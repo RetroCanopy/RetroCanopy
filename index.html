@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrocanopy Vault | Limited Merch Drops</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Top Announcement / Live Drop Countdown Bar -->
+    <div class="drop-banner">
+        <div class="banner-badge">LIVE DROP #048</div>
+        <div class="banner-timer">
+            CLOSES IN: <span id="countdown-timer">04d 18h 32m 14s</span>
+        </div>
+        <div class="banner-cta">ONLY 34 / 250 ITEMS LEFT</div>
+        <div class="banner-nav-links">
+            <a href="creators.html" class="banner-creator-pill">🎙️ FOR CREATORS</a>
+            <a href="organizations.html" class="banner-org-pill">🏢 ORG & BULK ORDERS</a>
+        </div>
+    </div>
+
+    <!-- SVG Filter to "Punch Out" Black Background -->
+    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true" focusable="false">
+        <defs>
+            <filter id="black-key">
+                <feColorMatrix type="matrix" values="1 0 0 0 0
+                                                     0 1 0 0 0
+                                                     0 0 1 0 0
+                                                     1 1 1 0 -0.1" />
+            </filter>
+        </defs>
+    </svg>
+
+    <main>
+        <!-- Compact Hero Header with Action Paths -->
+        <section class="hero">
+            <div class="logo-container">
+                <img src="assets/logo.png" alt="Retrocanopy Logo" class="brand-logo-image">
+            </div>
+            <h1 class="brand-name">RETROCAN<span class="flicker-erratic">O</span>PY</h1>
+            <div class="vault-tagline-badge">THE RETRO VAULT // LIMITED MERCH DROPS</div>
+            <p class="brand-tagline">CUSTOM PRINTED IN-HOUSE • WE PRINT ANYTHING ON ANYTHING</p>
+            
+            <!-- Action Buttons: Shoppers, Creators, Organizations -->
+            <div class="hero-actions hero-buttons">
+                <a href="#catalog" class="hero-btn primary-btn">⚡ EXPLORE VAULT DROPS</a>
+                <a href="creators.html" class="hero-btn creator-btn">🎙️ CREATOR MERCH HUB ➔</a>
+                <a href="organizations.html" class="hero-btn org-btn">🏢 BULK & ORG ORDERS ➔</a>
+            </div>
+        </section>
+
+        <!-- Compact Vault Grid Section with 7 Rotating Products -->
+        <section id="catalog" class="vault-section">
+            <div class="vault-header">
+                <h2 class="vault-title">CURRENT DROP #048 CATALOG</h2>
+                <p class="vault-subtitle">High-Density DTG • 3D Puff Embroidery • Laser-Etched • Rubberized Prints</p>
+            </div>
+
+            <div class="vault-carousel">
+                <div class="vault-track">
+                    <!-- Item 1: Oversized Tee -->
+                    <div class="vault-card">
+                        <div class="vault-card-badge">🔥 14 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_tee.png" alt="Retrocanopy Signature Tee" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">APPAREL / DTG</span>
+                            <h3 class="product-name">SIGNATURE LOGO TEE</h3>
+                            <div class="product-specs">240GSM Heavy Cotton • DTG Print</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$48.00</span>
+                                <span class="product-original-price">$65.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">S</span>
+                                <span class="size-btn">M</span>
+                                <span class="size-btn">L</span>
+                                <span class="size-btn">XL</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('SIGNATURE LOGO TEE', 48.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: Heavyweight Hoodie -->
+                    <div class="vault-card">
+                        <div class="vault-card-badge rare">⚡ 7 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_hoodie.png" alt="Retrocanopy Heavyweight Hoodie" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">OUTERWEAR / FLEECE</span>
+                            <h3 class="product-name">RETROCANOPY HOODIE</h3>
+                            <div class="product-specs">400GSM Fleece • High-Density Print</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$85.00</span>
+                                <span class="product-original-price">$110.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">S</span>
+                                <span class="size-btn">M</span>
+                                <span class="size-btn">L</span>
+                                <span class="size-btn">XL</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('RETROCANOPY HOODIE', 85.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: 3D Embroidered Snapback Cap -->
+                    <div class="vault-card">
+                        <div class="vault-card-badge">✨ 8 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_cap.png" alt="Retrocanopy 3D Puff Snapback" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">HEADWEAR / EMBROIDERY</span>
+                            <h3 class="product-name">RETROCANOPY SNAPBACK</h3>
+                            <div class="product-specs">High-Density 3D Stitching</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$34.00</span>
+                                <span class="product-original-price">$45.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">ONE SIZE</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('RETROCANOPY SNAPBACK', 34.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 4: Arcade Hero Bomber Jacket -->
+                    <div class="vault-card">
+                        <div class="vault-card-badge rare">🔥 6 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_bomber.jpg" alt="Arcade Hero Bomber Jacket" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">OUTERWEAR / BOMBER</span>
+                            <h3 class="product-name">ARCADE HERO BOMBER</h3>
+                            <div class="product-specs">Satin Shell • Embroidered Patches</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$120.00</span>
+                                <span class="product-original-price">$155.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">M</span>
+                                <span class="size-btn">L</span>
+                                <span class="size-btn">XL</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('ARCADE HERO BOMBER', 120.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 5: Retro Wave Knit Beanie -->
+                    <div class="vault-card">
+                        <div class="vault-card-badge">✨ 19 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_beanie.jpg" alt="Retrocanopy Knit Beanie" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">HEADWEAR / PATCH</span>
+                            <h3 class="product-name">RETROCANOPY BEANIE</h3>
+                            <div class="product-specs">Heavy Rib Knit • Woven Patch</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$28.00</span>
+                                <span class="product-original-price">$38.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">ONE SIZE</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('RETROCANOPY BEANIE', 28.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 6: Cyber Laser-Etched Tumbler -->
+                    <div class="vault-card">
+                        <div class="vault-card-badge">⚡ 11 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_tumbler.jpg" alt="Cyber Laser Travel Tumbler" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">DRINKWARE / STEEL</span>
+                            <h3 class="product-name">CYBER LASER TUMBLER</h3>
+                            <div class="product-specs">20oz Double-Wall Vacuum Insulated</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$32.00</span>
+                                <span class="product-original-price">$42.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">20oz</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('CYBER LASER TUMBLER', 32.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 7: XL Gaming Desk Mat -->
+                    <div class="vault-card">
+                        <div class="vault-card-badge rare">🔥 5 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_deskmat.png" alt="Retrocanopy XL Desk Mat" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">ACCESSORIES / DESK MAT</span>
+                            <h3 class="product-name">RETROCANOPY DESK MAT</h3>
+                            <div class="product-specs">900x400mm • Stitched Edge Rubber</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$38.00</span>
+                                <span class="product-original-price">$50.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">900x400mm</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('RETROCANOPY DESK MAT', 38.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <!-- DUPLICATE SET (Items 1-7) for seamless infinite carousel loop -->
+                    <div class="vault-card">
+                        <div class="vault-card-badge">🔥 14 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_tee.png" alt="Retrocanopy Signature Tee" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">APPAREL / DTG</span>
+                            <h3 class="product-name">SIGNATURE LOGO TEE</h3>
+                            <div class="product-specs">240GSM Heavy Cotton • DTG Print</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$48.00</span>
+                                <span class="product-original-price">$65.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">S</span>
+                                <span class="size-btn">M</span>
+                                <span class="size-btn">L</span>
+                                <span class="size-btn">XL</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('SIGNATURE LOGO TEE', 48.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <div class="vault-card">
+                        <div class="vault-card-badge rare">⚡ 7 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_hoodie.png" alt="Retrocanopy Heavyweight Hoodie" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">OUTERWEAR / FLEECE</span>
+                            <h3 class="product-name">RETROCANOPY HOODIE</h3>
+                            <div class="product-specs">400GSM Fleece • High-Density Print</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$85.00</span>
+                                <span class="product-original-price">$110.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">S</span>
+                                <span class="size-btn">M</span>
+                                <span class="size-btn">L</span>
+                                <span class="size-btn">XL</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('RETROCANOPY HOODIE', 85.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <div class="vault-card">
+                        <div class="vault-card-badge">✨ 8 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_cap.png" alt="Retrocanopy 3D Puff Snapback" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">HEADWEAR / EMBROIDERY</span>
+                            <h3 class="product-name">RETROCANOPY SNAPBACK</h3>
+                            <div class="product-specs">High-Density 3D Stitching</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$34.00</span>
+                                <span class="product-original-price">$45.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">ONE SIZE</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('RETROCANOPY SNAPBACK', 34.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <div class="vault-card">
+                        <div class="vault-card-badge rare">🔥 6 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_bomber.jpg" alt="Arcade Hero Bomber Jacket" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">OUTERWEAR / BOMBER</span>
+                            <h3 class="product-name">ARCADE HERO BOMBER</h3>
+                            <div class="product-specs">Satin Shell • Embroidered Patches</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$120.00</span>
+                                <span class="product-original-price">$155.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">M</span>
+                                <span class="size-btn">L</span>
+                                <span class="size-btn">XL</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('ARCADE HERO BOMBER', 120.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <div class="vault-card">
+                        <div class="vault-card-badge">✨ 19 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_beanie.jpg" alt="Retrocanopy Knit Beanie" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">HEADWEAR / PATCH</span>
+                            <h3 class="product-name">RETROCANOPY BEANIE</h3>
+                            <div class="product-specs">Heavy Rib Knit • Woven Patch</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$28.00</span>
+                                <span class="product-original-price">$38.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">ONE SIZE</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('RETROCANOPY BEANIE', 28.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <div class="vault-card">
+                        <div class="vault-card-badge">⚡ 11 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_tumbler.jpg" alt="Cyber Laser Travel Tumbler" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">DRINKWARE / STEEL</span>
+                            <h3 class="product-name">CYBER LASER TUMBLER</h3>
+                            <div class="product-specs">20oz Double-Wall Vacuum Insulated</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$32.00</span>
+                                <span class="product-original-price">$42.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">20oz</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('CYBER LASER TUMBLER', 32.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+
+                    <div class="vault-card">
+                        <div class="vault-card-badge rare">🔥 5 LEFT</div>
+                        <div class="product-image-wrap">
+                            <img src="assets/vault_drop_deskmat.png" alt="Retrocanopy XL Desk Mat" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-category">ACCESSORIES / DESK MAT</span>
+                            <h3 class="product-name">RETROCANOPY DESK MAT</h3>
+                            <div class="product-specs">900x400mm • Stitched Edge Rubber</div>
+                            <div class="product-price-row">
+                                <span class="product-price">$38.00</span>
+                                <span class="product-original-price">$50.00</span>
+                            </div>
+                            <div class="size-selector">
+                                <span class="size-btn active">900x400mm</span>
+                            </div>
+                            <button class="order-btn" onclick="openOrderModal('RETROCANOPY DESK MAT', 38.00)">PRE-ORDER</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dual Partnership Portals: Creators & Organizations -->
+        <section class="portal-section">
+            <div class="portal-grid">
+                <!-- Portal 1: Creators -->
+                <div class="portal-card creator-portal">
+                    <div class="portal-badge">FOR CREATORS & STREAMERS</div>
+                    <h3 class="portal-title">LAUNCH YOUR OFFICIAL CREATOR MERCH</h3>
+                    <p class="portal-desc">Zero upfront inventory cost. In-house premium embroidery, custom neck tags, unboxing cards, and up to 60% higher profit margins than Teespring.</p>
+                    <ul class="portal-features">
+                        <li>✓ 400GSM Hoodies, Heavyweight Tees & 3D Puff Hats</li>
+                        <li>✓ Free Physical Sample Kit for Qualified Channels</li>
+                        <li>✓ Dedicated Storefront (retrocanopy.com/@YourBrand)</li>
+                    </ul>
+                    <a href="creators.html" class="portal-btn creator-portal-btn">🎙️ EXPLORE CREATOR PLATFORM ➔</a>
+                </div>
+
+                <!-- Portal 2: Organizations & Bulk -->
+                <div class="portal-card org-portal">
+                    <div class="portal-badge org-badge-small">FOR ORGANIZATIONS & TEAMS</div>
+                    <h3 class="portal-title">CUSTOM BULK PRINTING & UNIFORMS</h3>
+                    <p class="portal-desc">Official merchandise provider for Scouting America troops, youth leagues, schools, non-profits, and corporate brands. Tiered volume discounts from 24 to 1,000+ units.</p>
+                    <ul class="portal-features">
+                        <li>✓ Screen Printing, Embroidery & Custom Merit Patches</li>
+                        <li>✓ Scouting America & Tax-Exempt Unit Friendly</li>
+                        <li>✓ Fast 5-10 Day Turnaround & Free Digital Proofs</li>
+                    </ul>
+                    <a href="organizations.html" class="portal-btn org-portal-btn">🏢 REQUEST BULK QUOTE / ORDER ➔</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Print Capabilities Showcase Banner -->
+        <section class="capabilities-banner">
+            <h3 class="cap-title">WE PRINT ANYTHING ON ANYTHING</h3>
+            <div class="cap-grid">
+                <div class="cap-item">
+                    <div class="cap-icon">👕</div>
+                    <div class="cap-name">Apparel & Outerwear</div>
+                    <div class="cap-desc">Tees, Hoodies, Jackets, & Tank Tops.</div>
+                </div>
+                <div class="cap-item">
+                    <div class="cap-icon">🧢</div>
+                    <div class="cap-name">Headwear & Patchwork</div>
+                    <div class="cap-desc">Snapbacks, Beanies, & Woven Patches.</div>
+                </div>
+                <div class="cap-item">
+                    <div class="cap-icon">🖥️</div>
+                    <div class="cap-name">Desk Mats & Accessories</div>
+                    <div class="cap-desc">XL Gaming Pads, Mugs, & Stickers.</div>
+                </div>
+                <div class="cap-item">
+                    <div class="cap-icon">⚡</div>
+                    <div class="cap-name">Specialty Finishes</div>
+                    <div class="cap-desc">Puff 3D, Foil, Glow-in-Dark & Sublimation.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIP Early Access Form -->
+        <section class="vip-section">
+            <div class="vip-box">
+                <h3 class="vip-title">JOIN THE VAULT VIP LIST</h3>
+                <p class="vip-desc">Get notified 1 hour before Drop #049 goes live.</p>
+                <form class="vip-form" onsubmit="event.preventDefault(); alert('You are on the VIP Vault list!');">
+                    <input type="email" placeholder="Enter your email address..." required class="vip-input">
+                    <button type="submit" class="vip-submit-btn">GET EARLY ACCESS</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Quick Checkout / Order Modal -->
+    <div id="order-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeOrderModal()">&times;</button>
+            <div class="modal-header">
+                <div class="modal-tag">LIMITED DROP CHECKOUT</div>
+                <h3 id="modal-item-title" class="modal-title">Product Name</h3>
+                <div id="modal-item-price" class="modal-price">$0.00</div>
+            </div>
+            <form class="modal-form" onsubmit="handleOrderSubmit(event)">
+                <div class="form-group">
+                    <label>Select Variant / Size</label>
+                    <select class="form-select" id="order-size">
+                        <option value="Standard" selected>Standard Option</option>
+                        <option value="S">Small (S)</option>
+                        <option value="M">Medium (M)</option>
+                        <option value="L">Large (L)</option>
+                        <option value="XL">Extra Large (XL)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Email Address for Tracking</label>
+                    <input type="email" class="form-input" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Shipping Address</label>
+                    <input type="text" class="form-input" placeholder="Street, City, State, ZIP" required>
+                </div>
+                <button type="submit" class="modal-checkout-btn">⚡ CONFIRM PRE-ORDER</button>
+                <p class="modal-guarantee">🔒 Custom printed in-house & shipped within 3-5 business days.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Creator Partnership Application Modal -->
+    <div id="creator-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeCreatorModal()">&times;</button>
+            <div class="modal-header">
+                <div class="modal-tag creator-tag">CREATOR COLLAB APPLICATION</div>
+                <h3 class="modal-title">JOIN THE RETROCANOPY NETWORK</h3>
+                <div class="modal-price" style="font-size: 0.95rem; color: var(--neon-blue);">$0 Upfront • Custom Production</div>
+            </div>
+            <form class="modal-form" onsubmit="handleCreatorSubmit(event)">
+                <div class="form-group">
+                    <label>Channel / Brand Name</label>
+                    <input type="text" class="form-input" placeholder="e.g. CyberGamer, RetroWave Reviews" required>
+                </div>
+                <div class="form-group">
+                    <label>Channel / Social Link (YouTube / Twitch / TikTok)</label>
+                    <input type="url" class="form-input" placeholder="https://youtube.com/@yourchannel" required>
+                </div>
+                <div class="form-group">
+                    <label>Approx. Subscriber / Follower Count</label>
+                    <select class="form-select" required>
+                        <option value="">Select Audience Size...</option>
+                        <option value="10k-25k">10K – 25K Followers</option>
+                        <option value="25k-75k">25K – 75K Followers</option>
+                        <option value="75k-150k">75K – 150K Followers</option>
+                        <option value="150k+">150K+ Followers</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Merch Concept or Desired Items</label>
+                    <input type="text" class="form-input" placeholder="e.g. 3D Puff Snapbacks, Oversized Acid-Wash Tees" required>
+                </div>
+                <div class="form-group">
+                    <label>Your Direct Email</label>
+                    <input type="email" class="form-input" placeholder="creator@business.com" required>
+                </div>
+                <button type="submit" class="modal-checkout-btn creator-submit-btn">🚀 SUBMIT APPLICATION & REQUEST FREE SAMPLE</button>
+                <p class="modal-guarantee">✨ We review every application personally and reply within 24 hours.</p>
+            </form>
+        </div>
+    </div>
+
+    <footer class="retro-footer">
+        <div class="footer-inner">
+            <span class="footer-copy">Copyright &copy; 2026 Retrocanopy</span>
+            <div class="footer-links">
+                <a href="creators.html" class="footer-link">Creators</a>
+                <span class="footer-divider">//</span>
+                <a href="organizations.html" class="footer-link">Organizations</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

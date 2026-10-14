@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Merch Hub | Retrocanopy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Top Announcement Navigation Bar -->
+    <div class="drop-banner">
+        <a href="index.html" class="nav-back-link">&#9664; STORE CATALOG</a>
+        <div class="banner-badge">CREATOR PLATFORM</div>
+        <div class="banner-cta">ZERO INVENTORY RISK &bull; 100% IN-HOUSE PRINTED</div>
+        <a href="organizations.html" class="banner-org-pill">&#127970; ORG &amp; BULK ORDERS</a>
+    </div>
+
+    <!-- SVG Filter -->
+    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true" focusable="false">
+        <defs>
+            <filter id="black-key">
+                <feColorMatrix type="matrix" values="1 0 0 0 0
+                                                     0 1 0 0 0
+                                                     0 0 1 0 0
+                                                     1 1 1 0 -0.1" />
+            </filter>
+        </defs>
+    </svg>
+
+    <main>
+        <!-- Creator Page Hero -->
+        <section class="hero creator-hero">
+            <div class="logo-container">
+                <a href="index.html"><img src="assets/logo.png" alt="Retrocanopy Logo" class="brand-logo-image"></a>
+            </div>
+            <h1 class="brand-name">RETROCAN<span class="flicker-erratic">O</span>PY</h1>
+            <div class="creator-badge" style="margin-top: 0.5rem;">CREATOR MERCH NETWORK</div>
+            <h2 class="creator-hero-headline">YOUR MERCH. ZERO RISK.</h2>
+            <p class="creator-hero-sub">We build custom capsule collections for up-and-coming YouTubers, streamers, and podcasters with 10k&ndash;150k subscribers. Premium apparel, high-density embroidery, custom neck tags, and $0 upfront inventory cost.</p>
+            
+            <div class="hero-actions">
+                <a href="#apply" class="hero-btn primary-btn">&#127897;&#65039; APPLY AS CREATOR</a>
+                <a href="#how-it-works" class="hero-btn org-btn">&#9889; SEE HOW IT WORKS</a>
+                <a href="#calculator" class="hero-btn creator-btn">&#128202; CALCULATE EARNINGS</a>
+            </div>
+        </section>
+
+        <!-- Perks Section -->
+        <section class="creator-collab-section" style="margin-top: 1rem;">
+            <div class="creator-badge">WHY TOP CREATORS CHOOSE US</div>
+            <h2 class="creator-title">WHITE-GLOVE MERCHANDISE, ZERO HASSLE</h2>
+            <p class="creator-subtitle">Generic automated print-on-demand sites use paper-thin blanks with low-res prints. We operate our own in-house production shop so your fans get genuine streetwear quality.</p>
+            
+            <div class="creator-perks-grid">
+                <div class="creator-perk-card">
+                    <div class="perk-icon">&#127897;&#65039;</div>
+                    <div class="perk-header">DEDICATED STOREFRONT</div>
+                    <p class="perk-text">Get your custom branded drop page (retrocanopy.com/@YourChannel) with live countdown timers and seamless fan checkout.</p>
+                </div>
+                <div class="creator-perk-card">
+                    <div class="perk-icon">&#128202;</div>
+                    <div class="perk-header">REAL-TIME ANALYTICS</div>
+                    <p class="perk-text">Track pre-order sales, traffic sources, conversion rates, and profit payouts in your private creator dashboard.</p>
+                </div>
+                <div class="creator-perk-card">
+                    <div class="perk-icon">&#128176;</div>
+                    <div class="perk-header">ZERO UPFRONT COST</div>
+                    <p class="perk-text">Never risk buying excess stock. All items are produced on-demand during limited drops so you keep up to 60% margin with zero upfront risk.</p>
+                </div>
+                <div class="creator-perk-card">
+                    <div class="perk-icon">&#128640;</div>
+                    <div class="perk-header">WE HANDLE EVERYTHING</div>
+                    <p class="perk-text">From sample printing and packaging to customer service, returns, and worldwide shipping &mdash; you create, we fulfill.</p>
+                </div>
+            </div>
+
+            <!-- How It Works Step-by-Step -->
+            <div id="how-it-works" class="how-it-works-grid">
+                <div class="how-step">
+                    <div class="step-num">01</div>
+                    <div class="step-title">APPLY &amp; DESIGN</div>
+                    <p class="step-desc">Share your channel concept. Our design team creates high-res digital mockups of 3-5 signature items tailored to your audience.</p>
+                </div>
+                <div class="how-step">
+                    <div class="step-num">02</div>
+                    <div class="step-title">FREE SAMPLE KIT</div>
+                    <p class="step-desc">We print your custom samples and ship them directly to your door so you can test the quality on stream and in videos.</p>
+                </div>
+                <div class="how-step">
+                    <div class="step-num">03</div>
+                    <div class="step-title">LAUNCH DROP &amp; EARN</div>
+                    <p class="step-desc">Run a 10-14 day limited drop. We handle all customer payments, in-house printing, and international shipping while you cash out.</p>
+                </div>
+            </div>
+
+            <!-- Interactive Profit Calculator -->
+            <div id="calculator" class="creator-calculator" style="margin-top: 3rem;">
+                <div class="calc-header-wrap">
+                    <h3 class="calc-title">&#128202; INTERACTIVE PROFIT CALCULATOR</h3>
+                    <p class="calc-subtitle">Drag the slider to see how much more you keep printing with Retrocanopy compared to standard POD platforms</p>
+                </div>
+                <div class="calc-body">
+                    <div class="calc-control">
+                        <div class="calc-label-row">
+                            <span>Estimated Monthly Item Sales:</span>
+                            <span id="sales-count" class="calc-highlight">150 items / month</span>
+                        </div>
+                        <input type="range" id="sales-slider" min="25" max="1000" step="25" value="150" class="calc-slider" oninput="updateEarnings(this.value)">
+                    </div>
+                    <div class="calc-results">
+                        <div class="calc-result-box retrocanopy">
+                            <span class="calc-res-label">YOUR RETROCANOPY PAYOUT</span>
+                            <span id="retrocanopy-profit" class="calc-res-value">$2,400 / mo</span>
+                            <span class="calc-res-sub">Avg ~$16.00 profit / garment</span>
+                        </div>
+                        <div class="calc-vs">VS</div>
+                        <div class="calc-result-box standard">
+                            <span class="calc-res-label">GENERIC PRINT-ON-DEMAND</span>
+                            <span id="generic-profit" class="calc-res-value">$900 / mo</span>
+                            <span class="calc-res-sub">Avg ~$6.00 profit / garment</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Creator Direct Application Form -->
+            <div id="apply" class="creator-form-container">
+                <div class="creator-form-header">
+                    <div class="modal-tag creator-tag">CREATOR ONBOARDING APPLICATION</div>
+                    <h3 class="creator-title" style="font-size: 1.5rem; margin-top: 0.5rem;">APPLY FOR YOUR CREATOR STOREFRONT</h3>
+                    <p style="color: #aaa; font-size: 0.85rem;">Currently accepting applications from creators with 10k+ followers/subscribers across YouTube, Twitch, TikTok, or podcasting.</p>
+                </div>
+                <form class="modal-form" onsubmit="handleCreatorSubmit(event)" style="max-width: 650px; margin: 1.5rem auto 0; text-align: left;">
+                    <div class="form-group">
+                        <label for="creator-name">Channel / Creator Name</label>
+                        <input type="text" id="creator-name" name="creator_name" class="form-input" placeholder="e.g. RetroWave Gaming, CyberTech Daily" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="creator-link">Primary Channel / Social Link</label>
+                        <input type="url" id="creator-link" name="channel_url" class="form-input" placeholder="https://youtube.com/@yourname or twitch.tv/yourname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="creator-audience">Audience / Subscriber Size</label>
+                        <select id="creator-audience" name="audience_size" class="form-select" required>
+                            <option value="">Select Audience Range...</option>
+                            <option value="10k-25k">10,000 &ndash; 25,000 Subscribers / Followers</option>
+                            <option value="25k-75k">25,000 &ndash; 75,000 Subscribers / Followers</option>
+                            <option value="75k-150k">75,000 &ndash; 150,000 Subscribers / Followers</option>
+                            <option value="150k+">150,000+ Subscribers / Followers</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="creator-products">Merchandise Products Desired</label>
+                        <input type="text" id="creator-products" name="desired_products" class="form-input" placeholder="e.g. Heavyweight Hoodies, 3D Puff Snapbacks, Desk Mats, Tumblers" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="creator-email">Direct Business Email</label>
+                        <input type="email" id="creator-email" name="business_email" class="form-input" placeholder="creator@business.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="creator-notes">Tell Us About Your Brand &amp; Merch Vision (Optional)</label>
+                        <textarea id="creator-notes" name="notes" class="form-input" rows="3" placeholder="Tell us your release timeline, style aesthetic, or ideas..."></textarea>
+                    </div>
+                    <button type="submit" class="modal-checkout-btn creator-submit-btn" style="padding: 1rem; font-size: 0.95rem;">&#128640; SUBMIT CREATOR APPLICATION &amp; REQUEST SAMPLE KIT</button>
+                    <p class="modal-guarantee">&#10024; We review all applications and respond within 24 business hours.</p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="retro-footer">
+        <div class="footer-inner">
+            <span class="footer-copy">&copy; 2026 RETROCANOPY // CREATOR PLATFORM</span>
+            <div class="footer-links">
+                <a href="index.html" class="footer-link">Catalog</a>
+                <span class="footer-divider">//</span>
+                <a href="organizations.html" class="footer-link">Organizations</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
