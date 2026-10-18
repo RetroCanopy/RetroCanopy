@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bulk &amp; Organization Merch Orders | Retrocanopy</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -16,23 +17,12 @@
 <body>
     <!-- Top Announcement Navigation Bar -->
     <div class="drop-banner">
-        <a href="index.html" class="nav-back-link">&#9664; STORE CATALOG</a>
+        <a href="index.html" class="nav-back-link">&#9664; RETROCANOPY</a>
         <div class="banner-badge">ORG &amp; BULK ORDERS</div>
         <div class="banner-cta">SCOUTING AMERICA TRUSTED &bull; BULK PRICING</div>
         <a href="creators.html" class="banner-creator-pill">&#127897;&#65039; CREATOR HUB</a>
     </div>
 
-    <!-- SVG Filter -->
-    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true" focusable="false">
-        <defs>
-            <filter id="black-key">
-                <feColorMatrix type="matrix" values="1 0 0 0 0
-                                                     0 1 0 0 0
-                                                     0 0 1 0 0
-                                                     1 1 1 0 -0.1" />
-            </filter>
-        </defs>
-    </svg>
 
     <main>
         <!-- Organization Hero -->
@@ -48,7 +38,7 @@
             <div class="hero-actions">
                 <a href="#order-form" class="hero-btn primary-btn">&#128230; REQUEST BULK QUOTE / ORDER</a>
                 <a href="#tiers" class="hero-btn org-btn">&#9889; VIEW BULK PRICING TIERS</a>
-                <a href="index.html#catalog" class="hero-btn creator-btn">&#9889; BROWSE CATALOG</a>
+                <a href="index.html" class="hero-btn creator-btn">&#9889; RETROCANOPY HOME</a>
             </div>
         </section>
 
@@ -211,7 +201,7 @@
 
                     <div class="form-group">
                         <label for="org-notes">Additional Notes / Specific Garment Colors / Sizing Breakdown</label>
-                        <textarea id="org-notes" name="notes" class="form-input" rows="3" placeholder="e.g. 30 Youth L, 25 Adult M, 20 Adult L in Navy Blue with gold front print..."></textarea>
+                        <textarea id="org-notes" name="notes" class="form-input form-textarea" rows="3" placeholder="e.g. 30 Youth L, 25 Adult M, 20 Adult L in Navy Blue with gold front print..."></textarea>
                     </div>
 
                     <button type="submit" class="modal-checkout-btn org-submit-btn" style="padding: 1rem; font-size: 0.95rem;">&#128230; SUBMIT BULK QUOTE REQUEST</button>
@@ -225,13 +215,16 @@
         <div class="footer-inner">
             <span class="footer-copy">&copy; 2026 RETROCANOPY // BULK &amp; INSTITUTIONAL MERCH</span>
             <div class="footer-links">
-                <a href="index.html" class="footer-link">Catalog</a>
+                <a href="index.html" class="footer-link">Home</a>
                 <span class="footer-divider">//</span>
                 <a href="creators.html" class="footer-link">Creators</a>
             </div>
         </div>
     </footer>
 
+    <!-- Supabase Client & App Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
     <script src="script.js"></script>
 </body>
 

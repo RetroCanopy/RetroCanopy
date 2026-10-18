@@ -1,105 +1,13 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Size Selector Toggle Logic
-    const sizeContainers = document.querySelectorAll('.size-selector');
-    sizeContainers.forEach(container => {
-        const buttons = container.querySelectorAll('.size-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-    });
+/**
+ * Retrocanopy - Core Application Scripts
+ * Lightweight, modular client script with zero console errors on minimal pages.
+ */
 
-    // Countdown Timer logic
-    startCountdown();
-
-    // Close order modal on backdrop click
-    const orderModal = document.getElementById('order-modal');
-    if (orderModal) {
-        orderModal.addEventListener('click', (e) => {
-            if (e.target === orderModal) closeOrderModal();
-        });
-    }
-
-    // Close modals on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeOrderModal();
-            closeCreatorModal();
-        }
-    });
-});
-
-// Real-time Countdown Timer
-function startCountdown() {
-    const timerElement = document.getElementById('countdown-timer');
-    if (!timerElement) return;
-
-    // Set countdown 4 days, 18 hours from now
-    let totalSeconds = (4 * 86400) + (18 * 3600) + (32 * 60) + 14;
-
-    setInterval(() => {
-        if (totalSeconds <= 0) return;
-        totalSeconds--;
-
-        const days = Math.floor(totalSeconds / 86400);
-        const hours = Math.floor((totalSeconds % 86400) / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        const pad = (n) => String(n).padStart(2, '0');
-        timerElement.textContent = `${pad(days)}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
-    }, 1000);
-}
-
-// Modal Handlers
-function openOrderModal(productName, price, cardEl) {
-    const modal = document.getElementById('order-modal');
-    const titleElem = document.getElementById('modal-item-title');
-    const priceElem = document.getElementById('modal-item-price');
-    const sizeSelect = document.getElementById('order-size');
-
-    if (modal && titleElem && priceElem) {
-        titleElem.textContent = productName;
-        priceElem.textContent = `$${price.toFixed(2)}`;
-
-        // Pass the active size from the card into the modal dropdown
-        if (cardEl && sizeSelect) {
-            const activeBtn = cardEl.closest('.vault-card')?.querySelector('.size-btn.active');
-            if (activeBtn) {
-                const activeSize = activeBtn.textContent.trim();
-                for (let opt of sizeSelect.options) {
-                    if (opt.value === activeSize || opt.text.includes(activeSize)) {
-                        opt.selected = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        modal.classList.remove('hidden');
-    }
-}
-
-function closeOrderModal() {
-    const modal = document.getElementById('order-modal');
-    if (modal) {
-        modal.classList.add('hidden');
-    }
-}
-
-function handleOrderSubmit(event) {
-    event.preventDefault();
-    const title = document.getElementById('modal-item-title').textContent;
-    const size = document.getElementById('order-size').value;
-    alert(`PRE-ORDER SECURED!\n\nItem: ${title}\nSize: ${size}\n\nWe will email your print & tracking confirmation shortly!`);
-    closeOrderModal();
-}
-
-// Interactive Creator Profit Calculator
+/**
+ * Creator Profit Calculator (creators.html)
+ */
 function updateEarnings(val) {
-    const items = parseInt(val, 10);
+    const items = parseInt(val, 10) || 0;
     const countElem = document.getElementById('sales-count');
     const retroProfitElem = document.getElementById('retrocanopy-profit');
     const genericProfitElem = document.getElementById('generic-profit');
@@ -108,7 +16,6 @@ function updateEarnings(val) {
         countElem.textContent = `${items} items / month`;
     }
 
-    // Calculation: Retrocanopy avg profit ~$16/item vs generic ~$6/item
     const retroProfit = items * 16;
     const genericProfit = items * 6;
 
@@ -120,22 +27,94 @@ function updateEarnings(val) {
     }
 }
 
-// Creator Modal Handlers
-function closeCreatorModal() {
-    const modal = document.getElementById('creator-modal');
-    if (modal) {
-        modal.classList.add('hidden');
+/**
+ * Creator Application Submission Handler (creators.html)
+ */
+async function handleCreatorSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn ? submitBtn.innerHTML : 'SUBMIT';
+
+    const creatorName = document.getElementById('creator-name')?.value || '';
+    const channelUrl = document.getElementById('creator-link')?.value || '';
+    const audienceSize = document.getElementById('creator-audience')?.value || '';
+    const desiredProducts = document.getElementById('creator-products')?.value || '';
+    const businessEmail = document.getElementById('creator-email')?.value || '';
+    const notes = document.getElementById('creator-notes')?.value || '';
+
+    if (submitBtn) submitBtn.innerHTML = 'SUBMITTING APPLICATION...';
+
+    const client = window.db || (typeof db !== 'undefined' ? db : null);
+    if (client) {
+        try {
+            const { error } = await client.from('creator_applications').insert([{
+                creator_name: creatorName,
+                channel_url: channelUrl,
+                audience_size: audienceSize,
+                desired_products: desiredProducts,
+                business_email: businessEmail,
+                notes: notes || null
+            }]);
+            if (error) console.warn('Supabase creator insert notice:', error);
+        } catch (err) {
+            console.error('Supabase connection error:', err);
+        }
     }
-}
 
-function handleCreatorSubmit(event) {
-    event.preventDefault();
     alert('CREATOR APPLICATION RECEIVED!\n\nThank you for reaching out. Our team will review your channel and reply within 24 hours with your sample kit details.');
-    closeCreatorModal();
+    if (submitBtn) submitBtn.innerHTML = originalText;
+    form.reset();
 }
 
-function handleOrgSubmit(event) {
+/**
+ * Organization Bulk Order Submission Handler (organizations.html)
+ */
+async function handleOrgSubmit(event) {
     event.preventDefault();
-    alert('BULK QUOTE REQUEST RECEIVED!\n\nThank you for reaching out. A dedicated account manager will prepare your itemized quote, volume discounts, and digital mockups within 24 business hours.');
-}
+    const form = event.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn ? submitBtn.innerHTML : 'SUBMIT';
 
+    const orgName = document.getElementById('org-name')?.value || '';
+    const orgType = document.getElementById('org-type')?.value || '';
+    const contactName = document.getElementById('org-contact')?.value || '';
+    const phone = document.getElementById('org-phone')?.value || '';
+    const email = document.getElementById('org-email')?.value || '';
+    const deadline = document.getElementById('org-date')?.value || '';
+    const quantityTier = document.getElementById('org-qty')?.value || '';
+    const taxExempt = document.getElementById('org-tax')?.value || 'No';
+    const artworkLink = document.getElementById('org-artwork')?.value || '';
+    const notes = document.getElementById('org-notes')?.value || '';
+
+    const productCheckboxes = form.querySelectorAll('input[name="products[]"]:checked');
+    const productsNeeded = Array.from(productCheckboxes).map(cb => cb.value);
+
+    if (submitBtn) submitBtn.innerHTML = 'TRANSMITTING QUOTE REQUEST...';
+
+    const client = window.db || (typeof db !== 'undefined' ? db : null);
+    if (client) {
+        try {
+            const { error } = await client.from('organization_orders').insert([{
+                organization_name: orgName,
+                organization_type: orgType,
+                contact_name: contactName,
+                phone: phone,
+                email: email,
+                deadline: deadline || null,
+                products_needed: productsNeeded,
+                quantity_tier: quantityTier,
+                tax_exempt: taxExempt,
+                artwork_link: artworkLink || null,
+                notes: notes || null
+            }]);
+            if (error) console.warn('Supabase org insert notice:', error);
+        } catch (err) {
+            console.error('Supabase connection error:', err);
+        }
+    }
+
+    alert('BULK QUOTE REQUEST RECEIVED!\n\nThank you for reaching out. A dedicated account manager will prepare your itemized quote, volume discounts, and digital mockups within 24 business hours.');
+    if (submitBtn) submitBtn.innerHTML = originalText;
+    form.reset();
+}

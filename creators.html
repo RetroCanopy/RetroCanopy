@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creator Merch Hub | Retrocanopy</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -16,23 +17,12 @@
 <body>
     <!-- Top Announcement Navigation Bar -->
     <div class="drop-banner">
-        <a href="index.html" class="nav-back-link">&#9664; STORE CATALOG</a>
+        <a href="index.html" class="nav-back-link">&#9664; RETROCANOPY</a>
         <div class="banner-badge">CREATOR PLATFORM</div>
         <div class="banner-cta">ZERO INVENTORY RISK &bull; 100% IN-HOUSE PRINTED</div>
         <a href="organizations.html" class="banner-org-pill">&#127970; ORG &amp; BULK ORDERS</a>
     </div>
 
-    <!-- SVG Filter -->
-    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true" focusable="false">
-        <defs>
-            <filter id="black-key">
-                <feColorMatrix type="matrix" values="1 0 0 0 0
-                                                     0 1 0 0 0
-                                                     0 0 1 0 0
-                                                     1 1 1 0 -0.1" />
-            </filter>
-        </defs>
-    </svg>
 
     <main>
         <!-- Creator Page Hero -->
@@ -166,7 +156,7 @@
                     </div>
                     <div class="form-group">
                         <label for="creator-notes">Tell Us About Your Brand &amp; Merch Vision (Optional)</label>
-                        <textarea id="creator-notes" name="notes" class="form-input" rows="3" placeholder="Tell us your release timeline, style aesthetic, or ideas..."></textarea>
+                        <textarea id="creator-notes" name="notes" class="form-input form-textarea" rows="3" placeholder="Tell us your release timeline, style aesthetic, or ideas..."></textarea>
                     </div>
                     <button type="submit" class="modal-checkout-btn creator-submit-btn" style="padding: 1rem; font-size: 0.95rem;">&#128640; SUBMIT CREATOR APPLICATION &amp; REQUEST SAMPLE KIT</button>
                     <p class="modal-guarantee">&#10024; We review all applications and respond within 24 business hours.</p>
@@ -179,13 +169,16 @@
         <div class="footer-inner">
             <span class="footer-copy">&copy; 2026 RETROCANOPY // CREATOR PLATFORM</span>
             <div class="footer-links">
-                <a href="index.html" class="footer-link">Catalog</a>
+                <a href="index.html" class="footer-link">Home</a>
                 <span class="footer-divider">//</span>
                 <a href="organizations.html" class="footer-link">Organizations</a>
             </div>
         </div>
     </footer>
 
+    <!-- Supabase Client & App Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
     <script src="script.js"></script>
 </body>
 

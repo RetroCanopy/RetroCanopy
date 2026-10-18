@@ -1,4 +1,7 @@
-param([int]$Port = 5000)
+param(
+    [int]$Port = 8080,
+    [switch]$NoBrowser
+)
 
 $listener = New-Object System.Net.HttpListener
 $prefix = "http://localhost:$Port/"
@@ -6,8 +9,10 @@ $listener.Prefixes.Add($prefix)
 $listener.Start()
 Write-Host "Retrocanopy server started at $prefix"
 
-# Open browser
-Start-Process $prefix
+# Open browser if not suppressed
+if (-not $NoBrowser) {
+    Start-Process $prefix
+}
 
 $mimeTypes = @{
     ".html" = "text/html; charset=utf-8"
