@@ -178,30 +178,87 @@ body::after {
     }
 }
 
-.coming-soon {
-    font-family: 'Orbitron', sans-serif;
-    font-size: clamp(0.75rem, 1.8vw, 1.15rem);
-    font-weight: 700;
-    letter-spacing: clamp(0.25rem, 0.6vw, 0.55rem);
-    text-transform: uppercase;
-    color: var(--neon-blue);
-    margin-top: clamp(2rem, 5vh, 4rem);
-    position: relative;
-    z-index: 2;
-    opacity: 0.85;
-    text-shadow: 0 0 10px rgba(0, 212, 255, 0.6), 0 0 20px rgba(0, 212, 255, 0.3);
-    animation: coming-soon-glow 4s ease-in-out infinite alternate;
+/* ── 4B. 16-Bit Retro Gamer Intro ───────────────────────────── */
+.game-character-actor {
+    position: fixed;
+    bottom: clamp(14px, 4.5vh, 36px);
+    left: 0;
+    z-index: 999;
+    pointer-events: auto;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate3d(-200px, 0, 0);
+    will-change: transform;
 }
 
-@keyframes coming-soon-glow {
-    0% {
-        opacity: 0.7;
-        text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
-    }
-    100% {
-        opacity: 0.95;
-        text-shadow: 0 0 14px rgba(0, 212, 255, 0.85), 0 0 26px rgba(157, 78, 221, 0.45);
-    }
+/* 16-Bit Retro Dialogue Bubble */
+.character-dialogue {
+    position: absolute;
+    bottom: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.2);
+    transform-origin: bottom center;
+    background: #0d021c;
+    color: #ffffff;
+    font-family: 'Orbitron', monospace, sans-serif;
+    font-size: clamp(0.72rem, 1.8vw, 0.92rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.65rem 1.2rem;
+    border-radius: 8px;
+    border: 2px solid var(--neon-pink);
+    box-shadow: 0 0 16px rgba(255, 45, 149, 0.65), 0 0 30px rgba(0, 212, 255, 0.25), inset 0 0 8px rgba(255, 45, 149, 0.3);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+    z-index: 1000;
+}
+
+/* Speech bubble pointer tail */
+.character-dialogue::after {
+    content: '';
+    position: absolute;
+    bottom: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 9px solid var(--neon-pink);
+}
+
+.character-dialogue.show {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+/* Layered Frame Container (344x526 aspect ratio = 0.654) */
+.gamer-frame-container {
+    width: clamp(96px, 13vw, 138px);
+    height: clamp(147px, 19.9vw, 211px);
+    position: relative;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+.g-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+.g-frame.active {
+    display: block;
 }
 
 /* ── Short Viewport Adaptations ───────────────────────────── */
@@ -1156,12 +1213,6 @@ footer, .retro-footer {
         -webkit-box-reflect: below 2px linear-gradient(to bottom, transparent 45%, rgba(0, 0, 0, 0.2) 70%, rgba(255, 45, 149, 0.2) 100%);
     }
 
-    .coming-soon {
-        font-size: clamp(0.7rem, 3.2vw, 0.95rem);
-        letter-spacing: clamp(0.2rem, 1vw, 0.4rem);
-        margin-top: clamp(1.5rem, 4vh, 2.8rem);
-    }
-
     .form-input,
     .form-select,
     button,
@@ -1181,10 +1232,5 @@ footer, .retro-footer {
     .brand-name {
         font-size: 1.3rem;
         letter-spacing: 0.05rem;
-    }
-
-    .coming-soon {
-        font-size: 0.65rem;
-        letter-spacing: 0.18rem;
     }
 }

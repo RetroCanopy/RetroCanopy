@@ -12,7 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
 
 <body>
@@ -23,10 +23,20 @@
         <h1 class="brand-name" aria-label="RETROCANOPY">
             <span class="brand-text-base">RETROCAN</span><span class="flicker-letter">O</span><span class="brand-text-base">PY</span>
         </h1>
-        <div class="coming-soon">COMING SOON</div>
     </main>
 
-    <script src="script.js"></script>
+    <!-- 16-Bit Retro Gamer Intro: Walk, Stop, Turn & Greet, Walk Off -->
+    <div id="arcade-character" class="game-character-actor" aria-hidden="true">
+        <div class="character-dialogue" id="character-dialogue">We Will Be Right Back....</div>
+        <div class="gamer-frame-container">
+            <img src="assets/gamer_frame_walk1.png?v=6" alt="Walk 1" class="g-frame frame-walk1 active" id="frame-walk1">
+            <img src="assets/gamer_frame_walk2.png?v=6" alt="Walk 2" class="g-frame frame-walk2" id="frame-walk2">
+            <img src="assets/gamer_frame_front.png?v=6" alt="Turn to Camera" class="g-frame frame-front" id="frame-front">
+            <img src="assets/gamer_frame_exit.png?v=6" alt="Walk Exit" class="g-frame frame-exit" id="frame-exit">
+        </div>
+    </div>
+
+    <script src="script.js?v=6"></script>
 </body>
 
 </html>
