@@ -30,6 +30,7 @@ html {
     width: 100%;
     overflow-x: hidden;
     background-color: #000000;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -42,7 +43,8 @@ body {
     min-height: 100dvh;
     position: relative;
     margin: 0;
-    padding: 0;
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* ── 3. Clean Black Void (Pinstripes & Grids Removed) ──────────────────────── */
@@ -1103,5 +1105,86 @@ footer, .retro-footer {
     .hero-actions {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .creator-form-container,
+    .calc-card,
+    .modal-card {
+        padding: 1.25rem 1rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .form-row-2 {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tiers-grid,
+    .perks-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .footer-inner {
+        flex-direction: column;
+        gap: 0.8rem;
+        text-align: center;
+    }
+}
+
+/* Mobile Phone Optimization (480px and below) */
+@media (max-width: 480px) {
+    .hero-container {
+        padding: 1.5rem 1rem env(safe-area-inset-bottom, 1.5rem);
+        justify-content: center;
+    }
+
+    .logo-container {
+        width: clamp(130px, 46vw, 220px);
+        height: clamp(130px, 46vw, 220px);
+        margin-bottom: -0.6rem;
+    }
+
+    .brand-name {
+        font-size: clamp(1.4rem, 8.2vw, 2.5rem);
+        letter-spacing: clamp(0.06rem, 0.5vw, 0.2rem);
+        -webkit-box-reflect: below 2px linear-gradient(to bottom, transparent 45%, rgba(0, 0, 0, 0.2) 70%, rgba(255, 45, 149, 0.2) 100%);
+    }
+
+    .coming-soon {
+        font-size: clamp(0.7rem, 3.2vw, 0.95rem);
+        letter-spacing: clamp(0.2rem, 1vw, 0.4rem);
+        margin-top: clamp(1.5rem, 4vh, 2.8rem);
+    }
+
+    .form-input,
+    .form-select,
+    button,
+    .modal-checkout-btn {
+        min-height: 48px;
+        font-size: 16px; /* Prevents auto-zoom on iOS Safari */
+    }
+}
+
+/* Extra Small Phones (360px and below) */
+@media (max-width: 360px) {
+    .logo-container {
+        width: 120px;
+        height: 120px;
+    }
+
+    .brand-name {
+        font-size: 1.3rem;
+        letter-spacing: 0.05rem;
+    }
+
+    .coming-soon {
+        font-size: 0.65rem;
+        letter-spacing: 0.18rem;
     }
 }
