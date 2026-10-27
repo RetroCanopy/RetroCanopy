@@ -3066,12 +3066,9 @@ function initGamerIntro() {
         }, stepObj.holdMs || 8000);
     }
 
-    if (holoStage) {
-        holoStage.addEventListener('click', (e) => {
-            if (!inPrologue) return;
-            if (e.target && e.target.closest('#skip-intro-btn')) return;
-            advanceToNextStep(true);
-        });
+    // Do not allow clicking the stage or skip button to skip the intro on the live site
+    if (skipIntroBtn) {
+        skipIntroBtn.remove();
     }
 
     function playScriptStep(index) {

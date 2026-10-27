@@ -5097,11 +5097,15 @@ body.coming-soon-finale-active .diorama-bg-synth {
     }
 
     .skip-intro-btn {
-        bottom: 14px;
-        right: 12px;
-        padding: 7px 13px;
-        font-size: 0.64rem;
+        display: none !important;
     }
+}
+
+.skip-intro-btn,
+#skip-intro-btn {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 @media (max-width: 420px) {
