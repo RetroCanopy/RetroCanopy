@@ -1,0 +1,255 @@
+/* ==========================================================================
+   RETROCANOPY — 2K HD INTERACTIVE ZOOM INSPECTOR (MINIMALIST EDITION)
+   ========================================================================== */
+
+.hoodie-unit,
+.garment-unit,
+.hat-levitate-wrapper,
+.mat-levitate-wrapper,
+.item-levitate-wrapper,
+.bag-levitate-wrapper {
+  cursor: zoom-in !important;
+  position: relative;
+}
+
+/* Whisper-subtle hover cue that never clutters the product */
+.rc-zoom-hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: rgba(16, 17, 24, 0.72);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.78);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 5px 12px;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 25;
+}
+
+.hoodie-unit:hover .rc-zoom-hint,
+.garment-unit:hover .rc-zoom-hint,
+.hat-levitate-wrapper:hover .rc-zoom-hint,
+.mat-levitate-wrapper:hover .rc-zoom-hint,
+.item-levitate-wrapper:hover .rc-zoom-hint,
+.bag-levitate-wrapper:hover .rc-zoom-hint {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Fullscreen Smooth Zoom Overlay */
+.rc-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(4, 4, 7, 0.96);
+  backdrop-filter: blur(24px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.rc-zoom-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Minimalist Top Inspector Bar */
+.rc-zoom-topbar {
+  position: fixed;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(18, 19, 26, 0.78);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 7px 10px 7px 18px;
+  border-radius: 999px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+  z-index: 10002;
+  transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rc-zoom-overlay.open .rc-zoom-topbar {
+  transform: translateX(-50%) translateY(0);
+}
+
+.rc-zoom-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rc-zoom-kicker {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 9px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.rc-zoom-title {
+  display: none !important;
+}
+
+.rc-zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rc-zoom-pill-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.rc-zoom-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.52);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rc-zoom-btn:hover {
+  color: #ffffff;
+}
+
+.rc-zoom-btn.active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.rc-zoom-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rc-zoom-close:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* Interactive Pan & Zoom Viewport */
+.rc-zoom-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.rc-zoom-stage:active {
+  cursor: grabbing;
+}
+
+.rc-zoom-img {
+  max-height: 82vh;
+  max-width: 86vw;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  transform-origin: 50% 50%;
+  transform: scale(0.88);
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.95));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.rc-zoom-overlay.open .rc-zoom-img {
+  transform: scale(1.45);
+}
+
+.rc-zoom-img.panning {
+  transition: transform 0.08s linear;
+}
+
+/* Whisper-Minimal Bottom Hint inside Zoom Inspector */
+.rc-zoom-footer-hint {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.38);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  z-index: 10002;
+}
+
+.rc-zoom-footer-hint span {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Side Navigation Arrows inside Zoom Modal */
+.rc-zoom-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10002;
+  transition: all 0.2s ease;
+}
+
+.rc-zoom-nav:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.rc-zoom-prev { left: 28px; }
+.rc-zoom-next { right: 28px; }

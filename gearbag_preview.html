@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Retrocanopy â€” Misc Vault | LAN Gear Bag &amp; Insulated Tumblers</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #000000;
+      --neon-pink: #ff2d95;
+      --neon-purple: #9d4edd;
+      --neon-blue: #00d4ff;
+      --sunset-orange: #ffae00;
+      --text-color: #ffffff;
+      --muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: #000000;
+      color: #ffffff;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* â”€â”€ MINIMAL FLOATING SITE HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 300;
+      padding: 18px 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+      pointer-events: none;
+    }
+
+    .site-header > * {
+      pointer-events: auto;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      mix-blend-mode: screen;
+      transition: transform 0.3s ease;
+    }
+
+    .brand-link:hover .nav-logo {
+      transform: scale(1.08);
+    }
+
+    .nav-wordmark {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .brand-text-base {
+      background: linear-gradient(to bottom, var(--sunset-orange) 10%, var(--neon-pink) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 10px rgba(255, 45, 149, 0.5));
+    }
+
+    .flicker-letter {
+      background: linear-gradient(to bottom, var(--sunset-orange) 10%, var(--neon-pink) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 10px rgba(255, 45, 149, 0.5));
+      animation: smooth-neon-pulse 6s infinite ease-in-out;
+    }
+
+    @keyframes smooth-neon-pulse {
+      0%, 100% { opacity: 1; }
+      48% { opacity: 0.95; }
+      51% { opacity: 0.42; }
+      54% { opacity: 0.78; }
+      57% { opacity: 0.48; }
+      62% { opacity: 1; }
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(10, 12, 22, 0.65);
+      backdrop-filter: blur(12px);
+      padding: 8px 22px;
+      border-radius: 999px;
+    }
+
+    .nav-center a {
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-center a:hover,
+    .nav-center a.active {
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(255, 45, 149, 0.8);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cart-pill {
+      background: rgba(255, 45, 149, 0.14);
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .cart-pill:hover {
+      background: rgba(255, 45, 149, 0.32);
+      box-shadow: 0 0 18px rgba(255, 45, 149, 0.5);
+    }
+
+    /* â”€â”€ CENTER-STAGE FLOATING SHOWROOM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .showroom-viewport {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      perspective: 1200px;
+      overflow: hidden;
+    }
+
+    /* Subtle Ambient Aura Behind Floating Gear Bag (No base, no border) */
+    .ambient-aura {
+      position: absolute;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 45, 149, 0.08) 0%, rgba(0, 212, 255, 0.04) 45%, transparent 70%);
+      filter: blur(42px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .glide-arrow {
+      position: absolute;
+      top: 46%;
+      transform: translateY(-50%);
+      z-index: 260;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(12, 15, 26, 0.65);
+      backdrop-filter: blur(10px);
+      border: none;
+      color: #cbd5e1;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.15rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.22s ease;
+    }
+
+    .glide-arrow:hover {
+      color: #ffffff;
+      background: rgba(255, 45, 149, 0.25);
+      box-shadow: 0 0 22px rgba(255, 45, 149, 0.45);
+      transform: translateY(-50%) scale(1.08);
+    }
+
+    .glide-prev { left: 36px; }
+    .glide-next { right: 36px; }
+
+    .bag-levitate-wrapper {
+      z-index: 2;
+      animation: floatLevitate 3.8s ease-in-out infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 72px;
+    }
+
+    .bag-img {
+      width: min(72vw, 480px);
+      max-height: 64vh;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 36px 44px rgba(0, 0, 0, 0.96));
+      transition: transform 0.15s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes floatLevitate {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .hud-stack {
+      position: fixed;
+      bottom: 22px;
+      z-index: 250;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hud-selector-strip {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(10, 12, 20, 0.68);
+      backdrop-filter: blur(16px);
+      padding: 8px 22px;
+      border-radius: 999px;
+    }
+
+    .mini-thumbs {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .mini-thumb {
+      cursor: pointer;
+      opacity: 0.4;
+      transition: all 0.22s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mini-thumb:hover { opacity: 0.85; transform: translateY(-2px); }
+    .mini-thumb.active { opacity: 1; transform: translateY(-3px); }
+
+    /* â”€â”€ FLOATING BOTTOM HUD BAR (Ultra-Clean Borderless Dock) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+    .hud-dock {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      background: rgba(10, 12, 20, 0.72);
+      backdrop-filter: blur(18px);
+      padding: 14px 28px;
+      border-radius: 999px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+    }
+
+    .hud-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 245px;
+    }
+
+    .hud-kicker {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--neon-blue);
+    }
+
+    .hud-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.98rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .hud-specs {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .hud-divider {
+      width: 1px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .hud-price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 900;
+      background: linear-gradient(to right, var(--sunset-orange), var(--neon-pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hud-buy-btn {
+      background: linear-gradient(135deg, var(--sunset-orange) 0%, var(--neon-pink) 100%);
+      border: none;
+      color: #000000;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255, 45, 149, 0.45);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hud-buy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 28px rgba(255, 45, 149, 0.8);
+    }
+
+    @media (max-width: 768px) {
+      .site-header {
+        padding: 14px 20px;
+      }
+      .nav-center {
+        display: none;
+      }
+      .hud-dock {
+        flex-direction: column;
+        gap: 12px;
+        border-radius: 24px;
+        padding: 16px 22px;
+        width: 90vw;
+        text-align: center;
+      }
+      .hud-divider, .hud-specs {
+        display: none;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="merch_minimal.css?v=85">
+  <link rel="stylesheet" href="merch_zoom.css?v=4">
+  <script src="merch_zoom.js?v=75" defer></script>
+</head>
+<body>
+
+  <!-- 1. MINIMAL FLOATING SITE HEADER -->
+  <header class="site-header">
+    <a href="index.html" class="brand-link">
+      <img src="assets/logo.png" alt="Retrocanopy Logo" class="nav-logo">
+      <div class="nav-wordmark">
+        <span class="brand-text-base">RETROCAN</span><span class="flicker-letter">O</span><span class="brand-text-base">PY</span>
+      </div>
+    </a>
+
+    <nav class="nav-center">
+      <a href="index.html" class="nav-home-btn">&#8962; Home</a>
+      <a href="hat_preview.html">Hat</a>
+      <a href="deskmat_preview.html">Desk Mats</a>
+      <a href="hoodie_preview.html">Hoodies</a>
+      <a href="tee_preview.html">Tees</a>
+      <a href="joggers_preview.html">Joggers</a>
+      <a href="longsleeve_preview.html">Long-Sleeves</a>
+      <a href="gearbag_preview.html" class="active">Misc</a>
+    </nav>
+
+    <div class="nav-right">
+      <a href="index.html" class="nav-home-pill">&#8962; Home</a>
+      <button class="cart-pill" id="bagBtn">Bag (0)</button>
+    </div>
+  </header>
+
+  <!-- 2. CENTER-STAGE FLOATING MISC VAULT (GEAR BAG & TUMBLERS) -->
+  <main class="showroom-viewport" id="stage">
+    <div class="ambient-aura"></div>
+
+    <button class="glide-arrow glide-prev" onclick="stepItem(-1)" aria-label="Previous Misc Item">&#8592;</button>
+
+    <div class="bag-levitate-wrapper">
+      <img class="bag-img" id="bagImg" src="assets/merch/gearbag_opt1.png?v=5" alt="Retrocanopy Floating Misc Gear">
+    </div>
+
+    <button class="glide-arrow glide-next" onclick="stepItem(1)" aria-label="Next Misc Item">&#8594;</button>
+  </main>
+
+  <!-- 3. FLOATING BOTTOM HUD DOCK -->
+  <footer class="hud-stack">
+    <div class="hud-selector-strip">
+      <div class="size-switch">
+        <button class="size-pill active" id="pillGearBag" onclick="jumpToCategory('bag')">Gear Bag</button>
+        <button class="size-pill" id="pillTumblers" onclick="jumpToCategory('tumbler')">Tumblers</button>
+      </div>
+      <div class="strip-divider"></div>
+      <div class="mini-thumbs" id="thumbStrip"></div>
+    </div>
+
+    <div class="hud-dock">
+      <div class="hud-info">
+        <span class="hud-kicker" id="hudKicker">RC-701</span>
+        <span class="hud-title" id="hudTitle">20oz LAN Gear Bag</span>
+      </div>
+
+      <div class="hud-divider"></div>
+
+      <div class="hud-specs" id="hudSpecs">
+        <span>20oz Heavyweight Duck Canvas</span>
+        <span>â€¢</span>
+        <span>Reinforced Webbing Straps</span>
+        <span>â€¢</span>
+        <span>Fits Full TKL Board + Headset</span>
+      </div>
+
+      <div class="hud-divider"></div>
+
+      <div class="hud-price" id="hudPrice">$28</div>
+
+      <button class="hud-buy-btn" onclick="addToBag(this)">Add to Bag</button>
+    </div>
+  </footer>
+
+  <script>
+    const miscOptions = [
+      {
+        model: 'RC-701',
+        category: 'bag',
+        title: '20oz LAN Gear Bag',
+        price: '$28',
+        specs: '<span>20oz Heavyweight Duck Canvas</span><span>â€¢</span><span>Reinforced Webbing Straps</span><span>â€¢</span><span>Fits Full TKL Board + Headset</span>',
+        src: 'assets/merch/gearbag_opt1.png?v=5'
+      },
+      {
+        model: 'RC-702',
+        category: 'tumbler',
+        title: 'Classic Sunset Grid 30oz Tumbler',
+        price: '$34',
+        specs: '<span>30oz Double-Wall Vacuum Steel</span><span>â€¢</span><span>24hr Ice Cold / 12hr Hot</span><span>â€¢</span><span>Smoked Lid &amp; Reusable Straw</span>',
+        src: 'assets/merch/tumbler_opt1.png?v=2'
+      },
+      {
+        model: 'RC-703',
+        category: 'tumbler',
+        title: 'Outrun Wireframe Horizon 30oz Tumbler',
+        price: '$34',
+        specs: '<span>30oz Double-Wall Vacuum Steel</span><span>â€¢</span><span>Cyan Wireframe Mountain Print</span><span>â€¢</span><span>Cup-Holder Tapered Base</span>',
+        src: 'assets/merch/tumbler_opt2.png?v=2'
+      },
+      {
+        model: 'RC-704',
+        category: 'tumbler',
+        title: 'Starry Synthwave Cosmos 30oz Tumbler',
+        price: '$34',
+        specs: '<span>30oz Double-Wall Vacuum Steel</span><span>â€¢</span><span>Deep-Space Nebula UV Print</span><span>â€¢</span><span>Sweat-Proof Matte Coat</span>',
+        src: 'assets/merch/tumbler_opt3.png?v=2'
+      },
+      {
+        model: 'RC-705',
+        category: 'tumbler',
+        title: 'Midnight Stealth Laser-Etched 30oz Tumbler',
+        price: '$36',
+        specs: '<span>30oz Double-Wall Vacuum Steel</span><span>â€¢</span><span>Precision Laser-Etched Silver Crest</span><span>â€¢</span><span>Pro-Esports Matte Finish</span>',
+        src: 'assets/merch/tumbler_opt4.png?v=2'
+      }
+    ];
+
+    let currentIdx = 0;
+    let bagCount = 0;
+    const bagImg = document.getElementById('bagImg');
+    const hudKicker = document.getElementById('hudKicker');
+    const hudTitle = document.getElementById('hudTitle');
+    const hudSpecs = document.getElementById('hudSpecs');
+    const hudPrice = document.getElementById('hudPrice');
+    const thumbStrip = document.getElementById('thumbStrip');
+    const pillGearBag = document.getElementById('pillGearBag');
+    const pillTumblers = document.getElementById('pillTumblers');
+    const bagBtn = document.getElementById('bagBtn');
+
+    function updateShowroom() {
+      const item = miscOptions[currentIdx];
+      bagImg.src = item.src;
+      hudKicker.textContent = item.model;
+      hudTitle.textContent = item.title;
+      hudSpecs.innerHTML = item.specs;
+      hudPrice.textContent = item.price;
+
+      if (pillGearBag && pillTumblers) {
+        pillGearBag.classList.toggle('active', item.category === 'bag');
+        pillTumblers.classList.toggle('active', item.category === 'tumbler');
+      }
+
+      thumbStrip.innerHTML = '';
+      miscOptions.forEach((it, idx) => {
+        const div = document.createElement('div');
+        div.className = 'mini-thumb' + (idx === currentIdx ? ' active' : '');
+        div.title = `${it.model} â€” ${it.title}`;
+        div.onclick = () => {
+          currentIdx = idx;
+          updateShowroom();
+        };
+        thumbStrip.appendChild(div);
+      });
+    }
+
+    function stepItem(dir) {
+      currentIdx = (currentIdx + dir + miscOptions.length) % miscOptions.length;
+      updateShowroom();
+    }
+
+    function jumpToCategory(cat) {
+      if (cat === 'bag') {
+        currentIdx = 0;
+      } else {
+        // If already on a tumbler, step to next tumbler; otherwise jump to first tumbler (index 1)
+        if (miscOptions[currentIdx].category === 'tumbler') {
+          currentIdx = currentIdx < miscOptions.length - 1 ? currentIdx + 1 : 1;
+        } else {
+          currentIdx = 1;
+        }
+      }
+      updateShowroom();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') stepItem(1);
+      if (e.key === 'ArrowLeft') stepItem(-1);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      bagImg.style.transform = `rotateY(${x * 9}deg) rotateX(${-y * 7}deg)`;
+    });
+
+    function addToBag(btn) {
+      bagCount++;
+      bagBtn.textContent = `Bag (${bagCount})`;
+      const orig = btn.textContent;
+      btn.textContent = 'Added âœ“';
+      setTimeout(() => { btn.textContent = orig; }, 900);
+    }
+
+    updateShowroom();
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

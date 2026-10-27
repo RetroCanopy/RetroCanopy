@@ -10,33 +10,338 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="style.css?v=85">
 </head>
 
-<body>
-    <main class="hero-container">
-        <div class="logo-container">
-            <img src="assets/logo.png" alt="Retrocanopy Logo" class="brand-logo-image">
-        </div>
-        <h1 class="brand-name" aria-label="RETROCANOPY">
-            <span class="brand-text-base">RETROCAN</span><span class="flicker-letter">O</span><span class="brand-text-base">PY</span>
-        </h1>
-    </main>
+<body class="cinema-intro-active">
+    <!-- Preloaded HTML5 Audio Tracks for Title Screen Score, Synth's Emotional Journey, Impact Boom, Typing Tick & Kingdom Hearts Soundtrack -->
+    <audio id="intro-title-audio" src="assets/intro_theme.wav?v=36" autoplay preload="auto"></audio>
+    <audio id="syn-journey-audio" src="assets/syn_journey.wav?v=85" preload="auto"></audio>
+    <audio id="cup-boom-audio" src="assets/cup_boom.wav?v=36" preload="auto"></audio>
+    <audio id="lofi-loop-audio" src="assets/dearly_beloved.mp3?v=80" loop preload="auto"></audio>
+    <audio id="type-tick-audio" src="assets/type_tick.wav?v=36" preload="auto"></audio>
 
-    <!-- 16-Bit Retro Gamer Intro: Walk, Stop, Turn & Greet, Walk Off -->
-    <div id="arcade-character" class="game-character-actor" aria-hidden="true">
-        <div class="character-dialogue" id="character-dialogue">We Will Be Right Back....</div>
-        <div class="gamer-frame-container">
-            <img src="assets/gamer_frame_walk1.png?v=6" alt="Walk 1" class="g-frame frame-walk1 active" id="frame-walk1">
-            <img src="assets/gamer_frame_walk2.png?v=6" alt="Walk 2" class="g-frame frame-walk2" id="frame-walk2">
-            <img src="assets/gamer_frame_front.png?v=6" alt="Turn to Camera" class="g-frame frame-front" id="frame-front">
-            <img src="assets/gamer_frame_exit.png?v=6" alt="Walk Exit" class="g-frame frame-exit" id="frame-exit">
+    <!-- Full-screen subtle electric lightning flash placeholder -->
+    <div class="sabotage-screen-flash" id="sabotage-screen-flash" aria-hidden="true"></div>
+
+    <!-- High-Production Movie Studio Intro Atmosphere & Widescreen Letterbox Stage -->
+    <div class="cinema-intro-fx" id="cinema-intro-fx" aria-hidden="true">
+        <div class="cinema-letterbox cinema-letterbox-top"></div>
+        <div class="cinema-letterbox cinema-letterbox-bottom"></div>
+        <div class="cinema-anamorphic-flare"></div>
+        <div class="cinema-dust-field">
+            <span style="--dx:18%; --dy:38%; --dd:0.4s; --ds:1.2"></span>
+            <span style="--dx:31%; --dy:58%; --dd:1.1s; --ds:0.9"></span>
+            <span style="--dx:44%; --dy:30%; --dd:0.8s; --ds:1.35"></span>
+            <span style="--dx:56%; --dy:64%; --dd:1.5s; --ds:1.1"></span>
+            <span style="--dx:68%; --dy:33%; --dd:0.9s; --ds:1.25"></span>
+            <span style="--dx:79%; --dy:54%; --dd:1.3s; --ds:1.0"></span>
+            <span style="--dx:26%; --dy:46%; --dd:0.7s; --ds:0.85"></span>
+            <span style="--dx:73%; --dy:42%; --dd:0.6s; --ds:1.2"></span>
         </div>
     </div>
 
-    <script src="script.js?v=6"></script>
+    <main class="hero-container cinematic-center cinema-reveal-stage" id="hero-container">
+        <div class="logo-container" id="logo-container">
+            <img src="assets/logo_8bit.png?v=25" alt="" aria-hidden="true" class="logo-evo-layer logo-evo-8bit">
+            <img src="assets/logo_16bit.png?v=25" alt="" aria-hidden="true" class="logo-evo-layer logo-evo-16bit">
+            <img src="assets/logo_32bit.png?v=25" alt="" aria-hidden="true" class="logo-evo-layer logo-evo-32bit">
+            <img src="assets/logo_64bit.png?v=25" alt="" aria-hidden="true" class="logo-evo-layer logo-evo-64bit">
+            <img src="assets/logo.png?v=25" alt="Retrocanopy Logo" class="brand-logo-image logo-evo-hd">
+        </div>
+        <h1 class="brand-name" aria-label="RETROCANOPY">
+            <span class="brand-text-base">RETROCAN</span><span class="flicker-letter sabotaged" id="flicker-o">O<span class="o-hit-spark" id="o-hit-spark" aria-hidden="true"></span><span class="o-shockwave-ring" id="o-shockwave-ring" aria-hidden="true"></span></span><span class="brand-text-base">PY</span>
+        </h1>
+        <div class="cinema-studio-tagline" id="cinema-studio-tagline" aria-hidden="true">
+            <div class="tagline-row tagline-row-primary">
+                <span class="tagline-rule"></span>
+                <span class="tagline-text">Fun. Upbeat. Charity. Kindness.</span>
+                <span class="tagline-rule"></span>
+            </div>
+            <div class="tagline-row tagline-row-secondary">
+                <span class="tagline-subtext">A place for Culture &amp; Good Vibes</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Kingdom Hearts Background Music Toggle Pill & Track Selector (appears once intro completes) -->
+    <div class="kh-music-widget" id="kh-music-widget">
+        <button type="button" class="lofi-music-btn" id="lofi-music-btn" aria-label="Toggle Kingdom Hearts Background Music">
+            <span class="lofi-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span id="lofi-music-label">DEARLY BELOVED</span>
+            <span class="kh-music-caret" aria-hidden="true">&#9662;</span>
+        </button>
+        <div class="kh-track-menu" id="kh-track-menu" role="menu" aria-label="Select Kingdom Hearts Song">
+            <button type="button" class="kh-track-option active" data-kh-track="0">Dearly Beloved</button>
+            <button type="button" class="kh-track-option" data-kh-track="1">Sanctuary</button>
+            <button type="button" class="kh-track-option" data-kh-track="2">Sunset</button>
+            <button type="button" class="kh-track-option" data-kh-track="off">Music: Off</button>
+        </div>
+    </div>
+
+    <!-- Skip Intro Button for quick navigation -->
+    <button type="button" class="skip-intro-btn" id="skip-intro-btn" aria-label="Skip Intro">SKIP INTRO &#9197;</button>
+
+    <!-- 3D HOME SCREEN DEPTH BACKDROP (3D STAGE SHADOWBOX DIORAMA + LOGO DIMMER + SYNTH IN BACKGROUND) -->
+    <div class="stage-3d-home-backdrop" id="stage-3d-home-backdrop" aria-hidden="true">
+        <div class="stage-3d-backdrop-sanctuary"></div>
+        <div class="stage-3d-backdrop-blue-glow"></div>
+        <div class="stage-3d-backdrop-vignette"></div>
+        <div class="stage-3d-logo-dimmer"></div>
+        <div class="diorama-bg-synth" id="diorama-bg-synth">
+            <div class="diorama-bg-synth-glow"></div>
+            <img src="assets/friends/owl3_wings_open.png?v=74" alt="Synth in Background Stage" class="diorama-bg-synth-img">
+        </div>
+    </div>
+
+    <!-- CONCEPT 1 & 3A: GLOSSY 3D NEON-CYAN & MAGENTA PERSPECTIVE GRID STAGE FLOOR (WITH MIRROR REFLECTIONS) -->
+    <div class="stage-3d-neon-grid-floor" id="stage-3d-neon-grid-floor" aria-hidden="true">
+        <div class="stage-3d-horizon-glow"></div>
+        <div class="stage-3d-grid-plane"></div>
+        <div class="stage-3d-mirror-sheen"></div>
+        <div class="stage-3d-diorama-floor-reflection" id="stage-3d-diorama-reflection"></div>
+    </div>
+
+    <!-- FULL-SCREEN HOLOGRAM OWL BUTLER ("SYN") 8-SCENE CINEMATIC GAMING CULTURE SHIFT JOURNEY -->
+    <section class="holo-butler-journey-stage pitch-black-opening" id="holo-butler-journey-stage" data-mood="nostalgia" aria-label="Gaming Culture Shift Journey with Syn the Hologram Owl Butler">
+        <!-- 8 Widescreen 16-Bit Scene Illustrations with Cinematic Ken-Burns Pan/Zoom + Live Neon Flicker & Moving CRT Gameplay -->
+        <div class="holo-era-backdrop-slides" id="holo-era-slides" aria-hidden="true">
+            <div class="holo-era-slide" data-era-slide="0" style="background-image: url('assets/eras/scene1_golden_arcade.jpg?v=49');">
+                <div class="era-neon-glow-layer neon-flicker-arcade" style="background-image: url('assets/eras/scene1_neon_glow.png?v=73');"></div>
+                <canvas class="era-crt-game-canvas" data-era-crt-canvas="1" style="-webkit-mask-image: url('assets/eras/scene1_crt_mask.png?v=73'); mask-image: url('assets/eras/scene1_crt_mask.png?v=73');"></canvas>
+            </div>
+            <div class="holo-era-slide" data-era-slide="1" style="background-image: url('assets/eras/scene2_rental_friday.jpg?v=49');">
+                <div class="era-neon-glow-layer neon-flicker-rental" style="background-image: url('assets/eras/scene2_neon_glow.png?v=73');"></div>
+                <canvas class="era-crt-game-canvas" data-era-crt-canvas="2" style="-webkit-mask-image: url('assets/eras/scene2_crt_mask.png?v=73'); mask-image: url('assets/eras/scene2_crt_mask.png?v=73');"></canvas>
+            </div>
+            <div class="holo-era-slide" data-era-slide="2" style="background-image: url('assets/eras/scene3_lan_culture.jpg?v=49');">
+                <div class="era-neon-glow-layer neon-flicker-lan" style="background-image: url('assets/eras/scene3_neon_glow.png?v=73');"></div>
+                <canvas class="era-crt-game-canvas" data-era-crt-canvas="3" style="-webkit-mask-image: url('assets/eras/scene3_crt_mask.png?v=73'); mask-image: url('assets/eras/scene3_crt_mask.png?v=73');"></canvas>
+            </div>
+            <div class="holo-era-slide" data-era-slide="3" style="background-image: url('assets/eras/scene4_midnight_tournament.jpg?v=49');">
+                <div class="era-neon-glow-layer neon-flicker-tourney" style="background-image: url('assets/eras/scene4_neon_glow.png?v=73');"></div>
+                <canvas class="era-crt-game-canvas" data-era-crt-canvas="4" style="-webkit-mask-image: url('assets/eras/scene4_crt_mask.png?v=73'); mask-image: url('assets/eras/scene4_crt_mask.png?v=73');"></canvas>
+            </div>
+            <div class="holo-era-slide" data-era-slide="4" style="background-image: url('assets/eras/scene5_shuttered_arcade.jpg?v=57');">
+                <canvas class="shuttered-arcade-static-canvas" id="shuttered-arcade-static-canvas" aria-hidden="true"></canvas>
+            </div>
+            <div class="holo-era-slide" data-era-slide="5" style="background-image: url('assets/eras/scene6_corporate_static.jpg?v=57');">
+                <canvas class="tv-pile-static-canvas" id="tv-pile-static-canvas" aria-hidden="true"></canvas>
+            </div>
+            <div class="holo-era-slide" data-era-slide="6" style="background-image: url('assets/eras/scene7_creator_loft.jpg?v=49');">
+                <div class="era-neon-glow-layer neon-flicker-loft" style="background-image: url('assets/eras/scene7_neon_glow.png?v=73');"></div>
+                <canvas class="era-crt-game-canvas" data-era-crt-canvas="7" style="-webkit-mask-image: url('assets/eras/scene7_crt_mask.png?v=73'); mask-image: url('assets/eras/scene7_crt_mask.png?v=73');"></canvas>
+            </div>
+            <div class="holo-era-slide" data-era-slide="7" style="background-image: url('assets/eras/scene8_retrocanopy_sanctuary.jpg?v=58');">
+                <div class="era-tree-blue-glow-layer" style="background-image: url('assets/eras/scene8_tree_blue_glow.png?v=73');"></div>
+                <canvas class="era-tree-magic-canvas" data-era-tree-canvas="8" style="-webkit-mask-image: url('assets/eras/scene8_tree_blue_glow.png?v=73'); mask-image: url('assets/eras/scene8_tree_blue_glow.png?v=73');"></canvas>
+                <canvas class="era-crt-game-canvas" data-era-crt-canvas="8" style="-webkit-mask-image: url('assets/eras/scene8_crt_mask.png?v=73'); mask-image: url('assets/eras/scene8_crt_mask.png?v=73');"></canvas>
+            </div>
+            <!-- Act-Reactive Emotional Color Grading & Anamorphic Light Wash inside the Cinema Frame -->
+            <div class="holo-emotional-color-grade" aria-hidden="true"></div>
+            <div class="holo-crt-scanline-overlay" aria-hidden="true"></div>
+        </div>
+
+        <!-- Full-Screen Transparent Atmospheric Particle, Full-Screen Rain & Firefly Canvas Overlay -->
+        <canvas class="holo-era-canvas" id="holo-era-canvas"></canvas>
+
+        <!-- Dramatic Act Transition & Projector Flash Overlay -->
+        <div class="holo-dramatic-flash" id="holo-dramatic-flash" aria-hidden="true"></div>
+
+        <!-- Opening Black-Screen Large White Typing Greeting ("Hello Friend... I am Synth") -->
+        <div class="synth-opening-greeting" id="synth-opening-greeting" aria-live="polite">
+            <div class="synth-greeting-line">
+                <span class="synth-greeting-text" id="synth-greeting-text"></span><span class="synth-greeting-cursor" aria-hidden="true"></span>
+            </div>
+        </div>
+
+        <!-- 2.39:1 Widescreen Theatrical Cinema Letterbox Bars -->
+        <div class="holo-cinema-bar holo-cinema-bar-top" aria-hidden="true"></div>
+        <div class="holo-cinema-bar holo-cinema-bar-bottom" aria-hidden="true"></div>
+
+        <!-- Stationary Left-Side 3D Vector Wireframe Owl Butler Actor ("SYNTH") with Wings Wide Open -->
+        <div class="holo-owl-actor" id="actor-owl-butler">
+            <!-- Fancy Steampunk Type Writing Sign Above Synth ("Coming Soon 11/14") -->
+            <div class="synth-steampunk-coming-soon" id="synth-steampunk-coming-soon" aria-live="polite">
+                <div class="steampunk-plaque-frame">
+                    <span class="steampunk-rivet rivet-tl" aria-hidden="true"></span>
+                    <span class="steampunk-rivet rivet-tr" aria-hidden="true"></span>
+                    <span class="steampunk-rivet rivet-bl" aria-hidden="true"></span>
+                    <span class="steampunk-rivet rivet-br" aria-hidden="true"></span>
+                    <div class="steampunk-ornament-row" aria-hidden="true">
+                        <span class="steampunk-filigree">&#9552;&#9552;&#9672;</span>
+                        <span class="steampunk-gear-icon">&#9881;</span>
+                        <span class="steampunk-filigree">&#9672;&#9552;&#9552;</span>
+                    </div>
+                    <div class="steampunk-coming-title">Coming Soon</div>
+                    <div class="steampunk-coming-date">11 / 14</div>
+                    <div class="steampunk-ornament-bottom" aria-hidden="true">&#10087; &#9472;&#9472;&#9472; &#9670; &#9472;&#9472;&#9472; &#10087;</div>
+                </div>
+            </div>
+            <div class="holo-owl-beam-cone" aria-hidden="true"></div>
+            <div class="holo-owl-scan-laser" aria-hidden="true"></div>
+            <div class="holo-owl-sprite-wrap">
+                <img src="assets/friends/owl3_wings_open.png?v=84" alt="Synth Arms Down on Cane" class="owl-frame frame-idle active">
+                <img src="assets/friends/owl3_welcome.png?v=84" alt="Synth Arm Out Welcoming" class="owl-frame frame-talk1">
+                <img src="assets/friends/owl3_welcome.png?v=84" alt="Synth Arm Out Welcoming" class="owl-frame frame-talk2">
+                <!-- True RGB Horizontal Scan-Slice Glitch Layers (no rubbery skewing) -->
+                <img src="assets/friends/owl3_wings_open.png?v=84" alt="" aria-hidden="true" class="owl-glitch-slice owl-glitch-slice-cyan">
+                <img src="assets/friends/owl3_wings_open.png?v=84" alt="" aria-hidden="true" class="owl-glitch-slice owl-glitch-slice-magenta">
+            </div>
+            <div class="holo-owl-emitter-ring" aria-hidden="true"></div>
+            <div class="holo-owl-floor-light" aria-hidden="true"></div>
+            <div class="member-nameplate holo-owl-nameplate"><span>SYNTH</span></div>
+        </div>
+    </section>
+
+    <!-- 16-Bit Retrocanopy Crew Lineup Stage (4 Core Section Guides: Chloe, CAB-84, Akari, Grizz) -->
+    <div id="crew-stage" class="crew-stage" aria-label="Retrocanopy Character Guides">
+
+        <!-- Borderless Hologram Action Backdrop Flash (Glows subtly on the pure black screen behind each crew member as Synth introduces them) -->
+        <div class="crew-action-backdrop-flash" id="crew-action-backdrop-flash" data-theme="shop" aria-hidden="true">
+            <!-- 1. Chloe: The Shop (Streetwear, Custom Hats & Limited Merch Drops) -->
+            <div class="action-flash-layer flash-layer-shop" data-flash-id="chloe">
+                <div class="action-flash-scene-projection" style="background-image: url('assets/eras/scene2_rental_friday.jpg?v=49');"></div>
+                <div class="action-flash-merch-trio">
+                    <img src="assets/vault_drop_hoodie.png" alt="" class="flash-merch-item item-left">
+                    <img src="assets/vault_drop_tee.png" alt="" class="flash-merch-item item-center">
+                    <img src="assets/vault_drop_deskmat.png" alt="" class="flash-merch-item item-right">
+                </div>
+                <div class="action-flash-watermark">THE SHOP // RETRO STREETWEAR &amp; CUSTOM HATS</div>
+            </div>
+            <!-- 2. CAB-84: The Arcade (Free Retro Games & High Score Battles) -->
+            <div class="action-flash-layer flash-layer-games" data-flash-id="cab84">
+                <div class="action-flash-scene-projection" style="background-image: url('assets/eras/scene1_golden_arcade.jpg?v=49');"></div>
+                <div class="action-flash-watermark">THE ARCADE // FREE RETRO GAMES &amp; HIGH SCORES</div>
+            </div>
+            <!-- 3. Akari: Culture Hub (Community Chat, Pixel Art, Music & Trading Cards) -->
+            <div class="action-flash-layer flash-layer-culture" data-flash-id="akari">
+                <div class="action-flash-scene-projection" style="background-image: url('assets/eras/scene3_lan_culture.jpg?v=49');"></div>
+                <div class="action-flash-watermark">CULTURE HUB // CHAT &bull; PIXEL ART &bull; MUSIC &bull; CARDS</div>
+            </div>
+            <!-- 4. Grizz: Creators & Bulk Orders (In-House Screen Printing & Collabs) -->
+            <div class="action-flash-layer flash-layer-creators" data-flash-id="grizz">
+                <div class="action-flash-scene-projection" style="background-image: url('assets/eras/scene7_creator_loft.jpg?v=49');"></div>
+                <div class="action-flash-watermark">CREATORS &amp; BULK // IN-HOUSE PRINT &amp; COLLABS</div>
+            </div>
+            <div class="action-flash-scanlines"></div>
+        </div>
+
+        <!-- Shared Dynamic Speech Bubble that positions above the currently speaking character -->
+        <div class="character-dialogue" id="character-dialogue" role="dialog" aria-live="polite">
+            <div class="dialogue-header">
+                <span class="dialogue-led" aria-hidden="true"></span>
+                <div class="dialogue-speaker" id="dialogue-speaker">CHLOE &bull; THE SHOP</div>
+            </div>
+            <p class="dialogue-text" id="dialogue-text"></p>
+            <div class="dialogue-hint" id="dialogue-hint">NEXT &#9654;</div>
+        </div>
+
+        <!-- 1. CAB-84 — Games & Arcade Guide (Concept 3A 3D-Shaded Pop-Out Model) -->
+        <div class="crew-member v-wing-front station-games" id="actor-cab84" data-character="cab84">
+            <div class="member-link-slot" id="link-slot-cab84">
+                <a href="games.html" class="tutorial-choice-btn role-btn-games" id="games-choice-btn">
+                    <span class="choice-cursor">&#9654;</span>
+                    <span class="choice-label">ARCADE</span>
+                </a>
+            </div>
+            <div class="crew-holo-beam-cone" aria-hidden="true"></div>
+            <div class="crew-holo-scan-laser" aria-hidden="true"></div>
+            <div class="gamer-frame-container friend-sprite">
+                <img src="assets/friends/cab84_3d_side_r.png?v=73" alt="CAB-84 Walk 1" class="g-frame frame-walk1">
+                <img src="assets/friends/cab84_3d_front.png?v=73" alt="CAB-84 Walk 2" class="g-frame frame-walk2">
+                <img src="assets/friends/cab84_3d_side_r.png?v=73" alt="CAB-84 Walk 3" class="g-frame frame-walk3">
+                <img src="assets/friends/cab84_3d_front.png?v=73" alt="CAB-84 3D Front" class="g-frame frame-idle active">
+                <img src="assets/friends/cab84_3d_talk.png?v=73" alt="CAB-84 Talk 1" class="g-frame frame-talk1">
+                <img src="assets/friends/cab84_3d_talk.png?v=73" alt="CAB-84 Talk 2" class="g-frame frame-talk2">
+                <img src="assets/friends/cab84_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan">
+                <img src="assets/friends/cab84_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta">
+            </div>
+            <div class="crew-holo-emitter-ring ring-games" aria-hidden="true"></div>
+            <div class="v-formation-floor-reflection refl-games" aria-hidden="true"></div>
+            <div class="member-nameplate nameplate-games"><span>CAB-84</span></div>
+        </div>
+
+        <!-- 2. CHLOE — Shop & Streetwear Guide (Concept 3A 3D-Shaded Pop-Out Model) -->
+        <div class="crew-member v-center-deep station-shop" id="actor-chloe" data-character="chloe">
+            <div class="member-link-slot" id="link-slot-chloe">
+                <a href="hat_preview.html" class="tutorial-choice-btn role-btn-shop" id="shop-choice-btn">
+                    <span class="choice-cursor">&#9654;</span>
+                    <span class="choice-label">SHOP</span>
+                </a>
+            </div>
+            <div class="crew-holo-beam-cone" aria-hidden="true"></div>
+            <div class="crew-holo-scan-laser" aria-hidden="true"></div>
+            <div class="gamer-frame-container friend-sprite">
+                <img src="assets/friends/chloe_3d_side_r.png?v=73" alt="Chloe Walk 1" class="g-frame frame-walk1">
+                <img src="assets/friends/chloe_3d_front.png?v=73" alt="Chloe Walk 2" class="g-frame frame-walk2">
+                <img src="assets/friends/chloe_3d_side_r.png?v=73" alt="Chloe Walk 3" class="g-frame frame-walk3">
+                <img src="assets/friends/chloe_3d_front.png?v=73" alt="Chloe 3D Front" class="g-frame frame-idle active">
+                <img src="assets/friends/chloe_3d_talk.png?v=73" alt="Chloe Talk 1" class="g-frame frame-talk1">
+                <img src="assets/friends/chloe_3d_talk.png?v=73" alt="Chloe Talk 2" class="g-frame frame-talk2">
+                <img src="assets/friends/chloe_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan">
+                <img src="assets/friends/chloe_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta">
+            </div>
+            <div class="crew-holo-emitter-ring ring-shop" aria-hidden="true"></div>
+            <div class="v-formation-floor-reflection refl-shop" aria-hidden="true"></div>
+            <div class="member-nameplate nameplate-shop"><span>CHLOE</span></div>
+        </div>
+
+        <!-- 3. AKARI — Culture, Chat, Art & Trading Cards Guide (Concept 3A 3D-Shaded Pop-Out Model) -->
+        <div class="crew-member v-center-deep station-culture" id="actor-akari" data-character="akari">
+            <div class="member-link-slot" id="link-slot-akari">
+                <a href="culture.html" class="tutorial-choice-btn role-btn-culture" id="culture-choice-btn">
+                    <span class="choice-cursor">&#9654;</span>
+                    <span class="choice-label">CULTURE</span>
+                </a>
+            </div>
+            <div class="crew-holo-beam-cone" aria-hidden="true"></div>
+            <div class="crew-holo-scan-laser" aria-hidden="true"></div>
+            <div class="gamer-frame-container friend-sprite sprite-wide">
+                <img src="assets/friends/akari_3d_side_r.png?v=73" alt="Akari Walk 1" class="g-frame frame-walk1">
+                <img src="assets/friends/akari_3d_front.png?v=73" alt="Akari Walk 2" class="g-frame frame-walk2">
+                <img src="assets/friends/akari_3d_side_r.png?v=73" alt="Akari Walk 3" class="g-frame frame-walk3">
+                <img src="assets/friends/akari_3d_front.png?v=73" alt="Akari 3D Front" class="g-frame frame-idle active">
+                <img src="assets/friends/akari_3d_hover.png?v=73" alt="Akari Bow Hover" class="g-frame frame-talk1">
+                <img src="assets/friends/akari_3d_hover.png?v=73" alt="Akari Bow Hover" class="g-frame frame-talk2">
+                <img src="assets/friends/akari_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan">
+                <img src="assets/friends/akari_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta">
+            </div>
+            <div class="crew-holo-emitter-ring ring-culture" aria-hidden="true"></div>
+            <div class="v-formation-floor-reflection refl-culture" aria-hidden="true"></div>
+            <div class="member-nameplate nameplate-culture"><span>AKARI</span></div>
+        </div>
+
+        <!-- 4. GRIZZ — Creators & Community Bulk Orders Guide (Concept 3A 3D-Shaded Pop-Out Model) -->
+        <div class="crew-member v-wing-front station-creators" id="actor-grizz" data-character="grizz">
+            <div class="member-link-slot" id="link-slot-grizz">
+                <a href="creators.html" class="tutorial-choice-btn role-btn-creators" id="creators-choice-btn">
+                    <span class="choice-cursor">&#9654;</span>
+                    <span class="choice-label">CREATORS</span>
+                </a>
+            </div>
+            <div class="crew-holo-beam-cone" aria-hidden="true"></div>
+            <div class="crew-holo-scan-laser" aria-hidden="true"></div>
+            <div class="gamer-frame-container friend-sprite">
+                <img src="assets/friends/grizz_3d_side_r.png?v=73" alt="Grizz Walk 1" class="g-frame frame-walk1">
+                <img src="assets/friends/grizz_3d_front.png?v=73" alt="Grizz Walk 2" class="g-frame frame-walk2">
+                <img src="assets/friends/grizz_3d_side_r.png?v=73" alt="Grizz Walk 3" class="g-frame frame-walk3">
+                <img src="assets/friends/grizz_3d_front.png?v=73" alt="Grizz 3D Front" class="g-frame frame-idle active">
+                <img src="assets/friends/grizz_3d_talk.png?v=73" alt="Grizz Talk 1" class="g-frame frame-talk1">
+                <img src="assets/friends/grizz_3d_talk.png?v=73" alt="Grizz Talk 2" class="g-frame frame-talk2">
+                <img src="assets/friends/grizz_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan">
+                <img src="assets/friends/grizz_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta">
+            </div>
+            <div class="crew-holo-emitter-ring ring-creators" aria-hidden="true"></div>
+            <div class="v-formation-floor-reflection refl-creators" aria-hidden="true"></div>
+            <div class="member-nameplate nameplate-creators"><span>GRIZZ</span></div>
+        </div>
+
+    </div>
+
+    <script src="script.js?v=85"></script>
 </body>
 
 </html>
