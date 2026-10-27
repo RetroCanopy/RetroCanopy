@@ -12,15 +12,15 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=86">
+    <link rel="stylesheet" href="style.css?v=88">
 </head>
 
 <body class="cinema-intro-active">
     <!-- Preloaded HTML5 Audio Tracks for Title Screen Score, Synth's Emotional Journey, Impact Boom, Typing Tick & Kingdom Hearts Soundtrack -->
     <audio id="intro-title-audio" src="assets/intro_theme.wav?v=36" autoplay preload="auto"></audio>
-    <audio id="syn-journey-audio" src="assets/syn_journey.wav?v=85" preload="auto"></audio>
+    <audio id="syn-journey-audio" src="assets/syn_journey.wav?v=88" preload="none"></audio>
     <audio id="cup-boom-audio" src="assets/cup_boom.wav?v=36" preload="auto"></audio>
-    <audio id="lofi-loop-audio" src="assets/dearly_beloved.mp3?v=80" loop preload="auto"></audio>
+    <audio id="lofi-loop-audio" src="assets/dearly_beloved.mp3?v=80" loop preload="none"></audio>
     <audio id="type-tick-audio" src="assets/type_tick.wav?v=36" preload="auto"></audio>
 
     <!-- Full-screen subtle electric lightning flash placeholder -->
@@ -81,7 +81,8 @@
         </div>
     </div>
 
-    <!-- Skip Intro Button removed for live site -->
+    <!-- Skip Intro Button for quick navigation -->
+    <button type="button" class="skip-intro-btn" id="skip-intro-btn" style="display: none;" aria-label="Skip Intro">SKIP INTRO &#9197;</button>
 
     <!-- 3D HOME SCREEN DEPTH BACKDROP (3D STAGE SHADOWBOX DIORAMA + LOGO DIMMER + SYNTH IN BACKGROUND) -->
     <div class="stage-3d-home-backdrop" id="stage-3d-home-backdrop" aria-hidden="true">
@@ -91,7 +92,7 @@
         <div class="stage-3d-logo-dimmer"></div>
         <div class="diorama-bg-synth" id="diorama-bg-synth">
             <div class="diorama-bg-synth-glow"></div>
-            <img src="assets/friends/owl3_wings_open.png?v=74" alt="Synth in Background Stage" class="diorama-bg-synth-img">
+            <img src="assets/friends/owl3_wings_open.png?v=74" alt="Synth in Background Stage" class="diorama-bg-synth-img" loading="lazy" decoding="async">
         </div>
     </div>
 
@@ -182,12 +183,12 @@
             <div class="holo-owl-beam-cone" aria-hidden="true"></div>
             <div class="holo-owl-scan-laser" aria-hidden="true"></div>
             <div class="holo-owl-sprite-wrap">
-                <img src="assets/friends/owl3_wings_open.png?v=84" alt="Synth Arms Down on Cane" class="owl-frame frame-idle active">
-                <img src="assets/friends/owl3_welcome.png?v=84" alt="Synth Arm Out Welcoming" class="owl-frame frame-talk1">
-                <img src="assets/friends/owl3_welcome.png?v=84" alt="Synth Arm Out Welcoming" class="owl-frame frame-talk2">
+                <img src="assets/friends/owl3_wings_open.png?v=84" alt="Synth Arms Down on Cane" class="owl-frame frame-idle active" decoding="async">
+                <img src="assets/friends/owl3_welcome.png?v=84" alt="Synth Arm Out Welcoming" class="owl-frame frame-talk1" decoding="async">
+                <img src="assets/friends/owl3_welcome.png?v=84" alt="Synth Arm Out Welcoming" class="owl-frame frame-talk2" decoding="async">
                 <!-- True RGB Horizontal Scan-Slice Glitch Layers (no rubbery skewing) -->
-                <img src="assets/friends/owl3_wings_open.png?v=84" alt="" aria-hidden="true" class="owl-glitch-slice owl-glitch-slice-cyan">
-                <img src="assets/friends/owl3_wings_open.png?v=84" alt="" aria-hidden="true" class="owl-glitch-slice owl-glitch-slice-magenta">
+                <img src="assets/friends/owl3_wings_open.png?v=84" alt="" aria-hidden="true" class="owl-glitch-slice owl-glitch-slice-cyan" decoding="async">
+                <img src="assets/friends/owl3_wings_open.png?v=84" alt="" aria-hidden="true" class="owl-glitch-slice owl-glitch-slice-magenta" decoding="async">
             </div>
             <div class="holo-owl-emitter-ring" aria-hidden="true"></div>
             <div class="holo-owl-floor-light" aria-hidden="true"></div>
@@ -198,35 +199,8 @@
     <!-- 16-Bit Retrocanopy Crew Lineup Stage (4 Core Section Guides: Chloe, CAB-84, Akari, Grizz) -->
     <div id="crew-stage" class="crew-stage" aria-label="Retrocanopy Character Guides">
 
-        <!-- Borderless Hologram Action Backdrop Flash (Glows subtly on the pure black screen behind each crew member as Synth introduces them) -->
-        <div class="crew-action-backdrop-flash" id="crew-action-backdrop-flash" data-theme="shop" aria-hidden="true">
-            <!-- 1. Chloe: The Shop (Streetwear, Custom Hats & Limited Merch Drops) -->
-            <div class="action-flash-layer flash-layer-shop" data-flash-id="chloe">
-                <div class="action-flash-scene-projection" style="background-image: url('assets/eras/scene2_rental_friday.jpg?v=49');"></div>
-                <div class="action-flash-merch-trio">
-                    <img src="assets/vault_drop_hoodie.png" alt="" class="flash-merch-item item-left">
-                    <img src="assets/vault_drop_tee.png" alt="" class="flash-merch-item item-center">
-                    <img src="assets/vault_drop_deskmat.png" alt="" class="flash-merch-item item-right">
-                </div>
-                <div class="action-flash-watermark">THE SHOP // RETRO STREETWEAR &amp; CUSTOM HATS</div>
-            </div>
-            <!-- 2. CAB-84: The Arcade (Free Retro Games & High Score Battles) -->
-            <div class="action-flash-layer flash-layer-games" data-flash-id="cab84">
-                <div class="action-flash-scene-projection" style="background-image: url('assets/eras/scene1_golden_arcade.jpg?v=49');"></div>
-                <div class="action-flash-watermark">THE ARCADE // FREE RETRO GAMES &amp; HIGH SCORES</div>
-            </div>
-            <!-- 3. Akari: Culture Hub (Community Chat, Pixel Art, Music & Trading Cards) -->
-            <div class="action-flash-layer flash-layer-culture" data-flash-id="akari">
-                <div class="action-flash-scene-projection" style="background-image: url('assets/eras/scene3_lan_culture.jpg?v=49');"></div>
-                <div class="action-flash-watermark">CULTURE HUB // CHAT &bull; PIXEL ART &bull; MUSIC &bull; CARDS</div>
-            </div>
-            <!-- 4. Grizz: Creators & Bulk Orders (In-House Screen Printing & Collabs) -->
-            <div class="action-flash-layer flash-layer-creators" data-flash-id="grizz">
-                <div class="action-flash-scene-projection" style="background-image: url('assets/eras/scene7_creator_loft.jpg?v=49');"></div>
-                <div class="action-flash-watermark">CREATORS &amp; BULK // IN-HOUSE PRINT &amp; COLLABS</div>
-            </div>
-            <div class="action-flash-scanlines"></div>
-        </div>
+        <!-- Borderless Hologram Action Backdrop Flash (Placeholder container) -->
+        <div class="crew-action-backdrop-flash" id="crew-action-backdrop-flash" data-theme="shop" aria-hidden="true"></div>
 
         <!-- Shared Dynamic Speech Bubble that positions above the currently speaking character -->
         <div class="character-dialogue" id="character-dialogue" role="dialog" aria-live="polite">
@@ -249,14 +223,14 @@
             <div class="crew-holo-beam-cone" aria-hidden="true"></div>
             <div class="crew-holo-scan-laser" aria-hidden="true"></div>
             <div class="gamer-frame-container friend-sprite">
-                <img src="assets/friends/cab84_3d_side_r.png?v=73" alt="CAB-84 Walk 1" class="g-frame frame-walk1">
-                <img src="assets/friends/cab84_3d_front.png?v=73" alt="CAB-84 Walk 2" class="g-frame frame-walk2">
-                <img src="assets/friends/cab84_3d_side_r.png?v=73" alt="CAB-84 Walk 3" class="g-frame frame-walk3">
-                <img src="assets/friends/cab84_3d_front.png?v=73" alt="CAB-84 3D Front" class="g-frame frame-idle active">
-                <img src="assets/friends/cab84_3d_talk.png?v=73" alt="CAB-84 Talk 1" class="g-frame frame-talk1">
-                <img src="assets/friends/cab84_3d_talk.png?v=73" alt="CAB-84 Talk 2" class="g-frame frame-talk2">
-                <img src="assets/friends/cab84_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan">
-                <img src="assets/friends/cab84_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta">
+                <img src="assets/friends/cab84_3d_side_r.png?v=73" alt="CAB-84 Walk 1" class="g-frame frame-walk1" loading="lazy" decoding="async">
+                <img src="assets/friends/cab84_3d_front.png?v=73" alt="CAB-84 Walk 2" class="g-frame frame-walk2" loading="lazy" decoding="async">
+                <img src="assets/friends/cab84_3d_side_r.png?v=73" alt="CAB-84 Walk 3" class="g-frame frame-walk3" loading="lazy" decoding="async">
+                <img src="assets/friends/cab84_3d_front.png?v=73" alt="CAB-84 3D Front" class="g-frame frame-idle active" loading="lazy" decoding="async">
+                <img src="assets/friends/cab84_3d_talk.png?v=73" alt="CAB-84 Talk 1" class="g-frame frame-talk1" loading="lazy" decoding="async">
+                <img src="assets/friends/cab84_3d_talk.png?v=73" alt="CAB-84 Talk 2" class="g-frame frame-talk2" loading="lazy" decoding="async">
+                <img src="assets/friends/cab84_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan" loading="lazy" decoding="async">
+                <img src="assets/friends/cab84_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta" loading="lazy" decoding="async">
             </div>
             <div class="crew-holo-emitter-ring ring-games" aria-hidden="true"></div>
             <div class="v-formation-floor-reflection refl-games" aria-hidden="true"></div>
@@ -274,14 +248,14 @@
             <div class="crew-holo-beam-cone" aria-hidden="true"></div>
             <div class="crew-holo-scan-laser" aria-hidden="true"></div>
             <div class="gamer-frame-container friend-sprite">
-                <img src="assets/friends/chloe_3d_side_r.png?v=73" alt="Chloe Walk 1" class="g-frame frame-walk1">
-                <img src="assets/friends/chloe_3d_front.png?v=73" alt="Chloe Walk 2" class="g-frame frame-walk2">
-                <img src="assets/friends/chloe_3d_side_r.png?v=73" alt="Chloe Walk 3" class="g-frame frame-walk3">
-                <img src="assets/friends/chloe_3d_front.png?v=73" alt="Chloe 3D Front" class="g-frame frame-idle active">
-                <img src="assets/friends/chloe_3d_talk.png?v=73" alt="Chloe Talk 1" class="g-frame frame-talk1">
-                <img src="assets/friends/chloe_3d_talk.png?v=73" alt="Chloe Talk 2" class="g-frame frame-talk2">
-                <img src="assets/friends/chloe_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan">
-                <img src="assets/friends/chloe_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta">
+                <img src="assets/friends/chloe_3d_side_r.png?v=73" alt="Chloe Walk 1" class="g-frame frame-walk1" loading="lazy" decoding="async">
+                <img src="assets/friends/chloe_3d_front.png?v=73" alt="Chloe Walk 2" class="g-frame frame-walk2" loading="lazy" decoding="async">
+                <img src="assets/friends/chloe_3d_side_r.png?v=73" alt="Chloe Walk 3" class="g-frame frame-walk3" loading="lazy" decoding="async">
+                <img src="assets/friends/chloe_3d_front.png?v=73" alt="Chloe 3D Front" class="g-frame frame-idle active" loading="lazy" decoding="async">
+                <img src="assets/friends/chloe_3d_talk.png?v=73" alt="Chloe Talk 1" class="g-frame frame-talk1" loading="lazy" decoding="async">
+                <img src="assets/friends/chloe_3d_talk.png?v=73" alt="Chloe Talk 2" class="g-frame frame-talk2" loading="lazy" decoding="async">
+                <img src="assets/friends/chloe_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan" loading="lazy" decoding="async">
+                <img src="assets/friends/chloe_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta" loading="lazy" decoding="async">
             </div>
             <div class="crew-holo-emitter-ring ring-shop" aria-hidden="true"></div>
             <div class="v-formation-floor-reflection refl-shop" aria-hidden="true"></div>
@@ -299,14 +273,14 @@
             <div class="crew-holo-beam-cone" aria-hidden="true"></div>
             <div class="crew-holo-scan-laser" aria-hidden="true"></div>
             <div class="gamer-frame-container friend-sprite sprite-wide">
-                <img src="assets/friends/akari_3d_side_r.png?v=73" alt="Akari Walk 1" class="g-frame frame-walk1">
-                <img src="assets/friends/akari_3d_front.png?v=73" alt="Akari Walk 2" class="g-frame frame-walk2">
-                <img src="assets/friends/akari_3d_side_r.png?v=73" alt="Akari Walk 3" class="g-frame frame-walk3">
-                <img src="assets/friends/akari_3d_front.png?v=73" alt="Akari 3D Front" class="g-frame frame-idle active">
-                <img src="assets/friends/akari_3d_hover.png?v=73" alt="Akari Bow Hover" class="g-frame frame-talk1">
-                <img src="assets/friends/akari_3d_hover.png?v=73" alt="Akari Bow Hover" class="g-frame frame-talk2">
-                <img src="assets/friends/akari_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan">
-                <img src="assets/friends/akari_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta">
+                <img src="assets/friends/akari_3d_side_r.png?v=73" alt="Akari Walk 1" class="g-frame frame-walk1" loading="lazy" decoding="async">
+                <img src="assets/friends/akari_3d_front.png?v=73" alt="Akari Walk 2" class="g-frame frame-walk2" loading="lazy" decoding="async">
+                <img src="assets/friends/akari_3d_side_r.png?v=73" alt="Akari Walk 3" class="g-frame frame-walk3" loading="lazy" decoding="async">
+                <img src="assets/friends/akari_3d_front.png?v=73" alt="Akari 3D Front" class="g-frame frame-idle active" loading="lazy" decoding="async">
+                <img src="assets/friends/akari_3d_hover.png?v=73" alt="Akari Bow Hover" class="g-frame frame-talk1" loading="lazy" decoding="async">
+                <img src="assets/friends/akari_3d_hover.png?v=73" alt="Akari Bow Hover" class="g-frame frame-talk2" loading="lazy" decoding="async">
+                <img src="assets/friends/akari_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan" loading="lazy" decoding="async">
+                <img src="assets/friends/akari_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta" loading="lazy" decoding="async">
             </div>
             <div class="crew-holo-emitter-ring ring-culture" aria-hidden="true"></div>
             <div class="v-formation-floor-reflection refl-culture" aria-hidden="true"></div>
@@ -324,14 +298,14 @@
             <div class="crew-holo-beam-cone" aria-hidden="true"></div>
             <div class="crew-holo-scan-laser" aria-hidden="true"></div>
             <div class="gamer-frame-container friend-sprite">
-                <img src="assets/friends/grizz_3d_side_r.png?v=73" alt="Grizz Walk 1" class="g-frame frame-walk1">
-                <img src="assets/friends/grizz_3d_front.png?v=73" alt="Grizz Walk 2" class="g-frame frame-walk2">
-                <img src="assets/friends/grizz_3d_side_r.png?v=73" alt="Grizz Walk 3" class="g-frame frame-walk3">
-                <img src="assets/friends/grizz_3d_front.png?v=73" alt="Grizz 3D Front" class="g-frame frame-idle active">
-                <img src="assets/friends/grizz_3d_talk.png?v=73" alt="Grizz Talk 1" class="g-frame frame-talk1">
-                <img src="assets/friends/grizz_3d_talk.png?v=73" alt="Grizz Talk 2" class="g-frame frame-talk2">
-                <img src="assets/friends/grizz_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan">
-                <img src="assets/friends/grizz_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta">
+                <img src="assets/friends/grizz_3d_side_r.png?v=73" alt="Grizz Walk 1" class="g-frame frame-walk1" loading="lazy" decoding="async">
+                <img src="assets/friends/grizz_3d_front.png?v=73" alt="Grizz Walk 2" class="g-frame frame-walk2" loading="lazy" decoding="async">
+                <img src="assets/friends/grizz_3d_side_r.png?v=73" alt="Grizz Walk 3" class="g-frame frame-walk3" loading="lazy" decoding="async">
+                <img src="assets/friends/grizz_3d_front.png?v=73" alt="Grizz 3D Front" class="g-frame frame-idle active" loading="lazy" decoding="async">
+                <img src="assets/friends/grizz_3d_talk.png?v=73" alt="Grizz Talk 1" class="g-frame frame-talk1" loading="lazy" decoding="async">
+                <img src="assets/friends/grizz_3d_talk.png?v=73" alt="Grizz Talk 2" class="g-frame frame-talk2" loading="lazy" decoding="async">
+                <img src="assets/friends/grizz_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-cyan" loading="lazy" decoding="async">
+                <img src="assets/friends/grizz_3d_front.png?v=73" alt="" aria-hidden="true" class="crew-glitch-slice crew-glitch-slice-magenta" loading="lazy" decoding="async">
             </div>
             <div class="crew-holo-emitter-ring ring-creators" aria-hidden="true"></div>
             <div class="v-formation-floor-reflection refl-creators" aria-hidden="true"></div>
@@ -340,7 +314,7 @@
 
     </div>
 
-    <script src="script.js?v=86"></script>
+    <script src="script.js?v=88"></script>
 </body>
 
 </html>

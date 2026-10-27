@@ -209,9 +209,10 @@ function initGamerIntro() {
     const holoDramaticFlash = document.getElementById('holo-dramatic-flash');
 
     // When true, after the 8 era cutscenes finish (Scene 8), instead of introducing the crew,
-    // Synth walks to the center of the stage and says "Coming soon... 11/14" with the fancy Steampunk sign above him.
+    // Synth walks to the center of the stage and says "Coming soon... 11/14" with the Fancy Steampunk sign above him.
     // Set to false on 11/14 launch to restore the full 4-character crew introductions!
     const TEASER_COMING_SOON_MODE = true;
+    const IS_LOCAL_DEV_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
     const fullPrologueSteps = [
         {
@@ -793,6 +794,7 @@ function initGamerIntro() {
     const typeTickAudioEl = document.getElementById('type-tick-audio');
 
     function triggerNativeServerAudio(cmd) {
+        if (!IS_LOCAL_DEV_SERVER) return;
         try {
             fetch('/api/audio?cmd=' + encodeURIComponent(cmd) + '&t=' + Date.now(), {
                 method: 'GET',
@@ -803,7 +805,7 @@ function initGamerIntro() {
     }
 
     window.addEventListener('pagehide', () => {
-        if (nativeIntroAudioActive || nativeLofiAudioActive) {
+        if (IS_LOCAL_DEV_SERVER && (nativeIntroAudioActive || nativeLofiAudioActive)) {
             try {
                 if (navigator.sendBeacon) {
                     navigator.sendBeacon('/api/audio?cmd=stop');
@@ -820,13 +822,14 @@ function initGamerIntro() {
     for (let i = 0; i < 4; i++) {
         try {
             const tickAudio = (i === 0 && typeTickAudioEl) ? typeTickAudioEl : new Audio('assets/type_tick.wav?v=36');
-            tickAudio.preload = 'auto';
+            tickAudio.preload = i === 0 ? 'auto' : 'none';
             tickAudio.volume = 0.72;
             typeTickPool.push(tickAudio);
         } catch (_) {}
     }
 
-    // Preloaded 13-Scene British Gentleman Butler Neural Voice Pool for Syn (assets/voice/syn_0.wav .. syn_12.wav)
+    // Lazy-loaded 13-Scene British Gentleman Butler Neural Voice Pool for Syn (assets/voice/syn_0.wav .. syn_12.wav)
+    // Not preloaded at 0.0s because syn_journey.wav already mixes all of Synth's voice lines!
     const synVoicePool = [];
     let activeSynVoiceAudio = null;
     let holoJourneyStartPerfNow = 0;
@@ -845,8 +848,8 @@ function initGamerIntro() {
     let owlPoseCueTimer = null;
     for (let i = 0; i < 13; i++) {
         try {
-            const vAudio = new Audio(`assets/voice/syn_${i}.wav?v=85`);
-            vAudio.preload = 'auto';
+            const vAudio = new Audio(`assets/voice/syn_${i}.wav?v=88`);
+            vAudio.preload = 'none';
             vAudio.volume = 1.0;
             synVoicePool.push(vAudio);
         } catch (_) {}
@@ -874,8 +877,10 @@ function initGamerIntro() {
                             triggerNativeServerAudio('stop');
                         }
                     }).catch(() => {
-                        nativeIntroAudioActive = true;
-                        triggerNativeServerAudio(`synvoice${sceneIdx}`);
+                        if (IS_LOCAL_DEV_SERVER) {
+                            nativeIntroAudioActive = true;
+                            triggerNativeServerAudio(`synvoice${sceneIdx}`);
+                        }
                     });
                     return;
                 }
@@ -891,15 +896,19 @@ function initGamerIntro() {
                 const p = voiceEl.play();
                 if (p && typeof p.catch === 'function') {
                     p.catch(() => {
-                        nativeIntroAudioActive = true;
-                        triggerNativeServerAudio(`synvoice${sceneIdx}`);
+                        if (IS_LOCAL_DEV_SERVER) {
+                            nativeIntroAudioActive = true;
+                            triggerNativeServerAudio(`synvoice${sceneIdx}`);
+                        }
                     });
                 }
                 return;
             } catch (_) {}
         }
-        nativeIntroAudioActive = true;
-        triggerNativeServerAudio(`synvoice${sceneIdx}`);
+        if (IS_LOCAL_DEV_SERVER) {
+            nativeIntroAudioActive = true;
+            triggerNativeServerAudio(`synvoice${sceneIdx}`);
+        }
     }
 
     function stopSynVoiceLine(stopServer = true) {
@@ -1021,7 +1030,13 @@ function initGamerIntro() {
     }
 
     // Automatically trigger & unlock AudioContext + HTML5 <audio> on any user interaction
-    const unlockAudioOnce = () => {
+    let lastHoverAudioUnlockAttempt = 0;
+    const unlockAudioOnce = (e) => {
+        if (e && (e.type === 'pointermove' || e.type === 'mousemove' || e.type === 'pointerover' || e.type === 'wheel')) {
+            const nowMs = performance.now();
+            if (nowMs - lastHoverAudioUnlockAttempt < 400) return;
+            lastHoverAudioUnlockAttempt = nowMs;
+        }
         primeHtmlAudioElementsOnGesture();
         if (inPrologue && !sequenceComplete && synJourneyAudioEl && synJourneyAudioEl.paused) {
             try {
@@ -1107,6 +1122,30 @@ function initGamerIntro() {
     audioUnlockVectors.forEach((evt) => {
         window.addEventListener(evt, unlockAudioOnce, { capture: true, passive: true });
     });
+
+    // Stagger background audio preloading so Title Screen logos & intro_theme.wav get 100% network priority at 0.0s!
+    setTimeout(() => {
+        if (synJourneyAudioEl && synJourneyAudioEl.preload === 'none') {
+            try {
+                synJourneyAudioEl.preload = 'auto';
+                synJourneyAudioEl.load();
+            } catch (_) {}
+        }
+    }, 1200);
+    setTimeout(() => {
+        if (lofiLoopAudioEl && lofiLoopAudioEl.preload === 'none') {
+            try {
+                lofiLoopAudioEl.preload = 'auto';
+                lofiLoopAudioEl.load();
+            } catch (_) {}
+        }
+        if (synVoicePool[8]) {
+            try {
+                synVoicePool[8].preload = 'auto';
+                synVoicePool[8].load();
+            } catch (_) {}
+        }
+    }, 3500);
 
     /**
      * Bind directly to pre-rendered disk WAV assets so zero main-thread blocking occurs at startup
@@ -1379,8 +1418,10 @@ function initGamerIntro() {
                         p.then(() => {
                             rampDearlyBelovedVolume(0.24, 2400);
                         }).catch(() => {
-                            nativeLofiAudioActive = true;
-                            triggerNativeServerAudio('kh_soft');
+                            if (IS_LOCAL_DEV_SERVER) {
+                                nativeLofiAudioActive = true;
+                                triggerNativeServerAudio('kh_soft');
+                            }
                         });
                     } else {
                         rampDearlyBelovedVolume(0.24, 2400);
@@ -1389,10 +1430,12 @@ function initGamerIntro() {
                     rampDearlyBelovedVolume(0.24, 1200);
                 }
             } catch (_) {
-                nativeLofiAudioActive = true;
-                triggerNativeServerAudio('kh_soft');
+                if (IS_LOCAL_DEV_SERVER) {
+                    nativeLofiAudioActive = true;
+                    triggerNativeServerAudio('kh_soft');
+                }
             }
-        } else {
+        } else if (IS_LOCAL_DEV_SERVER) {
             nativeLofiAudioActive = true;
             triggerNativeServerAudio('kh_soft');
         }
@@ -1427,19 +1470,23 @@ function initGamerIntro() {
                         p.then(() => {
                             rampDearlyBelovedVolume(0.88, 1600);
                         }).catch(() => {
-                            nativeLofiAudioActive = true;
-                            triggerNativeServerAudio('kh_full');
+                            if (IS_LOCAL_DEV_SERVER) {
+                                nativeLofiAudioActive = true;
+                                triggerNativeServerAudio('kh_full');
+                            }
                         });
                     } else {
                         rampDearlyBelovedVolume(0.88, 1600);
                     }
                 }
             } catch (_) {
-                nativeLofiAudioActive = true;
-                triggerNativeServerAudio('kh_full');
+                if (IS_LOCAL_DEV_SERVER) {
+                    nativeLofiAudioActive = true;
+                    triggerNativeServerAudio('kh_full');
+                }
             }
         }
-        if (nativeLofiAudioActive) {
+        if (IS_LOCAL_DEV_SERVER && nativeLofiAudioActive) {
             triggerNativeServerAudio('kh_full');
         }
     }
@@ -1488,16 +1535,20 @@ function initGamerIntro() {
                 const p = lofiFallbackAudio.play();
                 if (p && typeof p.catch === 'function') {
                     p.catch(() => {
-                        nativeLofiAudioActive = true;
-                        triggerNativeServerAudio(trackObj.serverCmd);
+                        if (IS_LOCAL_DEV_SERVER) {
+                            nativeLofiAudioActive = true;
+                            triggerNativeServerAudio(trackObj.serverCmd);
+                        }
                     });
                 }
             } catch (_) {
-                nativeLofiAudioActive = true;
-                triggerNativeServerAudio(trackObj.serverCmd);
+                if (IS_LOCAL_DEV_SERVER) {
+                    nativeLofiAudioActive = true;
+                    triggerNativeServerAudio(trackObj.serverCmd);
+                }
             }
         }
-        if (nativeLofiAudioActive) {
+        if (IS_LOCAL_DEV_SERVER && nativeLofiAudioActive) {
             triggerNativeServerAudio(trackObj.serverCmd);
         }
         updateLofiButtonUI();
@@ -1551,7 +1602,7 @@ function initGamerIntro() {
     // 4-Act Emotional Cinematic Synth-Piano & Warm Analog Pad Score State
     let holoScoreNodes = null;
 
-    const holoParticles = Array.from({ length: 48 }, (_, i) => ({
+    const holoParticles = Array.from({ length: window.innerWidth <= 768 ? 24 : 36 }, (_, i) => ({
         x: Math.random(),
         y: Math.random(),
         speed: 0.06 + Math.random() * 0.16,
@@ -1559,7 +1610,7 @@ function initGamerIntro() {
         phase: Math.random() * Math.PI * 2
     }));
 
-    const holoRainDrops = Array.from({ length: 220 }, () => ({
+    const holoRainDrops = Array.from({ length: window.innerWidth <= 768 ? 95 : 150 }, () => ({
         x: Math.random(),
         y: Math.random(),
         len: 22 + Math.random() * 34,
@@ -1568,7 +1619,7 @@ function initGamerIntro() {
     }));
 
     function startHoloEmotionalScore() {
-        // Play the pre-rendered Synth Journey WAV (assets/syn_journey.wav?v=77), which mixes Synth's voiceover
+        // Play the pre-rendered Synth Journey WAV (assets/syn_journey.wav?v=88), which mixes Synth's voiceover
         // with Kingdom Hearts' Title Screen Theme ("Dearly Beloved") gently ducked underneath!
         if (synJourneyAudioEl) {
             try {
@@ -1578,15 +1629,19 @@ function initGamerIntro() {
                 const p = synJourneyAudioEl.play();
                 if (p && typeof p.catch === 'function') {
                     p.catch(() => {
-                        nativeIntroAudioActive = true;
-                        triggerNativeServerAudio('syn');
+                        if (IS_LOCAL_DEV_SERVER) {
+                            nativeIntroAudioActive = true;
+                            triggerNativeServerAudio('syn');
+                        }
                     });
                 }
             } catch (_) {
-                nativeIntroAudioActive = true;
-                triggerNativeServerAudio('syn');
+                if (IS_LOCAL_DEV_SERVER) {
+                    nativeIntroAudioActive = true;
+                    triggerNativeServerAudio('syn');
+                }
             }
-        } else {
+        } else if (IS_LOCAL_DEV_SERVER) {
             nativeIntroAudioActive = true;
             triggerNativeServerAudio('syn');
         }
@@ -1810,10 +1865,10 @@ function initGamerIntro() {
      * Renders boiling CRT snow, rolling horizontal sync bars, and scanline tear streaks
      * directly into #tv-pile-static-canvas (masked to all 58 static TV screens in the pile!)
      */
-    function renderTvPileStaticCanvas(now) {
+    function renderTvPileStaticCanvas(now, era) {
         const sw = 344; // 1/4 of 1376 -> crisp 4x4 pixel CRT snow grains
         const sh = 192; // 1/4 of 768
-        if (tvPileStaticCanvas && (tvPileStaticCanvas.width !== sw || tvPileStaticCanvas.height !== sh)) {
+        if (era === 5 && tvPileStaticCanvas && (tvPileStaticCanvas.width !== sw || tvPileStaticCanvas.height !== sh)) {
             tvPileStaticCanvas.width = sw;
             tvPileStaticCanvas.height = sh;
             tvStaticCtx = tvPileStaticCanvas.getContext('2d');
@@ -1821,7 +1876,7 @@ function initGamerIntro() {
                 tvStaticImgData = tvStaticCtx.createImageData(sw, sh);
             }
         }
-        if (shutteredArcadeStaticCanvas && (shutteredArcadeStaticCanvas.width !== sw || shutteredArcadeStaticCanvas.height !== sh)) {
+        if (era === 4 && shutteredArcadeStaticCanvas && (shutteredArcadeStaticCanvas.width !== sw || shutteredArcadeStaticCanvas.height !== sh)) {
             shutteredArcadeStaticCanvas.width = sw;
             shutteredArcadeStaticCanvas.height = sh;
             shutteredStaticCtx = shutteredArcadeStaticCanvas.getContext('2d');
@@ -1829,7 +1884,8 @@ function initGamerIntro() {
                 tvStaticImgData = shutteredStaticCtx.createImageData(sw, sh);
             }
         }
-        if ((!tvStaticCtx && !shutteredStaticCtx) || !tvStaticImgData) return;
+        const activeCtx = (era === 4) ? shutteredStaticCtx : (era === 5) ? tvStaticCtx : null;
+        if (!activeCtx || !tvStaticImgData) return;
 
         const data = tvStaticImgData.data;
         const t = (now || performance.now()) * 0.001;
@@ -1838,6 +1894,7 @@ function initGamerIntro() {
         const tearRow = Math.random() < 0.65 ? Math.floor(Math.random() * sh) : -10;
 
         let p = 0;
+        let rng = ((now | 0) * 2654435761) >>> 0;
         for (let y = 0; y < sh; y++) {
             const scanShade = (y & 1) === 1 ? 0.78 : 1.0;
             const d1 = Math.abs(y - bar1Y);
@@ -1846,30 +1903,32 @@ function initGamerIntro() {
             const isTear = Math.abs(y - tearRow) <= 1;
 
             for (let x = 0; x < sw; x++) {
-                // High-contrast boiling television snow static
-                const r = Math.random();
+                // Fast integer xorshift PRNG for zero-overhead television snow static
+                rng ^= rng << 13;
+                rng ^= rng >>> 17;
+                rng ^= rng << 5;
+                const rb = rng & 255;
                 let luma;
                 if (isTear) {
-                    luma = r > 0.25 ? 250 : 45;
-                } else if (r > 0.72) {
-                    luma = 215 + Math.random() * 40;
-                } else if (r < 0.24) {
-                    luma = 32 + Math.random() * 48;
+                    luma = rb > 64 ? 250 : 45;
+                } else if (rb > 184) {
+                    luma = 215 + ((rb * 40) >> 8);
+                } else if (rb < 61) {
+                    luma = 32 + ((rb * 48) >> 8);
                 } else {
-                    luma = 95 + Math.random() * 115;
+                    luma = 95 + ((rb * 115) >> 8);
                 }
                 luma = Math.min(255, (luma + syncBoost) * scanShade);
 
                 // Authentic cool-white CRT television phosphor tint
-                data[p] = Math.floor(luma * 0.90);
-                data[p + 1] = Math.floor(luma * 0.96);
-                data[p + 2] = Math.min(255, Math.floor(luma * 1.06));
+                data[p] = (luma * 230) >> 8;
+                data[p + 1] = (luma * 246) >> 8;
+                data[p + 2] = Math.min(255, (luma * 271) >> 8);
                 data[p + 3] = 255;
                 p += 4;
             }
         }
-        if (tvStaticCtx) tvStaticCtx.putImageData(tvStaticImgData, 0, 0);
-        if (shutteredStaticCtx) shutteredStaticCtx.putImageData(tvStaticImgData, 0, 0);
+        activeCtx.putImageData(tvStaticImgData, 0, 0);
     }
 
     /**
@@ -1989,8 +2048,20 @@ function initGamerIntro() {
         }
     }
 
+    let lastHoloCanvasFrameTime = 0;
+    let lastClearedHoloEra = null;
+
     function renderHoloEraCanvas(now) {
         if (!holoCanvasActive || !holoEraCanvas) return;
+
+        // Throttle canvas rendering to a smooth ~30fps (32ms interval) to free main-thread & GPU bandwidth
+        const frameNow = now || performance.now();
+        if (frameNow - lastHoloCanvasFrameTime < 32) {
+            holoCanvasRaf = requestAnimationFrame(renderHoloEraCanvas);
+            return;
+        }
+        lastHoloCanvasFrameTime = frameNow;
+
         const ctx = holoEraCanvas.getContext('2d');
         if (!ctx) return;
 
@@ -1999,15 +2070,27 @@ function initGamerIntro() {
         if (holoEraCanvas.width !== w || holoEraCanvas.height !== h) {
             holoEraCanvas.width = w;
             holoEraCanvas.height = h;
+            lastClearedHoloEra = null;
         }
 
-        const t = (now || performance.now()) * 0.001;
+        const era = targetHoloEra;
+        // Skip redundant full-screen clearRect on scenes with zero canvas particles (era === -2 or era === 8)
+        if (era === -2 || era === 8) {
+            if (lastClearedHoloEra !== era) {
+                ctx.clearRect(0, 0, w, h);
+                lastClearedHoloEra = era;
+            }
+            holoCanvasRaf = requestAnimationFrame(renderHoloEraCanvas);
+            return;
+        }
+        lastClearedHoloEra = era;
+
+        const t = frameNow * 0.001;
         // Keep canvas 100% transparent so the full-screen 16-bit scene artwork shines unobstructed!
         ctx.clearRect(0, 0, w, h);
 
-        const era = targetHoloEra;
         if (era >= 0 && era <= 7 && era !== 4 && era !== 5) {
-            renderEraCrtGameplayAndTreeMagic(now, era);
+            renderEraCrtGameplayAndTreeMagic(frameNow, era);
         }
 
         if (era === -2) {
@@ -2116,7 +2199,7 @@ function initGamerIntro() {
 
             if (era === 4 || era === 5) {
                 // Render live moving television static inside all static TV screens in Scene 4 (Shutdown Arcade) & Scene 5 (TV Pile)!
-                renderTvPileStaticCanvas(now);
+                renderTvPileStaticCanvas(frameNow, era);
             }
             if (era === 5) {
                 // Full-screen CRT snow flicker & rolling vertical sync bar on the Corporate Static scene
@@ -3066,9 +3149,12 @@ function initGamerIntro() {
         }, stepObj.holdMs || 8000);
     }
 
-    // Do not allow clicking the stage or skip button to skip the intro on the live site
-    if (skipIntroBtn) {
-        skipIntroBtn.remove();
+    if (holoStage) {
+        holoStage.addEventListener('click', (e) => {
+            if (!inPrologue) return;
+            if (e.target && e.target.closest('#skip-intro-btn')) return;
+            advanceToNextStep(true);
+        });
     }
 
     function playScriptStep(index) {
@@ -3415,6 +3501,8 @@ function initGamerIntro() {
         });
     }
 
+    function triggerJiggleImpulse() {}
+
     // Allow clicking any character after intro to hear their line, and switch to their signature role pose on mouse hover!
     crewOrder.forEach((id) => {
         const actor = crewActors[id];
@@ -3721,8 +3809,8 @@ function initGamerIntro() {
                             prebuiltIntroAudio.volume = 0.88;
                             introHtmlAudioStarted = true;
                         }).catch(() => {
-                            // Browser blocked autoplay on reload -> immediately play assets/intro_theme.wav via native Windows Audio bridge with zero click needed!
-                            if (!introHtmlAudioStarted && !nativeIntroAudioActive) {
+                            // Browser blocked autoplay on reload -> immediately play assets/intro_theme.wav via native Windows Audio bridge on local dev server
+                            if (IS_LOCAL_DEV_SERVER && !introHtmlAudioStarted && !nativeIntroAudioActive) {
                                 nativeIntroAudioActive = true;
                                 introHtmlAudioStarted = true;
                                 triggerNativeServerAudio('intro');
@@ -3731,7 +3819,7 @@ function initGamerIntro() {
                     }
                 }
             } catch (_) {
-                if (!nativeIntroAudioActive) {
+                if (IS_LOCAL_DEV_SERVER && !nativeIntroAudioActive) {
                     nativeIntroAudioActive = true;
                     introHtmlAudioStarted = true;
                     triggerNativeServerAudio('intro');
