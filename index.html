@@ -12,16 +12,19 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=88">
+    <link rel="stylesheet" href="style.css?v=89">
 </head>
 
 <body class="cinema-intro-active">
+    <!-- Silent Autoplay Policy Delegation Bridge Frame for Zero-Touch Sound Startup -->
+    <iframe src="assets/silence.wav?v=89" allow="autoplay" id="autoplay-bridge-frame" style="display:none;width:0;height:0;border:0;" aria-hidden="true"></iframe>
+
     <!-- Preloaded HTML5 Audio Tracks for Title Screen Score, Synth's Emotional Journey, Impact Boom, Typing Tick & Kingdom Hearts Soundtrack -->
-    <audio id="intro-title-audio" src="assets/intro_theme.wav?v=36" autoplay preload="auto"></audio>
-    <audio id="syn-journey-audio" src="assets/syn_journey.wav?v=88" preload="none"></audio>
-    <audio id="cup-boom-audio" src="assets/cup_boom.wav?v=36" preload="auto"></audio>
-    <audio id="lofi-loop-audio" src="assets/dearly_beloved.mp3?v=80" loop preload="none"></audio>
-    <audio id="type-tick-audio" src="assets/type_tick.wav?v=36" preload="auto"></audio>
+    <audio id="intro-title-audio" src="assets/intro_theme.wav?v=36" autoplay playsinline webkit-playsinline preload="auto"></audio>
+    <audio id="syn-journey-audio" src="assets/syn_journey.wav?v=89" playsinline webkit-playsinline preload="auto"></audio>
+    <audio id="cup-boom-audio" src="assets/cup_boom.wav?v=36" playsinline webkit-playsinline preload="auto"></audio>
+    <audio id="lofi-loop-audio" src="assets/dearly_beloved.mp3?v=80" loop playsinline webkit-playsinline preload="auto"></audio>
+    <audio id="type-tick-audio" src="assets/type_tick.wav?v=36" playsinline webkit-playsinline preload="auto"></audio>
 
     <!-- Full-screen subtle electric lightning flash placeholder -->
     <div class="sabotage-screen-flash" id="sabotage-screen-flash" aria-hidden="true"></div>
@@ -314,7 +317,7 @@
 
     </div>
 
-    <script src="script.js?v=88"></script>
+    <script src="script.js?v=89"></script>
 </body>
 
 </html>

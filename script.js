@@ -961,16 +961,128 @@ function initGamerIntro() {
     }
 
     let isAudioUnlocked = false;
+    let synPrimedForAutoplay = false;
+    let lofiPrimedForAutoplay = false;
+    let introFadeTimer = null;
+    let decodedIntroBuffer = null;
+    let decodedSynJourneyBuffer = null;
+    let activeWebAudioFallbackSource = null;
+    let activeWebAudioFallbackGain = null;
+    let activeWebAudioFallbackMode = null;
+
     const audioUnlockVectors = [
-        'pointermove', 'mousemove', 'pointerover', 'wheel', 'focus',
-        'click', 'keydown', 'pointerdown', 'mousedown', 'touchstart'
+        'pointermove', 'mousemove', 'pointerover', 'mouseover', 'mouseenter',
+        'wheel', 'scroll', 'focus', 'pageshow', 'visibilitychange',
+        'deviceorientation', 'devicemotion',
+        'click', 'keydown', 'keyup', 'pointerdown', 'pointerup', 'mousedown', 'mouseup',
+        'touchstart', 'touchmove', 'touchend'
     ];
 
     function removeAudioUnlockListeners() {
         audioUnlockVectors.forEach((evt) => {
             window.removeEventListener(evt, unlockAudioOnce, true);
             window.removeEventListener(evt, unlockAudioOnce, false);
+            document.removeEventListener(evt, unlockAudioOnce, true);
         });
+    }
+
+    function stopWebAudioBufferFallback() {
+        if (activeWebAudioFallbackSource) {
+            try { activeWebAudioFallbackSource.stop(); } catch (_) {}
+            try { activeWebAudioFallbackSource.disconnect(); } catch (_) {}
+            activeWebAudioFallbackSource = null;
+        }
+        if (activeWebAudioFallbackGain) {
+            try { activeWebAudioFallbackGain.disconnect(); } catch (_) {}
+            activeWebAudioFallbackGain = null;
+        }
+        activeWebAudioFallbackMode = null;
+    }
+
+    function startWebAudioBufferFallback(mode, offsetSec = 0) {
+        const ctx = ensureLofiAudioContext();
+        if (!ctx || ctx.state !== 'running') return false;
+        const buf = (mode === 'intro') ? decodedIntroBuffer : (mode === 'syn') ? decodedSynJourneyBuffer : null;
+        if (!buf) return false;
+        if (activeWebAudioFallbackMode === mode && activeWebAudioFallbackSource) return true;
+        stopWebAudioBufferFallback();
+        try {
+            const clampedOffset = Math.max(0, Math.min(buf.duration - 0.05, offsetSec));
+            const src = ctx.createBufferSource();
+            const g = ctx.createGain();
+            src.buffer = buf;
+            g.gain.setValueAtTime(mode === 'intro' ? 0.88 : 0.95, ctx.currentTime);
+            src.connect(g);
+            g.connect(ctx.destination);
+            src.start(0, clampedOffset);
+            activeWebAudioFallbackSource = src;
+            activeWebAudioFallbackGain = g;
+            activeWebAudioFallbackMode = mode;
+            src.onended = () => {
+                if (activeWebAudioFallbackSource === src) {
+                    activeWebAudioFallbackSource = null;
+                    activeWebAudioFallbackMode = null;
+                }
+            };
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    function preloadWebAudioDecodedBuffers() {
+        const ctx = ensureLofiAudioContext();
+        if (!ctx) return;
+        fetch('assets/intro_theme.wav?v=36')
+            .then((r) => r.arrayBuffer())
+            .then((ab) => ctx.decodeAudioData(ab))
+            .then((decoded) => {
+                decodedIntroBuffer = decoded;
+                if (ctx.state === 'running' && state === 'LOGO_ZOOM_OUT' && (!prebuiltIntroAudio || prebuiltIntroAudio.paused)) {
+                    const elSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
+                    startWebAudioBufferFallback('intro', elSec);
+                }
+            })
+            .catch(() => {});
+
+        fetch('assets/syn_journey.wav?v=89')
+            .then((r) => r.arrayBuffer())
+            .then((ab) => ctx.decodeAudioData(ab))
+            .then((decoded) => {
+                decodedSynJourneyBuffer = decoded;
+                if (ctx.state === 'running' && inPrologue && !sequenceComplete && (!synJourneyAudioEl || synJourneyAudioEl.paused)) {
+                    const elProSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
+                    startWebAudioBufferFallback('syn', elProSec);
+                }
+            })
+            .catch(() => {});
+    }
+
+    function isAnyStageAudioPlayingUnmuted() {
+        if (state === 'LOGO_ZOOM_OUT' && !inPrologue && !sequenceComplete) {
+            return Boolean(
+                (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted) ||
+                activeWebAudioFallbackMode === 'intro' ||
+                nativeIntroAudioActive
+            );
+        }
+        if (inPrologue && !sequenceComplete) {
+            return Boolean(
+                (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted) ||
+                (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingSynFallback) ||
+                activeWebAudioFallbackMode === 'syn' ||
+                nativeIntroAudioActive
+            );
+        }
+        if (sequenceComplete) {
+            return Boolean(
+                lofiMuted ||
+                (lofiFallbackAudio && !lofiFallbackAudio.paused && !lofiFallbackAudio.muted) ||
+                (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingLofiFallback) ||
+                nativeLofiAudioActive
+            );
+        }
+        return false;
     }
 
     function primeHtmlAudioElementsOnGesture() {
@@ -980,16 +1092,40 @@ function initGamerIntro() {
                 cupBoomAudioEl.volume = 0.82;
             } catch (_) {}
         }
-        if (synJourneyAudioEl) {
+        if (synJourneyAudioEl && !synPrimedForAutoplay && !inPrologue && synJourneyAudioEl.paused) {
             try {
-                synJourneyAudioEl.muted = false;
-                synJourneyAudioEl.volume = 0.95;
+                synJourneyAudioEl.muted = true;
+                synJourneyAudioEl.volume = 0;
+                const p = synJourneyAudioEl.play();
+                if (p && typeof p.then === 'function') {
+                    p.then(() => {
+                        synPrimedForAutoplay = true;
+                        if (!inPrologue) {
+                            synJourneyAudioEl.pause();
+                            synJourneyAudioEl.currentTime = 0;
+                        }
+                        synJourneyAudioEl.muted = false;
+                        synJourneyAudioEl.volume = 0.95;
+                    }).catch(() => {});
+                }
             } catch (_) {}
         }
-        if (lofiLoopAudioEl) {
+        if (lofiLoopAudioEl && !lofiPrimedForAutoplay && !lofiStarted && lofiLoopAudioEl.paused) {
             try {
-                lofiLoopAudioEl.muted = lofiMuted;
-                lofiLoopAudioEl.volume = lofiMuted ? 0 : 0.16;
+                lofiLoopAudioEl.muted = true;
+                lofiLoopAudioEl.volume = 0;
+                const p = lofiLoopAudioEl.play();
+                if (p && typeof p.then === 'function') {
+                    p.then(() => {
+                        lofiPrimedForAutoplay = true;
+                        if (!lofiStarted && !inPrologue) {
+                            lofiLoopAudioEl.pause();
+                            lofiLoopAudioEl.currentTime = 0;
+                        }
+                        lofiLoopAudioEl.muted = lofiMuted;
+                        lofiLoopAudioEl.volume = lofiMuted ? 0 : 0.16;
+                    }).catch(() => {});
+                }
             } catch (_) {}
         }
     }
@@ -1010,15 +1146,20 @@ function initGamerIntro() {
                         nativeLofiAudioActive = false;
                         triggerNativeServerAudio('stop');
                     }
-                    if (!nativeIntroAudioActive && typeof playIntroAudio === 'function') {
+                    if (!nativeIntroAudioActive && state === 'LOGO_ZOOM_OUT' && typeof playIntroAudio === 'function') {
                         playIntroAudio();
+                        if (!prebuiltIntroAudio || prebuiltIntroAudio.paused) {
+                            const elSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
+                            startWebAudioBufferFallback('intro', elSec);
+                        }
+                    }
+                    if (inPrologue && !sequenceComplete && (!synJourneyAudioEl || synJourneyAudioEl.paused)) {
+                        const elProSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
+                        startWebAudioBufferFallback('syn', elProSec);
                     }
                     if (lofiStarted && lofiMasterGain && !lofiMuted) {
                         lofiMasterGain.gain.cancelScheduledValues(lofiCtx.currentTime);
                         lofiMasterGain.gain.linearRampToValueAtTime(0.14, lofiCtx.currentTime + 0.6);
-                    }
-                    if (introHtmlAudioStarted || nativeIntroAudioActive || state !== 'LOGO_ZOOM_OUT') {
-                        removeAudioUnlockListeners();
                     }
                 }
             };
@@ -1029,12 +1170,12 @@ function initGamerIntro() {
         return lofiCtx;
     }
 
-    // Automatically trigger & unlock AudioContext + HTML5 <audio> on any user interaction
+    // Automatically trigger & unlock AudioContext + HTML5 <audio> on any sensor, lifecycle, hover, or user event
     let lastHoverAudioUnlockAttempt = 0;
     const unlockAudioOnce = (e) => {
-        if (e && (e.type === 'pointermove' || e.type === 'mousemove' || e.type === 'pointerover' || e.type === 'wheel')) {
+        if (e && (e.type === 'pointermove' || e.type === 'mousemove' || e.type === 'pointerover' || e.type === 'mouseover' || e.type === 'wheel' || e.type === 'deviceorientation' || e.type === 'devicemotion')) {
             const nowMs = performance.now();
-            if (nowMs - lastHoverAudioUnlockAttempt < 400) return;
+            if (nowMs - lastHoverAudioUnlockAttempt < 120) return;
             lastHoverAudioUnlockAttempt = nowMs;
         }
         primeHtmlAudioElementsOnGesture();
@@ -1049,12 +1190,20 @@ function initGamerIntro() {
                 const p = synJourneyAudioEl.play();
                 if (p && typeof p.then === 'function') {
                     p.then(() => {
+                        stopWebAudioBufferFallback();
                         if (nativeIntroAudioActive) {
                             nativeIntroAudioActive = false;
                             triggerNativeServerAudio('stop');
                         }
                     }).catch(() => {});
                 }
+            } catch (_) {}
+        }
+        if (sequenceComplete && !lofiMuted && lofiFallbackAudio && lofiFallbackAudio.paused) {
+            try {
+                lofiFallbackAudio.muted = false;
+                lofiFallbackAudio.volume = 0.88;
+                lofiFallbackAudio.play().catch(() => {});
             } catch (_) {}
         }
         if (state === 'LOGO_ZOOM_OUT' && !sequenceComplete && prebuiltIntroAudio && !nativeIntroAudioActive) {
@@ -1070,13 +1219,14 @@ function initGamerIntro() {
                     if (p && typeof p.then === 'function') {
                         p.then(() => {
                             introHtmlAudioStarted = true;
-                            if (lofiCtx && lofiCtx.state === 'running') {
-                                removeAudioUnlockListeners();
-                            }
+                            stopWebAudioBufferFallback();
+                            primeHtmlAudioElementsOnGesture();
                         }).catch(() => {});
                     }
                 } else {
                     introHtmlAudioStarted = true;
+                    stopWebAudioBufferFallback();
+                    primeHtmlAudioElementsOnGesture();
                 }
             } catch (_) {}
         }
@@ -1088,14 +1238,22 @@ function initGamerIntro() {
                     nativeLofiAudioActive = false;
                     triggerNativeServerAudio('stop');
                 }
-                if (!nativeIntroAudioActive && typeof playIntroAudio === 'function') {
+                if (!nativeIntroAudioActive && state === 'LOGO_ZOOM_OUT' && typeof playIntroAudio === 'function') {
                     playIntroAudio();
+                    if (!prebuiltIntroAudio || prebuiltIntroAudio.paused) {
+                        const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
+                        startWebAudioBufferFallback('intro', elapsedSec);
+                    }
+                }
+                if (inPrologue && !sequenceComplete && (!synJourneyAudioEl || synJourneyAudioEl.paused)) {
+                    const elapsedPrologueSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
+                    startWebAudioBufferFallback('syn', elapsedPrologueSec);
                 }
                 if (lofiStarted && lofiMasterGain && !lofiMuted) {
                     lofiMasterGain.gain.cancelScheduledValues(ctx.currentTime);
                     lofiMasterGain.gain.linearRampToValueAtTime(0.14, ctx.currentTime + 0.6);
                 }
-                if (introHtmlAudioStarted || nativeIntroAudioActive || state !== 'LOGO_ZOOM_OUT') {
+                if (sequenceComplete && isAnyStageAudioPlayingUnmuted()) {
                     removeAudioUnlockListeners();
                 }
             } else if (ctx.state === 'suspended') {
@@ -1105,15 +1263,20 @@ function initGamerIntro() {
                         nativeLofiAudioActive = false;
                         triggerNativeServerAudio('stop');
                     }
-                    if (!nativeIntroAudioActive && typeof playIntroAudio === 'function') {
+                    if (!nativeIntroAudioActive && state === 'LOGO_ZOOM_OUT' && typeof playIntroAudio === 'function') {
                         playIntroAudio();
+                        if (!prebuiltIntroAudio || prebuiltIntroAudio.paused) {
+                            const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
+                            startWebAudioBufferFallback('intro', elapsedSec);
+                        }
+                    }
+                    if (inPrologue && !sequenceComplete && (!synJourneyAudioEl || synJourneyAudioEl.paused)) {
+                        const elapsedPrologueSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
+                        startWebAudioBufferFallback('syn', elapsedPrologueSec);
                     }
                     if (lofiStarted && lofiMasterGain && !lofiMuted) {
                         lofiMasterGain.gain.cancelScheduledValues(ctx.currentTime);
                         lofiMasterGain.gain.linearRampToValueAtTime(0.14, ctx.currentTime + 0.6);
-                    }
-                    if (introHtmlAudioStarted || nativeIntroAudioActive || state !== 'LOGO_ZOOM_OUT') {
-                        removeAudioUnlockListeners();
                     }
                 }).catch(() => {});
             }
@@ -1121,7 +1284,26 @@ function initGamerIntro() {
     };
     audioUnlockVectors.forEach((evt) => {
         window.addEventListener(evt, unlockAudioOnce, { capture: true, passive: true });
+        document.addEventListener(evt, unlockAudioOnce, { capture: true, passive: true });
     });
+
+    const autoplayBridgeFrame = document.getElementById('autoplay-bridge-frame');
+    if (autoplayBridgeFrame) {
+        autoplayBridgeFrame.addEventListener('load', () => {
+            unlockAudioOnce();
+        });
+    }
+
+    // Continuous 220ms zero-touch autoplay retry loop so sound starts the exact instant the browser media pipeline is ready
+    const autoplayRetryTimer = setInterval(() => {
+        if (sequenceComplete && isAnyStageAudioPlayingUnmuted()) {
+            clearInterval(autoplayRetryTimer);
+            return;
+        }
+        if (!isAnyStageAudioPlayingUnmuted()) {
+            unlockAudioOnce();
+        }
+    }, 220);
 
     // Stagger background audio preloading so Title Screen logos & intro_theme.wav get 100% network priority at 0.0s!
     setTimeout(() => {
@@ -1205,6 +1387,7 @@ function initGamerIntro() {
     buildBoomAssets();
     buildLofiFallbackAssets();
     ensureLofiAudioContext();
+    preloadWebAudioDecodedBuffers();
 
     /**
      * Crisp upward wind-whoosh right as Dark James releases the Glitch cup
@@ -1406,6 +1589,15 @@ function initGamerIntro() {
      */
     function startDearlyBelovedCutsceneBed() {
         if (lofiMuted) return;
+        // In Teaser Coming Soon mode, Dearly Beloved is already mixed directly into assets/syn_journey.wav?v=89
+        // starting at 5.80s — so if syn_journey.wav is already playing, do not double-play a second copy!
+        if (TEASER_COMING_SOON_MODE && (
+            (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted) ||
+            (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingSynFallback) ||
+            activeWebAudioFallbackMode === 'syn'
+        )) {
+            return;
+        }
         if (lofiFallbackAudio) {
             try {
                 lofiFallbackAudio.muted = false;
@@ -1470,6 +1662,18 @@ function initGamerIntro() {
                         p.then(() => {
                             rampDearlyBelovedVolume(0.88, 1600);
                         }).catch(() => {
+                            // If lofiFallbackAudio was not gesture-unlocked, reuse prebuiltIntroAudio which was unlocked at 0.0s!
+                            if (prebuiltIntroAudio) {
+                                try {
+                                    prebuiltIntroAudio._playingSynFallback = false;
+                                    prebuiltIntroAudio._playingLofiFallback = true;
+                                    prebuiltIntroAudio.src = 'assets/dearly_beloved.mp3?v=80';
+                                    prebuiltIntroAudio.loop = true;
+                                    prebuiltIntroAudio.muted = false;
+                                    prebuiltIntroAudio.volume = 0.88;
+                                    prebuiltIntroAudio.play().catch(() => {});
+                                } catch (_) {}
+                            }
                             if (IS_LOCAL_DEV_SERVER) {
                                 nativeLofiAudioActive = true;
                                 triggerNativeServerAudio('kh_full');
@@ -1619,7 +1823,42 @@ function initGamerIntro() {
     }));
 
     function startHoloEmotionalScore() {
-        // Play the pre-rendered Synth Journey WAV (assets/syn_journey.wav?v=88), which mixes Synth's voiceover
+        if (introFadeTimer) {
+            clearInterval(introFadeTimer);
+            introFadeTimer = null;
+        }
+        stopWebAudioBufferFallback();
+
+        const tryReuseUnlockedIntroElementOrWebAudio = () => {
+            // 1. Reuse prebuiltIntroAudio (#intro-title-audio) which already has autoplay permission from t = 0.0s!
+            if (prebuiltIntroAudio && synJourneyAudioEl) {
+                try {
+                    prebuiltIntroAudio._playingSynFallback = true;
+                    prebuiltIntroAudio.src = synJourneyAudioEl.getAttribute('src') || 'assets/syn_journey.wav?v=89';
+                    prebuiltIntroAudio.loop = false;
+                    prebuiltIntroAudio.muted = false;
+                    prebuiltIntroAudio.volume = 0.95;
+                    prebuiltIntroAudio.currentTime = 0;
+                    const p2 = prebuiltIntroAudio.play();
+                    if (p2 && typeof p2.then === 'function') {
+                        p2.then(() => {
+                            stopWebAudioBufferFallback();
+                        }).catch(() => {
+                            startWebAudioBufferFallback('syn', 0);
+                        });
+                        return;
+                    }
+                } catch (_) {}
+            }
+            // 2. Also trigger Web Audio decoded buffer fallback if AudioContext is running
+            startWebAudioBufferFallback('syn', 0);
+            if (IS_LOCAL_DEV_SERVER) {
+                nativeIntroAudioActive = true;
+                triggerNativeServerAudio('syn');
+            }
+        };
+
+        // Play the pre-rendered Synth Journey WAV (assets/syn_journey.wav?v=89), which mixes Synth's voiceover
         // with Kingdom Hearts' Title Screen Theme ("Dearly Beloved") gently ducked underneath!
         if (synJourneyAudioEl) {
             try {
@@ -1627,33 +1866,35 @@ function initGamerIntro() {
                 synJourneyAudioEl.volume = 0.95;
                 synJourneyAudioEl.currentTime = 0;
                 const p = synJourneyAudioEl.play();
-                if (p && typeof p.catch === 'function') {
-                    p.catch(() => {
-                        if (IS_LOCAL_DEV_SERVER) {
-                            nativeIntroAudioActive = true;
-                            triggerNativeServerAudio('syn');
-                        }
+                if (p && typeof p.then === 'function') {
+                    p.then(() => {
+                        stopWebAudioBufferFallback();
+                    }).catch(() => {
+                        tryReuseUnlockedIntroElementOrWebAudio();
                     });
                 }
             } catch (_) {
-                if (IS_LOCAL_DEV_SERVER) {
-                    nativeIntroAudioActive = true;
-                    triggerNativeServerAudio('syn');
-                }
+                tryReuseUnlockedIntroElementOrWebAudio();
             }
-        } else if (IS_LOCAL_DEV_SERVER) {
-            nativeIntroAudioActive = true;
-            triggerNativeServerAudio('syn');
+        } else {
+            tryReuseUnlockedIntroElementOrWebAudio();
         }
     }
 
     function triggerHoloSceneChord(eraIdx) {
-        // Kingdom Hearts "Dearly Beloved" is mixed directly into syn_journey.wav?v=77 with automatic voice ducking
+        // Kingdom Hearts "Dearly Beloved" is mixed directly into syn_journey.wav?v=89 with automatic voice ducking
         void eraIdx;
     }
 
     function stopHoloEmotionalScore(fadeSec = 1.2, stopWav = true) {
         if (stopWav) {
+            stopWebAudioBufferFallback();
+            if (prebuiltIntroAudio && prebuiltIntroAudio._playingSynFallback && !prebuiltIntroAudio.paused) {
+                try {
+                    prebuiltIntroAudio.pause();
+                    prebuiltIntroAudio._playingSynFallback = false;
+                } catch (_) {}
+            }
             if (synJourneyAudioEl && !synJourneyAudioEl.paused) {
                 let vol = synJourneyAudioEl.volume;
                 const fadeTimer = setInterval(() => {
@@ -3727,16 +3968,31 @@ function initGamerIntro() {
                 introGain.gain.linearRampToValueAtTime(0.0001, lofiCtx.currentTime + 2.2);
             } catch (_) {}
         }
-        if (prebuiltIntroAudio && !prebuiltIntroAudio.paused) {
+        if (activeWebAudioFallbackMode === 'intro' && activeWebAudioFallbackGain && lofiCtx && lofiCtx.state === 'running') {
+            try {
+                activeWebAudioFallbackGain.gain.cancelScheduledValues(lofiCtx.currentTime);
+                activeWebAudioFallbackGain.gain.linearRampToValueAtTime(0.0001, lofiCtx.currentTime + 1.4);
+            } catch (_) {}
+        }
+        if (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio._playingSynFallback) {
+            if (introFadeTimer) clearInterval(introFadeTimer);
             let fadeVol = prebuiltIntroAudio.volume;
-            const fadeInterval = setInterval(() => {
+            introFadeTimer = setInterval(() => {
+                if (prebuiltIntroAudio._playingSynFallback) {
+                    clearInterval(introFadeTimer);
+                    introFadeTimer = null;
+                    return;
+                }
                 fadeVol = Math.max(0, fadeVol - 0.06);
                 try {
                     prebuiltIntroAudio.volume = fadeVol;
                 } catch (_) {}
                 if (fadeVol <= 0) {
-                    clearInterval(fadeInterval);
-                    try { prebuiltIntroAudio.pause(); } catch (_) {}
+                    clearInterval(introFadeTimer);
+                    introFadeTimer = null;
+                    if (!prebuiltIntroAudio._playingSynFallback) {
+                        try { prebuiltIntroAudio.pause(); } catch (_) {}
+                    }
                 }
             }, 90);
         }
@@ -3808,8 +4064,12 @@ function initGamerIntro() {
                             prebuiltIntroAudio.muted = false;
                             prebuiltIntroAudio.volume = 0.88;
                             introHtmlAudioStarted = true;
+                            stopWebAudioBufferFallback();
+                            primeHtmlAudioElementsOnGesture();
                         }).catch(() => {
-                            // Browser blocked autoplay on reload -> immediately play assets/intro_theme.wav via native Windows Audio bridge on local dev server
+                            // Browser blocked autoplay on reload -> try Web Audio buffer fallback or native Windows Audio bridge on local dev server
+                            const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
+                            startWebAudioBufferFallback('intro', elapsedSec);
                             if (IS_LOCAL_DEV_SERVER && !introHtmlAudioStarted && !nativeIntroAudioActive) {
                                 nativeIntroAudioActive = true;
                                 introHtmlAudioStarted = true;
