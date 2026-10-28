@@ -1038,7 +1038,9 @@ function initGamerIntro() {
     let tapForAudioDismissed = false;
     let lastAudioUnlockClickTime = 0;
     let introPlayPending = false;
+    let introGestureSynced = false;
     let synPlayPending = false;
+    let synGestureSynced = false;
 
     function isHtmlAudioTrulyPlayingUnmuted() {
         if (nativeIntroAudioActive || nativeLofiAudioActive) return true;
@@ -1134,15 +1136,16 @@ function initGamerIntro() {
         if (!prebuiltIntroAudio || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT' || nativeIntroAudioActive) return;
         prebuiltIntroAudio.muted = false;
         prebuiltIntroAudio.volume = 0.88;
-        if (!prebuiltIntroAudio.paused) {
+        if (!prebuiltIntroAudio.paused || introHtmlAudioStarted) {
             introHtmlAudioStarted = true;
             stopWebAudioBufferFallback();
             return;
         }
-        // NEVER interrupt an in-flight play() request over HTTPS unless this is a direct user click/tap gesture!
-        if (introPlayPending && !isUserGesture) return;
-        // NEVER seek currentTime while paused/buffering unless this is a direct user gesture AND audio data is buffered!
-        if (isUserGesture && prebuiltIntroAudio.readyState >= 2) {
+        // NEVER interrupt an in-flight play() request (even across pointerdown -> mousedown -> click on the same tap)!
+        if (introPlayPending) return;
+        // Sync currentTime at most ONCE on the first user gesture if audio was blocked at 0.0s
+        if (isUserGesture && !introGestureSynced && prebuiltIntroAudio.readyState >= 2) {
+            introGestureSynced = true;
             const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
             if (elapsedSec > 0.6 && Math.abs(prebuiltIntroAudio.currentTime - elapsedSec) > 0.45) {
                 try { prebuiltIntroAudio.currentTime = elapsedSec; } catch (_) {}
@@ -1181,8 +1184,8 @@ function initGamerIntro() {
             (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted) ||
             (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingSynFallback);
         if (synAlreadyPlaying) return;
-        // NEVER interrupt an in-flight play() request over HTTPS unless this is a direct user click/tap gesture!
-        if (synPlayPending && !isUserGesture) return;
+        // NEVER interrupt an in-flight play() request!
+        if (synPlayPending) return;
 
         const elapsedPrologueSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
         const targetEl = (prebuiltIntroAudio && prebuiltIntroAudio._playingSynFallback) ? prebuiltIntroAudio : (synJourneyAudioEl || prebuiltIntroAudio);
@@ -1191,7 +1194,8 @@ function initGamerIntro() {
         try {
             targetEl.muted = false;
             targetEl.volume = 0.95;
-            if (isUserGesture && targetEl.readyState >= 2 && elapsedPrologueSec > 0.6 && Math.abs(targetEl.currentTime - elapsedPrologueSec) > 0.45) {
+            if (isUserGesture && !synGestureSynced && targetEl.readyState >= 2 && elapsedPrologueSec > 0.6 && Math.abs(targetEl.currentTime - elapsedPrologueSec) > 0.45) {
+                synGestureSynced = true;
                 try { targetEl.currentTime = elapsedPrologueSec; } catch (_) {}
             }
             synPlayPending = true;
@@ -4082,156 +4086,9 @@ function initGamerIntro() {
     function playCinemaStudioLogoSwell() {
         if (sequenceComplete || state !== 'LOGO_ZOOM_OUT') return;
 
-        // 1. Trigger HTML5 <audio> (assets/intro_theme.wav?v=36) automatically without ever muting or aborting an in-flight HTTPS download
+        // Play the single pre-rendered Title Screen audio track (assets/intro_theme.wav?v=36) —
+        // do NOT layer a second Web Audio synth copy on top so the logo audio never plays twice!
         tryStartIntroHtmlAudio(false);
-
-        // 2. Layer live Web Audio 4-Era Console Evolution Fanfare when AudioContext is running (and native fallback isn't already playing)
-        const ctx = ensureLofiAudioContext();
-        if (!ctx || ctx.state !== 'running') {
-            if (ctx && ctx.state === 'suspended') {
-                ctx.resume().then(() => {
-                    if (!nativeIntroAudioActive) {
-                        playIntroAudio();
-                    }
-                }).catch(() => {});
-            }
-            return;
-        }
-
-        if (nativeIntroAudioActive) return;
-        if (cinemaSwellPlayed) return;
-        cinemaSwellPlayed = true;
-
-        const now = ctx.currentTime;
-        const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
-
-        introGain = ctx.createGain();
-        introGain.gain.setValueAtTime(0.72, now);
-        introGain.connect(ctx.destination);
-
-        // Era 1 (0.0s – 1.65s): 8-Bit NES Chiptune Square Arpeggio
-        const arp8Notes = [220.0, 277.18, 329.63, 440.0, 329.63, 440.0, 554.37, 659.25, 440.0, 554.37, 659.25, 880.0];
-        arp8Notes.forEach((freq, idx) => {
-            const noteStartAbs = idx * 0.13;
-            if (noteStartAbs + 0.12 <= elapsedSec) return;
-            const st = now + Math.max(0, noteStartAbs - elapsedSec);
-            const dur = 0.12;
-            const osc = ctx.createOscillator();
-            const g = ctx.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(freq, st);
-            g.gain.setValueAtTime(0.0001, st);
-            g.gain.linearRampToValueAtTime(0.085, st + 0.015);
-            g.gain.exponentialRampToValueAtTime(0.0001, st + dur);
-            osc.connect(g);
-            g.connect(introGain);
-            osc.start(st);
-            osc.stop(st + dur + 0.02);
-        });
-
-        // Era 2 (1.50s – 3.15s): 16-Bit SNES/Genesis Warm FM Synth Chord & Lead
-        if (elapsedSec < 3.1) {
-            const st16 = now + Math.max(0, 1.50 - elapsedSec);
-            const dur16 = Math.max(0.3, 3.15 - Math.max(1.50, elapsedSec));
-            [110.0, 220.0, 329.63, 415.30, 554.37].forEach((freq, idx) => {
-                const osc = ctx.createOscillator();
-                const flt = ctx.createBiquadFilter();
-                const g = ctx.createGain();
-                osc.type = idx % 2 === 0 ? 'sawtooth' : 'triangle';
-                osc.frequency.setValueAtTime(freq, st16);
-                flt.type = 'lowpass';
-                flt.frequency.setValueAtTime(1400, st16);
-                g.gain.setValueAtTime(0.0001, st16);
-                g.gain.linearRampToValueAtTime(0.065 / (1 + idx * 0.15), st16 + 0.18);
-                g.gain.exponentialRampToValueAtTime(0.0001, st16 + dur16);
-                osc.connect(flt);
-                flt.connect(g);
-                g.connect(introGain);
-                osc.start(st16);
-                osc.stop(st16 + dur16 + 0.04);
-            });
-        }
-
-        // Era 3 (2.95s – 4.80s): 32-Bit / 64-Bit Arcade Poly-Synth Filter Sweep
-        if (elapsedSec < 4.75) {
-            const st32 = now + Math.max(0, 2.95 - elapsedSec);
-            const dur32 = Math.max(0.3, 4.80 - Math.max(2.95, elapsedSec));
-            [146.83, 220.0, 277.18, 369.99, 440.0, 659.25].forEach((freq, idx) => {
-                const osc = ctx.createOscillator();
-                const flt = ctx.createBiquadFilter();
-                const g = ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(freq * 0.994, st32);
-                osc.frequency.exponentialRampToValueAtTime(freq, st32 + dur32 * 0.6);
-                flt.type = 'lowpass';
-                flt.frequency.setValueAtTime(480, st32);
-                flt.frequency.exponentialRampToValueAtTime(2800, st32 + dur32 * 0.85);
-                g.gain.setValueAtTime(0.0001, st32);
-                g.gain.linearRampToValueAtTime(0.075 / (1 + idx * 0.16), st32 + 0.25);
-                g.gain.exponentialRampToValueAtTime(0.0001, st32 + dur32);
-                osc.connect(flt);
-                flt.connect(g);
-                g.connect(introGain);
-                osc.start(st32);
-                osc.stop(st32 + dur32 + 0.05);
-            });
-        }
-
-        // Era 4 (4.60s – 9.60s): Full HD Final Tree & RETROCANOPY Cinema Fanfare + Bell Cascade
-        const stHD = now + Math.max(0, 4.60 - elapsedSec);
-        const durHD = Math.max(1.2, 9.60 - Math.max(4.60, elapsedSec));
-
-        const subOsc = ctx.createOscillator();
-        const subGain = ctx.createGain();
-        subOsc.type = 'sine';
-        subOsc.frequency.setValueAtTime(55, stHD);
-        subOsc.frequency.exponentialRampToValueAtTime(55, stHD + durHD);
-        subGain.gain.setValueAtTime(0.0001, stHD);
-        subGain.gain.linearRampToValueAtTime(0.26, stHD + 0.35);
-        subGain.gain.exponentialRampToValueAtTime(0.0001, stHD + durHD);
-        subOsc.connect(subGain);
-        subGain.connect(introGain);
-        subOsc.start(stHD);
-        subOsc.stop(stHD + durHD + 0.05);
-
-        [110, 164.81, 220, 277.18, 329.63, 440, 554.37, 659.25].forEach((f, idx) => {
-            const osc = ctx.createOscillator();
-            const filter = ctx.createBiquadFilter();
-            const gain = ctx.createGain();
-            osc.type = idx < 4 ? 'sawtooth' : 'triangle';
-            osc.frequency.setValueAtTime(f * 0.992, stHD);
-            osc.frequency.exponentialRampToValueAtTime(f, stHD + 0.6);
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(520, stHD);
-            filter.frequency.exponentialRampToValueAtTime(3200, stHD + 1.2);
-            filter.frequency.exponentialRampToValueAtTime(680, stHD + durHD);
-            gain.gain.setValueAtTime(0.0001, stHD);
-            gain.gain.linearRampToValueAtTime(0.095 / (1 + idx * 0.18), stHD + 0.55);
-            gain.gain.exponentialRampToValueAtTime(0.0001, stHD + durHD);
-            osc.connect(filter);
-            filter.connect(gain);
-            gain.connect(introGain);
-            osc.start(stHD);
-            osc.stop(stHD + durHD + 0.08);
-        });
-
-        // Crystalline Bell Cascade as the final HD tree locks in and RETROCANOPY + Tagline appear
-        [554.37, 659.25, 880, 1108.73, 1318.51].forEach((hiFreq, idx) => {
-            const bellAbs = 4.75 + idx * 0.18;
-            if (bellAbs + 1.5 <= elapsedSec) return;
-            const bst = now + Math.max(0, bellAbs - elapsedSec);
-            const sOsc = ctx.createOscillator();
-            const sGain = ctx.createGain();
-            sOsc.type = 'sine';
-            sOsc.frequency.setValueAtTime(hiFreq, bst);
-            sGain.gain.setValueAtTime(0.0001, bst);
-            sGain.gain.linearRampToValueAtTime(0.065 / (1 + idx * 0.18), bst + 0.04);
-            sGain.gain.exponentialRampToValueAtTime(0.0001, bst + 2.4);
-            sOsc.connect(sGain);
-            sGain.connect(introGain);
-            sOsc.start(bst);
-            sOsc.stop(bst + 2.45);
-        });
     }
 
     /**
