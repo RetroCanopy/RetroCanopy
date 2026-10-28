@@ -1058,7 +1058,50 @@ function initGamerIntro() {
             .catch(() => {});
     }
 
+    const tapForAudioPromptEl = document.getElementById('tap-for-audio-prompt');
+    let tapForAudioDismissed = false;
+    let lastAudioUnlockClickTime = 0;
+
+    function isHtmlAudioTrulyPlayingUnmuted() {
+        if (nativeIntroAudioActive || nativeLofiAudioActive) return true;
+        if (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio.currentTime > 0.02) return true;
+        if (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted && synJourneyAudioEl.currentTime > 0.02) return true;
+        if (lofiFallbackAudio && !lofiFallbackAudio.paused && !lofiFallbackAudio.muted && lofiFallbackAudio.currentTime > 0.02) return true;
+        return false;
+    }
+
+    function dismissTapForAudioPrompt() {
+        tapForAudioDismissed = true;
+        if (tapForAudioPromptEl) {
+            tapForAudioPromptEl.classList.remove('visible');
+            tapForAudioPromptEl.classList.add('hidden');
+        }
+    }
+
+    function updateTapForAudioPrompt() {
+        if (!tapForAudioPromptEl || tapForAudioDismissed) return;
+        if (isHtmlAudioTrulyPlayingUnmuted()) {
+            dismissTapForAudioPrompt();
+        } else {
+            tapForAudioPromptEl.classList.add('visible');
+        }
+    }
+
+    if (tapForAudioPromptEl) {
+        tapForAudioPromptEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lastAudioUnlockClickTime = performance.now();
+            dismissTapForAudioPrompt();
+            unlockAudioOnce(e);
+        });
+    }
+
+    // Show "TAP FOR AUDIO" if unmuted autoplay has not started within 300ms
+    setTimeout(updateTapForAudioPrompt, 300);
     function isAnyStageAudioPlayingUnmuted() {
+        if (isHtmlAudioTrulyPlayingUnmuted()) {
+            dismissTapForAudioPrompt();
+        }
         if (state === 'LOGO_ZOOM_OUT' && !inPrologue && !sequenceComplete) {
             return Boolean(
                 (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted) ||
@@ -1173,6 +1216,12 @@ function initGamerIntro() {
     // Automatically trigger & unlock AudioContext + HTML5 <audio> on any sensor, lifecycle, hover, or user event
     let lastHoverAudioUnlockAttempt = 0;
     const unlockAudioOnce = (e) => {
+        if (e && (e.type === 'click' || e.type === 'touchstart' || e.type === 'touchend' || e.type === 'pointerdown' || e.type === 'mousedown' || e.type === 'keydown')) {
+            if (!tapForAudioDismissed) {
+                lastAudioUnlockClickTime = performance.now();
+                dismissTapForAudioPrompt();
+            }
+        }
         if (e && (e.type === 'pointermove' || e.type === 'mousemove' || e.type === 'pointerover' || e.type === 'mouseover' || e.type === 'wheel' || e.type === 'deviceorientation' || e.type === 'devicemotion')) {
             const nowMs = performance.now();
             if (nowMs - lastHoverAudioUnlockAttempt < 120) return;
@@ -3393,7 +3442,8 @@ function initGamerIntro() {
     if (holoStage) {
         holoStage.addEventListener('click', (e) => {
             if (!inPrologue) return;
-            if (e.target && e.target.closest('#skip-intro-btn')) return;
+            if (e.target && (e.target.closest('#skip-intro-btn') || e.target.closest('#tap-for-audio-prompt'))) return;
+            if (performance.now() - lastAudioUnlockClickTime < 550) return;
             advanceToNextStep(true);
         });
     }
