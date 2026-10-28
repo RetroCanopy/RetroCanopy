@@ -1035,8 +1035,10 @@ function initGamerIntro() {
     }
 
     const tapForAudioPromptEl = document.getElementById('tap-for-audio-prompt');
-    let tapForAudioDismissed = false;
+    let tapForAudioDismissed = true;
     let lastAudioUnlockClickTime = 0;
+    let introPlayPending = false;
+    let synPlayPending = false;
 
     function isHtmlAudioTrulyPlayingUnmuted() {
         if (nativeIntroAudioActive || nativeLofiAudioActive) return true;
@@ -1054,30 +1056,7 @@ function initGamerIntro() {
         }
     }
 
-    function updateTapForAudioPrompt() {
-        if (!tapForAudioPromptEl || tapForAudioDismissed) return;
-        if (isHtmlAudioTrulyPlayingUnmuted()) {
-            dismissTapForAudioPrompt();
-        } else {
-            tapForAudioPromptEl.classList.add('visible');
-        }
-    }
-
-    if (tapForAudioPromptEl) {
-        tapForAudioPromptEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-            lastAudioUnlockClickTime = performance.now();
-            dismissTapForAudioPrompt();
-            unlockAudioOnce(e);
-        });
-    }
-
-    // Show "TAP FOR AUDIO" if unmuted autoplay has not started within 300ms
-    setTimeout(updateTapForAudioPrompt, 300);
     function isAnyStageAudioPlayingUnmuted() {
-        if (isHtmlAudioTrulyPlayingUnmuted()) {
-            dismissTapForAudioPrompt();
-        }
         if (state === 'LOGO_ZOOM_OUT' && !inPrologue && !sequenceComplete) {
             return Boolean(
                 (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted) ||
@@ -1127,6 +1106,121 @@ function initGamerIntro() {
         }
     }
 
+    function tryStartIntroHtmlAudio(isUserGesture = false) {
+        if (!prebuiltIntroAudio || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT' || nativeIntroAudioActive) return;
+        prebuiltIntroAudio.muted = false;
+        prebuiltIntroAudio.volume = 0.88;
+        if (!prebuiltIntroAudio.paused) {
+            introHtmlAudioStarted = true;
+            stopWebAudioBufferFallback();
+            return;
+        }
+        // NEVER interrupt an in-flight play() request over HTTPS unless this is a direct user click/tap gesture!
+        if (introPlayPending && !isUserGesture) return;
+        // NEVER seek currentTime while paused/buffering unless this is a direct user gesture AND audio data is buffered!
+        if (isUserGesture && prebuiltIntroAudio.readyState >= 2) {
+            const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
+            if (elapsedSec > 0.6 && Math.abs(prebuiltIntroAudio.currentTime - elapsedSec) > 0.45) {
+                try { prebuiltIntroAudio.currentTime = elapsedSec; } catch (_) {}
+            }
+        }
+        try {
+            introPlayPending = true;
+            const p = prebuiltIntroAudio.play();
+            if (p && typeof p.then === 'function') {
+                p.then(() => {
+                    introPlayPending = false;
+                    prebuiltIntroAudio.muted = false;
+                    prebuiltIntroAudio.volume = 0.88;
+                    introHtmlAudioStarted = true;
+                    stopWebAudioBufferFallback();
+                }).catch((err) => {
+                    introPlayPending = false;
+                    if (IS_LOCAL_DEV_SERVER && !introHtmlAudioStarted && !nativeIntroAudioActive && (!err || err.name === 'NotAllowedError')) {
+                        nativeIntroAudioActive = true;
+                        introHtmlAudioStarted = true;
+                        triggerNativeServerAudio('intro');
+                    }
+                });
+            } else {
+                introPlayPending = false;
+            }
+        } catch (_) {
+            introPlayPending = false;
+        }
+    }
+
+    function tryStartSynJourneyAudio(isUserGesture = false) {
+        if (!inPrologue || sequenceComplete) return;
+        const synAlreadyPlaying =
+            (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted) ||
+            (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingSynFallback);
+        if (synAlreadyPlaying) return;
+        // NEVER interrupt an in-flight play() request over HTTPS unless this is a direct user click/tap gesture!
+        if (synPlayPending && !isUserGesture) return;
+
+        const elapsedPrologueSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
+        const targetEl = (prebuiltIntroAudio && prebuiltIntroAudio._playingSynFallback) ? prebuiltIntroAudio : (synJourneyAudioEl || prebuiltIntroAudio);
+        if (!targetEl) return;
+
+        try {
+            targetEl.muted = false;
+            targetEl.volume = 0.95;
+            if (isUserGesture && targetEl.readyState >= 2 && elapsedPrologueSec > 0.6 && Math.abs(targetEl.currentTime - elapsedPrologueSec) > 0.45) {
+                try { targetEl.currentTime = elapsedPrologueSec; } catch (_) {}
+            }
+            synPlayPending = true;
+            const p = targetEl.play();
+            if (p && typeof p.then === 'function') {
+                p.then(() => {
+                    synPlayPending = false;
+                    stopWebAudioBufferFallback();
+                    if (nativeIntroAudioActive) {
+                        nativeIntroAudioActive = false;
+                        triggerNativeServerAudio('stop');
+                    }
+                }).catch((err) => {
+                    synPlayPending = false;
+                    // If synJourneyAudioEl was blocked by mobile single-element autoplay policy (NotAllowedError),
+                    // immediately hand off to prebuiltIntroAudio (#intro-title-audio) which was already unlocked at t = 0.0s!
+                    if (targetEl === synJourneyAudioEl && prebuiltIntroAudio && (!err || err.name === 'NotAllowedError')) {
+                        try {
+                            prebuiltIntroAudio._playingSynFallback = true;
+                            const synSrc = synJourneyAudioEl.getAttribute('src') || 'assets/syn_journey.wav?v=92';
+                            if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('syn_journey.wav') === -1) {
+                                prebuiltIntroAudio.src = synSrc;
+                            }
+                            prebuiltIntroAudio.loop = false;
+                            prebuiltIntroAudio.muted = false;
+                            prebuiltIntroAudio.volume = 0.95;
+                            synPlayPending = true;
+                            const p2 = prebuiltIntroAudio.play();
+                            if (p2 && typeof p2.then === 'function') {
+                                p2.then(() => {
+                                    synPlayPending = false;
+                                    stopWebAudioBufferFallback();
+                                }).catch(() => {
+                                    synPlayPending = false;
+                                });
+                            } else {
+                                synPlayPending = false;
+                            }
+                        } catch (_) {
+                            synPlayPending = false;
+                        }
+                    } else if (IS_LOCAL_DEV_SERVER && !nativeIntroAudioActive && (!err || err.name === 'NotAllowedError')) {
+                        nativeIntroAudioActive = true;
+                        triggerNativeServerAudio('syn');
+                    }
+                });
+            } else {
+                synPlayPending = false;
+            }
+        } catch (_) {
+            synPlayPending = false;
+        }
+    }
+
     function ensureLofiAudioContext() {
         if (!lofiCtx) {
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1145,14 +1239,9 @@ function initGamerIntro() {
                     }
                     if (!nativeIntroAudioActive && state === 'LOGO_ZOOM_OUT' && typeof playIntroAudio === 'function') {
                         playIntroAudio();
-                        if (!prebuiltIntroAudio || prebuiltIntroAudio.paused) {
-                            const elSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
-                            startWebAudioBufferFallback('intro', elSec);
-                        }
                     }
-                    if (inPrologue && !sequenceComplete && (!synJourneyAudioEl || synJourneyAudioEl.paused)) {
-                        const elProSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
-                        startWebAudioBufferFallback('syn', elProSec);
+                    if (inPrologue && !sequenceComplete) {
+                        tryStartSynJourneyAudio(false);
                     }
                     if (lofiStarted && lofiMasterGain && !lofiMuted) {
                         lofiMasterGain.gain.cancelScheduledValues(lofiCtx.currentTime);
@@ -1170,12 +1259,9 @@ function initGamerIntro() {
     // Automatically trigger & unlock AudioContext + HTML5 <audio> on any sensor, lifecycle, hover, or user event
     let lastHoverAudioUnlockAttempt = 0;
     const unlockAudioOnce = (e) => {
-        if (e && (e.type === 'click' || e.type === 'touchstart' || e.type === 'touchend' || e.type === 'pointerdown' || e.type === 'mousedown' || e.type === 'keydown')) {
-            if (!tapForAudioDismissed) {
-                lastAudioUnlockClickTime = performance.now();
-                dismissTapForAudioPrompt();
-            }
-        }
+        const isDirectGesture = Boolean(
+            e && (e.type === 'click' || e.type === 'touchstart' || e.type === 'touchend' || e.type === 'pointerdown' || e.type === 'mousedown' || e.type === 'keydown')
+        );
         if (e && (e.type === 'pointermove' || e.type === 'mousemove' || e.type === 'pointerover' || e.type === 'mouseover' || e.type === 'wheel' || e.type === 'deviceorientation' || e.type === 'devicemotion')) {
             const nowMs = performance.now();
             if (nowMs - lastHoverAudioUnlockAttempt < 120) return;
@@ -1183,46 +1269,7 @@ function initGamerIntro() {
         }
         primeHtmlAudioElementsOnGesture();
         if (inPrologue && !sequenceComplete) {
-            const synAlreadyPlaying = (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted) ||
-                (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingSynFallback);
-            if (!synAlreadyPlaying && synJourneyAudioEl && synJourneyAudioEl.paused) {
-                try {
-                    const elapsedPrologueSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
-                    synJourneyAudioEl.muted = false;
-                    synJourneyAudioEl.volume = 0.95;
-                    if (Math.abs(synJourneyAudioEl.currentTime - elapsedPrologueSec) > 0.35) {
-                        try { synJourneyAudioEl.currentTime = elapsedPrologueSec; } catch (_) {}
-                    }
-                    const p = synJourneyAudioEl.play();
-                    if (p && typeof p.then === 'function') {
-                        p.then(() => {
-                            stopWebAudioBufferFallback();
-                            dismissTapForAudioPrompt();
-                            if (nativeIntroAudioActive) {
-                                nativeIntroAudioActive = false;
-                                triggerNativeServerAudio('stop');
-                            }
-                        }).catch(() => {
-                            if (prebuiltIntroAudio) {
-                                try {
-                                    prebuiltIntroAudio._playingSynFallback = true;
-                                    if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('syn_journey.wav') === -1) {
-                                        prebuiltIntroAudio.src = synJourneyAudioEl.getAttribute('src') || 'assets/syn_journey.wav?v=91';
-                                    }
-                                    prebuiltIntroAudio.muted = false;
-                                    prebuiltIntroAudio.volume = 0.95;
-                                    if (Math.abs(prebuiltIntroAudio.currentTime - elapsedPrologueSec) > 0.35) {
-                                        try { prebuiltIntroAudio.currentTime = elapsedPrologueSec; } catch (_) {}
-                                    }
-                                    prebuiltIntroAudio.play().then(() => {
-                                        dismissTapForAudioPrompt();
-                                    }).catch(() => {});
-                                } catch (_) {}
-                            }
-                        });
-                    }
-                } catch (_) {}
-            }
+            tryStartSynJourneyAudio(isDirectGesture);
         }
         if (sequenceComplete && !lofiMuted && lofiFallbackAudio && lofiFallbackAudio.paused) {
             try {
@@ -1231,29 +1278,8 @@ function initGamerIntro() {
                 lofiFallbackAudio.play().catch(() => {});
             } catch (_) {}
         }
-        if (state === 'LOGO_ZOOM_OUT' && !sequenceComplete && prebuiltIntroAudio && !nativeIntroAudioActive) {
-            try {
-                const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
-                prebuiltIntroAudio.muted = false;
-                prebuiltIntroAudio.volume = 0.88;
-                if (prebuiltIntroAudio.paused) {
-                    if (Math.abs(prebuiltIntroAudio.currentTime - elapsedSec) > 0.35) {
-                        try { prebuiltIntroAudio.currentTime = elapsedSec; } catch (_) {}
-                    }
-                    const p = prebuiltIntroAudio.play();
-                    if (p && typeof p.then === 'function') {
-                        p.then(() => {
-                            introHtmlAudioStarted = true;
-                            stopWebAudioBufferFallback();
-                            primeHtmlAudioElementsOnGesture();
-                        }).catch(() => {});
-                    }
-                } else {
-                    introHtmlAudioStarted = true;
-                    stopWebAudioBufferFallback();
-                    primeHtmlAudioElementsOnGesture();
-                }
-            } catch (_) {}
+        if (state === 'LOGO_ZOOM_OUT' && !inPrologue && !sequenceComplete) {
+            tryStartIntroHtmlAudio(isDirectGesture);
         }
         const ctx = ensureLofiAudioContext();
         if (ctx) {
@@ -1265,14 +1291,9 @@ function initGamerIntro() {
                 }
                 if (!nativeIntroAudioActive && state === 'LOGO_ZOOM_OUT' && typeof playIntroAudio === 'function') {
                     playIntroAudio();
-                    if (!prebuiltIntroAudio || prebuiltIntroAudio.paused) {
-                        const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
-                        startWebAudioBufferFallback('intro', elapsedSec);
-                    }
                 }
-                if (inPrologue && !sequenceComplete && (!synJourneyAudioEl || synJourneyAudioEl.paused)) {
-                    const elapsedPrologueSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
-                    startWebAudioBufferFallback('syn', elapsedPrologueSec);
+                if (inPrologue && !sequenceComplete) {
+                    tryStartSynJourneyAudio(false);
                 }
                 if (lofiStarted && lofiMasterGain && !lofiMuted) {
                     lofiMasterGain.gain.cancelScheduledValues(ctx.currentTime);
@@ -1290,14 +1311,9 @@ function initGamerIntro() {
                     }
                     if (!nativeIntroAudioActive && state === 'LOGO_ZOOM_OUT' && typeof playIntroAudio === 'function') {
                         playIntroAudio();
-                        if (!prebuiltIntroAudio || prebuiltIntroAudio.paused) {
-                            const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
-                            startWebAudioBufferFallback('intro', elapsedSec);
-                        }
                     }
-                    if (inPrologue && !sequenceComplete && (!synJourneyAudioEl || synJourneyAudioEl.paused)) {
-                        const elapsedPrologueSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
-                        startWebAudioBufferFallback('syn', elapsedPrologueSec);
+                    if (inPrologue && !sequenceComplete) {
+                        tryStartSynJourneyAudio(false);
                     }
                     if (lofiStarted && lofiMasterGain && !lofiMuted) {
                         lofiMasterGain.gain.cancelScheduledValues(ctx.currentTime);
@@ -1312,14 +1328,28 @@ function initGamerIntro() {
         document.addEventListener(evt, unlockAudioOnce, { capture: true, passive: true });
     });
 
-    const autoplayBridgeFrame = document.getElementById('autoplay-bridge-frame');
-    if (autoplayBridgeFrame) {
-        autoplayBridgeFrame.addEventListener('load', () => {
-            unlockAudioOnce();
+    if (introTitleAudioEl) {
+        introTitleAudioEl.addEventListener('loadeddata', () => tryStartIntroHtmlAudio(false));
+        introTitleAudioEl.addEventListener('canplay', () => tryStartIntroHtmlAudio(false));
+        introTitleAudioEl.addEventListener('playing', () => {
+            introHtmlAudioStarted = true;
+            if (synJourneyAudioEl && synJourneyAudioEl.preload === 'none') {
+                try {
+                    synJourneyAudioEl.preload = 'auto';
+                    synJourneyAudioEl.load();
+                } catch (_) {}
+            }
+        });
+    }
+    if (synJourneyAudioEl) {
+        synJourneyAudioEl.addEventListener('canplay', () => {
+            if (inPrologue && !sequenceComplete) {
+                tryStartSynJourneyAudio(false);
+            }
         });
     }
 
-    // Continuous 220ms zero-touch autoplay retry loop so sound starts the exact instant the browser media pipeline is ready
+    // Gentle non-interrupting retry loop that NEVER aborts an in-flight HTTPS download or seeks currentTime while buffering
     const autoplayRetryTimer = setInterval(() => {
         if (sequenceComplete && isAnyStageAudioPlayingUnmuted()) {
             clearInterval(autoplayRetryTimer);
@@ -1328,7 +1358,7 @@ function initGamerIntro() {
         if (!isAnyStageAudioPlayingUnmuted()) {
             unlockAudioOnce();
         }
-    }, 220);
+    }, 350);
 
     // Stagger background audio preloading so Title Screen logos & intro_theme.wav get 100% network priority at 0.0s!
     setTimeout(() => {
@@ -1614,13 +1644,9 @@ function initGamerIntro() {
      */
     function startDearlyBelovedCutsceneBed() {
         if (lofiMuted) return;
-        // In Teaser Coming Soon mode, Dearly Beloved is already mixed directly into assets/syn_journey.wav?v=89
-        // starting at 5.80s — so if syn_journey.wav is already playing, do not double-play a second copy!
-        if (TEASER_COMING_SOON_MODE && (
-            (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted) ||
-            (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingSynFallback) ||
-            activeWebAudioFallbackMode === 'syn'
-        )) {
+        // In Teaser Coming Soon mode, Dearly Beloved is already resampled to 24kHz mono and mixed directly into assets/syn_journey.wav
+        // starting at 5.80s — never play a second <audio> element at 5.80s because mobile browsers will pause syn_journey.wav!
+        if (TEASER_COMING_SOON_MODE) {
             return;
         }
         if (lofiFallbackAudio) {
@@ -1853,57 +1879,10 @@ function initGamerIntro() {
             introFadeTimer = null;
         }
         stopWebAudioBufferFallback();
-
-        const tryReuseUnlockedIntroElementOrWebAudio = () => {
-            // 1. Reuse prebuiltIntroAudio (#intro-title-audio) which already has autoplay permission from t = 0.0s!
-            if (prebuiltIntroAudio && synJourneyAudioEl) {
-                try {
-                    prebuiltIntroAudio._playingSynFallback = true;
-                    prebuiltIntroAudio.src = synJourneyAudioEl.getAttribute('src') || 'assets/syn_journey.wav?v=89';
-                    prebuiltIntroAudio.loop = false;
-                    prebuiltIntroAudio.muted = false;
-                    prebuiltIntroAudio.volume = 0.95;
-                    prebuiltIntroAudio.currentTime = 0;
-                    const p2 = prebuiltIntroAudio.play();
-                    if (p2 && typeof p2.then === 'function') {
-                        p2.then(() => {
-                            stopWebAudioBufferFallback();
-                        }).catch(() => {
-                            startWebAudioBufferFallback('syn', 0);
-                        });
-                        return;
-                    }
-                } catch (_) {}
-            }
-            // 2. Also trigger Web Audio decoded buffer fallback if AudioContext is running
-            startWebAudioBufferFallback('syn', 0);
-            if (IS_LOCAL_DEV_SERVER) {
-                nativeIntroAudioActive = true;
-                triggerNativeServerAudio('syn');
-            }
-        };
-
-        // Play the pre-rendered Synth Journey WAV (assets/syn_journey.wav?v=89), which mixes Synth's voiceover
-        // with Kingdom Hearts' Title Screen Theme ("Dearly Beloved") gently ducked underneath!
         if (synJourneyAudioEl) {
-            try {
-                synJourneyAudioEl.muted = false;
-                synJourneyAudioEl.volume = 0.95;
-                synJourneyAudioEl.currentTime = 0;
-                const p = synJourneyAudioEl.play();
-                if (p && typeof p.then === 'function') {
-                    p.then(() => {
-                        stopWebAudioBufferFallback();
-                    }).catch(() => {
-                        tryReuseUnlockedIntroElementOrWebAudio();
-                    });
-                }
-            } catch (_) {
-                tryReuseUnlockedIntroElementOrWebAudio();
-            }
-        } else {
-            tryReuseUnlockedIntroElementOrWebAudio();
+            try { synJourneyAudioEl.currentTime = 0; } catch (_) {}
         }
+        tryStartSynJourneyAudio(false);
     }
 
     function triggerHoloSceneChord(eraIdx) {
@@ -4072,62 +4051,8 @@ function initGamerIntro() {
     function playCinemaStudioLogoSwell() {
         if (sequenceComplete || state !== 'LOGO_ZOOM_OUT') return;
 
-        // 1. Trigger HTML5 <audio> (assets/intro_theme.wav?v=36) automatically, with instant native Windows Audio fallback if browser reload policy blocks autoplay
-        if (prebuiltIntroAudio && !introHtmlAudioStarted && !nativeIntroAudioActive) {
-            try {
-                prebuiltIntroAudio.muted = false;
-                prebuiltIntroAudio.volume = 0.88;
-                if (!prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted) {
-                    introHtmlAudioStarted = true;
-                } else {
-                    const elapsed = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
-                    if (Math.abs(prebuiltIntroAudio.currentTime - elapsed) > 0.35) {
-                        try { prebuiltIntroAudio.currentTime = elapsed; } catch (_) {}
-                    }
-                    const p = prebuiltIntroAudio.play();
-                    if (p && typeof p.then === 'function') {
-                        p.then(() => {
-                            prebuiltIntroAudio.muted = false;
-                            prebuiltIntroAudio.volume = 0.88;
-                            introHtmlAudioStarted = true;
-                            dismissTapForAudioPrompt();
-                            stopWebAudioBufferFallback();
-                        }).catch(() => {
-                            // Try muted autoplay -> immediate unmute for browsers that permit unmuting an active stream
-                            try {
-                                prebuiltIntroAudio.muted = true;
-                                const mp = prebuiltIntroAudio.play();
-                                if (mp && typeof mp.then === 'function') {
-                                    mp.then(() => {
-                                        setTimeout(() => {
-                                            try {
-                                                prebuiltIntroAudio.muted = false;
-                                                prebuiltIntroAudio.volume = 0.88;
-                                                if (!prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted) {
-                                                    introHtmlAudioStarted = true;
-                                                    dismissTapForAudioPrompt();
-                                                }
-                                            } catch (_) {}
-                                        }, 60);
-                                    }).catch(() => {});
-                                }
-                            } catch (_) {}
-                            if (IS_LOCAL_DEV_SERVER && !introHtmlAudioStarted && !nativeIntroAudioActive) {
-                                nativeIntroAudioActive = true;
-                                introHtmlAudioStarted = true;
-                                triggerNativeServerAudio('intro');
-                            }
-                        });
-                    }
-                }
-            } catch (_) {
-                if (IS_LOCAL_DEV_SERVER && !nativeIntroAudioActive) {
-                    nativeIntroAudioActive = true;
-                    introHtmlAudioStarted = true;
-                    triggerNativeServerAudio('intro');
-                }
-            }
-        }
+        // 1. Trigger HTML5 <audio> (assets/intro_theme.wav?v=36) automatically without ever muting or aborting an in-flight HTTPS download
+        tryStartIntroHtmlAudio(false);
 
         // 2. Layer live Web Audio 4-Era Console Evolution Fanfare when AudioContext is running (and native fallback isn't already playing)
         const ctx = ensureLofiAudioContext();

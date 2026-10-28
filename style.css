@@ -5105,67 +5105,9 @@ body.coming-soon-finale-active .diorama-bg-synth {
     }
 }
 
-/* ── Tap For Audio Prompt Pill (Appears when browser requires a tap, then disappears) ── */
+/* ── Tap For Audio Prompt Pill (Disabled — Audio is 100% Automatic) ── */
 .tap-for-audio-prompt {
-    position: fixed;
-    top: clamp(16px, 3.2vh, 28px);
-    left: 50%;
-    transform: translate3d(-50%, 0, 0);
-    z-index: 9999;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    padding: 9px 20px;
-    border-radius: 999px;
-    background: rgba(8, 12, 24, 0.88);
-    border: 1.5px solid rgba(0, 240, 255, 0.78);
-    box-shadow:
-        0 0 18px rgba(0, 240, 255, 0.38),
-        0 6px 20px rgba(0, 0, 0, 0.85),
-        inset 0 0 10px rgba(0, 240, 255, 0.18);
-    color: #ffffff;
-    font-family: 'Orbitron', 'Chakra Petch', sans-serif;
-    font-size: clamp(0.70rem, 2.2vw, 0.84rem);
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-.tap-for-audio-prompt.visible {
-    opacity: 1;
-    pointer-events: auto;
-    animation: tapAudioPulse 2s ease-in-out infinite;
-}
-
-.tap-for-audio-prompt.hidden {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    animation: none !important;
-}
-
-.tap-audio-icon {
-    font-size: 1.02em;
-    line-height: 1;
-}
-
-.tap-audio-text {
-    color: #e8fbff;
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.75);
-}
-
-@keyframes tapAudioPulse {
-    0%, 100% {
-        transform: translate3d(-50%, 0, 0) scale(1);
-    }
-    50% {
-        transform: translate3d(-50%, 0, 0) scale(1.05);
-    }
+    display: none !important;
 }
 
 
