@@ -1035,7 +1035,7 @@ function initGamerIntro() {
     }
 
     const tapForAudioPromptEl = document.getElementById('tap-for-audio-prompt');
-    let tapForAudioDismissed = true;
+    let tapForAudioDismissed = false;
     let lastAudioUnlockClickTime = 0;
     let introPlayPending = false;
     let synPlayPending = false;
@@ -1056,7 +1056,31 @@ function initGamerIntro() {
         }
     }
 
+    function updateTapForAudioPrompt() {
+        if (!tapForAudioPromptEl || tapForAudioDismissed) return;
+        if (isHtmlAudioTrulyPlayingUnmuted()) {
+            dismissTapForAudioPrompt();
+        } else {
+            tapForAudioPromptEl.classList.add('visible');
+        }
+    }
+
+    if (tapForAudioPromptEl) {
+        tapForAudioPromptEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lastAudioUnlockClickTime = performance.now();
+            dismissTapForAudioPrompt();
+            unlockAudioOnce(e);
+        });
+    }
+
+    // Show "TAP FOR AUDIO" if unmuted autoplay has not started within 350ms, and dismiss automatically the instant audio plays or user taps
+    setTimeout(updateTapForAudioPrompt, 350);
+
     function isAnyStageAudioPlayingUnmuted() {
+        if (isHtmlAudioTrulyPlayingUnmuted()) {
+            dismissTapForAudioPrompt();
+        }
         if (state === 'LOGO_ZOOM_OUT' && !inPrologue && !sequenceComplete) {
             return Boolean(
                 (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted) ||
@@ -1133,6 +1157,7 @@ function initGamerIntro() {
                     prebuiltIntroAudio.muted = false;
                     prebuiltIntroAudio.volume = 0.88;
                     introHtmlAudioStarted = true;
+                    dismissTapForAudioPrompt();
                     stopWebAudioBufferFallback();
                 }).catch((err) => {
                     introPlayPending = false;
@@ -1174,6 +1199,7 @@ function initGamerIntro() {
             if (p && typeof p.then === 'function') {
                 p.then(() => {
                     synPlayPending = false;
+                    dismissTapForAudioPrompt();
                     stopWebAudioBufferFallback();
                     if (nativeIntroAudioActive) {
                         nativeIntroAudioActive = false;
@@ -1186,7 +1212,7 @@ function initGamerIntro() {
                     if (targetEl === synJourneyAudioEl && prebuiltIntroAudio && (!err || err.name === 'NotAllowedError')) {
                         try {
                             prebuiltIntroAudio._playingSynFallback = true;
-                            const synSrc = synJourneyAudioEl.getAttribute('src') || 'assets/syn_journey.wav?v=92';
+                            const synSrc = synJourneyAudioEl.getAttribute('src') || 'assets/syn_journey.wav?v=93';
                             if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('syn_journey.wav') === -1) {
                                 prebuiltIntroAudio.src = synSrc;
                             }
@@ -1198,6 +1224,7 @@ function initGamerIntro() {
                             if (p2 && typeof p2.then === 'function') {
                                 p2.then(() => {
                                     synPlayPending = false;
+                                    dismissTapForAudioPrompt();
                                     stopWebAudioBufferFallback();
                                 }).catch(() => {
                                     synPlayPending = false;
@@ -1262,6 +1289,10 @@ function initGamerIntro() {
         const isDirectGesture = Boolean(
             e && (e.type === 'click' || e.type === 'touchstart' || e.type === 'touchend' || e.type === 'pointerdown' || e.type === 'mousedown' || e.type === 'keydown')
         );
+        if (isDirectGesture && !tapForAudioDismissed) {
+            lastAudioUnlockClickTime = performance.now();
+            dismissTapForAudioPrompt();
+        }
         if (e && (e.type === 'pointermove' || e.type === 'mousemove' || e.type === 'pointerover' || e.type === 'mouseover' || e.type === 'wheel' || e.type === 'deviceorientation' || e.type === 'devicemotion')) {
             const nowMs = performance.now();
             if (nowMs - lastHoverAudioUnlockAttempt < 120) return;
