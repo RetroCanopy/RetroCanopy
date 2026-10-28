@@ -1031,31 +1031,7 @@ function initGamerIntro() {
     }
 
     function preloadWebAudioDecodedBuffers() {
-        const ctx = ensureLofiAudioContext();
-        if (!ctx) return;
-        fetch('assets/intro_theme.wav?v=36')
-            .then((r) => r.arrayBuffer())
-            .then((ab) => ctx.decodeAudioData(ab))
-            .then((decoded) => {
-                decodedIntroBuffer = decoded;
-                if (ctx.state === 'running' && state === 'LOGO_ZOOM_OUT' && (!prebuiltIntroAudio || prebuiltIntroAudio.paused)) {
-                    const elSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
-                    startWebAudioBufferFallback('intro', elSec);
-                }
-            })
-            .catch(() => {});
-
-        fetch('assets/syn_journey.wav?v=89')
-            .then((r) => r.arrayBuffer())
-            .then((ab) => ctx.decodeAudioData(ab))
-            .then((decoded) => {
-                decodedSynJourneyBuffer = decoded;
-                if (ctx.state === 'running' && inPrologue && !sequenceComplete && (!synJourneyAudioEl || synJourneyAudioEl.paused)) {
-                    const elProSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
-                    startWebAudioBufferFallback('syn', elProSec);
-                }
-            })
-            .catch(() => {});
+        // Do not fetch multi-megabyte WAV files a second time at 0.0s so #intro-title-audio gets 100% mobile bandwidth priority
     }
 
     const tapForAudioPromptEl = document.getElementById('tap-for-audio-prompt');
@@ -1129,46 +1105,24 @@ function initGamerIntro() {
     }
 
     function primeHtmlAudioElementsOnGesture() {
+        // IMPORTANT FOR MOBILE: Never call .play() on secondary <audio> elements while #intro-title-audio is playing,
+        // because Android Chrome and iOS Safari only allow 1 active HTMLAudioElement session at a time and will pause #intro-title-audio!
         if (cupBoomAudioEl) {
             try {
                 cupBoomAudioEl.muted = false;
                 cupBoomAudioEl.volume = 0.82;
             } catch (_) {}
         }
-        if (synJourneyAudioEl && !synPrimedForAutoplay && !inPrologue && synJourneyAudioEl.paused) {
+        if (synJourneyAudioEl) {
             try {
-                synJourneyAudioEl.muted = true;
-                synJourneyAudioEl.volume = 0;
-                const p = synJourneyAudioEl.play();
-                if (p && typeof p.then === 'function') {
-                    p.then(() => {
-                        synPrimedForAutoplay = true;
-                        if (!inPrologue) {
-                            synJourneyAudioEl.pause();
-                            synJourneyAudioEl.currentTime = 0;
-                        }
-                        synJourneyAudioEl.muted = false;
-                        synJourneyAudioEl.volume = 0.95;
-                    }).catch(() => {});
-                }
+                synJourneyAudioEl.muted = false;
+                synJourneyAudioEl.volume = 0.95;
             } catch (_) {}
         }
-        if (lofiLoopAudioEl && !lofiPrimedForAutoplay && !lofiStarted && lofiLoopAudioEl.paused) {
+        if (lofiLoopAudioEl) {
             try {
-                lofiLoopAudioEl.muted = true;
-                lofiLoopAudioEl.volume = 0;
-                const p = lofiLoopAudioEl.play();
-                if (p && typeof p.then === 'function') {
-                    p.then(() => {
-                        lofiPrimedForAutoplay = true;
-                        if (!lofiStarted && !inPrologue) {
-                            lofiLoopAudioEl.pause();
-                            lofiLoopAudioEl.currentTime = 0;
-                        }
-                        lofiLoopAudioEl.muted = lofiMuted;
-                        lofiLoopAudioEl.volume = lofiMuted ? 0 : 0.16;
-                    }).catch(() => {});
-                }
+                lofiLoopAudioEl.muted = lofiMuted;
+                lofiLoopAudioEl.volume = lofiMuted ? 0 : 0.16;
             } catch (_) {}
         }
     }
@@ -1228,25 +1182,47 @@ function initGamerIntro() {
             lastHoverAudioUnlockAttempt = nowMs;
         }
         primeHtmlAudioElementsOnGesture();
-        if (inPrologue && !sequenceComplete && synJourneyAudioEl && synJourneyAudioEl.paused) {
-            try {
-                const elapsedPrologueSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
-                synJourneyAudioEl.muted = false;
-                synJourneyAudioEl.volume = 0.95;
-                if (Math.abs(synJourneyAudioEl.currentTime - elapsedPrologueSec) > 0.35) {
-                    try { synJourneyAudioEl.currentTime = elapsedPrologueSec; } catch (_) {}
-                }
-                const p = synJourneyAudioEl.play();
-                if (p && typeof p.then === 'function') {
-                    p.then(() => {
-                        stopWebAudioBufferFallback();
-                        if (nativeIntroAudioActive) {
-                            nativeIntroAudioActive = false;
-                            triggerNativeServerAudio('stop');
-                        }
-                    }).catch(() => {});
-                }
-            } catch (_) {}
+        if (inPrologue && !sequenceComplete) {
+            const synAlreadyPlaying = (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted) ||
+                (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingSynFallback);
+            if (!synAlreadyPlaying && synJourneyAudioEl && synJourneyAudioEl.paused) {
+                try {
+                    const elapsedPrologueSec = Math.max(0, (performance.now() - holoJourneyStartPerfNow) / 1000);
+                    synJourneyAudioEl.muted = false;
+                    synJourneyAudioEl.volume = 0.95;
+                    if (Math.abs(synJourneyAudioEl.currentTime - elapsedPrologueSec) > 0.35) {
+                        try { synJourneyAudioEl.currentTime = elapsedPrologueSec; } catch (_) {}
+                    }
+                    const p = synJourneyAudioEl.play();
+                    if (p && typeof p.then === 'function') {
+                        p.then(() => {
+                            stopWebAudioBufferFallback();
+                            dismissTapForAudioPrompt();
+                            if (nativeIntroAudioActive) {
+                                nativeIntroAudioActive = false;
+                                triggerNativeServerAudio('stop');
+                            }
+                        }).catch(() => {
+                            if (prebuiltIntroAudio) {
+                                try {
+                                    prebuiltIntroAudio._playingSynFallback = true;
+                                    if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('syn_journey.wav') === -1) {
+                                        prebuiltIntroAudio.src = synJourneyAudioEl.getAttribute('src') || 'assets/syn_journey.wav?v=91';
+                                    }
+                                    prebuiltIntroAudio.muted = false;
+                                    prebuiltIntroAudio.volume = 0.95;
+                                    if (Math.abs(prebuiltIntroAudio.currentTime - elapsedPrologueSec) > 0.35) {
+                                        try { prebuiltIntroAudio.currentTime = elapsedPrologueSec; } catch (_) {}
+                                    }
+                                    prebuiltIntroAudio.play().then(() => {
+                                        dismissTapForAudioPrompt();
+                                    }).catch(() => {});
+                                } catch (_) {}
+                            }
+                        });
+                    }
+                } catch (_) {}
+            }
         }
         if (sequenceComplete && !lofiMuted && lofiFallbackAudio && lofiFallbackAudio.paused) {
             try {
@@ -4114,12 +4090,28 @@ function initGamerIntro() {
                             prebuiltIntroAudio.muted = false;
                             prebuiltIntroAudio.volume = 0.88;
                             introHtmlAudioStarted = true;
+                            dismissTapForAudioPrompt();
                             stopWebAudioBufferFallback();
-                            primeHtmlAudioElementsOnGesture();
                         }).catch(() => {
-                            // Browser blocked autoplay on reload -> try Web Audio buffer fallback or native Windows Audio bridge on local dev server
-                            const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
-                            startWebAudioBufferFallback('intro', elapsedSec);
+                            // Try muted autoplay -> immediate unmute for browsers that permit unmuting an active stream
+                            try {
+                                prebuiltIntroAudio.muted = true;
+                                const mp = prebuiltIntroAudio.play();
+                                if (mp && typeof mp.then === 'function') {
+                                    mp.then(() => {
+                                        setTimeout(() => {
+                                            try {
+                                                prebuiltIntroAudio.muted = false;
+                                                prebuiltIntroAudio.volume = 0.88;
+                                                if (!prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted) {
+                                                    introHtmlAudioStarted = true;
+                                                    dismissTapForAudioPrompt();
+                                                }
+                                            } catch (_) {}
+                                        }, 60);
+                                    }).catch(() => {});
+                                }
+                            } catch (_) {}
                             if (IS_LOCAL_DEV_SERVER && !introHtmlAudioStarted && !nativeIntroAudioActive) {
                                 nativeIntroAudioActive = true;
                                 introHtmlAudioStarted = true;
