@@ -587,6 +587,46 @@ function initGamerIntro() {
             actor.width = baseWidths[id];
         });
 
+        // Mobile 2x2 Staggered Arcade Stage Formation (when all 4 crew are on stage after Synth's intro)
+        if (isMobile && !reserveLeftForSyn && activeOrder.length === 4) {
+            const upperScale = vh < 720 ? 0.50 : 0.54;
+            const lowerScale = vh < 720 ? 0.54 : 0.58;
+            const upperRowY = -Math.round(Math.max(255, Math.min(286, vh * 0.335)));
+            const lowerRowY = -6;
+            const leftColCenterX = Math.round(vw * 0.25);
+            const rightColCenterX = Math.round(vw * 0.75);
+
+            const mobileSlots = {
+                chloe: { centerX: leftColCenterX,  targetY: upperRowY, scale: upperScale, zIndex: 996 },
+                akari: { centerX: rightColCenterX, targetY: upperRowY, scale: upperScale, zIndex: 997 },
+                cab84: { centerX: leftColCenterX,  targetY: lowerRowY, scale: lowerScale, zIndex: 1005 },
+                grizz: { centerX: rightColCenterX, targetY: lowerRowY, scale: lowerScale, zIndex: 1006 }
+            };
+
+            activeOrder.forEach((id) => {
+                const actor = crewActors[id];
+                if (!actor) return;
+                const slot = mobileSlots[id] || { centerX: Math.round(vw * 0.5), targetY: lowerRowY, scale: lowerScale, zIndex: 1000 };
+                const baseW = baseWidths[id] || 185;
+                actor.targetX = Math.round(slot.centerX - baseW * 0.5);
+                actor.targetY = slot.targetY;
+                actor.targetScale = slot.scale;
+                actor.targetZIndex = slot.zIndex;
+                actor.width = Math.round(baseW * slot.scale);
+                if (actor.el) {
+                    actor.el.style.transformOrigin = 'bottom center';
+                    actor.el.style.zIndex = String(actor.targetZIndex);
+                }
+            });
+
+            if (excludeJames && crewActors.james) {
+                crewActors.james.targetX = vw + 220;
+                crewActors.james.targetY = 0;
+                crewActors.james.targetScale = 1;
+            }
+            return;
+        }
+
         // Reserve left space only while Synth is actively introducing the crew on the left
         const leftZoneStart = reserveLeftForSyn
             ? (isMobile ? Math.round(vw * 0.16) : Math.max(230, Math.min(355, Math.round(vw * 0.21))))
@@ -658,7 +698,10 @@ function initGamerIntro() {
         const vw = window.innerWidth;
         const vh = window.innerHeight;
         const bubbleW = Math.min(vw * 0.9, 430);
-        const actorCenterX = actor.targetX + actor.width / 2;
+        const rect = actor.el ? actor.el.getBoundingClientRect() : null;
+        const actorCenterX = (rect && rect.width > 0)
+            ? (rect.left + rect.width / 2)
+            : (actor.targetX + (actor.el ? actor.el.offsetWidth : actor.width) / 2);
 
         // Clamp bubble horizontal center so it never clips off left/right screen edge
         const minCenter = bubbleW / 2 + 12;
@@ -668,15 +711,16 @@ function initGamerIntro() {
         dialogue.style.left = `${clampedCenter.toFixed(1)}px`;
 
         // Dynamically set bottom above the speaking character's height, while guaranteeing it never covers RETROCANOPY!
-        const actorH = actor.el.offsetHeight || 240;
+        const actorVisualBottomFromTop = (rect && rect.height > 0) ? rect.top : (vh - (actor.el ? actor.el.offsetHeight : 240));
+        const actorH = Math.max(160, vh - actorVisualBottomFromTop);
         const bubbleH = dialogue.offsetHeight || 115;
         let maxAllowedBottom = vh - 165;
         if (brandNameEl) {
             const brandRect = brandNameEl.getBoundingClientRect();
-            const safeTopY = brandRect.bottom + 24;
+            const safeTopY = brandRect.bottom + 16;
             maxAllowedBottom = Math.max(195, vh - safeTopY - bubbleH);
         }
-        const targetBottom = Math.max(195, Math.min(maxAllowedBottom, actorH + 10));
+        const targetBottom = Math.max(195, Math.min(maxAllowedBottom, actorH + 8));
         dialogue.style.bottom = `${Math.round(targetBottom)}px`;
 
         // Point speech bubble tail directly at the speaking character
@@ -698,7 +742,17 @@ function initGamerIntro() {
 
     function shiftLogoOutOfWay() {
         if (!heroContainer) return;
+        const vw = window.innerWidth;
         const vh = window.innerHeight;
+        if (vw <= 768) {
+            // On mobile, push the Sun-Tree Logo & RETROCANOPY wordmark cleanly below the top utility bar (Music + Owner Hub / Sign In)
+            const mobileShiftY = vh < 700 ? 32 : 42;
+            const mobileScale = vh < 700 ? 0.64 : 0.70;
+            heroContainer.style.setProperty('--logo-shift-y', `${mobileShiftY}px`);
+            heroContainer.style.setProperty('--logo-shift-scale', `${mobileScale}`);
+            heroContainer.classList.add('shifted-up');
+            return;
+        }
         const shiftPx = Math.max(-28, Math.min(-10, -Math.round(vh * 0.02)));
         const scaleVal = vh < 760 ? 0.76 : 0.82;
         heroContainer.style.setProperty('--logo-shift-y', `${shiftPx}px`);

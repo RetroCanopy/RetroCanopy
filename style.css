@@ -4558,9 +4558,11 @@ body.syn-in-background .diorama-bg-synth {
 
 @media (max-width: 768px) {
     .diorama-bg-synth {
-        left: 8px;
-        bottom: clamp(235px, 34vh, 310px);
-        width: clamp(82px, 19vw, 118px);
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        bottom: clamp(185px, 23vh, 225px) !important;
+        width: clamp(68px, 16vw, 86px) !important;
+        z-index: 992 !important;
     }
 }
 
@@ -5078,12 +5080,19 @@ body.coming-soon-finale-active .diorama-bg-synth {
 
     .kh-music-widget {
         top: 10px;
-        right: 10px;
+        left: 10px;
+        right: auto;
     }
 
     .lofi-music-btn {
-        padding: 6px 11px;
-        font-size: 0.62rem;
+        padding: 5px 10px;
+        font-size: 0.56rem;
+        letter-spacing: 0.08em;
+        gap: 6px;
+    }
+
+    .hero-container.shifted-up {
+        transform: translate3d(0, var(--logo-shift-y, 42px), 0) scale(var(--logo-shift-scale, 0.70));
     }
 
     .skip-intro-btn {

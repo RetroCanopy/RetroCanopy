@@ -105,6 +105,248 @@
       }
     }
 
+    /* Mobile-Only Top & Bottom Quick-Action Bars (Hidden on Desktop PC > 768px) */
+    .mobile-arcade-top-bar,
+    .mobile-arcade-bottom-dock,
+    .slugger-mobile-touch-hint {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .concept5-stage-canvas {
+        top: 46%;
+        width: 156vw;
+        height: calc(156vw * 768 / 1376);
+      }
+      .plaque-sub-line {
+        font-size: clamp(0.42rem, 1.75vw, 0.56rem) !important;
+        letter-spacing: 0.02em !important;
+        left: 4% !important;
+        right: 4% !important;
+      }
+      .mobile-arcade-top-bar {
+        position: fixed;
+        top: 12px;
+        left: 10px;
+        right: 10px;
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .mobile-arcade-pill {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 9px 8px;
+        border-radius: 999px;
+        background: rgba(10, 14, 26, 0.92);
+        border: 1.5px solid rgba(0, 240, 255, 0.6);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.85), 0 0 12px rgba(0, 240, 255, 0.25);
+        color: #ffffff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.58rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+      }
+      .mobile-arcade-pill.gold-pill {
+        border-color: #d4af37;
+        color: #ffe8a3;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.85), 0 0 12px rgba(212, 175, 55, 0.3);
+      }
+      .mobile-arcade-bottom-dock {
+        position: fixed;
+        bottom: 16px;
+        left: 12px;
+        right: 12px;
+        z-index: 60;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .mobile-arcade-cta-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .mobile-arcade-cta-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        padding: 12px 10px;
+        border-radius: 14px;
+        border: 2px solid #00f0ff;
+        background: linear-gradient(180deg, rgba(16, 24, 42, 0.95) 0%, rgba(8, 11, 22, 0.98) 100%);
+        box-shadow:
+          inset 0 0 0 1.5px rgba(212, 175, 55, 0.65),
+          0 10px 26px rgba(0, 0, 0, 0.92),
+          0 0 18px rgba(0, 240, 255, 0.35);
+        color: #ffffff;
+        font-family: 'Orbitron', sans-serif;
+        cursor: pointer;
+        text-align: center;
+      }
+      .mobile-arcade-cta-btn.ticket-cta {
+        border-color: #ffd700;
+        box-shadow:
+          inset 0 0 0 1.5px rgba(0, 240, 255, 0.45),
+          0 10px 26px rgba(0, 0, 0, 0.92),
+          0 0 18px rgba(255, 215, 0, 0.35);
+      }
+      .mobile-cta-title {
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        color: #00f0ff;
+      }
+      .mobile-arcade-cta-btn.ticket-cta .mobile-cta-title {
+        color: #ffd700;
+      }
+      .mobile-cta-sub {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      /* Mobile Modal & Shinjuku Slugger Playfield Responsiveness */
+      .tier6-lightbox-backdrop,
+      #ticketCounterBackdrop {
+        align-items: flex-start !important;
+        padding: 18px 8px !important;
+      }
+      .tier6-lightbox-modal,
+      .ticket-counter-modal-card {
+        width: 96vw !important;
+        padding: 10px !important;
+        margin: 6px auto 20px !important;
+        border-radius: 16px !important;
+      }
+      .tier6-vault-inner-panel,
+      .tc-left-col {
+        padding: 12px 10px !important;
+        gap: 12px !important;
+      }
+      .tc-wallet-header-line {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        font-size: 0.68rem !important;
+        white-space: normal !important;
+      }
+      .tc-wallet-header-line > div {
+        white-space: normal !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+      .arcade-game-slot-frame {
+        height: 170px !important;
+        margin-bottom: 10px !important;
+      }
+      #gamesSelectionBackdrop.playing-active {
+        align-items: center !important;
+        padding: 8px 4px !important;
+      }
+      #gamesSelectionBackdrop.playing-active .tier6-lightbox-modal {
+        width: 98vw !important;
+        padding: 6px !important;
+        margin: auto !important;
+      }
+      #gamesSelectionBackdrop.playing-active #gamesActivePlayView {
+        padding: 6px !important;
+        gap: 8px !important;
+      }
+      /* Portrait-Zoomed Mobile Pinball Viewport: Crops side buildings so the Pinball Table fills the phone screen 1.68x larger with 1:1 round physics! */
+      #gamesSelectionBackdrop.playing-active .slugger-play-stage-wrap {
+        aspect-ratio: 100 / 95 !important;
+        width: 100% !important;
+        max-height: 60vh !important;
+        border-radius: 12px !important;
+      }
+      #gamesSelectionBackdrop.playing-active #shinjukuSluggerCanvas {
+        width: 168% !important;
+        height: 100% !important;
+        max-width: none !important;
+        margin-left: -34% !important;
+        touch-action: none !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -webkit-touch-callout: none !important;
+      }
+      #sluggerControlsHint {
+        display: none !important;
+      }
+      .slugger-mobile-touch-hint {
+        display: block !important;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.54rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: #7df9ff;
+        text-align: center;
+        padding: 2px 4px;
+      }
+      .slugger-kb-tag {
+        display: none !important;
+      }
+      #gamesActivePlayView .tier6-vault-footer-bar {
+        padding: 8px !important;
+        gap: 6px !important;
+      }
+      #gamesActivePlayView .slugger-controls-grid {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1.18fr 1fr !important;
+        gap: 7px !important;
+      }
+      #gamesActivePlayView .slugger-flap-btn {
+        width: 100% !important;
+        min-height: 60px !important;
+        padding: 10px 6px !important;
+        font-size: 0.66rem !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.06em !important;
+        border-radius: 12px !important;
+        justify-content: center !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        touch-action: none !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -webkit-touch-callout: none !important;
+      }
+      #gamesActivePlayView .slugger-flap-btn:active {
+        transform: scale(0.96) !important;
+        filter: brightness(1.28) !important;
+      }
+      #gamesActivePlayView .slugger-util-row {
+        grid-column: 1 / -1 !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 7px !important;
+        width: 100% !important;
+      }
+      #gamesActivePlayView .slugger-util-btn {
+        width: 100% !important;
+        min-height: 38px !important;
+        padding: 7px 8px !important;
+        font-size: 0.58rem !important;
+        justify-content: center !important;
+        display: inline-flex !important;
+        align-items: center !important;
+      }
+    }
+
     /* ── 5 EXACT PHOTOREALISTIC PLAQUE HOTSPOTS LOCKED TO VARIATION #1 PHOTO COORDINATES ── */
     .opt5-top-left-bar {
       position: absolute;
@@ -2336,6 +2578,27 @@
       <div class="foreground-counter-hotzone" onclick="window.__openTicketCounterModal()" title="Click the Ticket Counter Desk to Open Ticket Exchange &amp; Stage 6 Prize Vault"></div>
     </div>
 
+    <!-- MOBILE-ONLY TOP & BOTTOM QUICK-NAVIGATION DOCKS (HIDDEN ON PC > 768px) -->
+    <div class="mobile-arcade-top-bar" aria-label="Mobile Arcade Quick Navigation">
+      <a href="index.html" class="mobile-arcade-pill">&#127968; HOME</a>
+      <a href="hat_preview.html" class="mobile-arcade-pill gold-pill">&#128717;&#65039; STORE</a>
+      <button type="button" class="mobile-arcade-pill" onclick="window.__openLeaderboardModal()">&#127942; RANKS</button>
+      <button type="button" class="mobile-arcade-pill" onclick="document.getElementById('btnToggleSfx') && document.getElementById('btnToggleSfx').click()">&#128266; AUDIO</button>
+    </div>
+
+    <div class="mobile-arcade-bottom-dock" aria-label="Mobile Arcade Actions">
+      <div class="mobile-arcade-cta-row">
+        <button type="button" class="mobile-arcade-cta-btn" onclick="window.__openGamesSelectionModal()">
+          <span class="mobile-cta-title">&#128377;&#65039; PLAY GAMES</span>
+          <span class="mobile-cta-sub">Shinjuku Slugger '84</span>
+        </button>
+        <button type="button" class="mobile-arcade-cta-btn ticket-cta" onclick="window.__openTicketCounterModal()">
+          <span class="mobile-cta-title">&#127915; TICKET COUNTER</span>
+          <span class="mobile-cta-sub">Redeem Store Prizes</span>
+        </button>
+      </div>
+    </div>
+
     <div class="flight-unlock-toast" id="flightUnlockToast" style="top:96px;z-index:1200;">&#127915; +1 GOLDEN TICKET DISPENSED!</div>
 
   </main>
@@ -2490,22 +2753,27 @@
           <div id="sluggerControlsHint" style="font-size:0.76rem;color:rgba(220,238,255,0.92);">
             <strong>REAL PINBALL PHYSICS:</strong> Ball launches from <strong style="color:#00f0ff;">1 of 3 Pitch Holes</strong>! Use <kbd style="background:rgba(0,240,255,0.16);border:1px solid #00f0ff;padding:1px 6px;border-radius:4px;color:#00f0ff;font-family:'Orbitron',sans-serif;font-size:0.62rem;">&larr; / A</kbd> &amp; <kbd style="background:rgba(0,240,255,0.16);border:1px solid #00f0ff;padding:1px 6px;border-radius:4px;color:#00f0ff;font-family:'Orbitron',sans-serif;font-size:0.62rem;">&rarr; / D</kbd> (or <kbd style="background:rgba(0,240,255,0.16);border:1px solid #00f0ff;padding:1px 6px;border-radius:4px;color:#00f0ff;font-family:'Orbitron',sans-serif;font-size:0.62rem;">SPACE</kbd> / <strong>Click</strong>) to flip or hold the <strong>Pinball Flappers</strong> &mdash; board spaces shift every swing!
           </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;">
-            <button type="button" class="vitrine-side-toggle-pill" onpointerdown="window.__setFlipperHold('LEFT', true)" onpointerup="window.__setFlipperHold('LEFT', false)" onpointerleave="window.__setFlipperHold('LEFT', false)" style="position:static;padding:8px 12px;font-size:0.6rem;">
-              &#9664; LEFT FLAP [A]
+          <div class="slugger-mobile-touch-hint">
+            &#128241; TAP OR HOLD PADDLES (OR TAP BOARD) TO FLIP &bull; 10 PTS = 1 &#127915;
+          </div>
+          <div class="slugger-controls-grid" style="display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;">
+            <button type="button" class="vitrine-side-toggle-pill slugger-flap-btn" oncontextmenu="return false;" onpointerdown="event.preventDefault(); window.__setFlipperHold('LEFT', true)" onpointerup="window.__setFlipperHold('LEFT', false)" onpointercancel="window.__setFlipperHold('LEFT', false)" onpointerleave="window.__setFlipperHold('LEFT', false)" style="position:static;padding:8px 12px;font-size:0.6rem;">
+              &#9664; LEFT FLAP<span class="slugger-kb-tag">&nbsp;[A]</span>
             </button>
-            <button type="button" class="tc-stage6-bottom-pill" onpointerdown="window.__setFlipperHold('BOTH', true)" onpointerup="window.__setFlipperHold('BOTH', false)" onpointerleave="window.__setFlipperHold('BOTH', false)" style="width:auto;padding:8px 16px;font-size:0.64rem;">
-              &#128377;&#65039; FLIP BOTH [SPACE]
+            <button type="button" class="tc-stage6-bottom-pill slugger-flap-btn" oncontextmenu="return false;" onpointerdown="event.preventDefault(); window.__setFlipperHold('BOTH', true)" onpointerup="window.__setFlipperHold('BOTH', false)" onpointercancel="window.__setFlipperHold('BOTH', false)" onpointerleave="window.__setFlipperHold('BOTH', false)" style="width:auto;padding:8px 16px;font-size:0.64rem;">
+              &#128377;&#65039; FLIP BOTH<span class="slugger-kb-tag">&nbsp;[SPACE]</span>
             </button>
-            <button type="button" class="vitrine-side-toggle-pill" onpointerdown="window.__setFlipperHold('RIGHT', true)" onpointerup="window.__setFlipperHold('RIGHT', false)" onpointerleave="window.__setFlipperHold('RIGHT', false)" style="position:static;padding:8px 12px;font-size:0.6rem;">
-              RIGHT FLAP [D] &#9654;
+            <button type="button" class="vitrine-side-toggle-pill slugger-flap-btn" oncontextmenu="return false;" onpointerdown="event.preventDefault(); window.__setFlipperHold('RIGHT', true)" onpointerup="window.__setFlipperHold('RIGHT', false)" onpointercancel="window.__setFlipperHold('RIGHT', false)" onpointerleave="window.__setFlipperHold('RIGHT', false)" style="position:static;padding:8px 12px;font-size:0.6rem;">
+              RIGHT FLAP<span class="slugger-kb-tag">&nbsp;[D]</span> &#9654;
             </button>
-            <button type="button" class="vitrine-side-toggle-pill" onclick="window.__resetShinjukuSlugger()" style="position:static;padding:8px 12px;font-size:0.6rem;">
-              &#8635; NEW GAME
-            </button>
-            <button type="button" class="vitrine-side-toggle-pill" onclick="window.__returnToGamesSelectGrid()" style="position:static;padding:8px 12px;font-size:0.6rem;">
-              &larr; GAMES DECK
-            </button>
+            <div class="slugger-util-row" style="display:contents;">
+              <button type="button" class="vitrine-side-toggle-pill slugger-util-btn" onclick="window.__resetShinjukuSlugger()" style="position:static;padding:8px 12px;font-size:0.6rem;">
+                &#8635; NEW GAME
+              </button>
+              <button type="button" class="vitrine-side-toggle-pill slugger-util-btn" onclick="window.__returnToGamesSelectGrid()" style="position:static;padding:8px 12px;font-size:0.6rem;">
+                &larr; GAMES DECK
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -4844,23 +5112,47 @@
       };
 
       if (sluggerCanvas) {
+        const activeCanvasPointers = new Map();
+        sluggerCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
         sluggerCanvas.addEventListener('pointerdown', (e) => {
           e.preventDefault();
-          const rect = sluggerCanvas.getBoundingClientRect();
+          const wrapEl = sluggerCanvas.parentElement || sluggerCanvas;
+          const rect = wrapEl.getBoundingClientRect();
           const relX = (e.clientX - rect.left) / Math.max(1, rect.width);
+          let side = 'BOTH';
           if (relX < 0.38) {
-            window.__setFlipperHold('LEFT', true);
+            side = 'LEFT';
           } else if (relX > 0.62) {
-            window.__setFlipperHold('RIGHT', true);
-          } else {
-            window.__setFlipperHold('BOTH', true);
+            side = 'RIGHT';
           }
+          activeCanvasPointers.set(e.pointerId, side);
+          window.__setFlipperHold(side, true);
         });
-        window.addEventListener('pointerup', () => {
+        const releaseCanvasPointer = (e) => {
           if (!sluggerActive) return;
-          leftFlipper.held = false;
-          rightFlipper.held = false;
-        });
+          if (e && activeCanvasPointers.has(e.pointerId)) {
+            const side = activeCanvasPointers.get(e.pointerId);
+            activeCanvasPointers.delete(e.pointerId);
+            let stillLeft = false;
+            let stillRight = false;
+            activeCanvasPointers.forEach((s) => {
+              if (s === 'LEFT' || s === 'BOTH') stillLeft = true;
+              if (s === 'RIGHT' || s === 'BOTH') stillRight = true;
+            });
+            if ((side === 'LEFT' || side === 'BOTH') && !stillLeft) {
+              leftFlipper.held = false;
+            }
+            if ((side === 'RIGHT' || side === 'BOTH') && !stillRight) {
+              rightFlipper.held = false;
+            }
+          } else {
+            activeCanvasPointers.clear();
+            leftFlipper.held = false;
+            rightFlipper.held = false;
+          }
+        };
+        window.addEventListener('pointerup', releaseCanvasPointer);
+        window.addEventListener('pointercancel', releaseCanvasPointer);
       }
 
       window.addEventListener('keydown', (e) => {
@@ -6378,54 +6670,71 @@
       function drawLiveHudOverlay() {
         if (!sCtx) return;
         sCtx.save();
+        const isMobileHud = window.innerWidth <= 768;
 
-        // 1. Left Scoreboard Wing (x = 150..628, y = 10..98): ROUND POINTS (1 Runner Home = 1 Point)
-        const leftGrad = sCtx.createLinearGradient(150, 10, 150, 98);
+        // 1. Left Scoreboard Wing: ROUND POINTS (1 Runner Home = 1 Point)
+        const leftBoxX = 150;
+        const leftBoxW = isMobileHud ? 505 : 478;
+        const leftTextX = isMobileHud ? 522 : 389;
+        const leftGrad = sCtx.createLinearGradient(leftBoxX, 10, leftBoxX, 98);
         leftGrad.addColorStop(0, '#070b18');
         leftGrad.addColorStop(0.55, '#0d091c');
         leftGrad.addColorStop(1, '#160924');
         sCtx.fillStyle = leftGrad;
         sCtx.beginPath();
-        sCtx.roundRect(150, 10, 478, 88, 12);
+        sCtx.roundRect(leftBoxX, 10, leftBoxW, 88, 12);
         sCtx.fill();
+        if (isMobileHud) {
+          sCtx.strokeStyle = 'rgba(0, 240, 255, 0.55)';
+          sCtx.lineWidth = 2;
+          sCtx.stroke();
+        }
 
-        sCtx.font = '900 17px Orbitron, sans-serif';
+        sCtx.font = isMobileHud ? '900 13.5px Orbitron, sans-serif' : '900 17px Orbitron, sans-serif';
         sCtx.textAlign = 'center';
         sCtx.textBaseline = 'middle';
         sCtx.fillStyle = '#6cf6ff';
         sCtx.shadowColor = 'rgba(0, 240, 255, 0.75)';
         sCtx.shadowBlur = 10;
-        sCtx.fillText('ROUND POINTS (HOME = +1 PT)', 389, 29);
+        sCtx.fillText(isMobileHud ? 'POINTS (HOME = +1)' : 'ROUND POINTS (HOME = +1 PT)', leftTextX, 29);
 
-        sCtx.font = '900 38px Orbitron, sans-serif';
+        sCtx.font = isMobileHud ? '900 35px Orbitron, sans-serif' : '900 38px Orbitron, sans-serif';
         sCtx.fillStyle = '#ffd700';
         sCtx.shadowColor = 'rgba(255, 215, 0, 0.85)';
         sCtx.shadowBlur = 14;
-        sCtx.fillText(`${slugger.roundPoints.toLocaleString()} PTS`, 389, 68);
+        sCtx.fillText(`${slugger.roundPoints.toLocaleString()} PTS`, leftTextX, 68);
 
-        // 2. Right Scoreboard Wing (x = 1292..1770, y = 10..98): ROUND TICKETS (10 Points = 1 Ticket)
-        const rightGrad = sCtx.createLinearGradient(1292, 10, 1292, 98);
+        // 2. Right Scoreboard Wing: ROUND TICKETS (10 Points = 1 Ticket)
+        const rightBoxX = isMobileHud ? 1265 : 1292;
+        const rightBoxW = isMobileHud ? 505 : 478;
+        const rightTextX = isMobileHud ? 1398 : 1531;
+        const rightGrad = sCtx.createLinearGradient(rightBoxX, 10, rightBoxX, 98);
         rightGrad.addColorStop(0, '#070b18');
         rightGrad.addColorStop(0.55, '#0d091c');
         rightGrad.addColorStop(1, '#160924');
         sCtx.fillStyle = rightGrad;
         sCtx.beginPath();
-        sCtx.roundRect(1292, 10, 478, 88, 12);
+        sCtx.roundRect(rightBoxX, 10, rightBoxW, 88, 12);
         sCtx.fill();
+        if (isMobileHud) {
+          sCtx.strokeStyle = 'rgba(255, 45, 149, 0.55)';
+          sCtx.lineWidth = 2;
+          sCtx.stroke();
+        }
 
-        sCtx.font = '900 17px Orbitron, sans-serif';
+        sCtx.font = isMobileHud ? '900 13.5px Orbitron, sans-serif' : '900 17px Orbitron, sans-serif';
         sCtx.textAlign = 'center';
         sCtx.textBaseline = 'middle';
         sCtx.fillStyle = '#6cf6ff';
         sCtx.shadowColor = 'rgba(0, 240, 255, 0.75)';
         sCtx.shadowBlur = 10;
-        sCtx.fillText('ROUND TICKETS (10 PTS = 1 TIX)', 1531, 29);
+        sCtx.fillText(isMobileHud ? 'TICKETS (10P = 1T)' : 'ROUND TICKETS (10 PTS = 1 TIX)', rightTextX, 29);
 
-        sCtx.font = '900 38px Orbitron, sans-serif';
+        sCtx.font = isMobileHud ? '900 35px Orbitron, sans-serif' : '900 38px Orbitron, sans-serif';
         sCtx.fillStyle = '#ff3898';
         sCtx.shadowColor = 'rgba(255, 45, 149, 0.90)';
         sCtx.shadowBlur = 14;
-        sCtx.fillText(`${slugger.roundTickets.toLocaleString()} TIX`, 1531, 68);
+        sCtx.fillText(`${slugger.roundTickets.toLocaleString()} TIX`, rightTextX, 68);
 
         // 3. Dynamic Lives Neon Arcade Badge Centered Below the Top Title Banner (caps at 4 Lives max)
         const maxOrbs = Math.min(4, Math.max(3, slugger.maxLives));
@@ -6518,7 +6827,13 @@
         sCtx.fillStyle = '#00f0ff';
         sCtx.shadowColor = '#00f0ff';
         sCtx.shadowBlur = 10;
-        sCtx.fillText('ALL 3 LIVES USED • PRESS SPACE / FLIP OR CLICK TO PLAY AGAIN!', 960, 612);
+        sCtx.fillText(
+          window.innerWidth <= 768
+            ? 'ALL 3 LIVES USED • TAP ANY FLIPPER OR BOARD TO PLAY AGAIN!'
+            : 'ALL 3 LIVES USED • PRESS SPACE / FLIP OR CLICK TO PLAY AGAIN!',
+          960,
+          612
+        );
         sCtx.restore();
       }
 

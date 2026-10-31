@@ -993,6 +993,49 @@
         line-height: 1.5;
         text-align: left;
       }
+      @media (max-width: 768px) {
+        .rc-home-auth-bar {
+          top: 10px;
+          right: 10px;
+          gap: 6px;
+        }
+        .rc-home-signin-btn, .rc-home-admin-btn {
+          font-size: 0.56rem;
+          padding: 6px 10px;
+          letter-spacing: 0.06em;
+          gap: 5px;
+        }
+        .skip-intro-btn {
+          top: 44px !important;
+          right: 10px !important;
+          bottom: auto !important;
+          padding: 5px 10px !important;
+          font-size: 0.56rem !important;
+        }
+        .rc-clean-auth-card {
+          padding: 24px 18px;
+          border-radius: 20px;
+        }
+        .rc-clean-title {
+          font-size: 1.05rem;
+        }
+        .rc-clean-subtitle {
+          font-size: 0.82rem;
+          margin-bottom: 16px;
+        }
+        .rc-clean-choice-btn {
+          padding: 13px 14px;
+          font-size: 0.74rem;
+        }
+        .rc-clean-choice-btn.admin {
+          font-size: 0.64rem;
+          padding: 11px 8px;
+        }
+        .rc-clean-input {
+          padding: 12px 14px;
+          font-size: 0.95rem;
+        }
+      }
     `;
     document.head.appendChild(styleEl);
 

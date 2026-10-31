@@ -297,6 +297,8 @@
 }
 
 .glide-arrow {
+  position: fixed !important;
+  z-index: 240 !important;
   top: 47% !important;
   transform: translateY(-50%) !important;
   width: 46px !important;
@@ -2523,6 +2525,270 @@ body.outfit-view-active .shop-chloe-dialogue {
   .rc-store-coupon-dock {
     right: 16px;
     top: 66px;
+  }
+}
+
+/* ==========================================================================
+   MOBILE PHONE RESPONSIVE FORMATTING (<= 768px) — ZERO OVERLAP SHOWROOM LAYOUT
+   Keeps Desktop PC (> 768px) 100% untouched while giving phones a clean native layout.
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* 1. Compact 2-Row Top Header & Scrollable Category Strip */
+  .site-header {
+    padding: 8px 10px !important;
+    gap: 6px !important;
+    background: linear-gradient(180deg, rgba(6, 5, 14, 0.92) 0%, rgba(6, 5, 14, 0.45) 82%, transparent 100%) !important;
+  }
+  .brand-link {
+    gap: 6px !important;
+  }
+  .nav-logo {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  .nav-wordmark {
+    font-size: 0.66rem !important;
+    letter-spacing: 0.08em !important;
+  }
+  .nav-right {
+    gap: 4px !important;
+  }
+  .rc-arcade-xp-pill,
+  .rc-coupon-vault-pill,
+  .cart-pill,
+  .nav-home-pill {
+    padding: 4px 8px !important;
+    font-size: 0.54rem !important;
+    letter-spacing: 0.03em !important;
+    gap: 3px !important;
+  }
+  .nav-center {
+    padding: 3px 6px !important;
+    gap: 2px !important;
+  }
+  .nav-center a {
+    padding: 5px 10px !important;
+    font-size: 0.68rem !important;
+  }
+
+  /* Hide duplicate floating coupon strip on mobile since Coupons button is in top bar */
+  .rc-store-coupon-dock {
+    display: none !important;
+  }
+
+  /* Move Shop Lofi Music Pill to top-right below header so it never collides with bottom dots */
+  .lofi-music-btn {
+    top: 86px !important;
+    right: 10px !important;
+    bottom: auto !important;
+    padding: 4px 9px !important;
+    font-size: 0.52rem !important;
+    letter-spacing: 0.08em !important;
+    gap: 5px !important;
+    z-index: 270 !important;
+  }
+
+  /* 2. Unobstructed Center Product Stage in Upper-Middle of Phone Screen */
+  .pair-stage,
+  .hoodie-pair-stage,
+  .hat-levitate-wrapper,
+  .mat-levitate-wrapper,
+  .item-levitate-wrapper,
+  .bag-levitate-wrapper {
+    margin: 0 auto 150px auto !important;
+  }
+  .hat-levitate-wrapper img,
+  .mat-levitate-wrapper img,
+  .item-levitate-wrapper img,
+  .bag-levitate-wrapper img {
+    max-width: 74vw !important;
+    max-height: 40vh !important;
+    object-fit: contain !important;
+  }
+  .pair-stage,
+  .hoodie-pair-stage {
+    gap: 12px !important;
+    max-width: 88vw !important;
+  }
+  .pair-stage .tee-img,
+  .pair-stage .item-img {
+    max-width: 40vw !important;
+    max-height: 36vh !important;
+  }
+  .pair-stage .hoodie-img,
+  .hoodie-pair-stage .hoodie-img {
+    width: 42vw !important;
+    max-width: 42vw !important;
+    max-height: 38vh !important;
+  }
+  .hoodie-pair-stage.solo-mode .hoodie-img {
+    width: 72vw !important;
+    max-width: 72vw !important;
+    max-height: 42vh !important;
+  }
+  .glide-arrow {
+    position: fixed !important;
+    z-index: 240 !important;
+    top: 38% !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 0.92rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .glide-prev {
+    left: 10px !important;
+    right: auto !important;
+  }
+  .glide-next {
+    right: 10px !important;
+    left: auto !important;
+  }
+
+  /* 3. Sleek Docked Chloe Curator Strip Above the Bottom Buy Bar (Never Blocks Product!) */
+  .shop-chloe-stage {
+    left: 4px !important;
+    bottom: 84px !important;
+    z-index: 260 !important;
+  }
+  .shop-chloe-sprite-wrap {
+    width: 72px !important;
+    height: 102px !important;
+    margin-bottom: 0 !important;
+  }
+  .shop-chloe-nameplate {
+    display: none !important;
+  }
+  .shop-chloe-dialogue {
+    left: 80px !important;
+    right: 10px !important;
+    bottom: 86px !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 7px 10px !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+  }
+  .shop-chloe-dialogue::after {
+    left: -6px !important;
+    bottom: 22px !important;
+    width: 10px !important;
+    height: 10px !important;
+    transform: rotate(135deg) !important;
+  }
+  .shop-chloe-dialogue.chloe-minimized {
+    left: 80px !important;
+    right: auto !important;
+    bottom: 94px !important;
+    min-width: 155px !important;
+    padding: 5px 10px !important;
+  }
+  .shop-chloe-header {
+    margin-bottom: 2px !important;
+    padding-bottom: 2px !important;
+  }
+  .shop-chloe-speaker {
+    font-size: 0.46rem !important;
+    padding: 2px 5px !important;
+  }
+  .shop-chloe-item-tag {
+    font-size: 0.46rem !important;
+  }
+  .shop-chloe-item-title {
+    font-size: 0.60rem !important;
+    margin-bottom: 2px !important;
+  }
+  .shop-chloe-text {
+    font-size: 0.66rem !important;
+    line-height: 1.25 !important;
+    min-height: 0 !important;
+    max-height: 2.5em !important;
+    overflow-y: auto !important;
+  }
+  .shop-chloe-upsell-bar {
+    margin-top: 5px !important;
+    padding-top: 4px !important;
+    gap: 5px !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+  }
+  .chloe-upsell-btn {
+    font-size: 0.44rem !important;
+    letter-spacing: 0.03em !important;
+    padding: 5px 6px !important;
+    white-space: nowrap !important;
+    flex: 1 1 auto !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  /* 4. Full-Width Bottom Buy Capsule & Pagination Dots */
+  .hud-stack {
+    bottom: 10px !important;
+    left: 10px !important;
+    right: 10px !important;
+    transform: none !important;
+    width: auto !important;
+    gap: 6px !important;
+  }
+  .hud-selector-strip {
+    gap: 8px !important;
+  }
+  .mini-thumbs {
+    padding: 4px 10px !important;
+    gap: 6px !important;
+  }
+  .hud-stack .hud-dock {
+    position: static !important;
+  }
+  .hud-dock,
+  body > footer.hud-dock {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 999px !important;
+    padding: 6px 8px 6px 16px !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+  }
+  .hud-kicker,
+  .hud-code {
+    font-size: 0.68rem !important;
+    padding: 2px 6px !important;
+  }
+  .hud-title {
+    display: none !important;
+  }
+  .hud-price {
+    font-size: 0.90rem !important;
+    padding-left: 12px !important;
+  }
+  .hud-buy-btn {
+    padding: 7px 14px !important;
+    font-size: 0.72rem !important;
+  }
+
+  /* 5. Outfit Showcase & Checkout Modal on Mobile */
+  .rc-outfit-showcase {
+    left: 8px !important;
+    right: 8px !important;
+    top: 84px !important;
+    bottom: 84px !important;
+    padding: 10px 12px !important;
+  }
+  body.outfit-view-active .shop-chloe-stage,
+  body.outfit-view-active .shop-chloe-dialogue {
+    display: none !important;
+  }
+  .rc-checkout-modal {
+    width: 96vw !important;
+    padding: 16px 14px !important;
+    border-radius: 18px !important;
   }
 }
 
