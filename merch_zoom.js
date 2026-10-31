@@ -302,9 +302,20 @@
     });
 
     // Mark intro as seen & mark that we are inside an internal page so returning Home never replays the intro
-    sessionStorage.setItem('rc_intro_seen', '1');
-    sessionStorage.setItem('rc_from_internal', '1');
-    sessionStorage.setItem('rc_lofi_active', '1');
+    try {
+      sessionStorage.setItem('rc_intro_seen', '1');
+      sessionStorage.setItem('rc_from_internal', '1');
+      sessionStorage.setItem('rc_lofi_active', '1');
+      if (localStorage.getItem('rc_is_admin_v1') !== 'true') {
+        window.location.replace('index.html');
+        return;
+      }
+      if (!window.RetroAuthHub && !document.querySelector('script[src*="auth_hub.js"]')) {
+        const authScript = document.createElement('script');
+        authScript.src = 'auth_hub.js?v=109';
+        document.head.appendChild(authScript);
+      }
+    } catch (_) {}
 
     // Initialize Enlarged Chloe Product Guide & Continuous Soft Lofi Music
     initShopChloeGuide();
@@ -907,10 +918,16 @@
 
     function setWheelDiscountPct(pct) {
       const clean = Math.max(0, Math.min(50, parseInt(pct, 10) || 0));
-      sessionStorage.setItem('rc_wheel_discount', String(clean));
+      if (clean > 0) {
+        sessionStorage.setItem('rc_wheel_discount', String(clean));
+      } else {
+        sessionStorage.removeItem('rc_wheel_discount');
+      }
+      localStorage.removeItem('rc_wheel_coupon_pct');
     }
 
     function applyWheelDiscountToHudPrice(modelCode) {
+      // Keep showroom shelf prices clean — all coupons and wheel discounts are 1-time use applied at checkout after clicking the coupon icon!
       const priceEl = document.getElementById('hudPrice') || document.querySelector('.hud-price');
       if (!priceEl) return '';
       const code = modelCode || lastModelCode || 'RC-101';
@@ -931,19 +948,9 @@
         priceEl.setAttribute('data-orig-price', String(basePrice));
       }
       if (!basePrice) return priceEl.textContent.trim();
-
-      const wheelPct = getWheelDiscountPct();
-      if (wheelPct > 0) {
-        const discPrice = Math.round(basePrice * (1 - wheelPct / 100) * 100) / 100;
-        const discStr = formatMoney(discPrice);
-        const origStr = formatMoney(basePrice);
-        priceEl.innerHTML = `<span class="rc-orig-price-strike">${origStr}</span><span class="rc-wheel-discounted-price">${discStr}</span><span class="rc-wheel-discount-pill">\uD83C\uDFB0 ${wheelPct}% WHEEL BONUS</span>`;
-        return `${discStr} (${wheelPct}% OFF)`;
-      } else {
-        const origStr = formatMoney(basePrice);
-        priceEl.textContent = origStr;
-        return origStr;
-      }
+      const origStr = formatMoney(basePrice);
+      priceEl.textContent = origStr;
+      return origStr;
     }
 
     function computeBundlePricing(items) {
@@ -1122,31 +1129,269 @@
       }
     }
 
-    // Clear stale bag count on page reload or when entering Shop fresh from Home (index.html)
+    // Clear stale bag count and any saved coupons on reload or when not coming straight from Shop/Arcade
     try {
+      localStorage.removeItem('rc_active_checkout_coupon');
+      localStorage.removeItem('rc_used_coupons_v1');
+      localStorage.removeItem('rc_outfit_coupon_unlocked');
+      localStorage.removeItem('rc_wheel_coupon_pct');
+
       const navEntries = (window.performance && window.performance.getEntriesByType)
         ? window.performance.getEntriesByType('navigation')
         : [];
       const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
       const ref = document.referrer || '';
-      const isFromShopTab = /(hat|deskmat|hoodie|tee|joggers|longsleeve|gearbag)_preview\.html/i.test(ref);
-      if (isReload || !isFromShopTab) {
+      const isFromShopOrArcade = /(hat|deskmat|hoodie|tee|joggers|longsleeve|gearbag)_preview\.html|games\.html|arcade\.html/i.test(ref);
+      if (isReload || !isFromShopOrArcade) {
+        sessionStorage.removeItem('rc_moment_coupon_v1');
+        sessionStorage.removeItem('rc_wheel_discount');
+      }
+      if (isReload && !isFromShopOrArcade) {
         sessionStorage.removeItem('rc_shop_bag_count');
+        sessionStorage.removeItem('rc_shop_cart_items_v1');
       }
     } catch (_) {}
 
-    function getShopBagCount() {
-      const saved = parseInt(sessionStorage.getItem('rc_shop_bag_count') || '0', 10);
-      if (!isNaN(saved) && saved > 0) return saved;
-      const bagBtnEl = document.getElementById('bagBtn');
-      if (bagBtnEl) {
-        const match = (bagBtnEl.textContent || '').match(/\d+/);
-        if (match) {
-          const parsed = parseInt(match[0], 10);
-          if (parsed > 0) return parsed;
+    // =========================================================================
+    // STORE CART, CUSTOMER LOGIN SYNC & IN-THE-MOMENT 1-TIME COUPON SYSTEM
+    // =========================================================================
+    function getAccountsDb() {
+      try {
+        return JSON.parse(localStorage.getItem('rc_accounts_db_v1') || '{}') || {};
+      } catch (_) {
+        return {};
+      }
+    }
+
+    const IS_LOCAL_API_HOST = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+    function saveAccountsDb(db) {
+      localStorage.setItem('rc_accounts_db_v1', JSON.stringify(db));
+      if (!IS_LOCAL_API_HOST) return;
+      try {
+        const leaderboard = JSON.parse(localStorage.getItem('rc_leaderboard_v1') || '[]') || [];
+        const orders = JSON.parse(localStorage.getItem('rc_shop_orders_v1') || '[]') || [];
+        const stats = JSON.parse(localStorage.getItem('rc_site_stats_v1') || '{}') || {};
+        fetch('/api/arcade-db', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accounts: db, leaderboard, orders, stats, updatedAt: new Date().toISOString() })
+        }).catch(() => {});
+      } catch (_) {}
+    }
+
+    async function loadStoreAccountsFromServer() {
+      if (!IS_LOCAL_API_HOST) return;
+      try {
+        const res = await fetch('/api/arcade-db', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.accounts && typeof data.accounts === 'object') {
+            const localDb = getAccountsDb();
+            Object.entries(data.accounts).forEach(([k, srv]) => {
+              const loc = localDb[k];
+              if (!loc) {
+                localDb[k] = srv;
+              } else {
+                localDb[k] = {
+                  ...srv,
+                  ...loc,
+                  xp: Math.max(loc.xp || 0, srv.xp || 0),
+                  bestScore: Math.max(loc.bestScore || 0, srv.bestScore || 0)
+                };
+              }
+            });
+            localStorage.setItem('rc_accounts_db_v1', JSON.stringify(localDb));
+            syncActiveAccountToGlobalStorage();
+            if (typeof renderStoreCouponDockAndCheckout === 'function') {
+              renderStoreCouponDockAndCheckout();
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    function getCurrentUsername() {
+      return (localStorage.getItem('rc_current_user_v1') || '').trim();
+    }
+
+    function syncActiveAccountToGlobalStorage() {
+      const uname = getCurrentUsername();
+      if (!uname) return;
+      const db = getAccountsDb();
+      const acct = db[uname.toLowerCase()];
+      if (!acct) return;
+      localStorage.setItem('rc_canopy_xp', String(acct.xp || 0));
+      localStorage.setItem('rc_synth_flight_best', String(acct.bestScore || 0));
+    }
+
+    function syncGlobalStorageToActiveAccount() {
+      const uname = getCurrentUsername();
+      if (!uname) return;
+      const db = getAccountsDb();
+      const key = uname.toLowerCase();
+      const existing = db[key] || { username: uname, pin: '', xp: 0, bestScore: 0 };
+      existing.username = uname;
+      existing.xp = Math.max(existing.xp || 0, getCanopyXp());
+      existing.updatedAt = new Date().toISOString();
+      db[key] = existing;
+      saveAccountsDb(db);
+      localStorage.setItem('rc_canopy_xp', String(existing.xp));
+    }
+
+    function loginCustomerInStore(rawUsername, rawPin) {
+      const cleanName = (rawUsername || '').trim().replace(/^@+/, '');
+      if (!cleanName) return { ok: false, msg: 'Enter a username to log in!' };
+      const db = getAccountsDb();
+      const key = cleanName.toLowerCase();
+      const pin = (rawPin || '').trim();
+      const prevUser = getCurrentUsername();
+
+      if (db[key]) {
+        if (db[key].pin && pin && db[key].pin !== pin) {
+          return { ok: false, msg: 'Incorrect PIN for @' + db[key].username };
+        }
+        if (!prevUser) {
+          db[key].xp = Math.max(db[key].xp || 0, getCanopyXp());
+        }
+      } else {
+        db[key] = {
+          username: cleanName,
+          pin: pin,
+          xp: getCanopyXp(),
+          bestScore: parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+      }
+      localStorage.setItem('rc_current_user_v1', db[key].username);
+      saveAccountsDb(db);
+      syncActiveAccountToGlobalStorage();
+      renderStoreCouponDockAndCheckout();
+      return { ok: true, account: db[key] };
+    }
+
+    syncActiveAccountToGlobalStorage();
+
+    function getCanopyXp() {
+      return Math.max(0, parseInt(localStorage.getItem('rc_canopy_xp') || '0', 10) || 0);
+    }
+
+    function getUsedCouponsMap() {
+      return {};
+    }
+
+    function getMomentCoupon() {
+      try {
+        const raw = sessionStorage.getItem('rc_moment_coupon_v1');
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return (parsed && parsed.code) ? parsed : null;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function setMomentCoupon(couponObj) {
+      if (!couponObj || !couponObj.code) {
+        sessionStorage.removeItem('rc_moment_coupon_v1');
+        return;
+      }
+      sessionStorage.setItem('rc_moment_coupon_v1', JSON.stringify(couponObj));
+    }
+
+    function clearMomentCoupon() {
+      sessionStorage.removeItem('rc_moment_coupon_v1');
+      sessionStorage.removeItem('rc_wheel_discount');
+      localStorage.removeItem('rc_active_checkout_coupon');
+      localStorage.removeItem('rc_wheel_coupon_pct');
+    }
+
+    function markCouponAsUsedOneTime(code) {
+      if (!code) return;
+      clearMomentCoupon();
+    }
+
+    function getActiveCheckoutCoupon() {
+      const c = getMomentCoupon();
+      return c ? c.code : '';
+    }
+
+    function setActiveCheckoutCoupon(code) {
+      if (!code) {
+        clearMomentCoupon();
+      }
+    }
+
+    function getAllStoreCoupons() {
+      const c = getMomentCoupon();
+      if (!c) return [];
+      return [{
+        ...c,
+        unlocked: true,
+        redeemed: false
+      }];
+    }
+
+    function getCartItems() {
+      try {
+        const parsed = JSON.parse(sessionStorage.getItem('rc_shop_cart_items_v1') || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function saveCartItems(items) {
+      sessionStorage.setItem('rc_shop_cart_items_v1', JSON.stringify(items));
+      const totalQty = items.reduce((sum, it) => sum + (it.qty || 1), 0);
+      setShopBagCount(totalQty);
+    }
+
+    function addItemToCartByCode(code, qtyDelta = 1) {
+      const entry = masterCatalog[code] || {
+        model: code,
+        title: (document.getElementById('hudTitle')?.textContent || 'Retrocanopy Vault Piece').trim(),
+        price: 32,
+        img: 'assets/merch/hat_front_floating.png?v=94'
+      };
+      if (entry.tier6Only || entry.model === 'RC-309') {
+        const curXp = Math.max(
+          getCanopyXp(),
+          parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0
+        );
+        if (curXp < 25000) {
+          playCutsceneBonkSfx('bonk');
+          typeChloeLine(
+            `Hold up! The Limited Edition White & 24K Gold Hoodie (RC-309) is strictly reserved for Stage 6: 👑 Eternal Sanctuary Tree members (25,000+ Growth). You're at ${curXp.toLocaleString()} Growth — keep growing your Tree to earn yours!`
+          );
+          return false;
         }
       }
-      return 0;
+      const items = getCartItems();
+      const existing = items.find((it) => it.model === entry.model);
+      if (existing) {
+        existing.qty = Math.max(1, (existing.qty || 1) + qtyDelta);
+      } else {
+        items.push({
+          model: entry.model,
+          title: entry.title,
+          price: entry.price,
+          img: entry.img,
+          qty: Math.max(1, qtyDelta)
+        });
+      }
+      saveCartItems(items);
+      renderStoreCouponDockAndCheckout();
+    }
+
+    function getShopBagCount() {
+      const items = getCartItems();
+      if (items.length > 0) {
+        return items.reduce((sum, it) => sum + (it.qty || 1), 0);
+      }
+      const saved = parseInt(sessionStorage.getItem('rc_shop_bag_count') || '0', 10);
+      return (!isNaN(saved) && saved > 0) ? saved : 0;
     }
 
     function setShopBagCount(count) {
@@ -1162,19 +1407,18 @@
       }
     }
 
-    // Restore persisted bag count only when switching between Shop category tabs
+    // Restore persisted bag count when switching between Shop category tabs
     const initialBagCount = getShopBagCount();
     setShopBagCount(initialBagCount);
 
-    // Listen to solo "Add to Bag" button clicks so sessionStorage stays synced
+    // Listen to solo "Add to Bag" button clicks so actual product items are stored for Checkout
     document.querySelectorAll('.hud-buy-btn').forEach((buyBtn) => {
       buyBtn.addEventListener('click', () => {
+        const kickerEl = document.getElementById('hudKicker') || document.querySelector('.hud-kicker');
+        const activeCode = (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-101';
         setTimeout(() => {
-          const bagBtnEl = document.getElementById('bagBtn');
-          const match = bagBtnEl ? (bagBtnEl.textContent || '').match(/\d+/) : null;
-          const next = match ? parseInt(match[0], 10) : (getShopBagCount() + 1);
-          setShopBagCount(next);
-        }, 15);
+          addItemToCartByCode(activeCode, 1);
+        }, 10);
       });
     });
 
@@ -1182,24 +1426,518 @@
       const kickerEl = document.getElementById('hudKicker') || document.querySelector('.hud-kicker');
       const baseCode = (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-101';
       const summary = updateOutfitSummaryUI(baseCode);
-      const cur = getShopBagCount();
-      const nextCount = cur + summary.count;
-      setShopBagCount(nextCount);
+
+      summary.activeItems.forEach((it) => {
+        addItemToCartByCode(it.model, 1);
+      });
+
+      renderStoreCouponDockAndCheckout();
 
       if (outfitBuyBtn) {
         outfitBuyBtn.textContent = summary.isBundled
-          ? `Bundle Added (${summary.count} Items \u2022 ${summary.totalStr} \u2022 Saved ${summary.discountStr}) \u2713`
+          ? `Outfit Added (${summary.count} Items) \u2713`
           : `Item Added (${summary.totalStr}) \u2713`;
         setTimeout(() => {
           updateOutfitSummaryUI(baseCode);
         }, 1400);
       }
       if (summary.isBundled) {
-        typeChloeLine(`Awesome choice! I added your ${summary.count}-piece bundle to the bag with your 20% discount applied — you saved ${summary.discountStr} (${summary.totalStr} total instead of ${summary.subtotalStr})!`);
+        typeChloeLine(`Awesome choice! I added all ${summary.count} pieces of your outfit straight to the bag!`);
       } else {
         typeChloeLine(`Added your ${baseCode} (${summary.totalStr}) straight to the bag!`);
       }
     }
+
+    // =========================================================================
+    // HEADER CUSTOMER LOGIN, ARCADE LINK, FLOATING COUPON ICON DOCK & CHECKOUT
+    // =========================================================================
+    const CANOPY_TREE_TIERS = [
+      { stage: 1, min: 0,     next: 500,   icon: '🌱', name: 'Neon Sprout' },
+      { stage: 2, min: 500,   next: 1500,  icon: '🌿', name: 'Cyber Sapling' },
+      { stage: 3, min: 1500,  next: 4000,  icon: '🌳', name: 'Sunset Willow' },
+      { stage: 4, min: 4000,  next: 10000, icon: '✨', name: 'Astral Canopy' },
+      { stage: 5, min: 10000, next: 25000, icon: '🔥', name: 'Solar Valkyrie Tree' },
+      { stage: 6, min: 25000, next: null,  icon: '👑', name: 'Eternal Sanctuary Tree' }
+    ];
+
+    function getCanopyTreeTier(score) {
+      const s = Math.max(0, parseInt(score || 0, 10) || 0);
+      let match = CANOPY_TREE_TIERS[0];
+      CANOPY_TREE_TIERS.forEach((t) => {
+        if (s >= t.min) match = t;
+      });
+      return match;
+    }
+
+    function addCanopyGrowth(delta) {
+      const cur = Math.max(
+        getCanopyXp(),
+        parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0
+      );
+      const next = Math.max(0, cur + Math.round(delta || 0));
+      localStorage.setItem('rc_canopy_xp', String(next));
+      syncGlobalStorageToActiveAccount();
+      return next;
+    }
+
+    const navRightEl = document.querySelector('.nav-right');
+    let headerUserBtn = null;
+    let headerArcadeBtn = null;
+    let headerCouponsBtn = null;
+    function formatCompactHandle(u) {
+      if (!u) return '';
+      const cleaned = String(u).replace(/\s*\(owner\)\s*/i, '').trim();
+      const firstToken = cleaned.split(/\s+/)[0] || cleaned;
+      return firstToken.length > 12 ? firstToken.slice(0, 12) : firstToken;
+    }
+    if (navRightEl) {
+      headerUserBtn = document.createElement('button');
+      headerUserBtn.type = 'button';
+      headerUserBtn.className = 'rc-arcade-xp-pill';
+      headerUserBtn.id = 'rcHeaderUserBtn';
+      headerUserBtn.style.borderColor = 'rgba(0, 245, 155, 0.55)';
+      headerUserBtn.style.background = 'rgba(0, 245, 155, 0.14)';
+      headerUserBtn.style.color = '#b8ffdf';
+      headerUserBtn.title = getCurrentUsername()
+        ? `Logged in as @${getCurrentUsername()}`
+        : 'Customer Login & Personal Canopy Tree';
+      headerUserBtn.innerHTML = getCurrentUsername()
+        ? `&#128100; @${formatCompactHandle(getCurrentUsername())}`
+        : `&#128100; Login`;
+
+      const initTree = getCanopyTreeTier(getCanopyXp());
+      headerArcadeBtn = document.createElement('a');
+      headerArcadeBtn.href = 'games.html';
+      headerArcadeBtn.className = 'rc-arcade-xp-pill';
+      headerArcadeBtn.id = 'rcHeaderArcadeBtn';
+      headerArcadeBtn.title = `Stage ${initTree.stage}: ${initTree.name} • Play Synth's Flight to Grow Your Canopy Tree`;
+      headerArcadeBtn.innerHTML = `<span id="rcHeaderTreeIcon">${initTree.icon}</span> Tree: <span id="rcHeaderXpVal">${getCanopyXp().toLocaleString()}</span>`;
+
+      headerCouponsBtn = document.createElement('button');
+      headerCouponsBtn.type = 'button';
+      headerCouponsBtn.className = 'rc-coupon-vault-pill';
+      headerCouponsBtn.id = 'rcHeaderCouponsBtn';
+      headerCouponsBtn.title = 'Active 1-Time Coupon Won Just Now';
+      headerCouponsBtn.innerHTML = `&#127915; Coupon`;
+
+      const bagBtnRef = document.getElementById('bagBtn');
+      if (bagBtnRef) {
+        navRightEl.insertBefore(headerUserBtn, bagBtnRef);
+        navRightEl.insertBefore(headerArcadeBtn, bagBtnRef);
+        navRightEl.insertBefore(headerCouponsBtn, bagBtnRef);
+      } else {
+        navRightEl.appendChild(headerUserBtn);
+        navRightEl.appendChild(headerArcadeBtn);
+        navRightEl.appendChild(headerCouponsBtn);
+      }
+    }
+
+    // Floating Clickable Coupon Icon Dock (Only shows when a coupon was just won in that moment!)
+    const couponDockEl = document.createElement('div');
+    couponDockEl.className = 'rc-store-coupon-dock';
+    couponDockEl.id = 'rcStoreCouponDock';
+    document.body.appendChild(couponDockEl);
+
+    // Checkout Modal
+    const checkoutBackdropEl = document.createElement('div');
+    checkoutBackdropEl.className = 'rc-checkout-modal-backdrop';
+    checkoutBackdropEl.id = 'rcCheckoutModalBackdrop';
+    checkoutBackdropEl.innerHTML = `
+      <div class="rc-checkout-modal" onclick="event.stopPropagation()">
+        <div class="rc-checkout-top">
+          <div>
+            <div class="rc-checkout-title">&#128717;&#65039; RETROCANOPY CHECKOUT</div>
+            <div class="rc-checkout-sub">1-Time Coupons apply <strong>only in the moment you win them</strong> from the Wheel or Synth's Flight (we don't save coupons).</div>
+          </div>
+          <button type="button" class="rc-checkout-close-btn" id="rcCheckoutCloseBtn">Close &#10005;</button>
+        </div>
+
+        <!-- CUSTOMER LOGIN & PERSONAL CANOPY TREE STAGE BAR INSIDE STORE MODAL -->
+        <div style="background:rgba(0,240,255,0.07);border:1.5px solid rgba(0,240,255,0.38);border-radius:14px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <span style="font-family:'Orbitron',sans-serif;font-size:0.6rem;font-weight:800;letter-spacing:0.12em;color:#00f0ff;">PERSONAL CANOPY TREE EVOLUTION &bull; +250 GROWTH PER MERCH ITEM</span>
+            <span id="rcModalAccountStatus" style="font-size:0.8rem;color:#ffffff;">Sign in with your Arcade Username to grow your Personal Canopy Tree!</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <input type="text" id="rcStoreUsernameInput" maxlength="18" placeholder="Username (e.g. Joseph)" style="background:rgba(5,4,14,0.9);border:1.5px solid rgba(0,240,255,0.5);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.7rem;padding:7px 12px;border-radius:999px;outline:none;width:155px;">
+            <input type="password" id="rcStorePinInput" maxlength="8" placeholder="PIN (Opt)" style="background:rgba(5,4,14,0.9);border:1.5px solid rgba(0,240,255,0.5);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.7rem;padding:7px 10px;border-radius:999px;outline:none;width:88px;">
+            <button type="button" id="rcStoreLoginBtn" style="background:linear-gradient(135deg,#00f59b,#00f0ff);color:#04030a;border:none;font-family:'Orbitron',sans-serif;font-size:0.66rem;font-weight:900;padding:8px 14px;border-radius:999px;cursor:pointer;">&#128100; LOGIN</button>
+          </div>
+        </div>
+
+        <div class="rc-checkout-grid">
+          <!-- LEFT: ACTIVE IN-THE-MOMENT 1-TIME COUPON -->
+          <div class="rc-checkout-section-box">
+            <div class="rc-section-heading">
+              <span>&#127915; CURRENT 1-TIME COUPON (NOT SAVED)</span>
+              <a href="games.html" style="color:#ffae00;text-decoration:none;font-size:0.65rem;">&#129417; Play Synth's Flight &rarr;</a>
+            </div>
+            <div class="rc-checkout-coupons-grid" id="rcCheckoutCouponsGrid"></div>
+          </div>
+
+          <!-- RIGHT: BAG ITEMS & CHECKOUT ORDER SUMMARY -->
+          <div class="rc-checkout-section-box">
+            <div class="rc-section-heading">
+              <span>&#128717;&#65039; YOUR BAG &amp; CHECKOUT TOTAL</span>
+              <span id="rcCheckoutBagCountTag" style="color:rgba(255,255,255,0.65);font-size:0.65rem;">0 Items</span>
+            </div>
+            <div class="rc-bag-items-list" id="rcBagItemsList"></div>
+            <div class="rc-summary-lines" id="rcSummaryLines"></div>
+            <button type="button" class="rc-complete-checkout-btn" id="rcCompleteCheckoutBtn">
+              COMPLETE CHECKOUT
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(checkoutBackdropEl);
+
+    const rcStoreLoginBtn = document.getElementById('rcStoreLoginBtn');
+    const rcStoreUsernameInput = document.getElementById('rcStoreUsernameInput');
+    const rcStorePinInput = document.getElementById('rcStorePinInput');
+    if (rcStoreLoginBtn) {
+      rcStoreLoginBtn.addEventListener('click', () => {
+        const res = loginCustomerInStore(
+          rcStoreUsernameInput ? rcStoreUsernameInput.value : '',
+          rcStorePinInput ? rcStorePinInput.value : ''
+        );
+        if (!res.ok) {
+          playCutsceneBonkSfx('bonk');
+          typeChloeLine(res.msg);
+          return;
+        }
+        playCutsceneBonkSfx('jackpot_fanfare');
+        const t = getCanopyTreeTier(res.account.xp || 0);
+        typeChloeLine(`Welcome back @${res.account.username}! Your Canopy Tree is at Stage ${t.stage}: ${t.icon} ${t.name} (${(res.account.xp || 0).toLocaleString()} Growth)!`);
+      });
+    }
+    if (headerUserBtn) {
+      headerUserBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openStoreCheckoutModal();
+      });
+    }
+
+    function handleCouponIconClick(couponObj) {
+      if (!couponObj) return;
+      openStoreCheckoutModal();
+    }
+
+    function openStoreCheckoutModal() {
+      renderStoreCouponDockAndCheckout();
+      checkoutBackdropEl.classList.add('open');
+    }
+
+    function closeStoreCheckoutModal() {
+      checkoutBackdropEl.classList.remove('open');
+    }
+
+    const bagBtnMain = document.getElementById('bagBtn');
+    if (bagBtnMain) {
+      bagBtnMain.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openStoreCheckoutModal();
+      });
+    }
+    if (headerCouponsBtn) {
+      headerCouponsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openStoreCheckoutModal();
+      });
+    }
+    const rcCheckoutCloseBtn = document.getElementById('rcCheckoutCloseBtn');
+    if (rcCheckoutCloseBtn) {
+      rcCheckoutCloseBtn.addEventListener('click', closeStoreCheckoutModal);
+    }
+    checkoutBackdropEl.addEventListener('click', closeStoreCheckoutModal);
+
+    function renderStoreCouponDockAndCheckout() {
+      const xp = Math.max(
+        getCanopyXp(),
+        parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0
+      );
+      const treeTier = getCanopyTreeTier(xp);
+      const curUser = getCurrentUsername();
+      const activeCouponObj = getMomentCoupon();
+
+      if (headerUserBtn) {
+        headerUserBtn.title = curUser
+          ? `Logged in as @${curUser} • ${treeTier.icon} ${treeTier.name} (${xp.toLocaleString()} Growth)`
+          : 'Customer Login & Personal Canopy Tree';
+        headerUserBtn.innerHTML = curUser
+          ? `&#128100; @${formatCompactHandle(curUser)}`
+          : `&#128100; Login`;
+      }
+      const nextStepText = treeTier.next
+        ? `Next Stage at <strong>${treeTier.next.toLocaleString()}</strong>`
+        : `<strong>MAX ETERNAL STAGE</strong>`;
+      const modalAcctStatusEl = document.getElementById('rcModalAccountStatus');
+      if (modalAcctStatusEl) {
+        modalAcctStatusEl.innerHTML = curUser
+          ? `<span style="color:#00f59b;">&#10003; <strong>@${curUser}</strong> &bull; ${treeTier.icon} Stage ${treeTier.stage}: <strong>${treeTier.name}</strong> (${xp.toLocaleString()} Growth &bull; ${nextStepText})</span>`
+          : `${treeTier.icon} Stage ${treeTier.stage}: <strong>${treeTier.name}</strong> (${xp.toLocaleString()} Growth &bull; ${nextStepText}) &mdash; Sign in to save your Tree!`;
+      }
+      if (rcStoreUsernameInput && curUser && !rcStoreUsernameInput.value) {
+        rcStoreUsernameInput.value = curUser;
+      }
+
+      const treeIconHeaderEl = document.getElementById('rcHeaderTreeIcon');
+      if (treeIconHeaderEl) treeIconHeaderEl.textContent = treeTier.icon;
+      const xpHeaderEl = document.getElementById('rcHeaderXpVal');
+      if (xpHeaderEl) xpHeaderEl.textContent = xp.toLocaleString();
+      if (headerArcadeBtn) {
+        headerArcadeBtn.title = `Stage ${treeTier.stage}: ${treeTier.name} (${xp.toLocaleString()} Growth) • Play Synth's Flight to Grow Your Canopy Tree`;
+      }
+
+      // Only show header coupon pill when they have an active in-the-moment coupon from the wheel or game!
+      if (headerCouponsBtn) {
+        if (activeCouponObj) {
+          headerCouponsBtn.style.display = 'inline-flex';
+          headerCouponsBtn.classList.add('has-active-coupon');
+          headerCouponsBtn.innerHTML = `&#127915; ${activeCouponObj.code} (${activeCouponObj.shortLabel}) &#10003;`;
+        } else {
+          headerCouponsBtn.style.display = 'none';
+          headerCouponsBtn.classList.remove('has-active-coupon');
+        }
+      }
+
+      // 1. Top-Right Coupon Banner: ONLY shown if they just won a coupon from the wheel or game in this moment!
+      if (couponDockEl) {
+        couponDockEl.innerHTML = '';
+        if (activeCouponObj) {
+          couponDockEl.style.display = 'flex';
+          const banner = document.createElement('div');
+          banner.className = 'rc-active-coupon-banner';
+          banner.innerHTML = `&#10003; ${activeCouponObj.icon} ${activeCouponObj.code} (${activeCouponObj.shortLabel}) &bull; WON JUST NOW (1-TIME USE) &rarr;`;
+          banner.addEventListener('click', openStoreCheckoutModal);
+          couponDockEl.appendChild(banner);
+        } else {
+          couponDockEl.style.display = 'none';
+        }
+      }
+
+      // 2. Render Modal Coupon Section (Only the single coupon won in that moment, or empty state)
+      const modalGrid = document.getElementById('rcCheckoutCouponsGrid');
+      if (modalGrid) {
+        modalGrid.innerHTML = '';
+        if (activeCouponObj) {
+          const card = document.createElement('div');
+          card.className = 'rc-modal-coupon-btn active-checkout';
+          card.innerHTML = `
+            <div style="font-size:1.35rem;">${activeCouponObj.icon}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-family:'Orbitron',sans-serif;font-size:0.74rem;font-weight:900;color:#ffae00;">${activeCouponObj.code} &bull; ${activeCouponObj.title}</span>
+              </div>
+              <div style="font-size:0.74rem;color:rgba(255,255,255,0.82);margin-top:2px;">${activeCouponObj.desc || 'Won just now • 1-Time Use in This Moment (Not Saved)'}</div>
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:800;margin-top:4px;color:#00f59b;">&#10003; ACTIVE FOR THIS CHECKOUT ONLY (EXPIRES AFTER USE)</div>
+            </div>
+          `;
+          modalGrid.appendChild(card);
+        } else {
+          const emptyCouponBox = document.createElement('div');
+          emptyCouponBox.style.cssText = 'padding:18px 14px;border-radius:12px;border:1px dashed rgba(255,255,255,0.18);background:rgba(0,0,0,0.35);text-align:center;color:rgba(255,255,255,0.72);font-size:0.8rem;line-height:1.5;';
+          emptyCouponBox.innerHTML = `
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:800;color:#ffae00;margin-bottom:6px;">NO ACTIVE COUPON IN THIS MOMENT</div>
+            1-Time Coupons are <strong>not saved</strong>.<br>
+            You only get a coupon from what you <strong>just won right now</strong> on the <strong>Prize Wheel</strong> or in <strong>Synth's Flight</strong>!
+          `;
+          modalGrid.appendChild(emptyCouponBox);
+        }
+      }
+
+      // 3. Render Bag Items & Checkout Calculation
+      const bagListEl = document.getElementById('rcBagItemsList');
+      const summaryLinesEl = document.getElementById('rcSummaryLines');
+      const bagCountTagEl = document.getElementById('rcCheckoutBagCountTag');
+      const checkoutBtnEl = document.getElementById('rcCompleteCheckoutBtn');
+      const items = getCartItems();
+      const totalQty = items.reduce((s, it) => s + (it.qty || 1), 0);
+
+      if (bagCountTagEl) {
+        bagCountTagEl.textContent = `${totalQty} ${totalQty === 1 ? 'Item' : 'Items'}`;
+      }
+
+      if (bagListEl) {
+        bagListEl.innerHTML = '';
+        if (items.length === 0) {
+          const kickerEl = document.getElementById('hudKicker') || document.querySelector('.hud-kicker');
+          const curCode = (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-101';
+          const curEntry = masterCatalog[curCode] || masterCatalog['RC-101'];
+          const emptyDiv = document.createElement('div');
+          emptyDiv.style.cssText = 'padding:16px;text-align:center;color:rgba(255,255,255,0.68);font-size:0.82rem;';
+          emptyDiv.innerHTML = `
+            Your bag is currently empty.<br>
+            <button type="button" id="rcQuickAddCurrentBtn" style="margin-top:10px;padding:8px 16px;border-radius:999px;border:1px solid #00f0ff;background:rgba(0,240,255,0.15);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:800;cursor:pointer;">
+              + Add Current Item (${curEntry.model} &bull; $${curEntry.price}) to Bag
+            </button>
+          `;
+          bagListEl.appendChild(emptyDiv);
+          setTimeout(() => {
+            const qBtn = document.getElementById('rcQuickAddCurrentBtn');
+            if (qBtn) {
+              qBtn.addEventListener('click', () => addItemToCartByCode(curEntry.model, 1));
+            }
+          }, 0);
+        } else {
+          items.forEach((it) => {
+            const row = document.createElement('div');
+            row.className = 'rc-bag-item-row';
+            row.innerHTML = `
+              <img class="rc-bag-item-img" src="${it.img}" alt="${it.title}">
+              <div class="rc-bag-item-info">
+                <div class="rc-bag-item-code">${it.model} &bull; $${it.price} each</div>
+                <div class="rc-bag-item-title">${it.title}</div>
+              </div>
+              <div class="rc-bag-item-controls">
+                <button type="button" class="rc-qty-btn" data-act="dec" data-code="${it.model}">&minus;</button>
+                <span style="font-family:'Orbitron',sans-serif;font-size:0.75rem;font-weight:800;min-width:18px;text-align:center;">${it.qty}</span>
+                <button type="button" class="rc-qty-btn" data-act="inc" data-code="${it.model}">+</button>
+              </div>
+            `;
+            row.querySelectorAll('.rc-qty-btn').forEach((b) => {
+              b.addEventListener('click', () => {
+                const act = b.getAttribute('data-act');
+                const code = b.getAttribute('data-code');
+                const curItems = getCartItems();
+                const idx = curItems.findIndex((x) => x.model === code);
+                if (idx !== -1) {
+                  if (act === 'inc') curItems[idx].qty++;
+                  else curItems[idx].qty--;
+                  if (curItems[idx].qty <= 0) curItems.splice(idx, 1);
+                  saveCartItems(curItems);
+                  renderStoreCouponDockAndCheckout();
+                }
+              });
+            });
+            bagListEl.appendChild(row);
+          });
+        }
+      }
+
+      const subtotal = items.reduce((sum, it) => sum + it.price * (it.qty || 1), 0);
+      let discountAmt = 0;
+      if (subtotal > 0 && activeCouponObj) {
+        if (activeCouponObj.type === 'percent') {
+          discountAmt = Math.round(subtotal * (activeCouponObj.pct / 100) * 100) / 100;
+        } else if (activeCouponObj.type === 'fixed') {
+          discountAmt = Math.min(subtotal, activeCouponObj.amountOff || 32);
+        }
+      }
+      const afterDisc = Math.max(0, Math.round((subtotal - discountAmt) * 100) / 100);
+      const shipping = (subtotal === 0 || afterDisc >= 50 || (activeCouponObj && activeCouponObj.freeShip)) ? 0 : 4.99;
+      const finalTotal = Math.round((afterDisc + shipping) * 100) / 100;
+
+      if (summaryLinesEl) {
+        summaryLinesEl.innerHTML = `
+          <div class="rc-summary-row">
+            <span>Merchandise Subtotal:</span>
+            <span>${formatMoney(subtotal)}</span>
+          </div>
+          ${activeCouponObj ? `
+            <div class="rc-summary-row discount-row">
+              <span>${activeCouponObj.icon} ${activeCouponObj.code} (1-Time Use Applied at Checkout):</span>
+              <span>&minus;${formatMoney(discountAmt)}</span>
+            </div>
+          ` : `
+            <div class="rc-summary-row" style="color:rgba(255,255,255,0.52);font-size:0.76rem;">
+              <span>1-Time Use Coupon:</span>
+              <span>None Selected (Click an Icon on Left)</span>
+            </div>
+          `}
+          <div class="rc-summary-row">
+            <span>Shipping:</span>
+            <span>${shipping === 0 ? 'FREE' : formatMoney(shipping)}</span>
+          </div>
+          <div class="rc-summary-row total-row">
+            <span>CHECKOUT TOTAL:</span>
+            <span>${formatMoney(finalTotal)}</span>
+          </div>
+        `;
+      }
+
+      if (checkoutBtnEl) {
+        checkoutBtnEl.disabled = items.length === 0;
+        checkoutBtnEl.style.opacity = items.length === 0 ? '0.45' : '1';
+        checkoutBtnEl.textContent = activeCouponObj
+          ? `COMPLETE CHECKOUT (${formatMoney(finalTotal)}) • REDEEM 1-TIME [${activeCouponObj.code}]`
+          : `COMPLETE CHECKOUT (${formatMoney(finalTotal)})`;
+
+        checkoutBtnEl.onclick = () => {
+          if (items.length === 0) return;
+          const usedCode = activeCouponObj ? activeCouponObj.code : '';
+
+          // Record Shop Order for the Admin Hub (rc_shop_orders_v1 + /api/arcade-db)
+          try {
+            let ordersList = [];
+            try {
+              ordersList = JSON.parse(localStorage.getItem('rc_shop_orders_v1') || '[]') || [];
+            } catch (_) {}
+            const now = new Date();
+            const stamp = now.getFullYear() + '-' +
+              String(now.getMonth() + 1).padStart(2, '0') + '-' +
+              String(now.getDate()).padStart(2, '0') + ' ' +
+              String(now.getHours()).padStart(2, '0') + ':' +
+              String(now.getMinutes()).padStart(2, '0');
+            const newOrder = {
+              orderId: 'RC-ORD-' + (1000 + ordersList.length + 1),
+              username: getCurrentUsername() || 'Guest',
+              items: items.map((it) => ({
+                model: it.model,
+                title: it.title,
+                price: it.price,
+                qty: it.qty || 1
+              })),
+              subtotal: subtotal,
+              couponCode: usedCode || '',
+              discountAmt: discountAmt,
+              shipping: shipping,
+              totalPaid: finalTotal,
+              status: 'Processing',
+              createdAt: stamp
+            };
+            ordersList.unshift(newOrder);
+            localStorage.setItem('rc_shop_orders_v1', JSON.stringify(ordersList));
+          } catch (_) {}
+
+          const orderGrowthEarned = Math.max(1, totalQty) * 250;
+          const updatedTreeGrowth = addCanopyGrowth(orderGrowthEarned);
+          const newTreeTier = getCanopyTreeTier(updatedTreeGrowth);
+          if (usedCode) {
+            markCouponAsUsedOneTime(usedCode);
+          } else {
+            saveAccountsDb(getAccountsDb());
+          }
+          saveCartItems([]);
+          playCutsceneBonkSfx('jackpot_fanfare');
+          renderStoreCouponDockAndCheckout();
+
+          if (bagListEl) {
+            bagListEl.innerHTML = `
+              <div style="padding:18px;background:rgba(0,245,155,0.12);border:1.5px solid #00f59b;border-radius:14px;text-align:center;">
+                <div style="font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:900;color:#00f59b;">&#10003; ORDER CONFIRMED!</div>
+                <div style="font-size:0.8rem;margin-top:6px;color:#ffffff;">
+                  Paid <strong>${formatMoney(finalTotal)}</strong>
+                  ${usedCode ? ` with 1-time coupon <strong>${usedCode} (&minus;${formatMoney(discountAmt)})</strong>!` : '!'}
+                </div>
+                <div style="font-family:'Orbitron',sans-serif;font-size:0.64rem;color:#00f0ff;margin-top:6px;">
+                  +${orderGrowthEarned.toLocaleString()} CANOPY TREE GROWTH &bull; ${newTreeTier.icon} STAGE ${newTreeTier.stage}: ${newTreeTier.name.toUpperCase()} (${updatedTreeGrowth.toLocaleString()})
+                </div>
+                ${usedCode ? `<div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;color:#ff99cc;margin-top:6px;">&#128683; COUPON [${usedCode}] USED &amp; CLEARED (1-TIME USE)</div>` : ''}
+              </div>
+            `;
+          }
+          if (usedCode) {
+            typeChloeLine(`Order complete! Your ${usedCode} coupon saved you ${formatMoney(discountAmt)}, and your Personal Canopy Tree gained +${orderGrowthEarned} Growth (${newTreeTier.icon} ${newTreeTier.name})!`);
+          } else {
+            typeChloeLine(`Order complete! Your Personal Canopy Tree gained +${orderGrowthEarned} Growth (${newTreeTier.icon} ${newTreeTier.name})!`);
+          }
+        };
+      }
+    }
+
+    renderStoreCouponDockAndCheckout();
+    loadStoreAccountsFromServer();
 
     function syncChloeWithActiveProduct(forceRetype) {
       if (typeTimer) clearInterval(typeTimer);
@@ -1974,13 +2712,7 @@
       isUpsetCutscenePlaying = false;
       upsetBypassExit = true;
       upsetCutscene.classList.remove('active');
-      try {
-        if (window.parent && window.parent !== window) {
-          window.parent.location.href = 'arcade.html';
-          return;
-        }
-      } catch (_) {}
-      window.location.href = 'arcade.html';
+      window.location.href = 'games.html';
     }
 
     // -------------------------------------------------------------------------
@@ -2138,6 +2870,19 @@
     function claimWheelDiscountAndStay() {
       clearUpsetTimers();
       setWheelDiscountPct(wonDiscountPct);
+      const wheelCode = `WHEEL${wonDiscountPct}`;
+      setMomentCoupon({
+        code: wheelCode,
+        icon: '🎰',
+        shortLabel: `${wonDiscountPct}% OFF`,
+        title: `${wonDiscountPct}% OFF Wheel Spin Coupon`,
+        type: 'percent',
+        pct: wonDiscountPct,
+        freeShip: false,
+        source: 'wheel',
+        desc: `Won just now on Chloe's $1 Wheel • 1-Time Use in This Moment (Not Saved)`
+      });
+      renderStoreCouponDockAndCheckout();
       const kickerEl = document.getElementById('hudKicker') || document.querySelector('.hud-kicker');
       const code = kickerEl ? kickerEl.textContent.trim() : lastModelCode;
       const updatedPriceStr = applyWheelDiscountToHudPrice(code);
@@ -2150,7 +2895,7 @@
       upsetCutscene.classList.remove('active');
       setChloePose('flirt2');
       typeChloeLine(
-        `See? I knew staying was the right move. Your ${wonDiscountPct}% off is live across the whole shop—check out your new price right on the tag!`
+        `See? I knew staying was the right move! Your ${wheelCode} (${wonDiscountPct}% OFF) coupon is active right now—use it at checkout before leaving (coupons are not saved)!`
       );
     }
 
@@ -2209,6 +2954,10 @@
         localStorage.setItem('rc_chloe_custom_designs', JSON.stringify(savedList));
       } catch (_) {}
 
+      const updatedGrowth = addCanopyGrowth(100);
+      const customTier = getCanopyTreeTier(updatedGrowth);
+      renderStoreCouponDockAndCheckout();
+
       clearUpsetTimers();
       activeBranch = 'CUSTOM_DONE';
       setRightStagePane('CUSTOM_DONE');
@@ -2219,10 +2968,10 @@
         customSubmitBtn.innerHTML = '&#10024; RETURN TO SHOP WITH CHLOE (SAVED!) &hearts;';
       }
       if (upsetSpeakerEl) upsetSpeakerEl.textContent = 'CHLOE';
-      if (upsetBeatTag) upsetBeatTag.textContent = '1-OF-1 LOCKED IN';
+      if (upsetBeatTag) upsetBeatTag.textContent = '1-OF-1 LOCKED IN (+100 GROWTH)';
 
       typeCutsceneLineSlow(
-        `"Wait, that idea is actually fire. I've got your ${piece} concept ('${idea.slice(0, 60)}') locked in—we're going to bring this to life just for you!"`
+        `"Wait, that idea is actually fire. I've got your ${piece} concept ('${idea.slice(0, 60)}') locked in—plus +100 Growth for your ${customTier.name} (${updatedGrowth.toLocaleString()} Total Growth)!"`
       );
     }
 

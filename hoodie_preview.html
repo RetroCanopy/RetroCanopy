@@ -481,9 +481,9 @@
       .hoodie-pair-stage { gap: 16px; }
     }
   </style>
-  <link rel="stylesheet" href="merch_minimal.css?v=85">
+  <link rel="stylesheet" href="merch_minimal.css?v=98">
   <link rel="stylesheet" href="merch_zoom.css?v=4">
-  <script src="merch_zoom.js?v=75" defer></script>
+  <script src="merch_zoom.js?v=100" defer></script>
 </head>
 <body>
 
@@ -632,13 +632,13 @@
       {
         model: 'RC-308',
         title: 'Pinball Wizard Multiball Jackpot Hoodie',
-        specs: '<span>Front: 1000 PTS Pop-Bumper Crest</span><span>â€¢</span><span>Back: Arcade Pinball Playfield &amp; Flippers</span><span>â€¢</span><span>Blank Sleeves</span>',
+        specs: '<span>Front: 1000 PTS Pop-Bumper Crest</span><span>&bull;</span><span>Back: Arcade Pinball Playfield &amp; Flippers</span><span>&bull;</span><span>Blank Sleeves</span>',
         front: 'assets/merch/hoodie_opt9_front.png?v=75',
         back: 'assets/merch/hoodie_opt9_back.png?v=75'
       }
     ];
 
-    let currentIdx = 5;
+    let currentIdx = 0;
     let viewMode = 'both'; // 'both' | 'front' | 'back'
     let bagCount = 0;
 
@@ -719,7 +719,7 @@
       bagCount++;
       bagBtn.textContent = `Bag (${bagCount})`;
       const orig = btn.textContent;
-      btn.textContent = 'Added âœ“';
+      btn.textContent = 'Added \u2713';
       setTimeout(() => { btn.textContent = orig; }, 900);
     }
 

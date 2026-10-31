@@ -208,11 +208,21 @@ function initGamerIntro() {
     const synthSteampunkComingSoonEl = document.getElementById('synth-steampunk-coming-soon');
     const holoDramaticFlash = document.getElementById('holo-dramatic-flash');
 
-    // When true, after the 8 era cutscenes finish (Scene 8), instead of introducing the crew,
+    // When true (public visitors not logged in as Admin), after the 8 era cutscenes finish (Scene 8),
     // Synth walks to the center of the stage and says "Coming soon... 11/14" with the Fancy Steampunk sign above him.
-    // Set to false on 11/14 launch to restore the full 4-character crew introductions!
-    const TEASER_COMING_SOON_MODE = true;
-    const IS_LOCAL_DEV_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    // Logging in as an Admin/Owner (rc_is_admin_v1 === 'true') dynamically sets TEASER_COMING_SOON_MODE = false and unlocks the full site!
+    function isAdminSiteUnlocked() {
+        try {
+            if (window.RetroAuthHub && typeof window.RetroAuthHub.isAdminLoggedIn === 'function') {
+                return window.RetroAuthHub.isAdminLoggedIn();
+            }
+            return localStorage.getItem('rc_is_admin_v1') === 'true';
+        } catch (_) {
+            return false;
+        }
+    }
+    let TEASER_COMING_SOON_MODE = !isAdminSiteUnlocked();
+    const IS_LOCAL_DEV_SERVER = false;
 
     const fullPrologueSteps = [
         {
@@ -340,7 +350,35 @@ function initGamerIntro() {
         }
     ];
 
-    const prologueSteps = TEASER_COMING_SOON_MODE ? fullPrologueSteps.slice(0, 9) : fullPrologueSteps;
+    let prologueSteps = TEASER_COMING_SOON_MODE ? fullPrologueSteps.slice(0, 9) : fullPrologueSteps;
+
+    function syncTeaserModePrologueState() {
+        const scene8 = fullPrologueSteps[8];
+        if (scene8) {
+            scene8.eraTag = TEASER_COMING_SOON_MODE ? 'SYNTH  \u2022  COMING SOON 11/14' : 'SYNTH  \u2022  OUTRO \u2014 WELCOMING THE CREW';
+            scene8.holdMs = TEASER_COMING_SOON_MODE ? 5500 : 11180;
+            scene8.text = TEASER_COMING_SOON_MODE
+                ? "Coming soon... 11/14."
+                : "Now dry your eyes, old friend. Allow me to welcome in the crew who built this home for you. Everyone, come on out.";
+        }
+        prologueSteps = TEASER_COMING_SOON_MODE ? fullPrologueSteps.slice(0, 9) : fullPrologueSteps;
+        if (skipIntroBtn) {
+            skipIntroBtn.style.display = TEASER_COMING_SOON_MODE ? 'none' : '';
+        }
+        const synEl = document.getElementById('syn-journey-audio');
+        if (synEl) {
+            const desiredSynSrc = TEASER_COMING_SOON_MODE ? 'assets/syn_journey_teaser.wav?v=102' : 'assets/syn_journey.wav?v=102';
+            const curSynAttr = synEl.getAttribute('src') || '';
+            if (curSynAttr !== desiredSynSrc && synEl.paused) {
+                synEl.setAttribute('src', desiredSynSrc);
+            }
+        }
+        if (typeof synVoicePool !== 'undefined' && synVoicePool[8]) {
+            try {
+                synVoicePool[8].src = TEASER_COMING_SOON_MODE ? 'assets/voice/syn_8_teaser.wav?v=102' : 'assets/voice/syn_8.wav?v=102';
+            } catch (_) {}
+        }
+    }
 
     const scriptSteps = [
         {
@@ -778,8 +816,27 @@ function initGamerIntro() {
     let lofiStarted = false;
     let lofiMuted = sessionStorage.getItem('rc_lofi_muted') === '1';
 
+    // Detect browser Reload vs. Returning to Home from another internal page (e.g. Arcade / Store) right away
+    // so that #intro-title-audio NEVER starts playing when returning to the Home screen!
+    const navEntries = (window.performance && performance.getEntriesByType) ? performance.getEntriesByType('navigation') : [];
+    const navType = navEntries.length > 0 ? navEntries[0].type : ((window.performance && performance.navigation && performance.navigation.type === 1) ? 'reload' : 'navigate');
+    const isReload = navType === 'reload';
+    const isBackForward = navType === 'back_forward';
+    const cameFromInternalPage = Boolean(
+        window.__rcSkipIntroOnLoad ||
+        (!isReload && (
+            sessionStorage.getItem('rc_from_internal') === '1' ||
+            isBackForward
+        ))
+    );
+    if (cameFromInternalPage) {
+        window.__rcSkipIntroOnLoad = true;
+        sequenceComplete = true;
+        inPrologue = false;
+    }
+
     let introStartPerfNow = performance.now();
-    let state = 'LOGO_ZOOM_OUT';
+    let state = cameFromInternalPage ? 'GREETING' : 'LOGO_ZOOM_OUT';
     let cinemaSwellPlayed = false;
     let introHtmlAudioStarted = false;
     let nativeIntroAudioActive = false;
@@ -848,19 +905,25 @@ function initGamerIntro() {
     let owlPoseCueTimer = null;
     for (let i = 0; i < 13; i++) {
         try {
-            const vAudio = new Audio(`assets/voice/syn_${i}.wav?v=88`);
+            const voiceFile = (i === 8 && TEASER_COMING_SOON_MODE) ? 'assets/voice/syn_8_teaser.wav?v=102' : `assets/voice/syn_${i}.wav?v=88`;
+            const vAudio = new Audio(voiceFile);
             vAudio.preload = 'none';
             vAudio.volume = 1.0;
             synVoicePool.push(vAudio);
         } catch (_) {}
     }
+    syncTeaserModePrologueState();
 
     function playSynVoiceLine(sceneIdx, isManualSkip = false) {
         if (!isManualSkip) {
             // During normal continuous playback, Syn's spoken British Gentleman Butler voice is already mixed
-            // directly into assets/syn_journey.wav (played by synJourneyAudioEl or server $synPlayer)!
-            if (synJourneyAudioEl && !synJourneyAudioEl.paused) return;
+            // directly into assets/syn_journey.wav (played by synJourneyAudioEl or prebuiltIntroAudio fallback)!
+            if (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted) return;
+            if (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingSynFallback) return;
             if (nativeIntroAudioActive) return;
+            tryStartSynJourneyAudio(false);
+            if (synJourneyAudioEl && !synJourneyAudioEl.paused && !synJourneyAudioEl.muted) return;
+            if (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio._playingSynFallback) return;
         }
         stopSynVoiceLine(false);
         const stepObj = prologueSteps[sceneIdx];
@@ -1133,7 +1196,7 @@ function initGamerIntro() {
     }
 
     function tryStartIntroHtmlAudio(isUserGesture = false) {
-        if (!prebuiltIntroAudio || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT' || nativeIntroAudioActive) return;
+        if (window.__rcSkipIntroOnLoad || !prebuiltIntroAudio || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT' || nativeIntroAudioActive) return;
         prebuiltIntroAudio.muted = false;
         prebuiltIntroAudio.volume = 0.88;
         if (!prebuiltIntroAudio.paused || introHtmlAudioStarted) {
@@ -1143,11 +1206,11 @@ function initGamerIntro() {
         }
         // NEVER interrupt an in-flight play() request (even across pointerdown -> mousedown -> click on the same tap)!
         if (introPlayPending) return;
-        // Sync currentTime at most ONCE on the first user gesture if audio was blocked at 0.0s
-        if (isUserGesture && !introGestureSynced && prebuiltIntroAudio.readyState >= 2) {
-            introGestureSynced = true;
+        // Sync currentTime at most ONCE when starting after 0.6s if audio was blocked at 0.0s
+        if (!introGestureSynced && prebuiltIntroAudio.readyState >= 2) {
             const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
             if (elapsedSec > 0.6 && Math.abs(prebuiltIntroAudio.currentTime - elapsedSec) > 0.45) {
+                introGestureSynced = true;
                 try { prebuiltIntroAudio.currentTime = elapsedSec; } catch (_) {}
             }
         }
@@ -1157,6 +1220,14 @@ function initGamerIntro() {
             if (p && typeof p.then === 'function') {
                 p.then(() => {
                     introPlayPending = false;
+                    if (window.__rcSkipIntroOnLoad || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT') {
+                        try {
+                            prebuiltIntroAudio.pause();
+                            prebuiltIntroAudio.muted = true;
+                            prebuiltIntroAudio.currentTime = 0;
+                        } catch (_) {}
+                        return;
+                    }
                     prebuiltIntroAudio.muted = false;
                     prebuiltIntroAudio.volume = 0.88;
                     introHtmlAudioStarted = true;
@@ -1164,6 +1235,7 @@ function initGamerIntro() {
                     stopWebAudioBufferFallback();
                 }).catch((err) => {
                     introPlayPending = false;
+                    if (window.__rcSkipIntroOnLoad || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT') return;
                     if (IS_LOCAL_DEV_SERVER && !introHtmlAudioStarted && !nativeIntroAudioActive && (!err || err.name === 'NotAllowedError')) {
                         nativeIntroAudioActive = true;
                         introHtmlAudioStarted = true;
@@ -1194,7 +1266,7 @@ function initGamerIntro() {
         try {
             targetEl.muted = false;
             targetEl.volume = 0.95;
-            if (isUserGesture && !synGestureSynced && targetEl.readyState >= 2 && elapsedPrologueSec > 0.6 && Math.abs(targetEl.currentTime - elapsedPrologueSec) > 0.45) {
+            if (!synGestureSynced && targetEl.readyState >= 2 && elapsedPrologueSec > 0.6 && Math.abs(targetEl.currentTime - elapsedPrologueSec) > 0.45) {
                 synGestureSynced = true;
                 try { targetEl.currentTime = elapsedPrologueSec; } catch (_) {}
             }
@@ -1212,8 +1284,8 @@ function initGamerIntro() {
                 }).catch((err) => {
                     synPlayPending = false;
                     // If synJourneyAudioEl was blocked by mobile single-element autoplay policy (NotAllowedError),
-                    // immediately hand off to prebuiltIntroAudio (#intro-title-audio) which was already unlocked at t = 0.0s!
-                    if (targetEl === synJourneyAudioEl && prebuiltIntroAudio && (!err || err.name === 'NotAllowedError')) {
+                    // only hand off to prebuiltIntroAudio (#intro-title-audio) if it was already unlocked at t = 0.0s!
+                    if (targetEl === synJourneyAudioEl && prebuiltIntroAudio && introHtmlAudioStarted && (!err || err.name === 'NotAllowedError')) {
                         try {
                             prebuiltIntroAudio._playingSynFallback = true;
                             const synSrc = synJourneyAudioEl.getAttribute('src') || 'assets/syn_journey.wav?v=93';
@@ -1231,12 +1303,14 @@ function initGamerIntro() {
                                     dismissTapForAudioPrompt();
                                     stopWebAudioBufferFallback();
                                 }).catch(() => {
+                                    prebuiltIntroAudio._playingSynFallback = false;
                                     synPlayPending = false;
                                 });
                             } else {
                                 synPlayPending = false;
                             }
                         } catch (_) {
+                            prebuiltIntroAudio._playingSynFallback = false;
                             synPlayPending = false;
                         }
                     } else if (IS_LOCAL_DEV_SERVER && !nativeIntroAudioActive && (!err || err.name === 'NotAllowedError')) {
@@ -1431,14 +1505,22 @@ function initGamerIntro() {
     function buildIntroAssets() {
         if (introTitleAudioEl) {
             prebuiltIntroAudio = introTitleAudioEl;
-            prebuiltIntroAudio.muted = false;
-            prebuiltIntroAudio.volume = 0.88;
+            if (cameFromInternalPage || window.__rcSkipIntroOnLoad) {
+                try {
+                    prebuiltIntroAudio.pause();
+                    prebuiltIntroAudio.muted = true;
+                    prebuiltIntroAudio.volume = 0;
+                } catch (_) {}
+            } else {
+                prebuiltIntroAudio.muted = false;
+                prebuiltIntroAudio.volume = 0.88;
+            }
         } else {
             try {
                 prebuiltIntroAudio = new Audio('assets/intro_theme.wav?v=36');
-                prebuiltIntroAudio.muted = false;
-                prebuiltIntroAudio.volume = 0.88;
-                prebuiltIntroAudio.preload = 'auto';
+                prebuiltIntroAudio.muted = Boolean(cameFromInternalPage || window.__rcSkipIntroOnLoad);
+                prebuiltIntroAudio.volume = (cameFromInternalPage || window.__rcSkipIntroOnLoad) ? 0 : 0.88;
+                prebuiltIntroAudio.preload = (cameFromInternalPage || window.__rcSkipIntroOnLoad) ? 'none' : 'auto';
             } catch (_) {}
         }
     }
@@ -1679,9 +1761,10 @@ function initGamerIntro() {
      */
     function startDearlyBelovedCutsceneBed() {
         if (lofiMuted) return;
-        // In Teaser Coming Soon mode, Dearly Beloved is already resampled to 24kHz mono and mixed directly into assets/syn_journey.wav
-        // starting at 5.80s — never play a second <audio> element at 5.80s because mobile browsers will pause syn_journey.wav!
-        if (TEASER_COMING_SOON_MODE) {
+        // Dearly Beloved is already resampled to 24kHz mono and mixed directly into assets/syn_journey.wav
+        // starting at 5.80s — ensure syn_journey.wav is playing rather than starting a second <audio> element on top of it!
+        if (inPrologue && !sequenceComplete) {
+            tryStartSynJourneyAudio(false);
             return;
         }
         if (lofiFallbackAudio) {
@@ -3495,12 +3578,15 @@ function initGamerIntro() {
         if (prebuiltIntroAudio) {
             try {
                 prebuiltIntroAudio.pause();
+                prebuiltIntroAudio.muted = true;
+                prebuiltIntroAudio.volume = 0;
                 prebuiltIntroAudio.currentTime = 0;
+                prebuiltIntroAudio.removeAttribute('autoplay');
             } catch (_) {}
         }
         if (nativeIntroAudioActive) {
             nativeIntroAudioActive = false;
-            triggerNativeServerAudio('stop_syn');
+            triggerNativeServerAudio('stop');
         }
         if (introGain && lofiCtx && lofiCtx.state === 'running') {
             try {
@@ -3595,7 +3681,10 @@ function initGamerIntro() {
             holoStage.classList.remove('active', 'dematerialize', 'pitch-black-opening', 'outro-welcome-crew', 'sanctuary-living-backdrop');
         }
         if (owlActorEl) {
-            owlActorEl.classList.remove('pre-glitch-hidden', 'holo-beam-in', 'holo-beam-out', 'holo-glitch-in');
+            owlActorEl.classList.remove('pre-glitch-hidden', 'holo-beam-in', 'holo-beam-out', 'holo-glitch-in', 'center-stage-coming-soon', 'walking-to-center');
+        }
+        if (synthSteampunkComingSoonEl) {
+            synthSteampunkComingSoonEl.classList.remove('visible');
         }
 
         computeTargetPositions(true, false);
@@ -3603,6 +3692,7 @@ function initGamerIntro() {
             stage.classList.add('syn-exited');
         }
         if (document.body) {
+            document.body.classList.remove('diorama-reveal-active', 'coming-soon-finale-active');
             document.body.classList.add('syn-in-background');
         }
         if (crewActors.james) {
@@ -3648,6 +3738,29 @@ function initGamerIntro() {
         skipIntroBtn.addEventListener('click', skipEntireIntro);
     }
 
+    window.__rcUnlockFullSiteForAdmin = function () {
+        TEASER_COMING_SOON_MODE = false;
+        syncTeaserModePrologueState();
+        skipEntireIntro();
+    };
+
+    window.__rcLockSiteToTeaserMode = function () {
+        TEASER_COMING_SOON_MODE = true;
+        syncTeaserModePrologueState();
+        friendsOnlyOrder.forEach((id) => {
+            const actor = crewActors[id];
+            if (!actor || !actor.el) return;
+            actor.arrived = false;
+            actor.movingToStation = false;
+            actor.el.style.opacity = '0';
+            actor.el.style.pointerEvents = 'none';
+            if (actor.linkSlot) {
+                actor.linkSlot.classList.remove('revealed');
+            }
+        });
+        skipEntireIntro();
+    };
+
     if (owlActorEl) {
         owlActorEl.addEventListener('click', (e) => {
             if (!sequenceComplete || !TEASER_COMING_SOON_MODE) return;
@@ -3671,36 +3784,15 @@ function initGamerIntro() {
     let subpageFrame = null;
 
     function openSeamlessSubpage(url, pushHistory = true) {
-        sessionStorage.setItem('rc_intro_seen', '1');
-        sessionStorage.setItem('rc_from_internal', '1');
-        sessionStorage.setItem('rc_lofi_active', '1');
-        sessionStorage.removeItem('rc_shop_bag_count');
-        if (!sequenceComplete) {
-            if (heroContainer) heroContainer.classList.add('no-transition');
-            skipEntireIntro();
-        } else {
-            startSoftLofiMusic();
-        }
-
-        if (document.body) {
-            document.body.classList.add('subpage-open');
-        }
-
-        if (!subpageFrame) {
-            subpageFrame = document.createElement('iframe');
-            subpageFrame.id = 'rc-subpage-frame';
-            subpageFrame.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;border:none;z-index:1180;background:#000000;opacity:0;transition:opacity 0.22s ease;';
-            document.body.appendChild(subpageFrame);
-        }
-        subpageFrame.style.display = 'block';
-        subpageFrame.style.pointerEvents = 'auto';
-        subpageFrame.src = url;
-        requestAnimationFrame(() => {
-            if (subpageFrame) subpageFrame.style.opacity = '1';
-        });
-        if (pushHistory && window.history && window.history.pushState) {
-            window.history.pushState({ subpage: url }, '', url);
-        }
+        try {
+            sessionStorage.setItem('rc_intro_seen', '1');
+            sessionStorage.setItem('rc_from_internal', '1');
+            sessionStorage.setItem('rc_lofi_active', '1');
+            sessionStorage.removeItem('rc_shop_bag_count');
+        } catch (_) {}
+        dismissTapForAudioPrompt();
+        const targetUrl = url.indexOf('?') === -1 ? (url + '?v=99') : url;
+        window.location.href = targetUrl;
     }
 
     window.__rcCloseSubpage = function (pushHistory = true) {
@@ -3828,21 +3920,11 @@ function initGamerIntro() {
     const WALK_SPEED = Math.max(175, Math.min(225, window.innerWidth * 0.145));
     const VILLAIN_WALK_SPEED = Math.max(210, Math.min(275, window.innerWidth * 0.18));
     let lastTime = null;
-    state = 'LOGO_ZOOM_OUT';
+    state = cameFromInternalPage ? 'GREETING' : 'LOGO_ZOOM_OUT';
 
     // Detect browser Reload vs. Returning to Home from another internal page:
     // - Reloading the site (F5 / Ctrl+R) ALWAYS triggers the full intro animation!
     // - Going back to the Home page from inside the site skips the intro!
-    const navEntries = (window.performance && performance.getEntriesByType) ? performance.getEntriesByType('navigation') : [];
-    const navType = navEntries.length > 0 ? navEntries[0].type : ((window.performance && performance.navigation && performance.navigation.type === 1) ? 'reload' : 'navigate');
-    const isReload = navType === 'reload';
-    const isBackForward = navType === 'back_forward';
-    const cameFromInternalPage = !isReload && (
-        sessionStorage.getItem('rc_from_internal') === '1' ||
-        isBackForward ||
-        (document.referrer && document.referrer.indexOf(window.location.host) !== -1 && document.referrer.indexOf('index.html') === -1)
-    );
-
     if (isReload) {
         sessionStorage.removeItem('rc_from_internal');
     } else if (cameFromInternalPage) {
@@ -4098,15 +4180,37 @@ function initGamerIntro() {
      */
     function replayTitleScreenFromStart() {
         try {
+            clearSynthHelloTimers();
             if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+            if (advanceTimer) { clearTimeout(advanceTimer); advanceTimer = null; }
             if (introTransitionTimer) { clearTimeout(introTransitionTimer); introTransitionTimer = null; }
             if (introCraneTimer) { clearTimeout(introCraneTimer); introCraneTimer = null; }
+            if (holoGlitchTimer) { clearTimeout(holoGlitchTimer); holoGlitchTimer = null; }
+            if (crewWalkInOutroTimer) { clearTimeout(crewWalkInOutroTimer); crewWalkInOutroTimer = null; }
+            if (turntableFinaleSpinTimer) { clearTimeout(turntableFinaleSpinTimer); turntableFinaleSpinTimer = null; }
+            if (owlPoseCueTimer) { clearTimeout(owlPoseCueTimer); owlPoseCueTimer = null; }
+            if (introFadeTimer) { clearInterval(introFadeTimer); introFadeTimer = null; }
+            if (holoCanvasRaf) { cancelAnimationFrame(holoCanvasRaf); holoCanvasRaf = null; }
+            if (crewWalkAlongsideRaf) { cancelAnimationFrame(crewWalkAlongsideRaf); crewWalkAlongsideRaf = null; }
+            holoCanvasActive = false;
+            stopOwlTalkAnim();
             stopCharacterTalkAnim();
+            stopSynVoiceLine(true);
+            stopHoloEmotionalScore(0.05, true);
+            hideActionBackdropFlash();
 
+            window.__rcSkipIntroOnLoad = false;
+            sessionStorage.removeItem('rc_from_internal');
             sequenceComplete = false;
+            inPrologue = false;
+            currentPrologueIndex = -1;
             isThrowingAtO = false;
             isRepairingO = false;
             isTyping = false;
+            introPlayPending = false;
+            introGestureSynced = false;
+            synPlayPending = false;
+            synGestureSynced = false;
             if (nativeIntroAudioActive || nativeLofiAudioActive) {
                 nativeIntroAudioActive = false;
                 nativeLofiAudioActive = false;
@@ -4133,25 +4237,38 @@ function initGamerIntro() {
             if (lofiLoopTimer) { clearInterval(lofiLoopTimer); lofiLoopTimer = null; }
             if (lofiMusicBtn) lofiMusicBtn.classList.remove('visible', 'playing');
 
-            // Reset dialogue & actors back off-stage left
+            // Reset cutscene stage & dialogue & crew actors back off-stage left
+            if (holoStage) {
+                holoStage.classList.remove('active', 'dematerialize', 'pitch-black-opening', 'outro-welcome-crew', 'sanctuary-living-backdrop', 'holo-stage-thunder-shake');
+            }
+            if (owlActorEl) {
+                owlActorEl.classList.remove('pre-glitch-hidden', 'holo-beam-in', 'holo-beam-out', 'holo-glitch-in', 'center-stage-coming-soon', 'walking-to-center');
+            }
+            if (stage) {
+                stage.classList.remove('syn-exited');
+            }
             if (dialogue) dialogue.classList.remove('show');
-            if (skipBtn) skipBtn.classList.remove('hidden');
+            if (skipIntroBtn) skipIntroBtn.classList.remove('hidden');
             if (flickerO) {
                 flickerO.classList.remove('sabotaged', 'impact-flash', 'repair-flash');
                 flickerO.classList.add('repaired-solid');
             }
-            Object.keys(actors).forEach((id) => {
-                const a = actors[id];
+            Object.keys(crewActors).forEach((id) => {
+                const a = crewActors[id];
                 if (!a || !a.el) return;
-                a.x = -520;
-                a.el.style.left = '-520px';
+                a.arrived = false;
+                a.movingToStation = false;
+                a.posX = -520;
                 a.el.style.opacity = '0';
-                a.el.classList.remove('visible', 'speaking-focus', 'speaking-dim', 'walking', 'facing-left');
+                a.el.style.pointerEvents = 'none';
+                a.el.style.transform = 'translate3d(-520px, 0, 0)';
+                a.el.classList.remove('visible', 'speaking-focus', 'speaking-dim', 'walking', 'facing-left', 'crew-glitch-in');
+                if (a.linkSlot) a.linkSlot.classList.remove('revealed');
             });
 
             // Restart CSS Title Screen animations from 0.0s
             if (document.body) {
-                document.body.classList.remove('intro-awaiting-audio', 'syn-in-background', 'holo-pitch-black', 'holo-journey-active');
+                document.body.classList.remove('intro-awaiting-audio', 'syn-in-background', 'holo-pitch-black', 'holo-journey-active', 'diorama-reveal-active', 'coming-soon-finale-active');
                 document.body.classList.add('cinema-intro-active');
             }
             if (heroContainer) {
@@ -4165,9 +4282,23 @@ function initGamerIntro() {
             if (prebuiltIntroAudio) {
                 try {
                     prebuiltIntroAudio.pause();
+                    prebuiltIntroAudio._playingSynFallback = false;
+                    prebuiltIntroAudio._playingLofiFallback = false;
+                    if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('intro_theme.wav') === -1) {
+                        prebuiltIntroAudio.src = 'assets/intro_theme.wav?v=36';
+                    }
+                    prebuiltIntroAudio.loop = false;
                     prebuiltIntroAudio.muted = false;
                     prebuiltIntroAudio.volume = 0.88;
                     prebuiltIntroAudio.currentTime = 0;
+                } catch (_) {}
+            }
+            if (synJourneyAudioEl) {
+                try {
+                    synJourneyAudioEl.pause();
+                    synJourneyAudioEl.muted = false;
+                    synJourneyAudioEl.volume = 0.95;
+                    synJourneyAudioEl.currentTime = 0;
                 } catch (_) {}
             }
             const ctx = ensureLofiAudioContext();
@@ -4175,8 +4306,10 @@ function initGamerIntro() {
                 ctx.resume().catch(() => {});
             }
             scheduleIntroTransition(9800);
-            playCinemaStudioLogoSwell();
-        } catch (_) {}
+            tryStartIntroHtmlAudio(true);
+        } catch (err) {
+            console.error('Replay intro error:', err);
+        }
     }
 
     window.addEventListener('keydown', (e) => {
@@ -4197,8 +4330,19 @@ function initGamerIntro() {
 function initSubpageLofiMusic() {
     if (document.getElementById('crew-stage')) return; // Handled by initGamerIntro on index.html
 
-    sessionStorage.setItem('rc_from_internal', '1');
-    sessionStorage.setItem('rc_intro_seen', '1');
+    try {
+        sessionStorage.setItem('rc_from_internal', '1');
+        sessionStorage.setItem('rc_intro_seen', '1');
+        if (localStorage.getItem('rc_is_admin_v1') !== 'true') {
+            window.location.replace('index.html');
+            return;
+        }
+        if (!window.RetroAuthHub && !document.querySelector('script[src*="auth_hub.js"]')) {
+            const authScript = document.createElement('script');
+            authScript.src = 'auth_hub.js?v=109';
+            document.head.appendChild(authScript);
+        }
+    } catch (_) {}
 
     // If running inside the seamless parent Lofi host on index.html, parent audio is already playing continuously!
     try {

@@ -1,0 +1,3063 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Synth's Midnight Flight — Retrocanopy 16-Bit Arcade</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #04030a;
+      --neon-cyan: #00f0ff;
+      --neon-pink: #ff2d95;
+      --neon-gold: #ffae00;
+      --neon-purple: #9d4edd;
+      --neon-green: #00f59b;
+      --glass-bg: rgba(12, 14, 26, 0.86);
+      --glass-border: rgba(0, 240, 255, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 18%, #14082c 0%, #060410 55%, #000000 100%);
+      color: #ffffff;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* ── TOP ARCADE HEADER ──────────────────────────────────────────────── */
+    .arcade-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(5, 4, 14, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.22);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      mix-blend-mode: screen;
+    }
+
+    .nav-wordmark {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.02rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      background: linear-gradient(to bottom, var(--neon-gold) 10%, var(--neon-pink) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 10px rgba(255, 45, 149, 0.45));
+    }
+
+    .header-center-pills {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-auth-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(0, 245, 155, 0.14);
+      border: 1.5px solid rgba(0, 245, 155, 0.6);
+      color: #b8ffdf;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 7px 15px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 16px rgba(0, 245, 155, 0.22);
+    }
+
+    .user-auth-pill:hover {
+      background: rgba(0, 245, 155, 0.26);
+      border-color: #ffffff;
+      color: #ffffff;
+      box-shadow: 0 0 22px rgba(0, 245, 155, 0.5);
+    }
+
+    .user-auth-pill.guest-mode {
+      background: rgba(0, 240, 255, 0.14);
+      border-color: rgba(0, 240, 255, 0.65);
+      color: #b8faff;
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+    }
+
+    .xp-counter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 174, 0, 0.14);
+      border: 1.5px solid rgba(255, 174, 0, 0.65);
+      color: #ffe28a;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 7px 14px;
+      border-radius: 999px;
+      box-shadow: 0 0 18px rgba(255, 174, 0, 0.28);
+    }
+
+    .highscore-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 45, 149, 0.14);
+      border: 1.5px solid rgba(255, 45, 149, 0.5);
+      color: #ffc2e2;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 7px 14px;
+      border-radius: 999px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 8px 15px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+
+    .nav-btn-home {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
+
+    .nav-btn-home:hover {
+      background: rgba(0, 240, 255, 0.18);
+      border-color: var(--neon-cyan);
+    }
+
+    .nav-btn-store {
+      background: linear-gradient(135deg, var(--neon-gold) 0%, var(--neon-pink) 100%);
+      border: none;
+      color: #05030a;
+      box-shadow: 0 0 20px rgba(255, 45, 149, 0.5);
+    }
+
+    .nav-btn-store:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 28px rgba(255, 45, 149, 0.85);
+    }
+
+    /* ── MAIN 2-COLUMN ARCADE & COUPON/LEADERBOARD WORKSPACE ────────────── */
+    .arcade-workspace {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 76px 24px 28px;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    /* ── LEFT: 16-BIT CRT ARCADE CABINET VIEWPORT ───────────────────────── */
+    .cabinet-stage {
+      position: relative;
+      width: 100%;
+      background: linear-gradient(180deg, rgba(16, 12, 34, 0.95) 0%, rgba(7, 6, 18, 0.98) 100%);
+      border: 2px solid rgba(0, 240, 255, 0.45);
+      border-radius: 22px;
+      padding: 15px;
+      box-shadow:
+        0 0 40px rgba(0, 240, 255, 0.22),
+        0 0 80px rgba(255, 45, 149, 0.14),
+        inset 0 0 28px rgba(0, 240, 255, 0.12);
+    }
+
+    .cabinet-marquee {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 12px;
+    }
+
+    .marquee-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .marquee-badge {
+      background: rgba(255, 45, 149, 0.2);
+      border: 1px solid var(--neon-pink);
+      color: #ff99cc;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .marquee-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: #ffffff;
+      text-shadow: 0 0 14px rgba(0, 240, 255, 0.65);
+    }
+
+    .marquee-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .crt-ctrl-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      color: #d8f8ff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 5px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .crt-ctrl-btn:hover {
+      background: rgba(0, 240, 255, 0.22);
+      border-color: var(--neon-cyan);
+    }
+
+    .crt-screen-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #04020a;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 45, 149, 0.42);
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9);
+      cursor: pointer;
+    }
+
+    #flightCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Subtle CRT Scanline Overlay */
+    .crt-scanlines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      z-index: 5;
+    }
+
+    /* Mid-Flight Coupon Unlock Toast Banner */
+    .flight-unlock-toast {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      z-index: 30;
+      background: linear-gradient(135deg, rgba(255, 174, 0, 0.96), rgba(255, 45, 149, 0.96));
+      color: #05030a;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      padding: 8px 20px;
+      border-radius: 999px;
+      box-shadow: 0 0 30px rgba(255, 174, 0, 0.85);
+      pointer-events: none;
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+      white-space: nowrap;
+    }
+
+    .flight-unlock-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ── END-OF-GAME SCORE SUBMISSION & LIVE LEADERBOARD OVERLAY ────────── */
+    .endgame-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 25;
+      background: rgba(5, 3, 16, 0.92);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 18px 24px;
+      cursor: default;
+      overflow-y: auto;
+    }
+
+    .endgame-overlay.open {
+      display: flex;
+    }
+
+    .endgame-top-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+      padding-bottom: 10px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .endgame-headline {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: var(--neon-pink);
+      text-shadow: 0 0 14px rgba(255, 45, 149, 0.65);
+    }
+
+    .endgame-stats-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .endgame-stat-pill {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .endgame-stat-pill.score-pill {
+      color: #00f0ff;
+      border-color: rgba(0, 240, 255, 0.55);
+      background: rgba(0, 240, 255, 0.12);
+    }
+
+    .endgame-stat-pill.xp-pill {
+      color: #ffae00;
+      border-color: rgba(255, 174, 0, 0.55);
+      background: rgba(255, 174, 0, 0.14);
+    }
+
+    /* Post Score & Username Box inside End-of-Game Overlay */
+    .endgame-post-box {
+      background: rgba(0, 240, 255, 0.07);
+      border: 1.5px solid rgba(0, 240, 255, 0.42);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .post-box-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .post-box-kicker {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--neon-cyan);
+    }
+
+    .post-box-status {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .post-form-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .arcade-input {
+      background: rgba(6, 5, 18, 0.92);
+      border: 1.5px solid rgba(0, 240, 255, 0.55);
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 999px;
+      outline: none;
+      width: 165px;
+    }
+
+    .arcade-input:focus {
+      border-color: var(--neon-gold);
+      box-shadow: 0 0 14px rgba(255, 174, 0, 0.45);
+    }
+
+    .arcade-pin-input {
+      width: 95px;
+    }
+
+    .post-score-btn {
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+      color: #04030a;
+      border: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      padding: 8px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(0, 245, 155, 0.45);
+      transition: all 0.2s ease;
+    }
+
+    .post-score-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(0, 245, 155, 0.8);
+    }
+
+    /* Live Leaderboard Table inside End-of-Game Overlay */
+    .endgame-leaderboard-wrap {
+      flex: 1;
+      min-height: 150px;
+      max-height: 235px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.52);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 12px;
+    }
+
+    .lb-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 6px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: var(--neon-gold);
+    }
+
+    .lb-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    .lb-table th {
+      text-align: left;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.58rem;
+      color: rgba(255, 255, 255, 0.55);
+      padding: 4px 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .lb-table td {
+      padding: 5px 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+    }
+
+    .lb-row.is-current-user td {
+      background: rgba(255, 174, 0, 0.18);
+      color: #ffe28a;
+      font-weight: 900;
+    }
+
+    .lb-rank-badge {
+      display: inline-block;
+      min-width: 28px;
+      font-weight: 900;
+    }
+
+    .lb-you-tag {
+      background: var(--neon-gold);
+      color: #05030a;
+      font-size: 0.52rem;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 999px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .endgame-bottom-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 8px;
+    }
+
+    .fly-again-btn {
+      flex: 1;
+      padding: 11px 18px;
+      border-radius: 999px;
+      border: 1.5px solid var(--neon-cyan);
+      background: rgba(0, 240, 255, 0.18);
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .fly-again-btn:hover {
+      background: var(--neon-cyan);
+      color: #04030a;
+    }
+
+    .endgame-store-btn {
+      flex: 1;
+      padding: 11px 18px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--neon-gold), var(--neon-pink));
+      color: #04030a;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-align: center;
+      box-shadow: 0 0 22px rgba(255, 45, 149, 0.5);
+    }
+
+    .cabinet-footer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 8px 2px;
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.72);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .controls-hint kbd {
+      background: rgba(0, 240, 255, 0.14);
+      border: 1px solid rgba(0, 240, 255, 0.45);
+      color: var(--neon-cyan);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      margin: 0 2px;
+    }
+
+    /* ── RIGHT SIDEBAR: TABS FOR COUPON VAULT & LIVE LEADERBOARD ────────── */
+    .vault-sidebar {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 22px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75);
+    }
+
+    .sidebar-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-tab-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 8px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-tab-btn.active {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(255, 45, 149, 0.25));
+      border: 1px solid var(--neon-cyan);
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
+    }
+
+    .sidebar-pane {
+      display: none;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .sidebar-pane.active {
+      display: flex;
+    }
+
+    /* XP Progress Bar Box */
+    .xp-progress-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 174, 0, 0.32);
+      border-radius: 14px;
+      padding: 10px 13px;
+    }
+
+    .xp-progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .xp-current-label {
+      color: var(--neon-gold);
+    }
+
+    .xp-next-label {
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 0.62rem;
+    }
+
+    .xp-bar-track {
+      width: 100%;
+      height: 9px;
+      background: rgba(0, 0, 0, 0.65);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .xp-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-gold));
+      border-radius: 999px;
+      box-shadow: 0 0 12px rgba(255, 174, 0, 0.7);
+      transition: width 0.3s ease;
+    }
+
+    .coupon-vault-instruction {
+      font-size: 0.74rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.38;
+      background: rgba(0, 240, 255, 0.07);
+      border-left: 3px solid var(--neon-cyan);
+      padding: 7px 10px;
+      border-radius: 6px;
+    }
+
+    .coupon-icons-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .coupon-icon-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.22s ease;
+      text-align: left;
+      width: 100%;
+      color: #ffffff;
+      font-family: inherit;
+    }
+
+    .coupon-icon-card.locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .coupon-icon-card.unlocked {
+      cursor: pointer;
+      background: rgba(0, 240, 255, 0.08);
+      border-color: rgba(0, 240, 255, 0.55);
+    }
+
+    .coupon-icon-card.unlocked:hover {
+      transform: translateY(-2px);
+      background: rgba(0, 240, 255, 0.16);
+      border-color: var(--neon-gold);
+    }
+
+    .coupon-icon-card.active-checkout {
+      cursor: pointer;
+      background: linear-gradient(135deg, rgba(255, 174, 0, 0.22), rgba(255, 45, 149, 0.22));
+      border-color: var(--neon-gold);
+      box-shadow: 0 0 22px rgba(255, 174, 0, 0.4);
+    }
+
+    .coupon-icon-card.redeemed {
+      opacity: 0.36;
+      cursor: not-allowed;
+      background: rgba(40, 12, 24, 0.35);
+      border-color: rgba(255, 45, 149, 0.25);
+      text-decoration: line-through;
+    }
+
+    .coupon-icon-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      flex-shrink: 0;
+    }
+
+    .coupon-icon-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .coupon-code-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .coupon-code-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: var(--neon-gold);
+    }
+
+    .coupon-xp-req {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .coupon-desc {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-top: 1px;
+    }
+
+    .coupon-status-pill {
+      display: inline-block;
+      margin-top: 3px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .coupon-icon-card.unlocked .coupon-status-pill {
+      background: rgba(0, 240, 255, 0.2);
+      color: #9ef8ff;
+    }
+
+    .coupon-icon-card.active-checkout .coupon-status-pill {
+      background: var(--neon-gold);
+      color: #05030a;
+    }
+
+    .vault-cta-btn {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-pink) 100%);
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(0, 240, 255, 0.4);
+      transition: all 0.22s ease;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    /* ── CUSTOMER LOGIN & CREATE ACCOUNT ENTRY GATE MODAL ───────────────── */
+    .auth-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      background: radial-gradient(circle at 50% 30%, rgba(28, 12, 64, 0.52) 0%, rgba(6, 4, 18, 0.68) 100%);
+      backdrop-filter: blur(7px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-modal-backdrop.open {
+      display: flex;
+    }
+
+    .auth-modal {
+      width: min(94vw, 520px);
+      background: linear-gradient(180deg, rgba(20, 14, 44, 0.97) 0%, rgba(9, 7, 22, 0.99) 100%);
+      border: 2px solid var(--neon-cyan);
+      border-radius: 24px;
+      padding: 24px 26px;
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.92),
+        0 0 42px rgba(0, 240, 255, 0.35),
+        0 0 80px rgba(255, 45, 149, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .auth-gate-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      align-self: flex-start;
+      background: rgba(255, 45, 149, 0.18);
+      border: 1px solid var(--neon-pink);
+      color: #ffb3d9;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      padding: 4px 11px;
+      border-radius: 999px;
+    }
+
+    .auth-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding-bottom: 10px;
+      gap: 10px;
+    }
+
+    .auth-modal-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      text-shadow: 0 0 14px rgba(0, 240, 255, 0.65);
+    }
+
+    .auth-close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .auth-mode-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 240, 255, 0.25);
+    }
+
+    .auth-mode-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      color: rgba(255, 255, 255, 0.65);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 9px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .auth-mode-tab.active {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.28), rgba(255, 45, 149, 0.28));
+      border-color: var(--neon-cyan);
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
+    }
+
+    .quick-continue-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(0, 245, 155, 0.18), rgba(0, 240, 255, 0.14));
+      border: 1.5px solid var(--neon-green);
+      box-shadow: 0 0 20px rgba(0, 245, 155, 0.25);
+    }
+
+    .quick-continue-btn {
+      background: var(--neon-green);
+      color: #04030a;
+      border: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .auth-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .auth-field label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.63rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--neon-gold);
+    }
+
+    .auth-field input {
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(0, 240, 255, 0.5);
+      background: rgba(5, 4, 14, 0.95);
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.02rem;
+      outline: none;
+    }
+
+    .auth-field input:focus {
+      border-color: var(--neon-gold);
+      box-shadow: 0 0 16px rgba(255, 174, 0, 0.45);
+    }
+
+    .auth-status-msg {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #ff99cc;
+      min-height: 18px;
+      display: none;
+    }
+
+    .auth-submit-btn {
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+      color: #04030a;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(0, 245, 155, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .auth-submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 32px rgba(0, 245, 155, 0.85);
+    }
+
+    .saved-profiles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .saved-profile-chip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 0.78rem;
+      transition: all 0.18s ease;
+    }
+
+    .saved-profile-chip:hover {
+      border-color: var(--neon-cyan);
+      background: rgba(0, 240, 255, 0.12);
+    }
+
+    @media (max-width: 1080px) {
+      .arcade-workspace {
+        grid-template-columns: 1fr;
+      }
+      .header-center-pills {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP ARCADE NAVIGATION BAR -->
+  <header class="arcade-header">
+    <a href="index.html" class="brand-link">
+      <img src="assets/logo.png" alt="Retrocanopy Logo" class="nav-logo">
+      <span class="nav-wordmark">RETROCANOPY</span>
+    </a>
+
+    <div class="header-center-pills">
+      <div class="xp-counter-pill" id="topXpPill">&#9889; XP: <span id="topXpVal">0</span></div>
+      <div class="highscore-pill">&#127942; BEST: <span id="topBestScore">0</span></div>
+    </div>
+
+    <div class="header-actions">
+      <a href="index.html" class="nav-btn nav-btn-home">&#8962; Lobby</a>
+      <a href="hat_preview.html" class="nav-btn nav-btn-store" id="goStoreTopBtn">&#128717;&#65039; Store &amp; Checkout</a>
+      <a href="admin.html" class="nav-btn" id="topAdminHubBtn" style="display:none;background:rgba(255,174,0,0.18);border:1.5px solid #ffae00;color:#ffdf80;">&#128737;&#65039; Admin Hub</a>
+      <button type="button" class="user-auth-pill guest-mode" id="topUserAuthBtn" title="Click to Sign In, Save Progress, or Switch Account">
+        &#128100; <span id="topUserAuthLabel">SIGN IN</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE: SYNTH'S MIDNIGHT FLIGHT + COUPON VAULT / LIVE LEADERBOARD -->
+  <main class="arcade-workspace">
+
+    <!-- LEFT: PLAYABLE 16-BIT SYNTH'S MIDNIGHT FLIGHT CABINET -->
+    <section class="cabinet-stage" aria-label="Synth's Midnight Flight Arcade Cabinet">
+      <div class="cabinet-marquee">
+        <div class="marquee-title-wrap">
+          <span class="marquee-badge">ARCADE CABINET #01</span>
+          <h1 class="marquee-title">&#129417; SYNTH'S MIDNIGHT FLIGHT</h1>
+        </div>
+        <div class="marquee-controls">
+          <button type="button" class="crt-ctrl-btn" id="btnOpenLoginModal">&#128100; ACCOUNT</button>
+          <button type="button" class="crt-ctrl-btn" id="btnToggleSfx">&#128266; SFX: ON</button>
+          <button type="button" class="crt-ctrl-btn" id="btnRestartFlight">&#8634; NEW FLIGHT</button>
+        </div>
+      </div>
+
+      <div class="crt-screen-container" id="crtScreenContainer">
+        <canvas id="flightCanvas" width="960" height="540"></canvas>
+        <div class="crt-scanlines" aria-hidden="true"></div>
+        <div class="flight-unlock-toast" id="flightUnlockToast">&#127915; COUPON UNLOCKED!</div>
+
+        <!-- END-OF-GAME SCORE SUBMISSION & LIVE CURRENT LEADERBOARD OVERLAY -->
+        <div class="endgame-overlay" id="endgameOverlay" onclick="event.stopPropagation()">
+          <div class="endgame-top-banner">
+            <div class="endgame-headline">&#127942; FLIGHT COMPLETE!</div>
+            <div class="endgame-stats-strip">
+              <span class="endgame-stat-pill score-pill">SCORE: <strong id="egFinalScore">0</strong></span>
+              <span class="endgame-stat-pill xp-pill">+<strong id="egEarnedXp">0</strong> XP EARNED (TOTAL: <strong id="egTotalXp">0</strong> XP)</span>
+            </div>
+          </div>
+
+          <!-- USERNAME LOGIN & SCORE POSTING BAR -->
+          <div class="endgame-post-box">
+            <div class="post-box-left">
+              <span class="post-box-kicker">CUSTOMER ACCOUNT &amp; SCORE SUBMISSION</span>
+              <div class="post-box-status" id="egAccountStatusText">Log in or enter a Username to post your score &amp; save your XP!</div>
+            </div>
+            <div class="post-form-controls" id="egPostFormControls">
+              <input type="text" class="arcade-input" id="egUsernameInput" maxlength="18" placeholder="Username (e.g. Joseph)">
+              <input type="password" class="arcade-input arcade-pin-input" id="egPinInput" maxlength="8" placeholder="PIN (Opt)">
+              <button type="button" class="post-score-btn" id="egPostScoreBtn">&#127942; LOGIN &amp; POST SCORE</button>
+            </div>
+          </div>
+
+          <!-- LIVE CURRENT LEADERBOARD TABLE -->
+          <div class="endgame-leaderboard-wrap">
+            <div class="lb-header-row">
+              <span>&#9889; LIVE GLOBAL LEADERBOARD (STAYS CURRENT)</span>
+              <span id="egLeaderboardCountTag">TOP PILOTS</span>
+            </div>
+            <table class="lb-table" aria-label="Synth's Midnight Flight Live Leaderboard">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Pilot Username</th>
+                  <th>Score</th>
+                  <th>Saved XP</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="egLeaderboardTbody"></tbody>
+            </table>
+          </div>
+
+          <div class="endgame-bottom-actions">
+            <button type="button" class="fly-again-btn" id="egFlyAgainBtn">&#8634; FLY AGAIN (SPACE)</button>
+            <a href="hat_preview.html" class="endgame-store-btn">&#128717;&#65039; GO TO STORE &amp; APPLY 1-TIME COUPONS &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="cabinet-footer-bar">
+        <div class="controls-hint">
+          <strong>CONTROLS:</strong> Press <kbd>SPACE</kbd>, <kbd>&#8593;</kbd>, or <kbd>CLICK / TAP</kbd> screen to flap Synth's hologram wings!
+        </div>
+        <div>
+          Laser Gate = <strong>+50 XP</strong> &bull; Golden Ring = <strong>+75 XP &amp; Combo!</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT SIDEBAR: STORE COUPON VAULT + LIVE LEADERBOARD -->
+    <aside class="vault-sidebar" aria-label="Canopy XP, Store Coupon Vault & Live Leaderboard">
+      <div class="sidebar-tabs">
+        <button type="button" class="sidebar-tab-btn active" id="tabBtnCoupons">&#127915; COUPON VAULT</button>
+        <button type="button" class="sidebar-tab-btn" id="tabBtnLeaderboard">&#127942; LEADERBOARD</button>
+      </div>
+
+      <div class="xp-progress-card">
+        <div class="xp-progress-top">
+          <span class="xp-current-label">&#9889; <span id="vaultXpText">0</span> CANOPY XP</span>
+          <span class="xp-next-label" id="vaultNextTierText">Next Coupon at 250 XP</span>
+        </div>
+        <div class="xp-bar-track">
+          <div class="xp-bar-fill" id="vaultXpBarFill"></div>
+        </div>
+      </div>
+
+      <!-- PANE 1: 1-TIME USE STORE COUPONS -->
+      <div class="sidebar-pane active" id="paneCoupons">
+        <div class="coupon-vault-instruction" id="vaultInstructionBanner">
+          Click any unlocked <strong>Coupon Icon</strong> below (or in the Store) to lock it in as a <strong>1-time use applied at checkout</strong>. Progress saves to your customer login!
+        </div>
+        <div class="coupon-icons-list" id="couponIconsList"></div>
+      </div>
+
+      <!-- PANE 2: LIVE PERSISTENT LEADERBOARD -->
+      <div class="sidebar-pane" id="paneLeaderboard">
+        <div class="coupon-vault-instruction">
+          <strong>Live High-Score Leaderboard:</strong> Every completed flight automatically updates your best score tied to your customer username!
+        </div>
+        <div class="endgame-leaderboard-wrap" style="max-height:330px;">
+          <table class="lb-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Best Score</th>
+                <th>XP</th>
+              </tr>
+            </thead>
+            <tbody id="sidebarLeaderboardTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <a href="hat_preview.html" class="vault-cta-btn" id="goToStoreCheckoutBtn">
+        &#128717;&#65039; GO TO STORE &amp; APPLY AT CHECKOUT &rarr;
+      </a>
+    </aside>
+
+  </main>
+
+  <!-- CLEAN & SPACIOUS 2-STEP LOGIN / CREATE ACCOUNT POPUP -->
+  <div class="auth-modal-backdrop" id="authModalBackdrop">
+    <div class="auth-modal" onclick="event.stopPropagation()" style="width:min(500px,95vw);text-align:center;padding:34px 32px;gap:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:800;color:var(--neon-cyan);letter-spacing:0.1em;">RETROCANOPY</span>
+        <button type="button" class="auth-close-btn" id="authCloseBtn">Close &#10005;</button>
+      </div>
+
+      <h2 class="auth-modal-title" id="authModalTitleText" style="font-size:1.2rem;margin:2px 0;">WELCOME</h2>
+      <div style="font-size:0.9rem;color:rgba(255,255,255,0.72);margin-bottom:4px;line-height:1.45;" id="authModalSubtext">
+        Create an account or log in
+      </div>
+
+      <!-- STEP 1: FIRST POPUP (JUST CREATE ACCOUNT OR LOG IN) -->
+      <div id="authStepChoice" style="display:flex;flex-direction:column;gap:13px;">
+        <button type="button" class="auth-submit-btn" id="btnStepChooseCreate" style="padding:15px 18px;font-size:0.82rem;">CREATE ACCOUNT</button>
+        <button type="button" class="auth-submit-btn" id="btnStepChooseLogin" style="padding:15px 18px;font-size:0.82rem;background:rgba(0,240,255,0.12);border:1.5px solid var(--neon-cyan);color:#ffffff;box-shadow:none;">PLAYER LOG IN</button>
+        <div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;color:rgba(255,255,255,0.4);letter-spacing:0.15em;margin:2px 0;">&mdash; ADMIN ACCESS &mdash;</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button type="button" class="auth-submit-btn" id="btnStepChooseAdmin" style="padding:13px 12px;background:rgba(255,174,0,0.12);border:1.5px solid var(--neon-gold);color:#ffdf80;box-shadow:none;font-size:0.72rem;">&#128737;&#65039; ADMIN LOG IN</button>
+          <button type="button" class="auth-submit-btn" id="btnStepChooseAdminCreate" style="padding:13px 12px;background:rgba(255,174,0,0.12);border:1.5px solid var(--neon-gold);color:#ffdf80;box-shadow:none;font-size:0.72rem;">&#10024; CREATE ADMIN</button>
+        </div>
+        <button type="button" class="auth-close-btn" id="modalLogoutBtn" style="display:none;border-color:#ff2d95;color:#ff99cc;margin-top:4px;">Log Out of Active Account</button>
+      </div>
+
+      <!-- STEP 2: SPACIOUS EMAIL & PASSWORD FORM -->
+      <div id="authStepForm" style="display:none;flex-direction:column;gap:14px;text-align:left;">
+        <div class="auth-field" id="modalUsernameGroup" style="display:none;">
+          <label for="modalUsernameInput" id="lblModalUsername">USERNAME</label>
+          <input type="text" id="modalUsernameInput" maxlength="64" autocomplete="username" placeholder="Choose a display username (e.g. SynthPilot84)">
+        </div>
+        <div class="auth-field">
+          <label for="modalEmailInput" id="lblModalEmail">EMAIL ADDRESS</label>
+          <input type="email" id="modalEmailInput" maxlength="128" autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="auth-field">
+          <label for="modalPinInput" id="lblModalPin">PASSWORD</label>
+          <input type="password" id="modalPinInput" maxlength="128" autocomplete="current-password" placeholder="Enter your password">
+        </div>
+        <div class="auth-status-msg" id="authStatusMsg" style="text-align:center;font-size:0.85rem;"></div>
+        <button type="button" class="auth-submit-btn" id="modalLoginSaveBtn" style="padding:15px 18px;font-size:0.82rem;">CONTINUE</button>
+        <button type="button" class="auth-close-btn" id="btnAuthBackToChoice" style="background:transparent;border:none;color:rgba(255,255,255,0.68);align-self:center;font-size:0.7rem;">&larr; Back</button>
+      </div>
+
+      <!-- STEP 3: ADMIN ACCOUNT CREATED -> SENT TO OWNER'S PAGE FOR APPROVAL -->
+      <div id="authStepApproval" style="display:none;flex-direction:column;gap:14px;text-align:left;">
+        <div id="modalApprovalInfoBox" style="background:rgba(255,174,0,0.08);border:1.5px solid rgba(255,174,0,0.45);border-radius:14px;padding:16px 18px;font-size:0.85rem;color:rgba(255,255,255,0.9);line-height:1.5;"></div>
+        <button type="button" class="auth-submit-btn" id="btnVerifyAdminApproval" style="padding:14px 18px;font-size:0.8rem;">GO TO ADMIN LOG IN</button>
+        <button type="button" class="auth-close-btn" id="btnApprovalBackToForm" style="background:transparent;border:none;color:rgba(255,255,255,0.68);align-self:center;font-size:0.7rem;">&larr; Back</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth_hub.js?v=107"></script>
+  <script>
+    (function () {
+      // Mark internal navigation so returning to index.html skips the opening cutscene
+      sessionStorage.setItem('rc_intro_seen', '1');
+      sessionStorage.setItem('rc_from_internal', '1');
+      sessionStorage.setItem('rc_lofi_active', '1');
+
+      document.addEventListener('click', (e) => {
+        const link = e.target.closest('a[href]');
+        if (!link) return;
+        const href = link.getAttribute('href') || '';
+        if (href === 'index.html' || href.endsWith('/index.html')) {
+          try {
+            if (window.parent && window.parent !== window && window.parent.__rcLofiHostActive) {
+              e.preventDefault();
+              window.parent.__rcCloseSubpage(true);
+            }
+          } catch (_) {}
+        }
+      });
+
+      // =========================================================================
+      // SHARED CUSTOMER LOGIN, ACCOUNT PROGRESS & LIVE LEADERBOARD ENGINE
+      // =========================================================================
+      const COUPON_TIERS = [
+        {
+          code: 'CANOPY5',
+          icon: '🎟️',
+          title: '5% OFF Store Coupon',
+          xpReq: 250,
+          type: 'percent',
+          pct: 5,
+          desc: '5% OFF your order (1-Time Use at Checkout)'
+        },
+        {
+          code: 'CANOPY10',
+          icon: '⚡',
+          title: '10% OFF Store Coupon',
+          xpReq: 750,
+          type: 'percent',
+          pct: 10,
+          desc: '10% OFF your order (1-Time Use at Checkout)'
+        },
+        {
+          code: 'CANOPY15',
+          icon: '🌟',
+          title: '15% OFF + Free Sticker',
+          xpReq: 1500,
+          type: 'percent',
+          pct: 15,
+          desc: '15% OFF + Holo Sticker (1-Time Use at Checkout)'
+        },
+        {
+          code: 'CANOPY25',
+          icon: '🔥',
+          title: '25% OFF + Free Shipping',
+          xpReq: 3000,
+          type: 'percent',
+          pct: 25,
+          desc: '25% OFF + Free Shipping (1-Time Use at Checkout)'
+        },
+        {
+          code: 'FREECAP84',
+          icon: '🧢',
+          title: 'FREE Snapback Hat ($32 OFF)',
+          xpReq: 6000,
+          type: 'fixed',
+          amountOff: 32,
+          desc: 'FREE $32 Snapback Hat (1-Time Use at Checkout)'
+        }
+      ];
+
+      const SEEDED_LEADERBOARD = [
+        { username: 'CAB-84', score: 2450, xp: 3200, updatedAt: 'ARCADE HOST', isCrew: true },
+        { username: 'AKARI',  score: 1950, xp: 2400, updatedAt: 'CULTURE GUIDE', isCrew: true },
+        { username: 'SYNTH',  score: 1450, xp: 1850, updatedAt: 'OWL BUTLER', isCrew: true },
+        { username: 'CHLOE',  score: 1100, xp: 1500, updatedAt: 'SHOP CURATOR', isCrew: true },
+        { username: 'GRIZZ',  score: 850,  xp: 1100, updatedAt: 'CREATOR BOSS', isCrew: true }
+      ];
+
+      function getAccountsDb() {
+        try {
+          return JSON.parse(localStorage.getItem('rc_accounts_db_v1') || '{}') || {};
+        } catch (_) {
+          return {};
+        }
+      }
+
+      function saveAccountsDb(db) {
+        localStorage.setItem('rc_accounts_db_v1', JSON.stringify(db));
+        persistToServerAndCloud();
+      }
+
+      // Sync accounts & leaderboard to Server Disk DB (/api/arcade-db -> data/arcade_db.json) and Supabase Cloud (window.db)
+      let syncTimer = null;
+      function persistToServerAndCloud() {
+        if (syncTimer) clearTimeout(syncTimer);
+        syncTimer = setTimeout(async () => {
+          const accounts = getAccountsDb();
+          let adminAccounts = {};
+          let leaderboard = [];
+          let orders = [];
+          let stats = {};
+          try {
+            adminAccounts = JSON.parse(localStorage.getItem('rc_admin_accounts_v1') || '{}') || {};
+            leaderboard = JSON.parse(localStorage.getItem('rc_leaderboard_v1') || '[]') || [];
+            orders = JSON.parse(localStorage.getItem('rc_shop_orders_v1') || '[]') || [];
+            stats = JSON.parse(localStorage.getItem('rc_site_stats_v1') || '{}') || {};
+          } catch (_) {}
+
+          // 1. Save to Local Server Disk DB (Website/data/arcade_db.json)
+          if (window.location.protocol.startsWith('http')) {
+            try {
+              await fetch('api/arcade-db', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accounts, adminAccounts, leaderboard, orders, stats, updatedAt: new Date().toISOString() })
+              });
+            } catch (_) {}
+          }
+
+          // 2. Save active customer account & score to Supabase Cloud (if table exists)
+          const curUser = getCurrentUsername();
+          const client = window.db || (typeof db !== 'undefined' ? db : null);
+          if (client && curUser && accounts[curUser.toLowerCase()]) {
+            const acct = accounts[curUser.toLowerCase()];
+            try {
+              await client.from('arcade_accounts').upsert([{
+                username_key: curUser.toLowerCase(),
+                username: acct.username,
+                pin: acct.pin || '',
+                email: acct.email || null,
+                xp: acct.xp || 0,
+                best_score: acct.bestScore || 0,
+                used_coupons: acct.usedCoupons || {},
+                active_checkout_coupon: acct.activeCheckoutCoupon || '',
+                updated_at: new Date().toISOString()
+              }], { onConflict: 'username_key' });
+            } catch (_) {}
+          }
+        }, 120);
+      }
+
+      async function loadFromServerAndCloud() {
+        let changed = false;
+        // 1. Pull from Local Server Disk DB (Website/data/arcade_db.json)
+        if (window.location.protocol.startsWith('http')) {
+          try {
+            const res = await fetch('api/arcade-db');
+            if (res.ok) {
+              const data = await res.json();
+              if (data && data.accounts && typeof data.accounts === 'object') {
+                const localDb = getAccountsDb();
+                Object.keys(data.accounts).forEach((k) => {
+                  const srvAcc = data.accounts[k];
+                  const locAcc = localDb[k];
+                  if (!locAcc) {
+                    localDb[k] = srvAcc;
+                    changed = true;
+                  } else {
+                    locAcc.xp = Math.max(locAcc.xp || 0, srvAcc.xp || 0);
+                    locAcc.bestScore = Math.max(locAcc.bestScore || 0, srvAcc.bestScore || 0);
+                    locAcc.usedCoupons = { ...(srvAcc.usedCoupons || {}), ...(locAcc.usedCoupons || {}) };
+                  }
+                });
+                localStorage.setItem('rc_accounts_db_v1', JSON.stringify(localDb));
+              }
+              if (data && Array.isArray(data.leaderboard) && data.leaderboard.length > 0) {
+                let localLb = [];
+                try { localLb = JSON.parse(localStorage.getItem('rc_leaderboard_v1') || '[]') || []; } catch (_) {}
+                const mergedMap = new Map();
+                [...data.leaderboard, ...localLb].forEach((entry) => {
+                  if (!entry || !entry.username) return;
+                  const key = entry.username.toLowerCase();
+                  const prev = mergedMap.get(key);
+                  if (!prev || (entry.score || 0) >= (prev.score || 0)) {
+                    mergedMap.set(key, {
+                      username: entry.username,
+                      score: Math.max(prev ? prev.score : 0, entry.score || 0),
+                      xp: Math.max(prev ? prev.xp : 0, entry.xp || 0),
+                      updatedAt: entry.updatedAt || 'SAVED',
+                      isCrew: false
+                    });
+                  }
+                });
+                localStorage.setItem('rc_leaderboard_v1', JSON.stringify(Array.from(mergedMap.values())));
+                changed = true;
+              }
+            }
+          } catch (_) {}
+        }
+
+        // 2. Pull from Supabase Cloud DB if available
+        const client = window.db || (typeof db !== 'undefined' ? db : null);
+        if (client) {
+          try {
+            const { data: rows } = await client.from('arcade_accounts').select('*').limit(100);
+            if (Array.isArray(rows) && rows.length > 0) {
+              const localDb = getAccountsDb();
+              rows.forEach((r) => {
+                if (!r || !r.username) return;
+                const k = (r.username_key || r.username).toLowerCase();
+                const loc = localDb[k];
+                localDb[k] = {
+                  username: r.username,
+                  pin: r.pin || (loc ? loc.pin : ''),
+                  email: r.email || (loc ? loc.email : ''),
+                  xp: Math.max(loc ? loc.xp || 0 : 0, r.xp || 0),
+                  bestScore: Math.max(loc ? loc.bestScore || 0 : 0, r.best_score || 0),
+                  usedCoupons: { ...(r.used_coupons || {}), ...(loc ? loc.usedCoupons || {} : {}) },
+                  activeCheckoutCoupon: (loc && loc.activeCheckoutCoupon) || r.active_checkout_coupon || ''
+                };
+              });
+              localStorage.setItem('rc_accounts_db_v1', JSON.stringify(localDb));
+              changed = true;
+            }
+          } catch (_) {}
+        }
+
+        if (changed) {
+          syncActiveAccountToGlobalStorage();
+          renderAllUI();
+        }
+      }
+
+      function getCurrentUsername() {
+        return (localStorage.getItem('rc_current_user_v1') || '').trim();
+      }
+
+      function syncActiveAccountToGlobalStorage() {
+        const uname = getCurrentUsername();
+        if (!uname) return;
+        const db = getAccountsDb();
+        const key = uname.toLowerCase();
+        const acct = db[key];
+        if (!acct) return;
+
+        localStorage.setItem('rc_canopy_xp', String(acct.xp || 0));
+        localStorage.setItem('rc_synth_flight_best', String(acct.bestScore || 0));
+        localStorage.setItem('rc_used_coupons_v1', JSON.stringify(acct.usedCoupons || {}));
+        if (acct.activeCheckoutCoupon) {
+          localStorage.setItem('rc_active_checkout_coupon', acct.activeCheckoutCoupon);
+        } else {
+          localStorage.removeItem('rc_active_checkout_coupon');
+        }
+      }
+
+      function syncGlobalStorageToActiveAccount() {
+        const uname = getCurrentUsername();
+        if (!uname) return;
+        const db = getAccountsDb();
+        const key = uname.toLowerCase();
+        const existing = db[key] || { username: uname, pin: '', xp: 0, bestScore: 0, usedCoupons: {}, activeCheckoutCoupon: '' };
+        existing.username = uname;
+        existing.xp = Math.max(existing.xp || 0, getCanopyXp());
+        existing.bestScore = Math.max(existing.bestScore || 0, getBestScore());
+        existing.usedCoupons = { ...(existing.usedCoupons || {}), ...getUsedCouponsMap() };
+        existing.activeCheckoutCoupon = getActiveCheckoutCoupon();
+        existing.updatedAt = new Date().toISOString();
+        db[key] = existing;
+        saveAccountsDb(db);
+        // keep global mirrors in sync with merged maximums
+        localStorage.setItem('rc_canopy_xp', String(existing.xp));
+        localStorage.setItem('rc_synth_flight_best', String(existing.bestScore));
+        localStorage.setItem('rc_used_coupons_v1', JSON.stringify(existing.usedCoupons));
+      }
+
+      function loginOrRegisterCustomer(rawUsername, rawPin, mergeGuestProgress = true) {
+        const cleanName = (rawUsername || '').trim().replace(/^@+/, '');
+        if (!cleanName) return { ok: false, msg: 'Please enter a username!' };
+
+        const db = getAccountsDb();
+        const key = cleanName.toLowerCase();
+        const pin = (rawPin || '').trim();
+        const guestXp = mergeGuestProgress ? getCanopyXp() : 0;
+        const guestBest = mergeGuestProgress ? getBestScore() : 0;
+        const guestUsed = mergeGuestProgress ? getUsedCouponsMap() : {};
+        const guestActiveCoupon = mergeGuestProgress ? getActiveCheckoutCoupon() : '';
+
+        if (db[key]) {
+          // Existing customer account
+          if (db[key].pin && pin && db[key].pin !== pin) {
+            return { ok: false, msg: 'Incorrect PIN for existing customer @' + db[key].username };
+          }
+          // If switching from guest, only merge guest progress if they weren't logged into someone else
+          const prevUser = getCurrentUsername();
+          if (!prevUser && mergeGuestProgress) {
+            db[key].xp = Math.max(db[key].xp || 0, guestXp);
+            db[key].bestScore = Math.max(db[key].bestScore || 0, guestBest);
+            db[key].usedCoupons = { ...(db[key].usedCoupons || {}), ...guestUsed };
+            if (!db[key].activeCheckoutCoupon && guestActiveCoupon) {
+              db[key].activeCheckoutCoupon = guestActiveCoupon;
+            }
+          }
+        } else {
+          // Brand new customer account
+          db[key] = {
+            username: cleanName,
+            pin: pin,
+            xp: guestXp,
+            bestScore: guestBest,
+            usedCoupons: guestUsed,
+            activeCheckoutCoupon: guestActiveCoupon,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+        }
+
+        localStorage.setItem('rc_current_user_v1', db[key].username);
+        saveAccountsDb(db);
+        syncActiveAccountToGlobalStorage();
+
+        // Also ensure their best score is on the live leaderboard if > 0
+        if (db[key].bestScore > 0) {
+          postScoreToLeaderboard(db[key].username, db[key].bestScore, db[key].xp);
+        }
+
+        renderAllUI();
+        return { ok: true, account: db[key] };
+      }
+
+      function logoutCustomer() {
+        syncGlobalStorageToActiveAccount();
+        localStorage.removeItem('rc_current_user_v1');
+        localStorage.setItem('rc_canopy_xp', '0');
+        localStorage.setItem('rc_synth_flight_best', '0');
+        localStorage.setItem('rc_used_coupons_v1', '{}');
+        localStorage.removeItem('rc_active_checkout_coupon');
+        renderAllUI();
+      }
+
+      function getLeaderboard() {
+        let saved = [];
+        try {
+          saved = JSON.parse(localStorage.getItem('rc_leaderboard_v1') || '[]');
+          if (!Array.isArray(saved)) saved = [];
+        } catch (_) {
+          saved = [];
+        }
+
+        // Merge with seeded crew scores so leaderboard always has competitive targets
+        const map = new Map();
+        SEEDED_LEADERBOARD.forEach((entry) => {
+          map.set(entry.username.toLowerCase(), { ...entry });
+        });
+        saved.forEach((entry) => {
+          if (!entry || !entry.username) return;
+          const k = entry.username.toLowerCase();
+          const prev = map.get(k);
+          if (!prev || entry.score >= prev.score) {
+            map.set(k, {
+              username: entry.username,
+              score: Math.max(prev ? prev.score : 0, entry.score || 0),
+              xp: Math.max(prev ? prev.xp : 0, entry.xp || 0),
+              updatedAt: entry.updatedAt || 'LIVE',
+              isCrew: Boolean(entry.isCrew && !prev)
+            });
+          }
+        });
+
+        // Also pull all customer accounts from rc_accounts_db_v1 so every saved user with a score stays current!
+        const db = getAccountsDb();
+        Object.values(db).forEach((acct) => {
+          if (!acct || !acct.username || !(acct.bestScore > 0)) return;
+          const k = acct.username.toLowerCase();
+          const prev = map.get(k);
+          map.set(k, {
+            username: acct.username,
+            score: Math.max(prev ? prev.score : 0, acct.bestScore || 0),
+            xp: Math.max(prev ? prev.xp : 0, acct.xp || 0),
+            updatedAt: prev && prev.updatedAt && prev.updatedAt !== 'ARCADE HOST' ? prev.updatedAt : 'SAVED PILOT',
+            isCrew: false
+          });
+        });
+
+        const sorted = Array.from(map.values()).sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return (b.xp || 0) - (a.xp || 0);
+        });
+
+        return sorted.slice(0, 15);
+      }
+
+      function postScoreToLeaderboard(username, flightScore, totalXp) {
+        const cleanUser = (username || '').trim().replace(/^@+/, '');
+        if (!cleanUser) return;
+        const cleanScore = Math.max(0, Math.round(flightScore || 0));
+        const cleanXp = Math.max(0, Math.round(totalXp || getCanopyXp()));
+
+        let list = [];
+        try {
+          list = JSON.parse(localStorage.getItem('rc_leaderboard_v1') || '[]');
+          if (!Array.isArray(list)) list = [];
+        } catch (_) {
+          list = [];
+        }
+
+        const nowLabel = 'JUST NOW';
+        const idx = list.findIndex((x) => x && x.username && x.username.toLowerCase() === cleanUser.toLowerCase());
+        if (idx !== -1) {
+          list[idx].username = cleanUser;
+          list[idx].score = Math.max(list[idx].score || 0, cleanScore);
+          list[idx].xp = Math.max(list[idx].xp || 0, cleanXp);
+          list[idx].updatedAt = nowLabel;
+          list[idx].isCrew = false;
+        } else {
+          list.push({
+            username: cleanUser,
+            score: cleanScore,
+            xp: cleanXp,
+            updatedAt: nowLabel,
+            isCrew: false
+          });
+        }
+
+        localStorage.setItem('rc_leaderboard_v1', JSON.stringify(list));
+        persistToServerAndCloud();
+      }
+
+      function getCanopyXp() {
+        return Math.max(0, parseInt(localStorage.getItem('rc_canopy_xp') || '0', 10) || 0);
+      }
+
+      function setCanopyXp(xp) {
+        const clean = Math.max(0, Math.round(xp));
+        localStorage.setItem('rc_canopy_xp', String(clean));
+        syncGlobalStorageToActiveAccount();
+        return clean;
+      }
+
+      function getBestScore() {
+        return Math.max(0, parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0);
+      }
+
+      function setBestScore(s) {
+        const best = Math.max(getBestScore(), Math.round(s));
+        localStorage.setItem('rc_synth_flight_best', String(best));
+        syncGlobalStorageToActiveAccount();
+        return best;
+      }
+
+      function getUsedCouponsMap() {
+        try {
+          return JSON.parse(localStorage.getItem('rc_used_coupons_v1') || '{}') || {};
+        } catch (_) {
+          return {};
+        }
+      }
+
+      function getActiveCheckoutCoupon() {
+        return localStorage.getItem('rc_active_checkout_coupon') || '';
+      }
+
+      function setActiveCheckoutCoupon(code) {
+        if (!code) {
+          localStorage.removeItem('rc_active_checkout_coupon');
+        } else {
+          localStorage.setItem('rc_active_checkout_coupon', code);
+        }
+        syncGlobalStorageToActiveAccount();
+      }
+
+      // Sync active account on load
+      syncActiveAccountToGlobalStorage();
+
+      // =========================================================================
+      // UI ELEMENTS & RENDERING (COUPON VAULT, LEADERBOARD, LOGIN MODAL)
+      // =========================================================================
+      const topUserAuthBtn = document.getElementById('topUserAuthBtn');
+      const topUserAuthLabel = document.getElementById('topUserAuthLabel');
+      const topXpValEl = document.getElementById('topXpVal');
+      const topBestScoreEl = document.getElementById('topBestScore');
+      const vaultXpTextEl = document.getElementById('vaultXpText');
+      const vaultNextTierTextEl = document.getElementById('vaultNextTierText');
+      const vaultXpBarFillEl = document.getElementById('vaultXpBarFill');
+      const couponIconsListEl = document.getElementById('couponIconsList');
+      const vaultInstructionBanner = document.getElementById('vaultInstructionBanner');
+      const flightUnlockToast = document.getElementById('flightUnlockToast');
+
+      const tabBtnCoupons = document.getElementById('tabBtnCoupons');
+      const tabBtnLeaderboard = document.getElementById('tabBtnLeaderboard');
+      const paneCoupons = document.getElementById('paneCoupons');
+      const paneLeaderboard = document.getElementById('paneLeaderboard');
+
+      if (tabBtnCoupons && tabBtnLeaderboard) {
+        tabBtnCoupons.addEventListener('click', () => {
+          tabBtnCoupons.classList.add('active');
+          tabBtnLeaderboard.classList.remove('active');
+          paneCoupons.classList.add('active');
+          paneLeaderboard.classList.remove('active');
+        });
+        tabBtnLeaderboard.addEventListener('click', () => {
+          tabBtnLeaderboard.classList.add('active');
+          tabBtnCoupons.classList.remove('active');
+          paneLeaderboard.classList.add('active');
+          paneCoupons.classList.remove('active');
+          renderLeaderboards();
+        });
+      }
+
+      let toastTimer = null;
+      function showToast(msg) {
+        if (!flightUnlockToast) return;
+        flightUnlockToast.textContent = msg;
+        flightUnlockToast.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          flightUnlockToast.classList.remove('show');
+        }, 2900);
+      }
+
+      function renderLeaderboards() {
+        const rows = getLeaderboard();
+        const curUser = getCurrentUsername().toLowerCase();
+        const egTbody = document.getElementById('egLeaderboardTbody');
+        const sideTbody = document.getElementById('sidebarLeaderboardTbody');
+
+        function rankIcon(idx) {
+          if (idx === 0) return '👑 #1';
+          if (idx === 1) return '🥈 #2';
+          if (idx === 2) return '🥉 #3';
+          return `#${idx + 1}`;
+        }
+
+        if (egTbody) {
+          egTbody.innerHTML = rows.map((r, idx) => {
+            const isMe = curUser && r.username.toLowerCase() === curUser;
+            return `
+              <tr class="lb-row ${isMe ? 'is-current-user' : ''}">
+                <td><span class="lb-rank-badge">${rankIcon(idx)}</span></td>
+                <td>@${r.username}${isMe ? '<span class="lb-you-tag">YOU</span>' : ''}</td>
+                <td style="color:#00f0ff;font-weight:900;">${(r.score || 0).toLocaleString()} PTS</td>
+                <td style="color:#ffae00;">${(r.xp || 0).toLocaleString()} XP</td>
+                <td style="font-size:0.6rem;color:rgba(255,255,255,0.65);">${r.updatedAt || 'LIVE'}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        if (sideTbody) {
+          sideTbody.innerHTML = rows.map((r, idx) => {
+            const isMe = curUser && r.username.toLowerCase() === curUser;
+            return `
+              <tr class="lb-row ${isMe ? 'is-current-user' : ''}">
+                <td>${rankIcon(idx)}</td>
+                <td>@${r.username}${isMe ? '<span class="lb-you-tag">YOU</span>' : ''}</td>
+                <td style="color:#00f0ff;font-weight:800;">${(r.score || 0).toLocaleString()}</td>
+                <td style="color:#ffae00;">${(r.xp || 0).toLocaleString()}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      function renderCouponVault() {
+        const xp = getCanopyXp();
+        const best = getBestScore();
+        const usedMap = getUsedCouponsMap();
+        const curUser = getCurrentUsername();
+        let activeCode = getActiveCheckoutCoupon();
+
+        if (activeCode && usedMap[activeCode]) {
+          activeCode = '';
+          setActiveCheckoutCoupon('');
+        }
+
+        if (topUserAuthBtn && topUserAuthLabel) {
+          if (curUser) {
+            topUserAuthBtn.classList.remove('guest-mode');
+            topUserAuthLabel.textContent = `@${curUser}`;
+          } else {
+            topUserAuthBtn.classList.add('guest-mode');
+            topUserAuthLabel.textContent = 'SIGN IN';
+          }
+        }
+
+        if (topXpValEl) topXpValEl.textContent = xp.toLocaleString();
+        if (topBestScoreEl) topBestScoreEl.textContent = best.toLocaleString();
+        if (vaultXpTextEl) vaultXpTextEl.textContent = xp.toLocaleString();
+
+        const nextTier = COUPON_TIERS.find((t) => xp < t.xpReq);
+        if (nextTier) {
+          const prevReq = COUPON_TIERS[COUPON_TIERS.indexOf(nextTier) - 1]?.xpReq || 0;
+          const pct = Math.max(0, Math.min(100, ((xp - prevReq) / (nextTier.xpReq - prevReq)) * 100));
+          if (vaultXpBarFillEl) vaultXpBarFillEl.style.width = `${pct.toFixed(1)}%`;
+          if (vaultNextTierTextEl) {
+            vaultNextTierTextEl.textContent = `${(nextTier.xpReq - xp).toLocaleString()} XP to ${nextTier.code}`;
+          }
+        } else {
+          if (vaultXpBarFillEl) vaultXpBarFillEl.style.width = '100%';
+          if (vaultNextTierTextEl) vaultNextTierTextEl.textContent = 'ALL 5 TIERS UNLOCKED!';
+        }
+
+        if (!couponIconsListEl) return;
+        couponIconsListEl.innerHTML = '';
+
+        COUPON_TIERS.forEach((tier) => {
+          const isUnlocked = xp >= tier.xpReq;
+          const isRedeemed = Boolean(usedMap[tier.code]);
+          const isActive = !isRedeemed && isUnlocked && activeCode === tier.code;
+
+          let stateClass = 'locked';
+          let statusLabel = `🔒 LOCKED • NEED ${tier.xpReq.toLocaleString()} XP`;
+          if (isRedeemed) {
+            stateClass = 'redeemed';
+            statusLabel = '🚫 REDEEMED (1-TIME USE EXPIRED)';
+          } else if (isActive) {
+            stateClass = 'active-checkout';
+            statusLabel = '✓ QUEUED FOR CHECKOUT (1-TIME USE)';
+          } else if (isUnlocked) {
+            stateClass = 'unlocked';
+            statusLabel = '✨ CLICK ICON TO APPLY AT CHECKOUT (1-TIME USE)';
+          }
+
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = `coupon-icon-card ${stateClass}`;
+          card.innerHTML = `
+            <div class="coupon-icon-badge" aria-hidden="true">${tier.icon}</div>
+            <div class="coupon-icon-body">
+              <div class="coupon-code-row">
+                <span class="coupon-code-tag">${tier.code} &bull; ${tier.title}</span>
+                <span class="coupon-xp-req">${tier.xpReq.toLocaleString()} XP</span>
+              </div>
+              <div class="coupon-desc">${tier.desc}</div>
+              <span class="coupon-status-pill">${statusLabel}</span>
+            </div>
+          `;
+
+          card.addEventListener('click', () => {
+            if (isRedeemed) {
+              playArcadeSfx('buzz');
+              showToast(`🚫 ${tier.code} was already used (1-Time Use Only)!`);
+              return;
+            }
+            if (!isUnlocked) {
+              playArcadeSfx('buzz');
+              showToast(`🔒 Need ${(tier.xpReq - xp).toLocaleString()} more XP to unlock ${tier.code}!`);
+              return;
+            }
+            if (getActiveCheckoutCoupon() === tier.code) {
+              setActiveCheckoutCoupon('');
+              playArcadeSfx('flap');
+            } else {
+              setActiveCheckoutCoupon(tier.code);
+              playArcadeSfx('unlock');
+              showToast(`🎟️ ${tier.code} LOCKED IN FOR STORE CHECKOUT (1-TIME USE)!`);
+            }
+            renderCouponVault();
+          });
+
+          couponIconsListEl.appendChild(card);
+        });
+      }
+
+      function renderAllUI() {
+        renderCouponVault();
+        renderLeaderboards();
+        renderAuthModalState();
+      }
+
+      // =========================================================================
+      // CLEAN & SPACIOUS 2-STEP LOGIN / CREATE ACCOUNT POPUP CONTROLLER
+      // =========================================================================
+      const authModalBackdrop = document.getElementById('authModalBackdrop');
+      const authCloseBtn = document.getElementById('authCloseBtn');
+      const modalUsernameGroup = document.getElementById('modalUsernameGroup');
+      const lblModalUsername = document.getElementById('lblModalUsername');
+      const modalUsernameInput = document.getElementById('modalUsernameInput');
+      const lblModalEmail = document.getElementById('lblModalEmail');
+      const modalEmailInput = document.getElementById('modalEmailInput');
+      const lblModalPin = document.getElementById('lblModalPin');
+      const modalPinInput = document.getElementById('modalPinInput');
+      const modalLoginSaveBtn = document.getElementById('modalLoginSaveBtn');
+      const modalLogoutBtn = document.getElementById('modalLogoutBtn');
+      const btnOpenLoginModal = document.getElementById('btnOpenLoginModal');
+      const authModalTitleText = document.getElementById('authModalTitleText');
+      const authModalSubtext = document.getElementById('authModalSubtext');
+      const authStatusMsg = document.getElementById('authStatusMsg');
+      const authStepChoice = document.getElementById('authStepChoice');
+      const authStepForm = document.getElementById('authStepForm');
+      const authStepApproval = document.getElementById('authStepApproval');
+      const modalApprovalInfoBox = document.getElementById('modalApprovalInfoBox');
+      const btnVerifyAdminApproval = document.getElementById('btnVerifyAdminApproval');
+      const btnOpenApprovalMailto = document.getElementById('btnOpenApprovalMailto');
+      const btnApprovalBackToForm = document.getElementById('btnApprovalBackToForm');
+      const btnStepChooseCreate = document.getElementById('btnStepChooseCreate');
+      const btnStepChooseLogin = document.getElementById('btnStepChooseLogin');
+      const btnStepChooseAdmin = document.getElementById('btnStepChooseAdmin');
+      const btnStepChooseAdminCreate = document.getElementById('btnStepChooseAdminCreate');
+      const btnAuthBackToChoice = document.getElementById('btnAuthBackToChoice');
+      const topAdminHubBtn = document.getElementById('topAdminHubBtn');
+
+      let authMode = 'register'; // 'register' | 'signin' | 'admin_login' | 'admin_create'
+
+      function setAuthStatus(msg, isError = true) {
+        if (!authStatusMsg) return;
+        if (!msg) {
+          authStatusMsg.style.display = 'none';
+          authStatusMsg.textContent = '';
+          return;
+        }
+        authStatusMsg.style.display = 'block';
+        authStatusMsg.style.color = isError ? '#ff77aa' : '#00f59b';
+        authStatusMsg.textContent = msg;
+      }
+
+      function showChoiceStep() {
+        setAuthStatus('');
+        if (authStepChoice) authStepChoice.style.display = 'flex';
+        if (authStepForm) authStepForm.style.display = 'none';
+        if (authStepApproval) authStepApproval.style.display = 'none';
+        const curUser = getCurrentUsername();
+        if (authModalTitleText) {
+          authModalTitleText.textContent = curUser ? `WELCOME, @${curUser.toUpperCase()}` : 'RETROCANOPY';
+        }
+        if (authModalSubtext) {
+          authModalSubtext.textContent = curUser
+            ? 'Your progress and coupons are saved'
+            : 'Create an account or log in';
+        }
+        if (modalLogoutBtn) {
+          modalLogoutBtn.style.display = curUser ? 'inline-block' : 'none';
+        }
+      }
+
+      function showFormStep(mode) {
+        authMode = mode;
+        setAuthStatus('');
+        if (authStepChoice) authStepChoice.style.display = 'none';
+        if (authStepForm) authStepForm.style.display = 'flex';
+        if (authStepApproval) authStepApproval.style.display = 'none';
+        if (modalUsernameInput) modalUsernameInput.value = '';
+        if (modalEmailInput) modalEmailInput.value = '';
+        if (modalPinInput) modalPinInput.value = '';
+
+        if (mode === 'register') {
+          if (authModalTitleText) authModalTitleText.textContent = 'CREATE PLAYER ACCOUNT';
+          if (authModalSubtext) authModalSubtext.textContent = 'Unlocks everything in the site & saves progress';
+          if (modalUsernameGroup) modalUsernameGroup.style.display = 'flex';
+          if (lblModalUsername) lblModalUsername.textContent = 'USERNAME';
+          if (modalUsernameInput) modalUsernameInput.placeholder = 'Choose a display username (e.g. SynthPilot84)';
+          if (lblModalEmail) lblModalEmail.textContent = 'EMAIL ADDRESS';
+          if (modalEmailInput) {
+            modalEmailInput.type = 'email';
+            modalEmailInput.placeholder = 'Enter your email address (e.g. you@gmail.com)';
+          }
+          if (lblModalPin) lblModalPin.textContent = 'CREATE PASSWORD';
+          if (modalPinInput) modalPinInput.placeholder = 'Create a password';
+          if (modalLoginSaveBtn) modalLoginSaveBtn.textContent = 'CREATE ACCOUNT';
+          setTimeout(() => modalUsernameInput && modalUsernameInput.focus(), 50);
+        } else if (mode === 'signin') {
+          if (authModalTitleText) authModalTitleText.textContent = 'PLAYER LOG IN';
+          if (authModalSubtext) authModalSubtext.textContent = 'Sign in with your email address or username';
+          if (modalUsernameGroup) modalUsernameGroup.style.display = 'none';
+          if (lblModalEmail) lblModalEmail.textContent = 'EMAIL ADDRESS OR USERNAME';
+          if (modalEmailInput) {
+            modalEmailInput.type = 'text';
+            modalEmailInput.placeholder = 'Enter your email address or username';
+          }
+          if (lblModalPin) lblModalPin.textContent = 'PASSWORD';
+          if (modalPinInput) modalPinInput.placeholder = 'Enter your password';
+          if (modalLoginSaveBtn) modalLoginSaveBtn.textContent = 'LOG IN';
+          setTimeout(() => modalEmailInput && modalEmailInput.focus(), 50);
+        } else if (mode === 'admin_login') {
+          if (authModalTitleText) authModalTitleText.textContent = 'ADMIN LOG IN';
+          if (authModalSubtext) authModalSubtext.textContent = 'Sign in with your approved Admin email & password';
+          if (modalUsernameGroup) modalUsernameGroup.style.display = 'none';
+          if (lblModalEmail) lblModalEmail.textContent = 'ADMIN EMAIL ADDRESS';
+          if (modalEmailInput) {
+            modalEmailInput.type = 'email';
+            modalEmailInput.placeholder = 'Enter your approved admin email address';
+          }
+          if (lblModalPin) lblModalPin.textContent = 'ADMIN PASSWORD';
+          if (modalPinInput) modalPinInput.placeholder = 'Enter the password you set up';
+          if (modalLoginSaveBtn) modalLoginSaveBtn.textContent = 'LOG IN TO ADMIN HUB';
+          setTimeout(() => modalEmailInput && modalEmailInput.focus(), 50);
+        } else if (mode === 'admin_create') {
+          if (authModalTitleText) authModalTitleText.textContent = 'CREATE ADMIN ACCOUNT';
+          if (authModalSubtext) authModalSubtext.textContent = 'Sets up your email & password and sends your request to the Owner\'s Page for approval';
+          if (modalUsernameGroup) modalUsernameGroup.style.display = 'flex';
+          if (lblModalUsername) lblModalUsername.textContent = 'ADMIN NAME';
+          if (modalUsernameInput) modalUsernameInput.placeholder = 'Your name (e.g. Alex)';
+          if (lblModalEmail) lblModalEmail.textContent = 'ADMIN EMAIL ADDRESS';
+          if (modalEmailInput) {
+            modalEmailInput.type = 'email';
+            modalEmailInput.placeholder = 'Enter your email address';
+          }
+          if (lblModalPin) lblModalPin.textContent = 'SET ADMIN PASSWORD';
+          if (modalPinInput) modalPinInput.placeholder = 'Create the password you will use to log in';
+          if (modalLoginSaveBtn) modalLoginSaveBtn.textContent = 'CREATE ADMIN & SEND TO OWNER\'S PAGE';
+          setTimeout(() => modalUsernameInput && modalUsernameInput.focus(), 50);
+        }
+      }
+
+      function showApprovalStep(acct) {
+        if (authStepChoice) authStepChoice.style.display = 'none';
+        if (authStepForm) authStepForm.style.display = 'none';
+        if (authStepApproval) authStepApproval.style.display = 'flex';
+        if (authModalTitleText) authModalTitleText.textContent = 'SENT TO OWNER\'S PAGE';
+        if (authModalSubtext) authModalSubtext.textContent = 'Awaiting approval on the Owner\'s Page';
+        if (modalApprovalInfoBox) {
+          modalApprovalInfoBox.innerHTML = `
+            <div><strong style="color:#00f59b;">&#10003; Admin Account Created (Pending Approval)</strong></div>
+            <div style="margin-top:6px;">Admin Email: <strong style="color:#00f0ff;">${acct.email}</strong></div>
+            <div>Status: <strong style="color:#ffdf80;">Sent to Owner's Page for Approval</strong></div>
+            <div style="margin-top:8px;font-size:0.8rem;color:rgba(255,255,255,0.78);">
+              Your Admin Account request has been sent to the <strong>Owner's Page</strong>. Once the Owner hits <strong>Approve</strong>, you can log into the Admin Hub using <strong>${acct.email}</strong> and the password you set up!
+            </div>
+          `;
+        }
+      }
+
+      if (btnStepChooseCreate) btnStepChooseCreate.addEventListener('click', () => showFormStep('register'));
+      if (btnStepChooseLogin) btnStepChooseLogin.addEventListener('click', () => showFormStep('signin'));
+      if (btnStepChooseAdmin) btnStepChooseAdmin.addEventListener('click', () => showFormStep('admin_login'));
+      if (btnStepChooseAdminCreate) btnStepChooseAdminCreate.addEventListener('click', () => showFormStep('admin_create'));
+      if (btnAuthBackToChoice) btnAuthBackToChoice.addEventListener('click', showChoiceStep);
+      if (btnApprovalBackToForm) btnApprovalBackToForm.addEventListener('click', showChoiceStep);
+      if (btnVerifyAdminApproval) btnVerifyAdminApproval.addEventListener('click', () => showFormStep('admin_login'));
+
+      function renderAuthModalState() {
+        const curUser = getCurrentUsername();
+        const isAdmin = window.RetroAuthHub ? window.RetroAuthHub.isAdminLoggedIn() : (localStorage.getItem('rc_is_admin_v1') === 'true');
+        if (topAdminHubBtn) {
+          topAdminHubBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+        }
+        if (modalLogoutBtn) {
+          modalLogoutBtn.style.display = curUser ? 'inline-block' : 'none';
+        }
+      }
+
+      function openAuthModal(promptMsg) {
+        showChoiceStep();
+        renderAuthModalState();
+        if (promptMsg) {
+          setAuthStatus(promptMsg, true);
+        }
+        if (authModalBackdrop) authModalBackdrop.classList.add('open');
+      }
+
+      // Open clean 1st popup on entry ONLY if the customer hasn't signed in yet
+      if (!getCurrentUsername()) {
+        showChoiceStep();
+        if (authModalBackdrop) authModalBackdrop.classList.add('open');
+      }
+
+      if (topUserAuthBtn) topUserAuthBtn.addEventListener('click', () => openAuthModal());
+      if (btnOpenLoginModal) btnOpenLoginModal.addEventListener('click', () => openAuthModal());
+      if (authCloseBtn) {
+        authCloseBtn.addEventListener('click', () => {
+          authModalBackdrop.classList.remove('open');
+        });
+      }
+      if (authModalBackdrop) {
+        authModalBackdrop.addEventListener('click', () => {
+          authModalBackdrop.classList.remove('open');
+        });
+      }
+
+      async function submitCustomerAuthModal() {
+        const uname = modalUsernameInput ? modalUsernameInput.value.trim() : '';
+        const emailVal = modalEmailInput ? modalEmailInput.value.trim() : '';
+        const pin = modalPinInput ? modalPinInput.value.trim() : '';
+
+        if (authMode === 'admin_create') {
+          if (!window.RetroAuthHub) return;
+          const res = await window.RetroAuthHub.registerAdminAccount(uname, emailVal, pin);
+          if (!res.ok) {
+            playArcadeSfx('buzz');
+            setAuthStatus(res.msg);
+            return;
+          }
+          playArcadeSfx('unlock');
+          showApprovalStep(res.account);
+          return;
+        }
+
+        if (authMode === 'admin_login') {
+          if (!window.RetroAuthHub) return;
+          await window.RetroAuthHub.syncWithServerDb(false);
+          const res = window.RetroAuthHub.loginAdminAccount(emailVal, pin);
+          if (!res.ok) {
+            playArcadeSfx('buzz');
+            setAuthStatus(res.msg);
+            return;
+          }
+          playArcadeSfx('unlock');
+          window.location.href = 'admin.html';
+          return;
+        }
+
+        const identifier = authMode === 'register' ? (uname || emailVal.split('@')[0]) : emailVal;
+        if (!identifier) {
+          playArcadeSfx('buzz');
+          setAuthStatus('Please enter your email address or username.');
+          return;
+        }
+
+        if (window.RetroAuthHub) {
+          const hubRes = window.RetroAuthHub.performPlayerAuth(identifier, pin, authMode === 'register', emailVal);
+          if (!hubRes.ok) {
+            playArcadeSfx('buzz');
+            setAuthStatus(hubRes.msg);
+            return;
+          }
+          syncActiveAccountToGlobalStorage();
+          renderAllUI();
+          setAuthStatus('');
+          playArcadeSfx('unlock');
+          showToast(`👤 Logged in as @${hubRes.user.username}!`);
+          authModalBackdrop.classList.remove('open');
+          return;
+        }
+
+        const res = loginOrRegisterCustomer(identifier, pin, authMode === 'register');
+        if (!res.ok) {
+          playArcadeSfx('buzz');
+          setAuthStatus(res.msg);
+          return;
+        }
+
+        setAuthStatus('');
+        playArcadeSfx('unlock');
+        showToast(`👤 Logged in as @${res.account.username}!`);
+        authModalBackdrop.classList.remove('open');
+      }
+
+      if (modalLoginSaveBtn) {
+        modalLoginSaveBtn.addEventListener('click', submitCustomerAuthModal);
+      }
+
+      [modalUsernameInput, modalEmailInput, modalPinInput].forEach((inp) => {
+        if (!inp) return;
+        inp.addEventListener('keydown', (e) => {
+          e.stopPropagation();
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            submitCustomerAuthModal();
+          }
+        });
+      });
+
+      if (modalLogoutBtn) {
+        modalLogoutBtn.addEventListener('click', () => {
+          logoutCustomer();
+          localStorage.removeItem('rc_is_admin_v1');
+          showChoiceStep();
+          renderAuthModalState();
+        });
+      }
+
+      // =========================================================================
+      // 16-BIT SYNTHWAVE CHIPTUNE SOUND ENGINE (Web Audio API)
+      // =========================================================================
+      let audioCtx = null;
+      let sfxEnabled = true;
+      const btnToggleSfx = document.getElementById('btnToggleSfx');
+      if (btnToggleSfx) {
+        btnToggleSfx.addEventListener('click', () => {
+          sfxEnabled = !sfxEnabled;
+          btnToggleSfx.textContent = sfxEnabled ? '🔊 SFX: ON' : '🔇 SFX: OFF';
+        });
+      }
+
+      function ensureAudio() {
+        if (!sfxEnabled) return null;
+        if (!audioCtx) {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (Ctx) audioCtx = new Ctx();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
+        }
+        return audioCtx;
+      }
+
+      function playArcadeSfx(type) {
+        const ctx = ensureAudio();
+        if (!ctx) return;
+        try {
+          const now = ctx.currentTime;
+          if (type === 'flap') {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(290, now);
+            osc.frequency.exponentialRampToValueAtTime(620, now + 0.09);
+            g.gain.setValueAtTime(0.09, now);
+            g.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            osc.connect(g);
+            g.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.11);
+          } else if (type === 'gate') {
+            [523.25, 659.25].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const g = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(freq, now + i * 0.05);
+              g.gain.setValueAtTime(0.07, now + i * 0.05);
+              g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.12);
+              osc.connect(g);
+              g.connect(ctx.destination);
+              osc.start(now + i * 0.05);
+              osc.stop(now + i * 0.05 + 0.13);
+            });
+          } else if (type === 'ring') {
+            [587.33, 880, 1174.66].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const g = ctx.createGain();
+              osc.type = 'square';
+              osc.frequency.setValueAtTime(freq, now + i * 0.045);
+              g.gain.setValueAtTime(0.06, now + i * 0.045);
+              g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.045 + 0.14);
+              osc.connect(g);
+              g.connect(ctx.destination);
+              osc.start(now + i * 0.045);
+              osc.stop(now + i * 0.045 + 0.15);
+            });
+          } else if (type === 'unlock') {
+            [523.25, 659.25, 783.99, 1046.5, 1318.51].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const g = ctx.createGain();
+              osc.type = 'square';
+              osc.frequency.setValueAtTime(freq, now + i * 0.07);
+              g.gain.setValueAtTime(0.085, now + i * 0.07);
+              g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.22);
+              osc.connect(g);
+              g.connect(ctx.destination);
+              osc.start(now + i * 0.07);
+              osc.stop(now + i * 0.07 + 0.24);
+            });
+          } else if (type === 'crash' || type === 'buzz') {
+            [180, 125].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const g = ctx.createGain();
+              osc.type = 'sawtooth';
+              osc.frequency.setValueAtTime(freq, now + i * 0.1);
+              g.gain.setValueAtTime(0.11, now + i * 0.1);
+              g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.18);
+              osc.connect(g);
+              g.connect(ctx.destination);
+              osc.start(now + i * 0.1);
+              osc.stop(now + i * 0.1 + 0.2);
+            });
+          }
+        } catch (_) {}
+      }
+
+      // =========================================================================
+      // SYNTH'S MIDNIGHT FLIGHT — 60FPS HTML5 CANVAS ENGINE
+      // =========================================================================
+      const canvas = document.getElementById('flightCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;  // 960
+      const H = canvas.height; // 540
+      const GROUND_Y = H - 56;
+
+      const endgameOverlay = document.getElementById('endgameOverlay');
+      const egFinalScoreEl = document.getElementById('egFinalScore');
+      const egEarnedXpEl = document.getElementById('egEarnedXp');
+      const egTotalXpEl = document.getElementById('egTotalXp');
+      const egAccountStatusText = document.getElementById('egAccountStatusText');
+      const egUsernameInput = document.getElementById('egUsernameInput');
+      const egPinInput = document.getElementById('egPinInput');
+      const egPostScoreBtn = document.getElementById('egPostScoreBtn');
+      const egFlyAgainBtn = document.getElementById('egFlyAgainBtn');
+
+      const synthIdleImg = new Image();
+      synthIdleImg.src = 'assets/friends/owl3_wings_open.png?v=84';
+      const synthFlapImg = new Image();
+      synthFlapImg.src = 'assets/friends/owl3_welcome.png?v=84';
+      const logoImg = new Image();
+      logoImg.src = 'assets/logo.png';
+
+      let gameState = 'READY'; // 'READY' | 'PLAYING' | 'GAMEOVER'
+      let score = 0;
+      let GatesCleared = 0;
+      let sessionXpEarned = 0;
+      let combo = 1;
+      let scrollOffset = 0;
+
+      const synth = {
+        x: 210,
+        y: H * 0.44,
+        vy: 0,
+        gravity: 980,
+        flapImpulse: -355,
+        radius: 24,
+        flapAnimTimer: 0,
+        angle: 0
+      };
+
+      let pillars = [];
+      let rings = [];
+      let glitchCups = [];
+      let particles = [];
+      let floatingTexts = [];
+      let stars = [];
+
+      for (let i = 0; i < 65; i++) {
+        stars.push({
+          x: Math.random() * W,
+          y: Math.random() * (GROUND_Y - 40),
+          size: Math.random() * 2.2 + 0.8,
+          speed: Math.random() * 25 + 12,
+          color: i % 3 === 0 ? '#00f0ff' : (i % 3 === 1 ? '#ff2d95' : '#ffae00')
+        });
+      }
+
+      let spawnTimer = 0;
+
+      function resetFlight() {
+        score = 0;
+        GatesCleared = 0;
+        sessionXpEarned = 0;
+        combo = 1;
+        synth.y = H * 0.44;
+        synth.vy = 0;
+        synth.flapAnimTimer = 0;
+        synth.angle = 0;
+        pillars = [];
+        rings = [];
+        glitchCups = [];
+        particles = [];
+        floatingTexts = [];
+        spawnTimer = 0.2;
+        if (endgameOverlay) endgameOverlay.classList.remove('open');
+      }
+
+      function spawnObstacleWave() {
+        const gapH = Math.max(132, 168 - Math.min(34, GatesCleared * 1.4));
+        const minTop = 58;
+        const maxTop = GROUND_Y - gapH - 58;
+        const gapTop = minTop + Math.random() * (maxTop - minTop);
+        const colors = ['#00f0ff', '#ff2d95', '#ffae00'];
+        const color = colors[pillars.length % colors.length];
+        const oscAmp = GatesCleared >= 4 ? Math.min(32, 14 + GatesCleared * 0.8) : 0;
+
+        pillars.push({
+          x: W + 40,
+          w: 54,
+          gapTop,
+          gapH,
+          baseGapTop: gapTop,
+          oscAmp,
+          oscSpeed: 1.8 + (pillars.length % 3) * 0.45,
+          oscPhase: Math.random() * Math.PI * 2,
+          color,
+          passed: false
+        });
+
+        const ringY = Math.max(75, Math.min(GROUND_Y - 75, gapTop + gapH * 0.5 + (Math.random() - 0.5) * 45));
+        rings.push({
+          x: W + 40 + (Math.random() > 0.45 ? 135 : 27),
+          y: ringY,
+          r: 18,
+          collected: false,
+          pulse: 0
+        });
+
+        if (GatesCleared >= 3 && Math.random() < 0.42) {
+          const cupY = 85 + Math.random() * (GROUND_Y - 170);
+          glitchCups.push({
+            x: W + 210,
+            y: cupY,
+            r: 17,
+            vx: -75,
+            rot: 0
+          });
+        }
+      }
+
+      function addXpAndCheckUnlocks(xpDelta, x, y, label) {
+        const prevXp = getCanopyXp();
+        const newXp = setCanopyXp(prevXp + xpDelta);
+        sessionXpEarned += xpDelta;
+
+        floatingTexts.push({
+          x,
+          y,
+          text: label || `+${xpDelta} XP`,
+          color: '#ffae00',
+          life: 1.0
+        });
+
+        COUPON_TIERS.forEach((tier) => {
+          if (prevXp < tier.xpReq && newXp >= tier.xpReq) {
+            playArcadeSfx('unlock');
+            showToast(`🎉 UNLOCKED ${tier.code}: ${tier.title.toUpperCase()}!`);
+            const usedMap = getUsedCouponsMap();
+            if (!usedMap[tier.code]) {
+              setActiveCheckoutCoupon(tier.code);
+            }
+          }
+        });
+
+        renderCouponVault();
+      }
+
+      function openEndOfGameScreen() {
+        if (!endgameOverlay) return;
+        const curUser = getCurrentUsername();
+        const totalXp = getCanopyXp();
+
+        if (egFinalScoreEl) egFinalScoreEl.textContent = score.toLocaleString();
+        if (egEarnedXpEl) egEarnedXpEl.textContent = sessionXpEarned.toLocaleString();
+        if (egTotalXpEl) egTotalXpEl.textContent = totalXp.toLocaleString();
+
+        if (curUser) {
+          // Automatically post score tied to their logged-in customer username & save progress!
+          syncGlobalStorageToActiveAccount();
+          postScoreToLeaderboard(curUser, Math.max(score, getBestScore()), totalXp);
+          if (egUsernameInput) egUsernameInput.value = curUser;
+          if (egAccountStatusText) {
+            egAccountStatusText.innerHTML = `<span style="color:#00f59b;">&#10003; Score (${score.toLocaleString()} PTS) posted as <strong>@${curUser}</strong> &amp; progress saved!</span>`;
+          }
+          if (egPostScoreBtn) {
+            egPostScoreBtn.textContent = '✓ UPDATE / SWITCH USER';
+          }
+        } else {
+          if (egUsernameInput) egUsernameInput.value = '';
+          if (egAccountStatusText) {
+            egAccountStatusText.innerHTML = `Enter your <strong>Username</strong> to post <strong>${score.toLocaleString()} PTS</strong> to the leaderboard &amp; save your <strong>${totalXp.toLocaleString()} XP</strong>!`;
+          }
+          if (egPostScoreBtn) {
+            egPostScoreBtn.textContent = '🏆 LOGIN & POST SCORE';
+          }
+        }
+
+        renderAllUI();
+        endgameOverlay.classList.add('open');
+      }
+
+      if (egPostScoreBtn) {
+        egPostScoreBtn.addEventListener('click', () => {
+          const uname = egUsernameInput ? egUsernameInput.value.trim() : '';
+          const pin = egPinInput ? egPinInput.value.trim() : '';
+          if (!uname) {
+            playArcadeSfx('buzz');
+            showToast('⚠️ Enter a Username to post your score & save progress!');
+            if (egUsernameInput) egUsernameInput.focus();
+            return;
+          }
+          const res = loginOrRegisterCustomer(uname, pin, true);
+          if (!res.ok) {
+            playArcadeSfx('buzz');
+            showToast(`⚠️ ${res.msg}`);
+            return;
+          }
+          const finalBest = Math.max(score, res.account.bestScore || 0);
+          setBestScore(finalBest);
+          postScoreToLeaderboard(res.account.username, finalBest, res.account.xp);
+          playArcadeSfx('unlock');
+          showToast(`🏆 Score posted for @${res.account.username} & progress saved!`);
+          if (egAccountStatusText) {
+            egAccountStatusText.innerHTML = `<span style="color:#00f59b;">&#10003; Score (${finalBest.toLocaleString()} PTS) posted as <strong>@${res.account.username}</strong> &amp; progress saved!</span>`;
+          }
+          renderAllUI();
+        });
+      }
+
+      if (egUsernameInput) {
+        egUsernameInput.addEventListener('keydown', (e) => {
+          e.stopPropagation();
+          if (e.key === 'Enter' && egPostScoreBtn) {
+            egPostScoreBtn.click();
+          }
+        });
+      }
+      if (egPinInput) {
+        egPinInput.addEventListener('keydown', (e) => {
+          e.stopPropagation();
+          if (e.key === 'Enter' && egPostScoreBtn) {
+            egPostScoreBtn.click();
+          }
+        });
+      }
+
+      function flapSynth() {
+        if (!getCurrentUsername()) {
+          openAuthModal('⚠️ Please create your Customer Login first to launch Synth\'s Midnight Flight!');
+          return;
+        }
+        if (gameState === 'READY') {
+          resetFlight();
+          gameState = 'PLAYING';
+        } else if (gameState === 'GAMEOVER') {
+          resetFlight();
+          gameState = 'PLAYING';
+        }
+        synth.vy = synth.flapImpulse;
+        synth.flapAnimTimer = 0.22;
+        playArcadeSfx('flap');
+
+        for (let i = 0; i < 8; i++) {
+          particles.push({
+            x: synth.x - 16,
+            y: synth.y + (Math.random() - 0.5) * 20,
+            vx: -90 - Math.random() * 110,
+            vy: (Math.random() - 0.5) * 120 + 40,
+            size: Math.random() * 4 + 2,
+            color: i % 2 === 0 ? '#00f0ff' : '#ff2d95',
+            life: 0.55
+          });
+        }
+      }
+
+      function triggerGameOver() {
+        if (gameState !== 'PLAYING') return;
+        gameState = 'GAMEOVER';
+        playArcadeSfx('crash');
+        setBestScore(score);
+
+        for (let i = 0; i < 24; i++) {
+          const ang = (Math.PI * 2 * i) / 24;
+          const spd = 80 + Math.random() * 180;
+          particles.push({
+            x: synth.x,
+            y: synth.y,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd,
+            size: Math.random() * 5 + 2.5,
+            color: i % 2 === 0 ? '#00f0ff' : '#ffae00',
+            life: 0.85
+          });
+        }
+
+        openEndOfGameScreen();
+      }
+
+      const crtScreenContainer = document.getElementById('crtScreenContainer');
+      if (crtScreenContainer) {
+        crtScreenContainer.addEventListener('pointerdown', (e) => {
+          if (e.target.closest('#endgameOverlay')) return;
+          e.preventDefault();
+          flapSynth();
+        });
+      }
+
+      if (egFlyAgainBtn) {
+        egFlyAgainBtn.addEventListener('click', () => {
+          resetFlight();
+          gameState = 'PLAYING';
+          flapSynth();
+        });
+      }
+
+      const btnRestartFlight = document.getElementById('btnRestartFlight');
+      if (btnRestartFlight) {
+        btnRestartFlight.addEventListener('click', () => {
+          resetFlight();
+          gameState = 'PLAYING';
+          flapSynth();
+        });
+      }
+
+      window.addEventListener('keydown', (e) => {
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+        if (authModalBackdrop && authModalBackdrop.classList.contains('open')) return;
+        if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+          e.preventDefault();
+          flapSynth();
+        }
+      });
+
+      let lastTime = performance.now();
+
+      function update(dt, nowSec) {
+        const speed = 235 + Math.min(145, GatesCleared * 5.5);
+        scrollOffset = (scrollOffset + speed * dt) % 48;
+
+        stars.forEach((s) => {
+          s.x -= s.speed * dt;
+          if (s.x < 0) s.x += W;
+        });
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.life -= dt;
+          if (p.life <= 0) particles.splice(i, 1);
+        }
+
+        for (let i = floatingTexts.length - 1; i >= 0; i--) {
+          const ft = floatingTexts[i];
+          ft.y -= 42 * dt;
+          ft.life -= dt * 1.15;
+          if (ft.life <= 0) floatingTexts.splice(i, 1);
+        }
+
+        if (gameState === 'READY') {
+          synth.y = H * 0.44 + Math.sin(nowSec * 3.2) * 12;
+          synth.flapAnimTimer = (Math.sin(nowSec * 6) > 0.3) ? 0.1 : 0;
+          return;
+        }
+
+        if (gameState !== 'PLAYING') return;
+
+        synth.vy += synth.gravity * dt;
+        synth.y += synth.vy * dt;
+        if (synth.flapAnimTimer > 0) synth.flapAnimTimer -= dt;
+        synth.angle = Math.max(-0.42, Math.min(0.65, synth.vy / 520));
+
+        if (synth.y - synth.radius < 12) {
+          synth.y = 12 + synth.radius;
+          synth.vy = 0;
+        }
+        if (synth.y + synth.radius >= GROUND_Y) {
+          synth.y = GROUND_Y - synth.radius;
+          triggerGameOver();
+          return;
+        }
+
+        spawnTimer -= dt;
+        if (spawnTimer <= 0) {
+          spawnObstacleWave();
+          spawnTimer = Math.max(1.18, 1.75 - Math.min(0.52, GatesCleared * 0.022));
+        }
+
+        for (let i = pillars.length - 1; i >= 0; i--) {
+          const p = pillars[i];
+          p.x -= speed * dt;
+          if (p.oscAmp > 0) {
+            p.gapTop = p.baseGapTop + Math.sin(nowSec * p.oscSpeed + p.oscPhase) * p.oscAmp;
+          }
+
+          const hitX = synth.x + synth.radius * 0.72 > p.x && synth.x - synth.radius * 0.72 < p.x + p.w;
+          if (hitX) {
+            const hitTop = synth.y - synth.radius * 0.72 < p.gapTop;
+            const hitBot = synth.y + synth.radius * 0.72 > p.gapTop + p.gapH;
+            if (hitTop || hitBot) {
+              triggerGameOver();
+              return;
+            }
+          }
+
+          if (!p.passed && p.x + p.w < synth.x) {
+            p.passed = true;
+            GatesCleared++;
+            const pts = 100 * combo;
+            const xpGain = 50;
+            score += pts;
+            if (score > getBestScore()) setBestScore(score);
+            playArcadeSfx('gate');
+            addXpAndCheckUnlocks(xpGain, synth.x, synth.y - 28, `+${pts} PTS | +${xpGain} XP`);
+          }
+
+          if (p.x + p.w < -60) pillars.splice(i, 1);
+        }
+
+        for (let i = rings.length - 1; i >= 0; i--) {
+          const r = rings[i];
+          r.x -= speed * dt;
+          r.pulse += dt * 5;
+
+          if (!r.collected) {
+            const dx = synth.x - r.x;
+            const dy = synth.y - r.y;
+            if (Math.hypot(dx, dy) < synth.radius + r.r) {
+              r.collected = true;
+              combo = Math.min(5, combo + 1);
+              const pts = 250 * combo;
+              const xpGain = 75;
+              score += pts;
+              if (score > getBestScore()) setBestScore(score);
+              playArcadeSfx('ring');
+              addXpAndCheckUnlocks(xpGain, r.x, r.y - 18, `RING x${combo}! +${xpGain} XP`);
+            }
+          }
+
+          if (r.x < -50 || r.collected) {
+            rings.splice(i, 1);
+          }
+        }
+
+        for (let i = glitchCups.length - 1; i >= 0; i--) {
+          const c = glitchCups[i];
+          c.x += (c.vx - speed) * dt;
+          c.rot += dt * 4.5;
+          const dx = synth.x - c.x;
+          const dy = synth.y - c.y;
+          if (Math.hypot(dx, dy) < synth.radius * 0.78 + c.r) {
+            triggerGameOver();
+            return;
+          }
+          if (c.x < -50) glitchCups.splice(i, 1);
+        }
+      }
+
+      function draw() {
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+        skyGrad.addColorStop(0, '#05020f');
+        skyGrad.addColorStop(0.55, '#13072e');
+        skyGrad.addColorStop(1, '#2b0938');
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, W, GROUND_Y);
+
+        const sunX = W * 0.52;
+        const sunY = GROUND_Y - 38;
+        const sunGrad = ctx.createLinearGradient(sunX, sunY - 110, sunX, sunY + 40);
+        sunGrad.addColorStop(0, 'rgba(255, 174, 0, 0.42)');
+        sunGrad.addColorStop(0.6, 'rgba(255, 45, 149, 0.35)');
+        sunGrad.addColorStop(1, 'rgba(157, 78, 221, 0.05)');
+        ctx.fillStyle = sunGrad;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 105, Math.PI, 0);
+        ctx.fill();
+
+        if (logoImg.complete && logoImg.naturalWidth > 0) {
+          ctx.save();
+          ctx.globalAlpha = 0.22;
+          ctx.drawImage(logoImg, sunX - 85, sunY - 135, 170, 150);
+          ctx.restore();
+        }
+
+        stars.forEach((s) => {
+          ctx.fillStyle = s.color;
+          ctx.fillRect(s.x, s.y, s.size, s.size);
+        });
+
+        ctx.fillStyle = '#070312';
+        ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.55)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, GROUND_Y);
+        ctx.lineTo(W, GROUND_Y);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255, 45, 149, 0.35)';
+        ctx.lineWidth = 1;
+        for (let gx = -scrollOffset; gx < W; gx += 48) {
+          ctx.beginPath();
+          ctx.moveTo(gx, GROUND_Y);
+          ctx.lineTo(gx - (W * 0.5 - gx) * 0.35, H);
+          ctx.stroke();
+        }
+        for (let gy = GROUND_Y + 14; gy < H; gy += 16) {
+          ctx.beginPath();
+          ctx.moveTo(0, gy);
+          ctx.lineTo(W, gy);
+          ctx.stroke();
+        }
+
+        pillars.forEach((p) => {
+          ctx.save();
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 14;
+
+          const topH = Math.max(0, p.gapTop);
+          ctx.fillStyle = 'rgba(10, 14, 30, 0.92)';
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = 2.5;
+          ctx.fillRect(p.x, 0, p.w, topH);
+          ctx.strokeRect(p.x, -2, p.w, topH + 2);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x - 4, topH - 10, p.w + 8, 10);
+
+          const botY = p.gapTop + p.gapH;
+          const botH = Math.max(0, GROUND_Y - botY);
+          ctx.fillStyle = 'rgba(10, 14, 30, 0.92)';
+          ctx.fillRect(p.x, botY, p.w, botH);
+          ctx.strokeRect(p.x, botY, p.w, botH);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x - 4, botY, p.w + 8, 10);
+          ctx.restore();
+        });
+
+        rings.forEach((r) => {
+          if (r.collected) return;
+          ctx.save();
+          const rad = r.r + Math.sin(r.pulse) * 2.5;
+          ctx.strokeStyle = '#ffae00';
+          ctx.lineWidth = 3.5;
+          ctx.shadowColor = '#ffae00';
+          ctx.shadowBlur = 16;
+          ctx.beginPath();
+          ctx.arc(r.x, r.y, rad, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = '#fff3b0';
+          ctx.font = 'bold 10px Orbitron, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('XP', r.x, r.y);
+          ctx.restore();
+        });
+
+        glitchCups.forEach((c) => {
+          ctx.save();
+          ctx.translate(c.x, c.y);
+          ctx.rotate(c.rot);
+          ctx.shadowColor = '#00f59b';
+          ctx.shadowBlur = 14;
+          ctx.fillStyle = '#3a0ca3';
+          ctx.strokeStyle = '#00f59b';
+          ctx.lineWidth = 2;
+          ctx.fillRect(-11, -14, 22, 28);
+          ctx.strokeRect(-11, -14, 22, 28);
+          ctx.fillStyle = '#00f59b';
+          ctx.fillRect(-13, -16, 26, 5);
+          ctx.restore();
+        });
+
+        particles.forEach((p) => {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.fillStyle = p.color;
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 8;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+          ctx.restore();
+        });
+
+        ctx.save();
+        ctx.translate(synth.x, synth.y);
+        ctx.rotate(synth.angle);
+
+        ctx.strokeStyle = synth.flapAnimTimer > 0 ? '#ffae00' : '#00f0ff';
+        ctx.lineWidth = 2;
+        ctx.shadowColor = '#00f0ff';
+        ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.arc(0, 0, synth.radius + 5, 0, Math.PI * 2);
+        ctx.stroke();
+
+        const activeImg = (synth.flapAnimTimer > 0 && synthFlapImg.complete && synthFlapImg.naturalWidth > 0)
+          ? synthFlapImg
+          : synthIdleImg;
+
+        if (activeImg.complete && activeImg.naturalWidth > 0) {
+          ctx.globalCompositeOperation = 'screen';
+          ctx.drawImage(activeImg, -36, -38, 72, 76);
+          ctx.globalCompositeOperation = 'source-over';
+        } else {
+          ctx.fillStyle = '#00f0ff';
+          ctx.beginPath();
+          ctx.arc(0, 0, synth.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        floatingTexts.forEach((ft) => {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, ft.life);
+          ctx.font = '900 13px Orbitron, sans-serif';
+          ctx.fillStyle = ft.color;
+          ctx.shadowColor = '#000000';
+          ctx.shadowBlur = 6;
+          ctx.textAlign = 'center';
+          ctx.fillText(ft.text, ft.x, ft.y);
+          ctx.restore();
+        });
+
+        // Top In-Game CRT HUD Bar
+        ctx.save();
+        ctx.fillStyle = 'rgba(4, 3, 12, 0.78)';
+        ctx.fillRect(14, 12, 460, 40);
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.45)';
+        ctx.strokeRect(14, 12, 460, 40);
+
+        ctx.font = '800 12px Orbitron, sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        ctx.fillText(`SCORE: ${score.toLocaleString()}`, 26, 36);
+
+        ctx.fillStyle = '#ffae00';
+        ctx.fillText(`COMBO x${combo}`, 160, 36);
+
+        ctx.fillStyle = '#00f0ff';
+        ctx.fillText(`+${sessionXpEarned} XP`, 255, 36);
+
+        const activePilot = getCurrentUsername();
+        ctx.fillStyle = '#00f59b';
+        ctx.fillText(activePilot ? `PILOT: @${activePilot}` : 'PILOT: GUEST', 338, 36);
+        ctx.restore();
+
+        if (gameState === 'READY') {
+          ctx.save();
+          ctx.fillStyle = 'rgba(4, 2, 12, 0.68)';
+          ctx.fillRect(0, 0, W, H);
+
+          ctx.textAlign = 'center';
+          ctx.font = '900 30px Orbitron, sans-serif';
+          ctx.fillStyle = '#00f0ff';
+          ctx.shadowColor = '#00f0ff';
+          ctx.shadowBlur = 18;
+          ctx.fillText("SYNTH'S MIDNIGHT FLIGHT", W / 2, H * 0.28);
+
+          ctx.font = '700 15px Outfit, sans-serif';
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowBlur = 0;
+          ctx.fillText('Fly Synth through Neo-Tokyo Laser Gates & Golden Rings to earn Canopy XP & Store Coupons!', W / 2, H * 0.38);
+
+          const curPilot = getCurrentUsername();
+          ctx.fillStyle = '#00f59b';
+          ctx.font = '800 14px Orbitron, sans-serif';
+          ctx.fillText(
+            curPilot
+              ? `LOGGED IN AS @${curPilot.toUpperCase()} • PROGRESS & LEADERBOARD SCORES AUTO-SAVE!`
+              : 'TIP: CLICK "LOGIN / SAVE PROGRESS" ABOVE OR POST YOUR USERNAME AT THE END OF THE FLIGHT!',
+            W / 2,
+            H * 0.46
+          );
+
+          ctx.fillStyle = '#ff2d95';
+          ctx.font = '900 18px Orbitron, sans-serif';
+          ctx.fillText('PRESS [SPACE] OR CLICK SCREEN TO LAUNCH FLIGHT ▶', W / 2, H * 0.64);
+          ctx.restore();
+        }
+      }
+
+      function loop(now) {
+        const dt = Math.min(0.05, (now - lastTime) / 1000);
+        lastTime = now;
+        update(dt, now / 1000);
+        draw(now / 1000);
+        requestAnimationFrame(loop);
+      }
+
+      renderAllUI();
+      loadFromServerAndCloud();
+      requestAnimationFrame(loop);
+    })();
+  </script>
+</body>
+</html>

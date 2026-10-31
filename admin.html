@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retrocanopy — Owner's Page</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #05040d;
+      --bg-panel: rgba(13, 11, 29, 0.94);
+      --neon-cyan: #00f0ff;
+      --neon-pink: #ff2d95;
+      --neon-gold: #ffae00;
+      --neon-green: #00f59b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(0, 240, 255, 0.05), transparent 38%),
+        radial-gradient(circle at 82% 85%, rgba(255, 45, 149, 0.05), transparent 38%),
+        #05040d;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      padding-bottom: 32px;
+    }
+
+    /* Top Bar */
+    .admin-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 26px;
+      background: rgba(6, 5, 16, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #ffffff;
+    }
+
+    .admin-brand img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
+    }
+
+    .admin-brand-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: #ffffff;
+    }
+
+    .admin-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-nav-btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 6px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .admin-nav-btn:hover {
+      border-color: var(--neon-cyan);
+      background: rgba(0, 240, 255, 0.14);
+    }
+
+    .admin-nav-btn.logout {
+      border-color: rgba(255, 45, 149, 0.45);
+      color: #ff99cc;
+    }
+
+    .admin-nav-btn.logout:hover {
+      background: rgba(255, 45, 149, 0.2);
+      color: #ffffff;
+    }
+
+    /* CLEAN 3-COLUMN UNIFORM LAYOUT — 3 SPACIOUS TABBED CARDS */
+    .owner-workspace {
+      max-width: 1360px;
+      margin: 24px auto 0;
+      padding: 0 22px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1060px) {
+      .owner-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Uniform Card Size */
+    .owner-section {
+      background: var(--bg-panel);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
+      display: flex;
+      flex-direction: column;
+      height: 460px;
+      overflow: hidden;
+    }
+
+    .owner-section.b-cyan { border-top: 2.5px solid var(--neon-cyan); }
+    .owner-section.b-gold { border-top: 2.5px solid var(--neon-gold); }
+    .owner-section.b-pink { border-top: 2.5px solid var(--neon-pink); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .t-cyan { color: var(--neon-cyan); }
+    .t-gold { color: var(--neon-gold); }
+    .t-pink { color: var(--neon-pink); }
+
+    /* Clean Segmented Tab Bar inside each card */
+    .card-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(5, 4, 14, 0.75);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .card-tab-btn {
+      flex: 1;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      padding: 7px 6px;
+      border-radius: 7px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.55);
+      cursor: pointer;
+      transition: all 0.16s ease;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .card-tab-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .card-tab-btn.active {
+      background: rgba(0, 240, 255, 0.14);
+      border-color: rgba(0, 240, 255, 0.45);
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
+    }
+
+    .owner-section.b-gold .card-tab-btn.active {
+      background: rgba(255, 174, 0, 0.15);
+      border-color: rgba(255, 174, 0, 0.5);
+      box-shadow: 0 0 12px rgba(255, 174, 0, 0.15);
+    }
+
+    .owner-section.b-pink .card-tab-btn.active {
+      background: rgba(255, 45, 149, 0.16);
+      border-color: rgba(255, 45, 149, 0.5);
+      box-shadow: 0 0 12px rgba(255, 45, 149, 0.15);
+    }
+
+    /* Tab Panes */
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    /* Scrollable internal card body */
+    .card-scroll-body {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .card-scroll-body::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .card-scroll-body::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 4px;
+    }
+
+    /* Compact 4-Stat Strip */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .kpi-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 7px 6px;
+      text-align: center;
+    }
+
+    .kpi-pill.highlight-cyan {
+      border-color: rgba(0, 240, 255, 0.35);
+      background: rgba(0, 240, 255, 0.07);
+    }
+
+    .kpi-pill.highlight-gold {
+      border-color: rgba(255, 174, 0, 0.38);
+      background: rgba(255, 174, 0, 0.08);
+    }
+
+    .kpi-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.46rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.55);
+      text-transform: uppercase;
+    }
+
+    .kpi-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 900;
+      color: #ffffff;
+      margin-top: 2px;
+    }
+
+    /* List Rows */
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 11px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      flex-shrink: 0;
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .item-title {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-sub {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.56);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Destination Visit Count Number Badge */
+    .visit-num-box {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 900;
+      color: var(--neon-cyan);
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.32);
+      padding: 4px 11px;
+      border-radius: 7px;
+      min-width: 48px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .tag-pill {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.48rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .tag-owner {
+      background: rgba(255, 174, 0, 0.18);
+      border: 1px solid rgba(255, 174, 0, 0.5);
+      color: #ffdf80;
+    }
+
+    .tag-admin {
+      background: rgba(0, 240, 255, 0.14);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      color: var(--neon-cyan);
+    }
+
+    .tag-member {
+      background: rgba(0, 245, 155, 0.14);
+      border: 1px solid rgba(0, 245, 155, 0.4);
+      color: var(--neon-green);
+    }
+
+    .tag-pink {
+      background: rgba(255, 45, 149, 0.16);
+      border: 1px solid rgba(255, 45, 149, 0.45);
+      color: #ff85c2;
+    }
+
+    .row-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .act-btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      padding: 5px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .act-approve {
+      background: rgba(0, 245, 155, 0.16);
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+    }
+
+    .act-approve:hover {
+      background: var(--neon-green);
+      color: #04120c;
+    }
+
+    .act-reject {
+      background: rgba(255, 45, 149, 0.14);
+      border-color: rgba(255, 45, 149, 0.5);
+      color: #ff85c2;
+    }
+
+    .act-reject:hover {
+      background: var(--neon-pink);
+      color: #ffffff;
+    }
+
+    .act-neutral {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .act-neutral:hover {
+      border-color: var(--neon-cyan);
+      color: #ffffff;
+    }
+
+    .mini-btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.52rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.8);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mini-btn:hover {
+      border-color: var(--neon-cyan);
+      color: #ffffff;
+      background: rgba(0, 240, 255, 0.16);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 26px 12px;
+      color: rgba(255, 255, 255, 0.42);
+      font-size: 0.78rem;
+      border: 1px dashed rgba(255, 255, 255, 0.09);
+      border-radius: 10px;
+      margin: auto 0;
+    }
+
+    /* Live Traffic Dot */
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--neon-green);
+      box-shadow: 0 0 8px var(--neon-green);
+      animation: pulseDot 1.6s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* Inline Form inside Tabs */
+    .card-inline-form {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+
+    .card-mini-input {
+      flex: 1;
+      min-width: 0;
+      padding: 7px 10px;
+      border-radius: 7px;
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      background: rgba(4, 3, 12, 0.9);
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.76rem;
+      outline: none;
+    }
+
+    .card-mini-input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
+    }
+
+    .card-mini-input.w-small {
+      flex: 0 0 64px;
+      text-align: center;
+    }
+
+    /* Toggle Switch */
+    .toggle-pill {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.52rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.65);
+      transition: all 0.15s ease;
+    }
+
+    .toggle-pill.on {
+      background: rgba(0, 245, 155, 0.18);
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+      box-shadow: 0 0 8px rgba(0, 245, 155, 0.25);
+    }
+
+    /* Owner Login Gate */
+    .owner-gate-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 4, 13, 0.96);
+      backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .owner-gate-backdrop.open {
+      display: flex;
+    }
+
+    .owner-gate-card {
+      width: min(440px, 95vw);
+      background: rgba(12, 10, 28, 0.98);
+      border: 1.5px solid rgba(255, 174, 0, 0.55);
+      border-radius: 20px;
+      padding: 30px 26px;
+      text-align: center;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.92);
+    }
+
+    .owner-gate-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: var(--neon-gold);
+      margin-bottom: 6px;
+    }
+
+    .owner-gate-sub {
+      font-size: 0.84rem;
+      color: rgba(255, 255, 255, 0.68);
+      margin-bottom: 18px;
+    }
+
+    .owner-gate-input {
+      width: 100%;
+      padding: 13px 15px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(0, 240, 255, 0.45);
+      background: rgba(4, 3, 12, 0.95);
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      margin-bottom: 11px;
+      outline: none;
+    }
+
+    .owner-gate-btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      border: 1.5px solid var(--neon-gold);
+      background: linear-gradient(135deg, rgba(255, 174, 0, 0.28), rgba(255, 45, 149, 0.25));
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+    }
+
+    .owner-gate-err {
+      min-height: 18px;
+      font-size: 0.8rem;
+      color: #ff77aa;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="admin-topbar">
+    <a href="index.html" class="admin-brand">
+      <img src="assets/logo.png" alt="Retrocanopy">
+      <span class="admin-brand-title">RETROCANOPY — OWNER'S PAGE</span>
+    </a>
+    <div class="admin-nav-links">
+      <a href="index.html" class="admin-nav-btn">Home Stage</a>
+      <a href="hat_preview.html" class="admin-nav-btn">Merch Shop</a>
+      <a href="games.html" class="admin-nav-btn">Arcade</a>
+      <button type="button" class="admin-nav-btn logout" id="logoutBtn" style="display:none;">Log Out</button>
+    </div>
+  </header>
+
+  <!-- 3 CLEAN UNIFORM TABBED CARDS SIDE-BY-SIDE -->
+  <main class="owner-workspace">
+
+    <!-- =================================================================== -->
+    <!-- CARD 1: SITE TRAFFIC NUMBERS (DAY | MONTH | YEAR | TOTAL SO FAR)    -->
+    <!-- =================================================================== -->
+    <section class="owner-section b-cyan" data-card="traffic">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="live-dot"></span>
+          <h2 class="section-title t-cyan">Site Traffic</h2>
+        </div>
+        <button type="button" class="mini-btn" id="clearTrafficBtn">Reset</button>
+      </div>
+
+      <!-- Top Summary Numbers: Day, Month, Year, Total So Far -->
+      <div class="kpi-strip">
+        <div class="kpi-pill">
+          <div class="kpi-label">Today</div>
+          <div class="kpi-val" id="kpiVisitsDay">0</div>
+        </div>
+        <div class="kpi-pill">
+          <div class="kpi-label">Month</div>
+          <div class="kpi-val" id="kpiVisitsMonth">0</div>
+        </div>
+        <div class="kpi-pill">
+          <div class="kpi-label">Year</div>
+          <div class="kpi-val" id="kpiVisitsYear">0</div>
+        </div>
+        <div class="kpi-pill highlight-cyan">
+          <div class="kpi-label">Total</div>
+          <div class="kpi-val" id="kpiVisitsTotal">0</div>
+        </div>
+      </div>
+
+      <!-- Period Tabs to see Where People Visited for Day / Month / Year / Total -->
+      <div class="card-tabs" id="trafficPeriodTabs">
+        <button type="button" class="card-tab-btn active" data-period="day">Today</button>
+        <button type="button" class="card-tab-btn" data-period="month">This Month</button>
+        <button type="button" class="card-tab-btn" data-period="year">This Year</button>
+        <button type="button" class="card-tab-btn" data-period="total">Total So Far</button>
+      </div>
+
+      <!-- Breakdown of Where People Have Visited -->
+      <div class="card-scroll-body" id="trafficWhereList"></div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- CARD 2: MEMBERS & ACCESS (WITH TOTAL MEMBERS COUNTER)               -->
+    <!-- =================================================================== -->
+    <section class="owner-section b-gold" data-card="members">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h2 class="section-title t-gold">Members & Access</h2>
+        </div>
+        <span class="tag-pill tag-owner" id="membersHeaderBadge">1 MEMBER</span>
+      </div>
+
+      <!-- Member Count Summary Strip -->
+      <div class="kpi-strip">
+        <div class="kpi-pill highlight-gold">
+          <div class="kpi-label">Total Members</div>
+          <div class="kpi-val" id="kpiTotalMembers">1</div>
+        </div>
+        <div class="kpi-pill">
+          <div class="kpi-label">Admins</div>
+          <div class="kpi-val" id="kpiAdminMembers">1</div>
+        </div>
+        <div class="kpi-pill">
+          <div class="kpi-label">Players</div>
+          <div class="kpi-val" id="kpiPlayerMembers">0</div>
+        </div>
+        <div class="kpi-pill">
+          <div class="kpi-label">Pending</div>
+          <div class="kpi-val" id="kpiPendingMembers">0</div>
+        </div>
+      </div>
+
+      <!-- Card 2 Tabs -->
+      <div class="card-tabs">
+        <button type="button" class="card-tab-btn active" data-tab-target="pane-active-members" id="tabBtnActiveMembers">Active (1)</button>
+        <button type="button" class="card-tab-btn" data-tab-target="pane-pending-users" id="tabBtnPendingUsers">Pending (0)</button>
+        <button type="button" class="card-tab-btn" data-tab-target="pane-tree-tiers" id="tabBtnTreeTiers">Tree Tiers</button>
+      </div>
+
+      <!-- Tab 2A: Active Members -->
+      <div class="tab-pane active" id="pane-active-members">
+        <div class="card-scroll-body" id="activeMembersList"></div>
+      </div>
+
+      <!-- Tab 2B: Users Awaiting Approval -->
+      <div class="tab-pane" id="pane-pending-users">
+        <div class="card-scroll-body" id="pendingUsersList"></div>
+      </div>
+
+      <!-- Tab 2C: Canopy Tree Evolution Tiers -->
+      <div class="tab-pane" id="pane-tree-tiers">
+        <div class="card-scroll-body" id="treeTiersList"></div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- CARD 3: STORE & CONTROLS (ORDERS | INVENTORY | PROMOS | CONTROLS)   -->
+    <!-- =================================================================== -->
+    <section class="owner-section b-pink" data-card="store">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h2 class="section-title t-pink">Store & Controls</h2>
+        </div>
+        <button type="button" class="mini-btn" id="exportOrdersCsvBtn">Export CSV</button>
+      </div>
+
+      <!-- Card 3 Tabs -->
+      <div class="card-tabs">
+        <button type="button" class="card-tab-btn active" data-tab-target="pane-orders" id="tabBtnOrders">Orders (0)</button>
+        <button type="button" class="card-tab-btn" data-tab-target="pane-inventory">Inventory</button>
+        <button type="button" class="card-tab-btn" data-tab-target="pane-promos">Promos</button>
+        <button type="button" class="card-tab-btn" data-tab-target="pane-controls">Controls</button>
+      </div>
+
+      <!-- Tab 3A: Shop Orders -->
+      <div class="tab-pane active" id="pane-orders">
+        <div class="card-scroll-body" id="shopOrdersList"></div>
+      </div>
+
+      <!-- Tab 3B: Merch Inventory -->
+      <div class="tab-pane" id="pane-inventory">
+        <div class="card-scroll-body" id="merchInventoryList"></div>
+      </div>
+
+      <!-- Tab 3C: Promos & Arcade Coupons -->
+      <div class="tab-pane" id="pane-promos">
+        <div class="card-inline-form">
+          <input type="text" class="card-mini-input" id="newPromoCodeInput" placeholder="Promo Code (e.g. DROP20)" maxlength="18">
+          <input type="number" class="card-mini-input w-small" id="newPromoPctInput" placeholder="% Off" min="5" max="100" value="20">
+          <button type="button" class="act-btn act-approve" id="addPromoBtn">+ Add</button>
+        </div>
+        <div class="card-scroll-body" id="promoCouponsList"></div>
+      </div>
+
+      <!-- Tab 3D: Site Controls & Drop Banner -->
+      <div class="tab-pane" id="pane-controls">
+        <div class="card-inline-form">
+          <input type="text" class="card-mini-input" id="dropBannerTextInput" placeholder="Top Banner Text (e.g. 🔥 DROP 001 LIVE)" maxlength="80">
+          <button type="button" class="act-btn act-neutral" id="saveBannerTextBtn">Save</button>
+        </div>
+        <div class="card-scroll-body" id="siteControlsList"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Owner Login Modal Gate -->
+  <div class="owner-gate-backdrop" id="ownerGateModal">
+    <div class="owner-gate-card">
+      <div class="owner-gate-title">OWNER SIGN IN</div>
+      <div class="owner-gate-sub">Sign in with your Owner credentials to manage Retrocanopy.</div>
+      <input type="email" class="owner-gate-input" id="gateEmail" placeholder="Email Address" autocomplete="username">
+      <input type="password" class="owner-gate-input" id="gatePass" placeholder="Password" autocomplete="current-password">
+      <button type="button" class="owner-gate-btn" id="gateLoginBtn">UNLOCK OWNER'S PAGE</button>
+      <div class="owner-gate-err" id="gateErr"></div>
+    </div>
+  </div>
+
+  <script src="auth_hub.js?v=108"></script>
+  <script>
+    (function () {
+      const gateModal = document.getElementById('ownerGateModal');
+      const gateEmail = document.getElementById('gateEmail');
+      const gatePass = document.getElementById('gatePass');
+      const gateLoginBtn = document.getElementById('gateLoginBtn');
+      const gateErr = document.getElementById('gateErr');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      let selectedTrafficPeriod = 'day';
+
+      // Tab Switching for Card 2 & Card 3
+      document.querySelectorAll('.card-tab-btn[data-tab-target]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const card = btn.closest('.owner-section');
+          const targetId = btn.getAttribute('data-tab-target');
+          card.querySelectorAll('.card-tab-btn').forEach((b) => b.classList.remove('active'));
+          card.querySelectorAll('.tab-pane').forEach((p) => p.classList.remove('active'));
+          btn.classList.add('active');
+          const targetPane = document.getElementById(targetId);
+          if (targetPane) targetPane.classList.add('active');
+        });
+      });
+
+      // Period Switching for Card 1 (Today / Month / Year / Total So Far)
+      document.querySelectorAll('#trafficPeriodTabs .card-tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#trafficPeriodTabs .card-tab-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedTrafficPeriod = btn.getAttribute('data-period') || 'day';
+          renderTrafficCard();
+        });
+      });
+
+      const INV_KEY = 'rc_owner_inventory_v1';
+      const PROMOS_KEY = 'rc_owner_promos_v1';
+      const CONTROLS_KEY = 'rc_owner_controls_v1';
+
+      const DEFAULT_INVENTORY = [
+        { sku: 'RC-101', name: 'Original Canopy Snapback', price: 32, stock: 25, sold: 0 },
+        { sku: 'RC-102', name: 'Dual Grid Snapback', price: 32, stock: 25, sold: 0 },
+        { sku: 'RC-103', name: 'Outrun Mountains Cap', price: 32, stock: 20, sold: 0 },
+        { sku: 'RC-104', name: 'Starry Cosmos Cap', price: 32, stock: 20, sold: 0 },
+        { sku: 'RC-105', name: 'Valkyrie Samurai Cap', price: 34, stock: 15, sold: 0 },
+        { sku: 'RC-106', name: '1984 Corduroy Rope Cap', price: 34, stock: 15, sold: 0 },
+        { sku: 'RC-201', name: 'Neon Canopy Heavy Hoodie', price: 68, stock: 20, sold: 0 },
+        { sku: 'RC-301', name: 'Synthwave Grid Tee', price: 36, stock: 30, sold: 0 }
+      ];
+
+      const DEFAULT_CONTROLS = {
+        bannerEnabled: false,
+        bannerText: '🔥 RETROCANOPY DROP 001 LIVE — PLAY ARCADE TO UNLOCK UP TO 25% OFF!',
+        checkoutOpen: true,
+        arcadeRewardsActive: true
+      };
+
+      function getInventory() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(INV_KEY) || 'null');
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (_) {}
+        localStorage.setItem(INV_KEY, JSON.stringify(DEFAULT_INVENTORY));
+        return DEFAULT_INVENTORY;
+      }
+
+      function saveInventory(list) {
+        localStorage.setItem(INV_KEY, JSON.stringify(list));
+      }
+
+      function getCustomPromos() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(PROMOS_KEY) || '[]');
+          if (Array.isArray(parsed)) return parsed;
+        } catch (_) {}
+        return [];
+      }
+
+      function saveCustomPromos(list) {
+        localStorage.setItem(PROMOS_KEY, JSON.stringify(list));
+      }
+
+      function getControls() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(CONTROLS_KEY) || 'null');
+          if (parsed && typeof parsed === 'object') return { ...DEFAULT_CONTROLS, ...parsed };
+        } catch (_) {}
+        localStorage.setItem(CONTROLS_KEY, JSON.stringify(DEFAULT_CONTROLS));
+        return DEFAULT_CONTROLS;
+      }
+
+      function saveControls(ctrl) {
+        localStorage.setItem(CONTROLS_KEY, JSON.stringify(ctrl));
+      }
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function checkAccess() {
+        if (!window.RetroAuthHub) return false;
+        const loggedIn = window.RetroAuthHub.isAdminLoggedIn();
+        if (loggedIn) {
+          gateModal.classList.remove('open');
+          logoutBtn.style.display = 'inline-block';
+          return true;
+        } else {
+          gateModal.classList.add('open');
+          logoutBtn.style.display = 'none';
+          return false;
+        }
+      }
+
+      // =====================================================================
+      // CARD 1: SITE TRAFFIC NUMBERS (DAY, MONTH, YEAR, TOTAL SO FAR)
+      // =====================================================================
+      function renderTrafficCard() {
+        if (!window.RetroAuthHub) return;
+        const stats = window.RetroAuthHub.getSiteStats ? window.RetroAuthHub.getSiteStats() : {};
+        const feed = Array.isArray(stats.liveFeed) ? stats.liveFeed : [];
+
+        const now = new Date();
+        const curYear = now.getFullYear();
+        const curMonth = now.getMonth();
+        const curDay = now.getDate();
+
+        const makeEmptyBucket = () => ({
+          total: 0,
+          'Home Stage': 0,
+          'Merch Shop': 0,
+          'Arcade': 0,
+          'Culture': 0,
+          'Creators': 0
+        });
+
+        const buckets = {
+          day: makeEmptyBucket(),
+          month: makeEmptyBucket(),
+          year: makeEmptyBucket(),
+          total: {
+            total: stats.totalVisits || 0,
+            'Home Stage': stats.homeViews || 0,
+            'Merch Shop': stats.shopViews || 0,
+            'Arcade': stats.arcadeViews || 0,
+            'Culture': stats.cultureViews || 0,
+            'Creators': stats.creatorsViews || 0
+          }
+        };
+
+        feed.forEach((ev) => {
+          if (!ev || !ev.ts) return;
+          const d = new Date(ev.ts);
+          const sec = buckets.day[ev.section] !== undefined ? ev.section : 'Home Stage';
+
+          if (d.getFullYear() === curYear) {
+            buckets.year.total++;
+            buckets.year[sec]++;
+            if (d.getMonth() === curMonth) {
+              buckets.month.total++;
+              buckets.month[sec]++;
+              if (d.getDate() === curDay) {
+                buckets.day.total++;
+                buckets.day[sec]++;
+              }
+            }
+          }
+        });
+
+        // Ensure Total So Far is at least as large as current year bucket
+        buckets.total.total = Math.max(buckets.total.total, buckets.year.total);
+        ['Home Stage', 'Merch Shop', 'Arcade', 'Culture', 'Creators'].forEach((sec) => {
+          buckets.total[sec] = Math.max(buckets.total[sec] || 0, buckets.year[sec] || 0);
+        });
+
+        // Top 4 KPI numbers (Today, Month, Year, Total So Far)
+        document.getElementById('kpiVisitsDay').textContent = buckets.day.total;
+        document.getElementById('kpiVisitsMonth').textContent = buckets.month.total;
+        document.getElementById('kpiVisitsYear').textContent = buckets.year.total;
+        document.getElementById('kpiVisitsTotal').textContent = buckets.total.total;
+
+        const activeBucket = buckets[selectedTrafficPeriod] || buckets.day;
+        const periodLabelMap = {
+          day: 'Visits Today',
+          month: 'Visits This Month',
+          year: 'Visits This Year',
+          total: 'Total Visits So Far'
+        };
+        const periodSubLabel = periodLabelMap[selectedTrafficPeriod] || 'Visits';
+
+        const destinations = [
+          { key: 'Home Stage', name: 'Home Stage', desc: 'Main Stage & Character Hub' },
+          { key: 'Merch Shop', name: 'Merch Shop', desc: 'Snapbacks, Hoodies & Apparel' },
+          { key: 'Arcade', name: 'Arcade', desc: 'Synth\'s Midnight Flight & Games' },
+          { key: 'Culture', name: 'Culture Hub', desc: 'Retro Lore & Community' },
+          { key: 'Creators', name: 'Creators Studio', desc: 'Streamers & Creator Spotlight' }
+        ];
+
+        document.getElementById('trafficWhereList').innerHTML = destinations.map((dest) => {
+          const count = activeBucket[dest.key] || 0;
+          return `
+            <div class="item-row">
+              <div class="item-info">
+                <div class="item-title">${escapeHtml(dest.name)}</div>
+                <div class="item-sub">${escapeHtml(dest.desc)} • ${periodSubLabel}</div>
+              </div>
+              <div class="visit-num-box">${count}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // =====================================================================
+      // CARD 2: MEMBERS & ACCESS (WITH CANOPY TREE EVOLUTION TIERS)
+      // =====================================================================
+      const CANOPY_TREE_TIERS = [
+        { stage: 1, min: 0,     max: 499,   icon: '🌱', name: 'Neon Sprout',            range: '0 – 499 Growth',          perk: 'Planted under the Canopy' },
+        { stage: 2, min: 500,   max: 1499,  icon: '🌿', name: 'Cyber Sapling',          range: '500 – 1,499 Growth',      perk: 'Glowing cyan trunk veins + Sapling badge' },
+        { stage: 3, min: 1500,  max: 3999,  icon: '🌳', name: 'Sunset Willow',          range: '1,500 – 3,999 Growth',    perk: 'Free shipping unlocked on orders over $25' },
+        { stage: 4, min: 4000,  max: 9999,  icon: '✨', name: 'Astral Canopy',          range: '4,000 – 9,999 Growth',    perk: 'Early access to limited drops' },
+        { stage: 5, min: 10000, max: 24999, icon: '🔥', name: 'Solar Valkyrie Tree',    range: '10,000 – 24,999 Growth',  perk: 'Mystery Collector Sticker Pack with orders' },
+        { stage: 6, min: 25000, max: null,  icon: '👑', name: 'Eternal Sanctuary Tree', range: '25,000+ Growth',          perk: '👑 Earns Limited Edition White & 24K Gold Hoodie + Matching Snapback Hat (EST. 1984) in the Arcade' }
+      ];
+
+      function getCanopyTreeTier(score) {
+        const s = Math.max(0, parseInt(score || 0, 10) || 0);
+        let match = CANOPY_TREE_TIERS[0];
+        CANOPY_TREE_TIERS.forEach((t) => {
+          if (s >= t.min) match = t;
+        });
+        return match;
+      }
+
+      function renderMembersCard() {
+        if (!window.RetroAuthHub) return;
+        const adminDb = window.RetroAuthHub.getAdminAccountsDb() || {};
+        const playerDb = window.RetroAuthHub.getAccountsDb() || {};
+
+        const pendingList = [];
+        const activeList = [];
+        let adminCount = 0;
+        let playerCount = 0;
+
+        Object.keys(adminDb).forEach((key) => {
+          const acc = adminDb[key];
+          if (!acc || !acc.email) return;
+          if (acc.status === 'Pending') {
+            pendingList.push({
+              type: 'admin',
+              name: acc.name || acc.email.split('@')[0],
+              email: acc.email
+            });
+          } else if (acc.status === 'Approved') {
+            adminCount++;
+            // Check if this admin also has a player account or local growth score
+            const pMatch = playerDb[(acc.name || '').toLowerCase()] || null;
+            const ownerGrowth = acc.isOwner
+              ? Math.max(parseInt(localStorage.getItem('rc_canopy_xp') || '0', 10) || 0, pMatch ? (pMatch.xp || pMatch.bestScore || 0) : 0)
+              : (pMatch ? (pMatch.xp || pMatch.bestScore || 0) : 0);
+            activeList.push({
+              type: acc.isOwner ? 'owner' : 'admin',
+              name: acc.name || acc.email.split('@')[0],
+              email: acc.email,
+              growthScore: ownerGrowth,
+              bestScore: pMatch ? (pMatch.bestScore || 0) : 0,
+              isOwner: Boolean(acc.isOwner)
+            });
+          }
+        });
+
+        Object.keys(playerDb).forEach((key) => {
+          const p = playerDb[key];
+          if (!p || !p.username) return;
+          if (p.email && adminDb[p.email.toLowerCase()]) return;
+          playerCount++;
+          activeList.push({
+            type: 'member',
+            key: key,
+            name: `@${p.username}`,
+            email: p.email || 'Player Account',
+            growthScore: Math.max(p.xp || 0, p.bestScore || 0),
+            bestScore: p.bestScore || 0
+          });
+        });
+
+        const totalMembers = activeList.length;
+
+        // Update Top Member Count Numbers
+        document.getElementById('kpiTotalMembers').textContent = totalMembers;
+        document.getElementById('kpiAdminMembers').textContent = adminCount;
+        document.getElementById('kpiPlayerMembers').textContent = playerCount;
+        document.getElementById('kpiPendingMembers').textContent = pendingList.length;
+
+        document.getElementById('membersHeaderBadge').textContent = `${totalMembers} MEMBER${totalMembers === 1 ? '' : 'S'}`;
+        document.getElementById('tabBtnActiveMembers').textContent = `Active (${totalMembers})`;
+        document.getElementById('tabBtnPendingUsers').textContent = `Pending (${pendingList.length})`;
+
+        const activeEl = document.getElementById('activeMembersList');
+        if (activeList.length === 0) {
+          activeEl.innerHTML = `<div class="empty-state">No active members yet.</div>`;
+        } else {
+          activeEl.innerHTML = activeList.map((m) => {
+            const roleBadge = m.type === 'owner'
+              ? `<span class="tag-pill tag-owner">Owner</span>`
+              : (m.type === 'admin'
+                  ? `<span class="tag-pill tag-admin">Admin</span>`
+                  : `<span class="tag-pill tag-member">Member</span>`);
+
+            const treeTier = getCanopyTreeTier(m.growthScore || 0);
+            const treePill = `<span class="tag-pill tag-arcade">${treeTier.icon} ${escapeHtml(treeTier.name)} • ${(m.growthScore || 0).toLocaleString()}</span>`;
+
+            const actionHtml = m.isOwner
+              ? ``
+              : (m.type === 'admin'
+                  ? `<button type="button" class="act-btn act-reject" data-revoke-admin="${escapeHtml(m.email)}">Revoke</button>`
+                  : `<button type="button" class="act-btn act-reject" data-remove-player="${escapeHtml(m.key)}">Remove</button>`);
+
+            return `
+              <div class="item-row">
+                <div class="item-info">
+                  <div class="item-title">
+                    <span>${escapeHtml(m.name)}</span>
+                    ${roleBadge}
+                    ${treePill}
+                  </div>
+                  <div class="item-sub">${escapeHtml(m.email)}${m.bestScore ? ` • Best Flight: ${m.bestScore}` : ''}</div>
+                </div>
+                <div class="row-actions">${actionHtml}</div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        const treeTiersEl = document.getElementById('treeTiersList');
+        if (treeTiersEl) {
+          treeTiersEl.innerHTML = CANOPY_TREE_TIERS.map((t) => `
+            <div class="item-row">
+              <div class="item-info">
+                <div class="item-title">
+                  <span>${t.icon} Stage ${t.stage}: ${escapeHtml(t.name)}</span>
+                </div>
+                <div class="item-sub">${escapeHtml(t.perk)}</div>
+              </div>
+              <span class="tag-pill tag-owner">${escapeHtml(t.range)}</span>
+            </div>
+          `).join('');
+        }
+
+        const pendingEl = document.getElementById('pendingUsersList');
+        if (pendingList.length === 0) {
+          pendingEl.innerHTML = `<div class="empty-state">No users currently awaiting approval.</div>`;
+        } else {
+          pendingEl.innerHTML = pendingList.map((u) => `
+            <div class="item-row">
+              <div class="item-info">
+                <div class="item-title">
+                  <span>${escapeHtml(u.name)}</span>
+                  <span class="tag-pill tag-admin">Request</span>
+                </div>
+                <div class="item-sub">${escapeHtml(u.email)}</div>
+              </div>
+              <div class="row-actions">
+                <button type="button" class="act-btn act-approve" data-approve-email="${escapeHtml(u.email)}">Approve</button>
+                <button type="button" class="act-btn act-reject" data-reject-email="${escapeHtml(u.email)}">Reject</button>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // =====================================================================
+      // CARD 3: STORE, INVENTORY, PROMOS & CONTROLS
+      // =====================================================================
+      function renderStoreCard() {
+        if (!window.RetroAuthHub) return;
+        const orders = window.RetroAuthHub.getOrdersDb ? window.RetroAuthHub.getOrdersDb() : [];
+        const playerDb = window.RetroAuthHub.getAccountsDb ? window.RetroAuthHub.getAccountsDb() : {};
+
+        document.getElementById('tabBtnOrders').textContent = `Orders (${orders.length})`;
+        const ordersEl = document.getElementById('shopOrdersList');
+
+        if (orders.length === 0) {
+          ordersEl.innerHTML = `<div class="empty-state">No store orders yet. Real customer orders will appear here live.</div>`;
+        } else {
+          ordersEl.innerHTML = orders.map((o, idx) => {
+            const status = o.status || 'New';
+            const nextStatus = status === 'New' ? 'Shipped' : (status === 'Shipped' ? 'Delivered' : 'New');
+            const statusClass = status === 'Delivered' ? 'act-approve' : (status === 'Shipped' ? 'act-neutral' : 'act-reject');
+            return `
+              <div class="item-row">
+                <div class="item-info">
+                  <div class="item-title">
+                    <span>#${escapeHtml(o.orderId || ('RC-' + (1001 + idx)))}</span>
+                    <span class="tag-pill tag-pink">$${Number(o.total || 0).toFixed(2)}</span>
+                  </div>
+                  <div class="item-sub">${escapeHtml(o.item || 'Merch Item')} • ${escapeHtml(o.customer || 'Guest')}</div>
+                </div>
+                <div class="row-actions">
+                  <button type="button" class="act-btn ${statusClass}" data-cycle-order="${escapeHtml(o.orderId)}" data-next-status="${nextStatus}">${escapeHtml(status)}</button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // Inventory Tab
+        const inv = getInventory();
+        document.getElementById('merchInventoryList').innerHTML = inv.map((item) => {
+          const lowStock = item.stock <= 5;
+          return `
+            <div class="item-row">
+              <div class="item-info">
+                <div class="item-title">
+                  <span>${escapeHtml(item.sku)} — ${escapeHtml(item.name)}</span>
+                </div>
+                <div class="item-sub">$${item.price} • Sold: ${item.sold || 0} • <span style="color:${lowStock ? '#ff77aa' : '#00f59b'};">Stock: ${item.stock}</span></div>
+              </div>
+              <div class="row-actions">
+                <button type="button" class="act-btn act-neutral" data-stock-sku="${escapeHtml(item.sku)}" data-stock-delta="-1">-</button>
+                <button type="button" class="act-btn act-neutral" data-stock-sku="${escapeHtml(item.sku)}" data-stock-delta="1">+</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Promos & Arcade Coupons Tab (Direct Score-to-Coupon)
+        const customPromos = getCustomPromos();
+        const arcadeTiers = [
+          { code: 'CANOPY10', label: '10% Off Merch', scoreReq: 50 },
+          { code: 'CANOPY20', label: '20% Off Merch', scoreReq: 125 },
+          { code: 'CANOPY30', label: '30% Off + Free Ship', scoreReq: 250 },
+          { code: 'FREECAP84', label: 'FREE ITEM ($32 Off)', scoreReq: 500 }
+        ];
+
+        const customHtml = customPromos.map((p) => `
+          <div class="item-row">
+            <div class="item-info">
+              <div class="item-title">
+                <span>${escapeHtml(p.code)}</span>
+                <span class="tag-pill tag-owner">${p.pct}% OFF</span>
+              </div>
+              <div class="item-sub">Custom Owner Promo Code</div>
+            </div>
+            <div class="row-actions">
+              <button type="button" class="act-btn act-reject" data-del-promo="${escapeHtml(p.code)}">Delete</button>
+            </div>
+          </div>
+        `).join('');
+
+        const arcadeHtml = arcadeTiers.map((t) => {
+          let unlocked = 0;
+          let redeemed = 0;
+          Object.values(playerDb).forEach((p) => {
+            if (!p) return;
+            const pScore = Math.max(p.bestScore || 0, p.xp || 0);
+            if (pScore >= t.scoreReq) unlocked++;
+            if (p.usedCoupons && p.usedCoupons[t.code]) redeemed++;
+          });
+          return `
+            <div class="item-row">
+              <div class="item-info">
+                <div class="item-title">
+                  <span>${t.code}</span>
+                  <span class="tag-pill tag-member">${t.label}</span>
+                </div>
+                <div class="item-sub">Reach Score ${t.scoreReq} • Unlocked: ${unlocked} • Used: ${redeemed}</div>
+              </div>
+              <span class="tag-pill tag-admin">1-USE</span>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('promoCouponsList').innerHTML = customHtml + arcadeHtml;
+
+        // Site Controls Tab
+        const ctrl = getControls();
+        const bannerInput = document.getElementById('dropBannerTextInput');
+        if (document.activeElement !== bannerInput) {
+          bannerInput.value = ctrl.bannerText || '';
+        }
+
+        document.getElementById('siteControlsList').innerHTML = `
+          <div class="item-row">
+            <div class="item-info">
+              <div class="item-title">Sitewide Announcement Banner</div>
+              <div class="item-sub">Displays top drop bar across Home & Shop</div>
+            </div>
+            <button type="button" class="toggle-pill ${ctrl.bannerEnabled ? 'on' : ''}" data-toggle-ctrl="bannerEnabled">
+              ${ctrl.bannerEnabled ? 'ON' : 'OFF'}
+            </button>
+          </div>
+          <div class="item-row">
+            <div class="item-info">
+              <div class="item-title">Merch Store Checkout</div>
+              <div class="item-sub">Allow customers to place merch orders</div>
+            </div>
+            <button type="button" class="toggle-pill ${ctrl.checkoutOpen ? 'on' : ''}" data-toggle-ctrl="checkoutOpen">
+              ${ctrl.checkoutOpen ? 'OPEN' : 'PAUSED'}
+            </button>
+          </div>
+          <div class="item-row">
+            <div class="item-info">
+              <div class="item-title">Arcade Score Coupon Unlocks</div>
+              <div class="item-sub">Grant 1-time coupons at Score 10, 25 & 50</div>
+            </div>
+            <button type="button" class="toggle-pill ${ctrl.arcadeRewardsActive ? 'on' : ''}" data-toggle-ctrl="arcadeRewardsActive">
+              ${ctrl.arcadeRewardsActive ? 'ACTIVE' : 'PAUSED'}
+            </button>
+          </div>
+        `;
+      }
+
+      function renderAllCards() {
+        if (!checkAccess()) return;
+        renderTrafficCard();
+        renderMembersCard();
+        renderStoreCard();
+      }
+
+      // =====================================================================
+      // INTERACTIVE EVENT HANDLERS
+      // =====================================================================
+      document.addEventListener('click', async (e) => {
+        const approveBtn = e.target.closest('[data-approve-email]');
+        if (approveBtn) {
+          const email = approveBtn.getAttribute('data-approve-email');
+          await window.RetroAuthHub.setAdminAccountStatus(email, 'Approved');
+          renderAllCards();
+          return;
+        }
+
+        const rejectBtn = e.target.closest('[data-reject-email]');
+        if (rejectBtn) {
+          const email = rejectBtn.getAttribute('data-reject-email');
+          await window.RetroAuthHub.deleteAdminAccount(email);
+          renderAllCards();
+          return;
+        }
+
+        const revokeBtn = e.target.closest('[data-revoke-admin]');
+        if (revokeBtn) {
+          const email = revokeBtn.getAttribute('data-revoke-admin');
+          await window.RetroAuthHub.setAdminAccountStatus(email, 'Pending');
+          renderAllCards();
+          return;
+        }
+
+        const removePlayerBtn = e.target.closest('[data-remove-player]');
+        if (removePlayerBtn) {
+          const key = removePlayerBtn.getAttribute('data-remove-player');
+          const db = window.RetroAuthHub.getAccountsDb();
+          delete db[key];
+          localStorage.setItem('rc_accounts_db_v2', JSON.stringify(db));
+          await window.RetroAuthHub.syncWithServerDb(true);
+          renderAllCards();
+          return;
+        }
+
+        const cycleOrderBtn = e.target.closest('[data-cycle-order]');
+        if (cycleOrderBtn) {
+          const orderId = cycleOrderBtn.getAttribute('data-cycle-order');
+          const nextStatus = cycleOrderBtn.getAttribute('data-next-status');
+          const orders = window.RetroAuthHub.getOrdersDb();
+          const target = orders.find((o) => String(o.orderId) === String(orderId));
+          if (target) {
+            target.status = nextStatus;
+            localStorage.setItem('rc_shop_orders_v2', JSON.stringify(orders));
+            await window.RetroAuthHub.syncWithServerDb(true);
+            renderAllCards();
+          }
+          return;
+        }
+
+        const stockBtn = e.target.closest('[data-stock-sku]');
+        if (stockBtn) {
+          const sku = stockBtn.getAttribute('data-stock-sku');
+          const delta = parseInt(stockBtn.getAttribute('data-stock-delta') || '0', 10);
+          const inv = getInventory();
+          const item = inv.find((i) => i.sku === sku);
+          if (item) {
+            item.stock = Math.max(0, (item.stock || 0) + delta);
+            saveInventory(inv);
+            renderStoreCard();
+          }
+          return;
+        }
+
+        const delPromoBtn = e.target.closest('[data-del-promo]');
+        if (delPromoBtn) {
+          const code = delPromoBtn.getAttribute('data-del-promo');
+          const list = getCustomPromos().filter((p) => p.code !== code);
+          saveCustomPromos(list);
+          renderStoreCard();
+          return;
+        }
+
+        const toggleCtrlBtn = e.target.closest('[data-toggle-ctrl]');
+        if (toggleCtrlBtn) {
+          const field = toggleCtrlBtn.getAttribute('data-toggle-ctrl');
+          const ctrl = getControls();
+          ctrl[field] = !ctrl[field];
+          saveControls(ctrl);
+          renderStoreCard();
+          return;
+        }
+      });
+
+      document.getElementById('clearTrafficBtn').addEventListener('click', async () => {
+        if (window.RetroAuthHub && window.RetroAuthHub.clearTrafficStats) {
+          await window.RetroAuthHub.clearTrafficStats();
+          renderAllCards();
+        }
+      });
+
+      document.getElementById('exportOrdersCsvBtn').addEventListener('click', () => {
+        const orders = (window.RetroAuthHub && window.RetroAuthHub.getOrdersDb) ? window.RetroAuthHub.getOrdersDb() : [];
+        const rows = [['Order ID', 'Customer', 'Item', 'Total', 'Status', 'Date']];
+        orders.forEach((o) => {
+          rows.push([o.orderId || '', o.customer || '', o.item || '', o.total || 0, o.status || 'New', o.date || '']);
+        });
+        const csvContent = 'data:text/csv;charset=utf-8,' + rows.map((r) => r.join(',')).join('\n');
+        const link = document.createElement('a');
+        link.setAttribute('href', encodeURI(csvContent));
+        link.setAttribute('download', 'retrocanopy_orders.csv');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      });
+
+      document.getElementById('addPromoBtn').addEventListener('click', () => {
+        const codeInput = document.getElementById('newPromoCodeInput');
+        const pctInput = document.getElementById('newPromoPctInput');
+        const code = (codeInput.value || '').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+        const pct = Math.min(100, Math.max(5, parseInt(pctInput.value || '20', 10) || 20));
+        if (!code) return;
+        const list = getCustomPromos().filter((p) => p.code !== code);
+        list.unshift({ code, pct, createdAt: new Date().toISOString() });
+        saveCustomPromos(list);
+        codeInput.value = '';
+        renderStoreCard();
+      });
+
+      document.getElementById('saveBannerTextBtn').addEventListener('click', () => {
+        const bannerInput = document.getElementById('dropBannerTextInput');
+        const ctrl = getControls();
+        ctrl.bannerText = (bannerInput.value || '').trim() || DEFAULT_CONTROLS.bannerText;
+        saveControls(ctrl);
+        const btn = document.getElementById('saveBannerTextBtn');
+        btn.textContent = 'Saved!';
+        setTimeout(() => { btn.textContent = 'Save'; }, 1000);
+      });
+
+      async function handleGateLogin() {
+        gateErr.textContent = '';
+        await window.RetroAuthHub.syncWithServerDb(false);
+        const res = window.RetroAuthHub.loginAdminAccount(gateEmail.value, gatePass.value);
+        if (!res.ok) {
+          gateErr.textContent = res.msg;
+          return;
+        }
+        renderAllCards();
+      }
+
+      gateLoginBtn.addEventListener('click', handleGateLogin);
+      gatePass.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleGateLogin();
+      });
+
+      logoutBtn.addEventListener('click', async () => {
+        if (window.RetroAuthHub && window.RetroAuthHub.logoutActiveSession) {
+          await window.RetroAuthHub.logoutActiveSession();
+        }
+        renderAllCards();
+      });
+
+      window.addEventListener('DOMContentLoaded', async () => {
+        if (window.RetroAuthHub) {
+          await window.RetroAuthHub.syncWithServerDb(false);
+        }
+        renderAllCards();
+        setInterval(async () => {
+          if (window.RetroAuthHub) {
+            await window.RetroAuthHub.syncWithServerDb(false);
+            renderAllCards();
+          }
+        }, 3500);
+      });
+    })();
+  </script>
+</body>
+</html>

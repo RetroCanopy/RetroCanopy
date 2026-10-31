@@ -19,19 +19,44 @@
 <body class="cinema-intro-active">
     <!-- Preloaded HTML5 Audio Tracks for Title Screen Score, Synth's Emotional Journey, Impact Boom, Typing Tick & Kingdom Hearts Soundtrack -->
     <audio id="intro-title-audio" src="assets/intro_theme.wav?v=36" autoplay playsinline webkit-playsinline preload="auto"></audio>
-    <audio id="syn-journey-audio" src="assets/syn_journey.wav?v=93" playsinline webkit-playsinline preload="none"></audio>
-    <audio id="cup-boom-audio" src="assets/cup_boom.wav?v=36" playsinline webkit-playsinline preload="none"></audio>
+    <audio id="syn-journey-audio" src="assets/syn_journey.wav?v=93" playsinline webkit-playsinline preload="auto"></audio>
+    <audio id="cup-boom-audio" src="assets/cup_boom.wav?v=36" playsinline webkit-playsinline preload="auto"></audio>
     <audio id="lofi-loop-audio" src="assets/dearly_beloved.mp3?v=80" loop playsinline webkit-playsinline preload="none"></audio>
     <audio id="type-tick-audio" src="assets/type_tick.wav?v=36" playsinline webkit-playsinline preload="none"></audio>
     <script>
         (function () {
             var a = document.getElementById('intro-title-audio');
             if (!a) return;
+            var navEntries = (window.performance && performance.getEntriesByType) ? performance.getEntriesByType('navigation') : [];
+            var navType = navEntries.length > 0 ? navEntries[0].type : ((window.performance && performance.navigation && performance.navigation.type === 1) ? 'reload' : 'navigate');
+            var isReload = navType === 'reload';
+            var isBackForward = navType === 'back_forward';
+            var fromInternal = false;
+            try {
+                fromInternal = sessionStorage.getItem('rc_from_internal') === '1';
+            } catch (_) {}
+            var skipIntro = !isReload && (
+                fromInternal ||
+                isBackForward
+            );
+            if (skipIntro) {
+                window.__rcSkipIntroOnLoad = true;
+                try {
+                    a.pause();
+                    a.muted = true;
+                    a.volume = 0;
+                    a.removeAttribute('autoplay');
+                } catch (_) {}
+                if (document.body) {
+                    document.body.classList.remove('cinema-intro-active');
+                }
+                return;
+            }
             a.muted = false;
             a.volume = 0.88;
             var pending = false;
             var startOnce = function () {
-                if (!a.paused || pending) return;
+                if (window.__rcSkipIntroOnLoad || !a.paused || pending) return;
                 try {
                     pending = true;
                     var p = a.play();
@@ -115,7 +140,7 @@
     </button>
 
     <!-- Skip Intro Button for quick navigation -->
-    <button type="button" class="skip-intro-btn" id="skip-intro-btn" style="display: none;" aria-label="Skip Intro">SKIP INTRO &#9197;</button>
+    <button type="button" class="skip-intro-btn" id="skip-intro-btn" aria-label="Skip Intro">SKIP INTRO &#9197;</button>
 
     <!-- 3D HOME SCREEN DEPTH BACKDROP (3D STAGE SHADOWBOX DIORAMA + LOGO DIMMER + SYNTH IN BACKGROUND) -->
     <div class="stage-3d-home-backdrop" id="stage-3d-home-backdrop" aria-hidden="true">
@@ -248,7 +273,7 @@
         <!-- 1. CAB-84 — Games & Arcade Guide (Concept 3A 3D-Shaded Pop-Out Model) -->
         <div class="crew-member v-wing-front station-games" id="actor-cab84" data-character="cab84">
             <div class="member-link-slot" id="link-slot-cab84">
-                <a href="games.html" class="tutorial-choice-btn role-btn-games" id="games-choice-btn">
+                <a href="games.html?v=115" class="tutorial-choice-btn role-btn-games" id="games-choice-btn">
                     <span class="choice-cursor">&#9654;</span>
                     <span class="choice-label">ARCADE</span>
                 </a>
@@ -273,7 +298,7 @@
         <!-- 2. CHLOE — Shop & Streetwear Guide (Concept 3A 3D-Shaded Pop-Out Model) -->
         <div class="crew-member v-center-deep station-shop" id="actor-chloe" data-character="chloe">
             <div class="member-link-slot" id="link-slot-chloe">
-                <a href="hat_preview.html" class="tutorial-choice-btn role-btn-shop" id="shop-choice-btn">
+                <a href="hat_preview.html?v=100" class="tutorial-choice-btn role-btn-shop" id="shop-choice-btn">
                     <span class="choice-cursor">&#9654;</span>
                     <span class="choice-label">SHOP</span>
                 </a>
@@ -347,7 +372,8 @@
 
     </div>
 
-    <script src="script.js?v=94"></script>
+    <script src="script.js?v=102"></script>
+    <script src="auth_hub.js?v=109"></script>
 </body>
 
 </html>
