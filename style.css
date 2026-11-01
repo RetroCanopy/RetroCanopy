@@ -6251,7 +6251,7 @@ body.rc-logged-in-home .hero-container.shifted-up {
     }
 
     .rc-concept10a-showcase {
-        order: -1;
+        order: 2;
         width: 100%;
         height: clamp(78px, 10.2vh, 92px);
         gap: 4px;
