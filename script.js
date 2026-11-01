@@ -3090,7 +3090,7 @@ function initGamerIntro() {
             stage.classList.add('syn-exited');
         }
         if (document.body) {
-            document.body.classList.add('syn-in-background');
+            document.body.classList.remove('syn-in-background', 'diorama-reveal-active', 'coming-soon-finale-active');
         }
 
         computeTargetPositions(true, false);
@@ -3098,7 +3098,7 @@ function initGamerIntro() {
             stage.classList.add('syn-exited');
         }
         if (document.body) {
-            document.body.classList.add('syn-in-background');
+            document.body.classList.remove('syn-in-background', 'diorama-reveal-active', 'coming-soon-finale-active');
         }
         friendsOnlyOrder.forEach((id) => {
             const actor = crewActors[id];
@@ -3748,8 +3748,7 @@ function initGamerIntro() {
             stage.classList.add('syn-exited');
         }
         if (document.body) {
-            document.body.classList.remove('diorama-reveal-active', 'coming-soon-finale-active');
-            document.body.classList.add('syn-in-background');
+            document.body.classList.remove('diorama-reveal-active', 'coming-soon-finale-active', 'syn-in-background');
         }
         if (crewActors.james) {
             crewActors.james.arrived = true;
@@ -3777,8 +3776,7 @@ function initGamerIntro() {
         });
 
         if (document.body) {
-            document.body.classList.remove('cinema-intro-active', 'holo-journey-active');
-            document.body.classList.add('syn-in-background');
+            document.body.classList.remove('cinema-intro-active', 'holo-journey-active', 'diorama-reveal-active', 'coming-soon-finale-active', 'syn-in-background');
         }
         if (heroContainer) {
             heroContainer.classList.remove('cinematic-center', 'cinema-reveal-stage');
