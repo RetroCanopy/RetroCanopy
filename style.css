@@ -5315,7 +5315,7 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
 }
 
 .rc-game-scroll-card.is-coming-soon .rc-game-scroll-img {
-    filter: brightness(0.42) saturate(0.85) contrast(1.08);
+    filter: none;
 }
 
 /* Full-screen Neo-Tokyo "COMING SOON" Arcade Cabinet Visual Overlay */
