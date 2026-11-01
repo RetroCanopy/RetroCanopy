@@ -5178,18 +5178,20 @@ body.coming-soon-finale-active .diorama-bg-synth {
 }
 
 /* ==========================================================================
-   LOGGED-IN HOME SCREEN SCROLLING SHOP ITEMS SHOWCASE
+   LOGGED-IN HOME SCREEN SCROLLING SHOP ITEMS & ARCADE GAMES SHOWCASE
    ========================================================================== */
 .rc-home-shop-scroller {
     position: fixed;
     left: 0;
     right: 0;
-    top: clamp(275px, 34vh, 360px);
-    bottom: clamp(18px, 3.5vh, 42px);
+    top: clamp(188px, 22.5vh, 238px);
+    bottom: clamp(10px, 1.8vh, 22px);
     z-index: 620;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-evenly;
+    gap: clamp(6px, 1.2vh, 16px);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -5205,14 +5207,15 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
 
 .rc-shop-scroll-viewport {
     width: 100%;
-    height: 100%;
+    flex: 1 1 0;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     overflow: hidden;
     position: relative;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
 }
 
 .rc-shop-scroll-track {
@@ -5220,14 +5223,14 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
     align-items: center;
     flex-shrink: 0;
     width: max-content;
-    gap: clamp(28px, 4.2vw, 56px);
+    gap: clamp(22px, 3.2vw, 44px);
     will-change: transform;
-    padding: 12px 0;
+    padding: 4px 0;
 }
 
 .rc-shop-scroll-card {
     flex: 0 0 auto;
-    width: clamp(220px, 24vw, 305px);
+    width: clamp(195px, 20vw, 265px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -5235,19 +5238,19 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
     text-decoration: none;
     color: #ffffff;
     position: relative;
-    padding: 10px 8px;
+    padding: 4px 6px;
     transition: transform 0.25s ease;
     user-select: none;
     -webkit-user-drag: none;
 }
 
 .rc-shop-scroll-card:hover {
-    transform: translateY(-6px) scale(1.03);
+    transform: translateY(-4px) scale(1.03);
 }
 
 .rc-shop-scroll-img-wrap {
     width: 100%;
-    height: clamp(210px, 32vh, 300px);
+    height: clamp(165px, 22.5vh, 235px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5261,7 +5264,7 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
     height: 72%;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(255, 45, 149, 0.14) 0%, rgba(0, 240, 255, 0.08) 48%, transparent 72%);
-    filter: blur(22px);
+    filter: blur(20px);
     z-index: 0;
     pointer-events: none;
 }
@@ -5274,25 +5277,61 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
     width: auto;
     height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 22px 32px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(0, 240, 255, 0.14));
+    filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 14px rgba(0, 240, 255, 0.14));
     pointer-events: none;
     -webkit-user-drag: none;
 }
 
+/* Bottom Row: Arcade Games Scroller (Opposite Direction) */
+.rc-game-scroll-card {
+    width: clamp(230px, 23vw, 310px);
+}
+
+.rc-game-scroll-img-wrap {
+    width: 94%;
+    height: clamp(132px, 18.5vh, 182px);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1.5px solid rgba(0, 240, 255, 0.5);
+    box-shadow:
+        inset 0 0 0 1.5px rgba(212, 175, 55, 0.45),
+        0 12px 26px rgba(0, 0, 0, 0.92),
+        0 0 16px rgba(0, 240, 255, 0.18);
+    background: #050711;
+}
+
+.rc-game-scroll-img-wrap::before {
+    display: none;
+}
+
+.rc-game-scroll-img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    filter: none;
+    display: block;
+}
+
 .rc-shop-scroll-meta {
-    margin-top: 10px;
+    margin-top: 6px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     text-align: center;
-    background: rgba(8, 10, 22, 0.78);
+    background: rgba(8, 10, 22, 0.82);
     border: 1px solid rgba(0, 240, 255, 0.28);
-    border-radius: 14px;
-    padding: 8px 14px;
+    border-radius: 12px;
+    padding: 6px 12px;
     width: 94%;
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.75);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.78);
+}
+
+.rc-game-scroll-card .rc-shop-scroll-meta {
+    border-color: rgba(212, 175, 55, 0.42);
 }
 
 .rc-shop-scroll-top-row {
@@ -5300,24 +5339,37 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: 8px;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 .rc-shop-scroll-tag {
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.58rem;
+    font-size: 0.55rem;
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.09em;
     color: #00f0ff;
     text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .rc-shop-scroll-price {
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.76rem;
+    font-size: 0.7rem;
     font-weight: 900;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     background: linear-gradient(90deg, #ff8c00, #ff2d95);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.rc-game-scroll-card .rc-shop-scroll-price {
+    background: linear-gradient(90deg, #ffd700, #00f0ff);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -5325,9 +5377,9 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
 
 .rc-shop-scroll-title {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.92);
+    color: rgba(255, 255, 255, 0.94);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -5336,29 +5388,49 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
 
 @media (max-width: 768px) {
     .rc-home-shop-scroller {
-        top: clamp(230px, 29vh, 265px);
-        bottom: clamp(14px, 2.5vh, 26px);
+        top: clamp(178px, 21.5vh, 204px);
+        bottom: clamp(8px, 1.4vh, 16px);
+        gap: 4px;
     }
 
     .rc-shop-scroll-track {
-        gap: 20px;
+        gap: 16px;
     }
 
     .rc-shop-scroll-card {
-        width: clamp(210px, 60vw, 250px);
+        width: clamp(175px, 50vw, 210px);
+        padding: 2px 4px;
     }
 
     .rc-shop-scroll-img-wrap {
-        height: clamp(220px, 34vh, 285px);
+        height: clamp(148px, 20.5vh, 185px);
+    }
+
+    .rc-game-scroll-card {
+        width: clamp(205px, 58vw, 240px);
+    }
+
+    .rc-game-scroll-img-wrap {
+        height: clamp(118px, 16.5vh, 148px);
+        border-radius: 12px;
     }
 
     .rc-shop-scroll-meta {
-        padding: 8px 12px;
-        border-radius: 13px;
+        margin-top: 5px;
+        padding: 5px 10px;
+        border-radius: 11px;
+    }
+
+    .rc-shop-scroll-tag {
+        font-size: 0.5rem;
+    }
+
+    .rc-shop-scroll-price {
+        font-size: 0.66rem;
     }
 
     .rc-shop-scroll-title {
-        font-size: 0.78rem;
+        font-size: 0.72rem;
     }
 }
 

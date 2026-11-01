@@ -7337,6 +7337,10 @@
         setTimeout(() => {
           window.__openGamesSelectionModal();
         }, 80);
+      } else if (qsParams.get('openTickets') === '1') {
+        setTimeout(() => {
+          window.__openTicketCounterModal();
+        }, 80);
       } else if (qsParams.get('autoPlaySlugger') === '1') {
         setTimeout(() => {
           window.__openGamesSelectionModal();
