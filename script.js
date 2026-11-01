@@ -4597,22 +4597,23 @@ function initHomeShopScroller() {
     // Bottom Row: Retrocanopy Arcade Games (scrolling in the opposite direction: left-to-right)
     if (gamesTrack) {
         const arcadeCatalog = [
-            { code: 'ARC-01', title: "Shinjuku Slugger '84", cat: 'PINBALL', badge: 'PLAY NOW', img: 'assets/concept_gallery/shinjuku_slugger_84_hologram_batter.jpg?v=130', href: 'games.html?autoPlaySlugger=1' },
-            { code: 'ARC-02', title: "Synth's Midnight Flight", cat: 'FLIGHT', badge: '10 PTS = 1 TICKET', img: 'assets/concept_gallery/concept4_neo_tokyo_flight_png_1793320127834.jpg', href: 'games.html' },
-            { code: 'ARC-03', title: '86 Outrun Horizon Chase', cat: 'OUTRUN', badge: '10 PTS = 1 TICKET', img: 'assets/concept_gallery/concept_2_outrun_horizon_chase_1793320124381.jpg', href: 'games.html?openDeck=1' },
-            { code: 'ARC-04', title: 'Shibuya Hoverboard Blitz', cat: 'GRIND', badge: '10 PTS = 1 TICKET', img: 'assets/concept_gallery/shibuya_hoverboard_grind_blitz_gameplay_1793321779636.jpg', href: 'games.html?openDeck=1' },
-            { code: 'ARC-05', title: "Shinjuku Pinball Table '84", cat: 'ARCADE', badge: 'PLAY LIVE', img: 'assets/concept_gallery/shinjuku_slugger_84_board_clean.jpg', href: 'games.html?autoPlaySlugger=1' },
-            { code: 'ARC-06', title: 'Cyber-Shrine Skyway Run', cat: 'RUNNER', badge: '10 PTS = 1 TICKET', img: 'assets/concept_gallery/fun_run_idea_6_cyber_shrine_run_1793321757496.jpg', href: 'games.html?openDeck=1' },
-            { code: 'ARC-07', title: 'Wangan Midnight Chase', cat: 'DRIFT', badge: '10 PTS = 1 TICKET', img: 'assets/concept_gallery/tokyo_wangan_midnight_chase_1793321085389.jpg', href: 'games.html?openDeck=1' },
-            { code: 'ARC-08', title: 'Neo-Tokyo Ticket Counter', cat: 'PRIZES', badge: 'REDEEM PRIZES', img: 'assets/concept_gallery/concept5_var1_arcades_flanking_window_1793363445032.jpg', href: 'games.html?openTickets=1' },
-            { code: 'ARC-09', title: 'Akihabara Rooftop Slalom', cat: 'SLALOM', badge: '10 PTS = 1 TICKET', img: 'assets/concept_gallery/akihabara_rooftop_slalom_concept_1793321090518.jpg', href: 'games.html?openDeck=1' },
-            { code: 'ARC-10', title: 'Shibuya Valkyrie Storm', cat: 'BOSS RUN', badge: '10 PTS = 1 TICKET', img: 'assets/concept_gallery/tokyo_concept_10_shibuya_valkyrie_storm_1793321098370.jpg', href: 'games.html?openDeck=1' }
+            { code: 'ARC-01', title: "Shinjuku Slugger '84", cat: 'PINBALL', badge: 'PLAY NOW', comingSoon: false, img: 'assets/concept_gallery/shinjuku_slugger_84_hologram_batter.jpg?v=130', href: 'games.html?autoPlaySlugger=1' },
+            { code: 'ARC-02', title: "Synth's Midnight Flight", cat: 'FLIGHT', badge: 'PLAY NOW', comingSoon: false, img: 'assets/concept_gallery/concept4_neo_tokyo_flight_png_1793320127834.jpg', href: 'games.html' },
+            { code: 'ARC-03', title: '86 Outrun Horizon Chase', cat: 'OUTRUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/concept_2_outrun_horizon_chase_1793320124381.jpg', href: 'games.html?openDeck=1' },
+            { code: 'ARC-04', title: 'Shibuya Hoverboard Blitz', cat: 'GRIND', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/shibuya_hoverboard_grind_blitz_gameplay_1793321779636.jpg', href: 'games.html?openDeck=1' },
+            { code: 'ARC-05', title: "Shinjuku Pinball Table '84", cat: 'ARCADE', badge: 'PLAY NOW', comingSoon: false, img: 'assets/concept_gallery/shinjuku_slugger_84_board_clean.jpg', href: 'games.html?autoPlaySlugger=1' },
+            { code: 'ARC-06', title: 'Cyber-Shrine Skyway Run', cat: 'RUNNER', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/fun_run_idea_6_cyber_shrine_run_1793321757496.jpg', href: 'games.html?openDeck=1' },
+            { code: 'ARC-07', title: 'Wangan Midnight Chase', cat: 'DRIFT', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/tokyo_wangan_midnight_chase_1793321085389.jpg', href: 'games.html?openDeck=1' },
+            { code: 'ARC-08', title: 'Neo-Tokyo Ticket Counter', cat: 'PRIZES', badge: 'REDEEM PRIZES', comingSoon: false, img: 'assets/concept_gallery/concept5_var1_arcades_flanking_window_1793363445032.jpg', href: 'games.html?openTickets=1' },
+            { code: 'ARC-09', title: 'Akihabara Rooftop Slalom', cat: 'SLALOM', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/akihabara_rooftop_slalom_concept_1793321090518.jpg', href: 'games.html?openDeck=1' },
+            { code: 'ARC-10', title: 'Shibuya Valkyrie Storm', cat: 'BOSS RUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/tokyo_concept_10_shibuya_valkyrie_storm_1793321098370.jpg', href: 'games.html?openDeck=1' }
         ];
         const loopGames = arcadeCatalog.concat(arcadeCatalog);
         gamesTrack.innerHTML = loopGames.map((game) => `
-            <a class="rc-shop-scroll-card rc-game-scroll-card" href="${game.href}" draggable="false">
+            <a class="rc-shop-scroll-card rc-game-scroll-card${game.comingSoon ? ' is-coming-soon' : ''}" href="${game.href}" draggable="false">
                 <div class="rc-shop-scroll-img-wrap rc-game-scroll-img-wrap">
                     <img class="rc-shop-scroll-img rc-game-scroll-img" src="${game.img}" alt="${game.title}" loading="eager" draggable="false" />
+                    ${game.comingSoon ? '<span class="rc-game-coming-soon-pill">COMING SOON</span>' : ''}
                 </div>
                 <div class="rc-shop-scroll-meta">
                     <div class="rc-shop-scroll-top-row">
