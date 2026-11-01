@@ -5287,6 +5287,17 @@ body.rc-logged-in-home .hero-container.shifted-up {
 }
 
 /* Middle Row: Arcade Games Scroller (Opposite Direction) */
+.rc-games-scroll-viewport {
+    overflow: visible;
+    overflow-x: clip;
+    padding: 24px 0;
+    margin: -24px 0;
+}
+
+.rc-games-scroll-track {
+    padding: 12px 0;
+}
+
 .rc-game-scroll-card {
     width: clamp(215px, 21vw, 288px);
 }
@@ -5296,12 +5307,43 @@ body.rc-logged-in-home .hero-container.shifted-up {
     height: clamp(118px, 15vh, 162px);
     border-radius: 13px;
     overflow: hidden;
-    border: 1.5px solid rgba(0, 240, 255, 0.5);
-    box-shadow:
-        inset 0 0 0 1.5px rgba(212, 175, 55, 0.45),
-        0 10px 22px rgba(0, 0, 0, 0.92),
-        0 0 14px rgba(0, 240, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.92);
     background: #050711;
+}
+
+/* Glowing Neon Border for Currently Active ("PLAY NOW") Games */
+.rc-game-scroll-card:not(.is-coming-soon) .rc-game-scroll-img-wrap,
+.rc-game-scroll-card.is-active-game .rc-game-scroll-img-wrap {
+    border: 2.5px solid #00f0ff;
+    box-shadow:
+        inset 0 0 14px rgba(0, 240, 255, 0.8),
+        0 0 12px #00f0ff,
+        0 0 26px rgba(0, 240, 255, 0.78),
+        0 0 42px rgba(57, 255, 20, 0.38),
+        0 10px 22px rgba(0, 0, 0, 0.92);
+    animation: rcActiveGameNeonPulse 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes rcActiveGameNeonPulse {
+    0% {
+        border-color: #00f0ff;
+        box-shadow:
+            inset 0 0 12px rgba(0, 240, 255, 0.72),
+            0 0 10px #00f0ff,
+            0 0 22px rgba(0, 240, 255, 0.72),
+            0 0 36px rgba(57, 255, 20, 0.3),
+            0 10px 22px rgba(0, 0, 0, 0.92);
+    }
+    100% {
+        border-color: #66fbff;
+        box-shadow:
+            inset 0 0 16px rgba(0, 240, 255, 0.92),
+            0 0 15px #00f0ff,
+            0 0 32px rgba(0, 240, 255, 0.92),
+            0 0 48px rgba(57, 255, 20, 0.5),
+            0 10px 22px rgba(0, 0, 0, 0.92);
+    }
 }
 
 .rc-game-scroll-img-wrap::before {
@@ -5558,7 +5600,16 @@ body.rc-logged-in-home .hero-container.shifted-up {
 }
 
 .rc-game-scroll-card .rc-shop-scroll-meta {
-    border-color: rgba(212, 175, 55, 0.42);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.rc-game-scroll-card:not(.is-coming-soon) .rc-shop-scroll-meta,
+.rc-game-scroll-card.is-active-game .rc-shop-scroll-meta {
+    border: 1.5px solid #00f0ff;
+    box-shadow:
+        inset 0 0 8px rgba(0, 240, 255, 0.35),
+        0 0 14px rgba(0, 240, 255, 0.72),
+        0 6px 18px rgba(0, 0, 0, 0.85);
 }
 
 .rc-shop-scroll-top-row {

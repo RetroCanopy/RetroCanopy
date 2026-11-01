@@ -4609,7 +4609,7 @@ function initHomeShopScroller() {
         ];
         const loopGames = arcadeCatalog.concat(arcadeCatalog);
         gamesTrack.innerHTML = loopGames.map((game) => `
-            <a class="rc-shop-scroll-card rc-game-scroll-card${game.comingSoon ? ' is-coming-soon' : ''}" href="${game.href}" draggable="false">
+            <a class="rc-shop-scroll-card rc-game-scroll-card${game.comingSoon ? ' is-coming-soon' : ' is-active-game'}" href="${game.href}" draggable="false">
                 <div class="rc-shop-scroll-img-wrap rc-game-scroll-img-wrap">
                     <img class="rc-shop-scroll-img rc-game-scroll-img" src="${game.img}" alt="${game.title}" loading="eager" draggable="false" />
                 </div>
