@@ -3182,7 +3182,7 @@ function initGamerIntro() {
                 synthSteampunkComingSoonEl.classList.add('visible');
             }
             if (document.body) {
-                document.body.classList.remove('holo-journey-active', 'holo-pitch-black', 'cinema-intro-active', 'syn-in-background');
+                document.body.classList.remove('holo-journey-active', 'holo-pitch-black', 'cinema-intro-active', 'syn-in-background', 'rc-logged-in-home');
                 document.body.classList.add('diorama-reveal-active', 'coming-soon-finale-active');
             }
             if (heroContainer) {
@@ -3215,7 +3215,8 @@ function initGamerIntro() {
         }
         // Bring the RETROCANOPY logo & emblem right back to 100% brightness as Syn glitches away!
         if (document.body) {
-            document.body.classList.remove('holo-journey-active', 'holo-pitch-black');
+            document.body.classList.remove('holo-journey-active', 'holo-pitch-black', 'coming-soon-finale-active', 'diorama-reveal-active', 'syn-in-background');
+            document.body.classList.add('rc-logged-in-home');
         }
 
         // Settle all 4 crew members into their Dynamic V-Formation Hero Stance on the pure black stage!
@@ -3708,7 +3709,7 @@ function initGamerIntro() {
                 synthSteampunkComingSoonEl.classList.add('visible');
             }
             if (document.body) {
-                document.body.classList.remove('cinema-intro-active', 'holo-journey-active', 'holo-pitch-black', 'syn-in-background');
+                document.body.classList.remove('cinema-intro-active', 'holo-journey-active', 'holo-pitch-black', 'syn-in-background', 'rc-logged-in-home');
                 document.body.classList.add('diorama-reveal-active', 'coming-soon-finale-active');
             }
             if (heroContainer) {
@@ -3777,6 +3778,7 @@ function initGamerIntro() {
 
         if (document.body) {
             document.body.classList.remove('cinema-intro-active', 'holo-journey-active', 'diorama-reveal-active', 'coming-soon-finale-active', 'syn-in-background');
+            document.body.classList.add('rc-logged-in-home');
         }
         if (heroContainer) {
             heroContainer.classList.remove('cinematic-center', 'cinema-reveal-stage');
@@ -4514,13 +4516,152 @@ function initSubpageLofiMusic() {
     startSubpageLoop();
 }
 
+/**
+ * LOGGED-IN HOME PAGE SHOP SCROLLER
+ * Continuously scrolls all Retrocanopy Shop items across the pure-black home stage for logged-in users.
+ */
+function initHomeShopScroller() {
+    const track = document.getElementById('rc-shop-scroll-track');
+    const viewport = document.getElementById('rc-shop-scroll-viewport');
+    if (!track || !viewport) return;
+
+    const shopCatalog = [
+        // Interleaved flagship items from all categories first, followed by full catalog
+        { code: 'RC-301', title: 'Classic Sunset Grid Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt1_back.png?v=75', href: 'hoodie_preview.html?idx=0' },
+        { code: 'RC-101', title: 'Classic Sunset Grid Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_front_floating.png?v=94', href: 'hat_preview.html?idx=0' },
+        { code: 'RC-401', title: '86 Outrun Turbo Gullwing Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt1_back.png?v=6', href: 'tee_preview.html?idx=0' },
+        { code: 'RC-601', title: 'Golden ROM Cartridge Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt1_back.png?v=6', href: 'longsleeve_preview.html?idx=0' },
+        { code: 'RC-501', title: 'Sunset Grid Tech Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt1.png?v=1', href: 'joggers_preview.html?idx=0' },
+        { code: 'RC-201', title: 'Classic Sunset Grid XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_1.png?v=3', href: 'deskmat_preview.html?idx=0' },
+        { code: 'RC-701', title: 'Retrocanopy 20oz LAN Gear Bag', cat: 'GEAR & MISC', price: '$28', img: 'assets/merch/gearbag_opt1.png?v=5', href: 'gearbag_preview.html?idx=0' },
+
+        { code: 'RC-306', title: 'Cyber-Dragon Shenron Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt6_back.png?v=75', href: 'hoodie_preview.html?idx=5' },
+        { code: 'RC-105', title: 'Valkyrie Gold & Crimson Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt5.png?v=94', href: 'hat_preview.html?idx=4' },
+        { code: 'RC-402', title: '16-Bit Arcade Blueprint Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt2_back.png?v=6', href: 'tee_preview.html?idx=1' },
+        { code: 'RC-602', title: 'Cyber Ronin Samurai Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt2_back.png?v=6', href: 'longsleeve_preview.html?idx=1' },
+        { code: 'RC-502', title: 'Dual Cyan & Magenta Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt2.png?v=1', href: 'joggers_preview.html?idx=1' },
+        { code: 'RC-202', title: 'Dual Cyan & Magenta XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_2.png?v=3', href: 'deskmat_preview.html?idx=1' },
+        { code: 'RC-702', title: 'Classic Sunset Grid 30oz Tumbler', cat: 'GEAR & MISC', price: '$34', img: 'assets/merch/tumbler_opt1.png?v=2', href: 'gearbag_preview.html?idx=1' },
+
+        { code: 'RC-308', title: 'Pinball Wizard Jackpot Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt9_back.png?v=75', href: 'hoodie_preview.html?idx=7' },
+        { code: 'RC-102', title: 'Dual Cyan & Magenta Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt2.png?v=94', href: 'hat_preview.html?idx=1' },
+        { code: 'RC-403', title: 'Tokyo Shibuya Cyber-Shrine Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt3_back.png?v=6', href: 'tee_preview.html?idx=2' },
+        { code: 'RC-603', title: 'Power-Glove VR 1989 Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt3_back.png?v=6', href: 'longsleeve_preview.html?idx=2' },
+        { code: 'RC-503', title: 'Outrun Wireframe Cargo Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt3.png?v=1', href: 'joggers_preview.html?idx=2' },
+        { code: 'RC-203', title: 'Outrun Wireframe XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_3.png?v=3', href: 'deskmat_preview.html?idx=2' },
+        { code: 'RC-703', title: 'Dual Neon Grid 30oz Tumbler', cat: 'GEAR & MISC', price: '$34', img: 'assets/merch/tumbler_opt2.png?v=2', href: 'gearbag_preview.html?idx=2' },
+
+        { code: 'RC-302', title: 'Dual Cyan & Magenta Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt2_back.png?v=75', href: 'hoodie_preview.html?idx=1' },
+        { code: 'RC-103', title: 'Outrun Wireframe Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt3.png?v=94', href: 'hat_preview.html?idx=2' },
+        { code: 'RC-404', title: 'Analog Cassette Mixtape Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt4_back.png?v=11', href: 'tee_preview.html?idx=3' },
+        { code: 'RC-604', title: 'Orbital Saturn Eclipse Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt4_back.png?v=6', href: 'longsleeve_preview.html?idx=3' },
+        { code: 'RC-504', title: 'Starry Synthwave Cosmos Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt4.png?v=1', href: 'joggers_preview.html?idx=3' },
+        { code: 'RC-204', title: 'Pro-Esports Stealth XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_4.png?v=3', href: 'deskmat_preview.html?idx=3' },
+        { code: 'RC-704', title: 'Valkyrie Samurai 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt3.png?v=2', href: 'gearbag_preview.html?idx=3' },
+
+        { code: 'RC-303', title: 'Midnight Grinder Vault Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt3_back.png?v=75', href: 'hoodie_preview.html?idx=2' },
+        { code: 'RC-104', title: 'Starry Synthwave Cosmos Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt4.png?v=94', href: 'hat_preview.html?idx=3' },
+        { code: 'RC-405', title: 'Boss Level Mecha-Valkyrie Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt5_back.png?v=6', href: 'tee_preview.html?idx=4' },
+        { code: 'RC-605', title: 'Stereo Hi-Fi 60Hz VHS Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt5_back.png?v=6', href: 'longsleeve_preview.html?idx=4' },
+        { code: 'RC-505', title: '1984 Champion Gold Trim Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt5.png?v=1', href: 'joggers_preview.html?idx=4' },
+        { code: 'RC-205', title: 'Starry Synthwave Cosmos XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_5.png?v=3', href: 'deskmat_preview.html?idx=4' },
+        { code: 'RC-705', title: '1984 Champion Gold 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt4.png?v=2', href: 'gearbag_preview.html?idx=4' },
+
+        { code: 'RC-304', title: 'Outrun Wireframe Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt4_back.png?v=75', href: 'hoodie_preview.html?idx=3' },
+        { code: 'RC-305', title: 'Starry Synthwave Cosmos Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt5_back.png?v=75', href: 'hoodie_preview.html?idx=4' },
+        { code: 'RC-307', title: '1987 Superbike Cyber Drift Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt7_back.png?v=75', href: 'hoodie_preview.html?idx=6' },
+        { code: 'RC-106', title: '1984 Arcade Champion Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt6.png?v=94', href: 'hat_preview.html?idx=5' }
+    ];
+
+    // Duplicate items 2x for a seamless infinite scrolling marquee loop
+    const loopItems = shopCatalog.concat(shopCatalog);
+    track.innerHTML = loopItems.map((item) => `
+        <a class="rc-shop-scroll-card" href="${item.href}" draggable="false">
+            <div class="rc-shop-scroll-img-wrap">
+                <img class="rc-shop-scroll-img" src="${item.img}" alt="${item.title}" loading="eager" draggable="false" />
+            </div>
+            <div class="rc-shop-scroll-meta">
+                <div class="rc-shop-scroll-top-row">
+                    <span class="rc-shop-scroll-tag">${item.code} • ${item.cat}</span>
+                    <span class="rc-shop-scroll-price">${item.price}</span>
+                </div>
+                <div class="rc-shop-scroll-title">${item.title}</div>
+            </div>
+        </a>
+    `).join('');
+
+    let offsetPx = 0;
+    let lastTime = performance.now();
+    let isHovered = false;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartOffset = 0;
+    let dragMoved = 0;
+
+    viewport.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'mouse') isHovered = true;
+    });
+    viewport.addEventListener('pointerleave', () => {
+        isHovered = false;
+    });
+
+    viewport.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        dragStartX = e.clientX;
+        dragStartOffset = offsetPx;
+        dragMoved = 0;
+    }, { passive: true });
+
+    window.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStartX;
+        dragMoved = Math.max(dragMoved, Math.abs(dx));
+        offsetPx = dragStartOffset - dx;
+    }, { passive: true });
+
+    window.addEventListener('pointerup', () => {
+        isDragging = false;
+    }, { passive: true });
+
+    track.addEventListener('click', (e) => {
+        if (dragMoved > 10) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }, true);
+
+    function tickScroller(now) {
+        const dt = Math.min(0.06, Math.max(0.001, (now - lastTime) / 1000));
+        lastTime = now;
+
+        const halfWidth = track.scrollWidth / 2;
+        if (halfWidth > 0) {
+            if (!isDragging && !isHovered) {
+                const speedPxPerSec = window.innerWidth <= 920 ? 52 : 68;
+                offsetPx += speedPxPerSec * dt;
+            }
+            if (offsetPx >= halfWidth) {
+                offsetPx -= halfWidth;
+            } else if (offsetPx < 0) {
+                offsetPx += halfWidth;
+            }
+            track.style.transform = `translate3d(${-offsetPx}px, 0, 0)`;
+        }
+        requestAnimationFrame(tickScroller);
+    }
+
+    requestAnimationFrame(tickScroller);
+}
+
 // Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         initGamerIntro();
+        initHomeShopScroller();
         initSubpageLofiMusic();
     });
 } else {
     initGamerIntro();
+    initHomeShopScroller();
     initSubpageLofiMusic();
 }

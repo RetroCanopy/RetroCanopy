@@ -320,6 +320,26 @@
     // Initialize Enlarged Chloe Product Guide & Continuous Soft Lofi Music
     initShopChloeGuide();
     initShopLofiMusic();
+
+    // Support ?idx=N (and ?size=small) deep-linking from the Logged-In Home Page Shop Scroller
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const reqSize = params.get('size');
+      const reqIdxRaw = params.get('idx');
+      if (reqSize && typeof window.switchMatSize === 'function') {
+        window.switchMatSize(reqSize);
+      }
+      if (reqIdxRaw !== null) {
+        const reqIdx = parseInt(reqIdxRaw, 10);
+        if (!isNaN(reqIdx) && reqIdx >= 0) {
+          setTimeout(() => {
+            if (typeof window.selectHoodie === 'function') window.selectHoodie(reqIdx);
+            else if (typeof window.selectItem === 'function') window.selectItem(reqIdx);
+            else if (typeof window.selectMat === 'function') window.selectMat(reqIdx);
+          }, 40);
+        }
+      }
+    } catch (_) {}
   });
 
   /**

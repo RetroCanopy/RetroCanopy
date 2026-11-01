@@ -5177,6 +5177,195 @@ body.coming-soon-finale-active .diorama-bg-synth {
     }
 }
 
+/* ==========================================================================
+   LOGGED-IN HOME SCREEN SCROLLING SHOP ITEMS SHOWCASE
+   ========================================================================== */
+.rc-home-shop-scroller {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: clamp(275px, 34vh, 360px);
+    bottom: clamp(18px, 3.5vh, 42px);
+    z-index: 620;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.45s ease, visibility 0.45s ease;
+    overflow: hidden;
+}
+
+body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.coming-soon-finale-active) .rc-home-shop-scroller {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.rc-shop-scroll-viewport {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+    cursor: grab;
+    touch-action: pan-y;
+}
+
+.rc-shop-scroll-viewport:active {
+    cursor: grabbing;
+}
+
+.rc-shop-scroll-track {
+    display: flex;
+    align-items: center;
+    gap: clamp(28px, 4.2vw, 56px);
+    will-change: transform;
+    padding: 12px 0;
+}
+
+.rc-shop-scroll-card {
+    flex: 0 0 auto;
+    width: clamp(220px, 24vw, 305px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #ffffff;
+    position: relative;
+    padding: 10px 8px;
+    transition: transform 0.25s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.rc-shop-scroll-card:hover {
+    transform: translateY(-6px) scale(1.03);
+}
+
+.rc-shop-scroll-img-wrap {
+    width: 100%;
+    height: clamp(210px, 32vh, 300px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.rc-shop-scroll-img-wrap::before {
+    content: '';
+    position: absolute;
+    width: 72%;
+    height: 72%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 45, 149, 0.14) 0%, rgba(0, 240, 255, 0.08) 48%, transparent 72%);
+    filter: blur(22px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.rc-shop-scroll-img {
+    position: relative;
+    z-index: 1;
+    max-width: 94%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 22px 32px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(0, 240, 255, 0.14));
+    pointer-events: none;
+    -webkit-user-drag: none;
+}
+
+.rc-shop-scroll-meta {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+    background: rgba(8, 10, 22, 0.78);
+    border: 1px solid rgba(0, 240, 255, 0.28);
+    border-radius: 14px;
+    padding: 8px 14px;
+    width: 94%;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.75);
+}
+
+.rc-shop-scroll-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 8px;
+}
+
+.rc-shop-scroll-tag {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #00f0ff;
+    text-transform: uppercase;
+}
+
+.rc-shop-scroll-price {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    background: linear-gradient(90deg, #ff8c00, #ff2d95);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.rc-shop-scroll-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .rc-home-shop-scroller {
+        top: clamp(230px, 29vh, 265px);
+        bottom: clamp(14px, 2.5vh, 26px);
+    }
+
+    .rc-shop-scroll-track {
+        gap: 20px;
+    }
+
+    .rc-shop-scroll-card {
+        width: clamp(210px, 60vw, 250px);
+    }
+
+    .rc-shop-scroll-img-wrap {
+        height: clamp(220px, 34vh, 285px);
+    }
+
+    .rc-shop-scroll-meta {
+        padding: 8px 12px;
+        border-radius: 13px;
+    }
+
+    .rc-shop-scroll-title {
+        font-size: 0.78rem;
+    }
+}
+
+
 
 
 
