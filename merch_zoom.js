@@ -3119,33 +3119,35 @@
       });
     }
 
-    // Expose hooks for parent iframe host (index.html) and standalone browser navigation
+    // Expose hooks for parent iframe host (index.html) and standalone browser navigation (Chloe exit interception disabled)
     window.__rcShouldInterceptExitToHome = function () {
-      return !upsetBypassExit && getShopBagCount() === 0 && !isUpsetCutscenePlaying;
+      return false;
     };
     window.__rcTriggerUpsetCutscene = function (proceedFn) {
-      triggerUpsetChloeCutscene(proceedFn);
+      if (typeof proceedFn === 'function') {
+        proceedFn();
+      } else {
+        window.location.href = 'index.html';
+      }
     };
 
-    // Intercept clicking ANY link back to index.html (e.g. RETROCANOPY brand link) AND keep Shop category tabs on a single Back-button entry
+    // Navigate directly to index.html on Home / RETROCANOPY click AND keep Shop category tabs on a single Back-button entry
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a[href]');
       if (!link) return;
       const href = link.getAttribute('href') || '';
       if (href === 'index.html' || href.endsWith('/index.html')) {
-        if (!upsetBypassExit && getShopBagCount() === 0) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          triggerUpsetChloeCutscene(() => {
-            try {
-              if (window.parent && window.parent !== window && window.parent.__rcLofiHostActive) {
-                window.parent.__rcCloseSubpage(true);
-                return;
-              }
-            } catch (_) {}
-            window.location.href = href;
-          });
-        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        try {
+          sessionStorage.setItem('rc_from_internal', '1');
+          sessionStorage.setItem('rc_intro_seen', '1');
+          if (window.parent && window.parent !== window && window.parent.__rcLofiHostActive) {
+            window.parent.__rcCloseSubpage(true);
+            return;
+          }
+        } catch (_) {}
+        window.location.href = href;
         return;
       }
 
@@ -3154,44 +3156,6 @@
         window.location.replace(href);
       }
     }, true);
-
-    let isInsideSeamlessHost = false;
-    try {
-      isInsideSeamlessHost = Boolean(window.parent && window.parent !== window && window.parent.__rcLofiHostActive);
-    } catch (_) {}
-
-    if (!isInsideSeamlessHost && window.history && window.history.pushState) {
-      let historyGuardPushed = false;
-      const pushBackGuardOnce = () => {
-        if (historyGuardPushed) return;
-        historyGuardPushed = true;
-        try {
-          window.history.pushState({ rcShopGuard: true }, '', window.location.href);
-        } catch (_) {}
-      };
-      pushBackGuardOnce();
-      window.addEventListener('pointerdown', pushBackGuardOnce, { once: true, passive: true });
-      window.addEventListener('keydown', pushBackGuardOnce, { once: true, passive: true });
-
-      window.addEventListener('popstate', () => {
-        if (!upsetBypassExit && getShopBagCount() === 0) {
-          try {
-            window.history.pushState({ rcShopGuard: true }, '', window.location.href);
-          } catch (_) {}
-          if (isUpsetCutscenePlaying && activeBranch !== 'CONFIRM_LEAVE') {
-            promptConfirmLeave();
-          } else if (isUpsetCutscenePlaying && activeBranch === 'CONFIRM_LEAVE') {
-            finishCutsceneAndLeave();
-          } else {
-            triggerUpsetChloeCutscene(() => {
-              window.location.href = 'index.html';
-            });
-          }
-        } else {
-          window.location.href = 'index.html';
-        }
-      });
-    }
   }
 
   /**
@@ -3214,13 +3178,7 @@
           const href = link.getAttribute('href') || '';
           if (href === 'index.html' || href.endsWith('/index.html')) {
             e.preventDefault();
-            if (window.__rcShouldInterceptExitToHome && window.__rcShouldInterceptExitToHome()) {
-              window.__rcTriggerUpsetCutscene(() => {
-                window.parent.__rcCloseSubpage(true);
-              });
-            } else {
-              window.parent.__rcCloseSubpage(true);
-            }
+            window.parent.__rcCloseSubpage(true);
           }
         });
         return;
