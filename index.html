@@ -32,13 +32,15 @@
             var isReload = navType === 'reload';
             var isBackForward = navType === 'back_forward';
             var fromInternal = false;
+            var isLoggedIn = false;
             try {
                 fromInternal = sessionStorage.getItem('rc_from_internal') === '1';
+                isLoggedIn = localStorage.getItem('rc_is_admin_v1') === 'true' || Boolean(localStorage.getItem('rc_current_user_v1'));
             } catch (_) {}
-            var skipIntro = !isReload && (
+            var skipIntro = isLoggedIn || (!isReload && (
                 fromInternal ||
                 isBackForward
-            );
+            ));
             if (skipIntro) {
                 window.__rcSkipIntroOnLoad = true;
                 try {
@@ -142,16 +144,12 @@
     <!-- Skip Intro Button for quick navigation -->
     <button type="button" class="skip-intro-btn" id="skip-intro-btn" aria-label="Skip Intro">SKIP INTRO &#9197;</button>
 
-    <!-- 3D HOME SCREEN DEPTH BACKDROP (3D STAGE SHADOWBOX DIORAMA + LOGO DIMMER + SYNTH IN BACKGROUND) -->
+    <!-- 3D HOME SCREEN DEPTH BACKDROP (3D STAGE SHADOWBOX DIORAMA + LOGO DIMMER) -->
     <div class="stage-3d-home-backdrop" id="stage-3d-home-backdrop" aria-hidden="true">
         <div class="stage-3d-backdrop-sanctuary"></div>
         <div class="stage-3d-backdrop-blue-glow"></div>
         <div class="stage-3d-backdrop-vignette"></div>
         <div class="stage-3d-logo-dimmer"></div>
-        <div class="diorama-bg-synth" id="diorama-bg-synth">
-            <div class="diorama-bg-synth-glow"></div>
-            <img src="assets/friends/owl3_wings_open.png?v=74" alt="Synth in Background Stage" class="diorama-bg-synth-img" loading="lazy" decoding="async">
-        </div>
     </div>
 
     <!-- CONCEPT 1 & 3A: GLOSSY 3D NEON-CYAN & MAGENTA PERSPECTIVE GRID STAGE FLOOR (WITH MIRROR REFLECTIONS) -->
@@ -257,8 +255,8 @@
     <!-- Stage container (crew characters and section tabs removed; Synth owl butler & login preserved) -->
     <div id="crew-stage" class="crew-stage" aria-hidden="true"></div>
 
-    <script src="script.js?v=121"></script>
-    <script src="auth_hub.js?v=121"></script>
+    <script src="script.js?v=125"></script>
+    <script src="auth_hub.js?v=125"></script>
 </body>
 
 </html>

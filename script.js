@@ -210,15 +210,18 @@ function initGamerIntro() {
 
     function isAdminSiteUnlocked() {
         try {
-            if (window.RetroAuthHub && typeof window.RetroAuthHub.isAdminLoggedIn === 'function') {
-                return window.RetroAuthHub.isAdminLoggedIn();
+            if (window.RetroAuthHub && typeof window.RetroAuthHub.isAdminLoggedIn === 'function' && window.RetroAuthHub.isAdminLoggedIn()) {
+                return true;
             }
-            return localStorage.getItem('rc_is_admin_v1') === 'true';
+            if (window.RetroAuthHub && typeof window.RetroAuthHub.getCurrentUser === 'function' && window.RetroAuthHub.getCurrentUser()) {
+                return true;
+            }
+            return localStorage.getItem('rc_is_admin_v1') === 'true' || Boolean(localStorage.getItem('rc_current_user_v1'));
         } catch (_) {
             return false;
         }
     }
-    let TEASER_COMING_SOON_MODE = true;
+    let TEASER_COMING_SOON_MODE = !isAdminSiteUnlocked();
     const IS_LOCAL_DEV_SERVER = false;
 
     const fullPrologueSteps = [
@@ -347,7 +350,7 @@ function initGamerIntro() {
         }
     ];
 
-    let prologueSteps = TEASER_COMING_SOON_MODE ? fullPrologueSteps.slice(0, 9) : fullPrologueSteps;
+    let prologueSteps = TEASER_COMING_SOON_MODE ? fullPrologueSteps.slice(0, 9) : fullPrologueSteps.slice(0, 8);
 
     function syncTeaserModePrologueState() {
         const scene8 = fullPrologueSteps[8];
@@ -358,7 +361,7 @@ function initGamerIntro() {
                 ? "Coming soon... 11/14."
                 : "Now dry your eyes, old friend. Allow me to welcome in the crew who built this home for you. Everyone, come on out.";
         }
-        prologueSteps = TEASER_COMING_SOON_MODE ? fullPrologueSteps.slice(0, 9) : fullPrologueSteps;
+        prologueSteps = TEASER_COMING_SOON_MODE ? fullPrologueSteps.slice(0, 9) : fullPrologueSteps.slice(0, 8);
         if (skipIntroBtn) {
             skipIntroBtn.style.display = isAdminSiteUnlocked() ? '' : 'none';
         }
@@ -874,6 +877,7 @@ function initGamerIntro() {
     const isReload = navType === 'reload';
     const isBackForward = navType === 'back_forward';
     const cameFromInternalPage = Boolean(
+        isAdminSiteUnlocked() ||
         window.__rcSkipIntroOnLoad ||
         (!isReload && (
             sessionStorage.getItem('rc_from_internal') === '1' ||
@@ -1174,7 +1178,7 @@ function initGamerIntro() {
 
     function updateTapForAudioPrompt() {
         if (!tapForAudioPromptEl || tapForAudioDismissed) return;
-        if (isHtmlAudioTrulyPlayingUnmuted()) {
+        if (sequenceComplete || isHtmlAudioTrulyPlayingUnmuted()) {
             dismissTapForAudioPrompt();
         } else {
             tapForAudioPromptEl.classList.add('visible');
@@ -3608,6 +3612,7 @@ function initGamerIntro() {
     }
 
     function skipEntireIntro() {
+        dismissTapForAudioPrompt();
         clearSynthHelloTimers();
         if (typeTimer) clearInterval(typeTimer);
         if (advanceTimer) clearTimeout(advanceTimer);
@@ -3790,7 +3795,7 @@ function initGamerIntro() {
     }
 
     window.__rcUnlockFullSiteForAdmin = function () {
-        TEASER_COMING_SOON_MODE = true;
+        TEASER_COMING_SOON_MODE = false;
         syncTeaserModePrologueState();
         skipEntireIntro();
     };
@@ -3976,9 +3981,7 @@ function initGamerIntro() {
     // Detect browser Reload vs. Returning to Home from another internal page:
     // - Reloading the site (F5 / Ctrl+R) ALWAYS triggers the full intro animation!
     // - Going back to the Home page from inside the site skips the intro!
-    if (isReload) {
-        sessionStorage.removeItem('rc_from_internal');
-    } else if (cameFromInternalPage) {
+    if (isAdminSiteUnlocked() || (!isReload && cameFromInternalPage)) {
         sessionStorage.removeItem('rc_from_internal');
         if (heroContainer) {
             heroContainer.classList.add('no-transition');
@@ -3986,6 +3989,9 @@ function initGamerIntro() {
         state = 'GREETING';
         skipEntireIntro();
         return;
+    }
+    if (isReload) {
+        sessionStorage.removeItem('rc_from_internal');
     }
 
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -4364,6 +4370,7 @@ function initGamerIntro() {
     }
 
     window.addEventListener('keydown', (e) => {
+        if (isAdminSiteUnlocked()) return;
         const isF5 = (e.key === 'F5' || e.code === 'F5');
         const isCtrlR = ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'r' || e.key === 'R'));
         if (isF5 || isCtrlR) {

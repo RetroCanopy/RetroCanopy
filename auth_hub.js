@@ -1343,6 +1343,9 @@
         return;
       }
       updateTopPill();
+      if (typeof window.__rcUnlockFullSiteForAdmin === 'function') {
+        window.__rcUnlockFullSiteForAdmin();
+      }
       backdrop.classList.remove('open');
     }
 
@@ -1371,6 +1374,9 @@
     });
 
     updateTopPill();
+    if ((isAdminLoggedIn() || getCurrentUser()) && typeof window.__rcUnlockFullSiteForAdmin === 'function') {
+      window.__rcUnlockFullSiteForAdmin();
+    }
   }
 
   function initSitewideOwnerBanner() {
