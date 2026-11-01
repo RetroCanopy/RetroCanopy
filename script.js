@@ -4597,15 +4597,15 @@ function initHomeShopScroller() {
     // Bottom Row: Retrocanopy Arcade Games (scrolling in the opposite direction: left-to-right)
     if (gamesTrack) {
         const arcadeCatalog = [
-            { code: 'ARC-01', styleClass: 'rc-game-style-arc01', title: "Shinjuku Slugger '84", titleTop: 'SHINJUKU', titleMain: "SLUGGER '84", cat: 'PINBALL', badge: 'PLAY NOW', comingSoon: false, img: 'assets/concept_gallery/shinjuku_slugger_84_hologram_batter.jpg?v=134', href: 'games.html?autoPlaySlugger=1' },
-            { code: 'ARC-02', styleClass: 'rc-game-style-arc02', title: "Synth's Midnight Run", titleTop: "SYNTH'S", titleMain: 'MIDNIGHT RUN', cat: 'RUNNER', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/synths_midnight_run_poster.jpg?v=134', href: 'games.html?openDeck=1' },
-            { code: 'ARC-03', styleClass: 'rc-game-style-arc03', title: '86 Outrun Horizon Chase', titleTop: "'86 OUTRUN", titleMain: 'HORIZON CHASE', cat: 'OUTRUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/86_outrun_horizon_chase_poster.jpg?v=134', href: 'games.html?openDeck=1' },
-            { code: 'ARC-04', styleClass: 'rc-game-style-arc04', title: 'Shibuya Hoverboard Blitz', titleTop: 'SHIBUYA HOVERBOARD', titleMain: '⚡ BLITZ ⚡', cat: 'GRIND', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/shibuya_hoverboard_blitz_poster.jpg?v=134', href: 'games.html?openDeck=1' },
-            { code: 'ARC-05', styleClass: 'rc-game-style-arc05', title: "Shinjuku Pinball Table '84", titleTop: 'SHINJUKU PINBALL', titleMain: "TABLE '84", cat: 'ARCADE', badge: 'PLAY NOW', comingSoon: false, img: 'assets/concept_gallery/shinjuku_slugger_84_board_clean.jpg?v=134', href: 'games.html?autoPlaySlugger=1' },
-            { code: 'ARC-06', styleClass: 'rc-game-style-arc06', title: 'Cyber-Shrine Skyway Run', titleTop: 'CYBER-SHRINE', titleMain: 'SKYWAY RUN', cat: 'RUNNER', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/cyber_shrine_skyway_run_poster.jpg?v=134', href: 'games.html?openDeck=1' },
-            { code: 'ARC-07', styleClass: 'rc-game-style-arc07', title: 'Wangan Midnight Chase', titleTop: 'WANGAN MIDNIGHT', titleMain: 'CHASE', cat: 'DRIFT', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/wangan_midnight_chase_poster.jpg?v=134', href: 'games.html?openDeck=1' },
-            { code: 'ARC-08', styleClass: 'rc-game-style-arc08', title: 'Akihabara Rooftop Slalom', titleTop: 'AKIHABARA', titleMain: 'ROOFTOP SLALOM', cat: 'SLALOM', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/akihabara_rooftop_slalom_poster.jpg?v=134', href: 'games.html?openDeck=1' },
-            { code: 'ARC-09', styleClass: 'rc-game-style-arc09', title: 'Shibuya Valkyrie Storm', titleTop: 'SHIBUYA', titleMain: 'VALKYRIE STORM', cat: 'BOSS RUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/shibuya_valkyrie_storm_poster.jpg?v=134', href: 'games.html?openDeck=1' }
+            { code: 'ARC-01', styleClass: 'rc-game-style-arc01', title: "Shinjuku Slugger '84", titleTop: 'SHINJUKU', titleMain: "SLUGGER '84", cat: 'PINBALL', badge: 'PLAY NOW', comingSoon: false, img: 'assets/concept_gallery/shinjuku_slugger_84_card_clean.jpg?v=147', href: 'games.html?autoPlaySlugger=1' },
+            { code: 'ARC-02', styleClass: 'rc-game-style-arc02', title: "Synth's Midnight Run", titleTop: "SYNTH'S", titleMain: 'MIDNIGHT RUN', cat: 'RUNNER', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/synths_midnight_run_poster.jpg?v=147', href: 'games.html?openDeck=1' },
+            { code: 'ARC-03', styleClass: 'rc-game-style-arc03', title: '86 Outrun Horizon Chase', titleTop: "'86 OUTRUN", titleMain: 'HORIZON CHASE', cat: 'OUTRUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/86_outrun_horizon_chase_poster.jpg?v=147', href: 'games.html?openDeck=1' },
+            { code: 'ARC-04', styleClass: 'rc-game-style-arc04', title: 'Shibuya Hoverboard Blitz', titleTop: 'SHIBUYA HOVERBOARD', titleMain: '⚡ BLITZ ⚡', cat: 'GRIND', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/shibuya_hoverboard_blitz_poster.jpg?v=147', href: 'games.html?openDeck=1' },
+            { code: 'ARC-05', styleClass: 'rc-game-style-arc05', title: "Shinjuku Pinball Table '84", titleTop: 'SHINJUKU PINBALL', titleMain: "TABLE '84", cat: 'ARCADE', badge: 'PLAY NOW', comingSoon: false, img: 'assets/concept_gallery/shinjuku_pinball_84_card_clean.jpg?v=147', href: 'games.html?autoPlaySlugger=1' },
+            { code: 'ARC-06', styleClass: 'rc-game-style-arc06', title: 'Cyber-Shrine Skyway Run', titleTop: 'CYBER-SHRINE', titleMain: 'SKYWAY RUN', cat: 'RUNNER', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/cyber_shrine_skyway_run_poster.jpg?v=147', href: 'games.html?openDeck=1' },
+            { code: 'ARC-07', styleClass: 'rc-game-style-arc07', title: 'Wangan Midnight Chase', titleTop: 'WANGAN MIDNIGHT', titleMain: 'CHASE', cat: 'DRIFT', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/wangan_midnight_chase_poster.jpg?v=147', href: 'games.html?openDeck=1' },
+            { code: 'ARC-08', styleClass: 'rc-game-style-arc08', title: 'Akihabara Rooftop Slalom', titleTop: 'AKIHABARA', titleMain: 'ROOFTOP SLALOM', cat: 'SLALOM', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/akihabara_rooftop_slalom_poster.jpg?v=147', href: 'games.html?openDeck=1' },
+            { code: 'ARC-09', styleClass: 'rc-game-style-arc09', title: 'Shibuya Valkyrie Storm', titleTop: 'SHIBUYA', titleMain: 'VALKYRIE STORM', cat: 'BOSS RUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/shibuya_valkyrie_storm_poster.jpg?v=147', href: 'games.html?openDeck=1' }
         ];
         const loopGames = arcadeCatalog.concat(arcadeCatalog);
         gamesTrack.innerHTML = loopGames.map((game) => `
@@ -4621,8 +4621,14 @@ function initHomeShopScroller() {
                 </div>
                 <div class="rc-game-name-plaque">
                     <div class="rc-game-unique-title">
-                        <span class="rc-game-title-top">${game.titleTop}</span>
-                        <span class="rc-game-title-main">${game.titleMain}</span>
+                        <div class="rc-game-title-line rc-game-line-top">
+                            <span class="rc-game-stroke-layer" aria-hidden="true">${game.titleTop}</span>
+                            <span class="rc-game-fill-layer rc-game-title-top">${game.titleTop}</span>
+                        </div>
+                        <div class="rc-game-title-line rc-game-line-main">
+                            <span class="rc-game-stroke-layer" aria-hidden="true">${game.titleMain}</span>
+                            <span class="rc-game-fill-layer rc-game-title-main">${game.titleMain}</span>
+                        </div>
                     </div>
                 </div>
             </a>
