@@ -5504,10 +5504,10 @@ body.rc-logged-in-home .hero-container.shifted-up {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at 50% 50%, rgba(8, 10, 24, 0.18) 0%, rgba(4, 6, 16, 0.42) 100%);
+    background: radial-gradient(circle at 50% 50%, rgba(8, 10, 24, 0.16) 0%, rgba(4, 6, 16, 0.44) 100%);
     pointer-events: none;
     text-align: center;
-    padding: 8px;
+    padding: 6px 8px 28px 8px;
 }
 
 .rc-cs-visual-plaque {
@@ -5539,176 +5539,306 @@ body.rc-logged-in-home .hero-container.shifted-up {
     white-space: nowrap;
 }
 
-/* Unique Stylized Game Name Plaques Under Every Game on the Home Screen */
+/* Borderless, Big, Overlapping Stylized Game Logos Under/Over Every Game Card */
 .rc-game-name-plaque {
-    margin-top: 6px;
-    padding: 7px 10px !important;
-    min-height: 36px;
+    position: relative;
+    z-index: 6;
+    margin-top: -26px;
+    padding: 0 !important;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(7, 9, 20, 0.90);
-    border-radius: 12px;
-    width: 96%;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    width: 112%;
+    overflow: visible !important;
+    pointer-events: none;
 }
 
 .rc-game-unique-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     text-align: center;
-    line-height: 1.18;
+    line-height: 1.02;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: visible !important;
     text-transform: uppercase;
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rc-game-title-top,
+.rc-game-title-main {
+    display: block;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding: 1px 6px;
 }
 
 /* ARC-01: Shinjuku Slugger '84 — Stadium Neon Cyan & 24K Gold */
-.rc-game-style-arc01 .rc-game-name-plaque {
-    border: 1.5px solid #00f0ff;
-    box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.35), 0 0 14px rgba(0, 240, 255, 0.72), 0 6px 16px rgba(0, 0, 0, 0.85);
-}
 .rc-game-style-arc01 .rc-game-unique-title {
     font-family: 'Russo One', 'Orbitron', sans-serif;
     font-style: italic;
+    transform: rotate(-3.6deg) translateY(-3px);
+    filter:
+        drop-shadow(0 2px 0 #02050d)
+        drop-shadow(0 -1.5px 0 #02050d)
+        drop-shadow(2px 0 0 #02050d)
+        drop-shadow(-2px 0 0 #02050d)
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.96))
+        drop-shadow(0 0 12px rgba(0, 240, 255, 0.78));
+}
+.rc-game-style-arc01 .rc-game-title-top {
     font-size: 0.76rem;
-    letter-spacing: 0.06em;
-    background: linear-gradient(90deg, #00f0ff 0%, #ffffff 48%, #ffd700 100%);
+    letter-spacing: 0.15em;
+    background: linear-gradient(90deg, #00f0ff 0%, #ffffff 55%, #7df9ff 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.65));
+}
+.rc-game-style-arc01 .rc-game-title-main {
+    font-size: 1.24rem;
+    letter-spacing: 0.04em;
+    margin-top: -4px;
+    background: linear-gradient(180deg, #ffffff 0%, #ffd700 45%, #ff9900 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* ARC-02: Synth's Midnight Run — Cyber-Owl Violet, Cyan & Magenta */
-.rc-game-style-arc02 .rc-game-name-plaque {
-    border: 1.5px solid rgba(199, 125, 255, 0.72);
-    box-shadow: 0 0 12px rgba(199, 125, 255, 0.35), 0 6px 16px rgba(0, 0, 0, 0.85);
-}
 .rc-game-style-arc02 .rc-game-unique-title {
     font-family: 'Audiowide', 'Orbitron', sans-serif;
-    font-size: 0.73rem;
-    letter-spacing: 0.05em;
-    background: linear-gradient(90deg, #e0aaff 0%, #00f0ff 52%, #ff2d95 100%);
+    transform: rotate(2.8deg) translateY(-2px);
+    filter:
+        drop-shadow(0 2px 0 #05020f)
+        drop-shadow(0 -1.5px 0 #05020f)
+        drop-shadow(2px 0 0 #05020f)
+        drop-shadow(-2px 0 0 #05020f)
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.96))
+        drop-shadow(0 0 12px rgba(217, 70, 239, 0.75));
+}
+.rc-game-style-arc02 .rc-game-title-top {
+    font-size: 0.74rem;
+    letter-spacing: 0.16em;
+    transform: translateX(-8px);
+    background: linear-gradient(90deg, #f0abfc 0%, #00f0ff 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(199, 125, 255, 0.6));
+}
+.rc-game-style-arc02 .rc-game-title-main {
+    font-size: 1.06rem;
+    letter-spacing: 0.03em;
+    margin-top: -2px;
+    background: linear-gradient(90deg, #00f0ff 0%, #e879f9 48%, #ff2d95 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* ARC-03: 86 Outrun Horizon Chase — 1986 Turbo Sunset Gold, Orange & Crimson */
-.rc-game-style-arc03 .rc-game-name-plaque {
-    border: 1.5px solid rgba(255, 123, 0, 0.75);
-    box-shadow: 0 0 12px rgba(255, 94, 0, 0.38), 0 6px 16px rgba(0, 0, 0, 0.85);
-}
 .rc-game-style-arc03 .rc-game-unique-title {
     font-family: 'Chakra Petch', 'Orbitron', sans-serif;
     font-style: italic;
     font-weight: 700;
-    font-size: 0.76rem;
-    letter-spacing: 0.05em;
-    background: linear-gradient(90deg, #fff078 0%, #ff7b00 50%, #ff0055 100%);
+    transform: skewX(-12deg) rotate(-2.4deg) translateY(-3px);
+    filter:
+        drop-shadow(0 2px 0 #0a0304)
+        drop-shadow(0 -1.5px 0 #0a0304)
+        drop-shadow(2px 0 0 #0a0304)
+        drop-shadow(-2px 0 0 #0a0304)
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.96))
+        drop-shadow(0 0 12px rgba(255, 115, 0, 0.78));
+}
+.rc-game-style-arc03 .rc-game-title-top {
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+    background: linear-gradient(90deg, #fff59d 0%, #ff9100 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(255, 123, 0, 0.65));
+}
+.rc-game-style-arc03 .rc-game-title-main {
+    font-size: 1.12rem;
+    letter-spacing: 0.03em;
+    margin-top: -4px;
+    background: linear-gradient(180deg, #ffe57f 0%, #ff6d00 50%, #ff0055 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* ARC-04: Shibuya Hoverboard Blitz — Street Graffiti Radioactive Lime & Emerald */
-.rc-game-style-arc04 .rc-game-name-plaque {
-    border: 1.5px solid rgba(0, 245, 155, 0.72);
-    box-shadow: 0 0 12px rgba(0, 245, 155, 0.35), 0 6px 16px rgba(0, 0, 0, 0.85);
-}
 .rc-game-style-arc04 .rc-game-unique-title {
     font-family: 'Bungee', 'Orbitron', sans-serif;
-    font-size: 0.66rem;
-    letter-spacing: 0.04em;
-    background: linear-gradient(90deg, #b8ff00 0%, #00f59b 52%, #00d4ff 100%);
+    transform: rotate(-4.1deg) translateY(-4px);
+    filter:
+        drop-shadow(0 2px 0 #020a06)
+        drop-shadow(0 -1.5px 0 #020a06)
+        drop-shadow(2px 0 0 #020a06)
+        drop-shadow(-2px 0 0 #020a06)
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.96))
+        drop-shadow(0 0 12px rgba(0, 245, 155, 0.75));
+}
+.rc-game-style-arc04 .rc-game-title-top {
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    transform: rotate(1.8deg);
+    background: linear-gradient(90deg, #d4ff00 0%, #00f59b 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(0, 245, 155, 0.6));
+}
+.rc-game-style-arc04 .rc-game-title-main {
+    font-size: 0.92rem;
+    letter-spacing: 0.02em;
+    margin-top: -3px;
+    background: linear-gradient(90deg, #b8ff00 0%, #00f59b 50%, #00e5ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* ARC-05: Shinjuku Pinball Table '84 — 24K Jackpot Gold & Arcade Hot Pink */
-.rc-game-style-arc05 .rc-game-name-plaque {
-    border: 1.5px solid #ffd700;
-    box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.35), 0 0 14px rgba(255, 215, 0, 0.68), 0 6px 16px rgba(0, 0, 0, 0.85);
-}
 .rc-game-style-arc05 .rc-game-unique-title {
     font-family: 'Righteous', 'Orbitron', sans-serif;
-    font-size: 0.74rem;
-    letter-spacing: 0.05em;
-    background: linear-gradient(90deg, #ffd700 0%, #ff4da6 52%, #00f0ff 100%);
+    transform: rotate(3.4deg) translateY(-3px);
+    filter:
+        drop-shadow(0 2px 0 #09030a)
+        drop-shadow(0 -1.5px 0 #09030a)
+        drop-shadow(2px 0 0 #09030a)
+        drop-shadow(-2px 0 0 #09030a)
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.96))
+        drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
+}
+.rc-game-style-arc05 .rc-game-title-top {
+    font-size: 0.76rem;
+    letter-spacing: 0.15em;
+    background: linear-gradient(90deg, #ff55b8 0%, #ffd700 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.65));
+}
+.rc-game-style-arc05 .rc-game-title-main {
+    font-size: 1.22rem;
+    letter-spacing: 0.04em;
+    margin-top: -4px;
+    background: linear-gradient(90deg, #ffd700 0%, #ffffff 48%, #00f0ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* ARC-06: Cyber-Shrine Skyway Run — Torii Shrine Crimson, Sakura & 24K Gold */
-.rc-game-style-arc06 .rc-game-name-plaque {
-    border: 1.5px solid rgba(255, 51, 102, 0.75);
-    box-shadow: 0 0 12px rgba(255, 51, 102, 0.38), 0 6px 16px rgba(0, 0, 0, 0.85);
-}
 .rc-game-style-arc06 .rc-game-unique-title {
     font-family: 'Cinzel Decorative', 'Orbitron', serif;
     font-weight: 900;
-    font-size: 0.68rem;
-    letter-spacing: 0.05em;
-    background: linear-gradient(90deg, #ff3366 0%, #ff99bb 48%, #ffd700 100%);
+    transform: rotate(-2.6deg) translateY(-2px);
+    filter:
+        drop-shadow(0 2px 0 #0b0206)
+        drop-shadow(0 -1.5px 0 #0b0206)
+        drop-shadow(2px 0 0 #0b0206)
+        drop-shadow(-2px 0 0 #0b0206)
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.96))
+        drop-shadow(0 0 12px rgba(255, 51, 102, 0.78));
+}
+.rc-game-style-arc06 .rc-game-title-top {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    background: linear-gradient(90deg, #ff99bb 0%, #ffd700 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(255, 51, 102, 0.65));
+}
+.rc-game-style-arc06 .rc-game-title-main {
+    font-size: 1.08rem;
+    letter-spacing: 0.04em;
+    margin-top: -3px;
+    background: linear-gradient(90deg, #ff2a5f 0%, #ff85a2 48%, #ffd700 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* ARC-07: Wangan Midnight Chase — Midnight Cobalt Blue, Ice Cyan & Nitrous Purple */
-.rc-game-style-arc07 .rc-game-name-plaque {
-    border: 1.5px solid rgba(56, 189, 248, 0.75);
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.38), 0 6px 16px rgba(0, 0, 0, 0.85);
-}
 .rc-game-style-arc07 .rc-game-unique-title {
     font-family: 'Russo One', 'Chakra Petch', sans-serif;
     font-style: italic;
-    font-size: 0.74rem;
-    letter-spacing: 0.05em;
-    background: linear-gradient(90deg, #38bdf8 0%, #a855f7 52%, #f43f5e 100%);
+    transform: skewX(-10deg) rotate(2.6deg) translateY(-3px);
+    filter:
+        drop-shadow(0 2px 0 #020612)
+        drop-shadow(0 -1.5px 0 #020612)
+        drop-shadow(2px 0 0 #020612)
+        drop-shadow(-2px 0 0 #020612)
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.96))
+        drop-shadow(0 0 12px rgba(56, 189, 248, 0.78));
+}
+.rc-game-style-arc07 .rc-game-title-top {
+    font-size: 0.80rem;
+    letter-spacing: 0.16em;
+    transform: translateX(-6px);
+    background: linear-gradient(90deg, #7dd3fc 0%, #ffffff 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.65));
+}
+.rc-game-style-arc07 .rc-game-title-main {
+    font-size: 1.04rem;
+    letter-spacing: 0.03em;
+    margin-top: -3px;
+    background: linear-gradient(90deg, #38bdf8 0%, #c084fc 52%, #fb7185 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* ARC-08: Akihabara Rooftop Slalom — 16-Bit Pixel CRT Emerald, Cyan & Laser Yellow */
-.rc-game-style-arc08 .rc-game-name-plaque {
-    border: 1.5px solid rgba(0, 255, 136, 0.72);
-    box-shadow: 0 0 12px rgba(0, 255, 136, 0.35), 0 6px 16px rgba(0, 0, 0, 0.85);
-}
 .rc-game-style-arc08 .rc-game-unique-title {
     font-family: 'Press Start 2P', 'Orbitron', monospace;
-    font-size: 0.50rem;
-    letter-spacing: 0.03em;
-    background: linear-gradient(90deg, #00ff88 0%, #55ffff 50%, #ffee32 100%);
+    transform: rotate(-3.2deg) translateY(-2px);
+    filter:
+        drop-shadow(0 2px 0 #020a06)
+        drop-shadow(0 -1.5px 0 #020a06)
+        drop-shadow(2px 0 0 #020a06)
+        drop-shadow(-2px 0 0 #020a06)
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.96))
+        drop-shadow(0 0 12px rgba(0, 255, 136, 0.75));
+}
+.rc-game-style-arc08 .rc-game-title-top {
+    font-size: 0.56rem;
+    letter-spacing: 0.08em;
+    background: linear-gradient(90deg, #00ff88 0%, #ffee32 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.6));
+}
+.rc-game-style-arc08 .rc-game-title-main {
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+    margin-top: 2px;
+    background: linear-gradient(90deg, #55ffff 0%, #00ff88 50%, #ffee32 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* ARC-09: Shibuya Valkyrie Storm — Celestial 24K Valkyrie Gold, Ivory & Storm Amber */
-.rc-game-style-arc09 .rc-game-name-plaque {
-    border: 1.5px solid rgba(255, 215, 0, 0.78);
-    box-shadow: 0 0 12px rgba(255, 215, 0, 0.38), 0 6px 16px rgba(0, 0, 0, 0.85);
-}
 .rc-game-style-arc09 .rc-game-unique-title {
     font-family: 'Rye', 'Cinzel Decorative', serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.05em;
-    background: linear-gradient(90deg, #ffffff 0%, #ffd700 48%, #ff8800 100%);
+    transform: rotate(2.9deg) translateY(-3px);
+    filter:
+        drop-shadow(0 2px 0 #090601)
+        drop-shadow(0 -1.5px 0 #090601)
+        drop-shadow(2px 0 0 #090601)
+        drop-shadow(-2px 0 0 #090601)
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.96))
+        drop-shadow(0 0 12px rgba(255, 215, 0, 0.78));
+}
+.rc-game-style-arc09 .rc-game-title-top {
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    background: linear-gradient(90deg, #ffffff 0%, #ffd700 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.65));
+}
+.rc-game-style-arc09 .rc-game-title-main {
+    font-size: 1.04rem;
+    letter-spacing: 0.03em;
+    margin-top: -3px;
+    background: linear-gradient(180deg, #ffffff 0%, #ffd700 48%, #ff8800 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* White Hoodie (Win-Only Stage 6 Grand Prize) Card Styling */
@@ -5889,6 +6019,10 @@ body.rc-logged-in-home .hero-container.shifted-up {
         font-size: 0.68rem;
     }
 
+    .rc-game-coming-soon-visual {
+        padding: 4px 6px 20px 6px;
+    }
+
     .rc-cs-visual-plaque {
         padding: 4px 11px;
     }
@@ -5898,17 +6032,34 @@ body.rc-logged-in-home .hero-container.shifted-up {
     }
 
     .rc-game-name-plaque {
-        margin-top: 4px;
-        padding: 5px 8px !important;
-        min-height: 28px;
+        margin-top: -19px;
+        padding: 0 !important;
+        min-height: 0;
     }
 
-    .rc-game-unique-title {
-        font-size: 0.64rem !important;
+    .rc-game-title-top {
+        font-size: 0.62rem !important;
     }
 
-    .rc-game-style-arc08 .rc-game-unique-title {
-        font-size: 0.43rem !important;
+    .rc-game-title-main {
+        font-size: 0.90rem !important;
+    }
+
+    .rc-game-style-arc01 .rc-game-title-main,
+    .rc-game-style-arc05 .rc-game-title-main {
+        font-size: 1.00rem !important;
+    }
+
+    .rc-game-style-arc04 .rc-game-title-main {
+        font-size: 0.76rem !important;
+    }
+
+    .rc-game-style-arc08 .rc-game-title-top {
+        font-size: 0.46rem !important;
+    }
+
+    .rc-game-style-arc08 .rc-game-title-main {
+        font-size: 0.54rem !important;
     }
 
     body.rc-logged-in-home .kh-music-widget {
