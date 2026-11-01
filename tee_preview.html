@@ -374,8 +374,8 @@
       box-shadow: 0 0 20px rgba(255, 45, 149, 0.45);
     }
   </style>
-  <link rel="stylesheet" href="merch_minimal.css?v=120">
-  <link rel="stylesheet" href="merch_zoom.css?v=4">
+  <link rel="stylesheet" href="merch_minimal.css?v=121">
+  <link rel="stylesheet" href="merch_zoom.css?v=5">
   <script src="merch_zoom.js?v=100" defer></script>
 </head>
 <body>
@@ -409,19 +409,19 @@
     <div class="ambient-aura"></div>
     <button class="glide-arrow glide-prev" onclick="stepItem(-1)" aria-label="Previous Tee">&#8592;</button>
 
-    <div class="pair-stage" id="pairStage">
-      <div class="garment-unit" id="frontUnit" onclick="toggleSolo('front')">
+    <div class="pair-stage solo-mode" id="pairStage">
+      <div class="garment-unit hidden" id="frontUnit" onclick="toggleSolo('front')">
         <div class="levitate-front">
           <img class="garment-img" id="frontImg" src="assets/merch/tee_opt1_front.png?v=1" alt="Tee Front View">
         </div>
-        <span class="view-tag">FRONT</span>
+        <button type="button" class="garment-flip-btn" onclick="event.stopPropagation(); setViewMode('back')">BACK</button>
       </div>
 
       <div class="garment-unit" id="backUnit" onclick="toggleSolo('back')">
         <div class="levitate-back">
           <img class="garment-img" id="backImg" src="assets/merch/tee_opt1_back.png?v=1" alt="Tee Back View">
         </div>
-        <span class="view-tag">BACK</span>
+        <button type="button" class="garment-flip-btn" onclick="event.stopPropagation(); setViewMode('front')">FRONT</button>
       </div>
     </div>
 
@@ -494,7 +494,7 @@
     ];
 
     let currentIdx = 3;
-    let viewMode = 'both';
+    let viewMode = 'back';
     let bagCount = 0;
 
     const pairStage = document.getElementById('pairStage');
@@ -532,14 +532,14 @@
         const div = document.createElement('div');
         div.className = 'mini-thumb' + (idx === currentIdx ? ' active' : '');
         div.title = `${it.model} â€” ${it.title}`;
-        div.onclick = () => { currentIdx = idx; updateShowroom(); };
+        div.onclick = () => { currentIdx = idx; viewMode = 'back'; updateShowroom(); };
         thumbStrip.appendChild(div);
       });
     }
 
-    function setViewMode(mode) { viewMode = mode; updateShowroom(); }
-    function toggleSolo(which) { viewMode = (viewMode === which) ? 'both' : which; updateShowroom(); }
-    function stepItem(dir) { currentIdx = (currentIdx + dir + teeOptions.length) % teeOptions.length; updateShowroom(); }
+    function setViewMode(mode) { viewMode = (mode === 'front') ? 'front' : 'back'; updateShowroom(); }
+    function toggleSolo(which) { viewMode = (which === 'front') ? 'back' : 'front'; updateShowroom(); }
+    function stepItem(dir) { currentIdx = (currentIdx + dir + teeOptions.length) % teeOptions.length; viewMode = 'back'; updateShowroom(); }
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') stepItem(1);

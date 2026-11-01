@@ -206,6 +206,7 @@
   }
   .nav-center {
     display: flex !important;
+    flex-wrap: nowrap !important;
     order: 3 !important;
     width: 100% !important;
     overflow-x: auto !important;
@@ -280,10 +281,50 @@
   max-height: 67vh !important;
 }
 
+.pair-stage.solo-mode .garment-img,
+.pair-stage.solo-mode .tee-img,
+.pair-stage.solo-mode .item-img,
 .hoodie-pair-stage.solo-mode .hoodie-img {
-  width: min(68vw, 560px) !important;
-  max-width: min(68vw, 560px) !important;
-  max-height: 71vh !important;
+  width: min(56vw, 490px) !important;
+  max-width: min(56vw, 490px) !important;
+  max-height: 60vh !important;
+}
+
+.garment-flip-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  margin-top: 6px !important;
+  padding: 7px 22px !important;
+  border-radius: 999px !important;
+  background: rgba(12, 15, 26, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1.5px solid rgba(0, 240, 255, 0.65) !important;
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.8),
+    0 0 14px rgba(0, 240, 255, 0.25) !important;
+  color: #ffffff !important;
+  font-family: 'Orbitron', sans-serif !important;
+  font-size: 0.66rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: all 0.2s ease !important;
+  z-index: 30 !important;
+}
+
+.garment-flip-btn:hover,
+.garment-flip-btn:active {
+  background: rgba(0, 240, 255, 0.22) !important;
+  border-color: #00f0ff !important;
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.9),
+    0 0 20px rgba(0, 240, 255, 0.55) !important;
+  transform: translateY(-1px) !important;
 }
 
 .view-tag {
@@ -2563,6 +2604,7 @@ body.outfit-view-active .shop-chloe-dialogue {
     gap: 3px !important;
   }
   .nav-center {
+    flex-wrap: nowrap !important;
     padding: 3px 6px !important;
     gap: 2px !important;
   }
@@ -2621,10 +2663,18 @@ body.outfit-view-active .shop-chloe-dialogue {
     max-width: 42vw !important;
     max-height: 38vh !important;
   }
+  .pair-stage.solo-mode .garment-img,
+  .pair-stage.solo-mode .tee-img,
+  .pair-stage.solo-mode .item-img,
   .hoodie-pair-stage.solo-mode .hoodie-img {
-    width: 72vw !important;
-    max-width: 72vw !important;
-    max-height: 42vh !important;
+    width: 68vw !important;
+    max-width: 68vw !important;
+    max-height: 36vh !important;
+  }
+  .garment-flip-btn {
+    padding: 6px 20px !important;
+    font-size: 0.62rem !important;
+    margin-top: 4px !important;
   }
   .glide-arrow {
     position: fixed !important;

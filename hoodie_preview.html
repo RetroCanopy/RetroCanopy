@@ -481,8 +481,8 @@
       .hoodie-pair-stage { gap: 16px; }
     }
   </style>
-  <link rel="stylesheet" href="merch_minimal.css?v=120">
-  <link rel="stylesheet" href="merch_zoom.css?v=4">
+  <link rel="stylesheet" href="merch_minimal.css?v=121">
+  <link rel="stylesheet" href="merch_zoom.css?v=5">
   <script src="merch_zoom.js?v=100" defer></script>
 </head>
 <body>
@@ -519,21 +519,21 @@
 
     <button class="glide-arrow glide-prev" onclick="stepHoodie(-1)" aria-label="Previous Hoodie">&#8592;</button>
 
-    <div class="hoodie-pair-stage" id="pairStage">
+    <div class="hoodie-pair-stage solo-mode" id="pairStage">
       <!-- Front View Floating Unit -->
-      <div class="hoodie-unit" id="frontUnit" onclick="toggleSolo('front')">
+      <div class="hoodie-unit hidden" id="frontUnit" onclick="toggleSolo('front')">
         <div class="hoodie-levitate-front">
           <img class="hoodie-img" id="frontImg" src="assets/merch/hoodie_opt1_front.png?v=75" alt="Hoodie Front View">
         </div>
-        <span class="view-tag">FRONT</span>
+        <button type="button" class="garment-flip-btn" onclick="event.stopPropagation(); setViewMode('back')">BACK</button>
       </div>
 
-      <!-- Back View Floating Unit -->
+      <!-- Back View Floating Unit (Centered Default View) -->
       <div class="hoodie-unit" id="backUnit" onclick="toggleSolo('back')">
         <div class="hoodie-levitate-back">
           <img class="hoodie-img" id="backImg" src="assets/merch/hoodie_opt1_back.png?v=75" alt="Hoodie Back View">
         </div>
-        <span class="view-tag">BACK</span>
+        <button type="button" class="garment-flip-btn" onclick="event.stopPropagation(); setViewMode('front')">FRONT</button>
       </div>
     </div>
 
@@ -639,7 +639,7 @@
     ];
 
     let currentIdx = 0;
-    let viewMode = 'both'; // 'both' | 'front' | 'back'
+    let viewMode = 'back'; // Centered Back view by default; 'FRONT' button flips to 'front'
     let bagCount = 0;
 
     const pairStage = document.getElementById('pairStage');
@@ -681,6 +681,7 @@
         div.title = `${it.model} â€” ${it.title}`;
         div.onclick = () => {
           currentIdx = idx;
+          viewMode = 'back';
           updateShowroom();
         };
         thumbStrip.appendChild(div);
@@ -688,18 +689,19 @@
     }
 
     function setViewMode(mode) {
-      viewMode = mode;
+      viewMode = (mode === 'front') ? 'front' : 'back';
       updateShowroom();
     }
 
     function toggleSolo(which) {
-      viewMode = (viewMode === which) ? 'both' : which;
+      viewMode = (which === 'front') ? 'back' : 'front';
       updateShowroom();
     }
 
     function stepHoodie(dir) {
       const len = hoodieOptions.length;
       currentIdx = (currentIdx + dir + len) % len;
+      viewMode = 'back';
       updateShowroom();
     }
 
