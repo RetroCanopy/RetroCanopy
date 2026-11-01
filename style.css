@@ -5322,7 +5322,7 @@ body.rc-logged-in-home .hero-container.shifted-up {
     filter: none;
 }
 
-/* Bottom Row: Stationary Nerdy Misfits Logo + Waving Glitch Character */
+/* Bottom Row: Nerdy Misfits + Glitch & Deaf Hammer + Mascot */
 .rc-misfits-banner-row {
     width: 100%;
     flex: 0 0 auto;
@@ -5330,6 +5330,7 @@ body.rc-logged-in-home .hero-container.shifted-up {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: clamp(16px, 4vw, 64px);
     position: relative;
     padding: 2px 12px;
 }
@@ -5338,10 +5339,10 @@ body.rc-logged-in-home .hero-container.shifted-up {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(14px, 2.2vw, 28px);
+    gap: clamp(10px, 1.6vw, 22px);
     height: 100%;
     text-decoration: none;
-    padding: 6px 22px;
+    padding: 6px 16px;
     border-radius: 20px;
     transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), filter 0.28s ease;
     position: relative;
@@ -5358,6 +5359,10 @@ body.rc-logged-in-home .hero-container.shifted-up {
     pointer-events: none;
 }
 
+.rc-partner-deafhammer::before {
+    background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.18) 0%, rgba(20, 29, 192, 0.1) 48%, transparent 74%);
+}
+
 .rc-misfits-feature-link:hover {
     transform: translateY(-4px) scale(1.04);
     filter: brightness(1.08);
@@ -5366,12 +5371,19 @@ body.rc-logged-in-home .hero-container.shifted-up {
 .rc-misfits-char-wrap {
     position: relative;
     z-index: 1;
-    height: clamp(118px, 17.5vh, 182px);
+    height: clamp(114px, 17.2vh, 178px);
     display: inline-flex;
     align-items: flex-end;
     justify-content: center;
+    flex-shrink: 0;
     filter:
         drop-shadow(0 0 12px rgba(140, 230, 0, 0.42))
+        drop-shadow(0 10px 20px rgba(0, 0, 0, 0.92));
+}
+
+.rc-deafhammer-char-wrap {
+    filter:
+        drop-shadow(0 0 12px rgba(59, 130, 246, 0.48))
         drop-shadow(0 10px 20px rgba(0, 0, 0, 0.92));
 }
 
@@ -5415,7 +5427,7 @@ body.rc-logged-in-home .hero-container.shifted-up {
 .rc-misfits-logo-wrap {
     position: relative;
     z-index: 1;
-    height: clamp(106px, 15.8vh, 166px);
+    height: clamp(98px, 15vh, 158px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5424,7 +5436,7 @@ body.rc-logged-in-home .hero-container.shifted-up {
 .rc-misfits-logo-img {
     height: 100%;
     width: auto;
-    max-width: clamp(185px, 38vw, 310px);
+    max-width: clamp(150px, 24vw, 275px);
     object-fit: contain;
     filter:
         drop-shadow(0 0 16px rgba(140, 230, 0, 0.38))
@@ -5432,6 +5444,13 @@ body.rc-logged-in-home .hero-container.shifted-up {
         drop-shadow(0 10px 22px rgba(0, 0, 0, 0.94));
     pointer-events: none;
     -webkit-user-drag: none;
+}
+
+.rc-deafhammer-logo-img {
+    filter:
+        drop-shadow(0 0 16px rgba(59, 130, 246, 0.45))
+        drop-shadow(0 0 22px rgba(96, 165, 250, 0.28))
+        drop-shadow(0 10px 22px rgba(0, 0, 0, 0.94));
 }
 
 /* Full-screen Neo-Tokyo "COMING SOON" Arcade Cabinet Visual Overlay */
@@ -5628,25 +5647,32 @@ body.rc-logged-in-home .hero-container.shifted-up {
     }
 
     .rc-misfits-banner-row {
-        height: clamp(122px, 17.5vh, 152px);
+        height: clamp(114px, 16.5vh, 144px);
         padding: 2px 8px;
+        gap: 8px;
+        justify-content: center;
     }
 
     .rc-misfits-feature-link {
-        gap: 12px;
-        padding: 4px 12px;
+        gap: 5px;
+        padding: 2px 3px;
+        max-width: 48%;
     }
 
     .rc-misfits-char-wrap {
-        height: clamp(114px, 16.5vh, 144px);
+        height: clamp(88px, 13vh, 108px);
     }
 
     .rc-misfits-logo-wrap {
-        height: clamp(102px, 14.8vh, 130px);
+        height: auto;
+        width: clamp(88px, 24.5vw, 108px);
     }
 
     .rc-misfits-logo-img {
-        max-width: 58vw;
+        width: 100%;
+        height: auto;
+        max-height: 78px;
+        max-width: 100%;
     }
 
     .rc-shop-scroll-meta {
