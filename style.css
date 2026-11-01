@@ -5322,51 +5322,107 @@ body.rc-logged-in-home .hero-container.shifted-up {
     filter: none;
 }
 
-/* Bottom Row: NerdyMisfits.com Featured Products (Moving Opposite of the Games) */
-.rc-misfits-scroll-card {
-    width: clamp(190px, 18.5vw, 248px);
-}
-
-.rc-misfits-scroll-img-wrap {
-    width: 94%;
-    height: clamp(118px, 15vh, 162px);
-    border-radius: 13px;
-    overflow: hidden;
-    border: 1.5px solid rgba(140, 230, 0, 0.6);
-    box-shadow:
-        inset 0 0 0 1px rgba(0, 240, 255, 0.28),
-        0 10px 22px rgba(0, 0, 0, 0.92),
-        0 0 14px rgba(140, 230, 0, 0.18);
-    background: #080a12;
-}
-
-.rc-misfits-scroll-img-wrap::before {
-    display: none;
-}
-
-.rc-misfits-scroll-img {
+/* Bottom Row: Stationary Nerdy Misfits Logo + Waving Glitch Character */
+.rc-misfits-banner-row {
     width: 100%;
+    flex: 0 0 auto;
+    height: clamp(128px, 18.5vh, 195px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2px 12px;
+}
+
+.rc-misfits-feature-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(14px, 2.2vw, 28px);
     height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: cover;
-    filter: none;
-    display: block;
+    text-decoration: none;
+    padding: 6px 22px;
+    border-radius: 20px;
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), filter 0.28s ease;
+    position: relative;
 }
 
-.rc-misfits-scroll-card .rc-shop-scroll-meta {
-    border-color: rgba(140, 230, 0, 0.45);
+.rc-misfits-feature-link::before {
+    content: '';
+    position: absolute;
+    inset: 6% 4%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(140, 230, 0, 0.14) 0%, rgba(255, 45, 149, 0.08) 48%, transparent 74%);
+    filter: blur(22px);
+    z-index: 0;
+    pointer-events: none;
 }
 
-.rc-misfits-scroll-card .rc-shop-scroll-tag {
-    color: #8ce600;
+.rc-misfits-feature-link:hover {
+    transform: translateY(-4px) scale(1.04);
+    filter: brightness(1.08);
 }
 
-.rc-misfits-scroll-card .rc-shop-scroll-price {
-    background: linear-gradient(90deg, #8ce600, #00f0ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+.rc-misfits-char-wrap {
+    position: relative;
+    z-index: 1;
+    height: clamp(118px, 17.5vh, 182px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.rc-misfits-char-img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    filter:
+        drop-shadow(0 0 12px rgba(140, 230, 0, 0.42))
+        drop-shadow(0 10px 20px rgba(0, 0, 0, 0.92));
+    transform-origin: 52% 88%;
+    animation: rcGlitchWave 2.1s ease-in-out infinite;
+    pointer-events: none;
+    -webkit-user-drag: none;
+}
+
+@keyframes rcGlitchWave {
+    0%, 100% {
+        transform: rotate(0deg) translateY(0);
+    }
+    20% {
+        transform: rotate(-4.5deg) translateY(-3px);
+    }
+    40% {
+        transform: rotate(3.5deg) translateY(-1px);
+    }
+    60% {
+        transform: rotate(-3.5deg) translateY(-2px);
+    }
+    80% {
+        transform: rotate(2deg) translateY(0);
+    }
+}
+
+.rc-misfits-logo-wrap {
+    position: relative;
+    z-index: 1;
+    height: clamp(106px, 15.8vh, 166px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rc-misfits-logo-img {
+    height: 100%;
+    width: auto;
+    max-width: clamp(185px, 38vw, 310px);
+    object-fit: contain;
+    filter:
+        drop-shadow(0 0 16px rgba(140, 230, 0, 0.38))
+        drop-shadow(0 0 22px rgba(255, 45, 149, 0.26))
+        drop-shadow(0 10px 22px rgba(0, 0, 0, 0.94));
+    pointer-events: none;
+    -webkit-user-drag: none;
 }
 
 /* Full-screen Neo-Tokyo "COMING SOON" Arcade Cabinet Visual Overlay */
@@ -5562,13 +5618,26 @@ body.rc-logged-in-home .hero-container.shifted-up {
         border-radius: 11px;
     }
 
-    .rc-misfits-scroll-card {
-        width: clamp(172px, 47vw, 202px);
+    .rc-misfits-banner-row {
+        height: clamp(122px, 17.5vh, 152px);
+        padding: 2px 8px;
     }
 
-    .rc-misfits-scroll-img-wrap {
-        height: clamp(102px, 13.4vh, 120px);
-        border-radius: 11px;
+    .rc-misfits-feature-link {
+        gap: 12px;
+        padding: 4px 12px;
+    }
+
+    .rc-misfits-char-wrap {
+        height: clamp(114px, 16.5vh, 144px);
+    }
+
+    .rc-misfits-logo-wrap {
+        height: clamp(102px, 14.8vh, 130px);
+    }
+
+    .rc-misfits-logo-img {
+        max-width: 58vw;
     }
 
     .rc-shop-scroll-meta {
