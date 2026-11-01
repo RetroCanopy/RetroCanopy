@@ -7340,6 +7340,9 @@
       } else if (qsParams.get('openTickets') === '1') {
         setTimeout(() => {
           window.__openTicketCounterModal();
+          if (qsParams.get('openTier6') === '1' && typeof window.__openTier6VaultLightbox === 'function') {
+            window.__openTier6VaultLightbox('both');
+          }
         }, 80);
       } else if (qsParams.get('autoPlaySlugger') === '1') {
         setTimeout(() => {

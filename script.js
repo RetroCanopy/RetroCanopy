@@ -4528,21 +4528,21 @@ function initHomeShopScroller() {
     if (!track || !viewport) return;
 
     const shopCatalog = [
-        // Mixed-up order across categories, featuring the White & 24K Gold Hoodie (front & back) and White & 24K Gold Hat prominently!
+        // Mixed-up order across categories, featuring the White & 24K Gold Hoodie (WIN ONLY at Arcade) and White & 24K Gold Hat prominently!
         { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'HATS', price: '$36', img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'hat_preview.html?idx=6' },
-        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'HOODIES', price: '$78', img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'hoodie_preview.html?idx=8' },
+        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-401', title: '86 Outrun Turbo Gullwing Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt1_back.png?v=6', href: 'tee_preview.html?idx=0' },
         { code: 'RC-502', title: 'Dual Cyan & Magenta Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt2.png?v=1', href: 'joggers_preview.html?idx=1' },
         { code: 'RC-306', title: 'Cyber-Dragon Shenron Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt6_back.png?v=75', href: 'hoodie_preview.html?idx=5' },
         { code: 'RC-205', title: 'Starry Synthwave Cosmos XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_5.png?v=3', href: 'deskmat_preview.html?idx=4' },
-        { code: 'RC-309', title: 'White & 24K Gold Hoodie (Front)', cat: 'HOODIES', price: '$78', img: 'assets/merch/hoodie_tier6_2f_front.png?v=130', href: 'hoodie_preview.html?idx=8' },
+        { code: 'RC-309', title: 'White & 24K Gold Hoodie (Front)', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_front.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-601', title: 'Golden ROM Cartridge Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt1_back.png?v=6', href: 'longsleeve_preview.html?idx=0' },
         { code: 'RC-704', title: 'Valkyrie Samurai 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt3.png?v=2', href: 'gearbag_preview.html?idx=3' },
         { code: 'RC-101', title: 'Classic Sunset Grid Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_front_floating.png?v=94', href: 'hat_preview.html?idx=0' },
         { code: 'RC-308', title: 'Pinball Wizard Jackpot Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt9_back.png?v=75', href: 'hoodie_preview.html?idx=7' },
         { code: 'RC-403', title: 'Tokyo Shibuya Cyber-Shrine Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt3_back.png?v=6', href: 'tee_preview.html?idx=2' },
         { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'HATS', price: '$36', img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'hat_preview.html?idx=6' },
-        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'HOODIES', price: '$78', img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'hoodie_preview.html?idx=8' },
+        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-701', title: 'Retrocanopy 20oz LAN Gear Bag', cat: 'GEAR & MISC', price: '$28', img: 'assets/merch/gearbag_opt1.png?v=5', href: 'gearbag_preview.html?idx=0' },
         { code: 'RC-602', title: 'Cyber Ronin Samurai Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt2_back.png?v=6', href: 'longsleeve_preview.html?idx=1' },
         { code: 'RC-105', title: 'Valkyrie Gold & Crimson Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt5.png?v=94', href: 'hat_preview.html?idx=4' },
@@ -4555,7 +4555,7 @@ function initHomeShopScroller() {
         { code: 'RC-604', title: 'Orbital Saturn Eclipse Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt4_back.png?v=6', href: 'longsleeve_preview.html?idx=3' },
         { code: 'RC-102', title: 'Dual Cyan & Magenta Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt2.png?v=94', href: 'hat_preview.html?idx=1' },
         { code: 'RC-501', title: 'Sunset Grid Tech Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt1.png?v=1', href: 'joggers_preview.html?idx=0' },
-        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'HOODIES', price: '$78', img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'hoodie_preview.html?idx=8' },
+        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-402', title: '16-Bit Arcade Blueprint Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt2_back.png?v=6', href: 'tee_preview.html?idx=1' },
         { code: 'RC-203', title: 'Outrun Wireframe XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_3.png?v=3', href: 'deskmat_preview.html?idx=2' },
         { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'HATS', price: '$36', img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'hat_preview.html?idx=6' },
@@ -4580,7 +4580,7 @@ function initHomeShopScroller() {
     // Duplicate items 2x for a seamless infinite scrolling marquee loop
     const loopItems = shopCatalog.concat(shopCatalog);
     track.innerHTML = loopItems.map((item) => `
-        <a class="rc-shop-scroll-card" href="${item.href}" draggable="false">
+        <a class="rc-shop-scroll-card${item.winOnly ? ' is-win-only' : ''}" href="${item.href}" draggable="false">
             <div class="rc-shop-scroll-img-wrap">
                 <img class="rc-shop-scroll-img" src="${item.img}" alt="${item.title}" loading="eager" draggable="false" />
             </div>
@@ -4604,16 +4604,15 @@ function initHomeShopScroller() {
             { code: 'ARC-05', title: "Shinjuku Pinball Table '84", cat: 'ARCADE', badge: 'PLAY NOW', comingSoon: false, img: 'assets/concept_gallery/shinjuku_slugger_84_board_clean.jpg', href: 'games.html?autoPlaySlugger=1' },
             { code: 'ARC-06', title: 'Cyber-Shrine Skyway Run', cat: 'RUNNER', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/fun_run_idea_6_cyber_shrine_run_1793321757496.jpg', href: 'games.html?openDeck=1' },
             { code: 'ARC-07', title: 'Wangan Midnight Chase', cat: 'DRIFT', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/tokyo_wangan_midnight_chase_1793321085389.jpg', href: 'games.html?openDeck=1' },
-            { code: 'ARC-08', title: 'Neo-Tokyo Ticket Counter', cat: 'PRIZES', badge: 'REDEEM PRIZES', comingSoon: false, img: 'assets/concept_gallery/concept5_var1_arcades_flanking_window_1793363445032.jpg', href: 'games.html?openTickets=1' },
-            { code: 'ARC-09', title: 'Akihabara Rooftop Slalom', cat: 'SLALOM', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/akihabara_rooftop_slalom_concept_1793321090518.jpg', href: 'games.html?openDeck=1' },
-            { code: 'ARC-10', title: 'Shibuya Valkyrie Storm', cat: 'BOSS RUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/tokyo_concept_10_shibuya_valkyrie_storm_1793321098370.jpg', href: 'games.html?openDeck=1' }
+            { code: 'ARC-08', title: 'Akihabara Rooftop Slalom', cat: 'SLALOM', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/akihabara_rooftop_slalom_concept_1793321090518.jpg', href: 'games.html?openDeck=1' },
+            { code: 'ARC-09', title: 'Shibuya Valkyrie Storm', cat: 'BOSS RUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/tokyo_concept_10_shibuya_valkyrie_storm_1793321098370.jpg', href: 'games.html?openDeck=1' }
         ];
         const loopGames = arcadeCatalog.concat(arcadeCatalog);
         gamesTrack.innerHTML = loopGames.map((game) => `
             <a class="rc-shop-scroll-card rc-game-scroll-card${game.comingSoon ? ' is-coming-soon' : ''}" href="${game.href}" draggable="false">
                 <div class="rc-shop-scroll-img-wrap rc-game-scroll-img-wrap">
                     <img class="rc-shop-scroll-img rc-game-scroll-img" src="${game.img}" alt="${game.title}" loading="eager" draggable="false" />
-                    ${game.comingSoon ? '<span class="rc-game-coming-soon-pill">COMING SOON</span>' : ''}
+                    ${game.comingSoon ? '<div class="rc-game-coming-soon-visual"><div class="rc-cs-visual-plaque"><span class="rc-cs-visual-kicker">&#9670; ARCADE CABINET &#9670;</span><span class="rc-cs-visual-title">COMING SOON</span></div></div>' : ''}
                 </div>
                 <div class="rc-shop-scroll-meta">
                     <div class="rc-shop-scroll-top-row">

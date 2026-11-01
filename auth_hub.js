@@ -771,7 +771,7 @@
         top: clamp(62px, 8.5vh, 76px) !important;
         right: clamp(14px, 2.5vw, 28px) !important;
       }
-      .rc-home-signin-btn, .rc-home-admin-btn {
+      .rc-home-signin-btn, .rc-home-admin-btn, .rc-home-ticket-btn {
         font-family: 'Orbitron', sans-serif;
         font-size: 0.74rem;
         font-weight: 800;
@@ -785,6 +785,19 @@
         align-items: center;
         gap: 8px;
         backdrop-filter: blur(12px);
+        white-space: nowrap;
+      }
+      .rc-home-ticket-btn {
+        background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(255, 215, 0, 0.22));
+        border: 1.5px solid #ffd700;
+        color: #ffe885;
+        box-shadow: 0 0 18px rgba(255, 215, 0, 0.35), 0 0 12px rgba(0, 240, 255, 0.25);
+      }
+      .rc-home-ticket-btn:hover {
+        background: linear-gradient(135deg, rgba(0, 240, 255, 0.32), rgba(255, 215, 0, 0.34));
+        color: #ffffff;
+        box-shadow: 0 0 24px rgba(255, 215, 0, 0.65);
+        transform: translateY(-1px);
       }
       .rc-home-signin-btn {
         background: rgba(8, 7, 20, 0.88);
@@ -996,14 +1009,17 @@
       @media (max-width: 768px) {
         .rc-home-auth-bar {
           top: 10px;
-          right: 10px;
-          gap: 6px;
+          right: 6px;
+          gap: 4px;
         }
-        .rc-home-signin-btn, .rc-home-admin-btn {
-          font-size: 0.56rem;
-          padding: 6px 10px;
-          letter-spacing: 0.06em;
-          gap: 5px;
+        .rc-home-signin-btn, .rc-home-admin-btn, .rc-home-ticket-btn {
+          min-height: 0 !important;
+          height: 25px !important;
+          font-size: 0.44rem !important;
+          padding: 0 7px !important;
+          letter-spacing: 0.03em !important;
+          gap: 3px !important;
+          line-height: 1 !important;
         }
         .skip-intro-btn {
           top: 44px !important;
@@ -1042,6 +1058,9 @@
     const bar = document.createElement('div');
     bar.className = 'rc-home-auth-bar';
     bar.innerHTML = `
+      <a href="games.html?openTickets=1" class="rc-home-ticket-btn" id="rcHomeTicketCounterLink" style="display:none;">
+        &#127915; <span id="rcHomeTicketCounterText">TICKET COUNTER</span>
+      </a>
       <a href="admin.html" class="rc-home-admin-btn" id="rcHomeAdminHubLink" style="display:none;">
         &#128737;&#65039; <span id="rcHomeAdminHubText">OWNER / ADMIN HUB</span>
       </a>
@@ -1107,6 +1126,7 @@
 
     const signInBtn = document.getElementById('rcHomeSignInBtn');
     const signInLabel = document.getElementById('rcHomeSignInLabel');
+    const ticketCounterLink = document.getElementById('rcHomeTicketCounterLink');
     const adminHubLink = document.getElementById('rcHomeAdminHubLink');
     const adminHubText = document.getElementById('rcHomeAdminHubText');
     const closeBtn = document.getElementById('rcCleanAuthClose');
@@ -1150,6 +1170,9 @@
       } else {
         signInBtn.classList.remove('logged-in');
         signInLabel.textContent = 'SIGN IN';
+      }
+      if (ticketCounterLink) {
+        ticketCounterLink.style.display = (user || admin) ? 'inline-flex' : 'none';
       }
       if (adminHubLink) {
         adminHubLink.style.display = admin ? 'inline-flex' : 'none';

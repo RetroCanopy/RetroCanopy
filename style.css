@@ -5315,31 +5315,92 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
 }
 
 .rc-game-scroll-card.is-coming-soon .rc-game-scroll-img {
-    filter: brightness(0.72) saturate(0.92);
+    filter: brightness(0.42) saturate(0.85) contrast(1.08);
 }
 
-.rc-game-coming-soon-pill {
+/* Full-screen Neo-Tokyo "COMING SOON" Arcade Cabinet Visual Overlay */
+.rc-game-coming-soon-visual {
     position: absolute;
-    bottom: 8px;
-    right: 8px;
+    inset: 0;
     z-index: 3;
-    padding: 3px 9px;
-    border-radius: 999px;
-    background: rgba(8, 10, 22, 0.88);
-    border: 1px solid rgba(255, 45, 149, 0.78);
-    box-shadow: 0 0 12px rgba(255, 45, 149, 0.45), 0 4px 10px rgba(0, 0, 0, 0.85);
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.52rem;
-    font-weight: 900;
-    letter-spacing: 0.12em;
-    color: #ff85c2;
-    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(0, 240, 255, 0.06) 0px,
+            rgba(0, 240, 255, 0.06) 1px,
+            rgba(4, 6, 16, 0.42) 1px,
+            rgba(4, 6, 16, 0.42) 3px
+        ),
+        radial-gradient(circle at 50% 50%, rgba(10, 12, 28, 0.45) 0%, rgba(4, 6, 16, 0.78) 100%);
     pointer-events: none;
+    text-align: center;
+    padding: 8px;
+}
+
+.rc-cs-visual-plaque {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    background: rgba(8, 10, 24, 0.88);
+    border: 1.5px solid rgba(255, 45, 149, 0.85);
+    box-shadow:
+        inset 0 0 0 1px rgba(0, 240, 255, 0.35),
+        0 0 18px rgba(255, 45, 149, 0.52),
+        0 6px 16px rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(6px);
+}
+
+.rc-cs-visual-kicker {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.46rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    color: #00f0ff;
+    text-transform: uppercase;
+}
+
+.rc-cs-visual-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    background: linear-gradient(90deg, #ffd700 0%, #ff8c00 48%, #ff2d95 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(255, 45, 149, 0.55));
+    text-transform: uppercase;
     white-space: nowrap;
 }
 
 .rc-game-scroll-card.is-coming-soon .rc-shop-scroll-price {
     background: linear-gradient(90deg, #ff8c00, #ff2d95);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* White Hoodie (Win-Only Stage 6 Grand Prize) Card Styling */
+.rc-shop-scroll-card.is-win-only .rc-shop-scroll-meta {
+    border-color: rgba(255, 215, 0, 0.65);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.82), 0 0 14px rgba(255, 215, 0, 0.22);
+}
+
+.rc-shop-scroll-card.is-win-only .rc-shop-scroll-tag {
+    color: #ffd700;
+}
+
+.rc-shop-scroll-card.is-win-only .rc-shop-scroll-price {
+    background: linear-gradient(90deg, #ffd700, #00f0ff);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -5462,6 +5523,38 @@ body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active):not(.
 
     .rc-shop-scroll-title {
         font-size: 0.72rem;
+    }
+
+    .rc-cs-visual-plaque {
+        padding: 6px 12px;
+    }
+
+    .rc-cs-visual-kicker {
+        font-size: 0.4rem;
+    }
+
+    .rc-cs-visual-title {
+        font-size: 0.64rem;
+    }
+
+    body.rc-logged-in-home .kh-music-widget {
+        top: 10px !important;
+        left: 6px !important;
+    }
+
+    body.rc-logged-in-home .lofi-music-btn {
+        min-height: 0 !important;
+        height: 25px !important;
+        padding: 0 7px !important;
+        font-size: 0.44rem !important;
+        letter-spacing: 0.03em !important;
+        gap: 3px !important;
+        line-height: 1 !important;
+    }
+
+    body.rc-logged-in-home .lofi-eq {
+        transform: scale(0.72);
+        margin-right: -2px;
     }
 }
 
