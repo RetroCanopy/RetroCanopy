@@ -4729,32 +4729,24 @@
         tapTimer: 0
       };
 
-      // Dynamic Pitch Profiles & Escalating Pitch Heat Tiers (Idea #3: Progressive Pitch Challenge!)
-      const PITCH_PROFILES = [
-        { name: '🔥 84 MPH FASTBALL',    color: '#ffd700', curveX: 0.0,    vyBoost: 1.2, minHeat: 1 },
-        { name: '⚾ NEON CHANGEUP',      color: '#00f0ff', curveX: 0.008,  vyBoost: -0.4, minHeat: 1 },
-        { name: '🌀 WICKED CURVEBALL',   color: '#00f0ff', curveX: 0.034,  vyBoost: 0.5, minHeat: 2 },
-        { name: '⚡ RAZOR SLIDER',       color: '#ff2d95', curveX: -0.038, vyBoost: 1.1, minHeat: 2 },
-        { name: '🔥 102 MPH HEATER',     color: '#ff8c00', curveX: 0.014,  vyBoost: 2.6, minHeat: 3 },
-        { name: '⚓ GRAVITY SINKER',     color: '#b46cff', curveX: -0.030, vyBoost: 1.8, minHeat: 3 },
-        { name: '👻 PHANTOM SPLITTER',   color: '#ff2d95', curveX: 0.044,  vyBoost: 2.4, minHeat: 4 },
-        { name: '⚡ CYBER SCREWBALL',    color: '#ff2052', curveX: -0.048, vyBoost: 2.8, minHeat: 4 }
-      ];
-
-      function getPitchHeatTier(pts) {
-        const p = pts || 0;
-        if (p < 4) {
-          return { level: 1, name: 'ROOKIE', tag: 'HEAT LVL 1 • ROOKIE', color: '#00f0ff', speedMult: 1.00, gravMult: 1.00, curveMult: 0.35, fakeOutChance: 0.0, sCurveChance: 0.0, windupFrames: 18 };
-        } else if (p < 8) {
-          return { level: 2, name: 'BREAKING', tag: 'HEAT LVL 2 • BREAKING BALLS', color: '#ffd700', speedMult: 1.18, gravMult: 1.12, curveMult: 1.35, fakeOutChance: 0.0, sCurveChance: 0.0, windupFrames: 16 };
-        } else if (p < 13) {
-          return { level: 3, name: '102 MPH', tag: 'HEAT LVL 3 • 102 MPH TURBO', color: '#ff8c00', speedMult: 1.35, gravMult: 1.24, curveMult: 1.65, fakeOutChance: 0.30, sCurveChance: 0.25, windupFrames: 15 };
-        } else if (p < 19) {
-          return { level: 4, name: 'FAKE-OUT', tag: 'HEAT LVL 4 • FAKE-OUT WINDUP', color: '#ff2d95', speedMult: 1.48, gravMult: 1.35, curveMult: 1.95, fakeOutChance: 0.75, sCurveChance: 0.50, windupFrames: 20 };
-        }
-        const extraSpd = Math.min(0.28, (p - 19) * 0.015);
-        return { level: 5, name: 'OVERDRIVE', tag: 'HEAT LVL 5 • MAX OVERDRIVE', color: '#ff2052', speedMult: 1.62 + extraSpd, gravMult: 1.45, curveMult: 2.25, fakeOutChance: 0.90, sCurveChance: 0.70, windupFrames: 18 };
-      }
+      // Patrolling Mid-Field Blocker Bumper ("Infield Defender" — Option #4)
+      // Slides horizontally across y = 594 between the 3 '84' pop-bumpers and 2nd Base,
+      // deflecting flipped balls back down unless you shoot through the open lane!
+      const midfieldBlocker = {
+        x: 960,
+        y: 594,
+        halfLen: 52,      // 104px flat span + 2 * 16px rounded end-caps = 136px total blocker width
+        r: 16,            // 32px total vertical thickness
+        minX: 752,
+        maxX: 1168,
+        trackMinX: 696,
+        trackMaxX: 1224,
+        dir: 1,
+        baseSpeed: 3.8,
+        vx: 3.8,
+        hitTimer: 0,
+        cooldown: 0
+      };
 
       // Game State (3 Lives per Game, Tracks Round Points & Round Tickets, Lights Up Central Baseball Diamond!)
       const slugger = {
@@ -4785,10 +4777,7 @@
         boardOrder: ['OUT', 'SINGLE', 'HOMERUN', 'DOUBLE', 'TRIPLE'],
         boardShiftFlash: 0,
         shuffleCooldown: 0,
-        activeHoleIdx: 0, // 0 = Left Hole, 2 = Right Hole (Middle Hole #1 is dedicated to Extra Balls & Power-Ups!)
-        pitchLabel: '🔥 164 KM/H FASTBALL',
-        pitchColor: '#ffd700',
-        pitchCurveX: 0,
+        activeHoleIdx: 0, // 0 = Left Hole, 2 = Right Hole (Middle Hole #1 is dedicated to Extra Balls!)
         phase: 'LIVE_PLAY', // 'WINDUP' | 'LIVE_PLAY' | 'POCKET_HOLD' | 'RESULT_HOLD' | 'GAME_OVER'
         phaseTimer: 0,
         ballX: 842,
@@ -4889,9 +4878,7 @@
         slugger.bases = next;
         slugger.runs += runsScored;
         if (runsScored > 0) {
-          const prevHeat = getPitchHeatTier(slugger.roundPoints).level;
           awardSluggerPoints(runsScored);
-          const newHeatInfo = getPitchHeatTier(slugger.roundPoints);
           playArcadeSfx('run_scored');
           slugger.homePlateFlash = 48;
           spawnBurstParticles(960, 920, '#ffd700', 22);
@@ -4902,10 +4889,6 @@
             `+${runsScored} ${runsScored === 1 ? 'PT (RUNNER HOME!)' : 'PTS (RUNNERS HOME!)'}`,
             '#ffd700'
           );
-          if (newHeatInfo.level > prevHeat) {
-            slugger.neonSurge = 42;
-            spawnFloatingText(960, 520, `🔥 ${newHeatInfo.tag} UNLOCKED!`, newHeatInfo.color);
-          }
         }
         return runsScored;
       }
@@ -4968,39 +4951,22 @@
         awardExtraBallLife(midHole.x, midHole.y + 44);
       }
 
-      // Main Ball ONLY Releases from Left Hole (#0 at 716, 160) or Right Hole (#2 at 1204, 160)!
+      // Main Ball ONLY Releases from Left Hole (#0 at 716, 160) or Right Hole (#2 at 1204, 160) with a clean, straight pitch!
       function ejectBallFromHole(holeIdx) {
         const validHoleIdx = holeIdx === 2 ? 2 : 0;
         slugger.activeHoleIdx = validHoleIdx;
         const h = PITCH_HOLES_1080[validHoleIdx];
-        const heat = getPitchHeatTier(slugger.roundPoints);
-        const eligible = PITCH_PROFILES.filter((p) => p.minHeat <= heat.level);
-        // Weight toward newer/harder pitches at higher Heat Levels!
-        const pool = heat.level >= 2 ? eligible.filter((p) => p.minHeat >= Math.max(1, heat.level - 1)) : eligible;
-        const chosenPool = pool.length > 0 ? pool : eligible;
-        const prof = chosenPool[Math.floor(Math.random() * chosenPool.length)] || PITCH_PROFILES[0];
-
-        slugger.pitchLabel = prof.name;
-        slugger.pitchColor = prof.color;
-        slugger.isSCurvePitch = Math.random() < heat.sCurveChance;
-        const rawDir = Math.random() < 0.5 ? 1 : -1;
-        let curveMag = Math.abs(prof.curveX) * heat.curveMult;
-        if (heat.level >= 2 && curveMag < 0.022) {
-          curveMag = 0.024 * heat.curveMult;
-        }
-        slugger.pitchCurveX = rawDir * curveMag;
-
         slugger.ballX = h.x;
         slugger.ballY = h.y + 18;
         slugger.enteredPlayfield = false;
         slugger.hasBeenFlipped = false;
-        const baseVX = (2.0 + Math.random() * 1.4) * (0.92 + 0.08 * heat.speedMult);
+        const baseVX = 2.1 + Math.random() * 1.1;
         if (validHoleIdx === 0) {
           slugger.ballVX = baseVX;
         } else {
           slugger.ballVX = -baseVX;
         }
-        slugger.ballVY = (7.2 + prof.vyBoost + Math.random() * 1.5) * heat.speedMult;
+        slugger.ballVY = 7.6 + Math.random() * 1.2;
         slugger.saucerCooldown = 36;
       }
 
@@ -5009,16 +4975,10 @@
         if (!skipShuffle) {
           shuffleBoardSpaces();
         }
-        const heat = getPitchHeatTier(slugger.roundPoints);
         // Main ball ONLY releases from Left Hole (0) or Right Hole (2), leaving Middle Hole (1) for Extra Balls!
         slugger.activeHoleIdx = Math.random() < 0.5 ? 0 : 2;
-        slugger.fakeOutWindup = Math.random() < heat.fakeOutChance;
-        const eligible = PITCH_PROFILES.filter((p) => p.minHeat <= heat.level);
-        const prof = eligible[Math.floor(Math.random() * eligible.length)] || PITCH_PROFILES[0];
-        slugger.pitchLabel = slugger.fakeOutWindup ? '👻 FAKE-OUT WINDUP!' : prof.name;
-        slugger.pitchColor = slugger.fakeOutWindup ? '#ff2d95' : prof.color;
         slugger.phase = 'WINDUP';
-        slugger.phaseTimer = heat.windupFrames || 18;
+        slugger.phaseTimer = 18;
         slugger.enteredPlayfield = false;
         slugger.hasBeenFlipped = false;
         slugger.swungThisPitch = false;
@@ -5061,6 +5021,11 @@
         rightFlipper.omega = 0;
         rightFlipper.held = false;
         rightFlipper.tapTimer = 0;
+        midfieldBlocker.x = 960;
+        midfieldBlocker.dir = Math.random() < 0.5 ? 1 : -1;
+        midfieldBlocker.vx = midfieldBlocker.dir * midfieldBlocker.baseSpeed;
+        midfieldBlocker.hitTimer = 0;
+        midfieldBlocker.cooldown = 0;
         slugger.particles = [];
         slugger.bumperFlashes = [];
         slugger.floatingTexts = [];
@@ -5079,11 +5044,6 @@
         slugger.bannerText = '';
         slugger.bannerTimer = 0;
         slugger.activeHoleIdx = 0; // Left Hole #1 (Main ball only uses Left #0 and Right #2)
-        slugger.pitchLabel = '🔥 84 MPH FASTBALL';
-        slugger.pitchColor = '#ffd700';
-        slugger.pitchCurveX = 0;
-        slugger.fakeOutWindup = false;
-        slugger.isSCurvePitch = false;
         slugger.phase = 'LIVE_PLAY';
         slugger.enteredPlayfield = true;
         slugger.hasBeenFlipped = false;
@@ -5093,34 +5053,6 @@
         slugger.ballVX = 2.1;
         slugger.ballVY = 6.4;
         slugger.saucerCooldown = 28;
-      };
-
-      window.__demoSluggerHeatTier = function (points) {
-        slugger.roundPoints = points || 15;
-        slugger.roundTickets = Math.floor(slugger.roundPoints / 10);
-        slugger.runners = [true, true, false];
-        const heat = getPitchHeatTier(slugger.roundPoints);
-        slugger.heatLevel = heat.level;
-        slugger.activeHoleIdx = 0;
-        slugger.decoyHoleIdx = 2;
-        slugger.fakeOutWindup = heat.level >= 4;
-        slugger.isSCurvePitch = heat.level >= 4;
-        slugger.pitchLabel = heat.level >= 4 ? '⚡ CYBER SCREWBALL' : '🌀 WICKED CURVEBALL';
-        slugger.pitchColor = heat.color;
-        slugger.pitchCurveX = 0.042 * heat.curveMult;
-        slugger.phase = 'LIVE_PLAY';
-        slugger.enteredPlayfield = true;
-        slugger.hasBeenFlipped = false;
-        slugger.ballX = 875;
-        slugger.ballY = 530;
-        slugger.ballVX = 2.8;
-        slugger.ballVY = 8.4;
-        slugger.callout = {
-          text: `🔥 HEAT LVL ${heat.level}: ${heat.name}!`,
-          sub: `${Math.round(heat.speedMult * 100)}% PITCH SPEED • BREAKING CURVEBALLS ACTIVE!`,
-          color: heat.color,
-          timer: 55
-        };
       };
 
       window.__openGamesSelectionModal = function () {
@@ -5555,6 +5487,60 @@
         }
       }
 
+      // Collide Flipped Ball with the Patrolling Mid-Field Blocker Bumper ("Infield Defender" at y = 594)
+      function collideBallWithMidfieldBlocker() {
+        // Incoming pitch glides straight down to the flippers before the mid-field blocker engages!
+        if (!slugger.hasBeenFlipped) return;
+
+        const blk = midfieldBlocker;
+        const clampedX = Math.max(blk.x - blk.halfLen, Math.min(blk.x + blk.halfLen, slugger.ballX));
+        const closestY = blk.y;
+        const dx = slugger.ballX - clampedX;
+        const dy = slugger.ballY - closestY;
+        const dist = Math.hypot(dx, dy);
+        const minDist = slugger.ballR + blk.r;
+
+        if (dist < minDist) {
+          slugger.enteredPlayfield = true;
+          const nx = dist > 0.001 ? dx / dist : 0;
+          const ny = dist > 0.001 ? dy / dist : 1;
+
+          // Push ball cleanly outside blocker capsule radius
+          slugger.ballX = clampedX + nx * (minDist + 1.5);
+          slugger.ballY = closestY + ny * (minDist + 1.5);
+
+          const relVX = slugger.ballVX - blk.vx;
+          const relVY = slugger.ballVY;
+          const relDotN = relVX * nx + relVY * ny;
+
+          if (relDotN < 0 || Math.abs(dy) <= minDist) {
+            const restitution = 1.12;
+            const j = Math.max(10.5, -(1 + restitution) * relDotN);
+            slugger.ballVX += j * nx + blk.vx * 0.38;
+            slugger.ballVY += j * ny;
+
+            // Guarantee crisp downward deflection when hitting the front/bottom of the blocker, or upward bounce from above
+            if (dy >= -2) {
+              slugger.ballVY = Math.max(9.2, Math.abs(slugger.ballVY));
+            } else {
+              slugger.ballVY = -Math.max(10.5, Math.abs(slugger.ballVY));
+            }
+
+            if (blk.cooldown <= 0) {
+              blk.cooldown = 7;
+              blk.hitTimer = 18;
+              slugger.neonSurge = Math.max(slugger.neonSurge || 0, 24);
+              slugger.bumperFlashes.push({ x: clampedX, y: closestY, r: 28, alpha: 1.0, color: '#ff2d95' });
+              slugger.screenShake = 6;
+              spawnBurstParticles(clampedX, closestY + ny * blk.r, '#ff2d95', 18);
+              spawnBurstParticles(clampedX, closestY + ny * blk.r, '#00f0ff', 10);
+              spawnFloatingText(blk.x, blk.y - 30, 'DEFENDER BLOCK!', '#ff2d95');
+              playArcadeSfx('slingshot_kick');
+            }
+          }
+        }
+      }
+
       // Gap-Free 480 Hz Door Capture along the 6 Back Doors (ONLY after ball has been flipped; 2 doors always say OUT!)
       function checkUpperDoorCapture() {
         if (!slugger.hasBeenFlipped) return false;
@@ -5822,22 +5808,65 @@
               playArcadeSfx('bumper_bell');
             }
           }
+
+          // 5. Collide Extra Ball with Patrolling Mid-Field Blocker Bumper
+          const blk = midfieldBlocker;
+          const clampedX = Math.max(blk.x - blk.halfLen, Math.min(blk.x + blk.halfLen, eb.x));
+          const closestY = blk.y;
+          const bdx = eb.x - clampedX;
+          const bdy = eb.y - closestY;
+          const bdist = Math.hypot(bdx, bdy);
+          const bMinDist = eb.r + blk.r;
+          if (bdist < bMinDist) {
+            const bnx = bdist > 0.001 ? bdx / bdist : 0;
+            const bny = bdist > 0.001 ? bdy / bdist : 1;
+            eb.x = clampedX + bnx * (bMinDist + 1.5);
+            eb.y = closestY + bny * (bMinDist + 1.5);
+            const relDotN = (eb.vx - blk.vx) * bnx + eb.vy * bny;
+            const j = Math.max(10.0, -2.1 * relDotN);
+            eb.vx += j * bnx + blk.vx * 0.35;
+            eb.vy += j * bny;
+            if (bdy >= -2) {
+              eb.vy = Math.max(8.8, Math.abs(eb.vy));
+            } else {
+              eb.vy = -Math.max(10.0, Math.abs(eb.vy));
+            }
+            blk.hitTimer = 16;
+            spawnBurstParticles(clampedX, closestY + bny * blk.r, '#ff2d95', 12);
+            playArcadeSfx('slingshot_kick');
+          }
         }
         return false;
+      }
+
+      // Step the Patrolling Mid-Field Blocker Bumper ("Infield Defender") horizontally across y = 594
+      function stepMidfieldBlocker(dt) {
+        const blk = midfieldBlocker;
+        const speedTarget = blk.baseSpeed + Math.min(2.2, slugger.roundPoints * 0.12);
+        blk.vx = blk.dir * speedTarget;
+        blk.x += blk.vx * dt;
+        if (blk.x >= blk.maxX) {
+          blk.x = blk.maxX;
+          blk.dir = -1;
+          blk.vx = -speedTarget;
+        } else if (blk.x <= blk.minX) {
+          blk.x = blk.minX;
+          blk.dir = 1;
+          blk.vx = speedTarget;
+        }
       }
 
       function stepPinballPhysicsFrame() {
         const SUBSTEPS = 8;
         const dt = 1 / SUBSTEPS;
-        // Escalating Pitch Heat scales table gravity & pitch velocity as player scores more points!
-        const heat = getPitchHeatTier(slugger.roundPoints);
-        slugger.heatLevel = heat.level;
         const perspFactor = 0.85 + 0.35 * Math.max(0, Math.min(1, (slugger.ballY - 160) / 760));
-        const gravityPerStep = 0.33 * heat.gravMult * perspFactor * dt;
+        const gravityPerStep = 0.33 * perspFactor * dt;
 
         if (slugger.moundCooldown > 0) slugger.moundCooldown--;
         if (slugger.homePlateFlash > 0) slugger.homePlateFlash--;
         if (slugger.middleHoleFlash > 0) slugger.middleHoleFlash--;
+        if (midfieldBlocker.hitTimer > 0) midfieldBlocker.hitTimer--;
+        if (midfieldBlocker.cooldown > 0) midfieldBlocker.cooldown--;
 
         // Occasionally release an Extra Ball (+1 Life, up to 4 max) from the Middle Hole (#1 at 960, 158)
         if (slugger.middleSpawnTimer > 0) {
@@ -5899,25 +5928,13 @@
         for (let step = 0; step < SUBSTEPS; step++) {
           stepFlipperAngle(leftFlipper, dt);
           stepFlipperAngle(rightFlipper, dt);
+          stepMidfieldBlocker(dt);
 
           slugger.ballVY += gravityPerStep;
-          if (!slugger.hasBeenFlipped && slugger.pitchCurveX) {
-            // Level 4+ S-Breaking Screwball reverses lateral hook direction mid-table (y > 510)
-            const sCurveSign = (slugger.isSCurvePitch && slugger.ballY > 510) ? -1.15 : 1.0;
-            slugger.ballVX += slugger.pitchCurveX * sCurveSign * dt;
-            // Keep unflipped breaking pitches inside the fair strike-zone runway (x = 635..1285) before the flippers
-            if (slugger.ballY < 855) {
-              if (slugger.ballX < 635 && slugger.ballVX < 0) {
-                slugger.ballVX = Math.abs(slugger.ballVX) * 0.65;
-              } else if (slugger.ballX > 1285 && slugger.ballVX > 0) {
-                slugger.ballVX = -Math.abs(slugger.ballVX) * 0.65;
-              }
-            }
-          }
           slugger.ballVX *= 0.9992;
           slugger.ballVY *= 0.9992;
 
-          const maxSpd = 26.0 + (heat.level - 1) * 1.5;
+          const maxSpd = 26.0;
           const spd = Math.hypot(slugger.ballVX, slugger.ballVY);
           if (spd > maxSpd) {
             slugger.ballVX = (slugger.ballVX / spd) * maxSpd;
@@ -5945,6 +5962,7 @@
           collideBallWithFlipper(rightFlipper);
           collideBallWithWalls();
           collideBallWithBumpers();
+          collideBallWithMidfieldBlocker();
 
           // Step any active Extra Balls released from the Middle Hole
           for (let ebIdx = slugger.extraBalls.length - 1; ebIdx >= 0; ebIdx--) {
@@ -6338,6 +6356,123 @@
             sCtx.restore();
           }
         }
+
+        // 3. Draw the Patrolling Mid-Field Blocker Bumper ("Infield Defender" at y = 594)
+        const blk = midfieldBlocker;
+        const blkHit = blk.hitTimer > 0;
+        const blkW = (blk.halfLen + blk.r) * 2;
+        const blkH = blk.r * 2;
+
+        // A. Recessed Horizontal Neon Guide Track Slot (x = 696..1224, y = 594)
+        sCtx.save();
+        const trackW = blk.trackMaxX - blk.trackMinX;
+        const trackH = 14;
+        const trackY = blk.y - trackH / 2 + 4;
+        sCtx.fillStyle = '#03060f';
+        sCtx.strokeStyle = 'rgba(0, 240, 255, 0.45)';
+        sCtx.lineWidth = 2;
+        sCtx.shadowColor = '#00f0ff';
+        sCtx.shadowBlur = 10;
+        sCtx.beginPath();
+        sCtx.roundRect(blk.trackMinX, trackY, trackW, trackH, 7);
+        sCtx.fill();
+        sCtx.stroke();
+
+        // Inner glowing laser guide line along the track
+        sCtx.strokeStyle = 'rgba(255, 45, 149, 0.58)';
+        sCtx.lineWidth = 2;
+        sCtx.beginPath();
+        sCtx.moveTo(blk.trackMinX + 12, blk.y + 4);
+        sCtx.lineTo(blk.trackMaxX - 12, blk.y + 4);
+        sCtx.stroke();
+
+        // Left & Right 24K Gold Track End-Stop Sockets
+        [blk.trackMinX + 6, blk.trackMaxX - 6].forEach((tx) => {
+          sCtx.fillStyle = '#ffd700';
+          sCtx.shadowColor = '#ffd700';
+          sCtx.shadowBlur = 8;
+          sCtx.beginPath();
+          sCtx.arc(tx, blk.y + 4, 6.5, 0, Math.PI * 2);
+          sCtx.fill();
+        });
+        sCtx.restore();
+
+        // B. Glossy Floor Reflection & Under-Glow Beneath the Moving Blocker Bumper
+        sCtx.save();
+        const glowGrad = sCtx.createRadialGradient(blk.x, blk.y + 8, 6, blk.x, blk.y + 8, blk.halfLen + 36);
+        glowGrad.addColorStop(0, blkHit ? 'rgba(255, 255, 255, 0.65)' : 'rgba(255, 45, 149, 0.42)');
+        glowGrad.addColorStop(0.55, 'rgba(0, 240, 255, 0.22)');
+        glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        sCtx.fillStyle = glowGrad;
+        sCtx.beginPath();
+        sCtx.ellipse(blk.x, blk.y + 8, blk.halfLen + 36, 26, 0, 0, Math.PI * 2);
+        sCtx.fill();
+        sCtx.restore();
+
+        // C. 3D Extruded 24K Gold & Neon Pink/Cyan Capsule Blocker Sled (12px 3D vertical extrusion)
+        for (let dy = 12; dy >= 0; dy -= 3) {
+          sCtx.save();
+          const topY = blk.y - blk.r + dy - 4;
+          if (dy > 0) {
+            const wallGrad = sCtx.createLinearGradient(blk.x - blkW / 2, topY, blk.x + blkW / 2, topY);
+            wallGrad.addColorStop(0, '#3d2604');
+            wallGrad.addColorStop(0.28, '#d49b1a');
+            wallGrad.addColorStop(0.5, '#ffe88a');
+            wallGrad.addColorStop(0.72, '#b07b0e');
+            wallGrad.addColorStop(1, '#331f02');
+            sCtx.fillStyle = wallGrad;
+            sCtx.strokeStyle = dy === 12 ? '#ff2d95' : '#855806';
+            sCtx.lineWidth = dy === 12 ? 2.4 : 1.2;
+            if (dy === 12) {
+              sCtx.shadowColor = '#ff2d95';
+              sCtx.shadowBlur = blkHit ? 24 : 14;
+            }
+          } else {
+            // Top Beveled Obsidian & 24K Gold Armor Plate
+            const capGrad = sCtx.createLinearGradient(blk.x, topY, blk.x, topY + blkH);
+            capGrad.addColorStop(0, blkHit ? '#ffffff' : '#1b2742');
+            capGrad.addColorStop(0.5, blkHit ? '#ffd700' : '#0b1224');
+            capGrad.addColorStop(1, '#060a14');
+            sCtx.fillStyle = capGrad;
+            sCtx.strokeStyle = blkHit ? '#ffffff' : '#00f0ff';
+            sCtx.lineWidth = 2.8;
+            sCtx.shadowColor = blkHit ? '#ffffff' : '#00f0ff';
+            sCtx.shadowBlur = blkHit ? 24 : 14;
+          }
+          sCtx.beginPath();
+          sCtx.roundRect(blk.x - blkW / 2, topY, blkW, blkH, blk.r);
+          sCtx.fill();
+          sCtx.stroke();
+          sCtx.restore();
+        }
+
+        // D. Inner 24K Gold Bevel Frame, Left/Right Bumper End-Nodes & Crisp "DEFENDER" Readout
+        sCtx.save();
+        const faceY = blk.y - 4;
+        sCtx.strokeStyle = '#ffd700';
+        sCtx.lineWidth = 1.6;
+        sCtx.beginPath();
+        sCtx.roundRect(blk.x - blkW / 2 + 5, faceY - blk.r + 4, blkW - 10, blkH - 8, blk.r - 4);
+        sCtx.stroke();
+
+        // Glowing Neon Pink Rebound Nodes on Left & Right Capsule Ends
+        [blk.x - blk.halfLen + 2, blk.x + blk.halfLen - 2].forEach((nx) => {
+          sCtx.fillStyle = blkHit ? '#ffffff' : '#ff2d95';
+          sCtx.shadowColor = '#ff2d95';
+          sCtx.shadowBlur = 10;
+          sCtx.beginPath();
+          sCtx.arc(nx, faceY, 5.5, 0, Math.PI * 2);
+          sCtx.fill();
+        });
+
+        sCtx.font = '900 11px Orbitron, sans-serif';
+        sCtx.textAlign = 'center';
+        sCtx.textBaseline = 'middle';
+        sCtx.fillStyle = blkHit ? '#060a14' : '#ffe88a';
+        sCtx.shadowColor = blkHit ? '#ffffff' : '#ff2d95';
+        sCtx.shadowBlur = 8;
+        sCtx.fillText(blk.dir > 0 ? 'DEFENDER ▶' : '◀ DEFENDER', blk.x, faceY + 0.5);
+        sCtx.restore();
       }
 
       // Draw Upgraded Central Infield Baseball Diamond Inside the Machine that Lights Up the Bases Runners Are On!
@@ -6552,85 +6687,40 @@
         });
       }
 
-      // Draw the 3 Far-Back Pitch Holes at the Top of the Board (Left & Right Release Main Ball; Middle Hole #2 Releases Extra Balls & Power-Ups!)
+      // Draw the 3 Far-Back Pitch Holes at the Top of the Board (Left & Right Release Main Ball; Middle Hole #2 Releases Extra Balls!)
       function drawPitchHolesOverlay() {
         if (!sCtx) return;
         const activeHole = PITCH_HOLES_1080[slugger.activeHoleIdx] || PITCH_HOLES_1080[0];
         const midHole = PITCH_HOLES_1080[1];
         const now = performance.now();
 
-        // 1. Active Main-Ball Pitch Hole (Left #0 or Right #2) + Heat Level 4+ Dual-Hole Fake-Out Windup!
+        // 1. Active Main-Ball Pitch Hole (Left #0 or Right #2)
         if (slugger.phase === 'WINDUP' || slugger.saucerCooldown > 8) {
           const pulse = 0.55 + 0.45 * Math.sin(now * 0.025);
-          const holesToFlash = [activeHole];
-          if (slugger.phase === 'WINDUP' && slugger.fakeOutWindup) {
-            const decoyHole = PITCH_HOLES_1080[slugger.decoyHoleIdx];
-            if (decoyHole) holesToFlash.push(decoyHole);
-          }
-
-          for (let h = 0; h < holesToFlash.length; h++) {
-            const holeObj = holesToFlash[h];
-            const isDecoy = h === 1;
-            const ringCol = slugger.fakeOutWindup
-              ? (isDecoy ? `rgba(255, 45, 149, ${0.65 + pulse * 0.35})` : `rgba(0, 240, 255, ${0.65 + pulse * 0.35})`)
-              : `rgba(0, 240, 255, ${0.65 + pulse * 0.35})`;
-
-            sCtx.save();
-            sCtx.strokeStyle = ringCol;
-            sCtx.lineWidth = 4.5;
-            sCtx.shadowColor = isDecoy ? '#ff2d95' : '#00f0ff';
-            sCtx.shadowBlur = 24;
-            sCtx.beginPath();
-            sCtx.ellipse(holeObj.x, holeObj.y, holeObj.rx * 0.90, holeObj.ry * 0.90, 0, 0, Math.PI * 2);
-            sCtx.stroke();
-
-            const holeGrad = sCtx.createRadialGradient(
-              holeObj.x,
-              holeObj.y,
-              5,
-              holeObj.x,
-              holeObj.y,
-              holeObj.rx * 0.85
-            );
-            holeGrad.addColorStop(0, `rgba(255, 230, 120, ${0.82 * pulse})`);
-            holeGrad.addColorStop(0.6, isDecoy ? `rgba(255, 45, 149, ${0.38 * pulse})` : `rgba(0, 240, 255, ${0.38 * pulse})`);
-            holeGrad.addColorStop(1, 'rgba(0, 240, 255, 0)');
-            sCtx.fillStyle = holeGrad;
-            sCtx.beginPath();
-            sCtx.ellipse(holeObj.x, holeObj.y, holeObj.rx * 0.85, holeObj.ry * 0.85, 0, 0, Math.PI * 2);
-            sCtx.fill();
-
-            // During Dual-Hole Fake-Out Windup, render a phantom pulsing gold ball in the decoy hole too!
-            if (isDecoy && slugger.phase === 'WINDUP') {
-              sCtx.globalAlpha = 0.72 * pulse;
-              draw24KGoldPinball(holeObj.x, holeObj.y, 16);
-            }
-            sCtx.restore();
-          }
-
-          if (slugger.phase === 'WINDUP' && slugger.fakeOutWindup) {
-            sCtx.save();
-            sCtx.font = '900 12px Orbitron, sans-serif';
-            sCtx.textAlign = 'center';
-            sCtx.textBaseline = 'middle';
-            sCtx.fillStyle = '#ff2d95';
-            sCtx.shadowColor = '#ff2d95';
-            sCtx.shadowBlur = 12;
-            sCtx.fillText('👻 FAKE-OUT WINDUP!', 960, 200);
-            sCtx.restore();
-          }
-        }
-
-        // Pitch Radar Pill Badge below active Left/Right hole
-        if (!slugger.hasBeenFlipped && slugger.pitchLabel) {
           sCtx.save();
-          sCtx.font = '900 11px Orbitron, sans-serif';
-          sCtx.textAlign = 'center';
-          sCtx.textBaseline = 'middle';
-          sCtx.fillStyle = slugger.pitchColor || '#ffd700';
-          sCtx.shadowColor = slugger.pitchColor || '#ffd700';
-          sCtx.shadowBlur = 10;
-          sCtx.fillText(slugger.pitchLabel, activeHole.x, activeHole.y + 38);
+          sCtx.strokeStyle = `rgba(0, 240, 255, ${0.65 + pulse * 0.35})`;
+          sCtx.lineWidth = 4.5;
+          sCtx.shadowColor = '#00f0ff';
+          sCtx.shadowBlur = 24;
+          sCtx.beginPath();
+          sCtx.ellipse(activeHole.x, activeHole.y, activeHole.rx * 0.90, activeHole.ry * 0.90, 0, 0, Math.PI * 2);
+          sCtx.stroke();
+
+          const holeGrad = sCtx.createRadialGradient(
+            activeHole.x,
+            activeHole.y,
+            5,
+            activeHole.x,
+            activeHole.y,
+            activeHole.rx * 0.85
+          );
+          holeGrad.addColorStop(0, `rgba(255, 230, 120, ${0.82 * pulse})`);
+          holeGrad.addColorStop(0.6, `rgba(0, 240, 255, ${0.38 * pulse})`);
+          holeGrad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+          sCtx.fillStyle = holeGrad;
+          sCtx.beginPath();
+          sCtx.ellipse(activeHole.x, activeHole.y, activeHole.rx * 0.85, activeHole.ry * 0.85, 0, 0, Math.PI * 2);
+          sCtx.fill();
           sCtx.restore();
         }
 
@@ -6847,32 +6937,14 @@
         sCtx.arc(bx, by, br * 0.96, 0.15 * Math.PI, 0.85 * Math.PI);
         sCtx.stroke();
 
-        // Subtle Breaking-Ball Spin Aura Ring when an unflipped curveball/slider/screwball is hooking down the runway
-        if (
-          slugger.phase === 'LIVE_PLAY' &&
-          !slugger.hasBeenFlipped &&
-          Math.abs(slugger.pitchCurveX || 0) > 0.015 &&
-          Math.hypot(bx - slugger.ballX, by - slugger.ballY) < 4
-        ) {
-          const spinAng = performance.now() * 0.018 * (slugger.pitchCurveX > 0 ? 1 : -1);
-          sCtx.strokeStyle = slugger.pitchColor || '#00f0ff';
-          sCtx.lineWidth = 2.4;
-          sCtx.shadowColor = slugger.pitchColor || '#00f0ff';
-          sCtx.shadowBlur = 10;
-          sCtx.beginPath();
-          sCtx.arc(bx, by, br + 4.5, spinAng, spinAng + Math.PI * 1.15);
-          sCtx.stroke();
-        }
-
         sCtx.restore();
       }
 
-      // Draw Live Top HUD Scoreboard Tracking Round Points, Round Tickets (10 PTS = 1 TIX), Lives & Escalating Pitch Heat Level!
+      // Draw Live Top HUD Scoreboard Tracking Round Points, Round Tickets (10 PTS = 1 TIX) & Lives!
       function drawLiveHudOverlay() {
         if (!sCtx) return;
         sCtx.save();
         const isMobileHud = window.innerWidth <= 768;
-        const heat = getPitchHeatTier(slugger.roundPoints);
 
         // 1. Left Scoreboard Wing: ROUND POINTS (1 Runner Home = 1 Point)
         // On Full-Screen Mobile (canvas x = 438..1482), center left wing in x = 442..676 (center x = 559)
@@ -6940,17 +7012,13 @@
         sCtx.shadowBlur = 14;
         sCtx.fillText(`${slugger.roundTickets.toLocaleString()} TIX`, rightTextX, 68);
 
-        // 3. Side-by-Side Center Badges Below Top Title Banner: [LIVES] + [🔥 HEAT LVL X]
+        // 3. Centered Lives Pill Below Top Title Banner
         const maxOrbs = Math.min(4, Math.max(3, slugger.maxLives));
         const livesW = 114 + maxOrbs * 34;
-        const heatW = 248;
-        const gapW = 12;
-        const totalW = livesW + gapW + heatW;
         const badgeH = 34;
         const by = 88;
-        const bx = 960 - totalW / 2;
+        const bx = 960 - livesW / 2;
 
-        // 3A. Lives Pill
         sCtx.fillStyle = 'rgba(7, 11, 24, 0.94)';
         sCtx.strokeStyle = slugger.lives === 1 ? '#ff2d95' : '#00f0ff';
         sCtx.lineWidth = 2.2;
@@ -6994,28 +7062,6 @@
           sCtx.stroke();
           sCtx.restore();
         }
-
-        // 3B. Escalating Pitch Heat Badge (LVL 1 -> LVL 5)
-        const hx = bx + livesW + gapW;
-        sCtx.save();
-        sCtx.fillStyle = 'rgba(7, 11, 24, 0.94)';
-        sCtx.strokeStyle = heat.color;
-        sCtx.lineWidth = 2.2;
-        sCtx.shadowColor = heat.color;
-        sCtx.shadowBlur = 14;
-        sCtx.beginPath();
-        sCtx.roundRect(hx, by, heatW, badgeH, 17);
-        sCtx.fill();
-        sCtx.stroke();
-
-        sCtx.font = '900 11.5px Orbitron, sans-serif';
-        sCtx.textAlign = 'center';
-        sCtx.textBaseline = 'middle';
-        sCtx.fillStyle = heat.color;
-        sCtx.shadowColor = heat.color;
-        sCtx.shadowBlur = 10;
-        sCtx.fillText(`🔥 HEAT LVL ${heat.level} • ${heat.name}`, hx + heatW / 2, by + badgeH / 2 + 1);
-        sCtx.restore();
 
         sCtx.restore();
       }
@@ -7126,6 +7172,7 @@
         if (slugger.phase === 'WINDUP') {
           stepFlipperAngle(leftFlipper, 1);
           stepFlipperAngle(rightFlipper, 1);
+          stepMidfieldBlocker(1);
           slugger.phaseTimer--;
           const emerge = 1 - slugger.phaseTimer / 18;
           slugger.ballX = hole.x;
@@ -7149,6 +7196,7 @@
         } else if (slugger.phase === 'POCKET_HOLD') {
           stepFlipperAngle(leftFlipper, 1);
           stepFlipperAngle(rightFlipper, 1);
+          stepMidfieldBlocker(1);
           draw3DPinballFlipper(leftFlipper);
           draw3DPinballFlipper(rightFlipper);
           drawExtraPinballsAndPowerUps();
@@ -7170,6 +7218,7 @@
         } else if (slugger.phase === 'RESULT_HOLD') {
           stepFlipperAngle(leftFlipper, 1);
           stepFlipperAngle(rightFlipper, 1);
+          stepMidfieldBlocker(1);
           draw3DPinballFlipper(leftFlipper);
           draw3DPinballFlipper(rightFlipper);
           drawExtraPinballsAndPowerUps();
