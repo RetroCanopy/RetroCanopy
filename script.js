@@ -4525,6 +4525,7 @@ function initHomeShopScroller() {
     const track = document.getElementById('rc-shop-scroll-track');
     const viewport = document.getElementById('rc-shop-scroll-viewport');
     const gamesTrack = document.getElementById('rc-games-scroll-track');
+    const misfitsTrack = document.getElementById('rc-misfits-scroll-track');
     if (!track || !viewport) return;
 
     const shopCatalog = [
@@ -4624,8 +4625,43 @@ function initHomeShopScroller() {
         `).join('');
     }
 
+    // Bottom Row: NerdyMisfits.com Top 3D-Printed Creations (scrolling opposite of the games: right-to-left)
+    if (misfitsTrack) {
+        const misfitsCatalog = [
+            { id: '6I5NXDY6IJLNSYCVHIZ35EOD', title: 'Viking Dragon Wine Holder', price: '$30', img: 'assets/misfits/nm_viking_dragon_wine.jpg?v=135', href: 'https://nerdymisfits.com/?product=6I5NXDY6IJLNSYCVHIZ35EOD#glitchFeaturedAnchor' },
+            { id: 'BOHQY3NXXPZF6QONQ2ZXLIQF', title: 'Behold The Wizard Dice Tower', price: '$20', img: 'assets/misfits/nm_wizard_dice_tower.jpg?v=135', href: 'https://nerdymisfits.com/?product=BOHQY3NXXPZF6QONQ2ZXLIQF#glitchFeaturedAnchor' },
+            { id: 'BYBVGTBGS5IZBRR6FF7JA7ES', title: 'Omen Owl Dice Tower', price: '$25', img: 'assets/misfits/nm_omen_owl_dice_tower.jpg?v=135', href: 'https://nerdymisfits.com/?product=BYBVGTBGS5IZBRR6FF7JA7ES#glitchFeaturedAnchor' },
+            { id: '64H2JO36TJOKGRQAVH6ELPNV', title: 'The Exploited 3D Wall Art', price: '$20', img: 'assets/misfits/nm_exploited_wall_art.jpg?v=135', href: 'https://nerdymisfits.com/?product=64H2JO36TJOKGRQAVH6ELPNV#glitchFeaturedAnchor' },
+            { id: 'UYVOIFCEVJX2IO5FRXEPXMQA', title: 'Fourth Wing Dragon Trio Set', price: '$25', img: 'assets/misfits/nm_fourth_wing_dragons.jpg?v=135', href: 'https://nerdymisfits.com/?product=UYVOIFCEVJX2IO5FRXEPXMQA#glitchFeaturedAnchor' },
+            { id: 'KXQ4JRDUPGPA4BGUDYWFH6BW', title: "Dragon's Keep Dice Tower", price: '$25', img: 'assets/misfits/nm_dragons_keep_tower.jpg?v=135', href: 'https://nerdymisfits.com/?product=KXQ4JRDUPGPA4BGUDYWFH6BW#glitchFeaturedAnchor' },
+            { id: 'JHQQO3UDMSJMCCJWA3RXRUGI', title: 'Neon Raven 3D Wall Art', price: '$20', img: 'assets/misfits/nm_raven_wall_art.jpg?v=135', href: 'https://nerdymisfits.com/?product=JHQQO3UDMSJMCCJWA3RXRUGI#glitchFeaturedAnchor' },
+            { id: 'RNUAMD7ATKZ36IE3R3RCSTP4', title: 'Kraken Tentacle Dice Tower', price: '$25', img: 'assets/misfits/nm_kraken_dice_tower.jpg?v=135', href: 'https://nerdymisfits.com/?product=RNUAMD7ATKZ36IE3R3RCSTP4#glitchFeaturedAnchor' },
+            { id: '2GG4ENLMPJQYX67MPBJLDBLL', title: 'Reading Hoard Book Counter', price: '$20', img: 'assets/misfits/nm_reading_hoard_counter.jpg?v=135', href: 'https://nerdymisfits.com/?product=2GG4ENLMPJQYX67MPBJLDBLL#glitchFeaturedAnchor' },
+            { id: '3LZBIGJTK36BY4HSSCA7J5MG', title: 'Long Tail Crystal Dragon', price: '$25', img: 'assets/misfits/nm_crystal_dragon.jpg?v=135', href: 'https://nerdymisfits.com/?product=3LZBIGJTK36BY4HSSCA7J5MG#glitchFeaturedAnchor' },
+            { id: '7FC75LRJNDI2GEAW3WKTPOZU', title: 'Fourth Wing Dragon LED Lamp', price: '$20', img: 'assets/misfits/nm_dragon_lamp.jpg?v=135', href: 'https://nerdymisfits.com/?product=7FC75LRJNDI2GEAW3WKTPOZU#glitchFeaturedAnchor' },
+            { id: 'XIQMPCRRK5HMYNJ3DME27Q4L', title: "Raven's Feast Dice Tower", price: '$20', img: 'assets/misfits/nm_raven_dice_tower.jpg?v=135', href: 'https://nerdymisfits.com/?product=XIQMPCRRK5HMYNJ3DME27Q4L#glitchFeaturedAnchor' },
+            { id: 'YU4V57OQDG7ZYF6GVTKBQBRF', title: 'Articulated Skeleton Raptor', price: '$10', img: 'assets/misfits/nm_skeleton_raptor.jpg?v=135', href: 'https://nerdymisfits.com/?product=YU4V57OQDG7ZYF6GVTKBQBRF#glitchFeaturedAnchor' }
+        ];
+        const loopMisfits = misfitsCatalog.concat(misfitsCatalog);
+        misfitsTrack.innerHTML = loopMisfits.map((item) => `
+            <a class="rc-shop-scroll-card rc-misfits-scroll-card" href="${item.href}" target="_blank" rel="noopener" draggable="false">
+                <div class="rc-shop-scroll-img-wrap rc-misfits-scroll-img-wrap">
+                    <img class="rc-shop-scroll-img rc-misfits-scroll-img" src="${item.img}" alt="${item.title}" loading="eager" draggable="false" />
+                </div>
+                <div class="rc-shop-scroll-meta">
+                    <div class="rc-shop-scroll-top-row">
+                        <span class="rc-shop-scroll-tag">NERDYMISFITS.COM ↗</span>
+                        <span class="rc-shop-scroll-price">${item.price}</span>
+                    </div>
+                    <div class="rc-shop-scroll-title">${item.title}</div>
+                </div>
+            </a>
+        `).join('');
+    }
+
     let offsetPx = 0;
     let gamesOffsetPx = 0;
+    let misfitsOffsetPx = 0;
     let lastTime = performance.now();
 
     function tickScroller(now) {
@@ -4644,7 +4680,7 @@ function initHomeShopScroller() {
             track.style.transform = `translate3d(${-offsetPx}px, 0, 0)`;
         }
 
-        // Bottom Row: Arcade games scrolling left-to-right (opposite direction)
+        // Middle Row: Arcade games scrolling left-to-right (opposite direction)
         if (gamesTrack) {
             const gamesHalfWidth = gamesTrack.scrollWidth / 2;
             if (gamesHalfWidth > 0) {
@@ -4653,6 +4689,18 @@ function initHomeShopScroller() {
                     gamesOffsetPx -= gamesHalfWidth;
                 }
                 gamesTrack.style.transform = `translate3d(${-(gamesHalfWidth - gamesOffsetPx)}px, 0, 0)`;
+            }
+        }
+
+        // Bottom Row: NerdyMisfits.com products scrolling right-to-left (opposite of the games)
+        if (misfitsTrack) {
+            const misfitsHalfWidth = misfitsTrack.scrollWidth / 2;
+            if (misfitsHalfWidth > 0) {
+                misfitsOffsetPx += speedPxPerSec * dt;
+                if (misfitsOffsetPx >= misfitsHalfWidth) {
+                    misfitsOffsetPx -= misfitsHalfWidth;
+                }
+                misfitsTrack.style.transform = `translate3d(${-misfitsOffsetPx}px, 0, 0)`;
             }
         }
 
