@@ -333,9 +333,16 @@
         const reqIdx = parseInt(reqIdxRaw, 10);
         if (!isNaN(reqIdx) && reqIdx >= 0) {
           setTimeout(() => {
-            if (typeof window.selectHoodie === 'function') window.selectHoodie(reqIdx);
-            else if (typeof window.selectItem === 'function') window.selectItem(reqIdx);
-            else if (typeof window.selectMat === 'function') window.selectMat(reqIdx);
+            const thumbs = document.querySelectorAll('#thumbStrip .mini-thumb');
+            if (thumbs && thumbs[reqIdx]) {
+              thumbs[reqIdx].click();
+            } else if (typeof window.selectHoodie === 'function') {
+              window.selectHoodie(reqIdx);
+            } else if (typeof window.selectItem === 'function') {
+              window.selectItem(reqIdx);
+            } else if (typeof window.selectMat === 'function') {
+              window.selectMat(reqIdx);
+            }
           }, 40);
         }
       }
@@ -356,6 +363,7 @@
       'RC-104': { model: 'RC-104', title: 'Starry Synthwave Cosmos Dad Cap', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt4.png?v=75' },
       'RC-105': { model: 'RC-105', title: 'Valkyrie Gold & Crimson Samurai Snapback', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt5.png?v=75' },
       'RC-106': { model: 'RC-106', title: '1984 Arcade Champion Corduroy Rope Cap', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt6.png?v=75' },
+      'RC-107': { model: 'RC-107', title: 'White & 24K Gold Crowned Valkyrie Snapback', role: 'Headwear', price: 36, img: 'assets/merch/hat_tier6_valkyrie.png?v=94' },
       'RC-201': { model: 'RC-201', title: 'Classic Sunset Grid XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_1.png?v=3' },
       'RC-202': { model: 'RC-202', title: 'Signature Type XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_2.png?v=3' },
       'RC-203': { model: 'RC-203', title: 'Outrun Wireframe XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_3.png?v=3' },
@@ -374,6 +382,7 @@
       'RC-306': { model: 'RC-306', title: 'Cyber-Dragon Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt6_back.png?v=75' },
       'RC-307': { model: 'RC-307', title: 'Superbike Drift Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt7_back.png?v=75' },
       'RC-308': { model: 'RC-308', title: 'Pinball Wizard Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt9_back.png?v=75' },
+      'RC-309': { model: 'RC-309', title: 'White & 24K Gold Crowned Legend Hoodie', role: 'Outerwear', price: 78, img: 'assets/merch/hoodie_tier6_2f_back.png?v=75' },
       'RC-401': { model: 'RC-401', title: 'Outrun Gullwing Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt1_back.png?v=6' },
       'RC-402': { model: 'RC-402', title: 'Arcade Blueprint Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt2_back.png?v=6' },
       'RC-403': { model: 'RC-403', title: 'Shibuya Shrine Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt3_back.png?v=6' },

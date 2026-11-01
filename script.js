@@ -4526,51 +4526,50 @@ function initHomeShopScroller() {
     if (!track || !viewport) return;
 
     const shopCatalog = [
-        // Interleaved flagship items from all categories first, followed by full catalog
-        { code: 'RC-301', title: 'Classic Sunset Grid Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt1_back.png?v=75', href: 'hoodie_preview.html?idx=0' },
-        { code: 'RC-101', title: 'Classic Sunset Grid Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_front_floating.png?v=94', href: 'hat_preview.html?idx=0' },
+        // Mixed-up order across categories, featuring the White & 24K Gold Hoodie and White & 24K Gold Hat
+        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'HOODIES', price: '$78', img: 'assets/merch/hoodie_tier6_2f_back.png?v=75', href: 'hoodie_preview.html?idx=8' },
         { code: 'RC-401', title: '86 Outrun Turbo Gullwing Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt1_back.png?v=6', href: 'tee_preview.html?idx=0' },
-        { code: 'RC-601', title: 'Golden ROM Cartridge Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt1_back.png?v=6', href: 'longsleeve_preview.html?idx=0' },
-        { code: 'RC-501', title: 'Sunset Grid Tech Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt1.png?v=1', href: 'joggers_preview.html?idx=0' },
-        { code: 'RC-201', title: 'Classic Sunset Grid XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_1.png?v=3', href: 'deskmat_preview.html?idx=0' },
-        { code: 'RC-701', title: 'Retrocanopy 20oz LAN Gear Bag', cat: 'GEAR & MISC', price: '$28', img: 'assets/merch/gearbag_opt1.png?v=5', href: 'gearbag_preview.html?idx=0' },
-
-        { code: 'RC-306', title: 'Cyber-Dragon Shenron Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt6_back.png?v=75', href: 'hoodie_preview.html?idx=5' },
-        { code: 'RC-105', title: 'Valkyrie Gold & Crimson Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt5.png?v=94', href: 'hat_preview.html?idx=4' },
-        { code: 'RC-402', title: '16-Bit Arcade Blueprint Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt2_back.png?v=6', href: 'tee_preview.html?idx=1' },
-        { code: 'RC-602', title: 'Cyber Ronin Samurai Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt2_back.png?v=6', href: 'longsleeve_preview.html?idx=1' },
+        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'HATS', price: '$36', img: 'assets/merch/hat_tier6_valkyrie.png?v=94', href: 'hat_preview.html?idx=6' },
         { code: 'RC-502', title: 'Dual Cyan & Magenta Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt2.png?v=1', href: 'joggers_preview.html?idx=1' },
-        { code: 'RC-202', title: 'Dual Cyan & Magenta XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_2.png?v=3', href: 'deskmat_preview.html?idx=1' },
-        { code: 'RC-702', title: 'Classic Sunset Grid 30oz Tumbler', cat: 'GEAR & MISC', price: '$34', img: 'assets/merch/tumbler_opt1.png?v=2', href: 'gearbag_preview.html?idx=1' },
-
-        { code: 'RC-308', title: 'Pinball Wizard Jackpot Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt9_back.png?v=75', href: 'hoodie_preview.html?idx=7' },
-        { code: 'RC-102', title: 'Dual Cyan & Magenta Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt2.png?v=94', href: 'hat_preview.html?idx=1' },
-        { code: 'RC-403', title: 'Tokyo Shibuya Cyber-Shrine Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt3_back.png?v=6', href: 'tee_preview.html?idx=2' },
-        { code: 'RC-603', title: 'Power-Glove VR 1989 Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt3_back.png?v=6', href: 'longsleeve_preview.html?idx=2' },
-        { code: 'RC-503', title: 'Outrun Wireframe Cargo Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt3.png?v=1', href: 'joggers_preview.html?idx=2' },
-        { code: 'RC-203', title: 'Outrun Wireframe XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_3.png?v=3', href: 'deskmat_preview.html?idx=2' },
-        { code: 'RC-703', title: 'Dual Neon Grid 30oz Tumbler', cat: 'GEAR & MISC', price: '$34', img: 'assets/merch/tumbler_opt2.png?v=2', href: 'gearbag_preview.html?idx=2' },
-
-        { code: 'RC-302', title: 'Dual Cyan & Magenta Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt2_back.png?v=75', href: 'hoodie_preview.html?idx=1' },
-        { code: 'RC-103', title: 'Outrun Wireframe Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt3.png?v=94', href: 'hat_preview.html?idx=2' },
-        { code: 'RC-404', title: 'Analog Cassette Mixtape Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt4_back.png?v=11', href: 'tee_preview.html?idx=3' },
-        { code: 'RC-604', title: 'Orbital Saturn Eclipse Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt4_back.png?v=6', href: 'longsleeve_preview.html?idx=3' },
-        { code: 'RC-504', title: 'Starry Synthwave Cosmos Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt4.png?v=1', href: 'joggers_preview.html?idx=3' },
-        { code: 'RC-204', title: 'Pro-Esports Stealth XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_4.png?v=3', href: 'deskmat_preview.html?idx=3' },
-        { code: 'RC-704', title: 'Valkyrie Samurai 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt3.png?v=2', href: 'gearbag_preview.html?idx=3' },
-
-        { code: 'RC-303', title: 'Midnight Grinder Vault Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt3_back.png?v=75', href: 'hoodie_preview.html?idx=2' },
-        { code: 'RC-104', title: 'Starry Synthwave Cosmos Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt4.png?v=94', href: 'hat_preview.html?idx=3' },
-        { code: 'RC-405', title: 'Boss Level Mecha-Valkyrie Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt5_back.png?v=6', href: 'tee_preview.html?idx=4' },
-        { code: 'RC-605', title: 'Stereo Hi-Fi 60Hz VHS Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt5_back.png?v=6', href: 'longsleeve_preview.html?idx=4' },
-        { code: 'RC-505', title: '1984 Champion Gold Trim Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt5.png?v=1', href: 'joggers_preview.html?idx=4' },
+        { code: 'RC-306', title: 'Cyber-Dragon Shenron Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt6_back.png?v=75', href: 'hoodie_preview.html?idx=5' },
         { code: 'RC-205', title: 'Starry Synthwave Cosmos XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_5.png?v=3', href: 'deskmat_preview.html?idx=4' },
-        { code: 'RC-705', title: '1984 Champion Gold 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt4.png?v=2', href: 'gearbag_preview.html?idx=4' },
-
-        { code: 'RC-304', title: 'Outrun Wireframe Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt4_back.png?v=75', href: 'hoodie_preview.html?idx=3' },
-        { code: 'RC-305', title: 'Starry Synthwave Cosmos Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt5_back.png?v=75', href: 'hoodie_preview.html?idx=4' },
+        { code: 'RC-601', title: 'Golden ROM Cartridge Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt1_back.png?v=6', href: 'longsleeve_preview.html?idx=0' },
+        { code: 'RC-704', title: 'Valkyrie Samurai 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt3.png?v=2', href: 'gearbag_preview.html?idx=3' },
+        { code: 'RC-101', title: 'Classic Sunset Grid Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_front_floating.png?v=94', href: 'hat_preview.html?idx=0' },
+        { code: 'RC-308', title: 'Pinball Wizard Jackpot Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt9_back.png?v=75', href: 'hoodie_preview.html?idx=7' },
+        { code: 'RC-403', title: 'Tokyo Shibuya Cyber-Shrine Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt3_back.png?v=6', href: 'tee_preview.html?idx=2' },
+        { code: 'RC-701', title: 'Retrocanopy 20oz LAN Gear Bag', cat: 'GEAR & MISC', price: '$28', img: 'assets/merch/gearbag_opt1.png?v=5', href: 'gearbag_preview.html?idx=0' },
+        { code: 'RC-602', title: 'Cyber Ronin Samurai Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt2_back.png?v=6', href: 'longsleeve_preview.html?idx=1' },
+        { code: 'RC-105', title: 'Valkyrie Gold & Crimson Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt5.png?v=94', href: 'hat_preview.html?idx=4' },
+        { code: 'RC-301', title: 'Classic Sunset Grid Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt1_back.png?v=75', href: 'hoodie_preview.html?idx=0' },
+        { code: 'RC-505', title: '1984 Champion Gold Trim Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt5.png?v=1', href: 'joggers_preview.html?idx=4' },
+        { code: 'RC-201', title: 'Classic Sunset Grid XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_1.png?v=3', href: 'deskmat_preview.html?idx=0' },
+        { code: 'RC-405', title: 'Boss Level Mecha-Valkyrie Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt5_back.png?v=6', href: 'tee_preview.html?idx=4' },
         { code: 'RC-307', title: '1987 Superbike Cyber Drift Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt7_back.png?v=75', href: 'hoodie_preview.html?idx=6' },
-        { code: 'RC-106', title: '1984 Arcade Champion Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt6.png?v=94', href: 'hat_preview.html?idx=5' }
+        { code: 'RC-702', title: 'Classic Sunset Grid 30oz Tumbler', cat: 'GEAR & MISC', price: '$34', img: 'assets/merch/tumbler_opt1.png?v=2', href: 'gearbag_preview.html?idx=1' },
+        { code: 'RC-604', title: 'Orbital Saturn Eclipse Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt4_back.png?v=6', href: 'longsleeve_preview.html?idx=3' },
+        { code: 'RC-102', title: 'Dual Cyan & Magenta Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt2.png?v=94', href: 'hat_preview.html?idx=1' },
+        { code: 'RC-501', title: 'Sunset Grid Tech Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt1.png?v=1', href: 'joggers_preview.html?idx=0' },
+        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'HOODIES', price: '$78', img: 'assets/merch/hoodie_tier6_2f_back.png?v=75', href: 'hoodie_preview.html?idx=8' },
+        { code: 'RC-402', title: '16-Bit Arcade Blueprint Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt2_back.png?v=6', href: 'tee_preview.html?idx=1' },
+        { code: 'RC-203', title: 'Outrun Wireframe XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_3.png?v=3', href: 'deskmat_preview.html?idx=2' },
+        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'HATS', price: '$36', img: 'assets/merch/hat_tier6_valkyrie.png?v=94', href: 'hat_preview.html?idx=6' },
+        { code: 'RC-303', title: 'Midnight Grinder Vault Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt3_back.png?v=75', href: 'hoodie_preview.html?idx=2' },
+        { code: 'RC-603', title: 'Power-Glove VR 1989 Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt3_back.png?v=6', href: 'longsleeve_preview.html?idx=2' },
+        { code: 'RC-705', title: '1984 Champion Gold 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt4.png?v=2', href: 'gearbag_preview.html?idx=4' },
+        { code: 'RC-404', title: 'Analog Cassette Mixtape Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt4_back.png?v=11', href: 'tee_preview.html?idx=3' },
+        { code: 'RC-503', title: 'Outrun Wireframe Cargo Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt3.png?v=1', href: 'joggers_preview.html?idx=2' },
+        { code: 'RC-104', title: 'Starry Synthwave Cosmos Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt4.png?v=94', href: 'hat_preview.html?idx=3' },
+        { code: 'RC-302', title: 'Dual Cyan & Magenta Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt2_back.png?v=75', href: 'hoodie_preview.html?idx=1' },
+        { code: 'RC-202', title: 'Dual Cyan & Magenta XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_2.png?v=3', href: 'deskmat_preview.html?idx=1' },
+        { code: 'RC-605', title: 'Stereo Hi-Fi 60Hz VHS Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt5_back.png?v=6', href: 'longsleeve_preview.html?idx=4' },
+        { code: 'RC-106', title: '1984 Arcade Champion Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt6.png?v=94', href: 'hat_preview.html?idx=5' },
+        { code: 'RC-305', title: 'Starry Synthwave Cosmos Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt5_back.png?v=75', href: 'hoodie_preview.html?idx=4' },
+        { code: 'RC-703', title: 'Dual Neon Grid 30oz Tumbler', cat: 'GEAR & MISC', price: '$34', img: 'assets/merch/tumbler_opt2.png?v=2', href: 'gearbag_preview.html?idx=2' },
+        { code: 'RC-504', title: 'Starry Synthwave Cosmos Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt4.png?v=1', href: 'joggers_preview.html?idx=3' },
+        { code: 'RC-103', title: 'Outrun Wireframe Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt3.png?v=94', href: 'hat_preview.html?idx=2' },
+        { code: 'RC-304', title: 'Outrun Wireframe Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt4_back.png?v=75', href: 'hoodie_preview.html?idx=3' },
+        { code: 'RC-204', title: 'Pro-Esports Stealth XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_4.png?v=3', href: 'deskmat_preview.html?idx=3' }
     ];
 
     // Duplicate items 2x for a seamless infinite scrolling marquee loop
@@ -4599,7 +4598,7 @@ function initHomeShopScroller() {
 
         const halfWidth = track.scrollWidth / 2;
         if (halfWidth > 0) {
-            const speedPxPerSec = window.innerWidth <= 920 ? 92 : 115;
+            const speedPxPerSec = window.innerWidth <= 920 ? 42 : 52;
             offsetPx += speedPxPerSec * dt;
             if (offsetPx >= halfWidth) {
                 offsetPx -= halfWidth;
