@@ -255,6 +255,7 @@
         margin-bottom: 10px !important;
       }
       /* 100% EDGE-TO-EDGE MOBILE FULLSCREEN SNAP WHEN PINBALL GAME IS ACTIVE */
+      body.mobile-slugger-fullscreen #opt5SanctuaryStage,
       body.mobile-slugger-fullscreen .mobile-arcade-top-bar,
       body.mobile-slugger-fullscreen .mobile-arcade-bottom-dock,
       body.mobile-slugger-fullscreen #lofi-music-btn,
@@ -271,6 +272,8 @@
         margin: 0 !important;
         z-index: 9999 !important;
         background: #04060e !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
         overflow: hidden !important;
         align-items: stretch !important;
         justify-content: stretch !important;
@@ -323,8 +326,9 @@
         border-radius: 0 !important;
         border: none !important;
         border-bottom: 2px solid #00f0ff !important;
-        box-shadow: 0 4px 18px rgba(0, 240, 255, 0.35) !important;
+        box-shadow: none !important;
         margin: 0 !important;
+        contain: layout paint !important;
       }
       body #gamesSelectionBackdrop.playing-active #shinjukuSluggerCanvas {
         width: 184% !important;
@@ -335,6 +339,7 @@
         user-select: none !important;
         -webkit-user-select: none !important;
         -webkit-touch-callout: none !important;
+        transform: translateZ(0) !important;
       }
       #sluggerControlsHint,
       .slugger-kb-tag,
@@ -4398,17 +4403,20 @@
         return audioCtx;
       }
 
-      // Helper: Short filtered noise burst for authentic mechanical solenoid clicks, wooden bat cracks & score-reel ratchets
+      // Helper: Pre-cached noise buffer for zero-latency mechanical solenoid clicks & bat cracks on mobile
+      let cachedPinballNoiseBuf = null;
       function playPinballNoiseBurst(ctx, startTime, duration, filterType, freq, q, peakGain) {
-        const sampleCount = Math.max(64, Math.floor(ctx.sampleRate * duration));
-        const buf = ctx.createBuffer(1, sampleCount, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < sampleCount; i++) {
-          const env = Math.pow(1 - i / sampleCount, 1.8);
-          data[i] = (Math.random() * 2 - 1) * env;
+        if (!cachedPinballNoiseBuf || cachedPinballNoiseBuf.sampleRate !== ctx.sampleRate) {
+          const maxSamples = Math.max(256, Math.floor(ctx.sampleRate * 0.08));
+          cachedPinballNoiseBuf = ctx.createBuffer(1, maxSamples, ctx.sampleRate);
+          const data = cachedPinballNoiseBuf.getChannelData(0);
+          for (let i = 0; i < maxSamples; i++) {
+            const env = Math.pow(1 - i / maxSamples, 1.6);
+            data[i] = (Math.random() * 2 - 1) * env;
+          }
         }
         const src = ctx.createBufferSource();
-        src.buffer = buf;
+        src.buffer = cachedPinballNoiseBuf;
         const flt = ctx.createBiquadFilter();
         flt.type = filterType || 'bandpass';
         flt.frequency.setValueAtTime(freq || 1200, startTime);
@@ -4636,14 +4644,42 @@
       const gamesActivePlayView = document.getElementById('gamesActivePlayView');
       const gamesModalWalletCount = document.getElementById('gamesModalWalletCount');
       const sluggerCanvas = document.getElementById('shinjukuSluggerCanvas');
-      const sCtx = sluggerCanvas ? sluggerCanvas.getContext('2d') : null;
+      const IS_MOBILE_PERF = Boolean(window.innerWidth <= 900 || ('ontouchstart' in window) || navigator.maxTouchPoints > 0);
+      const sCtx = sluggerCanvas
+        ? (sluggerCanvas.getContext('2d', { alpha: false, desynchronized: true }) || sluggerCanvas.getContext('2d'))
+        : null;
+      // On mobile GPUs, bypass expensive per-draw-call Gaussian shadowBlur passes so the game runs at a locked 60/120 FPS!
+      if (sCtx && IS_MOBILE_PERF) {
+        try {
+          sCtx.shadowBlur = 0;
+          Object.defineProperty(sCtx, 'shadowBlur', {
+            get: function () { return 0; },
+            set: function () {},
+            configurable: true
+          });
+        } catch (_) {}
+      }
 
       // Preload the clean 1920x1080 Elongated Deep-Runway Pinball-Baseball Playfield Plate (Concept Art 1: 1984 Shinjuku Neon Skyline)
       const sluggerCleanBoard = new Image();
+      let sluggerBoardCache = null;
+      sluggerCleanBoard.onload = function () {
+        try {
+          const off = document.createElement('canvas');
+          off.width = 1920;
+          off.height = 1080;
+          const oCtx = off.getContext('2d', { alpha: false }) || off.getContext('2d');
+          if (oCtx) {
+            oCtx.drawImage(sluggerCleanBoard, 0, 0, 1920, 1080);
+            sluggerBoardCache = off;
+          }
+        } catch (_) {}
+      };
       sluggerCleanBoard.src = 'assets/concept_gallery/shinjuku_slugger_84_board_clean.jpg?v=195';
 
       let sluggerAnimId = null;
       let sluggerActive = false;
+      let sluggerLastLoopTime = 0;
 
       // 3 Far-Back Pitch Eject Holes at the Very Top of the Elongated Pinball Board (y = 158..160)
       const PITCH_HOLES_1080 = [
@@ -5130,21 +5166,26 @@
         playArcadeSfx('unlock');
         window.__resetShinjukuSlugger();
         sluggerActive = true;
+        sluggerLastLoopTime = performance.now();
         if (sluggerAnimId) cancelAnimationFrame(sluggerAnimId);
         sluggerAnimId = requestAnimationFrame(sluggerLoop);
       };
 
       function spawnBurstParticles(x, y, color, count) {
-        for (let i = 0; i < count; i++) {
-          const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
+        const capCount = IS_MOBILE_PERF ? Math.min(count, 7) : count;
+        if (IS_MOBILE_PERF && slugger.particles.length > 28) {
+          slugger.particles.splice(0, slugger.particles.length - 28);
+        }
+        for (let i = 0; i < capCount; i++) {
+          const ang = (Math.PI * 2 * i) / capCount + (Math.random() - 0.5) * 0.3;
           const spd = 4 + Math.random() * 11;
           slugger.particles.push({
             x,
             y,
             vx: Math.cos(ang) * spd,
             vy: Math.sin(ang) * spd,
-            life: 26 + Math.floor(Math.random() * 18),
-            maxLife: 44,
+            life: IS_MOBILE_PERF ? (16 + Math.floor(Math.random() * 10)) : (26 + Math.floor(Math.random() * 18)),
+            maxLife: IS_MOBILE_PERF ? 26 : 44,
             color,
             size: 3 + Math.random() * 4
           });
@@ -5197,23 +5238,61 @@
 
       if (sluggerCanvas) {
         const activeCanvasPointers = new Map();
-        sluggerCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
-        sluggerCanvas.addEventListener('pointerdown', (e) => {
-          e.preventDefault();
+        const getSideFromClientX = (clientX) => {
+          if (window.innerWidth <= 768) {
+            const relX = clientX / Math.max(1, window.innerWidth);
+            return relX < 0.38 ? 'LEFT' : (relX > 0.62 ? 'RIGHT' : 'BOTH');
+          }
           const wrapEl = sluggerCanvas.parentElement || sluggerCanvas;
           const rect = wrapEl.getBoundingClientRect();
-          const relX = (e.clientX - rect.left) / Math.max(1, rect.width);
-          let side = 'BOTH';
-          if (relX < 0.38) {
-            side = 'LEFT';
-          } else if (relX > 0.62) {
-            side = 'RIGHT';
+          const relX = (clientX - rect.left) / Math.max(1, rect.width);
+          return relX < 0.38 ? 'LEFT' : (relX > 0.62 ? 'RIGHT' : 'BOTH');
+        };
+
+        sluggerCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Zero-latency direct hardware touch handlers for mobile flappers
+        sluggerCanvas.addEventListener('touchstart', (e) => {
+          if (!sluggerActive) return;
+          e.preventDefault();
+          for (let i = 0; i < e.changedTouches.length; i++) {
+            const t = e.changedTouches[i];
+            const side = getSideFromClientX(t.clientX);
+            activeCanvasPointers.set('t_' + t.identifier, side);
+            window.__setFlipperHold(side, true);
           }
+        }, { passive: false });
+
+        const releaseTouchPointers = (e) => {
+          if (!sluggerActive) return;
+          if (e && e.changedTouches) {
+            for (let i = 0; i < e.changedTouches.length; i++) {
+              activeCanvasPointers.delete('t_' + e.changedTouches[i].identifier);
+            }
+          } else {
+            activeCanvasPointers.clear();
+          }
+          let stillLeft = false;
+          let stillRight = false;
+          activeCanvasPointers.forEach((s) => {
+            if (s === 'LEFT' || s === 'BOTH') stillLeft = true;
+            if (s === 'RIGHT' || s === 'BOTH') stillRight = true;
+          });
+          if (!stillLeft) leftFlipper.held = false;
+          if (!stillRight) rightFlipper.held = false;
+        };
+        sluggerCanvas.addEventListener('touchend', releaseTouchPointers, { passive: true });
+        sluggerCanvas.addEventListener('touchcancel', releaseTouchPointers, { passive: true });
+
+        sluggerCanvas.addEventListener('pointerdown', (e) => {
+          if (e.pointerType === 'touch') return; // Handled with zero latency by touchstart above
+          e.preventDefault();
+          const side = getSideFromClientX(e.clientX);
           activeCanvasPointers.set(e.pointerId, side);
           window.__setFlipperHold(side, true);
         });
         const releaseCanvasPointer = (e) => {
-          if (!sluggerActive) return;
+          if (!sluggerActive || (e && e.pointerType === 'touch')) return;
           if (e && activeCanvasPointers.has(e.pointerId)) {
             const side = activeCanvasPointers.get(e.pointerId);
             activeCanvasPointers.delete(e.pointerId);
@@ -5271,14 +5350,14 @@
         const active = flp.held || flp.tapTimer > 0;
         const target = active ? flp.upAngle : flp.restAngle;
         const prevAngle = flp.angle;
-        const maxRate = active ? 0.25 * dt : 0.14 * dt;
+        const maxRate = active ? 0.36 * dt : 0.22 * dt;
         const diff = target - flp.angle;
         if (Math.abs(diff) <= maxRate) {
           flp.angle = target;
         } else {
           flp.angle += Math.sign(diff) * maxRate;
         }
-        flp.omega = (flp.angle - prevAngle) / dt;
+        flp.omega = (flp.angle - prevAngle) / Math.max(0.01, dt);
       }
 
       function collideBallWithFlipper(flp) {
@@ -5869,9 +5948,9 @@
         }
       }
 
-      function stepPinballPhysicsFrame() {
-        const SUBSTEPS = 8;
-        const dt = 1 / SUBSTEPS;
+      function stepPinballPhysicsFrame(frameScale) {
+        const SUBSTEPS = IS_MOBILE_PERF ? 6 : 8;
+        const dt = (frameScale || 1) / SUBSTEPS;
         const perspFactor = 0.85 + 0.35 * Math.max(0, Math.min(1, (slugger.ballY - 160) / 760));
         const gravityPerStep = 0.33 * perspFactor * dt;
 
@@ -6065,7 +6144,13 @@
         sCtx.restore();
 
         // 2. 3D Extruded Brushed 24K Gold Vertical Side Wall (20px tall in screen Y)
-        for (let dy = 20; dy >= 2; dy -= 2) {
+        const dyStep = IS_MOBILE_PERF ? 6 : 2;
+        const wallGrad = sCtx.createLinearGradient(0, -flp.rBase, flp.length, flp.rBase);
+        wallGrad.addColorStop(0, '#c48f18');
+        wallGrad.addColorStop(0.35, '#ffdf78');
+        wallGrad.addColorStop(0.68, '#96680a');
+        wallGrad.addColorStop(1, '#4d3203');
+        for (let dy = 20; dy >= 2; dy -= dyStep) {
           sCtx.save();
           applyFlipperTransform(sCtx, dy);
           traceTaperedCapsulePath(sCtx, flp.length, flp.rBase, flp.rTip);
@@ -6076,11 +6161,6 @@
             sCtx.strokeStyle = '#9e7012';
             sCtx.stroke();
           } else {
-            const wallGrad = sCtx.createLinearGradient(0, -flp.rBase, flp.length, flp.rBase);
-            wallGrad.addColorStop(0, '#c48f18');
-            wallGrad.addColorStop(0.35, '#ffdf78');
-            wallGrad.addColorStop(0.68, '#96680a');
-            wallGrad.addColorStop(1, '#4d3203');
             sCtx.fillStyle = wallGrad;
             sCtx.fill();
           }
@@ -6125,7 +6205,8 @@
         sCtx.restore();
 
         // 5. 3D Raised Cylindrical 24K Gold Pivot Turret Cap at (pivotX, pivotY)
-        for (let pyOff = 4; pyOff >= -6; pyOff -= 2) {
+        const pyStep = IS_MOBILE_PERF ? 5 : 2;
+        for (let pyOff = 4; pyOff >= -6; pyOff -= pyStep) {
           sCtx.save();
           sCtx.translate(flp.pivotX, flp.pivotY + pyOff);
           sCtx.scale(1, py);
@@ -6263,18 +6344,19 @@
 
           // 1. 3D Cylindrical Metallic Skirt Stack (concentric elliptical slices—no flat rectangle!)
           if (liftY > 1) {
-            for (let sy = 0; sy < liftY; sy += 2) {
+            const syStep = IS_MOBILE_PERF ? 5 : 2;
+            const cylGrad = sCtx.createLinearGradient(-r, 0, r, 0);
+            cylGrad.addColorStop(0, '#2e1d02');
+            cylGrad.addColorStop(0.22, '#b88214');
+            cylGrad.addColorStop(0.48, b.hitTimer > 0 ? '#ffffff' : '#fff4b8');
+            cylGrad.addColorStop(0.76, '#9c6b0c');
+            cylGrad.addColorStop(1, '#241602');
+            for (let sy = 0; sy < liftY; sy += syStep) {
               const frac = sy / Math.max(1, liftY);
               const sliceR = r * (0.86 + 0.14 * frac);
               sCtx.save();
               sCtx.translate(b.x, b.y + 4 - sy);
               sCtx.scale(1, py);
-              const cylGrad = sCtx.createLinearGradient(-sliceR, 0, sliceR, 0);
-              cylGrad.addColorStop(0, '#2e1d02');
-              cylGrad.addColorStop(0.22, '#b88214');
-              cylGrad.addColorStop(0.48, b.hitTimer > 0 ? '#ffffff' : '#fff4b8');
-              cylGrad.addColorStop(0.76, '#9c6b0c');
-              cylGrad.addColorStop(1, '#241602');
               sCtx.fillStyle = cylGrad;
               sCtx.beginPath();
               sCtx.arc(0, 0, sliceR, 0, Math.PI * 2);
@@ -6423,17 +6505,18 @@
         sCtx.restore();
 
         // C. 3D Extruded 24K Gold & Neon Pink/Cyan Capsule Blocker Sled (12px 3D vertical extrusion)
-        for (let dy = 12; dy >= 0; dy -= 3) {
+        const blkStep = IS_MOBILE_PERF ? 6 : 3;
+        const blkWallGrad = sCtx.createLinearGradient(blk.x - blkW / 2, blk.y, blk.x + blkW / 2, blk.y);
+        blkWallGrad.addColorStop(0, '#3d2604');
+        blkWallGrad.addColorStop(0.28, '#d49b1a');
+        blkWallGrad.addColorStop(0.5, '#ffe88a');
+        blkWallGrad.addColorStop(0.72, '#b07b0e');
+        blkWallGrad.addColorStop(1, '#331f02');
+        for (let dy = 12; dy >= 0; dy -= blkStep) {
           sCtx.save();
           const topY = blk.y - blk.r + dy - 4;
           if (dy > 0) {
-            const wallGrad = sCtx.createLinearGradient(blk.x - blkW / 2, topY, blk.x + blkW / 2, topY);
-            wallGrad.addColorStop(0, '#3d2604');
-            wallGrad.addColorStop(0.28, '#d49b1a');
-            wallGrad.addColorStop(0.5, '#ffe88a');
-            wallGrad.addColorStop(0.72, '#b07b0e');
-            wallGrad.addColorStop(1, '#331f02');
-            sCtx.fillStyle = wallGrad;
+            sCtx.fillStyle = blkWallGrad;
             sCtx.strokeStyle = dy === 12 ? '#ff2d95' : '#855806';
             sCtx.lineWidth = dy === 12 ? 2.4 : 1.2;
             if (dy === 12) {
@@ -7152,27 +7235,35 @@
         sCtx.restore();
       }
 
-      function sluggerLoop() {
+      function sluggerLoop(nowTs) {
         if (!sluggerActive || !sCtx) return;
 
-        if (leftFlipper.tapTimer > 0) leftFlipper.tapTimer--;
-        if (rightFlipper.tapTimer > 0) rightFlipper.tapTimer--;
-        if (slugger.boardShiftFlash > 0) slugger.boardShiftFlash--;
-        if (slugger.shuffleCooldown > 0) slugger.shuffleCooldown--;
-        if (slugger.gateFlash && slugger.gateFlash.timer > 0) slugger.gateFlash.timer--;
-        if (slugger.gameOverCooldown > 0) slugger.gameOverCooldown--;
-        if (slugger.neonSurge > 0) slugger.neonSurge--;
+        const now = typeof nowTs === 'number' ? nowTs : performance.now();
+        const rawDtMs = sluggerLastLoopTime > 0 ? (now - sluggerLastLoopTime) : 16.667;
+        sluggerLastLoopTime = now;
+        // Frame-rate independent delta-time multiplier (keeps full arcade speed even if mobile screen runs at 30/60/120Hz)
+        const frameScale = Math.min(2.2, Math.max(0.65, rawDtMs / 16.667));
+
+        if (leftFlipper.tapTimer > 0) leftFlipper.tapTimer = Math.max(0, leftFlipper.tapTimer - frameScale);
+        if (rightFlipper.tapTimer > 0) rightFlipper.tapTimer = Math.max(0, rightFlipper.tapTimer - frameScale);
+        if (slugger.boardShiftFlash > 0) slugger.boardShiftFlash = Math.max(0, slugger.boardShiftFlash - frameScale);
+        if (slugger.shuffleCooldown > 0) slugger.shuffleCooldown = Math.max(0, slugger.shuffleCooldown - frameScale);
+        if (slugger.gateFlash && slugger.gateFlash.timer > 0) slugger.gateFlash.timer = Math.max(0, slugger.gateFlash.timer - frameScale);
+        if (slugger.gameOverCooldown > 0) slugger.gameOverCooldown = Math.max(0, slugger.gameOverCooldown - frameScale);
+        if (slugger.neonSurge > 0) slugger.neonSurge = Math.max(0, slugger.neonSurge - frameScale);
 
         sCtx.save();
         if (slugger.screenShake > 0) {
           const sx = (Math.random() - 0.5) * slugger.screenShake * 1.6;
           const sy = (Math.random() - 0.5) * slugger.screenShake * 1.6;
           sCtx.translate(sx, sy);
-          slugger.screenShake = Math.max(0, slugger.screenShake - 0.8);
+          slugger.screenShake = Math.max(0, slugger.screenShake - 0.8 * frameScale);
         }
 
-        // 1. Draw the clean 1920x1080 Elongated Deep-Runway Pinball-Baseball Playfield Plate
-        if (sluggerCleanBoard.complete && sluggerCleanBoard.naturalWidth > 0) {
+        // 1. Draw the clean 1920x1080 Elongated Deep-Runway Pinball-Baseball Playfield Plate (1:1 pre-scaled GPU texture copy)
+        if (sluggerBoardCache) {
+          sCtx.drawImage(sluggerBoardCache, 0, 0);
+        } else if (sluggerCleanBoard.complete && sluggerCleanBoard.naturalWidth > 0) {
           sCtx.drawImage(sluggerCleanBoard, 0, 0, 1920, 1080);
         } else {
           sCtx.fillStyle = '#060a12';
@@ -7197,7 +7288,7 @@
             const tb = slugger.tunnelBalls[tbIdx];
             const prog = Math.min(1, 1 - tb.timer / tb.maxTimer);
             drawPinballEnteringTunnel(tb.startX, tb.startY, tb.targetX, tb.targetY, prog, tb.color);
-            tb.timer--;
+            tb.timer -= frameScale;
             if (tb.timer <= 0) {
               slugger.tunnelBalls.splice(tbIdx, 1);
             }
@@ -7208,11 +7299,11 @@
         const hole = PITCH_HOLES_1080[slugger.activeHoleIdx] || PITCH_HOLES_1080[0];
 
         if (slugger.phase === 'WINDUP') {
-          stepFlipperAngle(leftFlipper, 1);
-          stepFlipperAngle(rightFlipper, 1);
-          stepMidfieldBlocker(1);
-          slugger.phaseTimer--;
-          const emerge = 1 - slugger.phaseTimer / 18;
+          stepFlipperAngle(leftFlipper, frameScale);
+          stepFlipperAngle(rightFlipper, frameScale);
+          stepMidfieldBlocker(frameScale);
+          slugger.phaseTimer -= frameScale;
+          const emerge = 1 - Math.max(0, slugger.phaseTimer) / 18;
           slugger.ballX = hole.x;
           slugger.ballY = hole.y - 2 * emerge;
           slugger.ballR = 13 + 6 * emerge;
@@ -7226,15 +7317,15 @@
             playArcadeSfx('pitch_eject');
           }
         } else if (slugger.phase === 'LIVE_PLAY') {
-          stepPinballPhysicsFrame();
+          stepPinballPhysicsFrame(frameScale);
           draw3DPinballFlipper(leftFlipper);
           draw3DPinballFlipper(rightFlipper);
           drawExtraPinballsAndPowerUps();
           draw24KGoldPinball(slugger.ballX, slugger.ballY, slugger.ballR);
         } else if (slugger.phase === 'POCKET_HOLD') {
-          stepFlipperAngle(leftFlipper, 1);
-          stepFlipperAngle(rightFlipper, 1);
-          stepMidfieldBlocker(1);
+          stepFlipperAngle(leftFlipper, frameScale);
+          stepFlipperAngle(rightFlipper, frameScale);
+          stepMidfieldBlocker(frameScale);
           draw3DPinballFlipper(leftFlipper);
           draw3DPinballFlipper(rightFlipper);
           drawExtraPinballsAndPowerUps();
@@ -7249,24 +7340,24 @@
             tunnelProgress,
             doorCol
           );
-          slugger.phaseTimer--;
+          slugger.phaseTimer -= frameScale;
           if (slugger.phaseTimer <= 0) {
             startNextPitch(true);
           }
         } else if (slugger.phase === 'RESULT_HOLD') {
-          stepFlipperAngle(leftFlipper, 1);
-          stepFlipperAngle(rightFlipper, 1);
-          stepMidfieldBlocker(1);
+          stepFlipperAngle(leftFlipper, frameScale);
+          stepFlipperAngle(rightFlipper, frameScale);
+          stepMidfieldBlocker(frameScale);
           draw3DPinballFlipper(leftFlipper);
           draw3DPinballFlipper(rightFlipper);
           drawExtraPinballsAndPowerUps();
-          slugger.phaseTimer--;
+          slugger.phaseTimer -= frameScale;
           if (slugger.phaseTimer <= 0) {
             startNextPitch(true);
           }
         } else if (slugger.phase === 'GAME_OVER') {
-          stepFlipperAngle(leftFlipper, 1);
-          stepFlipperAngle(rightFlipper, 1);
+          stepFlipperAngle(leftFlipper, frameScale);
+          stepFlipperAngle(rightFlipper, frameScale);
           draw3DPinballFlipper(leftFlipper);
           draw3DPinballFlipper(rightFlipper);
         }
