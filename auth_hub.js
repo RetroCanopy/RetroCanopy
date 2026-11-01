@@ -747,7 +747,7 @@
       try {
         sessionStorage.setItem('rc_from_internal', '1');
       } catch (_) {}
-      if (!path.includes('admin') && !isAdminLoggedIn()) {
+      if (!path.includes('admin') && !isAdminLoggedIn() && !getCurrentUser()) {
         window.location.replace('index.html');
       }
       return;

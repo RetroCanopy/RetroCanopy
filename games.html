@@ -108,7 +108,8 @@
     /* Mobile-Only Top & Bottom Quick-Action Bars (Hidden on Desktop PC > 768px) */
     .mobile-arcade-top-bar,
     .mobile-arcade-bottom-dock,
-    .slugger-mobile-touch-hint {
+    .slugger-mobile-touch-hint,
+    .slugger-mobile-only-nav {
       display: none;
     }
 
@@ -254,6 +255,12 @@
         margin-bottom: 10px !important;
       }
       /* 100% EDGE-TO-EDGE MOBILE FULLSCREEN SNAP WHEN PINBALL GAME IS ACTIVE */
+      body.mobile-slugger-fullscreen .mobile-arcade-top-bar,
+      body.mobile-slugger-fullscreen .mobile-arcade-bottom-dock,
+      body.mobile-slugger-fullscreen #lofi-music-btn,
+      body.mobile-slugger-fullscreen .opt5-top-left-bar {
+        display: none !important;
+      }
       body #gamesSelectionBackdrop.playing-active {
         position: fixed !important;
         inset: 0 !important;
@@ -305,7 +312,7 @@
         justify-content: space-between !important;
         overflow: hidden !important;
       }
-      /* Full-Screen Portrait Mobile Pinball Stage: Fills upper ~80% of phone screen edge-to-edge! */
+      /* Full-Screen Portrait Mobile Pinball Stage: Snaps edge-to-edge across the phone screen! */
       body #gamesSelectionBackdrop.playing-active .slugger-play-stage-wrap {
         flex: 1 1 auto !important;
         width: 100vw !important;
@@ -329,20 +336,12 @@
         -webkit-user-select: none !important;
         -webkit-touch-callout: none !important;
       }
-      #sluggerControlsHint {
+      #sluggerControlsHint,
+      .slugger-kb-tag,
+      #gamesActivePlayView .slugger-controls-grid {
         display: none !important;
       }
       .slugger-mobile-touch-hint {
-        display: block !important;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 0.52rem;
-        font-weight: 800;
-        letter-spacing: 0.06em;
-        color: #7df9ff;
-        text-align: center;
-        padding: 1px 4px 3px;
-      }
-      .slugger-kb-tag {
         display: none !important;
       }
       #gamesActivePlayView .tier6-vault-footer-bar {
@@ -351,50 +350,42 @@
         border-radius: 0 !important;
         border: none !important;
         background: linear-gradient(180deg, #0b1122 0%, #050811 100%) !important;
-        padding: 6px 10px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
-        gap: 5px !important;
+        padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+        gap: 4px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
       }
-      #gamesActivePlayView .slugger-controls-grid {
-        width: 100% !important;
-        display: grid !important;
-        grid-template-columns: 1fr 1.18fr 1fr !important;
-        gap: 7px !important;
-      }
-      #gamesActivePlayView .slugger-flap-btn {
-        width: 100% !important;
-        min-height: 62px !important;
-        padding: 10px 6px !important;
-        font-size: 0.68rem !important;
-        font-weight: 900 !important;
-        letter-spacing: 0.06em !important;
-        border-radius: 12px !important;
-        justify-content: center !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        touch-action: none !important;
-        user-select: none !important;
-        -webkit-user-select: none !important;
-        -webkit-touch-callout: none !important;
-      }
-      #gamesActivePlayView .slugger-flap-btn:active {
-        transform: scale(0.96) !important;
-        filter: brightness(1.28) !important;
-      }
-      #gamesActivePlayView .slugger-util-row {
-        grid-column: 1 / -1 !important;
+      .slugger-mobile-only-nav {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
-        gap: 7px !important;
+        gap: 8px !important;
         width: 100% !important;
       }
-      #gamesActivePlayView .slugger-util-btn {
+      .slugger-mobile-nav-btn {
         width: 100% !important;
-        min-height: 36px !important;
-        padding: 6px 8px !important;
-        font-size: 0.58rem !important;
-        justify-content: center !important;
+        min-height: 40px !important;
+        padding: 8px 10px !important;
+        border-radius: 10px !important;
+        border: 1.5px solid #00f0ff !important;
+        background: rgba(10, 16, 32, 0.94) !important;
+        box-shadow: 0 0 12px rgba(0, 240, 255, 0.35), inset 0 0 8px rgba(0, 240, 255, 0.2) !important;
+        color: #ffffff !important;
+        font-family: 'Orbitron', sans-serif !important;
+        font-size: 0.64rem !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.08em !important;
+        text-decoration: none !important;
         display: inline-flex !important;
         align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        cursor: pointer !important;
+      }
+      .slugger-mobile-nav-btn.ticket-btn {
+        border-color: #ffd700 !important;
+        color: #ffe885 !important;
+        box-shadow: 0 0 14px rgba(255, 215, 0, 0.4), inset 0 0 8px rgba(255, 215, 0, 0.22) !important;
       }
     }
 
@@ -2814,7 +2805,11 @@
             <strong>REAL PINBALL PHYSICS:</strong> Ball launches from <strong style="color:#00f0ff;">1 of 3 Pitch Holes</strong>! Use <kbd style="background:rgba(0,240,255,0.16);border:1px solid #00f0ff;padding:1px 6px;border-radius:4px;color:#00f0ff;font-family:'Orbitron',sans-serif;font-size:0.62rem;">&larr; / A</kbd> &amp; <kbd style="background:rgba(0,240,255,0.16);border:1px solid #00f0ff;padding:1px 6px;border-radius:4px;color:#00f0ff;font-family:'Orbitron',sans-serif;font-size:0.62rem;">&rarr; / D</kbd> (or <kbd style="background:rgba(0,240,255,0.16);border:1px solid #00f0ff;padding:1px 6px;border-radius:4px;color:#00f0ff;font-family:'Orbitron',sans-serif;font-size:0.62rem;">SPACE</kbd> / <strong>Click</strong>) to flip or hold the <strong>Pinball Flappers</strong> &mdash; board spaces shift every swing!
           </div>
           <div class="slugger-mobile-touch-hint">
-            &#128241; TAP OR HOLD PADDLES (OR TAP BOARD) TO FLIP &bull; 10 PTS = 1 &#127915;
+            &#128070; TAP SCREEN FOR FLAPPERS &bull; LEFT / RIGHT / BOTH
+          </div>
+          <div class="slugger-mobile-only-nav">
+            <a href="index.html" class="slugger-mobile-nav-btn">&#127968; HOME</a>
+            <button type="button" class="slugger-mobile-nav-btn ticket-btn" onclick="window.__closeGamesSelectionModal(); window.__openTicketCounterModal();">&#127915; TICKET COUNTER</button>
           </div>
           <div class="slugger-controls-grid" style="display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;">
             <button type="button" class="vitrine-side-toggle-pill slugger-flap-btn" oncontextmenu="return false;" onpointerdown="event.preventDefault(); window.__setFlipperHold('LEFT', true)" onpointerup="window.__setFlipperHold('LEFT', false)" onpointercancel="window.__setFlipperHold('LEFT', false)" onpointerleave="window.__setFlipperHold('LEFT', false)" style="position:static;padding:8px 12px;font-size:0.6rem;">
@@ -5074,6 +5069,9 @@
         window.__returnToGamesSelectGrid();
         if (gamesSelectionBackdrop) gamesSelectionBackdrop.classList.add('open');
         if (btnOpenGamesModal) btnOpenGamesModal.classList.add('active-modal-pill');
+        if (window.innerWidth <= 768) {
+          window.__launchShinjukuSlugger();
+        }
       };
 
       window.__closeGamesSelectionModal = function () {
@@ -5082,6 +5080,7 @@
           cancelAnimationFrame(sluggerAnimId);
           sluggerAnimId = null;
         }
+        if (document.body) document.body.classList.remove('mobile-slugger-fullscreen');
         if (document.fullscreenElement && document.exitFullscreen) {
           try { document.exitFullscreen().catch(() => {}); } catch (_) {}
         }
@@ -5098,6 +5097,7 @@
           cancelAnimationFrame(sluggerAnimId);
           sluggerAnimId = null;
         }
+        if (document.body) document.body.classList.remove('mobile-slugger-fullscreen');
         if (document.fullscreenElement && document.exitFullscreen) {
           try { document.exitFullscreen().catch(() => {}); } catch (_) {}
         }
@@ -5108,11 +5108,15 @@
       };
 
       window.__launchShinjukuSlugger = function () {
-        if (gamesSelectionBackdrop) gamesSelectionBackdrop.classList.add('playing-active');
+        if (gamesSelectionBackdrop) {
+          gamesSelectionBackdrop.classList.add('open');
+          gamesSelectionBackdrop.classList.add('playing-active');
+        }
         if (gamesSelectGridView) gamesSelectGridView.style.display = 'none';
         if (gamesActivePlayView) gamesActivePlayView.style.display = 'flex';
         // On Mobile, snap to 100% Full-Screen View of the phone!
         if (window.innerWidth <= 768) {
+          if (document.body) document.body.classList.add('mobile-slugger-fullscreen');
           try { window.scrollTo(0, 0); } catch (_) {}
           const fsTarget = document.documentElement;
           if (fsTarget && !document.fullscreenElement) {
@@ -7072,6 +7076,31 @@
           sCtx.restore();
         }
 
+        // 4. Mobile On-Screen Instruction Pill Across the Bottom Apron ("TAP SCREEN FOR FLAPPERS")
+        if (isMobileHud && slugger.bannerTimer <= 0) {
+          const hintW = 640;
+          const hintH = 38;
+          const hintX = 960 - hintW / 2;
+          const hintY = 1028;
+          sCtx.fillStyle = 'rgba(6, 10, 22, 0.92)';
+          sCtx.strokeStyle = '#00f0ff';
+          sCtx.lineWidth = 2.2;
+          sCtx.shadowColor = 'rgba(0, 240, 255, 0.85)';
+          sCtx.shadowBlur = 14;
+          sCtx.beginPath();
+          sCtx.roundRect(hintX, hintY, hintW, hintH, 19);
+          sCtx.fill();
+          sCtx.stroke();
+
+          sCtx.font = '900 16px Orbitron, sans-serif';
+          sCtx.textAlign = 'center';
+          sCtx.textBaseline = 'middle';
+          sCtx.fillStyle = '#ffffff';
+          sCtx.shadowColor = '#00f0ff';
+          sCtx.shadowBlur = 10;
+          sCtx.fillText('TAP SCREEN FOR FLAPPERS  •  LEFT / RIGHT / BOTH', 960, hintY + hintH / 2 + 1);
+        }
+
         sCtx.restore();
       }
 
@@ -7353,7 +7382,7 @@
             window.__openTier6VaultLightbox('both');
           }
         }, 80);
-      } else if (qsParams.get('autoPlaySlugger') === '1') {
+      } else if (qsParams.get('autoPlaySlugger') === '1' || window.innerWidth <= 768) {
         setTimeout(() => {
           window.__openGamesSelectionModal();
           window.__launchShinjukuSlugger();
