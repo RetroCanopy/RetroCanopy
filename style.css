@@ -5400,37 +5400,168 @@ body.rc-logged-in-home .hero-container.shifted-up {
     flex-shrink: 0;
 }
 
-/* Concept 10A: Bottom Row Hologram Showcase Between Nerdy Misfits & Deaf Hammer */
+/* Concept 10A: Multi-Plane 3D Volumetric Hologram Showcase Between Nerdy Misfits & Deaf Hammer */
 .rc-concept10a-showcase {
+    --holo-rx: 0deg;
+    --holo-ry: 0deg;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 108%;
+    height: 112%;
     flex: 1 1 auto;
-    max-width: clamp(560px, 54vw, 940px);
+    max-width: clamp(580px, 56vw, 960px);
     padding: 0 4px;
     cursor: pointer;
     position: relative;
     user-select: none;
-    transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), filter 0.26s ease;
+    perspective: 920px;
+    transform-style: preserve-3d;
 }
 
-.rc-concept10a-showcase:hover {
-    transform: translateY(-3px) scale(1.03);
-    filter: brightness(1.08) drop-shadow(0 0 18px rgba(0, 240, 255, 0.45));
+.rc-10a-3d-stage {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    max-height: clamp(154px, 22vh, 232px);
+    transform-style: preserve-3d;
+    transform: rotateX(var(--holo-rx, 0deg)) rotateY(var(--holo-ry, 0deg));
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), filter 0.26s ease;
+    animation: rcHoloStageOrbit 5.8s ease-in-out infinite;
+}
+
+@keyframes rcHoloStageOrbit {
+    0%, 100% {
+        transform: rotateX(calc(var(--holo-rx, 0deg) + 2deg)) rotateY(calc(var(--holo-ry, 0deg) - 3.5deg)) translateY(0px);
+    }
+    50% {
+        transform: rotateX(calc(var(--holo-rx, 0deg) - 2deg)) rotateY(calc(var(--holo-ry, 0deg) + 3.5deg)) translateY(-4px);
+    }
+}
+
+.rc-concept10a-showcase:hover .rc-10a-3d-stage {
+    filter: brightness(1.14) saturate(1.15);
+}
+
+.rc-10a-holo-floor-glow {
+    position: absolute;
+    bottom: -6%;
+    left: 6%;
+    right: 6%;
+    height: 36%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.42) 0%, rgba(255, 215, 0, 0.18) 45%, transparent 74%);
+    filter: blur(18px);
+    transform: rotateX(72deg) translateZ(-24px);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .rc-concept10a-lockup-img {
+    position: relative;
+    z-index: 2;
     height: 100%;
-    width: 100%;
-    max-height: clamp(148px, 21.5vh, 224px);
+    width: auto;
+    max-width: 100%;
+    max-height: clamp(154px, 22vh, 232px);
     object-fit: contain;
     display: block;
     pointer-events: none;
     -webkit-user-drag: none;
-    filter:
-        drop-shadow(0 0 14px rgba(0, 240, 255, 0.38))
-        drop-shadow(0 0 22px rgba(255, 215, 0, 0.22));
+    mix-blend-mode: lighten;
+    transform: translateZ(18px);
+}
+
+.rc-10a-fg-layer {
+    position: absolute;
+    pointer-events: none;
+    transform-style: preserve-3d;
+}
+
+/* 3D Foreground Layer 1: Volumetric Light Pulse Over Synth Emitter */
+.rc-10a-fg-synth-beam {
+    left: 23.5%;
+    width: 17%;
+    top: 8%;
+    bottom: 8%;
+    z-index: 4;
+    transform: translateZ(44px);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 50% 62%, rgba(0, 240, 255, 0.34) 0%, rgba(255, 215, 0, 0.2) 38%, transparent 72%);
+    mix-blend-mode: screen;
+    filter: blur(8px);
+    animation: rcHoloBeamPulse 2.6s ease-in-out infinite;
+}
+
+@keyframes rcHoloBeamPulse {
+    0%, 100% {
+        opacity: 0.65;
+        transform: translateZ(44px) scale(0.96);
+    }
+    50% {
+        opacity: 1;
+        transform: translateZ(54px) scale(1.06);
+    }
+}
+
+/* 3D Foreground Layer 2: Strictly Rounded Hologram Laser Scanline Over the Plaque Glass */
+.rc-10a-fg-plaque-scan {
+    left: 42.2%;
+    width: 31.8%;
+    top: 32%;
+    height: 31%;
+    border-radius: 14px;
+    overflow: hidden;
+    z-index: 4;
+    transform: translateZ(38px);
+    mix-blend-mode: screen;
+    box-shadow: inset 0 0 14px rgba(0, 240, 255, 0.38);
+}
+
+.rc-10a-fg-plaque-scan::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 28%;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 240, 255, 0.45) 50%, rgba(255, 215, 0, 0.35) 75%, transparent 100%);
+    animation: rcHoloLaserScan 3.2s linear infinite;
+}
+
+@keyframes rcHoloLaserScan {
+    0% {
+        top: -32%;
+    }
+    100% {
+        top: 108%;
+    }
+}
+
+/* 3D Foreground Layer 3: Floating 3D Hologram HUD Ring Over the App Phones */
+.rc-10a-fg-phone-rings {
+    left: 81.2%;
+    top: 29%;
+    width: 7.4%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(0, 240, 255, 0.78);
+    box-shadow:
+        0 0 12px rgba(0, 240, 255, 0.68),
+        inset 0 0 10px rgba(255, 215, 0, 0.45);
+    z-index: 5;
+    mix-blend-mode: screen;
+    transform: translateZ(48px) rotateY(-16deg);
+    animation: rcHoloRingSpin 6s linear infinite;
+}
+
+@keyframes rcHoloRingSpin {
+    0% {
+        transform: translateZ(48px) rotateY(-16deg) rotateZ(0deg);
+    }
+    100% {
+        transform: translateZ(48px) rotateY(-16deg) rotateZ(360deg);
+    }
 }
 
 .rc-misfits-feature-link::before {
@@ -6061,14 +6192,18 @@ body.rc-logged-in-home .hero-container.shifted-up {
         order: 2;
         width: 100%;
         max-width: 100%;
-        height: clamp(86px, 11.2vh, 106px);
+        height: clamp(88px, 11.4vh, 108px);
         padding: 0 2px;
         justify-content: center;
     }
 
+    .rc-10a-3d-stage {
+        max-height: clamp(88px, 11.4vh, 108px);
+        max-width: 98vw;
+    }
+
     .rc-concept10a-lockup-img {
-        max-height: clamp(86px, 11.2vh, 106px);
-        width: 100%;
+        max-height: clamp(88px, 11.4vh, 108px);
     }
 
     .rc-misfits-feature-link {

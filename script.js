@@ -4693,6 +4693,24 @@ function initHomeShopScroller() {
 
     if (studioBtn) {
         studioBtn.addEventListener('click', openStudioModal);
+        studioBtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openStudioModal();
+            }
+        });
+        studioBtn.addEventListener('pointermove', (e) => {
+            const rect = studioBtn.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            const nx = ((e.clientX - rect.left) / rect.width) - 0.5;
+            const ny = ((e.clientY - rect.top) / rect.height) - 0.5;
+            studioBtn.style.setProperty('--holo-ry', `${(nx * 18).toFixed(2)}deg`);
+            studioBtn.style.setProperty('--holo-rx', `${(-ny * 14).toFixed(2)}deg`);
+        });
+        studioBtn.addEventListener('pointerleave', () => {
+            studioBtn.style.setProperty('--holo-ry', '0deg');
+            studioBtn.style.setProperty('--holo-rx', '0deg');
+        });
     }
     if (studioClose) {
         studioClose.addEventListener('click', closeStudioModal);

@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bungee&family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Press+Start+2P&family=Righteous&family=Russo+One&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=154">
+    <link rel="stylesheet" href="style.css?v=156">
 </head>
 
 <body class="cinema-intro-active">
@@ -271,9 +271,16 @@
                 </div>
             </a>
 
-            <!-- Concept 10A: Bottom Row Hologram Showcase (3D Website Wireframes + Synth Owl Butler + Ornate Hologram Plaque + 3D Smartphone App Screens) -->
+            <!-- Concept 10A: Multi-Plane 3D Volumetric Hologram Showcase (3D Website Wireframes + Synth Owl Butler + Ornate Hologram Plaque + 3D Smartphone App Screens) -->
             <div class="rc-concept10a-showcase" id="rc-hero-studio-marquee" role="button" tabindex="0" aria-label="We Build and Manage Websites and Apps — Book Your Project">
-                <img class="rc-concept10a-lockup-img" src="assets/misfits/concept10a_studio_lockup.png?v=154" alt="Synth — We Build and Manage Websites and Apps — Book Your Project" decoding="async" />
+                <div class="rc-10a-3d-stage">
+                    <div class="rc-10a-holo-floor-glow" aria-hidden="true"></div>
+                    <img class="rc-concept10a-lockup-img" src="assets/misfits/concept10a_studio_lockup.png?v=156" alt="Synth — We Build and Manage Websites and Apps — Book Your Project" decoding="async" />
+                    <!-- Floating 3D Foreground Hologram Layers (True 3D Z-Depth Parallax) -->
+                    <div class="rc-10a-fg-layer rc-10a-fg-synth-beam" aria-hidden="true"></div>
+                    <div class="rc-10a-fg-layer rc-10a-fg-plaque-scan" aria-hidden="true"></div>
+                    <div class="rc-10a-fg-layer rc-10a-fg-phone-rings" aria-hidden="true"></div>
+                </div>
             </div>
 
             <a class="rc-misfits-feature-link rc-partner-deafhammer" href="https://deafhammer.com" target="_blank" rel="noopener" aria-label="Visit DeafHammer.com">
@@ -335,7 +342,7 @@
     <!-- Stage container (crew characters and section tabs removed; Synth owl butler & login preserved) -->
     <div id="crew-stage" class="crew-stage" aria-hidden="true"></div>
 
-    <script src="script.js?v=150"></script>
+    <script src="script.js?v=151"></script>
     <script src="auth_hub.js?v=145"></script>
 </body>
 
