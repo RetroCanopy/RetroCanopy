@@ -4529,7 +4529,7 @@ function initHomeShopScroller() {
 
     const shopCatalog = [
         // Mixed-up order across categories, featuring the White & 24K Gold Hoodie (WIN ONLY at Arcade) and White & 24K Gold Hat prominently!
-        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'HATS', price: '$36', img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'hat_preview.html?idx=6' },
+        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-401', title: '86 Outrun Turbo Gullwing Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt1_back.png?v=6', href: 'tee_preview.html?idx=0' },
         { code: 'RC-502', title: 'Dual Cyan & Magenta Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt2.png?v=1', href: 'joggers_preview.html?idx=1' },
@@ -4541,7 +4541,7 @@ function initHomeShopScroller() {
         { code: 'RC-101', title: 'Classic Sunset Grid Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_front_floating.png?v=94', href: 'hat_preview.html?idx=0' },
         { code: 'RC-308', title: 'Pinball Wizard Jackpot Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt9_back.png?v=75', href: 'hoodie_preview.html?idx=7' },
         { code: 'RC-403', title: 'Tokyo Shibuya Cyber-Shrine Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt3_back.png?v=6', href: 'tee_preview.html?idx=2' },
-        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'HATS', price: '$36', img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'hat_preview.html?idx=6' },
+        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-701', title: 'Retrocanopy 20oz LAN Gear Bag', cat: 'GEAR & MISC', price: '$28', img: 'assets/merch/gearbag_opt1.png?v=5', href: 'gearbag_preview.html?idx=0' },
         { code: 'RC-602', title: 'Cyber Ronin Samurai Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt2_back.png?v=6', href: 'longsleeve_preview.html?idx=1' },
@@ -4558,7 +4558,7 @@ function initHomeShopScroller() {
         { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-402', title: '16-Bit Arcade Blueprint Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt2_back.png?v=6', href: 'tee_preview.html?idx=1' },
         { code: 'RC-203', title: 'Outrun Wireframe XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_3.png?v=3', href: 'deskmat_preview.html?idx=2' },
-        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'HATS', price: '$36', img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'hat_preview.html?idx=6' },
+        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
         { code: 'RC-303', title: 'Midnight Grinder Vault Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt3_back.png?v=75', href: 'hoodie_preview.html?idx=2' },
         { code: 'RC-603', title: 'Power-Glove VR 1989 Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt3_back.png?v=6', href: 'longsleeve_preview.html?idx=2' },
         { code: 'RC-705', title: '1984 Champion Gold 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt4.png?v=2', href: 'gearbag_preview.html?idx=4' },

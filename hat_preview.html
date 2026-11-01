@@ -631,8 +631,9 @@
       {
         model: 'RC-107',
         title: 'White & 24K Gold Crowned Valkyrie Snapback',
-        price: '$36',
-        specs: '<span>Arctic White 6-Panel Crown</span><span>&bull;</span><span>24K Gold Winged Laurel Embroidery</span><span>&bull;</span><span>One Size Adjustable</span>',
+        price: 'WIN ONLY',
+        winOnly: true,
+        specs: '<span>Arctic White 6-Panel Crown</span><span>&bull;</span><span>24K Gold Winged Laurel Embroidery</span><span>&bull;</span><span>Stage 6 Arcade Grand Prize</span>',
         src: 'assets/merch/hat_tier6_valkyrie.png?v=94'
       }
     ];
@@ -648,6 +649,7 @@
     const hudPrice = document.getElementById('hudPrice');
     const thumbStrip = document.getElementById('thumbStrip');
     const bagBtn = document.getElementById('bagBtn');
+    const hudBuyBtn = document.querySelector('.hud-buy-btn');
 
     function updateShowroom() {
       const item = hatOptions[currentIdx];
@@ -656,8 +658,16 @@
       hudTitle.textContent = item.title;
       hudSpecs.innerHTML = item.specs;
       if (hudPrice) {
-        hudPrice.setAttribute('data-orig-price', item.price.replace('$', ''));
-        hudPrice.textContent = item.price;
+        if (item.winOnly) {
+          hudPrice.removeAttribute('data-orig-price');
+          hudPrice.textContent = 'WIN ONLY';
+        } else {
+          hudPrice.setAttribute('data-orig-price', item.price.replace('$', ''));
+          hudPrice.textContent = item.price;
+        }
+      }
+      if (hudBuyBtn) {
+        hudBuyBtn.textContent = item.winOnly ? 'Win at Arcade' : 'Add to Bag';
       }
 
       if (thumbStrip) {
@@ -693,6 +703,11 @@
     });
 
     function addToBag(btn) {
+      const item = hatOptions[currentIdx];
+      if (item && item.winOnly) {
+        window.location.href = 'games.html?openTickets=1&openTier6=1';
+        return;
+      }
       bagCount++;
       bagBtn.textContent = `Bag (${bagCount})`;
       const orig = btn.textContent;

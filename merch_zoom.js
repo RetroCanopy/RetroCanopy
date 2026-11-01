@@ -363,7 +363,7 @@
       'RC-104': { model: 'RC-104', title: 'Starry Synthwave Cosmos Dad Cap', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt4.png?v=75' },
       'RC-105': { model: 'RC-105', title: 'Valkyrie Gold & Crimson Samurai Snapback', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt5.png?v=75' },
       'RC-106': { model: 'RC-106', title: '1984 Arcade Champion Corduroy Rope Cap', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt6.png?v=75' },
-      'RC-107': { model: 'RC-107', title: 'White & 24K Gold Crowned Valkyrie Snapback', role: 'Headwear', price: 36, img: 'assets/merch/hat_tier6_valkyrie.png?v=94' },
+      'RC-107': { model: 'RC-107', title: 'White & 24K Gold Crowned Valkyrie Snapback', role: 'Headwear', price: 0, winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=94' },
       'RC-201': { model: 'RC-201', title: 'Classic Sunset Grid XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_1.png?v=3' },
       'RC-202': { model: 'RC-202', title: 'Signature Type XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_2.png?v=3' },
       'RC-203': { model: 'RC-203', title: 'Outrun Wireframe XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_3.png?v=3' },
@@ -961,6 +961,11 @@
       if (!priceEl) return '';
       const code = modelCode || lastModelCode || 'RC-101';
       const catEntry = masterCatalog[code];
+      if (catEntry && catEntry.winOnly) {
+        priceEl.removeAttribute('data-orig-price');
+        priceEl.textContent = 'WIN ONLY';
+        return 'WIN ONLY';
+      }
       let basePrice = catEntry ? catEntry.price : null;
       if (!basePrice) {
         const rawAttr = priceEl.getAttribute('data-orig-price');
