@@ -253,31 +253,77 @@
         height: 170px !important;
         margin-bottom: 10px !important;
       }
-      #gamesSelectionBackdrop.playing-active {
-        align-items: center !important;
-        padding: 8px 4px !important;
+      /* 100% EDGE-TO-EDGE MOBILE FULLSCREEN SNAP WHEN PINBALL GAME IS ACTIVE */
+      body #gamesSelectionBackdrop.playing-active {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        z-index: 9999 !important;
+        background: #04060e !important;
+        overflow: hidden !important;
+        align-items: stretch !important;
+        justify-content: stretch !important;
       }
-      #gamesSelectionBackdrop.playing-active .tier6-lightbox-modal {
-        width: 98vw !important;
-        padding: 6px !important;
-        margin: auto !important;
+      body #gamesSelectionBackdrop.playing-active::before {
+        display: none !important;
       }
-      #gamesSelectionBackdrop.playing-active #gamesActivePlayView {
-        padding: 6px !important;
-        gap: 8px !important;
+      body #gamesSelectionBackdrop.playing-active .tier6-lightbox-modal {
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        max-width: 100vw !important;
+        max-height: 100dvh !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: #04060e !important;
+        display: flex !important;
+        flex-direction: column !important;
       }
-      /* Portrait-Zoomed Mobile Pinball Viewport: Crops side buildings so the Pinball Table fills the phone screen 1.68x larger with 1:1 round physics! */
-      #gamesSelectionBackdrop.playing-active .slugger-play-stage-wrap {
-        aspect-ratio: 100 / 95 !important;
-        width: 100% !important;
-        max-height: 60vh !important;
-        border-radius: 12px !important;
+      body #gamesSelectionBackdrop.playing-active .tier6-lightbox-modal > button[title="Close Arcade Games Page"] {
+        display: none !important;
       }
-      #gamesSelectionBackdrop.playing-active #shinjukuSluggerCanvas {
-        width: 168% !important;
+      body #gamesSelectionBackdrop.playing-active #gamesActivePlayView {
+        flex: 1 1 auto !important;
+        width: 100vw !important;
+        height: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: #04060e !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        overflow: hidden !important;
+      }
+      /* Full-Screen Portrait Mobile Pinball Stage: Fills upper ~80% of phone screen edge-to-edge! */
+      body #gamesSelectionBackdrop.playing-active .slugger-play-stage-wrap {
+        flex: 1 1 auto !important;
+        width: 100vw !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        aspect-ratio: auto !important;
+        border-radius: 0 !important;
+        border: none !important;
+        border-bottom: 2px solid #00f0ff !important;
+        box-shadow: 0 4px 18px rgba(0, 240, 255, 0.35) !important;
+        margin: 0 !important;
+      }
+      body #gamesSelectionBackdrop.playing-active #shinjukuSluggerCanvas {
+        width: 184% !important;
         height: 100% !important;
         max-width: none !important;
-        margin-left: -34% !important;
+        margin-left: -42% !important;
         touch-action: none !important;
         user-select: none !important;
         -webkit-user-select: none !important;
@@ -289,19 +335,24 @@
       .slugger-mobile-touch-hint {
         display: block !important;
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.54rem;
+        font-size: 0.52rem;
         font-weight: 800;
         letter-spacing: 0.06em;
         color: #7df9ff;
         text-align: center;
-        padding: 2px 4px;
+        padding: 1px 4px 3px;
       }
       .slugger-kb-tag {
         display: none !important;
       }
       #gamesActivePlayView .tier6-vault-footer-bar {
-        padding: 8px !important;
-        gap: 6px !important;
+        flex-shrink: 0 !important;
+        width: 100vw !important;
+        border-radius: 0 !important;
+        border: none !important;
+        background: linear-gradient(180deg, #0b1122 0%, #050811 100%) !important;
+        padding: 6px 10px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+        gap: 5px !important;
       }
       #gamesActivePlayView .slugger-controls-grid {
         width: 100% !important;
@@ -311,9 +362,9 @@
       }
       #gamesActivePlayView .slugger-flap-btn {
         width: 100% !important;
-        min-height: 60px !important;
+        min-height: 62px !important;
         padding: 10px 6px !important;
-        font-size: 0.66rem !important;
+        font-size: 0.68rem !important;
         font-weight: 900 !important;
         letter-spacing: 0.06em !important;
         border-radius: 12px !important;
@@ -338,8 +389,8 @@
       }
       #gamesActivePlayView .slugger-util-btn {
         width: 100% !important;
-        min-height: 38px !important;
-        padding: 7px 8px !important;
+        min-height: 36px !important;
+        padding: 6px 8px !important;
         font-size: 0.58rem !important;
         justify-content: center !important;
         display: inline-flex !important;
@@ -4678,13 +4729,32 @@
         tapTimer: 0
       };
 
-      // Dynamic Pitch Profiles for the 3 Top Pitch Holes
+      // Dynamic Pitch Profiles & Escalating Pitch Heat Tiers (Idea #3: Progressive Pitch Challenge!)
       const PITCH_PROFILES = [
-        { name: '🔥 164 KM/H FASTBALL', color: '#ffd700', curveX: 0.0,    vyBoost: 1.5 },
-        { name: '🌀 CYBER CURVEBALL',   color: '#00f0ff', curveX: 0.024,  vyBoost: 0.0 },
-        { name: '⚡ NEON SLIDER',       color: '#ff2d95', curveX: -0.026, vyBoost: 0.6 },
-        { name: '💫 TOKYO FORKBALL',    color: '#b46cff', curveX: 0.015,  vyBoost: -0.3 }
+        { name: '🔥 84 MPH FASTBALL',    color: '#ffd700', curveX: 0.0,    vyBoost: 1.2, minHeat: 1 },
+        { name: '⚾ NEON CHANGEUP',      color: '#00f0ff', curveX: 0.008,  vyBoost: -0.4, minHeat: 1 },
+        { name: '🌀 WICKED CURVEBALL',   color: '#00f0ff', curveX: 0.034,  vyBoost: 0.5, minHeat: 2 },
+        { name: '⚡ RAZOR SLIDER',       color: '#ff2d95', curveX: -0.038, vyBoost: 1.1, minHeat: 2 },
+        { name: '🔥 102 MPH HEATER',     color: '#ff8c00', curveX: 0.014,  vyBoost: 2.6, minHeat: 3 },
+        { name: '⚓ GRAVITY SINKER',     color: '#b46cff', curveX: -0.030, vyBoost: 1.8, minHeat: 3 },
+        { name: '👻 PHANTOM SPLITTER',   color: '#ff2d95', curveX: 0.044,  vyBoost: 2.4, minHeat: 4 },
+        { name: '⚡ CYBER SCREWBALL',    color: '#ff2052', curveX: -0.048, vyBoost: 2.8, minHeat: 4 }
       ];
+
+      function getPitchHeatTier(pts) {
+        const p = pts || 0;
+        if (p < 4) {
+          return { level: 1, name: 'ROOKIE', tag: 'HEAT LVL 1 • ROOKIE', color: '#00f0ff', speedMult: 1.00, gravMult: 1.00, curveMult: 0.35, fakeOutChance: 0.0, sCurveChance: 0.0, windupFrames: 18 };
+        } else if (p < 8) {
+          return { level: 2, name: 'BREAKING', tag: 'HEAT LVL 2 • BREAKING BALLS', color: '#ffd700', speedMult: 1.18, gravMult: 1.12, curveMult: 1.35, fakeOutChance: 0.0, sCurveChance: 0.0, windupFrames: 16 };
+        } else if (p < 13) {
+          return { level: 3, name: '102 MPH', tag: 'HEAT LVL 3 • 102 MPH TURBO', color: '#ff8c00', speedMult: 1.35, gravMult: 1.24, curveMult: 1.65, fakeOutChance: 0.30, sCurveChance: 0.25, windupFrames: 15 };
+        } else if (p < 19) {
+          return { level: 4, name: 'FAKE-OUT', tag: 'HEAT LVL 4 • FAKE-OUT WINDUP', color: '#ff2d95', speedMult: 1.48, gravMult: 1.35, curveMult: 1.95, fakeOutChance: 0.75, sCurveChance: 0.50, windupFrames: 20 };
+        }
+        const extraSpd = Math.min(0.28, (p - 19) * 0.015);
+        return { level: 5, name: 'OVERDRIVE', tag: 'HEAT LVL 5 • MAX OVERDRIVE', color: '#ff2052', speedMult: 1.62 + extraSpd, gravMult: 1.45, curveMult: 2.25, fakeOutChance: 0.90, sCurveChance: 0.70, windupFrames: 18 };
+      }
 
       // Game State (3 Lives per Game, Tracks Round Points & Round Tickets, Lights Up Central Baseball Diamond!)
       const slugger = {
@@ -4819,7 +4889,9 @@
         slugger.bases = next;
         slugger.runs += runsScored;
         if (runsScored > 0) {
+          const prevHeat = getPitchHeatTier(slugger.roundPoints).level;
           awardSluggerPoints(runsScored);
+          const newHeatInfo = getPitchHeatTier(slugger.roundPoints);
           playArcadeSfx('run_scored');
           slugger.homePlateFlash = 48;
           spawnBurstParticles(960, 920, '#ffd700', 22);
@@ -4830,6 +4902,10 @@
             `+${runsScored} ${runsScored === 1 ? 'PT (RUNNER HOME!)' : 'PTS (RUNNERS HOME!)'}`,
             '#ffd700'
           );
+          if (newHeatInfo.level > prevHeat) {
+            slugger.neonSurge = 42;
+            spawnFloatingText(960, 520, `🔥 ${newHeatInfo.tag} UNLOCKED!`, newHeatInfo.color);
+          }
         }
         return runsScored;
       }
@@ -4897,22 +4973,34 @@
         const validHoleIdx = holeIdx === 2 ? 2 : 0;
         slugger.activeHoleIdx = validHoleIdx;
         const h = PITCH_HOLES_1080[validHoleIdx];
-        const prof = PITCH_PROFILES[Math.floor(Math.random() * PITCH_PROFILES.length)];
+        const heat = getPitchHeatTier(slugger.roundPoints);
+        const eligible = PITCH_PROFILES.filter((p) => p.minHeat <= heat.level);
+        // Weight toward newer/harder pitches at higher Heat Levels!
+        const pool = heat.level >= 2 ? eligible.filter((p) => p.minHeat >= Math.max(1, heat.level - 1)) : eligible;
+        const chosenPool = pool.length > 0 ? pool : eligible;
+        const prof = chosenPool[Math.floor(Math.random() * chosenPool.length)] || PITCH_PROFILES[0];
+
         slugger.pitchLabel = prof.name;
         slugger.pitchColor = prof.color;
-        slugger.pitchCurveX = prof.curveX * (Math.random() < 0.5 ? 1 : -1) * 0.55;
+        slugger.isSCurvePitch = Math.random() < heat.sCurveChance;
+        const rawDir = Math.random() < 0.5 ? 1 : -1;
+        let curveMag = Math.abs(prof.curveX) * heat.curveMult;
+        if (heat.level >= 2 && curveMag < 0.022) {
+          curveMag = 0.024 * heat.curveMult;
+        }
+        slugger.pitchCurveX = rawDir * curveMag;
 
         slugger.ballX = h.x;
         slugger.ballY = h.y + 18;
         slugger.enteredPlayfield = false;
         slugger.hasBeenFlipped = false;
+        const baseVX = (2.0 + Math.random() * 1.4) * (0.92 + 0.08 * heat.speedMult);
         if (validHoleIdx === 0) {
-          slugger.ballVX = 2.0 + Math.random() * 1.4;
-          slugger.ballVY = 7.2 + prof.vyBoost + Math.random() * 1.6;
+          slugger.ballVX = baseVX;
         } else {
-          slugger.ballVX = -2.0 - Math.random() * 1.4;
-          slugger.ballVY = 7.2 + prof.vyBoost + Math.random() * 1.6;
+          slugger.ballVX = -baseVX;
         }
+        slugger.ballVY = (7.2 + prof.vyBoost + Math.random() * 1.5) * heat.speedMult;
         slugger.saucerCooldown = 36;
       }
 
@@ -4921,13 +5009,16 @@
         if (!skipShuffle) {
           shuffleBoardSpaces();
         }
-        // Main ball ONLY releases from Left Hole (0) or Right Hole (2), leaving Middle Hole (1) for Extra Balls & Power-Ups!
+        const heat = getPitchHeatTier(slugger.roundPoints);
+        // Main ball ONLY releases from Left Hole (0) or Right Hole (2), leaving Middle Hole (1) for Extra Balls!
         slugger.activeHoleIdx = Math.random() < 0.5 ? 0 : 2;
-        const prof = PITCH_PROFILES[Math.floor(Math.random() * PITCH_PROFILES.length)];
-        slugger.pitchLabel = prof.name;
-        slugger.pitchColor = prof.color;
+        slugger.fakeOutWindup = Math.random() < heat.fakeOutChance;
+        const eligible = PITCH_PROFILES.filter((p) => p.minHeat <= heat.level);
+        const prof = eligible[Math.floor(Math.random() * eligible.length)] || PITCH_PROFILES[0];
+        slugger.pitchLabel = slugger.fakeOutWindup ? '👻 FAKE-OUT WINDUP!' : prof.name;
+        slugger.pitchColor = slugger.fakeOutWindup ? '#ff2d95' : prof.color;
         slugger.phase = 'WINDUP';
-        slugger.phaseTimer = 18;
+        slugger.phaseTimer = heat.windupFrames || 18;
         slugger.enteredPlayfield = false;
         slugger.hasBeenFlipped = false;
         slugger.swungThisPitch = false;
@@ -4988,9 +5079,11 @@
         slugger.bannerText = '';
         slugger.bannerTimer = 0;
         slugger.activeHoleIdx = 0; // Left Hole #1 (Main ball only uses Left #0 and Right #2)
-        slugger.pitchLabel = '🔥 164 KM/H FASTBALL';
+        slugger.pitchLabel = '🔥 84 MPH FASTBALL';
         slugger.pitchColor = '#ffd700';
         slugger.pitchCurveX = 0;
+        slugger.fakeOutWindup = false;
+        slugger.isSCurvePitch = false;
         slugger.phase = 'LIVE_PLAY';
         slugger.enteredPlayfield = true;
         slugger.hasBeenFlipped = false;
@@ -5000,6 +5093,34 @@
         slugger.ballVX = 2.1;
         slugger.ballVY = 6.4;
         slugger.saucerCooldown = 28;
+      };
+
+      window.__demoSluggerHeatTier = function (points) {
+        slugger.roundPoints = points || 15;
+        slugger.roundTickets = Math.floor(slugger.roundPoints / 10);
+        slugger.runners = [true, true, false];
+        const heat = getPitchHeatTier(slugger.roundPoints);
+        slugger.heatLevel = heat.level;
+        slugger.activeHoleIdx = 0;
+        slugger.decoyHoleIdx = 2;
+        slugger.fakeOutWindup = heat.level >= 4;
+        slugger.isSCurvePitch = heat.level >= 4;
+        slugger.pitchLabel = heat.level >= 4 ? '⚡ CYBER SCREWBALL' : '🌀 WICKED CURVEBALL';
+        slugger.pitchColor = heat.color;
+        slugger.pitchCurveX = 0.042 * heat.curveMult;
+        slugger.phase = 'LIVE_PLAY';
+        slugger.enteredPlayfield = true;
+        slugger.hasBeenFlipped = false;
+        slugger.ballX = 875;
+        slugger.ballY = 530;
+        slugger.ballVX = 2.8;
+        slugger.ballVY = 8.4;
+        slugger.callout = {
+          text: `🔥 HEAT LVL ${heat.level}: ${heat.name}!`,
+          sub: `${Math.round(heat.speedMult * 100)}% PITCH SPEED • BREAKING CURVEBALLS ACTIVE!`,
+          color: heat.color,
+          timer: 55
+        };
       };
 
       window.__openGamesSelectionModal = function () {
@@ -5020,6 +5141,9 @@
           cancelAnimationFrame(sluggerAnimId);
           sluggerAnimId = null;
         }
+        if (document.fullscreenElement && document.exitFullscreen) {
+          try { document.exitFullscreen().catch(() => {}); } catch (_) {}
+        }
         if (gamesSelectionBackdrop) {
           gamesSelectionBackdrop.classList.remove('open');
           gamesSelectionBackdrop.classList.remove('playing-active');
@@ -5033,6 +5157,9 @@
           cancelAnimationFrame(sluggerAnimId);
           sluggerAnimId = null;
         }
+        if (document.fullscreenElement && document.exitFullscreen) {
+          try { document.exitFullscreen().catch(() => {}); } catch (_) {}
+        }
         if (gamesSelectionBackdrop) gamesSelectionBackdrop.classList.remove('playing-active');
         if (gamesSelectGridView) gamesSelectGridView.style.display = 'flex';
         if (gamesActivePlayView) gamesActivePlayView.style.display = 'none';
@@ -5043,6 +5170,18 @@
         if (gamesSelectionBackdrop) gamesSelectionBackdrop.classList.add('playing-active');
         if (gamesSelectGridView) gamesSelectGridView.style.display = 'none';
         if (gamesActivePlayView) gamesActivePlayView.style.display = 'flex';
+        // On Mobile, snap to 100% Full-Screen View of the phone!
+        if (window.innerWidth <= 768) {
+          try { window.scrollTo(0, 0); } catch (_) {}
+          const fsTarget = document.documentElement;
+          if (fsTarget && !document.fullscreenElement) {
+            if (fsTarget.requestFullscreen) {
+              try { fsTarget.requestFullscreen({ navigationUI: 'hide' }).catch(() => {}); } catch (_) {}
+            } else if (fsTarget.webkitRequestFullscreen) {
+              try { fsTarget.webkitRequestFullscreen(); } catch (_) {}
+            }
+          }
+        }
         playArcadeSfx('unlock');
         window.__resetShinjukuSlugger();
         sluggerActive = true;
@@ -5690,9 +5829,11 @@
       function stepPinballPhysicsFrame() {
         const SUBSTEPS = 8;
         const dt = 1 / SUBSTEPS;
-        // Brisk sloped pinball table gravity over the long 760px runway!
+        // Escalating Pitch Heat scales table gravity & pitch velocity as player scores more points!
+        const heat = getPitchHeatTier(slugger.roundPoints);
+        slugger.heatLevel = heat.level;
         const perspFactor = 0.85 + 0.35 * Math.max(0, Math.min(1, (slugger.ballY - 160) / 760));
-        const gravityPerStep = 0.33 * perspFactor * dt;
+        const gravityPerStep = 0.33 * heat.gravMult * perspFactor * dt;
 
         if (slugger.moundCooldown > 0) slugger.moundCooldown--;
         if (slugger.homePlateFlash > 0) slugger.homePlateFlash--;
@@ -5761,15 +5902,26 @@
 
           slugger.ballVY += gravityPerStep;
           if (!slugger.hasBeenFlipped && slugger.pitchCurveX) {
-            slugger.ballVX += slugger.pitchCurveX * dt;
+            // Level 4+ S-Breaking Screwball reverses lateral hook direction mid-table (y > 510)
+            const sCurveSign = (slugger.isSCurvePitch && slugger.ballY > 510) ? -1.15 : 1.0;
+            slugger.ballVX += slugger.pitchCurveX * sCurveSign * dt;
+            // Keep unflipped breaking pitches inside the fair strike-zone runway (x = 635..1285) before the flippers
+            if (slugger.ballY < 855) {
+              if (slugger.ballX < 635 && slugger.ballVX < 0) {
+                slugger.ballVX = Math.abs(slugger.ballVX) * 0.65;
+              } else if (slugger.ballX > 1285 && slugger.ballVX > 0) {
+                slugger.ballVX = -Math.abs(slugger.ballVX) * 0.65;
+              }
+            }
           }
           slugger.ballVX *= 0.9992;
           slugger.ballVY *= 0.9992;
 
+          const maxSpd = 26.0 + (heat.level - 1) * 1.5;
           const spd = Math.hypot(slugger.ballVX, slugger.ballVY);
-          if (spd > 26.0) {
-            slugger.ballVX = (slugger.ballVX / spd) * 26.0;
-            slugger.ballVY = (slugger.ballVY / spd) * 26.0;
+          if (spd > maxSpd) {
+            slugger.ballVX = (slugger.ballVX / spd) * maxSpd;
+            slugger.ballVY = (slugger.ballVY / spd) * maxSpd;
           }
 
           slugger.ballX += slugger.ballVX * dt;
@@ -6407,34 +6559,66 @@
         const midHole = PITCH_HOLES_1080[1];
         const now = performance.now();
 
-        // 1. Active Main-Ball Pitch Hole (Left #0 or Right #2)
+        // 1. Active Main-Ball Pitch Hole (Left #0 or Right #2) + Heat Level 4+ Dual-Hole Fake-Out Windup!
         if (slugger.phase === 'WINDUP' || slugger.saucerCooldown > 8) {
           const pulse = 0.55 + 0.45 * Math.sin(now * 0.025);
-          sCtx.save();
-          sCtx.strokeStyle = `rgba(0, 240, 255, ${0.65 + pulse * 0.35})`;
-          sCtx.lineWidth = 4.5;
-          sCtx.shadowColor = '#00f0ff';
-          sCtx.shadowBlur = 24;
-          sCtx.beginPath();
-          sCtx.ellipse(activeHole.x, activeHole.y, activeHole.rx * 0.90, activeHole.ry * 0.90, 0, 0, Math.PI * 2);
-          sCtx.stroke();
+          const holesToFlash = [activeHole];
+          if (slugger.phase === 'WINDUP' && slugger.fakeOutWindup) {
+            const decoyHole = PITCH_HOLES_1080[slugger.decoyHoleIdx];
+            if (decoyHole) holesToFlash.push(decoyHole);
+          }
 
-          const holeGrad = sCtx.createRadialGradient(
-            activeHole.x,
-            activeHole.y,
-            5,
-            activeHole.x,
-            activeHole.y,
-            activeHole.rx * 0.85
-          );
-          holeGrad.addColorStop(0, `rgba(255, 230, 120, ${0.82 * pulse})`);
-          holeGrad.addColorStop(0.6, `rgba(0, 240, 255, ${0.38 * pulse})`);
-          holeGrad.addColorStop(1, 'rgba(0, 240, 255, 0)');
-          sCtx.fillStyle = holeGrad;
-          sCtx.beginPath();
-          sCtx.ellipse(activeHole.x, activeHole.y, activeHole.rx * 0.85, activeHole.ry * 0.85, 0, 0, Math.PI * 2);
-          sCtx.fill();
-          sCtx.restore();
+          for (let h = 0; h < holesToFlash.length; h++) {
+            const holeObj = holesToFlash[h];
+            const isDecoy = h === 1;
+            const ringCol = slugger.fakeOutWindup
+              ? (isDecoy ? `rgba(255, 45, 149, ${0.65 + pulse * 0.35})` : `rgba(0, 240, 255, ${0.65 + pulse * 0.35})`)
+              : `rgba(0, 240, 255, ${0.65 + pulse * 0.35})`;
+
+            sCtx.save();
+            sCtx.strokeStyle = ringCol;
+            sCtx.lineWidth = 4.5;
+            sCtx.shadowColor = isDecoy ? '#ff2d95' : '#00f0ff';
+            sCtx.shadowBlur = 24;
+            sCtx.beginPath();
+            sCtx.ellipse(holeObj.x, holeObj.y, holeObj.rx * 0.90, holeObj.ry * 0.90, 0, 0, Math.PI * 2);
+            sCtx.stroke();
+
+            const holeGrad = sCtx.createRadialGradient(
+              holeObj.x,
+              holeObj.y,
+              5,
+              holeObj.x,
+              holeObj.y,
+              holeObj.rx * 0.85
+            );
+            holeGrad.addColorStop(0, `rgba(255, 230, 120, ${0.82 * pulse})`);
+            holeGrad.addColorStop(0.6, isDecoy ? `rgba(255, 45, 149, ${0.38 * pulse})` : `rgba(0, 240, 255, ${0.38 * pulse})`);
+            holeGrad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+            sCtx.fillStyle = holeGrad;
+            sCtx.beginPath();
+            sCtx.ellipse(holeObj.x, holeObj.y, holeObj.rx * 0.85, holeObj.ry * 0.85, 0, 0, Math.PI * 2);
+            sCtx.fill();
+
+            // During Dual-Hole Fake-Out Windup, render a phantom pulsing gold ball in the decoy hole too!
+            if (isDecoy && slugger.phase === 'WINDUP') {
+              sCtx.globalAlpha = 0.72 * pulse;
+              draw24KGoldPinball(holeObj.x, holeObj.y, 16);
+            }
+            sCtx.restore();
+          }
+
+          if (slugger.phase === 'WINDUP' && slugger.fakeOutWindup) {
+            sCtx.save();
+            sCtx.font = '900 12px Orbitron, sans-serif';
+            sCtx.textAlign = 'center';
+            sCtx.textBaseline = 'middle';
+            sCtx.fillStyle = '#ff2d95';
+            sCtx.shadowColor = '#ff2d95';
+            sCtx.shadowBlur = 12;
+            sCtx.fillText('👻 FAKE-OUT WINDUP!', 960, 200);
+            sCtx.restore();
+          }
         }
 
         // Pitch Radar Pill Badge below active Left/Right hole
@@ -6663,19 +6847,38 @@
         sCtx.arc(bx, by, br * 0.96, 0.15 * Math.PI, 0.85 * Math.PI);
         sCtx.stroke();
 
+        // Subtle Breaking-Ball Spin Aura Ring when an unflipped curveball/slider/screwball is hooking down the runway
+        if (
+          slugger.phase === 'LIVE_PLAY' &&
+          !slugger.hasBeenFlipped &&
+          Math.abs(slugger.pitchCurveX || 0) > 0.015 &&
+          Math.hypot(bx - slugger.ballX, by - slugger.ballY) < 4
+        ) {
+          const spinAng = performance.now() * 0.018 * (slugger.pitchCurveX > 0 ? 1 : -1);
+          sCtx.strokeStyle = slugger.pitchColor || '#00f0ff';
+          sCtx.lineWidth = 2.4;
+          sCtx.shadowColor = slugger.pitchColor || '#00f0ff';
+          sCtx.shadowBlur = 10;
+          sCtx.beginPath();
+          sCtx.arc(bx, by, br + 4.5, spinAng, spinAng + Math.PI * 1.15);
+          sCtx.stroke();
+        }
+
         sCtx.restore();
       }
 
-      // Draw Live Top HUD Scoreboard Tracking Round Points, Round Tickets (10 PTS = 1 TIX) & 3 Lives Indicator
+      // Draw Live Top HUD Scoreboard Tracking Round Points, Round Tickets (10 PTS = 1 TIX), Lives & Escalating Pitch Heat Level!
       function drawLiveHudOverlay() {
         if (!sCtx) return;
         sCtx.save();
         const isMobileHud = window.innerWidth <= 768;
+        const heat = getPitchHeatTier(slugger.roundPoints);
 
         // 1. Left Scoreboard Wing: ROUND POINTS (1 Runner Home = 1 Point)
-        const leftBoxX = 150;
-        const leftBoxW = isMobileHud ? 505 : 478;
-        const leftTextX = isMobileHud ? 522 : 389;
+        // On Full-Screen Mobile (canvas x = 438..1482), center left wing in x = 442..676 (center x = 559)
+        const leftBoxX = isMobileHud ? 442 : 150;
+        const leftBoxW = isMobileHud ? 236 : 478;
+        const leftTextX = isMobileHud ? 560 : 389;
         const leftGrad = sCtx.createLinearGradient(leftBoxX, 10, leftBoxX, 98);
         leftGrad.addColorStop(0, '#070b18');
         leftGrad.addColorStop(0.55, '#0d091c');
@@ -6685,29 +6888,30 @@
         sCtx.roundRect(leftBoxX, 10, leftBoxW, 88, 12);
         sCtx.fill();
         if (isMobileHud) {
-          sCtx.strokeStyle = 'rgba(0, 240, 255, 0.55)';
+          sCtx.strokeStyle = 'rgba(0, 240, 255, 0.65)';
           sCtx.lineWidth = 2;
           sCtx.stroke();
         }
 
-        sCtx.font = isMobileHud ? '900 13.5px Orbitron, sans-serif' : '900 17px Orbitron, sans-serif';
+        sCtx.font = isMobileHud ? '900 13px Orbitron, sans-serif' : '900 17px Orbitron, sans-serif';
         sCtx.textAlign = 'center';
         sCtx.textBaseline = 'middle';
         sCtx.fillStyle = '#6cf6ff';
         sCtx.shadowColor = 'rgba(0, 240, 255, 0.75)';
         sCtx.shadowBlur = 10;
-        sCtx.fillText(isMobileHud ? 'POINTS (HOME = +1)' : 'ROUND POINTS (HOME = +1 PT)', leftTextX, 29);
+        sCtx.fillText(isMobileHud ? 'ROUND POINTS' : 'ROUND POINTS (HOME = +1 PT)', leftTextX, 29);
 
-        sCtx.font = isMobileHud ? '900 35px Orbitron, sans-serif' : '900 38px Orbitron, sans-serif';
+        sCtx.font = isMobileHud ? '900 32px Orbitron, sans-serif' : '900 38px Orbitron, sans-serif';
         sCtx.fillStyle = '#ffd700';
         sCtx.shadowColor = 'rgba(255, 215, 0, 0.85)';
         sCtx.shadowBlur = 14;
         sCtx.fillText(`${slugger.roundPoints.toLocaleString()} PTS`, leftTextX, 68);
 
         // 2. Right Scoreboard Wing: ROUND TICKETS (10 Points = 1 Ticket)
-        const rightBoxX = isMobileHud ? 1265 : 1292;
-        const rightBoxW = isMobileHud ? 505 : 478;
-        const rightTextX = isMobileHud ? 1398 : 1531;
+        // On Full-Screen Mobile (canvas x = 438..1482), center right wing in x = 1242..1478 (center x = 1360)
+        const rightBoxX = isMobileHud ? 1242 : 1292;
+        const rightBoxW = isMobileHud ? 236 : 478;
+        const rightTextX = isMobileHud ? 1360 : 1531;
         const rightGrad = sCtx.createLinearGradient(rightBoxX, 10, rightBoxX, 98);
         rightGrad.addColorStop(0, '#070b18');
         rightGrad.addColorStop(0.55, '#0d091c');
@@ -6717,57 +6921,62 @@
         sCtx.roundRect(rightBoxX, 10, rightBoxW, 88, 12);
         sCtx.fill();
         if (isMobileHud) {
-          sCtx.strokeStyle = 'rgba(255, 45, 149, 0.55)';
+          sCtx.strokeStyle = 'rgba(255, 45, 149, 0.65)';
           sCtx.lineWidth = 2;
           sCtx.stroke();
         }
 
-        sCtx.font = isMobileHud ? '900 13.5px Orbitron, sans-serif' : '900 17px Orbitron, sans-serif';
+        sCtx.font = isMobileHud ? '900 13px Orbitron, sans-serif' : '900 17px Orbitron, sans-serif';
         sCtx.textAlign = 'center';
         sCtx.textBaseline = 'middle';
         sCtx.fillStyle = '#6cf6ff';
         sCtx.shadowColor = 'rgba(0, 240, 255, 0.75)';
         sCtx.shadowBlur = 10;
-        sCtx.fillText(isMobileHud ? 'TICKETS (10P = 1T)' : 'ROUND TICKETS (10 PTS = 1 TIX)', rightTextX, 29);
+        sCtx.fillText(isMobileHud ? 'ROUND TICKETS' : 'ROUND TICKETS (10 PTS = 1 TIX)', rightTextX, 29);
 
-        sCtx.font = isMobileHud ? '900 35px Orbitron, sans-serif' : '900 38px Orbitron, sans-serif';
+        sCtx.font = isMobileHud ? '900 32px Orbitron, sans-serif' : '900 38px Orbitron, sans-serif';
         sCtx.fillStyle = '#ff3898';
         sCtx.shadowColor = 'rgba(255, 45, 149, 0.90)';
         sCtx.shadowBlur = 14;
         sCtx.fillText(`${slugger.roundTickets.toLocaleString()} TIX`, rightTextX, 68);
 
-        // 3. Dynamic Lives Neon Arcade Badge Centered Below the Top Title Banner (caps at 4 Lives max)
+        // 3. Side-by-Side Center Badges Below Top Title Banner: [LIVES] + [🔥 HEAT LVL X]
         const maxOrbs = Math.min(4, Math.max(3, slugger.maxLives));
-        const badgeW = Math.max(248, 124 + maxOrbs * 42);
+        const livesW = 114 + maxOrbs * 34;
+        const heatW = 248;
+        const gapW = 12;
+        const totalW = livesW + gapW + heatW;
         const badgeH = 34;
-        const bx = 960 - badgeW / 2;
         const by = 88;
+        const bx = 960 - totalW / 2;
+
+        // 3A. Lives Pill
         sCtx.fillStyle = 'rgba(7, 11, 24, 0.94)';
         sCtx.strokeStyle = slugger.lives === 1 ? '#ff2d95' : '#00f0ff';
         sCtx.lineWidth = 2.2;
         sCtx.shadowColor = slugger.lives === 1 ? '#ff2d95' : '#00f0ff';
         sCtx.shadowBlur = 12;
         sCtx.beginPath();
-        sCtx.roundRect(bx, by, badgeW, badgeH, 17);
+        sCtx.roundRect(bx, by, livesW, badgeH, 17);
         sCtx.fill();
         sCtx.stroke();
 
-        sCtx.font = '900 13px Orbitron, sans-serif';
+        sCtx.font = '900 12.5px Orbitron, sans-serif';
         sCtx.textAlign = 'left';
         sCtx.textBaseline = 'middle';
         sCtx.fillStyle = '#ffffff';
         sCtx.shadowBlur = 6;
-        sCtx.fillText('LIVES:', bx + 22, by + badgeH / 2 + 1);
+        sCtx.fillText('LIVES:', bx + 18, by + badgeH / 2 + 1);
 
         for (let i = 0; i < maxOrbs; i++) {
           const alive = i < slugger.lives;
-          const cx = bx + 118 + i * 42;
+          const cx = bx + 98 + i * 34;
           const cy = by + badgeH / 2;
           sCtx.save();
           sCtx.beginPath();
-          sCtx.arc(cx, cy, 10, 0, Math.PI * 2);
+          sCtx.arc(cx, cy, 9.5, 0, Math.PI * 2);
           if (alive) {
-            const orbGrad = sCtx.createRadialGradient(cx - 3, cy - 3, 1, cx, cy, 10);
+            const orbGrad = sCtx.createRadialGradient(cx - 3, cy - 3, 1, cx, cy, 9.5);
             orbGrad.addColorStop(0, '#ffffff');
             orbGrad.addColorStop(0.35, '#ffd700');
             orbGrad.addColorStop(1, '#c48808');
@@ -6785,6 +6994,28 @@
           sCtx.stroke();
           sCtx.restore();
         }
+
+        // 3B. Escalating Pitch Heat Badge (LVL 1 -> LVL 5)
+        const hx = bx + livesW + gapW;
+        sCtx.save();
+        sCtx.fillStyle = 'rgba(7, 11, 24, 0.94)';
+        sCtx.strokeStyle = heat.color;
+        sCtx.lineWidth = 2.2;
+        sCtx.shadowColor = heat.color;
+        sCtx.shadowBlur = 14;
+        sCtx.beginPath();
+        sCtx.roundRect(hx, by, heatW, badgeH, 17);
+        sCtx.fill();
+        sCtx.stroke();
+
+        sCtx.font = '900 11.5px Orbitron, sans-serif';
+        sCtx.textAlign = 'center';
+        sCtx.textBaseline = 'middle';
+        sCtx.fillStyle = heat.color;
+        sCtx.shadowColor = heat.color;
+        sCtx.shadowBlur = 10;
+        sCtx.fillText(`🔥 HEAT LVL ${heat.level} • ${heat.name}`, hx + heatW / 2, by + badgeH / 2 + 1);
+        sCtx.restore();
 
         sCtx.restore();
       }
