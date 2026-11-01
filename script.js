@@ -208,9 +208,6 @@ function initGamerIntro() {
     const synthSteampunkComingSoonEl = document.getElementById('synth-steampunk-coming-soon');
     const holoDramaticFlash = document.getElementById('holo-dramatic-flash');
 
-    // When true (public visitors not logged in as Admin), after the 8 era cutscenes finish (Scene 8),
-    // Synth walks to the center of the stage and says "Coming soon... 11/14" with the Fancy Steampunk sign above him.
-    // Logging in as an Admin/Owner (rc_is_admin_v1 === 'true') dynamically sets TEASER_COMING_SOON_MODE = false and unlocks the full site!
     function isAdminSiteUnlocked() {
         try {
             if (window.RetroAuthHub && typeof window.RetroAuthHub.isAdminLoggedIn === 'function') {
@@ -221,7 +218,7 @@ function initGamerIntro() {
             return false;
         }
     }
-    let TEASER_COMING_SOON_MODE = !isAdminSiteUnlocked();
+    let TEASER_COMING_SOON_MODE = true;
     const IS_LOCAL_DEV_SERVER = false;
 
     const fullPrologueSteps = [
@@ -363,7 +360,7 @@ function initGamerIntro() {
         }
         prologueSteps = TEASER_COMING_SOON_MODE ? fullPrologueSteps.slice(0, 9) : fullPrologueSteps;
         if (skipIntroBtn) {
-            skipIntroBtn.style.display = TEASER_COMING_SOON_MODE ? 'none' : '';
+            skipIntroBtn.style.display = isAdminSiteUnlocked() ? '' : 'none';
         }
         const synEl = document.getElementById('syn-journey-audio');
         if (synEl) {
@@ -3793,7 +3790,7 @@ function initGamerIntro() {
     }
 
     window.__rcUnlockFullSiteForAdmin = function () {
-        TEASER_COMING_SOON_MODE = false;
+        TEASER_COMING_SOON_MODE = true;
         syncTeaserModePrologueState();
         skipEntireIntro();
     };
