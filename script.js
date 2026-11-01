@@ -4592,43 +4592,6 @@ function initHomeShopScroller() {
 
     let offsetPx = 0;
     let lastTime = performance.now();
-    let isHovered = false;
-    let isDragging = false;
-    let dragStartX = 0;
-    let dragStartOffset = 0;
-    let dragMoved = 0;
-
-    viewport.addEventListener('pointerenter', (e) => {
-        if (e.pointerType === 'mouse') isHovered = true;
-    });
-    viewport.addEventListener('pointerleave', () => {
-        isHovered = false;
-    });
-
-    viewport.addEventListener('pointerdown', (e) => {
-        isDragging = true;
-        dragStartX = e.clientX;
-        dragStartOffset = offsetPx;
-        dragMoved = 0;
-    }, { passive: true });
-
-    window.addEventListener('pointermove', (e) => {
-        if (!isDragging) return;
-        const dx = e.clientX - dragStartX;
-        dragMoved = Math.max(dragMoved, Math.abs(dx));
-        offsetPx = dragStartOffset - dx;
-    }, { passive: true });
-
-    window.addEventListener('pointerup', () => {
-        isDragging = false;
-    }, { passive: true });
-
-    track.addEventListener('click', (e) => {
-        if (dragMoved > 10) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-    }, true);
 
     function tickScroller(now) {
         const dt = Math.min(0.06, Math.max(0.001, (now - lastTime) / 1000));
@@ -4636,14 +4599,10 @@ function initHomeShopScroller() {
 
         const halfWidth = track.scrollWidth / 2;
         if (halfWidth > 0) {
-            if (!isDragging && !isHovered) {
-                const speedPxPerSec = window.innerWidth <= 920 ? 52 : 68;
-                offsetPx += speedPxPerSec * dt;
-            }
+            const speedPxPerSec = window.innerWidth <= 920 ? 92 : 115;
+            offsetPx += speedPxPerSec * dt;
             if (offsetPx >= halfWidth) {
                 offsetPx -= halfWidth;
-            } else if (offsetPx < 0) {
-                offsetPx += halfWidth;
             }
             track.style.transform = `translate3d(${-offsetPx}px, 0, 0)`;
         }
