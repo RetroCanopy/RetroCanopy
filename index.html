@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bungee&family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Press+Start+2P&family=Righteous&family=Russo+One&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=157">
+    <link rel="stylesheet" href="style.css?v=158">
 </head>
 
 <body class="cinema-intro-active">
@@ -271,6 +271,18 @@
                 </div>
             </a>
 
+            <!-- Concept 22: 4 Glowing Physical Arcade Push-Buttons on Control Deck (WEBSITES, APPS, GAMES, APPAREL + INSERT IDEA / HIRE US) -->
+            <div class="rc-concept22-deck" id="rc-hero-studio-marquee" role="group" aria-label="We Build Websites, Apps, Games, and Custom Apparel — Insert Idea / Hire Us">
+                <div class="rc-concept22-img-box">
+                    <img class="rc-concept22-deck-img" src="assets/misfits/concept22_arcade_deck.png?v=158" alt="Arcade Control Deck: Websites, Apps, Games, Apparel — Insert Idea / Hire Us" decoding="async" />
+                    <button type="button" class="rc-c22-hit rc-c22-hit-websites" data-service="Custom Website" aria-label="Custom Websites — Hire Us"></button>
+                    <button type="button" class="rc-c22-hit rc-c22-hit-apps" data-service="Mobile / Web App" aria-label="Mobile and Web Apps — Hire Us"></button>
+                    <button type="button" class="rc-c22-hit rc-c22-hit-games" data-service="Custom Arcade / Web Game" aria-label="Custom Arcade and Web Games — Hire Us"></button>
+                    <button type="button" class="rc-c22-hit rc-c22-hit-apparel" data-service="Custom Apparel & Merch" aria-label="Custom Apparel and Merch — Hire Us"></button>
+                    <button type="button" class="rc-c22-hit rc-c22-hit-hire" data-service="Full Custom Project" aria-label="Insert Idea / Hire Us"></button>
+                </div>
+            </div>
+
             <a class="rc-misfits-feature-link rc-partner-deafhammer" href="https://deafhammer.com" target="_blank" rel="noopener" aria-label="Visit DeafHammer.com">
                 <div class="rc-misfits-logo-wrap rc-deafhammer-logo-wrap">
                     <img class="rc-misfits-logo-img rc-deafhammer-logo-img" src="assets/misfits/deafhammer_logo_lockup.png?v=139" alt="Deaf Hammer Productions" decoding="async" />
@@ -282,10 +294,55 @@
         </div>
     </section>
 
+    <!-- Retrocanopy Studio ("We Build Websites, Apps, Games & Custom Apparel") Interactive Modal -->
+    <div class="rc-web-studio-modal-backdrop" id="rc-web-studio-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="rc-web-studio-modal-title">
+        <div class="rc-web-studio-modal-card">
+            <button type="button" class="rc-web-studio-close-btn" id="rc-web-studio-close-btn" aria-label="Close Studio Modal">&times;</button>
+            <div class="rc-web-studio-header-banner">
+                <span class="rc-web-studio-title" id="rc-web-studio-modal-title">RETROCANOPY STUDIO &mdash; WEBSITES &bull; APPS &bull; GAMES &bull; CUSTOM APPAREL</span>
+            </div>
+            <div class="rc-web-studio-pillars-grid">
+                <div class="rc-web-studio-pillar-card pillar-cyan">
+                    <div class="rc-pillar-icon" aria-hidden="true">&#127760;</div>
+                    <h3 class="rc-pillar-heading">WEBSITES</h3>
+                    <p class="rc-pillar-desc">Custom Brand Sites, E-Commerce Storefronts, 3D Stages &amp; 24/7 Management</p>
+                </div>
+                <div class="rc-web-studio-pillar-card pillar-gold">
+                    <div class="rc-pillar-icon" aria-hidden="true">&#128241;</div>
+                    <h3 class="rc-pillar-heading">APPS</h3>
+                    <p class="rc-pillar-desc">iOS, Android &amp; Full-Stack Web Applications Built &amp; Managed to Scale</p>
+                </div>
+                <div class="rc-web-studio-pillar-card pillar-magenta">
+                    <div class="rc-pillar-icon" aria-hidden="true">&#127918;</div>
+                    <h3 class="rc-pillar-heading">GAMES</h3>
+                    <p class="rc-pillar-desc">Custom HTML5 Arcade Games, Gamified Experiences &amp; Ticket Reward Systems</p>
+                </div>
+                <div class="rc-web-studio-pillar-card pillar-emerald">
+                    <div class="rc-pillar-icon" aria-hidden="true">&#128085;</div>
+                    <h3 class="rc-pillar-heading">CUSTOM APPAREL</h3>
+                    <p class="rc-pillar-desc">Custom Hats, Hoodies, Tees, Embroidery, Streetwear &amp; Brand Merch Drops</p>
+                </div>
+            </div>
+            <form class="rc-web-studio-quote-bar" id="rc-web-studio-quote-form">
+                <input type="text" class="rc-studio-input" id="rc-studio-name" placeholder="Your Name / Brand" required />
+                <input type="text" class="rc-studio-input" id="rc-studio-contact" placeholder="Email or Phone" required />
+                <select class="rc-studio-select" id="rc-studio-service" aria-label="Select Service Type">
+                    <option value="Custom Website">Custom Website</option>
+                    <option value="Mobile / Web App">Mobile / Web App</option>
+                    <option value="Custom Arcade / Web Game">Custom Arcade / Web Game</option>
+                    <option value="Custom Apparel & Merch">Custom Apparel &amp; Merch</option>
+                    <option value="Full Custom Project">Full Custom Project (Multiple Services)</option>
+                </select>
+                <button type="submit" class="rc-studio-submit-btn">INSERT IDEA / HIRE US &#9889;</button>
+            </form>
+            <div class="rc-studio-confirm-msg" id="rc-studio-confirm-msg" aria-live="polite"></div>
+        </div>
+    </div>
+
     <!-- Stage container (crew characters and section tabs removed; Synth owl butler & login preserved) -->
     <div id="crew-stage" class="crew-stage" aria-hidden="true"></div>
 
-    <script src="script.js?v=152"></script>
+    <script src="script.js?v=153"></script>
     <script src="auth_hub.js?v=145"></script>
 </body>
 

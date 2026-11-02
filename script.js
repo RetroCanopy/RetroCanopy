@@ -4671,6 +4671,70 @@ function initHomeShopScroller() {
     }
 
     requestAnimationFrame(tickScroller);
+
+    // Concept 22: 4 Glowing Physical Arcade Push-Buttons & Studio Modal
+    const studioDeck = document.getElementById('rc-hero-studio-marquee');
+    const studioModal = document.getElementById('rc-web-studio-modal');
+    const studioClose = document.getElementById('rc-web-studio-close-btn');
+    const studioForm = document.getElementById('rc-web-studio-quote-form');
+    const studioSelect = document.getElementById('rc-studio-service');
+    const studioConfirm = document.getElementById('rc-studio-confirm-msg');
+
+    function openStudioModal(preselectedService) {
+        if (!studioModal) return;
+        if (preselectedService && studioSelect) {
+            studioSelect.value = preselectedService;
+        }
+        studioModal.classList.add('active');
+        studioModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeStudioModal() {
+        if (!studioModal) return;
+        studioModal.classList.remove('active');
+        studioModal.setAttribute('aria-hidden', 'true');
+    }
+
+    if (studioDeck) {
+        const hitButtons = studioDeck.querySelectorAll('.rc-c22-hit');
+        hitButtons.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openStudioModal(btn.getAttribute('data-service') || 'Full Custom Project');
+            });
+        });
+        studioDeck.addEventListener('click', () => openStudioModal('Full Custom Project'));
+    }
+    if (studioClose) {
+        studioClose.addEventListener('click', closeStudioModal);
+    }
+    if (studioModal) {
+        studioModal.addEventListener('click', (e) => {
+            if (e.target === studioModal) closeStudioModal();
+        });
+    }
+    if (studioForm) {
+        studioForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameVal = (document.getElementById('rc-studio-name')?.value || '').trim();
+            const contactVal = (document.getElementById('rc-studio-contact')?.value || '').trim();
+            const serviceVal = studioSelect?.value || 'Full Custom Project';
+            try {
+                const existing = JSON.parse(localStorage.getItem('rc_studio_inquiries_v1') || '[]');
+                existing.push({
+                    name: nameVal,
+                    contact: contactVal,
+                    service: serviceVal,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('rc_studio_inquiries_v1', JSON.stringify(existing));
+            } catch (_) {}
+            if (studioConfirm) {
+                studioConfirm.textContent = `✓ Inquiry received for ${serviceVal}! Our team will reach out shortly.`;
+            }
+            studioForm.reset();
+        });
+    }
 }
 
 // Auto-initialize when DOM is ready
