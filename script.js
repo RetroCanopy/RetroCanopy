@@ -4635,8 +4635,137 @@ function initHomeShopScroller() {
     }
 
     let offsetPx = 0;
-    let gamesOffsetPx = 0;
+    let gamesPosPx = 0;
+    let shopDragActive = false;
+    let gamesDragActive = false;
+    let shopMomentumVel = 0;
+    let gamesMomentumVel = 0;
     let lastTime = performance.now();
+
+    function wrapInfiniteOffset(val, halfW) {
+        if (halfW <= 0) return 0;
+        return ((val % halfW) + halfW) % halfW;
+    }
+
+    function bindCarouselSwipe(viewportEl, isGamesRow) {
+        if (!viewportEl) return;
+        let startX = 0;
+        let startY = 0;
+        let lastX = 0;
+        let lastMoveTs = 0;
+        let activePointer = false;
+        let isHorizontalSwipe = null;
+        let totalMovedPx = 0;
+        let instVelPxPerSec = 0;
+
+        function onStart(clientX, clientY) {
+            activePointer = true;
+            isHorizontalSwipe = null;
+            startX = clientX;
+            startY = clientY;
+            lastX = clientX;
+            lastMoveTs = performance.now();
+            totalMovedPx = 0;
+            instVelPxPerSec = 0;
+            if (isGamesRow) {
+                gamesDragActive = true;
+                gamesMomentumVel = 0;
+            } else {
+                shopDragActive = true;
+                shopMomentumVel = 0;
+            }
+            viewportEl.classList.add('is-dragging');
+        }
+
+        function onMove(clientX, clientY, evt) {
+            if (!activePointer) return;
+            const dxTotal = clientX - startX;
+            const dyTotal = clientY - startY;
+
+            if (isHorizontalSwipe === null && (Math.abs(dxTotal) > 5 || Math.abs(dyTotal) > 5)) {
+                isHorizontalSwipe = Math.abs(dxTotal) >= Math.abs(dyTotal) * 0.85;
+                if (!isHorizontalSwipe) {
+                    onEnd();
+                    return;
+                }
+            }
+
+            if (isHorizontalSwipe && evt && evt.cancelable) {
+                evt.preventDefault();
+            }
+
+            const now = performance.now();
+            const dtMs = Math.max(4, now - lastMoveTs);
+            const stepDx = clientX - lastX;
+            lastX = clientX;
+            lastMoveTs = now;
+            totalMovedPx += Math.abs(stepDx);
+
+            const currentVel = (-stepDx / dtMs) * 1000;
+            instVelPxPerSec = instVelPxPerSec * 0.35 + currentVel * 0.65;
+
+            if (isGamesRow && gamesTrack) {
+                const gamesHalfWidth = gamesTrack.scrollWidth / 2;
+                gamesPosPx = wrapInfiniteOffset(gamesPosPx - stepDx, gamesHalfWidth);
+                gamesTrack.style.transform = `translate3d(${-gamesPosPx}px, 0, 0)`;
+            } else {
+                const halfWidth = track.scrollWidth / 2;
+                offsetPx = wrapInfiniteOffset(offsetPx - stepDx, halfWidth);
+                track.style.transform = `translate3d(${-offsetPx}px, 0, 0)`;
+            }
+        }
+
+        function onEnd() {
+            if (!activePointer) return;
+            activePointer = false;
+            viewportEl.classList.remove('is-dragging');
+            const clampedVel = Math.max(-2200, Math.min(2200, instVelPxPerSec));
+            if (isGamesRow) {
+                gamesDragActive = false;
+                if (Math.abs(clampedVel) > 40) gamesMomentumVel = clampedVel;
+            } else {
+                shopDragActive = false;
+                if (Math.abs(clampedVel) > 40) shopMomentumVel = clampedVel;
+            }
+        }
+
+        viewportEl.addEventListener('touchstart', (e) => {
+            if (!e.touches || e.touches.length !== 1) return;
+            onStart(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+
+        viewportEl.addEventListener('touchmove', (e) => {
+            if (!e.touches || e.touches.length !== 1) return;
+            onMove(e.touches[0].clientX, e.touches[0].clientY, e);
+        }, { passive: false });
+
+        viewportEl.addEventListener('touchend', onEnd, { passive: true });
+        viewportEl.addEventListener('touchcancel', onEnd, { passive: true });
+
+        viewportEl.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            onStart(e.clientX, e.clientY);
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!activePointer) return;
+            onMove(e.clientX, e.clientY, e);
+        });
+        window.addEventListener('mouseup', () => {
+            if (activePointer) onEnd();
+        });
+
+        // Prevent accidental navigation when finishing a swipe drag
+        viewportEl.addEventListener('click', (e) => {
+            if (totalMovedPx > 9) {
+                e.preventDefault();
+                e.stopPropagation();
+                totalMovedPx = 0;
+            }
+        }, true);
+    }
+
+    bindCarouselSwipe(document.getElementById('rc-shop-scroll-viewport'), false);
+    bindCarouselSwipe(document.getElementById('rc-games-scroll-viewport'), true);
 
     function tickScroller(now) {
         const dt = Math.min(0.06, Math.max(0.001, (now - lastTime) / 1000));
@@ -4644,25 +4773,31 @@ function initHomeShopScroller() {
 
         const speedPxPerSec = window.innerWidth <= 920 ? 42 : 52;
 
-        // Top Row: Shop items scrolling right-to-left (-offsetPx)
+        // Top Row: Shop items scrolling right-to-left (-offsetPx) + touch swipe & momentum
         const halfWidth = track.scrollWidth / 2;
-        if (halfWidth > 0) {
-            offsetPx += speedPxPerSec * dt;
-            if (offsetPx >= halfWidth) {
-                offsetPx -= halfWidth;
+        if (halfWidth > 0 && !shopDragActive) {
+            if (Math.abs(shopMomentumVel) > 8) {
+                offsetPx = wrapInfiniteOffset(offsetPx + shopMomentumVel * dt, halfWidth);
+                shopMomentumVel *= Math.pow(0.04, dt);
+            } else {
+                shopMomentumVel = 0;
+                offsetPx = wrapInfiniteOffset(offsetPx + speedPxPerSec * dt, halfWidth);
             }
             track.style.transform = `translate3d(${-offsetPx}px, 0, 0)`;
         }
 
-        // Middle Row: Arcade games scrolling left-to-right (opposite direction)
+        // Middle Row: Arcade games scrolling left-to-right (opposite direction) + touch swipe & momentum
         if (gamesTrack) {
             const gamesHalfWidth = gamesTrack.scrollWidth / 2;
-            if (gamesHalfWidth > 0) {
-                gamesOffsetPx += speedPxPerSec * dt;
-                if (gamesOffsetPx >= gamesHalfWidth) {
-                    gamesOffsetPx -= gamesHalfWidth;
+            if (gamesHalfWidth > 0 && !gamesDragActive) {
+                if (Math.abs(gamesMomentumVel) > 8) {
+                    gamesPosPx = wrapInfiniteOffset(gamesPosPx + gamesMomentumVel * dt, gamesHalfWidth);
+                    gamesMomentumVel *= Math.pow(0.04, dt);
+                } else {
+                    gamesMomentumVel = 0;
+                    gamesPosPx = wrapInfiniteOffset(gamesPosPx - speedPxPerSec * dt, gamesHalfWidth);
                 }
-                gamesTrack.style.transform = `translate3d(${-(gamesHalfWidth - gamesOffsetPx)}px, 0, 0)`;
+                gamesTrack.style.transform = `translate3d(${-gamesPosPx}px, 0, 0)`;
             }
         }
 

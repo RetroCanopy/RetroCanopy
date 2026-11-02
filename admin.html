@@ -828,7 +828,7 @@
     </div>
   </div>
 
-  <script src="auth_hub.js?v=146"></script>
+  <script src="auth_hub.js?v=147"></script>
   <script>
     (function () {
       const gateModal = document.getElementById('ownerGateModal');
@@ -1101,21 +1101,7 @@
           }
         });
 
-        Object.keys(playerDb).forEach((key) => {
-          const p = playerDb[key];
-          if (!p || !p.username) return;
-          if (p.email && adminDb[p.email.toLowerCase()]) return;
-          playerCount++;
-          activeList.push({
-            type: 'member',
-            key: key,
-            name: `@${p.username}`,
-            email: p.email || 'Player Account',
-            growthScore: Math.max(p.xp || 0, p.bestScore || 0),
-            bestScore: p.bestScore || 0
-          });
-        });
-
+        // Only Owner-approved Admin accounts are allowed in Active Members
         const totalMembers = activeList.length;
 
         // Update Top Member Count Numbers

@@ -1328,7 +1328,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
-  <script src="auth_hub.js?v=146"></script>
+  <script src="auth_hub.js?v=147"></script>
   <script>
     (function () {
       // Mark internal navigation so returning to index.html skips the opening cutscene
@@ -1596,58 +1596,8 @@
         localStorage.setItem('rc_used_coupons_v1', JSON.stringify(existing.usedCoupons));
       }
 
-      function loginOrRegisterCustomer(rawUsername, rawPin, mergeGuestProgress = true) {
-        const cleanName = (rawUsername || '').trim().replace(/^@+/, '');
-        if (!cleanName) return { ok: false, msg: 'Please enter a username!' };
-
-        const db = getAccountsDb();
-        const key = cleanName.toLowerCase();
-        const pin = (rawPin || '').trim();
-        const guestXp = mergeGuestProgress ? getCanopyXp() : 0;
-        const guestBest = mergeGuestProgress ? getBestScore() : 0;
-        const guestUsed = mergeGuestProgress ? getUsedCouponsMap() : {};
-        const guestActiveCoupon = mergeGuestProgress ? getActiveCheckoutCoupon() : '';
-
-        if (db[key]) {
-          // Existing customer account
-          if (db[key].pin && pin && db[key].pin !== pin) {
-            return { ok: false, msg: 'Incorrect PIN for existing customer @' + db[key].username };
-          }
-          // If switching from guest, only merge guest progress if they weren't logged into someone else
-          const prevUser = getCurrentUsername();
-          if (!prevUser && mergeGuestProgress) {
-            db[key].xp = Math.max(db[key].xp || 0, guestXp);
-            db[key].bestScore = Math.max(db[key].bestScore || 0, guestBest);
-            db[key].usedCoupons = { ...(db[key].usedCoupons || {}), ...guestUsed };
-            if (!db[key].activeCheckoutCoupon && guestActiveCoupon) {
-              db[key].activeCheckoutCoupon = guestActiveCoupon;
-            }
-          }
-        } else {
-          // Brand new customer account
-          db[key] = {
-            username: cleanName,
-            pin: pin,
-            xp: guestXp,
-            bestScore: guestBest,
-            usedCoupons: guestUsed,
-            activeCheckoutCoupon: guestActiveCoupon,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          };
-        }
-
-        localStorage.setItem('rc_current_user_v1', db[key].username);
-        saveAccountsDb(db);
-        syncActiveAccountToGlobalStorage();
-
-        // Also ensure their best score is on the live leaderboard if > 0
-        if (db[key].bestScore > 0) {
-          postScoreToLeaderboard(db[key].username, db[key].bestScore, db[key].xp);
-        }
-
-        renderAllUI();
-        return { ok: true, account: db[key] };
+      function loginOrRegisterCustomer() {
+        return { ok: false, msg: 'Only Owner-approved Admin accounts are permitted.' };
       }
 
       function logoutCustomer() {

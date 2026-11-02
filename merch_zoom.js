@@ -5,6 +5,22 @@
    ========================================================================== */
 
 (function () {
+  // Enforce strict Owner-approved Admin gate on all product preview pages
+  try {
+    const isAdminFlag = localStorage.getItem('rc_is_admin_v1') === 'true';
+    const adminEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim().toLowerCase();
+    const isOwnerEmail = adminEmail === 'josephcole001.ai@gmail.com' || adminEmail === 'josephcole001.a1@gmail.com';
+    const adminDb = JSON.parse(localStorage.getItem('rc_admin_accounts_v2') || '{}') || {};
+    const isApprovedAdmin = Boolean(isAdminFlag && adminEmail && (isOwnerEmail || (adminDb[adminEmail] && adminDb[adminEmail].status === 'Approved' && !adminDb[adminEmail].deleted)));
+    if (!isApprovedAdmin) {
+      localStorage.removeItem('rc_is_admin_v1');
+      localStorage.removeItem('rc_current_admin_email_v1');
+      localStorage.removeItem('rc_current_user_v1');
+      window.location.replace('index.html');
+      return;
+    }
+  } catch (_) {}
+
   let zoomScale = 1.45;
   let activeSide = 'front'; // 'front' | 'back' | 'single'
   let isDualViewPage = false;
@@ -1273,36 +1289,8 @@
       localStorage.setItem('rc_canopy_xp', String(existing.xp));
     }
 
-    function loginCustomerInStore(rawUsername, rawPin) {
-      const cleanName = (rawUsername || '').trim().replace(/^@+/, '');
-      if (!cleanName) return { ok: false, msg: 'Enter a username to log in!' };
-      const db = getAccountsDb();
-      const key = cleanName.toLowerCase();
-      const pin = (rawPin || '').trim();
-      const prevUser = getCurrentUsername();
-
-      if (db[key]) {
-        if (db[key].pin && pin && db[key].pin !== pin) {
-          return { ok: false, msg: 'Incorrect PIN for @' + db[key].username };
-        }
-        if (!prevUser) {
-          db[key].xp = Math.max(db[key].xp || 0, getCanopyXp());
-        }
-      } else {
-        db[key] = {
-          username: cleanName,
-          pin: pin,
-          xp: getCanopyXp(),
-          bestScore: parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-      }
-      localStorage.setItem('rc_current_user_v1', db[key].username);
-      saveAccountsDb(db);
-      syncActiveAccountToGlobalStorage();
-      renderStoreCouponDockAndCheckout();
-      return { ok: true, account: db[key] };
+    function loginCustomerInStore() {
+      return { ok: false, msg: 'Only Owner-approved Admin accounts are permitted.' };
     }
 
     syncActiveAccountToGlobalStorage();

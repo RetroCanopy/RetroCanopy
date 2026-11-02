@@ -91,7 +91,39 @@
 
   function getAccountsDb() {
     try {
-      return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '{}') || {};
+      const raw = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '{}') || {};
+      const admDb = getAdminAccountsDb();
+      const approvedNames = new Set(['joseph', 'joseph cole (owner)']);
+      const approvedEmails = new Set(OWNER_EMAIL_ALIASES);
+      Object.values(admDb).forEach((a) => {
+        if (a && a.status === 'Approved' && !a.deleted) {
+          if (a.name) approvedNames.add(a.name.trim().toLowerCase());
+          if (a.email) {
+            approvedEmails.add(a.email.trim().toLowerCase());
+            approvedNames.add(a.email.split('@')[0].trim().toLowerCase());
+          }
+        }
+      });
+      const filtered = {};
+      let changed = false;
+      Object.keys(raw).forEach((k) => {
+        const rec = raw[k];
+        if (!rec) {
+          changed = true;
+          return;
+        }
+        const uname = (rec.username || k || '').trim().toLowerCase();
+        const uemail = (rec.email || '').trim().toLowerCase();
+        if (approvedNames.has(uname) || (uemail && approvedEmails.has(uemail))) {
+          filtered[k] = rec;
+        } else {
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(filtered));
+      }
+      return filtered;
     } catch (_) {
       return {};
     }
@@ -673,78 +705,13 @@
   }
 
   // =========================================================================
-  // PLAYER ACCOUNT CREATION & LOGIN ENGINE
+  // PLAYER ACCOUNT CREATION & LOGIN ENGINE (DISABLED — ADMIN APPROVAL REQUIRED)
   // =========================================================================
-  function performPlayerAuth(rawIdentifier, rawPassword, isRegister, rawEmail) {
-    const cleanInput = (rawIdentifier || '').trim().replace(/^@+/, '');
-    const emailInput = (rawEmail || '').trim();
-    const pin = (rawPassword || '').trim();
-
-    if (!cleanInput && !emailInput) {
-      return { ok: false, msg: 'Please enter your email or username.' };
-    }
-    if (!pin) {
-      return { ok: false, msg: 'Please enter your password.' };
-    }
-
-    const db = getAccountsDb();
-
-    if (!isRegister) {
-      const lookup = cleanInput.toLowerCase();
-      let foundKey = db[lookup] ? lookup : null;
-      if (!foundKey) {
-        foundKey = Object.keys(db).find((k) => {
-          const acc = db[k];
-          return acc && ((acc.email && acc.email.toLowerCase() === lookup) || (acc.username && acc.username.toLowerCase() === lookup));
-        }) || null;
-      }
-      if (!foundKey) {
-        return { ok: false, msg: `No player account found for "${cleanInput}". Click Create Account first.` };
-      }
-      const acct = db[foundKey];
-      if (acct.pin && acct.pin !== pin) {
-        return { ok: false, msg: `Incorrect password for @${acct.username}.` };
-      }
-      acct.updatedAt = new Date().toISOString();
-      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(db));
-      localStorage.setItem(CURRENT_USER_KEY, acct.username);
-      touchSessionActivity();
-      syncPlayerToLocal(acct);
-      syncWithServerDb(true);
-      return { ok: true, user: acct };
-    }
-
-    const derivedUsername = cleanInput.includes('@') ? cleanInput.split('@')[0] : cleanInput;
-    const finalEmail = emailInput || (cleanInput.includes('@') ? cleanInput : '');
-    if (!finalEmail || !finalEmail.includes('@')) {
-      return { ok: false, msg: 'Please enter a valid email address.' };
-    }
-
-    const key = derivedUsername.toLowerCase();
-    if (db[key] && db[key].pin && db[key].pin !== pin) {
-      return { ok: false, msg: `Account @${db[key].username} already exists. Click Player Log In instead.` };
-    }
-
-    const curXp = Math.max(0, parseInt(localStorage.getItem('rc_canopy_xp') || '0', 10) || 0);
-    const curBest = Math.max(0, parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0);
-    db[key] = {
-      username: derivedUsername,
-      email: finalEmail,
-      pin: pin,
-      xp: db[key] ? Math.max(db[key].xp || 0, curXp) : curXp,
-      bestScore: db[key] ? Math.max(db[key].bestScore || 0, curBest) : curBest,
-      usedCoupons: db[key] ? (db[key].usedCoupons || {}) : {},
-      activeCheckoutCoupon: db[key] ? (db[key].activeCheckoutCoupon || '') : '',
-      createdAt: db[key]?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+  function performPlayerAuth() {
+    return {
+      ok: false,
+      msg: 'Unapproved accounts are disabled. Only Admin accounts approved by the Owner on the Owner\'s Page can access the site.'
     };
-
-    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(db));
-    localStorage.setItem(CURRENT_USER_KEY, db[key].username);
-    touchSessionActivity();
-    syncPlayerToLocal(db[key]);
-    syncWithServerDb(true);
-    return { ok: true, user: db[key] };
   }
 
   function syncPlayerToLocal(acct) {
