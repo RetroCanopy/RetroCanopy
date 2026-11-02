@@ -4696,7 +4696,7 @@ function initHomeShopScroller() {
     }
 
     if (studioDeck) {
-        const hitButtons = studioDeck.querySelectorAll('.rc-c3-hit, .rc-c22-hit');
+        const hitButtons = studioDeck.querySelectorAll('[data-service]');
         hitButtons.forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
