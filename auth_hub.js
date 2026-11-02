@@ -43,8 +43,14 @@
 
   function checkAndMaintain15DaySession() {
     try {
-      const hasSession = localStorage.getItem(IS_ADMIN_KEY) === 'true' || Boolean(localStorage.getItem(CURRENT_USER_KEY));
-      if (!hasSession) return false;
+      const hasAdminSession = localStorage.getItem(IS_ADMIN_KEY) === 'true' && Boolean(localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY));
+      if (!hasAdminSession) {
+        // Never allow a non-admin player session to persist or bypass the Coming Soon gate
+        localStorage.removeItem(IS_ADMIN_KEY);
+        localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
+        localStorage.removeItem(CURRENT_USER_KEY);
+        return false;
+      }
 
       const lastActive = parseInt(localStorage.getItem(SESSION_LAST_ACTIVE_KEY) || '0', 10);
       const now = Date.now();
@@ -252,8 +258,82 @@
   }
 
   const IS_LOCAL_API_HOST = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const CLOUD_ADMIN_SYNC_TOPIC = 'rc_retrocanopy_admin_approval_v3_84f9a2d1';
+
+  function mergeAdminAccountsMap(incomingMap) {
+    if (!incomingMap || typeof incomingMap !== 'object') return;
+    const locAdm = getAdminAccountsDb();
+    Object.keys(incomingMap).forEach((k) => {
+      const lowerK = k.toLowerCase();
+      if (lowerK === 'josephdanielcole1994@gmail.com' || isOwnerEmail(lowerK)) return;
+      const srvA = incomingMap[k];
+      if (!srvA || typeof srvA !== 'object') return;
+      const locA = locAdm[lowerK];
+      if (!locA) {
+        locAdm[lowerK] = srvA;
+      } else {
+        const srvTime = srvA.updatedAt ? new Date(srvA.updatedAt).getTime() : 0;
+        const locTime = locA.updatedAt ? new Date(locA.updatedAt).getTime() : 0;
+        locAdm[lowerK] = srvTime >= locTime ? { ...locA, ...srvA } : { ...srvA, ...locA };
+      }
+    });
+    // Always keep ONLY 1 Master Owner record
+    delete locAdm['josephcole001.a1@gmail.com'];
+    const ownerKey = OWNER_ADMIN_EMAIL.toLowerCase();
+    locAdm[ownerKey] = {
+      name: 'Joseph Cole (Owner)',
+      email: OWNER_ADMIN_EMAIL,
+      password: OWNER_ADMIN_PASS,
+      status: 'Approved',
+      isOwner: true,
+      createdAt: locAdm[ownerKey]?.createdAt || '2026-10-29',
+      updatedAt: new Date().toISOString()
+    };
+    localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(locAdm));
+  }
+
+  async function syncCloudAdminAccounts(pushFirst = false) {
+    if (!window.location.protocol.startsWith('http')) return;
+    try {
+      if (!pushFirst) {
+        const res = await fetch(`https://ntfy.sh/${CLOUD_ADMIN_SYNC_TOPIC}/json?poll=1&since=12h`, { cache: 'no-store' });
+        if (res.ok) {
+          const text = await res.text();
+          const lines = (text || '').split('\n').filter(Boolean);
+          lines.forEach((line) => {
+            try {
+              const env = JSON.parse(line);
+              if (env && env.event === 'message' && env.message) {
+                const body = JSON.parse(env.message);
+                if (body && body.adminAccounts && typeof body.adminAccounts === 'object') {
+                  mergeAdminAccountsMap(body.adminAccounts);
+                }
+              }
+            } catch (_) {}
+          });
+        }
+      } else {
+        const fullDb = getAdminAccountsDb();
+        const exportMap = {};
+        Object.keys(fullDb).forEach((k) => {
+          const lowerK = k.toLowerCase();
+          if (isOwnerEmail(lowerK)) return;
+          exportMap[lowerK] = fullDb[k];
+        });
+        await fetch(`https://ntfy.sh/${CLOUD_ADMIN_SYNC_TOPIC}`, {
+          method: 'POST',
+          body: JSON.stringify({
+            adminAccounts: exportMap,
+            ts: Date.now()
+          })
+        });
+      }
+    } catch (_) {}
+  }
 
   async function syncWithServerDb(pushFirst = false) {
+    await syncCloudAdminAccounts(pushFirst);
+
     if (!IS_LOCAL_API_HOST || !window.location.protocol.startsWith('http')) {
       checkAndMaintain15DaySession();
       verifyActiveAdminSessionStillValid();
@@ -285,33 +365,7 @@
               localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(locAcc));
             }
             if (data.adminAccounts && typeof data.adminAccounts === 'object') {
-              const locAdm = getAdminAccountsDb();
-              Object.keys(data.adminAccounts).forEach((k) => {
-                const lowerK = k.toLowerCase();
-                if (lowerK === 'josephdanielcole1994@gmail.com' || isOwnerEmail(lowerK)) return;
-                const srvA = data.adminAccounts[k];
-                const locA = locAdm[lowerK];
-                if (!locA) {
-                  locAdm[lowerK] = srvA;
-                } else {
-                  const srvTime = srvA.updatedAt ? new Date(srvA.updatedAt).getTime() : 0;
-                  const locTime = locA.updatedAt ? new Date(locA.updatedAt).getTime() : 0;
-                  locAdm[lowerK] = srvTime >= locTime ? { ...locA, ...srvA } : { ...srvA, ...locA };
-                }
-              });
-              // Always keep ONLY 1 Master Owner record
-              delete locAdm['josephcole001.a1@gmail.com'];
-              const ownerKey = OWNER_ADMIN_EMAIL.toLowerCase();
-              locAdm[ownerKey] = {
-                name: 'Joseph Cole (Owner)',
-                email: OWNER_ADMIN_EMAIL,
-                password: OWNER_ADMIN_PASS,
-                status: 'Approved',
-                isOwner: true,
-                createdAt: locAdm[ownerKey]?.createdAt || '2026-10-29',
-                updatedAt: new Date().toISOString()
-              };
-              localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(locAdm));
+              mergeAdminAccountsMap(data.adminAccounts);
             }
             if (Array.isArray(data.orders) && data.orders.length > 0) {
               const locOrd = getOrdersDb();
@@ -349,17 +403,15 @@
             if (data.activeSession && typeof data.activeSession === 'object') {
               const srvSess = data.activeSession;
               const explicitlyLoggedOut = localStorage.getItem(SESSION_LOGGED_OUT_KEY) === '1';
-              const localHasSession = localStorage.getItem(IS_ADMIN_KEY) === 'true' || Boolean(localStorage.getItem(CURRENT_USER_KEY));
-              if (!explicitlyLoggedOut && !localHasSession && !srvSess.loggedOut && srvSess.lastActiveAt) {
+              const localHasSession = localStorage.getItem(IS_ADMIN_KEY) === 'true' && Boolean(localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY));
+              if (!explicitlyLoggedOut && !localHasSession && !srvSess.loggedOut && srvSess.lastActiveAt && srvSess.isAdmin && srvSess.adminEmail) {
                 const ageMs = Date.now() - Number(srvSess.lastActiveAt);
-                if (ageMs >= 0 && ageMs <= FIFTEEN_DAYS_MS) {
-                  if (srvSess.isAdmin && srvSess.adminEmail) {
-                    localStorage.setItem(IS_ADMIN_KEY, 'true');
-                    localStorage.setItem(CURRENT_ADMIN_EMAIL_KEY, srvSess.adminEmail);
-                  }
-                  if (srvSess.username) {
-                    localStorage.setItem(CURRENT_USER_KEY, srvSess.username);
-                  }
+                const admDb = getAdminAccountsDb();
+                const srvAdmRec = admDb[srvSess.adminEmail.toLowerCase()];
+                if (ageMs >= 0 && ageMs <= FIFTEEN_DAYS_MS && srvAdmRec && srvAdmRec.status === 'Approved' && !srvAdmRec.deleted) {
+                  localStorage.setItem(IS_ADMIN_KEY, 'true');
+                  localStorage.setItem(CURRENT_ADMIN_EMAIL_KEY, srvSess.adminEmail.toLowerCase());
+                  localStorage.setItem(CURRENT_USER_KEY, srvAdmRec.name || srvSess.username || 'Admin');
                   localStorage.setItem(SESSION_LAST_ACTIVE_KEY, String(Date.now()));
                 }
               }
@@ -397,20 +449,30 @@
   }
 
   function verifyActiveAdminSessionStillValid() {
-    if (localStorage.getItem(IS_ADMIN_KEY) !== 'true') return false;
+    if (localStorage.getItem(IS_ADMIN_KEY) !== 'true') {
+      localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
+      localStorage.removeItem(CURRENT_USER_KEY);
+      return false;
+    }
     const activeEmail = (localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY) || '').trim().toLowerCase();
-    if (!activeEmail) return true;
+    if (!activeEmail) {
+      localStorage.removeItem(IS_ADMIN_KEY);
+      localStorage.removeItem(CURRENT_USER_KEY);
+      return false;
+    }
     const adminDb = getAdminAccountsDb();
     const rec = adminDb[activeEmail];
-    if (!rec || rec.status !== 'Approved') {
+    if (!rec || rec.status !== 'Approved' || rec.deleted) {
       localStorage.removeItem(IS_ADMIN_KEY);
       localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
+      localStorage.removeItem(CURRENT_USER_KEY);
       return false;
     }
     return true;
   }
 
   function getCurrentUser() {
+    if (!verifyActiveAdminSessionStillValid()) return '';
     return (localStorage.getItem(CURRENT_USER_KEY) || '').trim();
   }
 
@@ -441,6 +503,7 @@
       return { ok: false, msg: 'Please set a password (at least 4 characters).' };
     }
 
+    await syncCloudAdminAccounts(false);
     const db = getAdminAccountsDb();
     const key = email.toLowerCase();
 
@@ -460,14 +523,12 @@
       saveAdminAccountsDb(db);
       localStorage.setItem(IS_ADMIN_KEY, 'true');
       localStorage.setItem(CURRENT_ADMIN_EMAIL_KEY, ownerKey);
-      if (!getCurrentUser()) {
-        localStorage.setItem(CURRENT_USER_KEY, 'Joseph');
-      }
+      localStorage.setItem(CURRENT_USER_KEY, 'Joseph');
       touchSessionActivity();
       return { ok: true, isOwnerAutoLogin: true, account: db[ownerKey] };
     }
 
-    if (db[key] && db[key].status === 'Approved') {
+    if (db[key] && db[key].status === 'Approved' && !db[key].deleted) {
       return { ok: false, msg: 'This email is already an Approved Admin! Click Admin Log In to sign in.' };
     }
 
@@ -476,13 +537,15 @@
       email,
       password,
       status: 'Pending',
+      deleted: false,
       isOwner: false,
       createdAt: new Date().toLocaleString(),
       updatedAt: new Date().toISOString()
     };
 
     db[key] = record;
-    saveAdminAccountsDb(db);
+    localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(db));
+    await syncWithServerDb(true);
 
     return { ok: true, account: record };
   }
@@ -519,19 +582,17 @@
       saveAdminAccountsDb(db);
       localStorage.setItem(IS_ADMIN_KEY, 'true');
       localStorage.setItem(CURRENT_ADMIN_EMAIL_KEY, ownerKey);
-      if (!getCurrentUser()) {
-        localStorage.setItem(CURRENT_USER_KEY, 'Joseph');
-      }
+      localStorage.setItem(CURRENT_USER_KEY, 'Joseph');
       touchSessionActivity();
       return { ok: true, account: db[ownerKey] };
     }
 
     const acct = db[key];
 
-    if (!acct) {
+    if (!acct || acct.deleted) {
       return {
         ok: false,
-        msg: 'No Admin account found for this email. Click "Create Admin" first to send an approval request to the Owner\'s Page.'
+        msg: 'No approved Admin account found for this email. Click "Request Admin Account" first so the Owner can approve your account on the Owner\'s Page.'
       };
     }
 
@@ -567,9 +628,7 @@
     // Status === 'Approved'
     localStorage.setItem(IS_ADMIN_KEY, 'true');
     localStorage.setItem(CURRENT_ADMIN_EMAIL_KEY, acct.email.toLowerCase());
-    if (!getCurrentUser()) {
-      localStorage.setItem(CURRENT_USER_KEY, acct.name || acct.email.split('@')[0]);
-    }
+    localStorage.setItem(CURRENT_USER_KEY, acct.name || acct.email.split('@')[0]);
     touchSessionActivity();
     syncWithServerDb(true);
     return { ok: true, account: acct };
@@ -583,6 +642,7 @@
       return false; // Prevent locking out the Master Owner account
     }
     db[key].status = newStatus; // 'Approved' | 'Denied' | 'Revoked' | 'Pending'
+    db[key].deleted = false;
     db[key].updatedAt = new Date().toISOString();
     saveAdminAccountsDb(db);
 
@@ -590,6 +650,7 @@
     if (activeAdmin === key && newStatus !== 'Approved') {
       localStorage.removeItem(IS_ADMIN_KEY);
       localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
+      localStorage.removeItem(CURRENT_USER_KEY);
     }
     return true;
   }
@@ -598,12 +659,15 @@
     const key = (rawEmail || '').trim().toLowerCase();
     const db = getAdminAccountsDb();
     if (!db[key] || db[key].isOwner) return false;
-    delete db[key];
+    db[key].status = 'Denied';
+    db[key].deleted = true;
+    db[key].updatedAt = new Date().toISOString();
     saveAdminAccountsDb(db);
     const activeAdmin = (localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY) || '').toLowerCase();
     if (activeAdmin === key) {
       localStorage.removeItem(IS_ADMIN_KEY);
       localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
+      localStorage.removeItem(CURRENT_USER_KEY);
     }
     return true;
   }
@@ -747,7 +811,7 @@
       try {
         sessionStorage.setItem('rc_from_internal', '1');
       } catch (_) {}
-      if (!path.includes('admin') && !isAdminLoggedIn() && !getCurrentUser()) {
+      if (!path.includes('admin') && !isAdminLoggedIn()) {
         window.location.replace('index.html');
       }
       return;
@@ -1080,15 +1144,11 @@
         <h2 class="rc-clean-title" id="rcCleanAuthTitle">RETROCANOPY</h2>
         <p class="rc-clean-subtitle" id="rcCleanAuthSub">Create an account or log in</p>
 
-        <!-- VIEW 1: SIMPLE CHOICE (PLAYER CREATE / LOGIN + ADMIN CREATE / LOGIN) -->
+        <!-- VIEW 1: OWNER & APPROVED ADMIN ACCESS ONLY -->
         <div class="rc-clean-btn-stack" id="rcAuthViewChoice">
-          <button type="button" class="rc-clean-choice-btn primary" id="btnChooseCreate">CREATE ACCOUNT</button>
-          <button type="button" class="rc-clean-choice-btn secondary" id="btnChoosePlayerLogin">PLAYER LOG IN</button>
-          <div class="rc-clean-divider">&mdash; OWNER &amp; ADMIN ACCESS &mdash;</div>
-          <div class="rc-clean-admin-row">
-            <button type="button" class="rc-clean-choice-btn admin" id="btnChooseAdminLogin">&#128737;&#65039; ADMIN LOG IN</button>
-            <button type="button" class="rc-clean-choice-btn admin" id="btnChooseAdminCreate">&#10024; CREATE ADMIN</button>
-          </div>
+          <button type="button" class="rc-clean-choice-btn primary" id="btnChooseAdminLogin">&#128737;&#65039; ADMIN / OWNER LOG IN</button>
+          <button type="button" class="rc-clean-choice-btn secondary" id="btnChooseAdminCreate">&#10024; REQUEST ADMIN ACCOUNT</button>
+          <div class="rc-clean-divider">&mdash; OWNER APPROVAL REQUIRED FOR SITE ACCESS &mdash;</div>
           <button type="button" class="rc-clean-back-btn" id="btnHomeLogout" style="display:none;color:#ff77aa;">Log Out of Active Account</button>
         </div>
 
@@ -1121,7 +1181,7 @@
     `;
     document.body.appendChild(backdrop);
 
-    let currentFormMode = 'create'; // 'create' | 'player' | 'admin_login' | 'admin_create'
+    let currentFormMode = 'admin_login'; // 'admin_login' | 'admin_create'
     let approvalPollTimer = null;
 
     const signInBtn = document.getElementById('rcHomeSignInBtn');
@@ -1158,10 +1218,10 @@
     }
 
     function updateTopPill() {
-      const user = getCurrentUser();
       const admin = isAdminLoggedIn();
+      const user = admin ? getCurrentUser() : '';
       const owner = isOwnerLoggedIn();
-      if (user) {
+      if (admin && user) {
         signInBtn.classList.add('logged-in');
         signInLabel.textContent = `@${user}`;
       } else if (admin) {
@@ -1172,7 +1232,7 @@
         signInLabel.textContent = 'SIGN IN';
       }
       if (ticketCounterLink) {
-        ticketCounterLink.style.display = (user || admin) ? 'inline-flex' : 'none';
+        ticketCounterLink.style.display = admin ? 'inline-flex' : 'none';
       }
       if (adminHubLink) {
         adminHubLink.style.display = admin ? 'inline-flex' : 'none';
@@ -1181,7 +1241,7 @@
         }
       }
       if (logoutBtn) {
-        logoutBtn.style.display = (user || admin) ? 'inline-block' : 'none';
+        logoutBtn.style.display = admin ? 'inline-block' : 'none';
       }
     }
 
@@ -1190,11 +1250,12 @@
       viewChoice.style.display = 'flex';
       viewForm.style.display = 'none';
       viewApproval.style.display = 'none';
-      const user = getCurrentUser();
-      titleEl.textContent = user ? `WELCOME, @${user.toUpperCase()}` : 'RETROCANOPY';
-      subEl.textContent = user
-        ? 'You have full access to the entire site'
-        : 'Create an account or log in';
+      const admin = isAdminLoggedIn();
+      const user = admin ? getCurrentUser() : '';
+      titleEl.textContent = admin ? `WELCOME, @${(user || 'ADMIN').toUpperCase()}` : 'RETROCANOPY ADMIN ACCESS';
+      subEl.textContent = admin
+        ? 'Approved Admin — full access unlocked'
+        : 'Only Owner-approved Admin accounts can enter past the Coming Soon page';
       formMsg.textContent = '';
       updateTopPill();
     }
@@ -1210,43 +1271,19 @@
       emailInput.value = '';
       passInput.value = '';
 
-      if (mode === 'create') {
-        titleEl.textContent = 'CREATE PLAYER ACCOUNT';
-        subEl.textContent = 'Unlocks everything in the site & saves progress';
-        usernameGroup.style.display = 'flex';
-        usernameLabel.textContent = 'USERNAME';
-        userInput.placeholder = 'Choose a display username (e.g. SynthPilot84)';
-        emailLabel.textContent = 'EMAIL ADDRESS';
-        emailInput.type = 'email';
-        emailInput.placeholder = 'Enter your email address (e.g. you@gmail.com)';
-        passLabel.textContent = 'CREATE PASSWORD';
-        passInput.placeholder = 'Create a password';
-        submitBtn.textContent = 'CREATE ACCOUNT';
-        setTimeout(() => userInput.focus(), 50);
-      } else if (mode === 'player') {
-        titleEl.textContent = 'PLAYER LOG IN';
-        subEl.textContent = 'Sign in for full site access & saved progress';
-        usernameGroup.style.display = 'none';
-        emailLabel.textContent = 'EMAIL ADDRESS OR USERNAME';
-        emailInput.type = 'text';
-        emailInput.placeholder = 'Enter your email address or username';
-        passLabel.textContent = 'PASSWORD';
-        passInput.placeholder = 'Enter your password';
-        submitBtn.textContent = 'LOG IN';
-        setTimeout(() => emailInput.focus(), 50);
-      } else if (mode === 'admin_login') {
+      if (mode === 'admin_login') {
         titleEl.textContent = 'OWNER / ADMIN LOG IN';
-        subEl.textContent = 'Sign in with your Owner or approved Admin email & password';
+        subEl.textContent = 'Sign in with your Owner or Owner-approved Admin email & password';
         usernameGroup.style.display = 'none';
         emailLabel.textContent = 'ADMIN EMAIL ADDRESS';
         emailInput.type = 'email';
         emailInput.placeholder = 'Enter your admin email address';
         passLabel.textContent = 'ADMIN PASSWORD';
         passInput.placeholder = 'Enter your admin password';
-        submitBtn.textContent = 'LOG IN TO ADMIN HUB';
+        submitBtn.textContent = 'LOG IN';
         setTimeout(() => emailInput.focus(), 50);
       } else if (mode === 'admin_create') {
-        titleEl.textContent = 'CREATE ADMIN ACCOUNT';
+        titleEl.textContent = 'REQUEST ADMIN ACCOUNT';
         subEl.textContent = 'Set up your email & password — request goes to the Owner\'s Page for approval';
         usernameGroup.style.display = 'flex';
         usernameLabel.textContent = 'ADMIN NAME';
@@ -1255,8 +1292,8 @@
         emailInput.type = 'email';
         emailInput.placeholder = 'Enter your email address';
         passLabel.textContent = 'SET ADMIN PASSWORD';
-        passInput.placeholder = 'Create the password you will use to log in';
-        submitBtn.textContent = 'CREATE ADMIN & SEND TO OWNER';
+        passInput.placeholder = 'Create the password you will use once approved';
+        submitBtn.textContent = 'SEND REQUEST TO OWNER\'S PAGE';
         setTimeout(() => userInput.focus(), 50);
       }
     }
@@ -1273,7 +1310,7 @@
         <div style="margin-top:6px;">Admin Name: <strong>${acct.name}</strong></div>
         <div>Admin Email: <strong style="color:#00f0ff;">${acct.email}</strong></div>
         <div style="margin-top:8px;font-size:0.82rem;color:rgba(255,255,255,0.8);">
-          Your request is now waiting on the <strong>Owner's Page</strong>. Once the Owner clicks <strong>Approve</strong>, you can log into the Admin Hub using <strong>${acct.email}</strong> and the password you set up!
+          Your request is now waiting on the <strong>Owner's Page</strong>. Once the Owner clicks <strong>Approve</strong>, you can log in using <strong>${acct.email}</strong> and the password you set up!
         </div>
       `;
 
@@ -1282,11 +1319,11 @@
         await syncWithServerDb(false);
         const db = getAdminAccountsDb();
         const current = db[acct.email.toLowerCase()];
-        if (current && current.status === 'Approved') {
+        if (current && current.status === 'Approved' && !current.deleted) {
           stopApprovalPolling();
           localStorage.setItem(IS_ADMIN_KEY, 'true');
           localStorage.setItem(CURRENT_ADMIN_EMAIL_KEY, current.email.toLowerCase());
-          if (!getCurrentUser()) localStorage.setItem(CURRENT_USER_KEY, current.name || 'Admin');
+          localStorage.setItem(CURRENT_USER_KEY, current.name || 'Admin');
           updateTopPill();
           if (typeof window.__rcUnlockFullSiteForAdmin === 'function') {
             window.__rcUnlockFullSiteForAdmin();
@@ -1296,8 +1333,6 @@
       }, 2200);
     }
 
-    document.getElementById('btnChooseCreate').addEventListener('click', () => showFormView('create'));
-    document.getElementById('btnChoosePlayerLogin').addEventListener('click', () => showFormView('player'));
     document.getElementById('btnChooseAdminLogin').addEventListener('click', () => showFormView('admin_login'));
     document.getElementById('btnChooseAdminCreate').addEventListener('click', () => showFormView('admin_create'));
     backBtn.addEventListener('click', showChoiceView);
@@ -1338,28 +1373,8 @@
         return;
       }
 
-      const lowerEmail = e.toLowerCase();
-      const adminDb = getAdminAccountsDb();
-      const isMatchingAdminOrOwner = isOwnerEmail(lowerEmail) || Boolean(adminDb[lowerEmail]);
-
-      if (currentFormMode === 'admin_login' || (currentFormMode === 'player' && isMatchingAdminOrOwner)) {
-        await syncWithServerDb(false);
-        const res = loginAdminAccount(e, p);
-        if (!res.ok) {
-          formMsg.style.color = '#ff77aa';
-          formMsg.textContent = res.msg;
-          return;
-        }
-        updateTopPill();
-        if (typeof window.__rcUnlockFullSiteForAdmin === 'function') {
-          window.__rcUnlockFullSiteForAdmin();
-        }
-        backdrop.classList.remove('open');
-        return;
-      }
-
-      const identifier = currentFormMode === 'create' ? (u || e) : e;
-      const res = performPlayerAuth(identifier, p, currentFormMode === 'create', e);
+      await syncWithServerDb(false);
+      const res = loginAdminAccount(e, p);
       if (!res.ok) {
         formMsg.style.color = '#ff77aa';
         formMsg.textContent = res.msg;
@@ -1397,8 +1412,10 @@
     });
 
     updateTopPill();
-    if ((isAdminLoggedIn() || getCurrentUser()) && typeof window.__rcUnlockFullSiteForAdmin === 'function') {
+    if (isAdminLoggedIn() && typeof window.__rcUnlockFullSiteForAdmin === 'function') {
       window.__rcUnlockFullSiteForAdmin();
+    } else if (!isAdminLoggedIn() && typeof window.__rcLockSiteToTeaserMode === 'function' && document.body && document.body.classList.contains('rc-logged-in-home')) {
+      window.__rcLockSiteToTeaserMode();
     }
   }
 

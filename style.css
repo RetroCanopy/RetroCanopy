@@ -5237,7 +5237,7 @@ body.rc-logged-in-home .hero-container.shifted-up {
 
 .rc-shop-scroll-card {
     flex: 0 0 auto;
-    width: clamp(185px, 18.5vw, 248px);
+    width: clamp(205px, 20vw, 272px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -5245,19 +5245,19 @@ body.rc-logged-in-home .hero-container.shifted-up {
     text-decoration: none;
     color: #ffffff;
     position: relative;
-    padding: 2px 5px;
+    padding: 4px 6px;
     transition: transform 0.25s ease;
     user-select: none;
     -webkit-user-drag: none;
 }
 
 .rc-shop-scroll-card:hover {
-    transform: translateY(-4px) scale(1.03);
+    transform: translateY(-4px) scale(1.04);
 }
 
 .rc-shop-scroll-img-wrap {
     width: 100%;
-    height: clamp(128px, 16.5vh, 178px);
+    height: clamp(162px, 21vh, 224px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -6182,12 +6182,12 @@ body.rc-logged-in-home .hero-container.shifted-up {
     }
 
     .rc-shop-scroll-card {
-        width: clamp(156px, 43vw, 186px);
-        padding: 1px 4px;
+        width: clamp(168px, 46vw, 204px);
+        padding: 2px 4px;
     }
 
     .rc-shop-scroll-img-wrap {
-        height: clamp(96px, 12.2vh, 114px);
+        height: clamp(122px, 15.5vh, 146px);
     }
 
     .rc-game-scroll-card {

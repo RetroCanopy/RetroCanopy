@@ -210,13 +210,19 @@ function initGamerIntro() {
 
     function isAdminSiteUnlocked() {
         try {
-            if (window.RetroAuthHub && typeof window.RetroAuthHub.isAdminLoggedIn === 'function' && window.RetroAuthHub.isAdminLoggedIn()) {
-                return true;
+            if (window.RetroAuthHub && typeof window.RetroAuthHub.isAdminLoggedIn === 'function') {
+                return Boolean(window.RetroAuthHub.isAdminLoggedIn());
             }
-            if (window.RetroAuthHub && typeof window.RetroAuthHub.getCurrentUser === 'function' && window.RetroAuthHub.getCurrentUser()) {
-                return true;
+            const isAdminFlag = localStorage.getItem('rc_is_admin_v1') === 'true';
+            const adminEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim().toLowerCase();
+            const adminDb = JSON.parse(localStorage.getItem('rc_admin_accounts_v2') || '{}') || {};
+            const isApprovedAdmin = Boolean(isAdminFlag && adminEmail && adminDb[adminEmail] && adminDb[adminEmail].status === 'Approved' && !adminDb[adminEmail].deleted);
+            if (!isApprovedAdmin) {
+                localStorage.removeItem('rc_is_admin_v1');
+                localStorage.removeItem('rc_current_admin_email_v1');
+                localStorage.removeItem('rc_current_user_v1');
             }
-            return localStorage.getItem('rc_is_admin_v1') === 'true' || Boolean(localStorage.getItem('rc_current_user_v1'));
+            return isApprovedAdmin;
         } catch (_) {
             return false;
         }
@@ -4580,21 +4586,9 @@ function initHomeShopScroller() {
     // Duplicate items 2x for a seamless infinite scrolling marquee loop
     const loopItems = shopCatalog.concat(shopCatalog);
     track.innerHTML = loopItems.map((item) => `
-        <a class="rc-shop-scroll-card rc-merch-scroll-card ${item.styleClass}${item.winOnly ? ' is-win-only' : ''}" href="${item.href}" draggable="false">
+        <a class="rc-shop-scroll-card rc-merch-scroll-card ${item.styleClass}${item.winOnly ? ' is-win-only' : ''}" href="${item.href}" draggable="false" aria-label="${item.title}">
             <div class="rc-shop-scroll-img-wrap">
                 <img class="rc-shop-scroll-img" src="${item.img}" alt="${item.title}" loading="eager" draggable="false" />
-            </div>
-            <div class="rc-game-name-plaque rc-merch-name-plaque">
-                <div class="rc-game-unique-title">
-                    <div class="rc-game-title-line rc-game-line-top">
-                        <span class="rc-game-stroke-layer" aria-hidden="true">${item.titleTop}</span>
-                        <span class="rc-game-fill-layer rc-game-title-top">${item.titleTop}</span>
-                    </div>
-                    <div class="rc-game-title-line rc-game-line-main">
-                        <span class="rc-game-stroke-layer" aria-hidden="true">${item.titleMain}</span>
-                        <span class="rc-game-fill-layer rc-game-title-main">${item.titleMain}</span>
-                    </div>
-                </div>
             </div>
         </a>
     `).join('');

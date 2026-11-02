@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bungee&family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Press+Start+2P&family=Righteous&family=Russo+One&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=166">
+    <link rel="stylesheet" href="style.css?v=167">
 </head>
 
 <body class="cinema-intro-active">
@@ -35,7 +35,16 @@
             var isLoggedIn = false;
             try {
                 fromInternal = sessionStorage.getItem('rc_from_internal') === '1';
-                isLoggedIn = localStorage.getItem('rc_is_admin_v1') === 'true' || Boolean(localStorage.getItem('rc_current_user_v1'));
+                var isAdminFlag = localStorage.getItem('rc_is_admin_v1') === 'true';
+                var adminEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim().toLowerCase();
+                var adminDb = JSON.parse(localStorage.getItem('rc_admin_accounts_v2') || '{}') || {};
+                var isOwnerEmail = adminEmail === 'josephcole001.ai@gmail.com' || adminEmail === 'josephcole001.a1@gmail.com';
+                isLoggedIn = Boolean(isAdminFlag && adminEmail && (isOwnerEmail || (adminDb[adminEmail] && adminDb[adminEmail].status === 'Approved' && !adminDb[adminEmail].deleted)));
+                if (!isLoggedIn) {
+                    localStorage.removeItem('rc_is_admin_v1');
+                    localStorage.removeItem('rc_current_admin_email_v1');
+                    localStorage.removeItem('rc_current_user_v1');
+                }
             } catch (_) {}
             var skipIntro = isLoggedIn || (!isReload && (
                 fromInternal ||
@@ -364,8 +373,8 @@
     <!-- Stage container (crew characters and section tabs removed; Synth owl butler & login preserved) -->
     <div id="crew-stage" class="crew-stage" aria-hidden="true"></div>
 
-    <script src="script.js?v=154"></script>
-    <script src="auth_hub.js?v=145"></script>
+    <script src="script.js?v=156"></script>
+    <script src="auth_hub.js?v=146"></script>
 </body>
 
 </html>

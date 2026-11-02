@@ -828,7 +828,7 @@
     </div>
   </div>
 
-  <script src="auth_hub.js?v=108"></script>
+  <script src="auth_hub.js?v=146"></script>
   <script>
     (function () {
       const gateModal = document.getElementById('ownerGateModal');
@@ -1076,7 +1076,7 @@
 
         Object.keys(adminDb).forEach((key) => {
           const acc = adminDb[key];
-          if (!acc || !acc.email) return;
+          if (!acc || !acc.email || acc.deleted) return;
           if (acc.status === 'Pending') {
             pendingList.push({
               type: 'admin',
