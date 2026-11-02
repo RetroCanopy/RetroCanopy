@@ -5417,12 +5417,6 @@ body.rc-logged-in-home .hero-container.shifted-up {
     height: 100%;
     max-height: clamp(142px, 20.6vh, 218px);
     display: inline-block;
-    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), filter 0.24s ease;
-}
-
-.rc-concept22-img-box:hover {
-    transform: translateY(-2px) scale(1.015);
-    filter: brightness(1.06);
 }
 
 .rc-concept22-deck-img {
@@ -5434,7 +5428,41 @@ body.rc-logged-in-home .hero-container.shifted-up {
     display: block;
     pointer-events: none;
     -webkit-user-drag: none;
-    filter: drop-shadow(0 -4px 18px rgba(0, 240, 255, 0.16)) drop-shadow(0 10px 24px rgba(0, 0, 0, 0.95));
+    filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.95));
+}
+
+.rc-c22-lit-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    opacity: 0;
+    transition: opacity 0.16s ease, filter 0.16s ease;
+    z-index: 1;
+}
+
+.rc-c22-lit-websites {
+    clip-path: inset(0% 71.0% 41.5% 0%);
+}
+
+.rc-c22-lit-apps {
+    clip-path: inset(0% 50.0% 41.5% 29.0%);
+}
+
+.rc-c22-lit-games {
+    clip-path: inset(0% 29.1% 41.5% 50.0%);
+}
+
+.rc-c22-lit-apparel {
+    clip-path: inset(0% 0% 41.5% 70.9%);
+}
+
+.rc-c22-lit-hire {
+    clip-path: inset(58.5% 22.0% 0% 22.0%);
 }
 
 .rc-c22-hit {
@@ -5445,76 +5473,77 @@ body.rc-logged-in-home .hero-container.shifted-up {
     cursor: pointer;
     border-radius: 14px;
     outline: none;
-    transition: box-shadow 0.18s ease, background 0.18s ease, transform 0.12s ease;
-}
-
-.rc-c22-hit:active {
-    transform: translateY(2px) scale(0.97);
+    z-index: 3;
 }
 
 .rc-c22-hit-websites {
-    left: 9.5%;
-    top: 8%;
-    width: 19%;
-    height: 48%;
+    left: 8.5%;
+    top: 6%;
+    width: 20.5%;
+    height: 51%;
     border-radius: 50% 50% 14px 14px;
 }
-.rc-c22-hit-websites:hover,
-.rc-c22-hit-websites:focus-visible {
-    background: radial-gradient(circle at 50% 38%, rgba(0, 240, 255, 0.26) 0%, transparent 72%);
-    box-shadow: 0 0 18px rgba(0, 240, 255, 0.55);
+.rc-c22-hit-websites:hover + .rc-c22-lit-websites,
+.rc-c22-hit-websites:focus-visible + .rc-c22-lit-websites,
+.rc-c22-hit-websites:active + .rc-c22-lit-websites {
+    opacity: 1;
+    filter: brightness(1.08) drop-shadow(0 -2px 10px rgba(0, 240, 255, 0.45));
 }
 
 .rc-c22-hit-apps {
-    left: 30.5%;
-    top: 8%;
-    width: 18.5%;
-    height: 48%;
+    left: 29.2%;
+    top: 6%;
+    width: 20.5%;
+    height: 51%;
     border-radius: 50% 50% 14px 14px;
 }
-.rc-c22-hit-apps:hover,
-.rc-c22-hit-apps:focus-visible {
-    background: radial-gradient(circle at 50% 38%, rgba(255, 215, 0, 0.26) 0%, transparent 72%);
-    box-shadow: 0 0 18px rgba(255, 215, 0, 0.55);
+.rc-c22-hit-apps:hover + .rc-c22-lit-apps,
+.rc-c22-hit-apps:focus-visible + .rc-c22-lit-apps,
+.rc-c22-hit-apps:active + .rc-c22-lit-apps {
+    opacity: 1;
+    filter: brightness(1.08) drop-shadow(0 -2px 10px rgba(255, 215, 0, 0.45));
 }
 
 .rc-c22-hit-games {
-    left: 51%;
-    top: 8%;
-    width: 18.5%;
-    height: 48%;
+    left: 50.2%;
+    top: 6%;
+    width: 20.5%;
+    height: 51%;
     border-radius: 50% 50% 14px 14px;
 }
-.rc-c22-hit-games:hover,
-.rc-c22-hit-games:focus-visible {
-    background: radial-gradient(circle at 50% 38%, rgba(255, 45, 149, 0.28) 0%, transparent 72%);
-    box-shadow: 0 0 18px rgba(255, 45, 149, 0.58);
+.rc-c22-hit-games:hover + .rc-c22-lit-games,
+.rc-c22-hit-games:focus-visible + .rc-c22-lit-games,
+.rc-c22-hit-games:active + .rc-c22-lit-games {
+    opacity: 1;
+    filter: brightness(1.08) drop-shadow(0 -2px 10px rgba(255, 45, 149, 0.48));
 }
 
 .rc-c22-hit-apparel {
-    left: 71.5%;
-    top: 8%;
-    width: 19%;
-    height: 48%;
+    left: 71.0%;
+    top: 6%;
+    width: 20.5%;
+    height: 51%;
     border-radius: 50% 50% 14px 14px;
 }
-.rc-c22-hit-apparel:hover,
-.rc-c22-hit-apparel:focus-visible {
-    background: radial-gradient(circle at 50% 38%, rgba(0, 255, 102, 0.26) 0%, transparent 72%);
-    box-shadow: 0 0 18px rgba(0, 255, 102, 0.55);
+.rc-c22-hit-apparel:hover + .rc-c22-lit-apparel,
+.rc-c22-hit-apparel:focus-visible + .rc-c22-lit-apparel,
+.rc-c22-hit-apparel:active + .rc-c22-lit-apparel {
+    opacity: 1;
+    filter: brightness(1.08) drop-shadow(0 -2px 10px rgba(0, 255, 102, 0.45));
 }
 
 .rc-c22-hit-hire {
-    left: 26.8%;
-    top: 63.5%;
-    width: 46.4%;
-    height: 29.5%;
+    left: 25.0%;
+    top: 61.5%;
+    width: 50.0%;
+    height: 33.5%;
     border-radius: 10px;
 }
-.rc-c22-hit-hire:hover,
-.rc-c22-hit-hire:focus-visible {
-    background: rgba(255, 180, 0, 0.14);
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.68), inset 0 0 12px rgba(255, 215, 0, 0.38);
+.rc-c22-hit-hire:hover + .rc-c22-lit-hire,
+.rc-c22-hit-hire:focus-visible + .rc-c22-lit-hire,
+.rc-c22-hit-hire:active + .rc-c22-lit-hire {
+    opacity: 1;
+    filter: brightness(1.10) drop-shadow(0 0 12px rgba(255, 180, 0, 0.45));
 }
 
 .rc-misfits-feature-link::before {

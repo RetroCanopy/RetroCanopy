@@ -4716,24 +4716,59 @@
         { x: 960,  y: 480, r: 38, kick: 17.4, color: '#ffd700', isPopBumper: true, isRetractable: true, elev: 1.0, popState: 'UP_HOLD', stateTimer: 28 + Math.floor(Math.random() * 88),  retractSpeed: 0.044, riseSpeed: 0.054, hitTimer: 0, label: "'84" }
       ];
 
-      // Continuous Zero-Pinch Pinball Playfield Side Rails, Upper Door Arch Backstop, Slingshot Kickers & Inlane Funnels
+      // Continuous Zero-Pinch Pinball Playfield Side Rails, Upper Door Arch Backstop & Inlane Funnels
       const PLAYFIELD_WALLS_1080 = [
         // Top Playfield Arch above the 3 Pitch Holes
-        { x1: 615,  y1: 128, x2: 1305, y2: 128, restitution: 0.78, isSlingshot: false, isSideRail: false, isDoorArch: false, color: '#00f0ff' },
+        { x1: 615,  y1: 128, x2: 1305, y2: 128, nx:  0.0000, ny:  1.0000, restitution: 0.78, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
         // Upper Curved Door Arch Backstop & Corner Guides (active once ball enters playfield so ball NEVER bounces past the 5 back doors!)
-        { x1: 602,  y1: 312, x2: 668,  y2: 278, restitution: 0.72, isSlingshot: false, isSideRail: true,  isDoorArch: true,  color: '#ffd700' },
-        { x1: 668,  y1: 278, x2: 960,  y2: 254, restitution: 0.72, isSlingshot: false, isSideRail: false, isDoorArch: true,  color: '#00f0ff' },
-        { x1: 960,  y1: 254, x2: 1252, y2: 278, restitution: 0.72, isSlingshot: false, isSideRail: false, isDoorArch: true,  color: '#00f0ff' },
-        { x1: 1252, y1: 278, x2: 1318, y2: 312, restitution: 0.72, isSlingshot: false, isSideRail: true,  isDoorArch: true,  color: '#ffd700' },
-        // Left Continuous Side Rail -> Inlane Funnel (zero double-wall pinch traps!)
-        { x1: 615,  y1: 128, x2: 548,  y2: 882, restitution: 0.76, isSlingshot: false, isSideRail: true,  isDoorArch: false, color: '#00f0ff' },
-        { x1: 548,  y1: 882, x2: 736,  y2: 956, restitution: 0.48, isSlingshot: false, isSideRail: true,  isDoorArch: false, color: '#ff2d95' },
-        // Right Continuous Side Rail -> Inlane Funnel (zero double-wall pinch traps!)
-        { x1: 1305, y1: 128, x2: 1372, y2: 882, restitution: 0.76, isSlingshot: false, isSideRail: true,  isDoorArch: false, color: '#00f0ff' },
-        { x1: 1372, y1: 882, x2: 1184, y2: 956, restitution: 0.48, isSlingshot: false, isSideRail: true,  isDoorArch: false, color: '#ff2d95' },
-        // Left & Right Inward-Kicking Triangular Neon Cyan Slingshot Kickers (active front kicker face only so balls never trap behind!)
-        { x1: 608,  y1: 735, x2: 686,  y2: 875, restitution: 1.36, isSlingshot: true,  isSideRail: true,  isDoorArch: false, color: '#00f0ff' },
-        { x1: 1312, y1: 735, x2: 1234, y2: 875, restitution: 1.36, isSlingshot: true,  isSideRail: true,  isDoorArch: false, color: '#00f0ff' }
+        { x1: 602,  y1: 312, x2: 668,  y2: 278, nx:  0.4576, ny:  0.8892, restitution: 0.72, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: true,  color: '#ffd700' },
+        { x1: 668,  y1: 278, x2: 960,  y2: 254, nx:  0.0819, ny:  0.9966, restitution: 0.72, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: true,  color: '#00f0ff' },
+        { x1: 960,  y1: 254, x2: 1252, y2: 278, nx: -0.0819, ny:  0.9966, restitution: 0.72, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: true,  color: '#00f0ff' },
+        { x1: 1252, y1: 278, x2: 1318, y2: 312, nx: -0.4576, ny:  0.8892, restitution: 0.72, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: true,  color: '#ffd700' },
+        // Left Side Rail -> Wide Open Inlane Channel Behind the Left Slingshot Triangle -> Left Flipper Feed
+        { x1: 615,  y1: 128, x2: 552,  y2: 730, nx:  0.9946, ny:  0.1038, restitution: 0.44, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
+        { x1: 552,  y1: 730, x2: 534,  y2: 864, nx:  0.9911, ny:  0.1331, restitution: 0.28, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
+        { x1: 534,  y1: 864, x2: 736,  y2: 952, nx:  0.3996, ny: -0.9167, restitution: 0.18, isSlingshot: false, isSideRail: false, isInlaneFloor: true,  isDoorArch: false, color: '#ff2d95' },
+        // Right Side Rail -> Wide Open Inlane Channel Behind the Right Slingshot Triangle -> Right Flipper Feed
+        { x1: 1305, y1: 128, x2: 1368, y2: 730, nx: -0.9946, ny:  0.1038, restitution: 0.44, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
+        { x1: 1368, y1: 730, x2: 1386, y2: 864, nx: -0.9911, ny:  0.1331, restitution: 0.28, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
+        { x1: 1386, y1: 864, x2: 1184, y2: 952, nx: -0.3996, ny: -0.9167, restitution: 0.18, isSlingshot: false, isSideRail: false, isInlaneFloor: true,  isDoorArch: false, color: '#ff2d95' }
+      ];
+
+      // Exact 3-Sided Triangular Slingshot Bumpers Matching the Visual Cyan Triangles (Balls Roll Behind Them Down the Inlanes!)
+      const SLINGSHOT_TRIANGLES_1080 = [
+        {
+          side: 'LEFT',
+          cx: 673.3,
+          cy: 808.7,
+          hitTimer: 0,
+          cooldown: 0,
+          inlaneCooldown: 0,
+          edges: [
+            // 0: Inner-Front Kicker Face (faces the infield diamond -> kicks ball cleanly upward/across playfield)
+            { x1: 654, y1: 744, x2: 734, y2: 860, nx:  0.8232, ny: -0.5677, restitution: 0.86, isKicker: true,  color: '#00f0ff' },
+            // 1: Bottom Inlane Roof Guide (guides ball from behind the triangle down onto the left flipper)
+            { x1: 734, y1: 860, x2: 634, y2: 822, nx: -0.3552, ny:  0.9348, restitution: 0.22, isKicker: false, color: '#00f0ff' },
+            // 2: Outer-Back Inlane Guide (guides ball smoothly behind the angled piece into the left inlane channel)
+            { x1: 634, y1: 822, x2: 654, y2: 744, nx: -0.9687, ny: -0.2484, restitution: 0.25, isKicker: false, color: '#00f0ff' }
+          ]
+        },
+        {
+          side: 'RIGHT',
+          cx: 1246.7,
+          cy: 808.7,
+          hitTimer: 0,
+          cooldown: 0,
+          inlaneCooldown: 0,
+          edges: [
+            // 0: Inner-Front Kicker Face (faces the infield diamond -> kicks ball cleanly upward/across playfield)
+            { x1: 1186, y1: 860, x2: 1266, y2: 744, nx: -0.8232, ny: -0.5677, restitution: 0.86, isKicker: true,  color: '#00f0ff' },
+            // 1: Outer-Back Inlane Guide (guides ball smoothly behind the angled piece into the right inlane channel)
+            { x1: 1266, y1: 744, x2: 1286, y2: 822, nx:  0.9687, ny: -0.2484, restitution: 0.25, isKicker: false, color: '#00f0ff' },
+            // 2: Bottom Inlane Roof Guide (guides ball from behind the triangle down onto the right flipper)
+            { x1: 1286, y1: 822, x2: 1186, y2: 860, nx:  0.3552, ny:  0.9348, restitution: 0.22, isKicker: false, color: '#00f0ff' }
+          ]
+        }
       ];
 
       // Real Perspective-Foreshortened 3D Pinball Flippers (Slightly Bigger: length=170, rBase=23, rTip=12) Mounted at (736, 956 & 1184, 956)
@@ -4991,7 +5026,8 @@
         awardExtraBallLife(midHole.x, midHole.y + 44);
       }
 
-      // Main Ball ONLY Releases from Left Hole (#0 at 716, 160) or Right Hole (#2 at 1204, 160) with a clean, straight pitch!
+      // Main Ball ONLY Releases from Left Hole (#0 at 716, 160) or Right Hole (#2 at 1204, 160)
+      // Mixes direct center pitches and outer-lane pitches that feed behind the angled slingshot pieces down the inlanes!
       function ejectBallFromHole(holeIdx) {
         const validHoleIdx = holeIdx === 2 ? 2 : 0;
         slugger.activeHoleIdx = validHoleIdx;
@@ -5000,13 +5036,17 @@
         slugger.ballY = h.y + 18;
         slugger.enteredPlayfield = false;
         slugger.hasBeenFlipped = false;
-        const baseVX = 2.1 + Math.random() * 1.1;
-        if (validHoleIdx === 0) {
-          slugger.ballVX = baseVX;
+        // ~35% of pitches feed down the outer lane behind the angled slingshot pieces; ~65% pitch toward center
+        const feedInlane = Math.random() < 0.35;
+        if (feedInlane) {
+          const outVX = 1.65 + Math.random() * 0.45;
+          slugger.ballVX = validHoleIdx === 0 ? -outVX : outVX;
+          slugger.ballVY = 7.8 + Math.random() * 0.9;
         } else {
-          slugger.ballVX = -baseVX;
+          const baseVX = 2.0 + Math.random() * 1.1;
+          slugger.ballVX = validHoleIdx === 0 ? baseVX : -baseVX;
+          slugger.ballVY = 7.6 + Math.random() * 1.2;
         }
-        slugger.ballVY = 7.6 + Math.random() * 1.2;
         slugger.saucerCooldown = 36;
       }
 
@@ -5439,6 +5479,147 @@
         }
       }
 
+      function collideSingleBallWithSlingshotTriangles(bObj, isMainBall) {
+        const bx = isMainBall ? slugger.ballX : bObj.x;
+        const by = isMainBall ? slugger.ballY : bObj.y;
+        const br = isMainBall ? slugger.ballR : bObj.r;
+
+        for (let tIdx = 0; tIdx < SLINGSHOT_TRIANGLES_1080.length; tIdx++) {
+          const tri = SLINGSHOT_TRIANGLES_1080[tIdx];
+          // Quick bounding-box precheck
+          if (by < 705 || by > 900) continue;
+          if (tri.side === 'LEFT' && (bx < 590 || bx > 775)) continue;
+          if (tri.side === 'RIGHT' && (bx < 1145 || bx > 1330)) continue;
+
+          // Find closest point on any front-facing edge of the 3-sided triangular slingshot piece
+          let bestEdge = null;
+          let bestQx = 0;
+          let bestQy = 0;
+          let bestT = 0.5;
+          let bestDist = 9999;
+
+          for (let eIdx = 0; eIdx < tri.edges.length; eIdx++) {
+            const e = tri.edges[eIdx];
+            const signedDist = (bx - e.x1) * e.nx + (by - e.y1) * e.ny;
+            // Ignore back-facing edges unless the ball center slightly penetrated the edge
+            if (signedDist < -10) continue;
+
+            const wx = e.x2 - e.x1;
+            const wy = e.y2 - e.y1;
+            const lenSq = wx * wx + wy * wy;
+            let t = ((bx - e.x1) * wx + (by - e.y1) * wy) / lenSq;
+            t = Math.max(0, Math.min(1, t));
+            const qx = e.x1 + t * wx;
+            const qy = e.y1 + t * wy;
+            const d = Math.hypot(bx - qx, by - qy);
+            if (d < bestDist) {
+              bestDist = d;
+              bestEdge = e;
+              bestQx = qx;
+              bestQy = qy;
+              bestT = t;
+            }
+          }
+
+          if (bestEdge && bestDist < br && bestDist > 0.0001) {
+            let nx = bestEdge.nx;
+            let ny = bestEdge.ny;
+            // On the flat middle of any triangle face, use the exact analytical face normal;
+            // on the 3 rounded corners (t <= 0.10 or t >= 0.90), blend smoothly with the radial corner normal
+            if (bestT <= 0.10 || bestT >= 0.90) {
+              const rnx = (bx - bestQx) / bestDist;
+              const rny = (by - bestQy) / bestDist;
+              if (rnx * bestEdge.nx + rny * bestEdge.ny > 0.25) {
+                nx = rnx;
+                ny = rny;
+              }
+            }
+
+            const pushX = bestQx + nx * (br + 0.9);
+            const pushY = bestQy + ny * (br + 0.9);
+            if (isMainBall) {
+              slugger.ballX = pushX;
+              slugger.ballY = pushY;
+            } else {
+              bObj.x = pushX;
+              bObj.y = pushY;
+            }
+
+            let vx = isMainBall ? slugger.ballVX : bObj.vx;
+            let vy = isMainBall ? slugger.ballVY : bObj.vy;
+            const vDotN = vx * nx + vy * ny;
+
+            if (vDotN < 0) {
+              // Active Solenoid Kick ONLY when hitting the middle 68% of the Inner-Front Kicker Face from the playfield side!
+              // Hitting the top corner post (t <= 0.16) or back/bottom inlane guide edges bounces cleanly without weird kicks!
+              const isFrontKickerHit =
+                bestEdge.isKicker &&
+                bestT > 0.16 &&
+                bestT < 0.84 &&
+                (nx * bestEdge.nx + ny * bestEdge.ny) > 0.88 &&
+                vDotN < -1.1;
+
+              const rest = isFrontKickerHit ? bestEdge.restitution : Math.min(0.42, bestEdge.restitution);
+              vx -= (1 + rest) * vDotN * nx;
+              vy -= (1 + rest) * vDotN * ny;
+
+              if (isFrontKickerHit) {
+                if (isMainBall) {
+                  slugger.enteredPlayfield = true;
+                  slugger.hasBeenFlipped = true;
+                } else {
+                  bObj.hasBeenFlipped = true;
+                }
+                const spd = Math.hypot(vx, vy);
+                const targetSpd = Math.min(16.2, Math.max(12.8, spd));
+                if (spd > 0.01) {
+                  vx = (vx / spd) * targetSpd;
+                  vy = (vy / spd) * targetSpd;
+                }
+                if (tri.cooldown <= 0) {
+                  tri.cooldown = 8;
+                  tri.hitTimer = 15;
+                  slugger.neonSurge = Math.max(slugger.neonSurge || 0, 18);
+                  if (isMainBall) slugger.screenShake = 4;
+                  spawnBurstParticles(bestQx, bestQy, '#00f0ff', 12);
+                  if (isMainBall) {
+                    spawnFloatingText(bestQx, bestQy - 16, 'SLINGSHOT KICK!', '#00f0ff');
+                    playArcadeSfx('slingshot_kick');
+                  }
+                }
+              }
+
+              if (isMainBall) {
+                slugger.ballVX = vx;
+                slugger.ballVY = vy;
+              } else {
+                bObj.vx = vx;
+                bObj.vy = vy;
+              }
+            }
+          }
+
+          // Smooth Inlane Rollover Feed when the ball travels BEHIND the angled piece down the inlane channel!
+          const inLeftInlane = tri.side === 'LEFT' && bx >= 534 && bx <= 648 && by >= 748 && by <= 895;
+          const inRightInlane = tri.side === 'RIGHT' && bx >= 1272 && bx <= 1386 && by >= 748 && by <= 895;
+          if (inLeftInlane || inRightInlane) {
+            if (isMainBall && slugger.ballVY > -0.5 && slugger.ballVY < 7.2) {
+              // Gentle gravity assist along the inlane channel so the ball rolls crisply onto the flipper
+              slugger.ballVY += 0.045;
+              if (by > 820) {
+                slugger.ballVX += (tri.side === 'LEFT' ? 0.055 : -0.055);
+              }
+            }
+            if (isMainBall && tri.inlaneCooldown <= 0 && by >= 785 && by <= 855) {
+              tri.inlaneCooldown = 48;
+              const slotX = tri.side === 'LEFT' ? 584 : 1336;
+              spawnBurstParticles(slotX, 812, '#00f0ff', 8);
+              spawnFloatingText(slotX, 780, 'INLANE FEED!', '#00f0ff');
+            }
+          }
+        }
+      }
+
       function collideBallWithWalls() {
         for (let i = 0; i < PLAYFIELD_WALLS_1080.length; i++) {
           const w = PLAYFIELD_WALLS_1080[i];
@@ -5457,19 +5638,10 @@
           const dist = Math.hypot(dx, dy);
 
           if (dist < slugger.ballR && dist > 0.001) {
-            let nx = dx / dist;
-            let ny = dy / dist;
+            // Use exact analytical wall normal when available so the ball never bounces at a weird angle
+            let nx = typeof w.nx === 'number' ? w.nx : (dx / dist);
+            let ny = typeof w.ny === 'number' ? w.ny : (dy / dist);
 
-            // Guarantee side-rail normals always push INWARD toward the center of the playfield (never trapping behind a rail!)
-            if (w.isSideRail) {
-              const inwardSign = cx < 960 ? 1 : -1;
-              if (nx * inwardSign < 0.15) {
-                nx = inwardSign * Math.max(0.38, Math.abs(nx));
-                const nLen = Math.hypot(nx, ny) || 1;
-                nx /= nLen;
-                ny /= nLen;
-              }
-            }
             if (w.isDoorArch && ny < 0.35) {
               ny = Math.max(0.65, Math.abs(ny));
               const nLen = Math.hypot(nx, ny) || 1;
@@ -5477,35 +5649,28 @@
               ny /= nLen;
             }
 
-            slugger.ballX = cx + nx * (slugger.ballR + 1.2);
-            slugger.ballY = cy + ny * (slugger.ballR + 1.2);
+            slugger.ballX = cx + nx * (slugger.ballR + 0.9);
+            slugger.ballY = cy + ny * (slugger.ballR + 0.9);
 
             const vDotN = slugger.ballVX * nx + slugger.ballVY * ny;
             if (vDotN < 0) {
               slugger.ballVX -= (1 + w.restitution) * vDotN * nx;
               slugger.ballVY -= (1 + w.restitution) * vDotN * ny;
 
-              if (w.isSideRail && Math.abs(slugger.ballVY) < 2.6) {
-                slugger.ballVY += 2.2;
-                slugger.ballVX += (cx < 960 ? 1.4 : -1.4);
-              }
-
-              if (w.isSlingshot) {
-                slugger.enteredPlayfield = true;
-                slugger.hasBeenFlipped = true;
-                const spd = Math.hypot(slugger.ballVX, slugger.ballVY);
-                if (spd < 15.5 && spd > 0.01) {
-                  slugger.ballVX = (slugger.ballVX / spd) * 15.5;
-                  slugger.ballVY = (slugger.ballVY / spd) * 15.5;
+              // If rolling down the pink/gold inlane floor rail onto the flipper, keep smooth forward roll along the rail tangent
+              if (w.isInlaneFloor && slugger.ballVY >= -1.0) {
+                const tangX = cx < 960 ? 0.9167 : -0.9167;
+                const tangY = 0.3996;
+                const vTang = slugger.ballVX * tangX + slugger.ballVY * tangY;
+                if (vTang < 5.4) {
+                  slugger.ballVX += tangX * 0.35;
+                  slugger.ballVY += tangY * 0.35;
                 }
-                slugger.screenShake = 5;
-                spawnBurstParticles(cx, cy, w.color, 14);
-                spawnFloatingText(cx, cy - 16, 'SLINGSHOT KICK!', '#00f0ff');
-                playArcadeSfx('slingshot_kick');
               }
             }
           }
         }
+        collideSingleBallWithSlingshotTriangles(slugger, true);
       }
 
       function collideBallWithBumpers() {
@@ -5820,7 +5985,7 @@
           }
         });
 
-        // 3. Collide Extra Ball with Playfield Walls
+        // 3. Collide Extra Ball with Playfield Walls & 3-Sided Slingshot Triangles
         for (let i = 0; i < PLAYFIELD_WALLS_1080.length; i++) {
           const w = PLAYFIELD_WALLS_1080[i];
           if (w.isDoorArch && !eb.hasBeenFlipped) continue;
@@ -5835,30 +6000,18 @@
           const dy = eb.y - cy;
           const dist = Math.hypot(dx, dy);
           if (dist < eb.r && dist > 0.001) {
-            let nx = dx / dist;
-            let ny = dy / dist;
-            if (w.isSideRail) {
-              const inwardSign = cx < 960 ? 1 : -1;
-              if (nx * inwardSign < 0.15) {
-                nx = inwardSign * Math.max(0.38, Math.abs(nx));
-                const nLen = Math.hypot(nx, ny) || 1;
-                nx /= nLen; ny /= nLen;
-              }
-            }
-            eb.x = cx + nx * (eb.r + 1.2);
-            eb.y = cy + ny * (eb.r + 1.2);
+            const nx = typeof w.nx === 'number' ? w.nx : (dx / dist);
+            const ny = typeof w.ny === 'number' ? w.ny : (dy / dist);
+            eb.x = cx + nx * (eb.r + 0.9);
+            eb.y = cy + ny * (eb.r + 0.9);
             const vDotN = eb.vx * nx + eb.vy * ny;
             if (vDotN < 0) {
               eb.vx -= (1 + w.restitution) * vDotN * nx;
               eb.vy -= (1 + w.restitution) * vDotN * ny;
-              if (w.isSlingshot) {
-                eb.hasBeenFlipped = true;
-                slugger.neonSurge = Math.max(slugger.neonSurge || 0, 18);
-                spawnBurstParticles(cx, cy, w.color, 10);
-              }
             }
           }
         }
+        collideSingleBallWithSlingshotTriangles(eb, false);
 
         // 4. Collide Extra Ball with Bumpers (only when popped out of the machine!)
         if (eb.hasBeenFlipped) {
@@ -5959,6 +6112,12 @@
         if (slugger.middleHoleFlash > 0) slugger.middleHoleFlash--;
         if (midfieldBlocker.hitTimer > 0) midfieldBlocker.hitTimer--;
         if (midfieldBlocker.cooldown > 0) midfieldBlocker.cooldown--;
+        for (let tIdx = 0; tIdx < SLINGSHOT_TRIANGLES_1080.length; tIdx++) {
+          const tri = SLINGSHOT_TRIANGLES_1080[tIdx];
+          if (tri.hitTimer > 0) tri.hitTimer--;
+          if (tri.cooldown > 0) tri.cooldown--;
+          if (tri.inlaneCooldown > 0) tri.inlaneCooldown--;
+        }
 
         // Occasionally release an Extra Ball (+1 Life, up to 4 max) from the Middle Hole (#1 at 960, 158)
         if (slugger.middleSpawnTimer > 0) {
