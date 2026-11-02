@@ -5184,7 +5184,7 @@ body.coming-soon-finale-active .diorama-bg-synth {
     position: fixed;
     left: 0;
     right: 0;
-    top: clamp(174px, 20vh, 212px);
+    top: clamp(158px, 18.2vh, 196px);
     bottom: clamp(4px, 0.8vh, 12px);
     z-index: 620;
     display: flex;
@@ -5225,19 +5225,23 @@ body.rc-logged-in-home .hero-container.shifted-up {
     mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
 }
 
+#rc-shop-scroll-viewport {
+    flex: 1.35 1 0;
+}
+
 .rc-shop-scroll-track {
     display: flex;
     align-items: center;
     flex-shrink: 0;
     width: max-content;
-    gap: clamp(20px, 2.8vw, 38px);
+    gap: clamp(22px, 2.8vw, 40px);
     will-change: transform;
     padding: 8px 0;
 }
 
 .rc-shop-scroll-card {
     flex: 0 0 auto;
-    width: clamp(205px, 20vw, 272px);
+    width: clamp(265px, 25.5vw, 360px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -5252,12 +5256,12 @@ body.rc-logged-in-home .hero-container.shifted-up {
 }
 
 .rc-shop-scroll-card:hover {
-    transform: translateY(-4px) scale(1.04);
+    transform: translateY(-5px) scale(1.05);
 }
 
 .rc-shop-scroll-img-wrap {
     width: 100%;
-    height: clamp(162px, 21vh, 224px);
+    height: clamp(232px, 28.5vh, 315px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5267,11 +5271,11 @@ body.rc-logged-in-home .hero-container.shifted-up {
 .rc-shop-scroll-img-wrap::before {
     content: '';
     position: absolute;
-    width: 72%;
-    height: 72%;
+    width: 76%;
+    height: 76%;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 45, 149, 0.14) 0%, rgba(0, 240, 255, 0.08) 48%, transparent 72%);
-    filter: blur(20px);
+    background: radial-gradient(circle, rgba(255, 45, 149, 0.16) 0%, rgba(0, 240, 255, 0.10) 48%, transparent 72%);
+    filter: blur(22px);
     z-index: 0;
     pointer-events: none;
 }
@@ -5279,7 +5283,7 @@ body.rc-logged-in-home .hero-container.shifted-up {
 .rc-shop-scroll-img {
     position: relative;
     z-index: 1;
-    max-width: 94%;
+    max-width: 98%;
     max-height: 100%;
     width: auto;
     height: auto;
@@ -6182,12 +6186,12 @@ body.rc-logged-in-home .hero-container.shifted-up {
     }
 
     .rc-shop-scroll-card {
-        width: clamp(168px, 46vw, 204px);
+        width: clamp(205px, 55vw, 248px);
         padding: 2px 4px;
     }
 
     .rc-shop-scroll-img-wrap {
-        height: clamp(122px, 15.5vh, 146px);
+        height: clamp(168px, 21.5vh, 204px);
     }
 
     .rc-game-scroll-card {
