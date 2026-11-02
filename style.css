@@ -5400,150 +5400,119 @@ body.rc-logged-in-home .hero-container.shifted-up {
     flex-shrink: 0;
 }
 
-/* Concept 22: 4 Glowing Physical Arcade Push-Buttons on Control Deck at Bottom Center */
-.rc-concept22-deck {
+/* Concept 3: Clean Synthwave Neon Sign Lockup at Bottom Center */
+.rc-concept3-lockup {
     display: inline-flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
-    height: 105%;
+    height: 100%;
     flex: 0 1 auto;
     position: relative;
     user-select: none;
     z-index: 2;
 }
 
-.rc-concept22-img-box {
+.rc-concept3-img-box {
     position: relative;
     height: 100%;
-    max-height: clamp(142px, 20.6vh, 218px);
-    display: inline-block;
+    max-height: clamp(132px, 19.2vh, 200px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), filter 0.24s ease;
 }
 
-.rc-concept22-deck-img {
+.rc-concept3-img-box:hover {
+    transform: translateY(-2px) scale(1.015);
+    filter: brightness(1.06);
+}
+
+.rc-concept3-lockup-img {
     height: 100%;
     width: auto;
-    max-width: clamp(410px, 42vw, 720px);
-    max-height: clamp(142px, 20.6vh, 218px);
+    max-width: clamp(420px, 46vw, 760px);
+    max-height: clamp(132px, 19.2vh, 200px);
     object-fit: contain;
     display: block;
     pointer-events: none;
     -webkit-user-drag: none;
-    filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.95));
 }
 
-.rc-c22-lit-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    pointer-events: none;
-    -webkit-user-drag: none;
-    opacity: 0;
-    transition: opacity 0.16s ease, filter 0.16s ease;
-    z-index: 1;
-}
-
-.rc-c22-lit-websites {
-    clip-path: inset(0% 71.0% 41.5% 0%);
-}
-
-.rc-c22-lit-apps {
-    clip-path: inset(0% 50.0% 41.5% 29.0%);
-}
-
-.rc-c22-lit-games {
-    clip-path: inset(0% 29.1% 41.5% 50.0%);
-}
-
-.rc-c22-lit-apparel {
-    clip-path: inset(0% 0% 41.5% 70.9%);
-}
-
-.rc-c22-lit-hire {
-    clip-path: inset(58.5% 22.0% 0% 22.0%);
-}
-
-.rc-c22-hit {
+.rc-c3-hit {
     position: absolute;
     background: transparent;
     border: none;
     padding: 0;
     cursor: pointer;
-    border-radius: 14px;
+    border-radius: 8px;
     outline: none;
     z-index: 3;
+    transition: box-shadow 0.18s ease, background 0.18s ease, transform 0.12s ease;
 }
 
-.rc-c22-hit-websites {
-    left: 8.5%;
-    top: 6%;
-    width: 20.5%;
-    height: 51%;
-    border-radius: 50% 50% 14px 14px;
-}
-.rc-c22-hit-websites:hover + .rc-c22-lit-websites,
-.rc-c22-hit-websites:focus-visible + .rc-c22-lit-websites,
-.rc-c22-hit-websites:active + .rc-c22-lit-websites {
-    opacity: 1;
-    filter: brightness(1.08) drop-shadow(0 -2px 10px rgba(0, 240, 255, 0.45));
+.rc-c3-hit:active {
+    transform: scale(0.97);
 }
 
-.rc-c22-hit-apps {
-    left: 29.2%;
-    top: 6%;
-    width: 20.5%;
-    height: 51%;
-    border-radius: 50% 50% 14px 14px;
+.rc-c3-hit-websites {
+    left: 2.5%;
+    top: 28%;
+    width: 22.8%;
+    height: 35%;
 }
-.rc-c22-hit-apps:hover + .rc-c22-lit-apps,
-.rc-c22-hit-apps:focus-visible + .rc-c22-lit-apps,
-.rc-c22-hit-apps:active + .rc-c22-lit-apps {
-    opacity: 1;
-    filter: brightness(1.08) drop-shadow(0 -2px 10px rgba(255, 215, 0, 0.45));
+.rc-c3-hit-websites:hover,
+.rc-c3-hit-websites:focus-visible {
+    background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.18) 0%, transparent 75%);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.38);
 }
 
-.rc-c22-hit-games {
-    left: 50.2%;
-    top: 6%;
-    width: 20.5%;
-    height: 51%;
-    border-radius: 50% 50% 14px 14px;
+.rc-c3-hit-apps {
+    left: 27.2%;
+    top: 28%;
+    width: 12.2%;
+    height: 35%;
 }
-.rc-c22-hit-games:hover + .rc-c22-lit-games,
-.rc-c22-hit-games:focus-visible + .rc-c22-lit-games,
-.rc-c22-hit-games:active + .rc-c22-lit-games {
-    opacity: 1;
-    filter: brightness(1.08) drop-shadow(0 -2px 10px rgba(255, 45, 149, 0.48));
+.rc-c3-hit-apps:hover,
+.rc-c3-hit-apps:focus-visible {
+    background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.18) 0%, transparent 75%);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.38);
 }
 
-.rc-c22-hit-apparel {
-    left: 71.0%;
-    top: 6%;
-    width: 20.5%;
-    height: 51%;
-    border-radius: 50% 50% 14px 14px;
+.rc-c3-hit-games {
+    left: 41.2%;
+    top: 28%;
+    width: 15.5%;
+    height: 35%;
 }
-.rc-c22-hit-apparel:hover + .rc-c22-lit-apparel,
-.rc-c22-hit-apparel:focus-visible + .rc-c22-lit-apparel,
-.rc-c22-hit-apparel:active + .rc-c22-lit-apparel {
-    opacity: 1;
-    filter: brightness(1.08) drop-shadow(0 -2px 10px rgba(0, 255, 102, 0.45));
+.rc-c3-hit-games:hover,
+.rc-c3-hit-games:focus-visible {
+    background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.18) 0%, transparent 75%);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.38);
 }
 
-.rc-c22-hit-hire {
-    left: 25.0%;
+.rc-c3-hit-apparel {
+    left: 59.0%;
+    top: 28%;
+    width: 38.5%;
+    height: 35%;
+}
+.rc-c3-hit-apparel:hover,
+.rc-c3-hit-apparel:focus-visible {
+    background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.18) 0%, transparent 75%);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.38);
+}
+
+.rc-c3-hit-start {
+    left: 31.2%;
     top: 61.5%;
-    width: 50.0%;
-    height: 33.5%;
-    border-radius: 10px;
+    width: 37.6%;
+    height: 30.5%;
+    border-radius: 999px;
 }
-.rc-c22-hit-hire:hover + .rc-c22-lit-hire,
-.rc-c22-hit-hire:focus-visible + .rc-c22-lit-hire,
-.rc-c22-hit-hire:active + .rc-c22-lit-hire {
-    opacity: 1;
-    filter: brightness(1.10) drop-shadow(0 0 12px rgba(255, 180, 0, 0.45));
+.rc-c3-hit-start:hover,
+.rc-c3-hit-start:focus-visible {
+    background: rgba(255, 235, 130, 0.16);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.72), inset 0 0 10px rgba(255, 255, 255, 0.35);
 }
 
 .rc-misfits-feature-link::before {
@@ -6170,20 +6139,20 @@ body.rc-logged-in-home .hero-container.shifted-up {
         justify-content: center;
     }
 
-    .rc-concept22-deck {
+    .rc-concept3-lockup {
         order: 2;
         width: 100%;
-        height: clamp(78px, 10.4vh, 96px);
+        height: clamp(72px, 9.6vh, 90px);
         justify-content: center;
     }
 
-    .rc-concept22-img-box {
-        max-height: clamp(78px, 10.4vh, 96px);
+    .rc-concept3-img-box {
+        max-height: clamp(72px, 9.6vh, 90px);
     }
 
-    .rc-concept22-deck-img {
-        max-height: clamp(78px, 10.4vh, 96px);
-        max-width: 92vw;
+    .rc-concept3-lockup-img {
+        max-height: clamp(72px, 9.6vh, 90px);
+        max-width: 94vw;
     }
 
     .rc-misfits-feature-link {
