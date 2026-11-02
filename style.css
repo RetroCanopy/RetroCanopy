@@ -5373,195 +5373,30 @@ body.rc-logged-in-home .hero-container.shifted-up {
     filter: none;
 }
 
-/* Bottom Row: Nerdy Misfits + Concept 10A Hologram Showcase + Deaf Hammer */
+/* Bottom Row: Nerdy Misfits + Deaf Hammer */
 .rc-misfits-banner-row {
     width: 100%;
     flex: 0 0 auto;
-    height: clamp(138px, 20vh, 210px);
+    height: clamp(128px, 18.8vh, 196px);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: clamp(8px, 1.4vw, 24px);
+    gap: clamp(16px, 3vw, 48px);
     position: relative;
-    padding: 2px clamp(12px, 2.2vw, 38px);
+    padding: 2px clamp(24px, 5vw, 90px);
 }
 
 .rc-misfits-feature-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(8px, 1.1vw, 16px);
+    gap: clamp(10px, 1.4vw, 22px);
     height: 100%;
     text-decoration: none;
-    padding: 4px 8px;
+    padding: 4px 14px;
     border-radius: 20px;
     transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), filter 0.28s ease;
     position: relative;
-    flex-shrink: 0;
-}
-
-/* Concept 10A: Multi-Plane 3D Volumetric Hologram Showcase Between Nerdy Misfits & Deaf Hammer */
-.rc-concept10a-showcase {
-    --holo-rx: 0deg;
-    --holo-ry: 0deg;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 112%;
-    flex: 1 1 auto;
-    max-width: clamp(580px, 56vw, 960px);
-    padding: 0 4px;
-    cursor: pointer;
-    position: relative;
-    user-select: none;
-    perspective: 920px;
-    transform-style: preserve-3d;
-}
-
-.rc-10a-3d-stage {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    max-height: clamp(154px, 22vh, 232px);
-    transform-style: preserve-3d;
-    transform: rotateX(var(--holo-rx, 0deg)) rotateY(var(--holo-ry, 0deg));
-    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), filter 0.26s ease;
-    animation: rcHoloStageOrbit 5.8s ease-in-out infinite;
-}
-
-@keyframes rcHoloStageOrbit {
-    0%, 100% {
-        transform: rotateX(calc(var(--holo-rx, 0deg) + 2deg)) rotateY(calc(var(--holo-ry, 0deg) - 3.5deg)) translateY(0px);
-    }
-    50% {
-        transform: rotateX(calc(var(--holo-rx, 0deg) - 2deg)) rotateY(calc(var(--holo-ry, 0deg) + 3.5deg)) translateY(-4px);
-    }
-}
-
-.rc-concept10a-showcase:hover .rc-10a-3d-stage {
-    filter: brightness(1.14) saturate(1.15);
-}
-
-.rc-10a-holo-floor-glow {
-    position: absolute;
-    bottom: -6%;
-    left: 6%;
-    right: 6%;
-    height: 36%;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.42) 0%, rgba(255, 215, 0, 0.18) 45%, transparent 74%);
-    filter: blur(18px);
-    transform: rotateX(72deg) translateZ(-24px);
-    pointer-events: none;
-    z-index: 0;
-}
-
-.rc-concept10a-lockup-img {
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    width: auto;
-    max-width: 100%;
-    max-height: clamp(154px, 22vh, 232px);
-    object-fit: contain;
-    display: block;
-    pointer-events: none;
-    -webkit-user-drag: none;
-    mix-blend-mode: lighten;
-    transform: translateZ(18px);
-}
-
-.rc-10a-fg-layer {
-    position: absolute;
-    pointer-events: none;
-    transform-style: preserve-3d;
-}
-
-/* 3D Foreground Layer 1: Volumetric Light Pulse Over Synth Emitter */
-.rc-10a-fg-synth-beam {
-    left: 23.5%;
-    width: 17%;
-    top: 8%;
-    bottom: 8%;
-    z-index: 4;
-    transform: translateZ(44px);
-    border-radius: 50%;
-    background: radial-gradient(ellipse at 50% 62%, rgba(0, 240, 255, 0.34) 0%, rgba(255, 215, 0, 0.2) 38%, transparent 72%);
-    mix-blend-mode: screen;
-    filter: blur(8px);
-    animation: rcHoloBeamPulse 2.6s ease-in-out infinite;
-}
-
-@keyframes rcHoloBeamPulse {
-    0%, 100% {
-        opacity: 0.65;
-        transform: translateZ(44px) scale(0.96);
-    }
-    50% {
-        opacity: 1;
-        transform: translateZ(54px) scale(1.06);
-    }
-}
-
-/* 3D Foreground Layer 2: Strictly Rounded Hologram Laser Scanline Over the Plaque Glass */
-.rc-10a-fg-plaque-scan {
-    left: 42.2%;
-    width: 31.8%;
-    top: 32%;
-    height: 31%;
-    border-radius: 14px;
-    overflow: hidden;
-    z-index: 4;
-    transform: translateZ(38px);
-    mix-blend-mode: screen;
-    box-shadow: inset 0 0 14px rgba(0, 240, 255, 0.38);
-}
-
-.rc-10a-fg-plaque-scan::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 28%;
-    background: linear-gradient(180deg, transparent 0%, rgba(0, 240, 255, 0.45) 50%, rgba(255, 215, 0, 0.35) 75%, transparent 100%);
-    animation: rcHoloLaserScan 3.2s linear infinite;
-}
-
-@keyframes rcHoloLaserScan {
-    0% {
-        top: -32%;
-    }
-    100% {
-        top: 108%;
-    }
-}
-
-/* 3D Foreground Layer 3: Floating 3D Hologram HUD Ring Over the App Phones */
-.rc-10a-fg-phone-rings {
-    left: 81.2%;
-    top: 29%;
-    width: 7.4%;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    border: 1.5px dashed rgba(0, 240, 255, 0.78);
-    box-shadow:
-        0 0 12px rgba(0, 240, 255, 0.68),
-        inset 0 0 10px rgba(255, 215, 0, 0.45);
-    z-index: 5;
-    mix-blend-mode: screen;
-    transform: translateZ(48px) rotateY(-16deg);
-    animation: rcHoloRingSpin 6s linear infinite;
-}
-
-@keyframes rcHoloRingSpin {
-    0% {
-        transform: translateZ(48px) rotateY(-16deg) rotateZ(0deg);
-    }
-    100% {
-        transform: translateZ(48px) rotateY(-16deg) rotateZ(360deg);
-    }
 }
 
 .rc-misfits-feature-link::before {
@@ -6181,51 +6016,30 @@ body.rc-logged-in-home .hero-container.shifted-up {
     }
 
     .rc-misfits-banner-row {
-        height: auto;
-        flex-wrap: wrap;
-        padding: 2px 6px;
-        gap: 2px 8px;
-        justify-content: center;
-    }
-
-    .rc-concept10a-showcase {
-        order: 2;
-        width: 100%;
-        max-width: 100%;
-        height: clamp(88px, 11.4vh, 108px);
-        padding: 0 2px;
-        justify-content: center;
-    }
-
-    .rc-10a-3d-stage {
-        max-height: clamp(88px, 11.4vh, 108px);
-        max-width: 98vw;
-    }
-
-    .rc-concept10a-lockup-img {
-        max-height: clamp(88px, 11.4vh, 108px);
+        height: clamp(78px, 10.4vh, 98px);
+        padding: 1px 6px;
+        gap: 6px;
     }
 
     .rc-misfits-feature-link {
         gap: 4px;
         padding: 1px 3px;
-        max-width: 48%;
-        height: clamp(72px, 9.5vh, 88px);
+        max-width: 49%;
     }
 
     .rc-misfits-char-wrap {
-        height: clamp(68px, 9vh, 82px);
+        height: clamp(74px, 9.8vh, 92px);
     }
 
     .rc-misfits-logo-wrap {
         height: auto;
-        width: clamp(78px, 22vw, 96px);
+        width: clamp(82px, 23vw, 102px);
     }
 
     .rc-misfits-logo-img {
         width: 100%;
         height: auto;
-        max-height: 62px;
+        max-height: 68px;
         max-width: 100%;
     }
 
@@ -6316,224 +6130,6 @@ body.rc-logged-in-home .hero-container.shifted-up {
     body.rc-logged-in-home .lofi-eq {
         transform: scale(0.72);
         margin-right: -2px;
-    }
-}
-
-/* ==========================================================================
-   RETROCANOPY DIGITAL STUDIO ("WE BUILD & MANAGE WEBSITES & APPS") MODAL
-   ========================================================================== */
-.rc-web-studio-modal-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 3200;
-    background: rgba(2, 4, 12, 0.82);
-    backdrop-filter: blur(12px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 18px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.28s ease, visibility 0.28s ease;
-}
-
-.rc-web-studio-modal-backdrop.active {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
-.rc-web-studio-modal-card {
-    position: relative;
-    width: min(1060px, 96vw);
-    max-height: 92vh;
-    overflow-y: auto;
-    background: linear-gradient(180deg, rgba(8, 12, 26, 0.97) 0%, rgba(4, 6, 16, 0.99) 100%);
-    border: 2px solid #00f0ff;
-    border-radius: 18px;
-    padding: clamp(18px, 2.4vw, 30px);
-    box-shadow:
-        inset 0 0 28px rgba(0, 240, 255, 0.18),
-        0 0 28px rgba(0, 240, 255, 0.45),
-        0 0 60px rgba(255, 215, 0, 0.22),
-        0 24px 64px rgba(0, 0, 0, 0.96);
-    transform: translateY(12px) scale(0.97);
-    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.rc-web-studio-modal-backdrop.active .rc-web-studio-modal-card {
-    transform: translateY(0) scale(1);
-}
-
-.rc-web-studio-close-btn {
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(0, 240, 255, 0.55);
-    background: rgba(8, 14, 30, 0.9);
-    color: #ffffff;
-    font-size: 1.35rem;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.18s ease;
-}
-
-.rc-web-studio-close-btn:hover {
-    background: #ff2d95;
-    border-color: #ffffff;
-    box-shadow: 0 0 14px rgba(255, 45, 149, 0.75);
-}
-
-.rc-web-studio-header-banner {
-    background: linear-gradient(90deg, #ffd700 0%, #ffdf66 50%, #ff9900 100%);
-    border-radius: 10px;
-    padding: 10px 18px;
-    text-align: center;
-    margin: 6px 32px 20px 0;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.55);
-}
-
-.rc-web-studio-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: clamp(0.78rem, 1.35vw, 1.12rem);
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    color: #050812;
-    text-transform: uppercase;
-}
-
-.rc-web-studio-pillars-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin-bottom: 20px;
-}
-
-.rc-web-studio-pillar-card {
-    background: rgba(10, 16, 34, 0.88);
-    border-radius: 14px;
-    padding: 18px 14px;
-    text-align: center;
-    border: 1.5px solid rgba(0, 240, 255, 0.45);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.8);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.rc-web-studio-pillar-card.pillar-gold {
-    border-color: rgba(255, 215, 0, 0.72);
-    box-shadow: inset 0 0 14px rgba(255, 215, 0, 0.14), 0 0 16px rgba(255, 215, 0, 0.22);
-}
-
-.rc-web-studio-pillar-card.pillar-cyan {
-    border-color: rgba(0, 240, 255, 0.75);
-    box-shadow: inset 0 0 14px rgba(0, 240, 255, 0.14), 0 0 16px rgba(0, 240, 255, 0.22);
-}
-
-.rc-web-studio-pillar-card.pillar-magenta {
-    border-color: rgba(255, 45, 149, 0.75);
-    box-shadow: inset 0 0 14px rgba(255, 45, 149, 0.14), 0 0 16px rgba(255, 45, 149, 0.22);
-}
-
-.rc-web-studio-pillar-card.pillar-emerald {
-    border-color: rgba(0, 255, 136, 0.72);
-    box-shadow: inset 0 0 14px rgba(0, 255, 136, 0.14), 0 0 16px rgba(0, 255, 136, 0.22);
-}
-
-.rc-pillar-icon {
-    font-size: 2rem;
-    filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.6));
-}
-
-.rc-pillar-heading {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.86rem;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 0.06em;
-}
-
-.rc-pillar-desc {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.8rem;
-    color: #c7d8fa;
-    line-height: 1.38;
-}
-
-.rc-web-studio-quote-bar {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1.2fr auto;
-    gap: 10px;
-    background: rgba(6, 10, 22, 0.92);
-    border: 1px solid rgba(0, 240, 255, 0.35);
-    border-radius: 12px;
-    padding: 12px;
-}
-
-.rc-studio-input,
-.rc-studio-select {
-    background: rgba(12, 18, 38, 0.95);
-    border: 1px solid rgba(0, 240, 255, 0.38);
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: #ffffff;
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.86rem;
-    outline: none;
-}
-
-.rc-studio-input:focus,
-.rc-studio-select:focus {
-    border-color: #ffd700;
-    box-shadow: 0 0 12px rgba(255, 215, 0, 0.45);
-}
-
-.rc-studio-submit-btn {
-    background: linear-gradient(135deg, #fff3a6 0%, #ffd700 50%, #ff9900 100%);
-    color: #050812;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 900;
-    font-size: 0.82rem;
-    letter-spacing: 0.08em;
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: 1px solid #ffffff;
-    cursor: pointer;
-    box-shadow: 0 0 16px rgba(255, 215, 0, 0.72);
-    white-space: nowrap;
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-.rc-studio-submit-btn:hover {
-    transform: translateY(-1px) scale(1.02);
-    box-shadow: 0 0 24px rgba(255, 215, 0, 0.95);
-}
-
-.rc-studio-confirm-msg {
-    margin-top: 10px;
-    text-align: center;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.82rem;
-    color: #00ff88;
-    min-height: 1.2em;
-}
-
-@media (max-width: 860px) {
-    .rc-web-studio-pillars-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    .rc-web-studio-quote-bar {
-        grid-template-columns: 1fr;
     }
 }
 
