@@ -4529,67 +4529,72 @@ function initHomeShopScroller() {
 
     const shopCatalog = [
         // Mixed-up order across categories, featuring the White & 24K Gold Hoodie (WIN ONLY at Arcade) and White & 24K Gold Hat prominently!
-        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
-        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
-        { code: 'RC-401', title: '86 Outrun Turbo Gullwing Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt1_back.png?v=6', href: 'tee_preview.html?idx=0' },
-        { code: 'RC-502', title: 'Dual Cyan & Magenta Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt2.png?v=1', href: 'joggers_preview.html?idx=1' },
-        { code: 'RC-306', title: 'Cyber-Dragon Shenron Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt6_back.png?v=75', href: 'hoodie_preview.html?idx=5' },
-        { code: 'RC-205', title: 'Starry Synthwave Cosmos XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_5.png?v=3', href: 'deskmat_preview.html?idx=4' },
-        { code: 'RC-309', title: 'White & 24K Gold Hoodie (Front)', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_front.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
-        { code: 'RC-601', title: 'Golden ROM Cartridge Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt1_back.png?v=6', href: 'longsleeve_preview.html?idx=0' },
-        { code: 'RC-704', title: 'Valkyrie Samurai 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt3.png?v=2', href: 'gearbag_preview.html?idx=3' },
-        { code: 'RC-101', title: 'Classic Sunset Grid Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_front_floating.png?v=94', href: 'hat_preview.html?idx=0' },
-        { code: 'RC-308', title: 'Pinball Wizard Jackpot Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt9_back.png?v=75', href: 'hoodie_preview.html?idx=7' },
-        { code: 'RC-403', title: 'Tokyo Shibuya Cyber-Shrine Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt3_back.png?v=6', href: 'tee_preview.html?idx=2' },
-        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
-        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
-        { code: 'RC-701', title: 'Retrocanopy 20oz LAN Gear Bag', cat: 'GEAR & MISC', price: '$28', img: 'assets/merch/gearbag_opt1.png?v=5', href: 'gearbag_preview.html?idx=0' },
-        { code: 'RC-602', title: 'Cyber Ronin Samurai Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt2_back.png?v=6', href: 'longsleeve_preview.html?idx=1' },
-        { code: 'RC-105', title: 'Valkyrie Gold & Crimson Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt5.png?v=94', href: 'hat_preview.html?idx=4' },
-        { code: 'RC-301', title: 'Classic Sunset Grid Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt1_back.png?v=75', href: 'hoodie_preview.html?idx=0' },
-        { code: 'RC-505', title: '1984 Champion Gold Trim Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt5.png?v=1', href: 'joggers_preview.html?idx=4' },
-        { code: 'RC-201', title: 'Classic Sunset Grid XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_1.png?v=3', href: 'deskmat_preview.html?idx=0' },
-        { code: 'RC-405', title: 'Boss Level Mecha-Valkyrie Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt5_back.png?v=6', href: 'tee_preview.html?idx=4' },
-        { code: 'RC-307', title: '1987 Superbike Cyber Drift Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt7_back.png?v=75', href: 'hoodie_preview.html?idx=6' },
-        { code: 'RC-702', title: 'Classic Sunset Grid 30oz Tumbler', cat: 'GEAR & MISC', price: '$34', img: 'assets/merch/tumbler_opt1.png?v=2', href: 'gearbag_preview.html?idx=1' },
-        { code: 'RC-604', title: 'Orbital Saturn Eclipse Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt4_back.png?v=6', href: 'longsleeve_preview.html?idx=3' },
-        { code: 'RC-102', title: 'Dual Cyan & Magenta Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt2.png?v=94', href: 'hat_preview.html?idx=1' },
-        { code: 'RC-501', title: 'Sunset Grid Tech Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt1.png?v=1', href: 'joggers_preview.html?idx=0' },
-        { code: 'RC-309', title: 'White & 24K Gold Crowned Hoodie', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
-        { code: 'RC-402', title: '16-Bit Arcade Blueprint Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt2_back.png?v=6', href: 'tee_preview.html?idx=1' },
-        { code: 'RC-203', title: 'Outrun Wireframe XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_3.png?v=3', href: 'deskmat_preview.html?idx=2' },
-        { code: 'RC-107', title: 'White & 24K Gold Valkyrie Hat', cat: 'PRIZE', price: 'WIN ONLY', winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
-        { code: 'RC-303', title: 'Midnight Grinder Vault Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt3_back.png?v=75', href: 'hoodie_preview.html?idx=2' },
-        { code: 'RC-603', title: 'Power-Glove VR 1989 Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt3_back.png?v=6', href: 'longsleeve_preview.html?idx=2' },
-        { code: 'RC-705', title: '1984 Champion Gold 30oz Tumbler', cat: 'GEAR & MISC', price: '$36', img: 'assets/merch/tumbler_opt4.png?v=2', href: 'gearbag_preview.html?idx=4' },
-        { code: 'RC-404', title: 'Analog Cassette Mixtape Tee', cat: 'TEES', price: '$36', img: 'assets/merch/tee_opt4_back.png?v=11', href: 'tee_preview.html?idx=3' },
-        { code: 'RC-503', title: 'Outrun Wireframe Cargo Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt3.png?v=1', href: 'joggers_preview.html?idx=2' },
-        { code: 'RC-104', title: 'Starry Synthwave Cosmos Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt4.png?v=94', href: 'hat_preview.html?idx=3' },
-        { code: 'RC-302', title: 'Dual Cyan & Magenta Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt2_back.png?v=75', href: 'hoodie_preview.html?idx=1' },
-        { code: 'RC-202', title: 'Dual Cyan & Magenta XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_2.png?v=3', href: 'deskmat_preview.html?idx=1' },
-        { code: 'RC-605', title: 'Stereo Hi-Fi 60Hz VHS Crewneck', cat: 'LONGSLEEVES', price: '$54', img: 'assets/merch/longsleeve_opt5_back.png?v=6', href: 'longsleeve_preview.html?idx=4' },
-        { code: 'RC-106', title: '1984 Arcade Champion Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt6.png?v=94', href: 'hat_preview.html?idx=5' },
-        { code: 'RC-305', title: 'Starry Synthwave Cosmos Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt5_back.png?v=75', href: 'hoodie_preview.html?idx=4' },
-        { code: 'RC-703', title: 'Dual Neon Grid 30oz Tumbler', cat: 'GEAR & MISC', price: '$34', img: 'assets/merch/tumbler_opt2.png?v=2', href: 'gearbag_preview.html?idx=2' },
-        { code: 'RC-504', title: 'Starry Synthwave Cosmos Joggers', cat: 'JOGGERS', price: '$58', img: 'assets/merch/joggers_opt4.png?v=1', href: 'joggers_preview.html?idx=3' },
-        { code: 'RC-103', title: 'Outrun Wireframe Snapback', cat: 'HATS', price: '$32', img: 'assets/merch/hat_opt3.png?v=94', href: 'hat_preview.html?idx=2' },
-        { code: 'RC-304', title: 'Outrun Wireframe Hoodie', cat: 'HOODIES', price: '$68', img: 'assets/merch/hoodie_opt4_back.png?v=75', href: 'hoodie_preview.html?idx=3' },
-        { code: 'RC-204', title: 'Pro-Esports Stealth XXL Mat', cat: 'DESK MATS', price: '$38', img: 'assets/merch/deskmat_topdown_4.png?v=3', href: 'deskmat_preview.html?idx=3' }
+        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT', winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
+        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
+        { styleClass: 'rc-game-style-arc03', title: '86 Outrun Turbo Gullwing Tee', titleTop: "'86 OUTRUN TURBO", titleMain: 'GULLWING TEE', img: 'assets/merch/tee_opt1_back.png?v=6', href: 'tee_preview.html?idx=0' },
+        { styleClass: 'rc-game-style-arc02', title: 'Dual Cyan & Magenta Joggers', titleTop: 'CYAN & MAGENTA', titleMain: 'TECH JOGGERS', img: 'assets/merch/joggers_opt2.png?v=1', href: 'joggers_preview.html?idx=1' },
+        { styleClass: 'rc-game-style-arc04', title: 'Cyber-Dragon Shenron Hoodie', titleTop: 'CYBER-DRAGON', titleMain: 'SHENRON HOODIE', img: 'assets/merch/hoodie_opt6_back.png?v=75', href: 'hoodie_preview.html?idx=5' },
+        { styleClass: 'rc-game-style-arc07', title: 'Starry Synthwave Cosmos XXL Mat', titleTop: 'STARRY SYNTHWAVE', titleMain: 'COSMOS XXL MAT', img: 'assets/merch/deskmat_topdown_5.png?v=3', href: 'deskmat_preview.html?idx=4' },
+        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_front.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
+        { styleClass: 'rc-game-style-arc08', title: 'Golden ROM Cartridge Crewneck', titleTop: 'GOLDEN ROM', titleMain: 'CARTRIDGE CREW', img: 'assets/merch/longsleeve_opt1_back.png?v=6', href: 'longsleeve_preview.html?idx=0' },
+        { styleClass: 'rc-game-style-arc06', title: 'Valkyrie Samurai 30oz Tumbler', titleTop: 'VALKYRIE SAMURAI', titleMain: '30OZ TUMBLER', img: 'assets/merch/tumbler_opt3.png?v=2', href: 'gearbag_preview.html?idx=3' },
+        { styleClass: 'rc-game-style-arc03', title: 'Classic Sunset Grid Snapback', titleTop: 'CLASSIC SUNSET', titleMain: 'GRID SNAPBACK', img: 'assets/merch/hat_front_floating.png?v=94', href: 'hat_preview.html?idx=0' },
+        { styleClass: 'rc-game-style-arc05', title: 'Pinball Wizard Jackpot Hoodie', titleTop: 'PINBALL WIZARD', titleMain: 'JACKPOT HOODIE', img: 'assets/merch/hoodie_opt9_back.png?v=75', href: 'hoodie_preview.html?idx=7' },
+        { styleClass: 'rc-game-style-arc06', title: 'Tokyo Shibuya Cyber-Shrine Tee', titleTop: 'TOKYO SHIBUYA', titleMain: 'CYBER-SHRINE TEE', img: 'assets/merch/tee_opt3_back.png?v=6', href: 'tee_preview.html?idx=2' },
+        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT', winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
+        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
+        { styleClass: 'rc-game-style-arc01', title: 'Retrocanopy 20oz LAN Gear Bag', titleTop: 'RETROCANOPY', titleMain: 'LAN GEAR BAG', img: 'assets/merch/gearbag_opt1.png?v=5', href: 'gearbag_preview.html?idx=0' },
+        { styleClass: 'rc-game-style-arc02', title: 'Cyber Ronin Samurai Crewneck', titleTop: 'CYBER RONIN', titleMain: 'SAMURAI CREWNECK', img: 'assets/merch/longsleeve_opt2_back.png?v=6', href: 'longsleeve_preview.html?idx=1' },
+        { styleClass: 'rc-game-style-arc09', title: 'Valkyrie Gold & Crimson Snapback', titleTop: 'VALKYRIE GOLD', titleMain: 'CRIMSON SNAPBACK', img: 'assets/merch/hat_opt5.png?v=94', href: 'hat_preview.html?idx=4' },
+        { styleClass: 'rc-game-style-arc03', title: 'Classic Sunset Grid Hoodie', titleTop: 'CLASSIC SUNSET', titleMain: 'GRID HOODIE', img: 'assets/merch/hoodie_opt1_back.png?v=75', href: 'hoodie_preview.html?idx=0' },
+        { styleClass: 'rc-game-style-arc01', title: '1984 Champion Gold Trim Joggers', titleTop: '1984 CHAMPION', titleMain: 'GOLD JOGGERS', img: 'assets/merch/joggers_opt5.png?v=1', href: 'joggers_preview.html?idx=4' },
+        { styleClass: 'rc-game-style-arc05', title: 'Classic Sunset Grid XXL Mat', titleTop: 'CLASSIC SUNSET', titleMain: 'GRID XXL MAT', img: 'assets/merch/deskmat_topdown_1.png?v=3', href: 'deskmat_preview.html?idx=0' },
+        { styleClass: 'rc-game-style-arc04', title: 'Boss Level Mecha-Valkyrie Tee', titleTop: 'BOSS LEVEL', titleMain: 'VALKYRIE TEE', img: 'assets/merch/tee_opt5_back.png?v=6', href: 'tee_preview.html?idx=4' },
+        { styleClass: 'rc-game-style-arc07', title: '1987 Superbike Cyber Drift Hoodie', titleTop: "'87 SUPERBIKE", titleMain: 'CYBER DRIFT HOODIE', img: 'assets/merch/hoodie_opt7_back.png?v=75', href: 'hoodie_preview.html?idx=6' },
+        { styleClass: 'rc-game-style-arc03', title: 'Classic Sunset Grid 30oz Tumbler', titleTop: 'CLASSIC SUNSET', titleMain: '30OZ TUMBLER', img: 'assets/merch/tumbler_opt1.png?v=2', href: 'gearbag_preview.html?idx=1' },
+        { styleClass: 'rc-game-style-arc02', title: 'Orbital Saturn Eclipse Crewneck', titleTop: 'ORBITAL SATURN', titleMain: 'ECLIPSE CREWNECK', img: 'assets/merch/longsleeve_opt4_back.png?v=6', href: 'longsleeve_preview.html?idx=3' },
+        { styleClass: 'rc-game-style-arc05', title: 'Dual Cyan & Magenta Snapback', titleTop: 'CYAN & MAGENTA', titleMain: 'NEON SNAPBACK', img: 'assets/merch/hat_opt2.png?v=94', href: 'hat_preview.html?idx=1' },
+        { styleClass: 'rc-game-style-arc03', title: 'Sunset Grid Tech Joggers', titleTop: 'SUNSET GRID', titleMain: 'TECH JOGGERS', img: 'assets/merch/joggers_opt1.png?v=1', href: 'joggers_preview.html?idx=0' },
+        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE', winOnly: true, img: 'assets/merch/hoodie_tier6_2f_back.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
+        { styleClass: 'rc-game-style-arc08', title: '16-Bit Arcade Blueprint Tee', titleTop: '16-BIT ARCADE', titleMain: 'BLUEPRINT TEE', img: 'assets/merch/tee_opt2_back.png?v=6', href: 'tee_preview.html?idx=1' },
+        { styleClass: 'rc-game-style-arc07', title: 'Outrun Wireframe XXL Mat', titleTop: 'OUTRUN WIREFRAME', titleMain: 'DESK MAT XXL', img: 'assets/merch/deskmat_topdown_3.png?v=3', href: 'deskmat_preview.html?idx=2' },
+        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT', winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=130', href: 'games.html?openTickets=1&openTier6=1' },
+        { styleClass: 'rc-game-style-arc04', title: 'Midnight Grinder Vault Hoodie', titleTop: 'MIDNIGHT GRINDER', titleMain: 'VAULT HOODIE', img: 'assets/merch/hoodie_opt3_back.png?v=75', href: 'hoodie_preview.html?idx=2' },
+        { styleClass: 'rc-game-style-arc01', title: 'Power-Glove VR 1989 Crewneck', titleTop: 'POWER-GLOVE VR', titleMain: '1989 CREWNECK', img: 'assets/merch/longsleeve_opt3_back.png?v=6', href: 'longsleeve_preview.html?idx=2' },
+        { styleClass: 'rc-game-style-arc09', title: '1984 Champion Gold 30oz Tumbler', titleTop: '1984 CHAMPION', titleMain: 'GOLD TUMBLER', img: 'assets/merch/tumbler_opt4.png?v=2', href: 'gearbag_preview.html?idx=4' },
+        { styleClass: 'rc-game-style-arc05', title: 'Analog Cassette Mixtape Tee', titleTop: 'ANALOG CASSETTE', titleMain: 'MIXTAPE TEE', img: 'assets/merch/tee_opt4_back.png?v=11', href: 'tee_preview.html?idx=3' },
+        { styleClass: 'rc-game-style-arc02', title: 'Outrun Wireframe Cargo Joggers', titleTop: 'OUTRUN WIREFRAME', titleMain: 'CARGO JOGGERS', img: 'assets/merch/joggers_opt3.png?v=1', href: 'joggers_preview.html?idx=2' },
+        { styleClass: 'rc-game-style-arc07', title: 'Starry Synthwave Cosmos Snapback', titleTop: 'STARRY SYNTHWAVE', titleMain: 'COSMOS SNAPBACK', img: 'assets/merch/hat_opt4.png?v=94', href: 'hat_preview.html?idx=3' },
+        { styleClass: 'rc-game-style-arc02', title: 'Dual Cyan & Magenta Hoodie', titleTop: 'CYAN & MAGENTA', titleMain: 'NEON HOODIE', img: 'assets/merch/hoodie_opt2_back.png?v=75', href: 'hoodie_preview.html?idx=1' },
+        { styleClass: 'rc-game-style-arc05', title: 'Dual Cyan & Magenta XXL Mat', titleTop: 'CYAN & MAGENTA', titleMain: 'NEON XXL MAT', img: 'assets/merch/deskmat_topdown_2.png?v=3', href: 'deskmat_preview.html?idx=1' },
+        { styleClass: 'rc-game-style-arc03', title: 'Stereo Hi-Fi 60Hz VHS Crewneck', titleTop: 'STEREO HI-FI 60HZ', titleMain: 'VHS CREWNECK', img: 'assets/merch/longsleeve_opt5_back.png?v=6', href: 'longsleeve_preview.html?idx=4' },
+        { styleClass: 'rc-game-style-arc09', title: '1984 Arcade Champion Snapback', titleTop: '1984 ARCADE', titleMain: 'CHAMP SNAPBACK', img: 'assets/merch/hat_opt6.png?v=94', href: 'hat_preview.html?idx=5' },
+        { styleClass: 'rc-game-style-arc06', title: 'Starry Synthwave Cosmos Hoodie', titleTop: 'STARRY SYNTHWAVE', titleMain: 'COSMOS HOODIE', img: 'assets/merch/hoodie_opt5_back.png?v=75', href: 'hoodie_preview.html?idx=4' },
+        { styleClass: 'rc-game-style-arc04', title: 'Dual Neon Grid 30oz Tumbler', titleTop: 'DUAL NEON GRID', titleMain: '30OZ TUMBLER', img: 'assets/merch/tumbler_opt2.png?v=2', href: 'gearbag_preview.html?idx=2' },
+        { styleClass: 'rc-game-style-arc07', title: 'Starry Synthwave Cosmos Joggers', titleTop: 'STARRY SYNTHWAVE', titleMain: 'COSMOS JOGGERS', img: 'assets/merch/joggers_opt4.png?v=1', href: 'joggers_preview.html?idx=3' },
+        { styleClass: 'rc-game-style-arc01', title: 'Outrun Wireframe Snapback', titleTop: 'OUTRUN WIREFRAME', titleMain: 'SNAPBACK HAT', img: 'assets/merch/hat_opt3.png?v=94', href: 'hat_preview.html?idx=2' },
+        { styleClass: 'rc-game-style-arc03', title: 'Outrun Wireframe Hoodie', titleTop: 'OUTRUN WIREFRAME', titleMain: 'TURBO HOODIE', img: 'assets/merch/hoodie_opt4_back.png?v=75', href: 'hoodie_preview.html?idx=3' },
+        { styleClass: 'rc-game-style-arc08', title: 'Pro-Esports Stealth XXL Mat', titleTop: 'PRO-ESPORTS', titleMain: 'STEALTH XXL MAT', img: 'assets/merch/deskmat_topdown_4.png?v=3', href: 'deskmat_preview.html?idx=3' }
     ];
 
     // Duplicate items 2x for a seamless infinite scrolling marquee loop
     const loopItems = shopCatalog.concat(shopCatalog);
     track.innerHTML = loopItems.map((item) => `
-        <a class="rc-shop-scroll-card${item.winOnly ? ' is-win-only' : ''}" href="${item.href}" draggable="false">
+        <a class="rc-shop-scroll-card rc-merch-scroll-card ${item.styleClass}${item.winOnly ? ' is-win-only' : ''}" href="${item.href}" draggable="false">
             <div class="rc-shop-scroll-img-wrap">
                 <img class="rc-shop-scroll-img" src="${item.img}" alt="${item.title}" loading="eager" draggable="false" />
             </div>
-            <div class="rc-shop-scroll-meta">
-                <div class="rc-shop-scroll-top-row">
-                    <span class="rc-shop-scroll-tag">${item.code} • ${item.cat}</span>
-                    <span class="rc-shop-scroll-price">${item.price}</span>
+            <div class="rc-game-name-plaque rc-merch-name-plaque">
+                <div class="rc-game-unique-title">
+                    <div class="rc-game-title-line rc-game-line-top">
+                        <span class="rc-game-stroke-layer" aria-hidden="true">${item.titleTop}</span>
+                        <span class="rc-game-fill-layer rc-game-title-top">${item.titleTop}</span>
+                    </div>
+                    <div class="rc-game-title-line rc-game-line-main">
+                        <span class="rc-game-stroke-layer" aria-hidden="true">${item.titleMain}</span>
+                        <span class="rc-game-fill-layer rc-game-title-main">${item.titleMain}</span>
+                    </div>
                 </div>
-                <div class="rc-shop-scroll-title">${item.title}</div>
             </div>
         </a>
     `).join('');
