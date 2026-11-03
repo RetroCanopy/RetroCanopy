@@ -200,6 +200,103 @@
     .ctrl-lbl { display: none; }
   }
 
+  /* ==========================================================================
+     FULL-SCREEN MOBILE PORTRAIT MODE (Zero Black Bars, Edge-to-Edge Alley!)
+     ========================================================================== */
+  @media (max-width: 820px), (max-aspect-ratio: 9/10) {
+    .top-nav {
+      top: 0; left: 0; right: 0;
+      height: calc(46px + env(safe-area-inset-top, 0px));
+      padding: env(safe-area-inset-top, 0px) 8px 0;
+      background: linear-gradient(180deg, rgba(14, 7, 34, 0.98) 0%, rgba(6, 3, 16, 0.96) 100%);
+      border-bottom: 1.5px solid rgba(0, 240, 255, 0.45);
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: 4px;
+    }
+    .nav-group {
+      flex-wrap: nowrap;
+      gap: 4px;
+    }
+    .nav-pill {
+      padding: 6px 8px;
+      font-size: 9px;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .nav-pill .m-hide {
+      display: none;
+    }
+
+    #stageWrap {
+      position: fixed;
+      top: calc(46px + env(safe-area-inset-top, 0px));
+      bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+      left: 0;
+      right: 0;
+      width: 100vw;
+      height: auto;
+      display: block;
+      overflow: hidden;
+    }
+    #stageWrap::before {
+      display: none;
+    }
+
+    #cabinetFrame {
+      position: absolute;
+      inset: 0;
+      width: 100vw !important;
+      height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+      border-radius: 0;
+      box-shadow: none;
+      overflow: hidden;
+    }
+
+    /* Zoom horizontally onto the center Skee-Roll cabinet (x = 278..1098) so it fills 100% of mobile portrait screen */
+    #c {
+      width: 168% !important;
+      height: 100% !important;
+      max-width: none !important;
+      margin-left: -34% !important;
+      display: block;
+      touch-action: none;
+    }
+
+    .control-deck {
+      position: fixed;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      transform: none !important;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      height: calc(56px + env(safe-area-inset-bottom, 0px));
+      padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+      border-radius: 0;
+      border: none;
+      border-top: 1.5px solid rgba(0, 240, 255, 0.5);
+      background: linear-gradient(180deg, rgba(16, 9, 36, 0.98), rgba(6, 3, 15, 1));
+      justify-content: space-between;
+      gap: 4px;
+    }
+    .ctrl-group {
+      padding-right: 5px;
+      gap: 3px;
+    }
+    .ctrl-btn {
+      padding: 8px 9px;
+      font-size: 9.5px;
+    }
+    .ctrl-btn.roll-cta {
+      padding: 9px 12px;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+  }
+
   /* End of Game Modal Overlay */
   #modal {
     position: fixed; inset: 0; z-index: 50;
@@ -296,13 +393,13 @@
 <!-- Top Floating Navigation Bar -->
 <nav class="top-nav" aria-label="Arcade Navigation">
   <div class="nav-group">
-    <a class="nav-pill" href="games.html" title="Return to Neo-Tokyo Arcade Deck">&#9664; ARCADE DECK</a>
-    <a class="nav-pill gold" href="games.html#ticketCounter" onclick="sessionStorage.setItem('rc_open_tc','1')" title="Redeem Golden Tickets">&#127915; TICKET COUNTER</a>
+    <a class="nav-pill" href="games.html" title="Return to Neo-Tokyo Arcade Deck">&#9664; ARCADE<span class="m-hide"> DECK</span></a>
+    <a class="nav-pill gold" href="games.html#ticketCounter" onclick="sessionStorage.setItem('rc_open_tc','1')" title="Redeem Golden Tickets">&#127915; TICKET<span class="m-hide"> COUNTER</span></a>
     <a class="nav-pill pink" href="hat_preview.html" title="Visit Retrocanopy Store">&#128717;&#65039; STORE</a>
   </div>
   <div class="nav-group">
-    <button type="button" class="nav-pill" id="btnNewGame" title="Restart 9-Ball Frame">&#8635; NEW FRAME</button>
-    <button type="button" class="nav-pill" id="mute" title="Toggle Arcade Audio">&#128266; AUDIO</button>
+    <button type="button" class="nav-pill" id="btnNewGame" title="Restart 9-Ball Frame">&#8635; NEW<span class="m-hide"> FRAME</span></button>
+    <button type="button" class="nav-pill" id="mute" title="Toggle Arcade Audio">&#128266;<span class="m-hide"> AUDIO</span></button>
   </div>
 </nav>
 
@@ -1126,7 +1223,7 @@ document.getElementById('again').addEventListener('click', () => { Snd.init(); r
 document.getElementById('btnNewGame').addEventListener('click', () => { Snd.init(); resetGame(); });
 
 const muteBtn = document.getElementById('mute');
-function syncMute() { muteBtn.innerHTML = Snd.muted ? '&#128263; MUTE' : '&#128266; AUDIO'; }
+function syncMute() { muteBtn.innerHTML = Snd.muted ? '&#128263;<span class="m-hide"> MUTE</span>' : '&#128266;<span class="m-hide"> AUDIO</span>'; }
 muteBtn.addEventListener('click', e => { e.stopPropagation(); Snd.init(); Snd.setMute(!Snd.muted); syncMute(); });
 syncMute();
 
@@ -1476,11 +1573,15 @@ function drawTargetBoardEffects(g, t) {
     // Floating "2X BONUS" micro-badge next to the lit ring
     const bx = bonus.cx + (S.bonusTarget === 'L-100' ? -36 : S.bonusTarget === 'R-100' ? 36 : bonus.rx + 28);
     const by = bonus.cy - 4;
+    g.save();
+    g.translate(bx, by);
+    g.scale(1, getCanvasYSquash());
     g.font = '900 10px Orbitron';
     g.textAlign = 'center';
     g.textBaseline = 'middle';
     g.fillStyle = '#ffd23a';
-    g.fillText('⚡2X', bx, by);
+    g.fillText('⚡2X', 0, 0);
+    g.restore();
     g.restore();
   }
 
@@ -1570,11 +1671,25 @@ function drawAimTrajectory(g) {
   g.restore();
 }
 
+// Live aspect-ratio compensation so spheres & HUD text remain 100% round/un-stretched in full-screen mobile portrait mode
+function getCanvasYSquash() {
+  const rect = cv.getBoundingClientRect();
+  if (!rect.width || !rect.height) return 1;
+  const scaleX = rect.width / CW;
+  const scaleY = rect.height / CH;
+  return clamp(scaleX / Math.max(1e-4, scaleY), 0.45, 1.0);
+}
+
 function draw3DBall(g, x, y, z, scaleMul = 1, alpha = 1, isReflection = false) {
   const p = P(x, y, z);
-  const r = Math.max(4, RB * p.s * scaleMul * 0.58);
+  const ySquash = getCanvasYSquash();
+  // Boost apparent ball radius slightly on portrait phones so it feels substantial and tactile
+  const mobileBoost = ySquash < 0.85 ? lerp(1.22, 1.0, (ySquash - 0.45) / 0.40) : 1.0;
+  const r = Math.max(4, RB * p.s * scaleMul * 0.58 * mobileBoost);
   g.save();
   g.globalAlpha = alpha;
+  g.translate(p.x, p.y);
+  g.scale(1, ySquash);
 
   if (!isReflection) {
     // Outer neon aura based on streak multiplier
@@ -1583,18 +1698,18 @@ function draw3DBall(g, x, y, z, scaleMul = 1, alpha = 1, isReflection = false) {
     const haloCol = S.mult >= 3 ? 'rgba(255, 200, 40, 0.55)'
                   : S.mult === 2 ? 'rgba(255, 47, 208, 0.5)'
                   : 'rgba(0, 240, 255, 0.38)';
-    const halo = g.createRadialGradient(p.x, p.y, r * 0.6, p.x, p.y, r * 1.85);
+    const halo = g.createRadialGradient(0, 0, r * 0.6, 0, 0, r * 1.85);
     halo.addColorStop(0, haloCol);
     halo.addColorStop(1, 'rgba(0,0,0,0)');
     g.fillStyle = halo;
     g.beginPath();
-    g.arc(p.x, p.y, r * 1.85, 0, Math.PI * 2);
+    g.arc(0, 0, r * 1.85, 0, Math.PI * 2);
     g.fill();
     g.restore();
   }
 
   // Main 3D metallic sphere shader
-  const gr = g.createRadialGradient(p.x - r * 0.34, p.y - r * 0.38, r * 0.05, p.x, p.y, r);
+  const gr = g.createRadialGradient(-r * 0.34, -r * 0.38, r * 0.05, 0, 0, r);
   if (S.mult >= 3) {
     // 3X 24K Gold Fireball Skin
     gr.addColorStop(0, '#ffffff');
@@ -1620,7 +1735,7 @@ function draw3DBall(g, x, y, z, scaleMul = 1, alpha = 1, isReflection = false) {
 
   g.fillStyle = gr;
   g.beginPath();
-  g.arc(p.x, p.y, r, 0, Math.PI * 2);
+  g.arc(0, 0, r, 0, Math.PI * 2);
   g.fill();
 
   // Animated spinning equatorial energy seam so player feels ball roll & spin
@@ -1628,7 +1743,6 @@ function draw3DBall(g, x, y, z, scaleMul = 1, alpha = 1, isReflection = false) {
     const rot = S.ball ? S.ball.rotP : S.time * 1.8;
     const tilt = (S.ball ? S.ball.spin : S.spin) * 0.65;
     g.save();
-    g.translate(p.x, p.y);
     g.rotate(tilt);
     g.beginPath();
     g.arc(0, 0, r * 0.94, 0, Math.PI * 2);
@@ -1658,7 +1772,7 @@ function draw3DBall(g, x, y, z, scaleMul = 1, alpha = 1, isReflection = false) {
   }
 
   g.restore();
-  return { x: p.x, y: p.y, r };
+  return { x: p.x, y: p.y, r: r * ySquash };
 }
 
 function drawTrail(g) {
@@ -1687,8 +1801,9 @@ function drawTrail(g) {
 }
 
 function drawPowerMeter(g, bp, power) {
-  const h = 135, w = 16;
-  const x = clamp(bp.x + bp.r + 24, 240, 1120);
+  const ySq = getCanvasYSquash();
+  const h = Math.round(135 * ySq), w = 16;
+  const x = clamp(bp.x + bp.r / ySq + 22, 305, 1025);
   const y = bp.y - h * 0.65;
   g.save();
   // Meter housing
@@ -1714,14 +1829,21 @@ function drawPowerMeter(g, bp, power) {
   g.fill();
 
   g.shadowBlur = 0;
-  g.font = '900 10px Orbitron';
-  g.fillStyle = '#ffd23a';
-  g.textAlign = 'left';
-  g.fillText('100', x + w + 6, y + 18);
-  g.fillStyle = '#00f0ff';
-  g.fillText('50', x + w + 6, y + 48);
-  g.fillStyle = '#ff7be5';
-  g.fillText('30', x + w + 6, y + 82);
+  [
+    { lbl: '100', col: '#ffd23a', dy: 0.14 },
+    { lbl: '50',  col: '#00f0ff', dy: 0.36 },
+    { lbl: '30',  col: '#ff7be5', dy: 0.62 }
+  ].forEach(tk => {
+    g.save();
+    g.translate(x + w + 6, y + h * tk.dy);
+    g.scale(1, ySq);
+    g.font = '900 10px Orbitron';
+    g.fillStyle = tk.col;
+    g.textAlign = 'left';
+    g.textBaseline = 'middle';
+    g.fillText(tk.lbl, 0, 0);
+    g.restore();
+  });
   g.restore();
 }
 
@@ -1750,33 +1872,46 @@ function drawTicketShimmer(g, t) {
 function drawHUD(g) {
   // Renders crisp glowing digital numbers directly inside the exact marquee boxes of skee_roll_84_bg_clean.jpg!
   const ballNo = Math.min(BALLS, S.ballIdx + (S.state === 'over' ? 0 : 1));
+  const ySquash = getCanvasYSquash();
 
   g.save();
   g.textAlign = 'center';
   g.textBaseline = 'middle';
 
-  // 1. BALLS Box Center: (395, 81)
+  // 1. BALLS Box Center: (395, 82)
+  g.save();
+  g.translate(395, 82);
+  g.scale(1, ySquash);
   g.font = '900 34px Orbitron';
   g.shadowColor = '#00f0ff';
   g.shadowBlur = 16;
   g.fillStyle = '#e6fcff';
-  g.fillText(`${ballNo}/${BALLS}`, 395, 82);
+  g.fillText(`${ballNo}/${BALLS}`, 0, 0);
+  g.restore();
 
-  // 2. SCORE Box Center: (988, 81)
+  // 2. SCORE Box Center: (988, 82)
+  g.save();
+  g.translate(988, 82);
+  g.scale(1, ySquash);
   g.font = '900 36px Orbitron';
   g.shadowColor = '#00f0ff';
   g.shadowBlur = 16;
   g.fillStyle = '#e6fcff';
-  g.fillText(String(S.score), 988, 82);
+  g.fillText(String(S.score), 0, 0);
+  g.restore();
 
-  // 3. TICKETS Sub-Marquee Box Center: (962, 171) inside (x=884..1048, y=148..195)
+  // 3. TICKETS Sub-Marquee Box Center: (965, 172) inside (x=884..1048, y=148..195)
+  g.save();
+  g.translate(965, 172);
+  g.scale(1, ySquash);
   g.font = '900 15px Orbitron';
   g.shadowColor = '#ffb800';
   g.shadowBlur = 12;
   g.fillStyle = '#ffd84a';
-  g.fillText(`TICKETS +${S.dispShown}`, 965, 172);
+  g.fillText(`TICKETS +${S.dispShown}`, 0, 0);
+  g.restore();
 
-  // 4. Live Streak & Wallet Telemetry Badge on Left Marquee Under-Hang (x=395, y=158)
+  // 4. Live Streak & Wallet Telemetry Badge on Left Marquee Under-Hang (x=395, y=161)
   g.save();
   const wx = 310, wy = 144, ww = 195, wh = 34;
   g.fillStyle = 'rgba(10, 6, 26, 0.84)';
@@ -1787,6 +1922,8 @@ function drawHUD(g) {
   g.fill();
   g.stroke();
 
+  g.translate(wx + ww / 2, wy + wh / 2 + 1);
+  g.scale(1, ySquash);
   g.font = '800 11.5px Orbitron';
   g.fillStyle = S.mult >= 3 ? '#ffd23a' : S.mult === 2 ? '#ff6be3' : '#9beeff';
   g.shadowColor = g.fillStyle;
@@ -1794,16 +1931,19 @@ function drawHUD(g) {
   const statusTxt = S.mult > 1
     ? `🔥 ${S.mult}X STREAK • 🎟️ ${walletTickets}`
     : `WALLET 🎟️ ${walletTickets.toLocaleString()}`;
-  g.fillText(statusTxt, wx + ww / 2, wy + wh / 2 + 1);
+  g.fillText(statusTxt, 0, 0);
   g.restore();
 
-  // 5. 9-Ball Frame Pip Indicators along the top of the lane apron (y=684)
+  // 5. 9-Ball Frame Pip Indicators along the top of the lane apron (y=686)
   const pipGap = 18, pipStart = 688 - pipGap * 4;
   for (let i = 0; i < BALLS; i++) {
     const r = S.results[i];
     const px = pipStart + i * pipGap, py = 686;
+    g.save();
+    g.translate(px, py);
+    g.scale(1, ySquash);
     g.beginPath();
-    g.arc(px, py, 4.8, 0, Math.PI * 2);
+    g.arc(0, 0, 5.2, 0, Math.PI * 2);
     if (r === undefined) {
       g.fillStyle = (i === S.ballIdx && S.state !== 'over') ? '#00f0ff' : 'rgba(255,255,255,0.2)';
       g.shadowBlur = (i === S.ballIdx && S.state !== 'over') ? 10 : 0;
@@ -1814,6 +1954,7 @@ function drawHUD(g) {
       g.shadowBlur = 8;
     }
     g.fill();
+    g.restore();
   }
 
   g.restore();
@@ -1891,16 +2032,22 @@ function render() {
       drawPowerMeter(ctx, bp, chargePower());
     } else if (drag && drag.pullBackPx >= 8) {
       drawPowerMeter(ctx, bp, S.smoothPwr);
+      const ySq = getCanvasYSquash();
       ctx.save();
+      ctx.translate(clamp(bp.x, 420, 956), bp.y - bp.r - 18);
+      ctx.scale(1, ySq);
       ctx.font = '900 13px Orbitron';
       ctx.textAlign = 'center';
       ctx.fillStyle = S.smoothPwr > 0.8 ? '#ffd23a' : '#00f0ff';
       ctx.shadowColor = ctx.fillStyle;
       ctx.shadowBlur = 12;
-      ctx.fillText(`POWER ${Math.round(S.smoothPwr * 100)}% • RELEASE TO ROLL`, bp.x, bp.y - bp.r - 18);
+      ctx.fillText(`POWER ${Math.round(S.smoothPwr * 100)}% • RELEASE TO ROLL`, 0, 0);
       ctx.restore();
     } else if (S.rollIn >= 1) {
+      const ySq = getCanvasYSquash();
       ctx.save();
+      ctx.translate(clamp(bp.x, 460, 916), bp.y - bp.r - 18);
+      ctx.scale(1, ySq);
       ctx.font = '800 13px Orbitron';
       ctx.textAlign = 'center';
       ctx.globalAlpha = 0.68 + 0.32 * Math.sin(S.time * 3.5);
@@ -1909,8 +2056,8 @@ function render() {
       ctx.shadowBlur = 10;
       const hint = S.hintT > 0
         ? 'PULL BALL BACK (OR SWIPE UP) TO ROLL!'
-        : 'PULL BALL BACK FOR POWER • OR SWIPE UP / HOLD [ROLL]';
-      ctx.fillText(hint, bp.x, bp.y - bp.r - 18);
+        : (ySq < 0.85 ? 'PULL BALL BACK OR SWIPE UP TO ROLL' : 'PULL BALL BACK FOR POWER • OR SWIPE UP / HOLD [ROLL]');
+      ctx.fillText(hint, 0, 0);
       ctx.restore();
     }
   } else if (S.ball && S.state === 'rolling') {
@@ -1948,26 +2095,35 @@ function render() {
   }
 
   // 4. Shockwaves & Particle Fireworks
+  const ySq = getCanvasYSquash();
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   S.shockwaves.forEach(sw => {
     const u = sw.t / 0.65;
+    ctx.save();
+    ctx.translate(sw.x, sw.y);
+    ctx.scale(1, ySq);
     ctx.strokeStyle = sw.col;
     ctx.globalAlpha = Math.max(0, 1 - u);
     ctx.lineWidth = 4 * (1 - u);
     ctx.beginPath();
-    ctx.arc(sw.x, sw.y, sw.maxR * u, 0, Math.PI * 2);
+    ctx.arc(0, 0, sw.maxR * u, 0, Math.PI * 2);
     ctx.stroke();
+    ctx.restore();
   });
   S.particles.forEach(pt => {
     const u = pt.life / pt.maxLife;
+    ctx.save();
+    ctx.translate(pt.x, pt.y);
+    ctx.scale(1, ySq);
     ctx.fillStyle = pt.col;
     ctx.globalAlpha = Math.max(0, 1 - u);
     ctx.shadowColor = pt.col;
     ctx.shadowBlur = 10;
     ctx.beginPath();
-    ctx.arc(pt.x, pt.y, pt.r * (1 - u * 0.5), 0, Math.PI * 2);
+    ctx.arc(0, 0, pt.r * (1 - u * 0.5), 0, Math.PI * 2);
     ctx.fill();
+    ctx.restore();
   });
   ctx.restore();
 
@@ -1976,17 +2132,19 @@ function render() {
     const u = p.t / 1.35;
     const sz = (p.big ? 34 : 26) * (1 + 0.18 * Math.sin(Math.min(1, p.t * 5) * Math.PI));
     ctx.save();
+    ctx.translate(clamp(p.x, 380, 996), p.y - u * 64);
+    ctx.scale(1, ySq);
     ctx.globalAlpha = Math.max(0, 1 - u * u);
     ctx.font = `900 ${sz}px Orbitron`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.lineWidth = 6;
     ctx.strokeStyle = 'rgba(12, 3, 28, 0.92)';
-    ctx.strokeText(p.txt, p.x, p.y - u * 64);
+    ctx.strokeText(p.txt, 0, 0);
     ctx.shadowColor = p.col;
     ctx.shadowBlur = 18;
     ctx.fillStyle = p.col;
-    ctx.fillText(p.txt, p.x, p.y - u * 64);
+    ctx.fillText(p.txt, 0, 0);
     ctx.restore();
   });
 
