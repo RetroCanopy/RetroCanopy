@@ -343,10 +343,10 @@
         transform: translateZ(0) !important;
       }
       body #gamesSelectionBackdrop.playing-active #skeeRollCanvas {
-        width: 196% !important;
+        width: 176% !important;
         height: 100% !important;
         max-width: none !important;
-        margin-left: -46% !important;
+        margin-left: -38% !important;
         touch-action: none !important;
         user-select: none !important;
         -webkit-user-select: none !important;
@@ -7678,19 +7678,19 @@
           }
         } catch (_) {}
       };
-      skeeCleanBoard.src = 'assets/concept_gallery/skeeroll_84_dragon_board_clean.jpg?v=175';
+      skeeCleanBoard.src = 'assets/concept_gallery/skeeroll_84_dragon_board_clean.jpg?v=180';
 
-      // Target Pockets Locked to Exact Coordinates on skeeroll_84_dragon_board_clean.jpg (1920x1080)
+      // Target Pockets Locked to Exact Symmetrical First-Person POV Coordinates on skeeroll_84_dragon_board_clean.jpg (1920x1080)
       const SKEE_POCKETS_1080 = [
-        { id: 'DRAGON_500', pts: 500, label: '🐉 500 PT DRAGON JACKPOT!', x: 966, y: 404, rx: 52, ry: 48, color: '#ffd700', isDragon: true },
-        { id: 'CORNER_100_L', pts: 100, label: '★ 100 PT CORNER POCKET!', x: 636, y: 502, rx: 30, ry: 22, color: '#ffd700' },
-        { id: 'TOP_50', pts: 50, label: '50 PT POCKET!', x: 782, y: 502, rx: 34, ry: 22, color: '#ff2d95' },
-        { id: 'CORNER_100_R', pts: 100, label: '★ 100 PT CORNER POCKET!', x: 924, y: 498, rx: 32, ry: 22, color: '#00f59b' },
-        { id: 'RING_40', pts: 40, label: '40 PT RING!', x: 808, y: 552, rx: 38, ry: 24, color: '#00f0ff' },
-        { id: 'CENTER_100', pts: 100, label: '★ 100 PT BULLSEYE CUP!', x: 838, y: 626, rx: 40, ry: 27, color: '#ffae00' },
-        { id: 'RING_30', pts: 30, label: '30 PT RING!', x: 835, y: 604, rx: 112, ry: 68, color: '#ff2d95', isOuterRing: true },
-        { id: 'RING_20', pts: 20, label: '20 PT RING!', x: 835, y: 618, rx: 168, ry: 102, color: '#00f0ff', isOuterRing: true },
-        { id: 'RING_10', pts: 10, label: '10 PT BASE RING', x: 842, y: 650, rx: 210, ry: 126, color: '#00f59b', isOuterRing: true }
+        { id: 'DRAGON_500', pts: 500, label: '🐉 500 PT DRAGON JACKPOT!', x: 960, y: 356, rx: 48, ry: 52, color: '#ffd700', isDragon: true },
+        { id: 'CORNER_100_L', pts: 100, label: '★ 100 PT LEFT CORNER CUP!', x: 816, y: 462, rx: 32, ry: 22, color: '#ffd700' },
+        { id: 'TOP_50', pts: 50, label: '50 PT POCKET!', x: 960, y: 462, rx: 35, ry: 22, color: '#ff2d95' },
+        { id: 'CORNER_100_R', pts: 100, label: '★ 100 PT RIGHT CORNER CUP!', x: 1106, y: 462, rx: 32, ry: 22, color: '#00f59b' },
+        { id: 'RING_40', pts: 40, label: '40 PT POCKET!', x: 960, y: 504, rx: 38, ry: 24, color: '#00f0ff' },
+        { id: 'CENTER_100', pts: 100, label: '★ 100 PT BULLSEYE CUP!', x: 960, y: 562, rx: 42, ry: 28, color: '#ffae00' },
+        { id: 'RING_30', pts: 30, label: '30 PT RING!', x: 960, y: 552, rx: 126, ry: 74, color: '#ff2d95', isOuterRing: true },
+        { id: 'RING_20', pts: 20, label: '20 PT RING!', x: 960, y: 562, rx: 185, ry: 108, color: '#00f0ff', isOuterRing: true },
+        { id: 'RING_10', pts: 10, label: '10 PT BASE RING', x: 960, y: 585, rx: 225, ry: 132, color: '#00f59b', isOuterRing: true }
       ];
 
       let skeeAnimId = null;
@@ -7705,23 +7705,23 @@
         dragonHits: 0,
         phase: 'AIM', // 'AIM' | 'CHARGING' | 'ROLLING' | 'AIRBORNE' | 'POCKET_HOLD' | 'GAME_OVER'
         phaseTimer: 0,
-        aimOffset: 0,       // -1.0 (left lane edge) to +1.0 (right lane edge)
+        aimOffset: 0,       // -1.0 (left lane rail) to +1.0 (right lane rail)
         aimOscDir: 1,
-        power: 0.68,        // 0.15 to 1.00 (0.88 - 0.98 reaches Dragon Mouth!)
+        power: 0.68,        // 0.15 to 1.00 (0.86 - 0.98 reaches Dragon Mouth!)
         powerDir: 1,
-        ballU: 0,           // 0 = bottom hand release, 1 = ramp lip
+        ballU: 0,           // 0 = bottom player release, 1 = ramp lip
         ballLat: 0,         // lateral lane offset (-1..1)
         ballLatVel: 0,
         rollSpeed: 0.028,
-        ballX: 1380,
-        ballY: 985,
-        ballR: 28,
+        ballX: 960,
+        ballY: 1020,
+        ballR: 34,
         airT: 0,
-        airDuration: 34,
-        airStartX: 1020,
-        airStartY: 800,
-        airTargetX: 838,
-        airTargetY: 626,
+        airDuration: 30,
+        airStartX: 960,
+        airStartY: 710,
+        airTargetX: 960,
+        airTargetY: 562,
         airPeakH: 150,
         scoredPocket: null,
         dragonBreathTimer: 0,
@@ -7737,48 +7737,34 @@
         floatingTexts: []
       };
 
-      // Perspective helper: maps lane progress u (0 = foreground player release, 1 = ramp lip at base of rings)
-      // and lateral position lat (-1 = left wood rail, +1 = right neon rail) to 1920x1080 canvas coordinates
+      // Symmetrical First-Person POV Perspective Helper:
+      // Maps lane progress u (0 = foreground player release at bottom center, 1 = wooden launch ramp lip at y=710)
+      // and lateral position lat (-1 = left neon rail, +1 = right neon rail) to 1920x1080 canvas coordinates
       function getSkeeLanePoint(u, lat) {
         const clampedU = Math.max(0, Math.min(1, u));
-        // Perspective foreshortening along the angled woodgrain lane
-        const p = Math.pow(clampedU, 0.86);
-        const centerStartX = 1410;
-        const centerStartY = 1030;
-        const centerEndX = 955;
-        const centerEndY = 790;
-        const cx = centerStartX + (centerEndX - centerStartX) * p;
-        const cy = centerStartY + (centerEndY - centerStartY) * p;
-        const halfWidthStart = 215;
-        const halfWidthEnd = 108;
+        // Perspective foreshortening straight down the 1-point perspective alley
+        const p = Math.pow(clampedU, 0.82);
+        const cx = 960;
+        const startY = 1034;
+        const endY = 710;
+        const cy = startY + (endY - startY) * p;
+        const halfWidthStart = 305; // wide foreground lane between neon rails
+        const halfWidthEnd = 148;   // narrow upper lane at ramp lip
         const hw = halfWidthStart + (halfWidthEnd - halfWidthStart) * p;
-        // Lane perpendicular vector (angled slightly up-right)
-        const perpX = 0.46;
-        const perpY = -0.88;
-        const x = cx + lat * hw * perpX * 1.45;
-        const y = cy + lat * hw * perpY * 0.42;
-        const r = 30 * (1 - 0.44 * p);
+        const x = cx + lat * hw;
+        const y = cy;
+        const r = 36 * (1 - 0.48 * p);
         return { x, y, r };
       }
 
-      // Compute where a launch with (aimOffset, power) will land on the inclined target board / Dragon Mouth
+      // Compute where a launch with (aimOffset, power) lands on the inclined target board / Dragon Mouth
       function computeSkeeLandingTarget(aim, pwr) {
         const normP = Math.max(0.12, Math.min(1.0, pwr));
-        if (normP >= 0.86 && aim >= 0.08) {
-          // High power + right-side aim targets the Cyber-Dragon's open 500 PT jaws at (966, 404)!
-          const dragonBlend = Math.min(1, (normP - 0.86) / 0.12);
-          return {
-            x: 880 + dragonBlend * 86 + (aim - 0.24) * 95,
-            y: 475 - dragonBlend * 71
-          };
-        }
-        const baseTargetY = 710 - normP * 270; // 0.12 -> 678 (10 ring), 0.50 -> 575 (40/100 ring), 0.80 -> 494 (top 50 / corner 100s)
-        const axisX = 850 - normP * 58;
-        const spreadX = 165;
-        return {
-          x: axisX + aim * spreadX,
-          y: baseTargetY
-        };
+        // Straight center shot + high power (0.86+) flies straight into the 500 PT Cyber-Dragon's open jaws at (960, 356)!
+        const targetY = 668 - normP * 334; // 0.12 -> 628 (10/20 ring), 0.35 -> 551 (100 bullseye), 0.62 -> 461 (50 & corner 100s), 0.93 -> 357 (Dragon Mouth!)
+        const boardHalfWidth = 175 * (1 - 0.18 * normP);
+        const targetX = 960 + aim * boardHalfWidth;
+        return { x: targetX, y: targetY };
       }
 
       function evaluateSkeePocketHit(tx, ty) {
@@ -7827,16 +7813,16 @@
       function spawnDragonFireBurst() {
         skee.dragonBreathTimer = 68;
         skee.screenShake = 14;
-        const mouthX = 972;
-        const mouthY = 402;
+        const mouthX = 960;
+        const mouthY = 356;
         const fireColors = ['#ffffff', '#fff3a1', '#ffae00', '#ff5500', '#00f0ff'];
         const count = IS_MOBILE_PERF ? 22 : 48;
         for (let i = 0; i < count; i++) {
-          const coneAng = 0.08 + (Math.random() - 0.5) * 0.58; // Shoots sparks out to the right just like Concept #6!
-          const spd = 7 + Math.random() * 16;
+          const coneAng = Math.random() * Math.PI * 2;
+          const spd = 6 + Math.random() * 15;
           skee.particles.push({
-            x: mouthX + (Math.random() - 0.5) * 18,
-            y: mouthY + (Math.random() - 0.5) * 18,
+            x: mouthX + (Math.random() - 0.5) * 20,
+            y: mouthY + (Math.random() - 0.5) * 20,
             vx: Math.cos(coneAng) * spd,
             vy: Math.sin(coneAng) * spd,
             life: 28 + Math.floor(Math.random() * 24),
@@ -7847,10 +7833,10 @@
         }
         for (let s = 0; s < (IS_MOBILE_PERF ? 6 : 12); s++) {
           skee.smokePuffs.push({
-            x: mouthX + 20 + Math.random() * 60,
+            x: mouthX + (Math.random() - 0.5) * 70,
             y: mouthY - 10 + (Math.random() - 0.5) * 40,
-            vx: 1.8 + Math.random() * 3.2,
-            vy: -0.8 - Math.random() * 1.5,
+            vx: (Math.random() - 0.5) * 3.5,
+            vy: -0.8 - Math.random() * 1.8,
             r: 18 + Math.random() * 26,
             life: 45 + Math.floor(Math.random() * 25),
             maxLife: 70
@@ -7869,7 +7855,7 @@
         skee.phase = 'AIM';
         skee.ballU = 0.04;
         skee.ballLat = skee.aimOffset;
-        skee.power = 0.65;
+        skee.power = 0.92;
         skee.powerDir = 1;
         skee.trail = [];
         const pt = getSkeeLanePoint(skee.ballU, skee.ballLat);
@@ -7932,14 +7918,14 @@
         skee.roundScore = 0;
         skee.roundTickets = 0;
         skee.dragonHits = 0;
-        skee.aimOffset = 0.12;
+        skee.aimOffset = 0;
         skee.power = 0.72;
         skee.dragonBreathTimer = 36;
         skee.ticketStreamTimer = 0;
         skee.particles = [];
         skee.smokePuffs = [];
         skee.floatingTexts = [];
-        skee.bannerText = 'FLICK UP THE LANE OR PRESS SPACE • HIT THE 500 PT DRAGON MOUTH!';
+        skee.bannerText = 'FLICK STRAIGHT UP THE LANE OR PRESS SPACE • HIT THE 500 PT DRAGON MOUTH!';
         skee.bannerColor = '#00f0ff';
         skee.bannerTimer = 95;
         prepareNextSkeeBall();
@@ -8032,7 +8018,7 @@
           if (dy > 35) {
             const flickSpeed = dy / dt;
             const flickPower = Math.max(0.32, Math.min(0.98, 0.35 + flickSpeed * 0.38 + dy / 680));
-            const flickAim = Math.max(-0.92, Math.min(0.92, (dx + 45) / 280));
+            const flickAim = Math.max(-0.92, Math.min(0.92, dx / 260));
             launchSkeeBallWithParams(flickAim, flickPower);
           } else {
             window.__skeeReleasePowerRoll();
@@ -8116,24 +8102,23 @@
 
       function drawSkeeTicketRibbon() {
         if (!kCtx) return;
-        // Draw the iconic streaming golden-orange ticket ribbon coming out of the "TICKET WINNER" slot at (1256, 622) just like Concept #6!
-        const slotX = 1256;
-        const slotY = 622;
+        // Draw the iconic streaming golden-orange ticket ribbon coming out of the "ticket" dispenser slot at (1296, 638)!
+        const slotX = 1296;
+        const slotY = 638;
         const activeTickets = skee.roundTickets > 0 || skee.ticketStreamTimer > 0;
         const numStubs = activeTickets ? Math.min(10, Math.max(4, skee.roundTickets + 3)) : 3;
 
         kCtx.save();
         for (let i = 0; i < numStubs; i++) {
-          const t = i / 8;
           const wave = Math.sin(skee.ticketRibbonOffset * 0.12 + i * 0.7) * (activeTickets ? 8 : 2);
-          const x0 = slotX + i * 28 + wave;
-          const y0 = slotY + i * 38 + Math.sin(i * 0.5) * 12;
+          const x0 = slotX + i * 24 + wave;
+          const y0 = slotY + i * 38 + Math.sin(i * 0.5) * 10;
           const stubW = 58;
           const stubH = 38;
 
           kCtx.save();
           kCtx.translate(x0, y0);
-          kCtx.rotate(0.56 + Math.sin(i * 0.4) * 0.08);
+          kCtx.rotate(0.48 + Math.sin(i * 0.4) * 0.08);
 
           const tGrad = kCtx.createLinearGradient(0, 0, stubW, stubH);
           tGrad.addColorStop(0, '#ffae00');
@@ -8167,31 +8152,31 @@
         if (!kCtx) return;
         kCtx.save();
 
-        // 1. Update the red digital "TICKET" LED counter baked onto the board at (1055, 703)
-        kCtx.fillStyle = 'rgba(18, 6, 10, 0.92)';
-        kCtx.fillRect(1028, 686, 54, 26);
-        kCtx.font = '900 20px Orbitron, sans-serif';
+        // 1. Update the red digital "TICKET" LED counter inside the recessed window above "TICKET" at (1148, 706)
+        kCtx.fillStyle = 'rgba(14, 5, 8, 0.94)';
+        kCtx.fillRect(1123, 692, 50, 26);
+        kCtx.font = '900 17px Orbitron, sans-serif';
         kCtx.textAlign = 'center';
         kCtx.textBaseline = 'middle';
         kCtx.fillStyle = '#ff3b30';
         kCtx.shadowColor = '#ff3b30';
         kCtx.shadowBlur = 10;
-        kCtx.fillText(String(skee.roundTickets), 1055, 700);
+        kCtx.fillText(String(skee.roundTickets), 1148, 706);
 
-        // 2. Draw remaining wooden balls lined up along the ball rack at base of target board (805..1075, 772) just like Concept #6!
-        const rackBallsToShow = Math.min(5, skee.ballsLeft);
+        // 2. Draw remaining wooden balls lined up along the right ball return rail (1195..1310, 745..920)
+        const rackBallsToShow = Math.min(5, Math.max(0, skee.ballsLeft - 1));
         for (let b = 0; b < rackBallsToShow; b++) {
-          const rx = 826 + b * 54;
-          const ry = 774 - b * 4;
-          drawWoodenSkeeBall(rx, ry, 24, false);
+          const rx = 1212 + b * 27;
+          const ry = 760 + b * 36;
+          drawWoodenSkeeBall(rx, ry, 18 + b * 1.4, false);
         }
 
         // 3. Draw Aim Trajectory Arc when in AIM or CHARGING state
         if (skee.phase === 'AIM' || skee.phase === 'CHARGING') {
           const landing = computeSkeeLandingTarget(skee.aimOffset, skee.power);
           const nearHit = evaluateSkeePocketHit(landing.x, landing.y);
-          const startPt = getSkeeLanePoint(0.08, skee.aimOffset * 0.65);
-          const lipPt = getSkeeLanePoint(0.98, skee.aimOffset * 0.85);
+          const startPt = getSkeeLanePoint(0.06, skee.aimOffset * 0.72);
+          const lipPt = getSkeeLanePoint(0.98, skee.aimOffset * 0.88);
 
           kCtx.save();
           kCtx.strokeStyle = nearHit && nearHit.isDragon ? '#ffd700' : '#00f0ff';
@@ -8212,9 +8197,9 @@
           kCtx.lineWidth = 3;
           kCtx.stroke();
 
-          // Power Meter Bar along the right side of the lane
-          const meterX = 1525;
-          const meterY = 740;
+          // Power Meter Bar along the left side of the cabinet
+          const meterX = 568;
+          const meterY = 735;
           const meterW = 24;
           const meterH = 210;
           kCtx.fillStyle = 'rgba(8, 12, 24, 0.88)';
@@ -8312,26 +8297,26 @@
           kCtx.fillRect(0, 0, 1920, 1080);
         }
 
-        // 2. Ambient Dragon Mouth Glow & Periodic Sparks (exact Concept #6 atmosphere!)
+        // 2. Ambient Dragon Mouth Glow & Periodic Sparks (exact Concept #6 first-person POV atmosphere!)
         if (Math.random() < 0.28 || skee.dragonBreathTimer > 0) {
           if (skee.dragonBreathTimer > 0) skee.dragonBreathTimer -= frameScale;
           kCtx.save();
-          const mouthGlow = kCtx.createRadialGradient(968, 404, 6, 968, 404, skee.dragonBreathTimer > 0 ? 115 : 68);
+          const mouthGlow = kCtx.createRadialGradient(960, 356, 6, 960, 356, skee.dragonBreathTimer > 0 ? 115 : 68);
           mouthGlow.addColorStop(0, 'rgba(255, 240, 150, 0.72)');
           mouthGlow.addColorStop(0.45, 'rgba(255, 140, 0, 0.35)');
           mouthGlow.addColorStop(1, 'rgba(255, 60, 0, 0)');
           kCtx.fillStyle = mouthGlow;
           kCtx.beginPath();
-          kCtx.arc(968, 404, skee.dragonBreathTimer > 0 ? 115 : 68, 0, Math.PI * 2);
+          kCtx.arc(960, 356, skee.dragonBreathTimer > 0 ? 115 : 68, 0, Math.PI * 2);
           kCtx.fill();
           kCtx.restore();
 
           if (Math.random() < 0.45) {
             skee.particles.push({
-              x: 974 + (Math.random() - 0.5) * 14,
-              y: 404 + (Math.random() - 0.5) * 14,
-              vx: 4 + Math.random() * 8,
-              vy: (Math.random() - 0.45) * 3.5,
+              x: 960 + (Math.random() - 0.5) * 18,
+              y: 356 + (Math.random() - 0.5) * 18,
+              vx: (Math.random() - 0.5) * 7,
+              vy: (Math.random() - 0.35) * 4.5,
               life: 16 + Math.floor(Math.random() * 14),
               maxLife: 30,
               color: Math.random() < 0.5 ? '#ffd700' : '#ff6a00',
@@ -8606,10 +8591,10 @@
           window.__openGamesSelectionModal();
           window.__launchSkeeRoll84();
           if (qsParams.get('demoDragonHit') === '1') {
-            skee.aimOffset = 0.24;
-            skee.power = 0.94;
+            skee.aimOffset = 0;
+            skee.power = 0.93;
             setTimeout(() => {
-              launchSkeeBallWithParams(0.24, 0.94);
+              launchSkeeBallWithParams(0, 0.93);
             }, 180);
           }
         }, 80);
