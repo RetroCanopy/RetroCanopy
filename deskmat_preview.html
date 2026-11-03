@@ -437,9 +437,9 @@
       .glide-next { right: 12px; }
     }
   </style>
-  <link rel="stylesheet" href="merch_minimal.css?v=120">
-  <link rel="stylesheet" href="merch_zoom.css?v=4">
-  <script src="merch_zoom.js?v=103" defer></script>
+  <link rel="stylesheet" href="merch_minimal.css?v=200">
+  <link rel="stylesheet" href="merch_zoom.css?v=200">
+  <script src="merch_zoom.js?v=200" defer></script>
 </head>
 <body>
 
@@ -476,7 +476,7 @@
     <button class="glide-arrow glide-prev" onclick="stepMat(-1)" aria-label="Previous Mat">&#8592;</button>
 
     <div class="mat-levitate-wrapper">
-      <img class="center-mat-img" id="centerMatImg" src="assets/merch/deskmat_topdown_1.png?v=3" alt="Floating Desk Mat">
+      <img class="center-mat-img" id="centerMatImg" src="assets/merch/deskmat_topdown_1.png?v=200" alt="Floating Desk Mat">
     </div>
 
     <button class="glide-arrow glide-next" onclick="stepMat(1)" aria-label="Next Mat">&#8594;</button>
@@ -528,11 +528,11 @@
         specs: '<span>900 Ã— 400 Ã— 4mm</span><span>â€¢</span><span>Micro-Woven Cloth</span><span>â€¢</span><span>Matte-Black Stitched Edge</span>',
         price: '$38',
         items: [
-          { model: 'RC-201', title: 'Classic Sunset Grid XXL', src: 'assets/merch/deskmat_topdown_1.png?v=3' },
-          { model: 'RC-202', title: 'Signature Type XXL', src: 'assets/merch/deskmat_topdown_2.png?v=3' },
-          { model: 'RC-203', title: 'Outrun Wireframe Horizon XXL', src: 'assets/merch/deskmat_topdown_3.png?v=3' },
-          { model: 'RC-204', title: 'Pro-Esports Stealth XXL', src: 'assets/merch/deskmat_topdown_4.png?v=3' },
-          { model: 'RC-205', title: 'Starry Synthwave Cosmos XXL', src: 'assets/merch/deskmat_topdown_5.png?v=3' }
+          { model: 'RC-201', title: 'Classic Sunset Grid XXL', src: 'assets/merch/deskmat_topdown_1.png?v=200' },
+          { model: 'RC-202', title: 'Signature Type XXL', src: 'assets/merch/deskmat_topdown_2.png?v=200' },
+          { model: 'RC-203', title: 'Outrun Wireframe Horizon XXL', src: 'assets/merch/deskmat_topdown_3.png?v=200' },
+          { model: 'RC-204', title: 'Pro-Esports Stealth XXL', src: 'assets/merch/deskmat_topdown_4.png?v=200' },
+          { model: 'RC-205', title: 'Starry Synthwave Cosmos XXL', src: 'assets/merch/deskmat_topdown_5.png?v=200' }
         ]
       },
       small: {
@@ -540,11 +540,11 @@
         specs: '<span>350 Ã— 300 Ã— 4mm</span><span>â€¢</span><span>Precision Cloth</span><span>â€¢</span><span>Matte-Black Stitched Edge</span>',
         price: '$22',
         items: [
-          { model: 'RC-211', title: 'Classic Full Emblem Pad', src: 'assets/merch/mousepad_small_1.png?v=3' },
-          { model: 'RC-212', title: 'Minimalist Stealth Icon Pad', src: 'assets/merch/mousepad_small_2.png?v=3' },
-          { model: 'RC-213', title: 'Dual Cyan/Magenta Grid Pad', src: 'assets/merch/mousepad_small_3.png?v=3' },
-          { model: 'RC-214', title: 'Corner-Badge Pro Aim Pad', src: 'assets/merch/mousepad_small_4.png?v=3' },
-          { model: 'RC-215', title: 'Starry Outrun Horizon Pad', src: 'assets/merch/mousepad_small_5.png?v=3' }
+          { model: 'RC-211', title: 'Classic Full Emblem Pad', src: 'assets/merch/mousepad_small_1.png?v=200' },
+          { model: 'RC-212', title: 'Minimalist Stealth Icon Pad', src: 'assets/merch/mousepad_small_2.png?v=200' },
+          { model: 'RC-213', title: 'Dual Cyan/Magenta Grid Pad', src: 'assets/merch/mousepad_small_3.png?v=200' },
+          { model: 'RC-214', title: 'Corner-Badge Pro Aim Pad', src: 'assets/merch/mousepad_small_4.png?v=200' },
+          { model: 'RC-215', title: 'Starry Outrun Horizon Pad', src: 'assets/merch/mousepad_small_5.png?v=200' }
         ]
       }
     };
@@ -622,6 +622,30 @@
     }
 
     updateShowroom();
+
+    // Preload remaining product images asynchronously after initial paint for 0ms Next/Prev switching
+    window.__rcPreloadShopImgs = true;
+    setTimeout(() => {
+      const lists = [
+        typeof hatOptions !== 'undefined' ? hatOptions : null,
+        typeof hoodieOptions !== 'undefined' ? hoodieOptions : null,
+        typeof teeOptions !== 'undefined' ? teeOptions : null,
+        typeof crewneckOptions !== 'undefined' ? crewneckOptions : null,
+        typeof joggerOptions !== 'undefined' ? joggerOptions : null,
+        typeof xxlOptions !== 'undefined' ? xxlOptions : null,
+        typeof smallOptions !== 'undefined' ? smallOptions : null,
+        typeof miscOptions !== 'undefined' ? miscOptions : null
+      ].filter(Boolean);
+      lists.forEach((arr) => {
+        arr.forEach((it) => {
+          [it.src, it.front, it.back].filter(Boolean).forEach((u) => {
+            const im = new Image();
+            im.decoding = 'async';
+            im.src = u;
+          });
+        });
+      });
+    }, 180);
   </script>
 </body>
 </html>

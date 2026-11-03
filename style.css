@@ -6912,3 +6912,58 @@ body.rc-logged-in-home .hero-container.shifted-up {
         font-size: 0.45rem;
     }
 }
+
+
+/* ==========================================================================
+   HOME PAGE 60FPS GPU COMPOSITOR OPTIMIZATIONS
+   Eliminates per-frame full-screen filter animations & 92-card blur/drop-shadow
+   ========================================================================== */
+.stage-3d-backdrop-blue-glow {
+    filter: none !important;
+    animation: rcFastOpacityPulse 3.8s ease-in-out infinite alternate !important;
+    will-change: opacity;
+}
+
+.stage-3d-grid-plane {
+    filter: none !important;
+    animation: none !important;
+}
+
+@keyframes rcFastOpacityPulse {
+    0% { opacity: 0.45; }
+    100% { opacity: 0.92; }
+}
+
+.rc-shop-scroll-img-wrap::before,
+.rc-misfits-feature-link::before {
+    filter: none !important;
+}
+
+.rc-shop-scroll-img {
+    filter: none !important;
+}
+
+.rc-game-scroll-card.is-active-game {
+    animation: none !important;
+}
+
+.rc-holo-proj-glitch {
+    display: none !important;
+}
+
+.rc-holo-proj-main {
+    filter: none !important;
+    animation: none !important;
+}
+
+.rc-holo-scan-laser {
+    bottom: 14% !important;
+    animation: rcHoloLaserFast 2.6s ease-in-out infinite alternate !important;
+    will-change: transform, opacity;
+}
+
+@keyframes rcHoloLaserFast {
+    0% { transform: translate3d(0, 0, 0); opacity: 0.35; }
+    50% { opacity: 0.90; }
+    100% { transform: translate3d(0, -44px, 0); opacity: 0.42; }
+}

@@ -381,9 +381,9 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="merch_minimal.css?v=120">
-  <link rel="stylesheet" href="merch_zoom.css?v=4">
-  <script src="merch_zoom.js?v=103" defer></script>
+  <link rel="stylesheet" href="merch_minimal.css?v=200">
+  <link rel="stylesheet" href="merch_zoom.css?v=200">
+  <script src="merch_zoom.js?v=200" defer></script>
 </head>
 <body>
 
@@ -420,7 +420,7 @@
     <button class="glide-arrow glide-prev" onclick="stepItem(-1)" aria-label="Previous Misc Item">&#8592;</button>
 
     <div class="bag-levitate-wrapper">
-      <img class="bag-img" id="bagImg" src="assets/merch/gearbag_opt1.png?v=5" alt="Retrocanopy Floating Misc Gear">
+      <img class="bag-img" id="bagImg" src="assets/merch/gearbag_opt1.png?v=200" alt="Retrocanopy Floating Misc Gear">
     </div>
 
     <button class="glide-arrow glide-next" onclick="stepItem(1)" aria-label="Next Misc Item">&#8594;</button>
@@ -469,7 +469,7 @@
         title: '20oz LAN Gear Bag',
         price: '$28',
         specs: '<span>20oz Heavyweight Duck Canvas</span><span>â€¢</span><span>Reinforced Webbing Straps</span><span>â€¢</span><span>Fits Full TKL Board + Headset</span>',
-        src: 'assets/merch/gearbag_opt1.png?v=5'
+        src: 'assets/merch/gearbag_opt1.png?v=200'
       },
       {
         model: 'RC-702',
@@ -477,7 +477,7 @@
         title: 'Classic Sunset Grid 30oz Tumbler',
         price: '$34',
         specs: '<span>30oz Double-Wall Vacuum Steel</span><span>â€¢</span><span>24hr Ice Cold / 12hr Hot</span><span>â€¢</span><span>Smoked Lid &amp; Reusable Straw</span>',
-        src: 'assets/merch/tumbler_opt1.png?v=2'
+        src: 'assets/merch/tumbler_opt1.png?v=200'
       },
       {
         model: 'RC-703',
@@ -485,7 +485,7 @@
         title: 'Outrun Wireframe Horizon 30oz Tumbler',
         price: '$34',
         specs: '<span>30oz Double-Wall Vacuum Steel</span><span>â€¢</span><span>Cyan Wireframe Mountain Print</span><span>â€¢</span><span>Cup-Holder Tapered Base</span>',
-        src: 'assets/merch/tumbler_opt2.png?v=2'
+        src: 'assets/merch/tumbler_opt2.png?v=200'
       },
       {
         model: 'RC-704',
@@ -493,7 +493,7 @@
         title: 'Starry Synthwave Cosmos 30oz Tumbler',
         price: '$34',
         specs: '<span>30oz Double-Wall Vacuum Steel</span><span>â€¢</span><span>Deep-Space Nebula UV Print</span><span>â€¢</span><span>Sweat-Proof Matte Coat</span>',
-        src: 'assets/merch/tumbler_opt3.png?v=2'
+        src: 'assets/merch/tumbler_opt3.png?v=200'
       },
       {
         model: 'RC-705',
@@ -501,7 +501,7 @@
         title: 'Midnight Stealth Laser-Etched 30oz Tumbler',
         price: '$36',
         specs: '<span>30oz Double-Wall Vacuum Steel</span><span>â€¢</span><span>Precision Laser-Etched Silver Crest</span><span>â€¢</span><span>Pro-Esports Matte Finish</span>',
-        src: 'assets/merch/tumbler_opt4.png?v=2'
+        src: 'assets/merch/tumbler_opt4.png?v=200'
       }
     ];
 
@@ -582,6 +582,30 @@
     }
 
     updateShowroom();
+
+    // Preload remaining product images asynchronously after initial paint for 0ms Next/Prev switching
+    window.__rcPreloadShopImgs = true;
+    setTimeout(() => {
+      const lists = [
+        typeof hatOptions !== 'undefined' ? hatOptions : null,
+        typeof hoodieOptions !== 'undefined' ? hoodieOptions : null,
+        typeof teeOptions !== 'undefined' ? teeOptions : null,
+        typeof crewneckOptions !== 'undefined' ? crewneckOptions : null,
+        typeof joggerOptions !== 'undefined' ? joggerOptions : null,
+        typeof xxlOptions !== 'undefined' ? xxlOptions : null,
+        typeof smallOptions !== 'undefined' ? smallOptions : null,
+        typeof miscOptions !== 'undefined' ? miscOptions : null
+      ].filter(Boolean);
+      lists.forEach((arr) => {
+        arr.forEach((it) => {
+          [it.src, it.front, it.back].filter(Boolean).forEach((u) => {
+            const im = new Image();
+            im.decoding = 'async';
+            im.src = u;
+          });
+        });
+      });
+    }, 180);
   </script>
 </body>
 </html>

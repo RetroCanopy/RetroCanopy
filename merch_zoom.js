@@ -373,52 +373,52 @@
     if (document.getElementById('shop-chloe-stage')) return;
 
     const masterCatalog = {
-      'RC-101': { model: 'RC-101', title: 'Classic Sunset Grid Snapback', role: 'Headwear', price: 32, img: 'assets/merch/hat_front_floating.png?v=75' },
-      'RC-102': { model: 'RC-102', title: 'Dual Cyan & Magenta Grid Snapback', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt2.png?v=75' },
-      'RC-103': { model: 'RC-103', title: 'Outrun Wireframe Mountains Trucker Cap', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt3.png?v=75' },
-      'RC-104': { model: 'RC-104', title: 'Starry Synthwave Cosmos Dad Cap', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt4.png?v=75' },
-      'RC-105': { model: 'RC-105', title: 'Valkyrie Gold & Crimson Samurai Snapback', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt5.png?v=75' },
-      'RC-106': { model: 'RC-106', title: '1984 Arcade Champion Corduroy Rope Cap', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt6.png?v=75' },
-      'RC-107': { model: 'RC-107', title: 'White & 24K Gold Crowned Valkyrie Snapback', role: 'Headwear', price: 0, winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=94' },
-      'RC-201': { model: 'RC-201', title: 'Classic Sunset Grid XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_1.png?v=3' },
-      'RC-202': { model: 'RC-202', title: 'Signature Type XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_2.png?v=3' },
-      'RC-203': { model: 'RC-203', title: 'Outrun Wireframe XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_3.png?v=3' },
-      'RC-204': { model: 'RC-204', title: 'Pro-Esports Stealth XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_4.png?v=3' },
-      'RC-205': { model: 'RC-205', title: 'Starry Cosmos XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_5.png?v=3' },
-      'RC-211': { model: 'RC-211', title: 'Classic Emblem Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_1.png?v=3' },
-      'RC-212': { model: 'RC-212', title: 'Minimalist Stealth Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_2.png?v=3' },
-      'RC-213': { model: 'RC-213', title: 'Dual Cyan/Magenta Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_3.png?v=3' },
-      'RC-214': { model: 'RC-214', title: 'Corner-Badge Aim Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_4.png?v=3' },
-      'RC-215': { model: 'RC-215', title: 'Starry Outrun Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_5.png?v=3' },
-      'RC-301': { model: 'RC-301', title: 'Classic Sunset Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt1_back.png?v=75' },
-      'RC-302': { model: 'RC-302', title: 'Dual Grid Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt2_back.png?v=75' },
-      'RC-303': { model: 'RC-303', title: 'Midnight Grinder Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt3_back.png?v=75' },
-      'RC-304': { model: 'RC-304', title: 'Outrun Wireframe Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt4_back.png?v=75' },
-      'RC-305': { model: 'RC-305', title: 'Starry Cosmos Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt5_back.png?v=75' },
-      'RC-306': { model: 'RC-306', title: 'Cyber-Dragon Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt6_back.png?v=75' },
-      'RC-307': { model: 'RC-307', title: 'Superbike Drift Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt7_back.png?v=75' },
-      'RC-308': { model: 'RC-308', title: 'Pinball Wizard Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt9_back.png?v=75' },
-      'RC-309': { model: 'RC-309', title: 'White & 24K Gold Crowned Legend Hoodie', role: 'Outerwear', price: 78, img: 'assets/merch/hoodie_tier6_2f_back.png?v=75' },
-      'RC-401': { model: 'RC-401', title: 'Outrun Gullwing Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt1_back.png?v=6' },
-      'RC-402': { model: 'RC-402', title: 'Arcade Blueprint Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt2_back.png?v=6' },
-      'RC-403': { model: 'RC-403', title: 'Shibuya Shrine Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt3_back.png?v=6' },
-      'RC-404': { model: 'RC-404', title: 'Cassette Mixtape Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt4_back.png?v=11' },
-      'RC-405': { model: 'RC-405', title: 'Mecha-Valkyrie Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt5_back.png?v=6' },
-      'RC-501': { model: 'RC-501', title: 'Classic Sunset Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt1.png?v=1' },
-      'RC-502': { model: 'RC-502', title: 'Dual Grid Leg Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt2.png?v=1' },
-      'RC-503': { model: 'RC-503', title: 'Midnight Tech Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt3.png?v=1' },
-      'RC-504': { model: 'RC-504', title: 'Outrun Mountains Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt4.png?v=1' },
-      'RC-505': { model: 'RC-505', title: 'Starry Cosmos Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt5.png?v=1' },
-      'RC-601': { model: 'RC-601', title: 'Golden ROM Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt1_back.png?v=6' },
-      'RC-602': { model: 'RC-602', title: 'Cyber Ronin Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt2_back.png?v=6' },
-      'RC-603': { model: 'RC-603', title: 'Power-Glove 1989 Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt3_back.png?v=6' },
-      'RC-604': { model: 'RC-604', title: 'Saturn Eclipse Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt4_back.png?v=6' },
-      'RC-605': { model: 'RC-605', title: 'Hi-Fi 60Hz VHS Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt5_back.png?v=6' },
-      'RC-701': { model: 'RC-701', title: '20oz LAN Gear Bag', role: 'Carry Gear', price: 28, img: 'assets/merch/gearbag_opt1.png?v=5' },
-      'RC-702': { model: 'RC-702', title: 'Sunset Grid 30oz Tumbler', role: 'Drinkware', price: 34, img: 'assets/merch/tumbler_opt1.png?v=2' },
-      'RC-703': { model: 'RC-703', title: 'Outrun Horizon 30oz Tumbler', role: 'Drinkware', price: 34, img: 'assets/merch/tumbler_opt2.png?v=2' },
-      'RC-704': { model: 'RC-704', title: 'Starry Cosmos 30oz Tumbler', role: 'Drinkware', price: 34, img: 'assets/merch/tumbler_opt3.png?v=2' },
-      'RC-705': { model: 'RC-705', title: 'Midnight Laser 30oz Tumbler', role: 'Drinkware', price: 36, img: 'assets/merch/tumbler_opt4.png?v=2' }
+      'RC-101': { model: 'RC-101', title: 'Classic Sunset Grid Snapback', role: 'Headwear', price: 32, img: 'assets/merch/hat_front_floating.png?v=200' },
+      'RC-102': { model: 'RC-102', title: 'Dual Cyan & Magenta Grid Snapback', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt2.png?v=200' },
+      'RC-103': { model: 'RC-103', title: 'Outrun Wireframe Mountains Trucker Cap', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt3.png?v=200' },
+      'RC-104': { model: 'RC-104', title: 'Starry Synthwave Cosmos Dad Cap', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt4.png?v=200' },
+      'RC-105': { model: 'RC-105', title: 'Valkyrie Gold & Crimson Samurai Snapback', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt5.png?v=200' },
+      'RC-106': { model: 'RC-106', title: '1984 Arcade Champion Corduroy Rope Cap', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt6.png?v=200' },
+      'RC-107': { model: 'RC-107', title: 'White & 24K Gold Crowned Valkyrie Snapback', role: 'Headwear', price: 0, winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=200' },
+      'RC-201': { model: 'RC-201', title: 'Classic Sunset Grid XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_1.png?v=200' },
+      'RC-202': { model: 'RC-202', title: 'Signature Type XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_2.png?v=200' },
+      'RC-203': { model: 'RC-203', title: 'Outrun Wireframe XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_3.png?v=200' },
+      'RC-204': { model: 'RC-204', title: 'Pro-Esports Stealth XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_4.png?v=200' },
+      'RC-205': { model: 'RC-205', title: 'Starry Cosmos XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_5.png?v=200' },
+      'RC-211': { model: 'RC-211', title: 'Classic Emblem Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_1.png?v=200' },
+      'RC-212': { model: 'RC-212', title: 'Minimalist Stealth Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_2.png?v=200' },
+      'RC-213': { model: 'RC-213', title: 'Dual Cyan/Magenta Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_3.png?v=200' },
+      'RC-214': { model: 'RC-214', title: 'Corner-Badge Aim Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_4.png?v=200' },
+      'RC-215': { model: 'RC-215', title: 'Starry Outrun Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_5.png?v=200' },
+      'RC-301': { model: 'RC-301', title: 'Classic Sunset Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt1_back.png?v=200' },
+      'RC-302': { model: 'RC-302', title: 'Dual Grid Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt2_back.png?v=200' },
+      'RC-303': { model: 'RC-303', title: 'Midnight Grinder Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt3_back.png?v=200' },
+      'RC-304': { model: 'RC-304', title: 'Outrun Wireframe Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt4_back.png?v=200' },
+      'RC-305': { model: 'RC-305', title: 'Starry Cosmos Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt5_back.png?v=200' },
+      'RC-306': { model: 'RC-306', title: 'Cyber-Dragon Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt6_back.png?v=200' },
+      'RC-307': { model: 'RC-307', title: 'Superbike Drift Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt7_back.png?v=200' },
+      'RC-308': { model: 'RC-308', title: 'Pinball Wizard Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt9_back.png?v=200' },
+      'RC-309': { model: 'RC-309', title: 'White & 24K Gold Crowned Legend Hoodie', role: 'Outerwear', price: 78, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200' },
+      'RC-401': { model: 'RC-401', title: 'Outrun Gullwing Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt1_back.png?v=200' },
+      'RC-402': { model: 'RC-402', title: 'Arcade Blueprint Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt2_back.png?v=200' },
+      'RC-403': { model: 'RC-403', title: 'Shibuya Shrine Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt3_back.png?v=200' },
+      'RC-404': { model: 'RC-404', title: 'Cassette Mixtape Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt4_back.png?v=200' },
+      'RC-405': { model: 'RC-405', title: 'Mecha-Valkyrie Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt5_back.png?v=200' },
+      'RC-501': { model: 'RC-501', title: 'Classic Sunset Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt1.png?v=200' },
+      'RC-502': { model: 'RC-502', title: 'Dual Grid Leg Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt2.png?v=200' },
+      'RC-503': { model: 'RC-503', title: 'Midnight Tech Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt3.png?v=200' },
+      'RC-504': { model: 'RC-504', title: 'Outrun Mountains Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt4.png?v=200' },
+      'RC-505': { model: 'RC-505', title: 'Starry Cosmos Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt5.png?v=200' },
+      'RC-601': { model: 'RC-601', title: 'Golden ROM Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt1_back.png?v=200' },
+      'RC-602': { model: 'RC-602', title: 'Cyber Ronin Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt2_back.png?v=200' },
+      'RC-603': { model: 'RC-603', title: 'Power-Glove 1989 Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt3_back.png?v=200' },
+      'RC-604': { model: 'RC-604', title: 'Saturn Eclipse Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt4_back.png?v=200' },
+      'RC-605': { model: 'RC-605', title: 'Hi-Fi 60Hz VHS Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt5_back.png?v=200' },
+      'RC-701': { model: 'RC-701', title: '20oz LAN Gear Bag', role: 'Carry Gear', price: 28, img: 'assets/merch/gearbag_opt1.png?v=200' },
+      'RC-702': { model: 'RC-702', title: 'Sunset Grid 30oz Tumbler', role: 'Drinkware', price: 34, img: 'assets/merch/tumbler_opt1.png?v=200' },
+      'RC-703': { model: 'RC-703', title: 'Outrun Horizon 30oz Tumbler', role: 'Drinkware', price: 34, img: 'assets/merch/tumbler_opt2.png?v=200' },
+      'RC-704': { model: 'RC-704', title: 'Starry Cosmos 30oz Tumbler', role: 'Drinkware', price: 34, img: 'assets/merch/tumbler_opt3.png?v=200' },
+      'RC-705': { model: 'RC-705', title: 'Midnight Laser 30oz Tumbler', role: 'Drinkware', price: 36, img: 'assets/merch/tumbler_opt4.png?v=200' }
     };
 
     const productCatalogNotes = {
@@ -838,7 +838,7 @@
       setChloePose('flirt1');
     }
 
-    function resetIdleWinkCycle() {
+    function resetIdleWinkCycle() { return;
       if (idleWinkInterval) {
         clearInterval(idleWinkInterval);
         idleWinkInterval = null;
@@ -1213,7 +1213,7 @@
       } catch (_) {}
     }
 
-    async function loadStoreAccountsFromServer() {
+    async function loadStoreAccountsFromServer() { if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
       if (!IS_LOCAL_API_HOST) return;
       try {
         const res = await fetch('/api/arcade-db', { cache: 'no-store' });
@@ -1358,7 +1358,7 @@
         model: code,
         title: (document.getElementById('hudTitle')?.textContent || 'Retrocanopy Vault Piece').trim(),
         price: 32,
-        img: 'assets/merch/hat_front_floating.png?v=94'
+        img: 'assets/merch/hat_front_floating.png?v=200'
       };
       if (entry.tier6Only || entry.model === 'RC-309') {
         const curXp = Math.max(

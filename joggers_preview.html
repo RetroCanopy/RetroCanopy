@@ -232,9 +232,9 @@
       box-shadow: 0 0 20px rgba(255, 45, 149, 0.45);
     }
   </style>
-  <link rel="stylesheet" href="merch_minimal.css?v=120">
-  <link rel="stylesheet" href="merch_zoom.css?v=4">
-  <script src="merch_zoom.js?v=103" defer></script>
+  <link rel="stylesheet" href="merch_minimal.css?v=200">
+  <link rel="stylesheet" href="merch_zoom.css?v=200">
+  <script src="merch_zoom.js?v=200" defer></script>
 </head>
 <body>
 
@@ -268,7 +268,7 @@
     <button class="glide-arrow glide-prev" onclick="stepItem(-1)" aria-label="Previous">&#8592;</button>
 
     <div class="item-levitate-wrapper">
-      <img class="center-item-img" id="centerImg" src="assets/merch/joggers_opt1.png?v=1" alt="Floating Gaming Joggers">
+      <img class="center-item-img" id="centerImg" src="assets/merch/joggers_opt1.png?v=200" alt="Floating Gaming Joggers">
     </div>
 
     <button class="glide-arrow glide-next" onclick="stepItem(1)" aria-label="Next">&#8594;</button>
@@ -296,11 +296,11 @@
 
   <script>
     const joggerOptions = [
-      { model: 'RC-501', title: 'Classic Sunset Grid Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Thigh Classic Emblem</span><span>â€¢</span><span>Colored Sunset Text</span>', src: 'assets/merch/joggers_opt1.png?v=1' },
-      { model: 'RC-502', title: 'Dual Cyan/Magenta Vertical Leg Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Dual Grid + Vertical Leg Typography</span>', src: 'assets/merch/joggers_opt2.png?v=1' },
-      { model: 'RC-503', title: 'Midnight Grinder Techwear Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Thigh Crest + Lower Calf Grid Strip</span>', src: 'assets/merch/joggers_opt3.png?v=1' },
-      { model: 'RC-504', title: 'Outrun Wireframe Mountains Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Cyan Wireframe Mountains + Sunset Tree</span>', src: 'assets/merch/joggers_opt4.png?v=1' },
-      { model: 'RC-505', title: 'Starry Synthwave Cosmos Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Starry Cosmos Halo + Sunset Text</span>', src: 'assets/merch/joggers_opt5.png?v=1' }
+      { model: 'RC-501', title: 'Classic Sunset Grid Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Thigh Classic Emblem</span><span>â€¢</span><span>Colored Sunset Text</span>', src: 'assets/merch/joggers_opt1.png?v=200' },
+      { model: 'RC-502', title: 'Dual Cyan/Magenta Vertical Leg Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Dual Grid + Vertical Leg Typography</span>', src: 'assets/merch/joggers_opt2.png?v=200' },
+      { model: 'RC-503', title: 'Midnight Grinder Techwear Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Thigh Crest + Lower Calf Grid Strip</span>', src: 'assets/merch/joggers_opt3.png?v=200' },
+      { model: 'RC-504', title: 'Outrun Wireframe Mountains Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Cyan Wireframe Mountains + Sunset Tree</span>', src: 'assets/merch/joggers_opt4.png?v=200' },
+      { model: 'RC-505', title: 'Starry Synthwave Cosmos Joggers', specs: '<span>450GSM Fleece</span><span>â€¢</span><span>Starry Cosmos Halo + Sunset Text</span>', src: 'assets/merch/joggers_opt5.png?v=200' }
     ];
 
     let currentIdx = 0;
@@ -351,6 +351,30 @@
     }
 
     updateShowroom();
+
+    // Preload remaining product images asynchronously after initial paint for 0ms Next/Prev switching
+    window.__rcPreloadShopImgs = true;
+    setTimeout(() => {
+      const lists = [
+        typeof hatOptions !== 'undefined' ? hatOptions : null,
+        typeof hoodieOptions !== 'undefined' ? hoodieOptions : null,
+        typeof teeOptions !== 'undefined' ? teeOptions : null,
+        typeof crewneckOptions !== 'undefined' ? crewneckOptions : null,
+        typeof joggerOptions !== 'undefined' ? joggerOptions : null,
+        typeof xxlOptions !== 'undefined' ? xxlOptions : null,
+        typeof smallOptions !== 'undefined' ? smallOptions : null,
+        typeof miscOptions !== 'undefined' ? miscOptions : null
+      ].filter(Boolean);
+      lists.forEach((arr) => {
+        arr.forEach((it) => {
+          [it.src, it.front, it.back].filter(Boolean).forEach((u) => {
+            const im = new Image();
+            im.decoding = 'async';
+            im.src = u;
+          });
+        });
+      });
+    }, 180);
   </script>
 </body>
 </html>

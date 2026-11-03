@@ -374,9 +374,9 @@
       box-shadow: 0 0 20px rgba(255, 45, 149, 0.45);
     }
   </style>
-  <link rel="stylesheet" href="merch_minimal.css?v=121">
-  <link rel="stylesheet" href="merch_zoom.css?v=5">
-  <script src="merch_zoom.js?v=103" defer></script>
+  <link rel="stylesheet" href="merch_minimal.css?v=200">
+  <link rel="stylesheet" href="merch_zoom.css?v=200">
+  <script src="merch_zoom.js?v=200" defer></script>
 </head>
 <body>
 
@@ -412,14 +412,14 @@
     <div class="pair-stage solo-mode" id="pairStage">
       <div class="garment-unit hidden" id="frontUnit" onclick="toggleSolo('front')">
         <div class="levitate-front">
-          <img class="garment-img" id="frontImg" src="assets/merch/tee_opt1_front.png?v=1" alt="Tee Front View">
+          <img class="garment-img" id="frontImg" src="assets/merch/tee_opt1_front.png?v=200" alt="Tee Front View">
         </div>
         <button type="button" class="garment-flip-btn" onclick="event.stopPropagation(); setViewMode('back')">FRONT</button>
       </div>
 
       <div class="garment-unit" id="backUnit" onclick="toggleSolo('back')">
         <div class="levitate-back">
-          <img class="garment-img" id="backImg" src="assets/merch/tee_opt1_back.png?v=1" alt="Tee Back View">
+          <img class="garment-img" id="backImg" src="assets/merch/tee_opt1_back.png?v=200" alt="Tee Back View">
         </div>
         <button type="button" class="garment-flip-btn" onclick="event.stopPropagation(); setViewMode('front')">BACK</button>
       </div>
@@ -460,36 +460,36 @@
         model: 'RC-401',
         title: '86 Outrun Turbo Gullwing Tee',
         specs: '<span>Front: Turbo RPM Crest</span><span>â€¢</span><span>Back: Gullwing Supercar &amp; Sunset Tree</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/tee_opt1_front.png?v=6',
-        back: 'assets/merch/tee_opt1_back.png?v=6'
+        front: 'assets/merch/tee_opt1_front.png?v=200',
+        back: 'assets/merch/tee_opt1_back.png?v=200'
       },
       {
         model: 'RC-402',
         title: '16-Bit Arcade Cabinet Blueprint Tee',
         specs: '<span>Front: Insert Coin 25Â¢ Crest</span><span>â€¢</span><span>Back: Isometric Coin-Op Schematic</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/tee_opt2_front.png?v=6',
-        back: 'assets/merch/tee_opt2_back.png?v=6'
+        front: 'assets/merch/tee_opt2_front.png?v=200',
+        back: 'assets/merch/tee_opt2_back.png?v=200'
       },
       {
         model: 'RC-403',
         title: 'Tokyo Shibuya Cyber-Shrine Tee',
         specs: '<span>Front: Cyber Torii Hanko Seal</span><span>â€¢</span><span>Back: Neo-Tokyo Torii &amp; Sunset Tree</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/tee_opt3_front.png?v=6',
-        back: 'assets/merch/tee_opt3_back.png?v=6'
+        front: 'assets/merch/tee_opt3_front.png?v=200',
+        back: 'assets/merch/tee_opt3_back.png?v=200'
       },
       {
         model: 'RC-404',
         title: 'Analog Cassette Mixtape Vol. 01 Tee',
         specs: '<span>Front: C-90 Cassette Emblem (No Tree)</span><span>â€¢</span><span>Back: Chrome Cassette &amp; Neon Tape Ribbons</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/tee_opt4_front.png?v=11',
-        back: 'assets/merch/tee_opt4_back.png?v=11'
+        front: 'assets/merch/tee_opt4_front.png?v=200',
+        back: 'assets/merch/tee_opt4_back.png?v=200'
       },
       {
         model: 'RC-405',
         title: 'Boss Level Mecha-Valkyrie Tee',
         specs: '<span>Front: Cyber Visor Crest</span><span>â€¢</span><span>Back: Final-Boss Winged Mecha Guardian</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/tee_opt5_front.png?v=6',
-        back: 'assets/merch/tee_opt5_back.png?v=6'
+        front: 'assets/merch/tee_opt5_front.png?v=200',
+        back: 'assets/merch/tee_opt5_back.png?v=200'
       }
     ];
 
@@ -562,6 +562,30 @@
     }
 
     updateShowroom();
+
+    // Preload remaining product images asynchronously after initial paint for 0ms Next/Prev switching
+    window.__rcPreloadShopImgs = true;
+    setTimeout(() => {
+      const lists = [
+        typeof hatOptions !== 'undefined' ? hatOptions : null,
+        typeof hoodieOptions !== 'undefined' ? hoodieOptions : null,
+        typeof teeOptions !== 'undefined' ? teeOptions : null,
+        typeof crewneckOptions !== 'undefined' ? crewneckOptions : null,
+        typeof joggerOptions !== 'undefined' ? joggerOptions : null,
+        typeof xxlOptions !== 'undefined' ? xxlOptions : null,
+        typeof smallOptions !== 'undefined' ? smallOptions : null,
+        typeof miscOptions !== 'undefined' ? miscOptions : null
+      ].filter(Boolean);
+      lists.forEach((arr) => {
+        arr.forEach((it) => {
+          [it.src, it.front, it.back].filter(Boolean).forEach((u) => {
+            const im = new Image();
+            im.decoding = 'async';
+            im.src = u;
+          });
+        });
+      });
+    }, 180);
   </script>
 </body>
 </html>
