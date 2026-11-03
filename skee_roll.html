@@ -433,12 +433,13 @@ const lerp = (a, b, t) => a + (b - a) * t;
 function surf(z) {
   if (z <= HZ0) return 0;
   const u = clamp((z - HZ0) / (ZP - HZ0), 0, 1);
-  return RAMP_H * u * u * (3 - 2 * u);
+  // True upward-curving parabolic ski-jump ramp (steepest at the lip z = ZP)
+  return RAMP_H * u * u;
 }
 function dsurf(z) {
-  if (z <= HZ0 || z >= ZP) return 0;
-  const L = ZP - HZ0, u = (z - HZ0) / L;
-  return RAMP_H * 6 * u * (1 - u) / L;
+  if (z <= HZ0 || z > ZP) return 0;
+  const L = ZP - HZ0, u = clamp((z - HZ0) / L, 0, 1);
+  return 2 * RAMP_H * u / L;
 }
 function BW(u, v, h = 0) {
   return [
@@ -467,40 +468,38 @@ function setB(b, u, v, h, vu, vv, vh) {
   b.vz = vv * CPH - vh * SPH;
 }
 
-/* Calibrated 3D -> 1376x768 Artwork Projection
+/* Seamless C1-Continuous 3D -> 1376x768 Artwork Projection
    Matches:
    - Lane bottom (z = -0.35) -> y = 665, half-width = 503px
    - Ball spawn (z = 0.25) -> y = 528, half-width = 335px
-   - Ramp lip (z = 2.62, y = 0.068) -> y = 405, half-width = 112px
+   - Ramp lip (z = 2.62, y = RAMP_H) -> y = 400, scaleX = 392 (zero seam between lane & board!)
    - Board rings (v = 0.145..0.945) -> y = 372..212
 */
 function P(x, y, z) {
-  if (z <= ZP + 0.001 && y <= RAMP_H + 0.06) {
-    // Lane & Ramp perspective projection anchored to vanishing point (688, 330.5)
-    const u = clamp((z - (-0.35)) / (ZP - (-0.35)), -0.2, 1.05);
-    // Perspective depth factor k: 1.0 at z=-0.35 (y=665) down to 0.223 at z=ZP (y=405)
-    const k = 1 / (1 + 3.48 * Math.max(0, u));
-    const syBase = 330.5 + (665 - 330.5) * k;
-    const scaleX = (503 * k) / LH; // px per meter laterally at this depth
-    const liftY = Math.max(0, y - surf(Math.min(z, ZP))) * scaleX * 0.85;
+  if (z <= ZP) {
+    // Lane & Ramp perspective projection anchored so z=ZP, y=RAMP_H lands at (688 + x*392, 400)
+    const u = clamp((z - (-0.35)) / (ZP - (-0.35)), -0.25, 1.0);
+    const k = 1 / (1 + 3.495 * Math.max(0, u));
+    const syBase = 324.2 + (665 - 324.2) * k; // syBase(u=0)=665, syBase(u=1)=400.0
+    const scaleX = (503 * k) / LH;            // scaleX(u=1) = 392.4
+    const dh = Math.max(0, y - surf(z));
+    const liftY = dh * lerp(scaleX * 0.82, 260, clamp(u, 0, 1));
     return {
       x: 688 + x * scaleX,
       y: syBase - liftY,
       s: scaleX
     };
   }
-  // Above/beyond ramp lip -> Board projection matching artwork target bowl
+  // Above/beyond ramp lip -> Board projection matching artwork target bowl seamlessly from (688, 400)
   const dy = y - RAMP_H, dz = z - ZP;
   const v = dy * SPH + dz * CPH;
   const h = Math.max(0, dy * CPH - dz * SPH);
-  // v in [0 .. 1.05] maps to screen Y [400 .. 198]
   const sy = 400 - v * 196 - h * 260;
-  // Slight perspective narrowing up the board
-  const scaleX = lerp(392, 274, clamp(v / 1.0, 0, 1.2));
+  const scaleX = lerp(392.4, 274, clamp(v / 1.0, 0, 1.2));
   return {
     x: 688 + x * scaleX,
     y: sy,
-    s: scaleX * 0.82
+    s: scaleX * 0.85
   };
 }
 
@@ -602,10 +601,9 @@ const Snd = (() => {
 })();
 
 /* ============================================================================
-   4. DETERMINISTIC & RESPONSIVE BALL PHYSICS WITH RING FUNNELS & SPIN HOOK
+   4. AUTHENTIC 3D SKEE-BALL PHYSICS (Parabolic Ski-Jump, 3D Ring Rims & Funnels)
    ============================================================================ */
 function makeBall(v0, ang, x0 = 0, spin = 0) {
-  // Clamp v0 into playable arcade range so every valid flick clears the ramp
   const cleanV0 = clamp(v0, 3.85, 8.6);
   const cleanAng = clamp(ang, -0.22, 0.22);
   return {
@@ -613,11 +611,14 @@ function makeBall(v0, ang, x0 = 0, spin = 0) {
     x: clamp(x0, -(LH - RB - 0.015), LH - RB - 0.015),
     y: RB,
     z: Z0,
-    vx: cleanV0 * Math.sin(cleanAng),
+    // Gentle lateral component down the narrow wooden lane so angled shots don't ricochet early
+    vx: cleanV0 * Math.sin(cleanAng) * 0.44,
     vy: 0,
     vz: cleanV0 * Math.cos(cleanAng),
+    ang: cleanAng,
     spin: clamp(spin, -1, 1), // Lateral curve hook ("English")
     t: 0,
+    boardT: 0,
     done: false,
     pts: 0,
     kind: null,
@@ -626,6 +627,22 @@ function makeBall(v0, ang, x0 = 0, spin = 0) {
     rotP: 0,
     rotY: 0
   };
+}
+
+function classifyLandingRing(u, v) {
+  for (const C of CUPS) {
+    if (Math.hypot(u - C.u, v - C.v) <= C.r * 1.18) {
+      return { pts: C.s, label: C.label, col: C.col, cx: C.u, cy: C.v };
+    }
+  }
+  for (const R of RINGS) {
+    const eDist = Math.hypot((u - R.cx) / R.rx, (v - R.cy) / R.ry);
+    if (eDist <= 1.02) {
+      return { pts: R.s, label: R.label, col: R.col, cx: R.cx, cy: R.holeY };
+    }
+  }
+  const R10 = RINGS[RINGS.length - 1];
+  return { pts: 10, label: '10', col: R10.col, cx: 0, cy: R10.holeY };
 }
 
 function stepBall(b, dt, onEvt) {
@@ -637,36 +654,41 @@ function stepBall(b, dt, onEvt) {
 
   if (b.st === 'lane') {
     const s = dsurf(b.z), c = 1 / Math.hypot(1, s);
-    const ax = b.spin * 0.52; // Subtle curve hook down the wood lane
-    const az = -G * s * c * 0.55 - 0.012 * b.vz;
+    const ax = b.spin * 0.14; // Subtle drift on the polished wood lane
+    const az = -G * s * c * 0.45 - 0.02 * b.vz;
     b.vx += ax * dt;
     b.vz += az * dt;
-    // Never let ball stall on the ramp if launched properly
-    if (b.z > HZ0 && b.vz < 1.85) b.vz = 1.85;
+    if (b.vz < 2.2) b.vz = 2.2;
     b.x += b.vx * dt;
     b.z += b.vz * dt;
     b.y = surf(b.z) + RB;
 
     const wall = LH - RB;
-    if (b.x < -wall) { b.x = -wall; b.vx = -b.vx * 0.65; onEvt && onEvt('rail', Math.abs(b.vx)); }
-    if (b.x >  wall) { b.x =  wall; b.vx = -b.vx * 0.65; onEvt && onEvt('rail', Math.abs(b.vx)); }
+    if (b.x < -wall) { b.x = -wall; b.vx = -b.vx * 0.52; onEvt && onEvt('rail', Math.abs(b.vx)); }
+    if (b.x >  wall) { b.x =  wall; b.vx = -b.vx * 0.52; onEvt && onEvt('rail', Math.abs(b.vx)); }
 
     if (b.z >= ZP) {
-      // Launch off the ramp lip onto the inclined target board!
-      const sL = dsurf(ZP - 1e-3);
-      const sp = Math.hypot(b.vx, b.vz);
-      const launchPitch = Math.atan(sL) * 0.92 + 0.14;
+      // True parabolic ski-jump launch off the ramp lip (25 deg above the 31 deg target board!)
+      // Launches the ball cleanly into the air OVER the lower rings to land in the target pocket!
+      const sp = b.vz * 0.525;
+      const launchPitch = PH + (25 * Math.PI / 180);
+      b.vx = b.vx * 1.15 + b.spin * 0.22;
       b.vy = sp * Math.sin(launchPitch);
       b.vz = sp * Math.cos(launchPitch);
+      b.y = RAMP_H + RB * CPH;
+      b.z = ZP - RB * SPH;
       b.st = 'board';
       b.contact = false;
+      b.boardT = 0;
       onEvt && onEvt('launch', sp);
     }
     return;
   }
 
   // Board / Airborne state
-  b.vx += b.spin * 0.85 * dt; // Spin hooks ball toward corner 100 cups
+  b.boardT += dt;
+  const prevC = bc(b);
+  b.vx += b.spin * (b.contact ? 0.35 : 0.65) * dt; // Spin hooks airborne ball toward corner 100 cups
   b.vy -= G * dt;
   b.x += b.vx * dt;
   b.y += b.vy * dt;
@@ -675,34 +697,37 @@ function stepBall(b, dt, onEvt) {
   let c = bc(b);
   let { u, v, h, vu, vv, vh } = c;
 
-  // Board side walls
-  const bw = LH - RB * 0.6;
-  if (u < -bw) { u = -bw; vu = Math.abs(vu) * 0.55; onEvt && onEvt('wall', vu); }
-  if (u >  bw) { u =  bw; vu = -Math.abs(vu) * 0.55; onEvt && onEvt('wall', -vu); }
-  // Top backboard bumper
-  if (v > BL - RB) { v = BL - RB; vv = -Math.abs(vv) * 0.42; onEvt && onEvt('wall', -vv); }
+  // Wide oval target arena side walls (allows full access to 10/20 rings and L-100/R-100 corner cups at +-0.325m)
+  const bw = 0.435;
+  if (u < -bw) { u = -bw; vu = Math.abs(vu) * 0.48; onEvt && onEvt('wall', vu); }
+  if (u >  bw) { u =  bw; vu = -Math.abs(vu) * 0.48; onEvt && onEvt('wall', -vu); }
+  // Top curved backboard bumper
+  if (v > BL - RB) { v = BL - RB; vv = -Math.abs(vv) * 0.38; onEvt && onEvt('wall', -vv); }
 
-  // Board floor contact & rolling gravity
+  // Board floor contact, 3D ring rim deflections & pocket funneling
   if (h <= RB) {
-    if (vh < -0.35) onEvt && onEvt('land', -vh);
+    if (!b.contact && vh < -0.25) {
+      onEvt && onEvt('land', -vh);
+    }
     h = RB;
-    vh = vh < -0.25 ? -vh * 0.18 : 0;
+    vh = vh < -0.30 ? -vh * 0.20 : 0;
     b.contact = true;
-    vv -= G * SPH * 0.68 * dt;
-    vu -= vu * 1.15 * dt;
-    vv -= vv * 0.85 * dt;
 
-    // Gentle magnetic funnel attraction toward nearby scoring pockets & corner cups
-    // Makes gameplay feel rewarding and authentic like real arcade skee-ball funnels
+    // Natural downhill gravity on the 31-deg inclined board + smooth rolling friction
+    vv -= G * SPH * 0.58 * dt;
+    vu -= vu * 1.65 * dt;
+    vv -= vv * 1.25 * dt;
+
+    // 1. Check Corner 100 Cups (L-100, R-100)
     for (const C of CUPS) {
       const du = C.u - u, dv = C.v - v;
       const dist = Math.hypot(du, dv);
-      if (dist < C.r * 1.65) {
-        const pull = (1 - dist / (C.r * 1.65)) * 2.8;
+      if (dist < C.r * 1.55) {
+        const pull = (1 - dist / (C.r * 1.55)) * 4.2;
         vu += (du / (dist + 1e-4)) * pull * dt;
         vv += (dv / (dist + 1e-4)) * pull * dt;
-        if (dist < C.r * 0.92 && Math.hypot(vu, vv) < 2.6) {
-          const w = BW(C.u, C.v, RB * 0.3);
+        if (dist < C.r * 0.72 && Math.hypot(vu, vv) < 1.95) {
+          const w = BW(lerp(u, C.u, 0.55), lerp(v, C.v, 0.55), RB * 0.25);
           b.x = w[0]; b.y = w[1]; b.z = w[2];
           b.done = true; b.pts = C.s; b.kind = 'cup'; b.targetLabel = C.label;
           onEvt && onEvt('score', C.s);
@@ -711,35 +736,52 @@ function stepBall(b, dt, onEvt) {
       }
     }
 
-    // Check concentric ring pockets (from highest value 100 down to 10)
+    // 2. True 3D Elliptical Ring Divider Rim Collisions & Pocket Funneling
     for (const R of RINGS) {
-      const du = (R.cx - u), dv = (R.holeY - v);
-      const distHole = Math.hypot(du, dv);
-      // Normalized ellipse distance to this ring's boundary
-      const eDist = Math.hypot((u - R.cx) / R.rx, (v - R.cy) / R.ry);
+      const prevEDist = Math.hypot((prevC.u - R.cx) / R.rx, (prevC.v - R.cy) / R.ry);
+      const currEDist = Math.hypot((u - R.cx) / R.rx, (v - R.cy) / R.ry);
 
-      // Funnel pull into the ring's pocket hole
-      if (distHole < R.holeR * 1.75) {
-        const pull = (1 - distHole / (R.holeR * 1.75)) * 3.1;
+      // If rolling on the board and crossing a raised ring divider rim (eDist == 1.0),
+      // deflect physically off the curved 3D plastic ring wall so the ball rolls down the inside of the ring!
+      if ((prevEDist <= 1.0 && currEDist > 0.985) || (prevEDist >= 1.0 && currEDist < 1.015)) {
+        const inside = prevEDist <= 1.0;
+        let nx = (u - R.cx) / (R.rx * R.rx);
+        let nv = (v - R.cy) / (R.ry * R.ry);
+        const nLen = Math.hypot(nx, nv) || 1;
+        nx /= nLen; nv /= nLen;
+
+        // Keep ball on its side of the raised ring divider
+        const targetScale = inside ? 0.982 : 1.018;
+        if ((inside && currEDist > targetScale) || (!inside && currEDist < targetScale)) {
+          const angE = Math.atan2((v - R.cy) / R.ry, (u - R.cx) / R.rx);
+          u = R.cx + Math.cos(angE) * R.rx * targetScale;
+          v = R.cy + Math.sin(angE) * R.ry * targetScale;
+        }
+
+        const vn = vu * nx + vv * nv;
+        if ((inside && vn > 0) || (!inside && vn < 0)) {
+          vu -= (1 + 0.32) * vn * nx;
+          vv -= (1 + 0.32) * vn * nv;
+          if (Math.abs(vn) > 0.25) onEvt && onEvt('rim', Math.abs(vn));
+        }
+      }
+
+      // Smooth gravitational funnel into this ring's bottom pocket hole
+      const du = R.cx - u, dv = R.holeY - v;
+      const distHole = Math.hypot(du, dv);
+      if (currEDist <= 1.05 && distHole < R.holeR * 1.95) {
+        const pull = (1 - distHole / (R.holeR * 1.95)) * 5.2;
         vu += (du / (distHole + 1e-4)) * pull * dt;
         vv += (dv / (distHole + 1e-4)) * pull * dt;
       }
 
-      // Direct pocket capture
-      if (distHole < R.holeR * 0.95 && Math.hypot(vu, vv) < 2.85) {
-        const w = BW(R.cx, R.holeY, RB * 0.25);
+      // Capture when ball drops into the pocket hole
+      if (distHole < R.holeR * 0.72 && Math.hypot(vu, vv) < 2.1) {
+        const w = BW(lerp(u, R.cx, 0.55), lerp(v, R.holeY, 0.55), RB * 0.22);
         b.x = w[0]; b.y = w[1]; b.z = w[2];
         b.done = true; b.pts = R.s; b.kind = 'hole'; b.targetLabel = R.label;
         onEvt && onEvt('score', R.s);
         return;
-      }
-
-      // Ring plastic lip interaction when rolling down (vv < 0) inside the ring's bottom arc
-      if (vv < 0 && v <= R.cy && Math.abs(eDist - 1.0) < 0.14) {
-        // Rattle inside ring lip and funnel toward its bottom hole!
-        vv = -vv * 0.25;
-        vu += (R.cx - u) * 4.5 * dt;
-        onEvt && onEvt('rim', 0.4);
       }
     }
   } else {
@@ -748,36 +790,15 @@ function stepBall(b, dt, onEvt) {
 
   setB(b, u, v, h, vu, vv, vh);
 
-  // Settle check: if ball slows down on the board, award the smallest enclosing ring
-  if (b.contact && b.t > 0.55) {
+  // Settle check: if ball comes to rest inside a ring chamber, drop into that ring's pocket
+  if (b.contact && b.boardT > 0.35) {
     const sp2 = Math.hypot(vu, vv);
-    if (sp2 < 0.24 || v < 0.06 || b.t > 4.2) {
-      // Determine which ring encloses (u, v)
-      for (const C of CUPS) {
-        if (Math.hypot(u - C.u, v - C.v) <= C.r * 1.15) {
-          const w = BW(C.u, C.v, RB * 0.3);
-          b.x = w[0]; b.y = w[1]; b.z = w[2];
-          b.done = true; b.pts = C.s; b.kind = 'cup'; b.targetLabel = C.label;
-          onEvt && onEvt('score', C.s);
-          return;
-        }
-      }
-      for (const R of RINGS) {
-        const eDist = Math.hypot((u - R.cx) / R.rx, (v - R.cy) / R.ry);
-        if (eDist <= 1.06) {
-          const w = BW(R.cx, R.holeY, RB * 0.25);
-          b.x = w[0]; b.y = w[1]; b.z = w[2];
-          b.done = true; b.pts = R.s; b.kind = 'hole'; b.targetLabel = R.label;
-          onEvt && onEvt('score', R.s);
-          return;
-        }
-      }
-      // Even if it trickles to the very bottom lip of the board, award outer 10 ring
-      const R10 = RINGS[RINGS.length - 1];
-      const w = BW(0, R10.holeY, RB * 0.25);
+    if (sp2 < 0.22 || v < 0.05 || b.t > 3.8) {
+      const hit = classifyLandingRing(u, v);
+      const w = BW(hit.cx, hit.cy, RB * 0.22);
       b.x = w[0]; b.y = w[1]; b.z = w[2];
-      b.done = true; b.pts = 10; b.kind = 'hole'; b.targetLabel = '10';
-      onEvt && onEvt('score', 10);
+      b.done = true; b.pts = hit.pts; b.kind = 'hole'; b.targetLabel = hit.label;
+      onEvt && onEvt('score', hit.pts);
     }
   }
 }
@@ -789,16 +810,66 @@ function simulate(v0, ang = 0, x0 = 0, spin = 0) {
   return { pts: b.pts, kind: b.kind, label: b.targetLabel, t: b.t, x: b.x, y: b.y, z: b.z };
 }
 
-// Predict trajectory points for live 3D aiming arc
-function predictTrajectory(v0, ang, x0, spin) {
+// Sub-frame interpolated, arc-length resampled 3D trajectory predictor (zero frame-jump!)
+function predictTrajectory(v0, ang, x0, spin, zStart = Z0) {
   const b = makeBall(v0, ang, x0, spin);
-  const pts = [];
-  for (let i = 0; i < 190 && !b.done; i++) {
-    stepBall(b, DT * 2, null);
-    if (i % 3 === 0) pts.push({ x: b.x, y: b.y, z: b.z, st: b.st });
-    if (b.st === 'board' && b.contact) break;
+  b.z = zStart;
+  b.y = surf(Math.max(0, zStart)) + RB;
+
+  const rawPts = [{ x: b.x, y: b.y, z: b.z }];
+  let prevX = b.x, prevY = b.y, prevZ = b.z, prevH = RB;
+  let landU = b.x, landV = 0.5;
+
+  for (let i = 0; i < 360 && !b.done; i++) {
+    prevX = b.x; prevY = b.y; prevZ = b.z;
+    if (b.st === 'board') prevH = bc(b).h;
+
+    stepBall(b, DT, null);
+
+    if (b.st === 'board') {
+      const curC = bc(b);
+      if (b.contact || (curC.h <= RB && curC.vh <= 0)) {
+        // Exact sub-step linear interpolation where airborne ball touches h === RB
+        const denom = Math.max(1e-6, prevH - curC.h);
+        const frac = clamp((prevH - RB) / denom, 0, 1);
+        const lx = lerp(prevX, b.x, frac);
+        const ly = lerp(prevY, b.y, frac);
+        const lz = lerp(prevZ, b.z, frac);
+        rawPts.push({ x: lx, y: ly, z: lz });
+        const dy = ly - RAMP_H, dz = lz - ZP;
+        landU = lx;
+        landV = dy * SPH + dz * CPH;
+        break;
+      }
+    }
+    rawPts.push({ x: b.x, y: b.y, z: b.z });
   }
-  return { pts, end: { x: b.x, y: b.y, z: b.z } };
+
+  // Uniform arc-length resampling into 24 smooth points so dots never hop or bunch up
+  const cumLen = [0];
+  for (let i = 1; i < rawPts.length; i++) {
+    const a = rawPts[i - 1], c = rawPts[i];
+    cumLen.push(cumLen[i - 1] + Math.hypot(c.x - a.x, c.y - a.y, c.z - a.z));
+  }
+  const totalLen = cumLen[cumLen.length - 1] || 1e-4;
+  const N = 22;
+  const pts = [];
+  let idx = 0;
+  for (let k = 0; k <= N; k++) {
+    const targetD = (k / N) * totalLen;
+    while (idx < cumLen.length - 2 && cumLen[idx + 1] < targetD) idx++;
+    const segLen = Math.max(1e-6, cumLen[idx + 1] - cumLen[idx]);
+    const t = clamp((targetD - cumLen[idx]) / segLen, 0, 1);
+    const p0 = rawPts[idx], p1 = rawPts[idx + 1];
+    pts.push({
+      x: lerp(p0.x, p1.x, t),
+      y: lerp(p0.y, p1.y, t),
+      z: lerp(p0.z, p1.z, t)
+    });
+  }
+
+  const targetRing = classifyLandingRing(landU, landV);
+  return { pts, end: pts[pts.length - 1], targetRing };
 }
 
 /* ============================================================================
@@ -868,6 +939,9 @@ const S = {
   aimAng: 0,
   spin: 0,
   defaultPower: 0.62, // Sweet-spot default power (50/100 ring area)
+  smoothAimX: 0,
+  smoothAng: 0,
+  smoothPwr: 0.62,
   ball: null,
   trail: [],
   particles: [],
@@ -1113,17 +1187,17 @@ document.querySelectorAll('[data-preset]').forEach(btn => {
     if (S.state !== 'ready') return;
     const p = btn.getAttribute('data-preset');
     if (p === 'left100') {
-      S.aimX = -0.11; S.aimAng = -0.055; setSpin(-0.55);
-      launch(7.45, S.aimAng);
+      S.aimX = -0.11; S.aimAng = -0.075; setSpin(-0.55);
+      launch(7.32, S.aimAng);
     } else if (p === 'right100') {
-      S.aimX = 0.11; S.aimAng = 0.055; setSpin(0.55);
-      launch(7.45, S.aimAng);
+      S.aimX = 0.11; S.aimAng = 0.075; setSpin(0.55);
+      launch(7.32, S.aimAng);
     } else if (p === 'center100') {
       S.aimX = 0; S.aimAng = 0; setSpin(0);
       launch(7.15, 0);
     } else if (p === 'ring50') {
       S.aimX = 0; S.aimAng = 0; setSpin(0);
-      launch(6.35, 0);
+      launch(6.55, 0);
     }
   });
 });
@@ -1133,14 +1207,14 @@ let drag = null;
 function calcPullMetrics(startX, startY, clientX, clientY, lockedAimX) {
   const refH = Math.max(320, cv.getBoundingClientRect().height);
   const pullBackPx = Math.max(0, clientY - startY);
-  const maxPullPx = Math.max(85, Math.min(175, refH * 0.22));
-  const isPullingBack = pullBackPx >= 12;
+  const maxPullPx = Math.max(90, Math.min(185, refH * 0.24));
+  const isPullingBack = pullBackPx >= 8;
   const pullPower = isPullingBack
-    ? clamp((pullBackPx - 10) / Math.max(20, maxPullPx - 10), 0.12, 1.0)
+    ? clamp((pullBackPx - 6) / Math.max(24, maxPullPx - 6), 0.08, 1.0)
     : 0;
   const targetAimX = clamp(laneXAtClient(clientX), -(LH - RB - 0.015), LH - RB - 0.015);
   const pullAng = isPullingBack
-    ? clamp(S.aimAng + (targetAimX - lockedAimX) * 0.35, -0.16, 0.16)
+    ? clamp(S.aimAng + (targetAimX - lockedAimX) * 0.32, -0.16, 0.16)
     : S.aimAng;
   return { refH, pullBackPx, isPullingBack, pullPower, targetAimX, pullAng };
 }
@@ -1283,6 +1357,18 @@ function update(dt) {
       }
     }
     if (S.charging) S.chargeT += dt;
+
+    // Frame-rate independent exponential smoothing for the 3D trajectory guide (zero jitter!)
+    const targetPwr = S.charging
+      ? chargePower()
+      : (drag && drag.pullBackPx >= 8 && drag.pullPower > 0)
+        ? drag.pullPower
+        : S.defaultPower;
+    const targetAng = (drag && drag.pullBackPx >= 8) ? drag.pullAng : S.aimAng;
+    const kSmooth = 1 - Math.exp(-dt * 24);
+    S.smoothAimX = lerp(S.smoothAimX, S.aimX, kSmooth);
+    S.smoothAng  = lerp(S.smoothAng, targetAng, kSmooth);
+    S.smoothPwr  = lerp(S.smoothPwr, targetPwr, kSmooth);
   }
 
   if (S.state === 'rolling' && S.ball) {
@@ -1453,55 +1539,64 @@ function drawTargetBoardEffects(g, t) {
 
 function drawAimTrajectory(g) {
   if (S.state !== 'ready') return;
-  let pwr = S.charging ? chargePower() : S.defaultPower;
-  let ang = S.aimAng;
-  if (drag) {
-    if (drag.pullBackPx >= 12 && drag.pullPower > 0) {
-      pwr = drag.pullPower;
-      ang = drag.pullAng;
-    } else {
-      const v = flickVel(performance.now());
-      const refH = Math.max(320, cv.getBoundingClientRect().height);
-      if (v && -v.vy > 40) {
-        pwr = clamp((-v.vy / (refH * 1.65)), 0.18, 1);
-        ang = clamp(Math.atan2(v.vx * 0.65, -v.vy) * 0.28, -0.16, 0.16);
-      }
-    }
-  }
-  const v0 = lerp(4.1, 8.2, pwr);
-  const pred = predictTrajectory(v0, ang, S.aimX, S.spin);
+  const v0 = lerp(4.1, 8.2, S.smoothPwr);
+  const pred = predictTrajectory(v0, S.smoothAng, S.smoothAimX, S.spin, Z0);
   if (pred.pts.length < 2) return;
 
   g.save();
   g.globalCompositeOperation = 'lighter';
   const screenPts = pred.pts.map(pt => P(pt.x, pt.y, pt.z));
+  const ringInfo = pred.targetRing || { pts: 50, col: '#00f0ff', label: '50' };
+  const baseCol = S.mult >= 3 ? '#ffd23a' : S.mult === 2 ? '#ff3ad8' : ringInfo.col;
 
-  // Glowing dotted trajectory curve
-  for (let i = 1; i < screenPts.length; i += 2) {
+  // 1. Silky continuous glowing laser ribbon along the 3D ballistic curve
+  g.save();
+  g.strokeStyle = baseCol;
+  g.shadowColor = baseCol;
+  g.shadowBlur = 12;
+  g.lineWidth = 3.2;
+  g.globalAlpha = 0.28;
+  g.lineCap = 'round';
+  g.lineJoin = 'round';
+  g.beginPath();
+  g.moveTo(screenPts[0].x, screenPts[0].y);
+  for (let i = 1; i < screenPts.length; i++) {
+    g.lineTo(screenPts[i].x, screenPts[i].y);
+  }
+  g.stroke();
+  g.restore();
+
+  // 2. Evenly spaced arc-length dots (zero hopping!)
+  for (let i = 1; i < screenPts.length; i++) {
     const q = screenPts[i];
-    const u = i / screenPts.length;
-    const dotR = lerp(4.2, 2.0, u);
-    g.fillStyle = S.mult >= 3 ? `rgba(255,210,58,${0.85 - u * 0.5})`
-                : S.mult === 2 ? `rgba(255,58,216,${0.85 - u * 0.5})`
-                : `rgba(0,240,255,${0.85 - u * 0.5})`;
-    g.shadowColor = g.fillStyle;
+    const u = i / (screenPts.length - 1);
+    const dotR = lerp(4.2, 2.1, u);
+    g.fillStyle = baseCol;
+    g.globalAlpha = 0.88 - u * 0.42;
+    g.shadowColor = baseCol;
     g.shadowBlur = 10;
     g.beginPath();
     g.arc(q.x, q.y, dotR, 0, Math.PI * 2);
     g.fill();
   }
 
-  // Landing reticle on the target board
+  // 3. Sub-pixel smooth Landing Reticle + Target Ring Highlight on the board
   const last = screenPts[screenPts.length - 1];
-  if (last && last.y < 410) {
-    const pulse = 0.6 + 0.4 * Math.sin(S.time * 8);
-    g.strokeStyle = '#00f0ff';
-    g.shadowColor = '#00f0ff';
-    g.shadowBlur = 12;
-    g.lineWidth = 2;
+  if (last && last.y < 415) {
+    const pulse = 0.6 + 0.4 * Math.sin(S.time * 7);
+    g.globalAlpha = 0.92;
+    g.strokeStyle = ringInfo.col;
+    g.shadowColor = ringInfo.col;
+    g.shadowBlur = 14;
+    g.lineWidth = 2.2;
     g.beginPath();
-    g.arc(last.x, last.y, 10 + pulse * 4, 0, Math.PI * 2);
+    g.arc(last.x, last.y, 9 + pulse * 3, 0, Math.PI * 2);
     g.stroke();
+
+    g.fillStyle = '#ffffff';
+    g.beginPath();
+    g.arc(last.x, last.y, 2.8, 0, Math.PI * 2);
+    g.fill();
   }
   g.restore();
 }
@@ -1774,19 +1869,20 @@ function render() {
 
   // 3. Ball & Real-Time Mahogany Lane Reflection
   if (S.state === 'ready') {
-    const pullPwr = (drag && drag.pullBackPx >= 12) ? drag.pullPower : (S.charging ? chargePower() : 0);
+    const pullPwr = (drag && drag.pullBackPx >= 8) ? S.smoothPwr : (S.charging ? chargePower() : 0);
     const zBase = lerp(-0.15, Z0, 1 - Math.pow(1 - S.rollIn, 3));
     const z = zBase - pullPwr * 0.22;
     const y = surf(z) + RB;
+    const bx = S.smoothAimX;
 
     // Live 3D Trajectory Guide Arc
     drawAimTrajectory(ctx);
 
     // Slingshot / Plunger Neon Tension Band when pulling ball back
     if (pullPwr > 0.01) {
-      const anchorL = P(S.aimX - RB * 0.95, surf(Z0) + RB * 0.35, Z0 + 0.04);
-      const anchorR = P(S.aimX + RB * 0.95, surf(Z0) + RB * 0.35, Z0 + 0.04);
-      const ballMid = P(S.aimX, y, z);
+      const anchorL = P(bx - RB * 0.95, surf(Z0) + RB * 0.35, Z0 + 0.04);
+      const anchorR = P(bx + RB * 0.95, surf(Z0) + RB * 0.35, Z0 + 0.04);
+      const ballMid = P(bx, y, z);
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       const bandCol = pullPwr > 0.8 ? '#ffd23a' : pullPwr > 0.45 ? '#ff3ad8' : '#00f0ff';
@@ -1804,8 +1900,8 @@ function render() {
     }
 
     // Polished mahogany reflection & soft contact shadow
-    draw3DBall(ctx, S.aimX, -y * 0.85, z, 0.95, 0.24, true);
-    const sp = P(S.aimX, surf(z), z);
+    draw3DBall(ctx, bx, -y * 0.85, z, 0.95, 0.24, true);
+    const sp = P(bx, surf(z), z);
     ctx.save();
     ctx.fillStyle = 'rgba(0, 0, 0, 0.58)';
     ctx.beginPath();
@@ -1824,24 +1920,20 @@ function render() {
     ctx.stroke();
     ctx.restore();
 
-    const bp = draw3DBall(ctx, S.aimX, y, z, 1, 1, false);
+    const bp = draw3DBall(ctx, bx, y, z, 1, 1, false);
 
     if (S.charging) {
       drawPowerMeter(ctx, bp, chargePower());
-    } else if (drag && drag.pullBackPx >= 12) {
-      drawPowerMeter(ctx, bp, drag.pullPower);
+    } else if (drag && drag.pullBackPx >= 8) {
+      drawPowerMeter(ctx, bp, S.smoothPwr);
       ctx.save();
       ctx.font = '900 13px Orbitron';
       ctx.textAlign = 'center';
-      ctx.fillStyle = drag.pullPower > 0.8 ? '#ffd23a' : '#00f0ff';
+      ctx.fillStyle = S.smoothPwr > 0.8 ? '#ffd23a' : '#00f0ff';
       ctx.shadowColor = ctx.fillStyle;
       ctx.shadowBlur = 12;
-      ctx.fillText(`POWER ${Math.round(drag.pullPower * 100)}% • RELEASE TO ROLL`, bp.x, bp.y - bp.r - 18);
+      ctx.fillText(`POWER ${Math.round(S.smoothPwr * 100)}% • RELEASE TO ROLL`, bp.x, bp.y - bp.r - 18);
       ctx.restore();
-    } else if (drag) {
-      const v = flickVel(performance.now());
-      const refH = Math.max(320, cv.getBoundingClientRect().height);
-      if (v && -v.vy > 20) drawPowerMeter(ctx, bp, clamp(-v.vy / (refH * 1.65), 0.1, 1));
     } else if (S.rollIn >= 1) {
       ctx.save();
       ctx.font = '800 13px Orbitron';
@@ -1865,6 +1957,20 @@ function render() {
       ctx.fillStyle = 'rgba(0,0,0,0.52)';
       ctx.beginPath();
       ctx.ellipse(sp.x, sp.y + 5, RB * sp.s * 0.58, RB * sp.s * 0.2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    } else if (b.st === 'board') {
+      // Dynamic 3D shadow on the inclined target board to show airborne ski-jump height
+      const c = bc(b);
+      const shW = BW(c.u, c.v, 0);
+      const sp = P(shW[0], shW[1], shW[2]);
+      const hLift = Math.max(0, c.h - RB);
+      const shAlpha = clamp(0.48 - hLift * 1.1, 0.14, 0.48);
+      const shScale = clamp(1 - hLift * 1.4, 0.5, 1);
+      ctx.save();
+      ctx.fillStyle = `rgba(0,0,0,${shAlpha})`;
+      ctx.beginPath();
+      ctx.ellipse(sp.x, sp.y + 4, RB * sp.s * 0.56 * shScale, RB * sp.s * 0.22 * shScale, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
