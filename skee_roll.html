@@ -333,15 +333,6 @@
   </div>
 </div>
 
-<!-- Bottom-Right Quick Target Aim Presets -->
-<div class="preset-deck" aria-label="Target Shot Assist">
-  <span class="ctrl-lbl" style="color:#ffd23a;">AIM LOCK:</span>
-  <button type="button" class="ctrl-btn" data-preset="left100" title="Line up Left 100 Gold Corner Cup">L-100</button>
-  <button type="button" class="ctrl-btn" data-preset="center100" title="Line up Center 100 Bullseye">BULL 100</button>
-  <button type="button" class="ctrl-btn" data-preset="ring50" title="Line up 50 Ring">50 RING</button>
-  <button type="button" class="ctrl-btn" data-preset="right100" title="Line up Right 100 Gold Corner Cup">R-100</button>
-</div>
-
 <!-- Game Over Summary Modal -->
 <div id="modal">
   <div class="card">
@@ -1184,31 +1175,9 @@ window.addEventListener('pointerup', () => {
   }
 });
 
-// Shot Assist Presets (L-100, Bullseye 100, 50 Ring, R-100)
-document.querySelectorAll('[data-preset]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    Snd.init();
-    if (S.state !== 'ready') return;
-    const p = btn.getAttribute('data-preset');
-    if (p === 'left100') {
-      S.aimX = -0.06; S.aimAng = -0.17; setSpin(0);
-      launch(7.45, S.aimAng);
-    } else if (p === 'right100') {
-      S.aimX = 0.06; S.aimAng = 0.17; setSpin(0);
-      launch(7.45, S.aimAng);
-    } else if (p === 'center100') {
-      S.aimX = 0; S.aimAng = 0; setSpin(0);
-      launch(7.15, 0);
-    } else if (p === 'ring50') {
-      S.aimX = 0; S.aimAng = 0; setSpin(0);
-      launch(6.15, 0);
-    }
-  });
-});
-
-// Smooth Canvas Pull-Back-to-Shoot (Slingshot Angle & Power) & Flick-Up-to-Roll
+// Smooth Canvas Pull-Back-to-Shoot (Power & Angle, No Aim Lock) & Flick-Up-to-Roll
 let drag = null;
-function calcPullMetrics(startX, startY, clientX, clientY, lockedAimX) {
+function calcPullMetrics(startX, startY, clientX, clientY) {
   const refH = Math.max(320, cv.getBoundingClientRect().height);
   const pullBackPx = Math.max(0, clientY - startY);
   const maxPullPx = Math.max(90, Math.min(185, refH * 0.24));
@@ -1217,7 +1186,7 @@ function calcPullMetrics(startX, startY, clientX, clientY, lockedAimX) {
     ? clamp((pullBackPx - 6) / Math.max(24, maxPullPx - 6), 0.08, 1.0)
     : 0;
   const targetAimX = clamp(laneXAtClient(clientX), -(LH - RB - 0.015), LH - RB - 0.015);
-  // Slingshot angling: pulling ball back-left angles shot right, pulling back-right angles shot left
+  // Pulling back at an angle sets the launch angle freely without any aim lock
   const dxPx = clientX - startX;
   const dyPx = Math.max(35, pullBackPx);
   const slingAng = Math.atan2(-dxPx, dyPx) * 0.48;
@@ -1241,7 +1210,6 @@ cv.addEventListener('pointerdown', e => {
     startY: e.clientY,
     curX: e.clientX,
     curY: e.clientY,
-    lockedAimX: startX,
     pullBackPx: 0,
     pullPower: 0,
     pullAng: S.aimAng,
@@ -1257,20 +1225,13 @@ cv.addEventListener('pointermove', e => {
   drag.pts.push({ t: now, x: e.clientX, y: e.clientY });
   while (drag.pts.length > 2 && now - drag.pts[0].t > 150) drag.pts.shift();
 
-  const dyUp = drag.startY - e.clientY;
-  const pm = calcPullMetrics(drag.startX, drag.startY, e.clientX, e.clientY, drag.lockedAimX);
+  const pm = calcPullMetrics(drag.startX, drag.startY, e.clientX, e.clientY);
   drag.pullBackPx = pm.pullBackPx;
   drag.pullPower = pm.pullPower;
   drag.pullAng = pm.pullAng;
 
-  if (pm.isPullingBack && S.state === 'ready') {
-    // While pulling back, the ball visually shifts with your finger while the anchor stays at lockedAimX
-    S.aimX = clamp(lerp(drag.lockedAimX, pm.targetAimX, 0.78), -(LH - RB - 0.015), LH - RB - 0.015);
-  } else if (dyUp < 24 && S.state === 'ready') {
+  if (S.state === 'ready') {
     S.aimX = pm.targetAimX;
-    drag.lockedAimX = S.aimX;
-  } else if (S.state === 'ready') {
-    S.aimX = drag.lockedAimX;
   }
 });
 
@@ -1290,14 +1251,12 @@ function endDrag(e) {
   const v = flickVel(now);
   const totalDy = drag.startY - e.clientY;
   const totalDx = e.clientX - drag.startX;
-  const lockedX = drag.lockedAimX;
-  const pm = calcPullMetrics(drag.startX, drag.startY, e.clientX, e.clientY, lockedX);
+  const pm = calcPullMetrics(drag.startX, drag.startY, e.clientX, e.clientY);
   drag = null;
   cv.classList.remove('drag');
 
-  // Mode 1: Pull-Back Release (Slingshot / Plunger)
+  // Mode 1: Pull-Back Release
   if (pm.isPullingBack && pm.pullPower > 0) {
-    S.aimX = lockedX;
     const v0 = lerp(4.1, 8.2, pm.pullPower);
     launch(v0, pm.pullAng);
     return;
@@ -1877,32 +1836,29 @@ function render() {
   drawTicketShimmer(ctx, S.time);
   drawTrail(ctx);
 
-  // 3. Ball & Real-Time Mahogany Lane Reflection (No trajectory guide line!)
+  // 3. Ball & Real-Time Mahogany Lane Reflection (Only a line showing power, no guide line showing where ball goes!)
   if (S.state === 'ready') {
     const pullPwr = (drag && drag.pullBackPx >= 8) ? S.smoothPwr : (S.charging ? chargePower() : 0);
     const zBase = lerp(-0.15, Z0, 1 - Math.pow(1 - S.rollIn, 3));
     const z = zBase - pullPwr * 0.22;
     const y = surf(z) + RB;
     const bx = S.smoothAimX;
-    const anchorCenterX = (drag && drag.pullBackPx >= 8) ? drag.lockedAimX : bx;
 
-    // Slingshot / Plunger Neon Tension Band when pulling ball back (anchored at lockedAimX so it angles visibly!)
+    // Single straight Power Line showing ONLY power level (never showing where the ball will go)
     if (pullPwr > 0.01) {
-      const anchorL = P(anchorCenterX - RB * 1.05, surf(Z0) + RB * 0.35, Z0 + 0.04);
-      const anchorR = P(anchorCenterX + RB * 1.05, surf(Z0) + RB * 0.35, Z0 + 0.04);
-      const ballMid = P(bx, y, z);
+      const pOrigin = P(bx, surf(Z0) + RB * 0.4, Z0);
+      const pPulled = P(bx, surf(z) + RB * 0.4, z);
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
-      const bandCol = pullPwr > 0.8 ? '#ffd23a' : pullPwr > 0.45 ? '#ff3ad8' : '#00f0ff';
-      ctx.strokeStyle = bandCol;
-      ctx.shadowColor = bandCol;
+      const lineCol = pullPwr > 0.8 ? '#ffd23a' : pullPwr > 0.45 ? '#ff3ad8' : '#00f0ff';
+      ctx.strokeStyle = lineCol;
+      ctx.shadowColor = lineCol;
       ctx.shadowBlur = 16;
-      ctx.lineWidth = 3.5 + pullPwr * 3.5;
+      ctx.lineWidth = 5 + pullPwr * 4;
       ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(anchorL.x, anchorL.y);
-      ctx.lineTo(ballMid.x, ballMid.y + 6);
-      ctx.lineTo(anchorR.x, anchorR.y);
+      ctx.moveTo(pOrigin.x, pOrigin.y);
+      ctx.lineTo(pPulled.x, pPulled.y + pullPwr * 28);
       ctx.stroke();
       ctx.restore();
     }
@@ -1916,7 +1872,7 @@ function render() {
     ctx.ellipse(sp.x, sp.y + 8, RB * sp.s * 0.62, RB * sp.s * 0.22, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Pulsing launch ring under ball + compact 3D Aim Angle Chevron on the front rim of the ring
+    // Pulsing launch ring under ball (no directional chevron or trajectory line)
     const pulse = 0.5 + 0.5 * Math.sin(S.time * 5.2);
     const ringCol = pullPwr > 0.75 ? '#ffd23a' : S.mult >= 3 ? '#ffd23a' : '#00f0ff';
     ctx.strokeStyle = ringCol;
@@ -1926,20 +1882,6 @@ function render() {
     ctx.globalAlpha = 0.48 + pulse * 0.35;
     ctx.beginPath();
     ctx.ellipse(sp.x, sp.y + 4, RB * sp.s * (0.88 + pullPwr * 0.22), RB * sp.s * (0.32 + pullPwr * 0.08), 0, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Compact Aim Chevron right in front of the ball (shows angle without any lane guide line)
-    const tipWorldX = anchorCenterX + Math.sin(S.smoothAng) * 0.24;
-    const tipWorldZ = Z0 + Math.cos(S.smoothAng) * 0.18;
-    const wingL = P(anchorCenterX + Math.sin(S.smoothAng - 0.38) * 0.13, surf(Z0) + 0.005, Z0 + Math.cos(S.smoothAng - 0.38) * 0.10);
-    const wingR = P(anchorCenterX + Math.sin(S.smoothAng + 0.38) * 0.13, surf(Z0) + 0.005, Z0 + Math.cos(S.smoothAng + 0.38) * 0.10);
-    const tipP  = P(tipWorldX, surf(tipWorldZ) + 0.005, tipWorldZ);
-    ctx.globalAlpha = 0.75 + pulse * 0.25;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(wingL.x, wingL.y);
-    ctx.lineTo(tipP.x, tipP.y);
-    ctx.lineTo(wingR.x, wingR.y);
     ctx.stroke();
     ctx.restore();
 
