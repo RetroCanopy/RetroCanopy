@@ -721,17 +721,18 @@
       </div>
       <div class="shop-chloe-nameplate"><span>CHLOE &bull; THE SHOP</span></div>
     `;
-    document.body.appendChild(chloeStage);
+    // Chloe removed from the shop per user instruction
+    chloeStage.style.display = 'none';
 
     // Build the Complete Outfit Showcase DOM
     const outfitShowcase = document.createElement('section');
     outfitShowcase.className = 'rc-outfit-showcase';
     outfitShowcase.id = 'rc-outfit-showcase';
-    outfitShowcase.setAttribute('aria-label', 'Chloe Curated Complete Outfit');
+    outfitShowcase.setAttribute('aria-label', 'Retrocanopy Curated Complete Outfit');
     outfitShowcase.innerHTML = `
       <div class="rc-outfit-header">
         <div class="rc-outfit-title-wrap">
-          <span class="rc-outfit-kicker">CHLOE'S CURATED LOOKBOOK &bull; 20% OFF BUNDLE DISCOUNT</span>
+          <span class="rc-outfit-kicker">RETROCANOPY CURATED LOOKBOOK &bull; 20% OFF BUNDLE DISCOUNT</span>
           <h2 class="rc-outfit-title" id="rc-outfit-title">Signature Sunset Streetwear Outfit</h2>
         </div>
         <button type="button" class="rc-outfit-close-btn" id="rc-outfit-close">&#8592; Back to Solo Item</button>
@@ -904,25 +905,7 @@
     }
 
     function typeChloeLine(lineText, nextHintText) {
-      if (typeTimer) clearInterval(typeTimer);
-      currentFullText = lineText;
-      isTyping = true;
-      if (textEl) textEl.textContent = '';
-      if (hintEl) hintEl.textContent = 'SKIP \u25B6';
-      startTalkAnim();
-
-      let charIdx = 0;
-      typeTimer = setInterval(() => {
-        charIdx++;
-        if (textEl) {
-          textEl.textContent = currentFullText.slice(0, charIdx);
-        }
-        const curChar = currentFullText[charIdx - 1];
-        playDialogueCharTick(curChar, charIdx);
-        if (charIdx >= currentFullText.length) {
-          finishTyping(nextHintText);
-        }
-      }, 24);
+      return;
     }
     const typeDialogue = typeChloeLine;
 
@@ -2323,7 +2306,8 @@
         </div>
       </div>
     `;
-    document.body.appendChild(upsetCutscene);
+    // Chloe upset cutscene disabled/removed from the shop
+    upsetCutscene.style.display = 'none';
 
     const rightStageEl = document.getElementById('rc-cutscene-right-stage');
     const paneChoices = document.getElementById('rc-pane-choices');

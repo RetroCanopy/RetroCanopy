@@ -6621,3 +6621,294 @@ body.rc-logged-in-home .hero-container.shifted-up {
 
 
 
+/* ==========================================================================
+   CONCEPT 02: TRUE VOLUMETRIC HOLOGRAM BLUEPRINT PEDESTAL
+   ========================================================================== */
+.rc-holo-pedestal-showcase {
+    gap: clamp(4px, 0.55vh, 7px);
+    padding: 2px 14px 4px;
+    position: relative;
+}
+
+.rc-holo-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: clamp(0.76rem, 1.18vw, 1.06rem);
+    letter-spacing: 0.14em;
+    color: #b8fbff;
+    text-shadow:
+        0 0 8px rgba(0, 240, 255, 0.92),
+        0 0 20px rgba(0, 240, 255, 0.48);
+}
+
+.rc-holo-header-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #00f0ff;
+    box-shadow: 0 0 10px #00f0ff, 0 0 18px #ffd700;
+    animation: holo-underlight-idle-flicker 2.4s steps(1, end) infinite;
+}
+
+.rc-holo-projectors-row {
+    gap: clamp(14px, 2.2vw, 34px);
+    align-items: flex-end;
+}
+
+.rc-holo-projector-unit {
+    position: relative;
+    gap: 3px;
+}
+
+.rc-holo-projection-well {
+    position: relative;
+    width: clamp(86px, 11vh, 124px);
+    height: clamp(86px, 11.2vh, 126px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    pointer-events: none;
+}
+
+/* Volumetric Upward Light Cone (cleanly behind the crisp icon so it never washes out detail) */
+.rc-holo-beam-cone {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 92%;
+    height: 86%;
+    background:
+        repeating-linear-gradient(
+            180deg,
+            rgba(0, 240, 255, 0.08) 0px,
+            rgba(0, 240, 255, 0.08) 1px,
+            transparent 1px,
+            transparent 4px
+        ),
+        linear-gradient(
+            to top,
+            rgba(0, 240, 255, 0.28) 0%,
+            rgba(0, 195, 255, 0.10) 48%,
+            rgba(0, 240, 255, 0) 100%
+        );
+    clip-path: polygon(28% 100%, 72% 100%, 100% 0%, 0% 0%);
+    z-index: 1;
+    animation: rcHoloBeamFlicker 2.8s infinite ease-in-out;
+    animation-delay: var(--holo-delay, 0s);
+}
+
+/* Sweeping Horizontal Laser Scan Bar inside the Beam */
+.rc-holo-scan-laser {
+    position: absolute;
+    left: 12%;
+    width: 76%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent 0%, #00f0ff 22%, #ffffff 50%, #00f0ff 78%, transparent 100%);
+    box-shadow: 0 0 8px #00f0ff;
+    z-index: 4;
+    opacity: 0.55;
+    animation: rcHoloLaserSweep 2.6s ease-in-out infinite alternate;
+    animation-delay: var(--holo-delay, 0s);
+}
+
+/* Floating 3D Wireframe Hologram Stage (100% unmasked native retina clarity) */
+.rc-holo-proj-stage {
+    position: relative;
+    width: 96%;
+    height: 90%;
+    margin-bottom: 8px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: rcHoloLevitate 3.1s ease-in-out infinite;
+    animation-delay: var(--holo-delay, 0s);
+}
+
+.rc-holo-proj-main {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    opacity: 1;
+    filter:
+        contrast(1.16)
+        brightness(1.12)
+        drop-shadow(0 4px 10px rgba(0, 0, 0, 0.88))
+        drop-shadow(0 0 6px rgba(0, 240, 255, 0.52));
+    animation: rcHoloProjectionFlicker 3.6s steps(1, end) infinite;
+    animation-delay: var(--holo-delay, 0s);
+}
+
+/* Chromatic Aberration / Hologram Interference Ghost Layers */
+.rc-holo-proj-glitch {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0;
+}
+
+.rc-holo-proj-glitch.glitch-cyan {
+    filter: hue-rotate(-18deg) saturate(2.2) brightness(1.35) drop-shadow(-3px 0 6px rgba(0, 240, 255, 0.9));
+    animation: rcHoloGlitchCyan 4.2s steps(1, end) infinite;
+    animation-delay: var(--holo-delay, 0s);
+}
+
+.rc-holo-proj-glitch.glitch-magenta {
+    filter: hue-rotate(115deg) saturate(2.2) brightness(1.25) drop-shadow(3px 0 6px rgba(255, 45, 149, 0.85));
+    animation: rcHoloGlitchMagenta 4.2s steps(1, end) infinite;
+    animation-delay: var(--holo-delay, 0s);
+}
+
+/* Cyber-Brass & Cyan Emitter Ring at Base of Each Projection */
+.rc-holo-emitter-ring {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 58%;
+    height: 12px;
+    border-radius: 50%;
+    z-index: 3;
+    background: radial-gradient(
+        ellipse at center,
+        #ffffff 0%,
+        #00f0ff 42%,
+        rgba(255, 200, 60, 0.85) 76%,
+        rgba(40, 28, 6, 0.95) 100%
+    );
+    border: 1.5px solid #7efbff;
+    box-shadow:
+        0 0 14px #00f0ff,
+        0 0 26px rgba(0, 240, 255, 0.72),
+        0 2px 6px rgba(255, 195, 40, 0.55);
+    animation: holo-underlight-idle-flicker 3.2s steps(1, end) infinite;
+    animation-delay: var(--holo-delay, 0s);
+}
+
+.rc-holo-floor-glow {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 84%;
+    height: 16px;
+    border-radius: 50%;
+    z-index: 1;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0, 240, 255, 0.78) 0%,
+        rgba(0, 240, 255, 0.28) 55%,
+        transparent 100%
+    );
+    filter: blur(3px);
+}
+
+.rc-holo-label {
+    color: #aefbff;
+    text-shadow:
+        0 0 8px rgba(0, 240, 255, 0.85),
+        0 0 16px rgba(0, 240, 255, 0.42);
+    font-size: clamp(0.60rem, 0.84vw, 0.80rem);
+    letter-spacing: 0.11em;
+}
+
+.rc-holo-projector-unit:hover .rc-holo-beam-cone,
+.rc-holo-projector-unit:focus-visible .rc-holo-beam-cone {
+    filter: brightness(1.45);
+}
+
+.rc-holo-projector-unit:hover .rc-holo-proj-main,
+.rc-holo-projector-unit:focus-visible .rc-holo-proj-main {
+    opacity: 1;
+    filter:
+        brightness(1.25)
+        drop-shadow(0 0 12px #00f0ff)
+        drop-shadow(0 0 24px rgba(255, 215, 0, 0.75));
+}
+
+.rc-holo-projector-unit:hover .rc-holo-emitter-ring,
+.rc-holo-projector-unit:focus-visible .rc-holo-emitter-ring {
+    border-color: #ffffff;
+    box-shadow:
+        0 0 20px #00f0ff,
+        0 0 36px rgba(255, 215, 0, 0.85);
+}
+
+.rc-holo-start-btn {
+    border-color: rgba(0, 240, 255, 0.82);
+    background: linear-gradient(180deg, rgba(6, 44, 64, 0.82) 0%, rgba(4, 18, 32, 0.94) 100%);
+    box-shadow:
+        0 0 16px rgba(0, 240, 255, 0.42),
+        inset 0 0 12px rgba(0, 240, 255, 0.24);
+    color: #d8fcff;
+}
+
+.rc-holo-start-btn:hover,
+.rc-holo-start-btn:focus-visible {
+    border-color: #80ffff;
+    box-shadow:
+        0 0 24px rgba(0, 240, 255, 0.82),
+        0 0 36px rgba(255, 215, 0, 0.38),
+        inset 0 0 14px rgba(0, 240, 255, 0.42);
+}
+
+@keyframes rcHoloBeamFlicker {
+    0%, 100% { opacity: 0.84; }
+    42% { opacity: 0.56; }
+    45% { opacity: 0.96; }
+    78% { opacity: 0.68; }
+    81% { opacity: 0.94; }
+}
+
+@keyframes rcHoloLaserSweep {
+    0% { bottom: 14%; opacity: 0.35; }
+    50% { opacity: 0.92; }
+    100% { bottom: 84%; opacity: 0.42; }
+}
+
+@keyframes rcHoloLevitate {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-5px) scale(1.03); }
+}
+
+@keyframes rcHoloProjectionFlicker {
+    0%, 100% { opacity: 0.92; }
+    27% { opacity: 0.64; }
+    29% { opacity: 0.98; }
+    63% { opacity: 0.72; }
+    64% { opacity: 0.48; }
+    66% { opacity: 0.95; }
+}
+
+@keyframes rcHoloGlitchCyan {
+    0%, 26%, 30%, 62%, 66%, 100% { opacity: 0; transform: translate3d(0, 0, 0); }
+    27%, 29% { opacity: 0.65; transform: translate3d(-3px, -1px, 0) scaleX(1.03); }
+    63%, 65% { opacity: 0.75; transform: translate3d(-4px, 1px, 0); }
+}
+
+@keyframes rcHoloGlitchMagenta {
+    0%, 26%, 30%, 62%, 66%, 100% { opacity: 0; transform: translate3d(0, 0, 0); }
+    28%, 29% { opacity: 0.55; transform: translate3d(3px, 1px, 0) scaleX(1.02); }
+    64%, 65% { opacity: 0.68; transform: translate3d(4px, -1px, 0); }
+}
+
+@media (max-width: 768px) {
+    .rc-holo-projection-well {
+        width: 52px;
+        height: 54px;
+    }
+    .rc-holo-emitter-ring {
+        height: 8px;
+    }
+    .rc-holo-label {
+        font-size: 0.45rem;
+    }
+}

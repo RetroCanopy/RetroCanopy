@@ -562,8 +562,16 @@ body > footer.hud-dock {
   box-shadow: 0 4px 18px rgba(255, 45, 149, 0.4) !important;
 }
 
-/* ── 4. CORNER-DOCKED CHLOE SHOP CURATOR & COMPACT COLLAPSIBLE HUD ──────── */
-.shop-chloe-stage {
+/* ── 4. CORNER-DOCKED SHOP CURATOR (REMOVED) ──────── */
+.shop-chloe-stage,
+.shop-chloe-dialogue,
+.rc-chloe-upset-cutscene {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.shop-chloe-stage-disabled {
   position: fixed;
   left: 12px;
   bottom: 0;
