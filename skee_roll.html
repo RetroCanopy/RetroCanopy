@@ -965,11 +965,14 @@ function onEvent(type, val) {
 
     S.score += finalPts;
     S.results.push(finalPts);
-    const newTix = Math.floor(S.score / 10) - S.dispTarget;
-    S.dispTarget = Math.floor(S.score / 10);
-    if (newTix > 0) S.ticketPulse = 1.0;
-
-    awardPointsAndTickets(finalPts);
+    const totalTix = Math.floor(S.score / 100);
+    const newTix = totalTix - S.dispTarget;
+    S.dispTarget = totalTix;
+    if (newTix > 0) {
+      S.ticketPulse = 1.0;
+      // 1 wallet ticket = 10 XP in rc_canopy_xp, so each ticket earned (1 per 100 pts) adds 10 XP
+      awardPointsAndTickets(newTix * 10);
+    }
     Snd.score(basePts, totalMult);
 
     const p = P(b.x, b.y, b.z);
@@ -1125,8 +1128,23 @@ document.querySelectorAll('[data-preset]').forEach(btn => {
   });
 });
 
-// Smooth Canvas Drag & Flick-to-Roll (Locks lateral aimX once upward flick begins!)
+// Smooth Canvas Pull-Back-to-Shoot (Slingshot) & Flick-Up-to-Roll
 let drag = null;
+function calcPullMetrics(startX, startY, clientX, clientY, lockedAimX) {
+  const refH = Math.max(320, cv.getBoundingClientRect().height);
+  const pullBackPx = Math.max(0, clientY - startY);
+  const maxPullPx = Math.max(85, Math.min(175, refH * 0.22));
+  const isPullingBack = pullBackPx >= 12;
+  const pullPower = isPullingBack
+    ? clamp((pullBackPx - 10) / Math.max(20, maxPullPx - 10), 0.12, 1.0)
+    : 0;
+  const targetAimX = clamp(laneXAtClient(clientX), -(LH - RB - 0.015), LH - RB - 0.015);
+  const pullAng = isPullingBack
+    ? clamp(S.aimAng + (targetAimX - lockedAimX) * 0.35, -0.16, 0.16)
+    : S.aimAng;
+  return { refH, pullBackPx, isPullingBack, pullPower, targetAimX, pullAng };
+}
+
 cv.addEventListener('pointerdown', e => {
   Snd.init();
   if (S.resultsShown) return;
@@ -1139,7 +1157,12 @@ cv.addEventListener('pointerdown', e => {
     id: e.pointerId,
     startX: e.clientX,
     startY: e.clientY,
+    curX: e.clientX,
+    curY: e.clientY,
     lockedAimX: startX,
+    pullBackPx: 0,
+    pullPower: 0,
+    pullAng: S.aimAng,
     pts: [{ t: performance.now(), x: e.clientX, y: e.clientY }]
   };
 });
@@ -1147,14 +1170,22 @@ cv.addEventListener('pointerdown', e => {
 cv.addEventListener('pointermove', e => {
   if (!drag || e.pointerId !== drag.id) return;
   const now = performance.now();
+  drag.curX = e.clientX;
+  drag.curY = e.clientY;
   drag.pts.push({ t: now, x: e.clientX, y: e.clientY });
   while (drag.pts.length > 2 && now - drag.pts[0].t > 150) drag.pts.shift();
 
-  // Only adjust lateral ball position while moving horizontally near the start of the gesture;
-  // once dragging upward (> 24px), lock S.aimX so the upward swipe never jerks the ball sideways!
   const dyUp = drag.startY - e.clientY;
-  if (dyUp < 24 && S.state === 'ready') {
-    S.aimX = clamp(laneXAtClient(e.clientX), -(LH - RB - 0.015), LH - RB - 0.015);
+  const pm = calcPullMetrics(drag.startX, drag.startY, e.clientX, e.clientY, drag.lockedAimX);
+  drag.pullBackPx = pm.pullBackPx;
+  drag.pullPower = pm.pullPower;
+  drag.pullAng = pm.pullAng;
+
+  if (pm.isPullingBack && S.state === 'ready') {
+    // While pulling back, smoothly follow horizontal finger movement & angle
+    S.aimX = lerp(drag.lockedAimX, pm.targetAimX, 0.65);
+  } else if (dyUp < 24 && S.state === 'ready') {
+    S.aimX = pm.targetAimX;
     drag.lockedAimX = S.aimX;
   } else if (S.state === 'ready') {
     S.aimX = drag.lockedAimX;
@@ -1177,14 +1208,23 @@ function endDrag(e) {
   const v = flickVel(now);
   const totalDy = drag.startY - e.clientY;
   const totalDx = e.clientX - drag.startX;
+  const pm = calcPullMetrics(drag.startX, drag.startY, e.clientX, e.clientY, drag.lockedAimX);
   drag = null;
   cv.classList.remove('drag');
-  if (!v) return;
 
-  const refH = Math.max(480, cv.getBoundingClientRect().height);
+  // Mode 1: Pull-Back Release (Slingshot / Plunger)
+  if (pm.isPullingBack && pm.pullPower > 0) {
+    const v0 = lerp(4.1, 8.2, pm.pullPower);
+    launch(v0, pm.pullAng);
+    return;
+  }
+
+  // Mode 2: Upward Swipe / Flick
+  if (!v) return;
+  const refH = pm.refH;
   const upSpeed = -v.vy;
   if (upSpeed < refH * 0.22 && totalDy < 35) {
-    S.hintT = 1.4;
+    S.hintT = 1.6;
     return;
   }
   const norm = clamp(Math.max(upSpeed / (refH * 1.65), totalDy / (refH * 0.52)), 0.15, 1.0);
@@ -1416,11 +1456,16 @@ function drawAimTrajectory(g) {
   let pwr = S.charging ? chargePower() : S.defaultPower;
   let ang = S.aimAng;
   if (drag) {
-    const v = flickVel(performance.now());
-    const refH = Math.max(480, cv.getBoundingClientRect().height);
-    if (v && -v.vy > 40) {
-      pwr = clamp((-v.vy / (refH * 1.65)), 0.18, 1);
-      ang = clamp(Math.atan2(v.vx * 0.65, -v.vy) * 0.28, -0.16, 0.16);
+    if (drag.pullBackPx >= 12 && drag.pullPower > 0) {
+      pwr = drag.pullPower;
+      ang = drag.pullAng;
+    } else {
+      const v = flickVel(performance.now());
+      const refH = Math.max(320, cv.getBoundingClientRect().height);
+      if (v && -v.vy > 40) {
+        pwr = clamp((-v.vy / (refH * 1.65)), 0.18, 1);
+        ang = clamp(Math.atan2(v.vx * 0.65, -v.vy) * 0.28, -0.16, 0.16);
+      }
     }
   }
   const v0 = lerp(4.1, 8.2, pwr);
@@ -1729,11 +1774,34 @@ function render() {
 
   // 3. Ball & Real-Time Mahogany Lane Reflection
   if (S.state === 'ready') {
-    const z = lerp(-0.15, Z0, 1 - Math.pow(1 - S.rollIn, 3));
+    const pullPwr = (drag && drag.pullBackPx >= 12) ? drag.pullPower : (S.charging ? chargePower() : 0);
+    const zBase = lerp(-0.15, Z0, 1 - Math.pow(1 - S.rollIn, 3));
+    const z = zBase - pullPwr * 0.22;
     const y = surf(z) + RB;
 
     // Live 3D Trajectory Guide Arc
     drawAimTrajectory(ctx);
+
+    // Slingshot / Plunger Neon Tension Band when pulling ball back
+    if (pullPwr > 0.01) {
+      const anchorL = P(S.aimX - RB * 0.95, surf(Z0) + RB * 0.35, Z0 + 0.04);
+      const anchorR = P(S.aimX + RB * 0.95, surf(Z0) + RB * 0.35, Z0 + 0.04);
+      const ballMid = P(S.aimX, y, z);
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const bandCol = pullPwr > 0.8 ? '#ffd23a' : pullPwr > 0.45 ? '#ff3ad8' : '#00f0ff';
+      ctx.strokeStyle = bandCol;
+      ctx.shadowColor = bandCol;
+      ctx.shadowBlur = 16;
+      ctx.lineWidth = 3.5 + pullPwr * 3.5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(anchorL.x, anchorL.y);
+      ctx.lineTo(ballMid.x, ballMid.y + 6);
+      ctx.lineTo(anchorR.x, anchorR.y);
+      ctx.stroke();
+      ctx.restore();
+    }
 
     // Polished mahogany reflection & soft contact shadow
     draw3DBall(ctx, S.aimX, -y * 0.85, z, 0.95, 0.24, true);
@@ -1746,13 +1814,13 @@ function render() {
 
     // Pulsing launch ring under ball
     const pulse = 0.5 + 0.5 * Math.sin(S.time * 5.2);
-    ctx.strokeStyle = S.mult >= 3 ? '#ffd23a' : '#00f0ff';
+    ctx.strokeStyle = pullPwr > 0.75 ? '#ffd23a' : S.mult >= 3 ? '#ffd23a' : '#00f0ff';
     ctx.shadowColor = ctx.strokeStyle;
     ctx.shadowBlur = 14;
     ctx.lineWidth = 2.2;
     ctx.globalAlpha = 0.45 + pulse * 0.35;
     ctx.beginPath();
-    ctx.ellipse(sp.x, sp.y + 4, RB * sp.s * 0.88, RB * sp.s * 0.32, 0, 0, Math.PI * 2);
+    ctx.ellipse(sp.x, sp.y + 4, RB * sp.s * (0.88 + pullPwr * 0.22), RB * sp.s * (0.32 + pullPwr * 0.08), 0, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
 
@@ -1760,9 +1828,19 @@ function render() {
 
     if (S.charging) {
       drawPowerMeter(ctx, bp, chargePower());
+    } else if (drag && drag.pullBackPx >= 12) {
+      drawPowerMeter(ctx, bp, drag.pullPower);
+      ctx.save();
+      ctx.font = '900 13px Orbitron';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = drag.pullPower > 0.8 ? '#ffd23a' : '#00f0ff';
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.shadowBlur = 12;
+      ctx.fillText(`POWER ${Math.round(drag.pullPower * 100)}% • RELEASE TO ROLL`, bp.x, bp.y - bp.r - 18);
+      ctx.restore();
     } else if (drag) {
       const v = flickVel(performance.now());
-      const refH = Math.max(480, cv.getBoundingClientRect().height);
+      const refH = Math.max(320, cv.getBoundingClientRect().height);
       if (v && -v.vy > 20) drawPowerMeter(ctx, bp, clamp(-v.vy / (refH * 1.65), 0.1, 1));
     } else if (S.rollIn >= 1) {
       ctx.save();
@@ -1773,8 +1851,8 @@ function render() {
       ctx.shadowColor = '#00f0ff';
       ctx.shadowBlur = 10;
       const hint = S.hintT > 0
-        ? 'SWIPE UP FASTER OR HOLD [ROLL]!'
-        : 'SWIPE UP BALL • OR HOLD [SPACE / ROLL]';
+        ? 'PULL BALL BACK (OR SWIPE UP) TO ROLL!'
+        : 'PULL BALL BACK FOR POWER • OR SWIPE UP / HOLD [ROLL]';
       ctx.fillText(hint, bp.x, bp.y - bp.r - 18);
       ctx.restore();
     }
@@ -1900,7 +1978,7 @@ window.__skee = {
     while (S.results.length < BALLS) {
       S.results.push(50);
       S.score += 50;
-      S.dispTarget = Math.floor(S.score / 10);
+      S.dispTarget = Math.floor(S.score / 100);
     }
     S.ballIdx = BALLS;
     endGame();
