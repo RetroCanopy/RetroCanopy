@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>SKEE ROLL '84 — Retrocanopy Neo-Tokyo Arcade</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Outfit:ital,wght@0,500;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00f0ff;
+    --pink: #ff2fd0;
+    --gold: #ffd23a;
+    --violet: #7b68ff;
+    --bg: #05020d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: var(--bg); color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    touch-action: none;
+  }
+
+  /* Fullscreen Stage Wrapper */
+  #stageWrap {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(45, 16, 86, 0.45) 0%, rgba(5, 2, 13, 0.96) 75%),
+      url('assets/concept_gallery/skee_roll_84_bg_clean.jpg') center center / cover no-repeat;
+  }
+  #stageWrap::before {
+    content: ""; position: absolute; inset: 0;
+    backdrop-filter: blur(22px) brightness(0.45);
+    -webkit-backdrop-filter: blur(22px) brightness(0.45);
+    pointer-events: none;
+  }
+
+  /* 16:9 Crisp Cabinet Viewport */
+  #cabinetFrame {
+    position: relative;
+    width: 100vw; height: 100vh; height: 100dvh;
+    max-width: calc(100dvh * (1376 / 768));
+    max-height: calc(100vw * (768 / 1376));
+    box-shadow:
+      0 0 60px rgba(0, 0, 0, 0.95),
+      0 0 40px rgba(255, 47, 208, 0.25),
+      0 0 80px rgba(0, 240, 255, 0.18);
+    overflow: hidden;
+    background: #070312;
+  }
+
+  @media (min-aspect-ratio: 16/10) and (max-aspect-ratio: 19/10) {
+    #cabinetFrame {
+      max-width: 100vw;
+      max-height: 100dvh;
+    }
+  }
+
+  #c {
+    width: 100%; height: 100%;
+    display: block;
+    cursor: grab;
+  }
+  #c.drag { cursor: grabbing; }
+
+  /* Subtle CRT Scanline & Vignette Polish */
+  .scanlines {
+    position: absolute; inset: 0; pointer-events: none; z-index: 4;
+    background:
+      radial-gradient(ellipse at 50% 48%, transparent 62%, rgba(4, 2, 12, 0.55) 100%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 3px);
+  }
+
+  /* Top Floating Navigation Deck */
+  .top-nav {
+    position: fixed;
+    top: max(10px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    z-index: 30;
+    display: flex; align-items: center; justify-content: space-between;
+    pointer-events: none;
+    gap: 8px;
+  }
+  .nav-group {
+    display: flex; align-items: center; gap: 8px;
+    pointer-events: auto;
+    flex-wrap: wrap;
+  }
+  .nav-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 13px; border-radius: 999px;
+    background: linear-gradient(180deg, rgba(20, 12, 42, 0.88), rgba(8, 4, 20, 0.94));
+    border: 1.5px solid rgba(0, 240, 255, 0.55);
+    color: #dffcff; text-decoration: none;
+    font: 800 10.5px/1 'Orbitron', sans-serif;
+    letter-spacing: 0.08em; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.7), 0 0 14px rgba(0,240,255,0.25);
+    backdrop-filter: blur(8px);
+    transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+  }
+  .nav-pill:hover {
+    transform: translateY(-1px);
+    border-color: #fff;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.85), 0 0 22px rgba(0,240,255,0.6);
+  }
+  .nav-pill.gold {
+    border-color: rgba(255, 210, 58, 0.75);
+    color: #ffe885;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.7), 0 0 16px rgba(255,210,58,0.28);
+  }
+  .nav-pill.pink {
+    border-color: rgba(255, 47, 208, 0.7);
+    color: #ffb8f0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.7), 0 0 16px rgba(255,47,208,0.28);
+  }
+
+  /* Interactive Bottom-Left Arcade Control Deck (Aim, Curve Spin, Power Charge, Camera View) */
+  .control-deck {
+    position: fixed;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: max(14px, env(safe-area-inset-left));
+    z-index: 25;
+    display: flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, rgba(16, 9, 34, 0.9), rgba(7, 3, 18, 0.95));
+    border: 1.5px solid rgba(0, 240, 255, 0.42);
+    border-radius: 14px;
+    padding: 7px 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.85), 0 0 20px rgba(0,240,255,0.18);
+    backdrop-filter: blur(10px);
+  }
+  .ctrl-group {
+    display: flex; align-items: center; gap: 4px;
+    padding-right: 8px;
+    border-right: 1px solid rgba(255,255,255,0.12);
+  }
+  .ctrl-group:last-child { border-right: none; padding-right: 0; }
+  .ctrl-lbl {
+    font-size: 8.5px; font-weight: 800; color: #9beeff;
+    letter-spacing: 0.1em; margin-right: 3px;
+    text-transform: uppercase;
+  }
+  .ctrl-btn {
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1.2px solid rgba(0, 240, 255, 0.45);
+    background: rgba(0, 240, 255, 0.1);
+    color: #e6fcff;
+    font: 800 10px/1 'Orbitron', sans-serif;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.14s ease;
+  }
+  .ctrl-btn:hover, .ctrl-btn.active {
+    background: rgba(0, 240, 255, 0.28);
+    border-color: #fff;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.55);
+  }
+  .ctrl-btn.roll-cta {
+    background: linear-gradient(180deg, #ff3ad8 0%, #a31088 100%);
+    border: 1.5px solid #ffd23a;
+    color: #fff;
+    padding: 8px 14px;
+    font-size: 10.5px;
+    box-shadow: 0 0 18px rgba(255, 58, 216, 0.65);
+  }
+  .ctrl-btn.roll-cta:hover, .ctrl-btn.roll-cta:active {
+    background: linear-gradient(180deg, #ff6be3 0%, #c818a8 100%);
+    box-shadow: 0 0 24px rgba(255, 210, 58, 0.9);
+    transform: scale(1.03);
+  }
+
+  /* Quick Ring Preset Pills (Right-bottom helper for instant aim / practice) */
+  .preset-deck {
+    position: fixed;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    right: max(14px, env(safe-area-inset-right));
+    z-index: 25;
+    display: flex; align-items: center; gap: 6px;
+    background: linear-gradient(180deg, rgba(16, 9, 34, 0.88), rgba(7, 3, 18, 0.94));
+    border: 1.5px solid rgba(255, 210, 58, 0.45);
+    border-radius: 14px;
+    padding: 6px 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.85), 0 0 18px rgba(255, 210, 58, 0.18);
+    backdrop-filter: blur(10px);
+  }
+
+  @media (max-width: 900px) {
+    .preset-deck { display: none; }
+    .control-deck {
+      left: 50%; transform: translateX(-50%);
+      width: max-content; max-width: 96vw;
+      padding: 6px 8px; gap: 5px;
+    }
+    .ctrl-lbl { display: none; }
+  }
+
+  /* End of Game Modal Overlay */
+  #modal {
+    position: fixed; inset: 0; z-index: 50;
+    display: none; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at center, rgba(18, 6, 38, 0.78), rgba(3, 1, 8, 0.94));
+    backdrop-filter: blur(10px);
+    padding: 16px;
+  }
+  #modal.show { display: flex; }
+  .card {
+    width: min(480px, 94vw);
+    padding: 26px 26px 22px;
+    border-radius: 20px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(24, 11, 52, 0.96), rgba(9, 4, 24, 0.98));
+    border: 2px solid rgba(0, 240, 255, 0.7);
+    box-shadow:
+      0 0 45px rgba(255, 47, 208, 0.45),
+      0 0 90px rgba(0, 240, 255, 0.25),
+      inset 0 0 28px rgba(255, 47, 208, 0.16);
+  }
+  .card .kicker {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.28em;
+    color: var(--cyan); text-shadow: 0 0 10px var(--cyan);
+  }
+  .card h1 {
+    font: italic 900 32px/1.05 'Outfit', sans-serif;
+    margin: 6px 0 4px;
+    background: linear-gradient(180deg, #ffffff 0%, #ffd6ff 45%, #ff3ad8 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 16px rgba(255, 47, 208, 0.75));
+  }
+  .card .scoreBig {
+    font: 900 54px/1 'Orbitron', sans-serif;
+    color: #fff;
+    text-shadow: 0 0 20px var(--cyan), 0 0 42px #00a2ff;
+    margin: 8px 0 4px;
+  }
+  .card .rankBadge {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.16em;
+    background: rgba(255, 210, 58, 0.16);
+    border: 1px solid rgba(255, 210, 58, 0.65);
+    color: #ffe678;
+  }
+  .card .row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 14px; margin: 6px 0; border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(0, 240, 255, 0.22);
+    font-size: 11.5px; letter-spacing: 0.1em; color: #b8f2ff;
+  }
+  .card .row b {
+    font-size: 15px; color: var(--gold);
+    text-shadow: 0 0 10px rgba(255, 180, 32, 0.8);
+  }
+  .ballsGrid {
+    display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px;
+    margin: 12px 0 16px;
+  }
+  .ballChip {
+    padding: 6px 2px; border-radius: 7px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    font-size: 10px; font-weight: 900; color: #fff;
+  }
+  .card .btnRow {
+    display: flex; gap: 10px; margin-top: 10px;
+  }
+  .card button, .card a.btnLink {
+    flex: 1;
+    padding: 13px 16px; border-radius: 11px;
+    border: 2px solid var(--gold);
+    background: linear-gradient(180deg, #ff3ad8 0%, #9c1282 100%);
+    color: #fff; text-decoration: none;
+    font: 900 13px/1 'Orbitron', sans-serif;
+    letter-spacing: 0.14em; cursor: pointer;
+    box-shadow: 0 0 24px rgba(255, 58, 216, 0.7);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .card a.btnLink.secondary {
+    background: linear-gradient(180deg, rgba(0, 240, 255, 0.2), rgba(0, 110, 160, 0.35));
+    border-color: var(--cyan);
+    box-shadow: 0 0 18px rgba(0, 240, 255, 0.35);
+  }
+  .card button:hover, .card a.btnLink:hover { filter: brightness(1.15); transform: translateY(-1px); }
+</style>
+</head>
+<body>
+
+<!-- Top Floating Navigation Bar -->
+<nav class="top-nav" aria-label="Arcade Navigation">
+  <div class="nav-group">
+    <a class="nav-pill" href="games.html" title="Return to Neo-Tokyo Arcade Deck">&#9664; ARCADE DECK</a>
+    <a class="nav-pill gold" href="games.html#ticketCounter" onclick="sessionStorage.setItem('rc_open_tc','1')" title="Redeem Golden Tickets">&#127915; TICKET COUNTER</a>
+    <a class="nav-pill pink" href="hat_preview.html" title="Visit Retrocanopy Store">&#128717;&#65039; STORE</a>
+  </div>
+  <div class="nav-group">
+    <button type="button" class="nav-pill" id="btnNewGame" title="Restart 9-Ball Frame">&#8635; NEW FRAME</button>
+    <button type="button" class="nav-pill" id="mute" title="Toggle Arcade Audio">&#128266; AUDIO</button>
+  </div>
+</nav>
+
+<!-- Main 16:9 Photorealistic + 3D Hybrid Stage -->
+<div id="stageWrap">
+  <div id="cabinetFrame">
+    <canvas id="c" width="1376" height="768"></canvas>
+    <div class="scanlines"></div>
+  </div>
+</div>
+
+<!-- Bottom-Left Interactive Control Deck -->
+<div class="control-deck" aria-label="Skee Roll Controls">
+  <div class="ctrl-group">
+    <span class="ctrl-lbl">AIM</span>
+    <button type="button" class="ctrl-btn" id="btnAimL" title="Move Ball Left (A / Left Arrow)">&#9664;</button>
+    <button type="button" class="ctrl-btn" id="btnAimC" title="Center Ball">CTR</button>
+    <button type="button" class="ctrl-btn" id="btnAimR" title="Move Ball Right (D / Right Arrow)">&#9654;</button>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-lbl">SPIN</span>
+    <button type="button" class="ctrl-btn" id="btnSpinL" title="Hook Spin Left (Q)">&#8630; L</button>
+    <button type="button" class="ctrl-btn active" id="btnSpin0" title="Straight Roll">0</button>
+    <button type="button" class="ctrl-btn" id="btnSpinR" title="Hook Spin Right (E)">R &#8631;</button>
+  </div>
+  <div class="ctrl-group">
+    <button type="button" class="ctrl-btn roll-cta" id="btnRollHold" title="Hold to Charge Power & Release to Roll (or Hold SPACE)">&#127923; HOLD TO ROLL</button>
+  </div>
+</div>
+
+<!-- Bottom-Right Quick Target Aim Presets -->
+<div class="preset-deck" aria-label="Target Shot Assist">
+  <span class="ctrl-lbl" style="color:#ffd23a;">AIM LOCK:</span>
+  <button type="button" class="ctrl-btn" data-preset="left100" title="Line up Left 100 Gold Corner Cup">L-100</button>
+  <button type="button" class="ctrl-btn" data-preset="center100" title="Line up Center 100 Bullseye">BULL 100</button>
+  <button type="button" class="ctrl-btn" data-preset="ring50" title="Line up 50 Ring">50 RING</button>
+  <button type="button" class="ctrl-btn" data-preset="right100" title="Line up Right 100 Gold Corner Cup">R-100</button>
+</div>
+
+<!-- Game Over Summary Modal -->
+<div id="modal">
+  <div class="card">
+    <div class="kicker">SKEE ROLL '84 &bull; FRAME COMPLETE</div>
+    <h1 id="mTitle">ARCADE MASTER</h1>
+    <div class="scoreBig" id="mScore">0</div>
+    <div class="rankBadge" id="mRank">STREAK MULTIPLIER: 1X</div>
+    <div class="ballsGrid" id="mBallsGrid"></div>
+    <div class="row"><span>GOLDEN TICKETS WON</span><b id="mTix">+0 &#127915;</b></div>
+    <div class="row"><span>HIGH SCORE RECORD</span><b id="mBest">0</b></div>
+    <div class="row"><span>TICKET WALLET BALANCE</span><b id="mWal">&#127915; 0</b></div>
+    <div class="btnRow">
+      <button type="button" id="again">&#8635; ROLL AGAIN</button>
+      <a class="btnLink secondary" href="games.html">&#127918; ARCADE HUB</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="auth_hub.js?v=147"></script>
+<script>
+(() => {
+'use strict';
+
+// Mark internal navigation so returning to index.html / games.html is seamless
+try {
+  sessionStorage.setItem('rc_intro_seen', '1');
+  sessionStorage.setItem('rc_from_internal', '1');
+} catch (_) {}
+
+/* ============================================================================
+   1. EXACT CALIBRATED COORDINATE SYSTEM (Matches skee_roll_84_bg_clean.jpg 1376x768)
+   ============================================================================ */
+const CW = 1376, CH = 768;
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+
+// Load clean high-resolution 1984 Tokyo Arcade cabinet plate (1376 x 768)
+const bgImg = new Image();
+let bgLoaded = false;
+bgImg.onload = () => { bgLoaded = true; };
+bgImg.src = 'assets/concept_gallery/skee_roll_84_bg_clean.jpg?v=2';
+
+/* ============================================================================
+   2. 3D PHYSICS & PERSPECTIVE CALIBRATED TO THE ARTWORK RINGS & WOOD LANE
+   ============================================================================
+   World units (meters):
+   - X: lateral (-LH .. +LH), where 0 is centerline X = 688 px
+   - Z: depth along alley:
+       Z0 = 0.25m (ball release point -> screen Y = 528)
+       HZ0 = 2.55m (launch ramp lip -> screen Y = 408)
+       ZP = 2.62m (target board base -> screen Y = 402)
+       Target board inclined at PH = 31 deg from ZP to Z_TOP
+*/
+const LH = 0.285;              // Lane inner half-width
+const RB = 0.044;              // Ball radius
+const Z0 = 0.25;               // Ball spawn depth
+const HZ0 = 2.40;              // Ramp curve start
+const ZP = 2.62;               // Ramp lip / Board base
+const RAMP_H = 0.068;          // Ramp height rise
+const PH = 31 * Math.PI / 180; // Board tilt angle
+const CPH = Math.cos(PH), SPH = Math.sin(PH);
+const BL = 1.18;               // Board length in board-space v
+const G = 9.81;
+const BALLS = 9;
+const DT = 1 / 240;
+
+// Target Board Pockets & Concentric Rings (board coordinates u, v in meters)
+// Mapped so P(x,y,z) projects onto the exact glowing neon rings of skee_roll_84_bg_clean.jpg!
+const RINGS = [
+  { s: 100, col: '#ff4fd8', label: '100', cx: 0, cy: 0.905, rx: 0.095, ry: 0.082, holeY: 0.905, holeR: 0.068 },
+  { s: 50,  col: '#29e6ff', label: '50',  cx: 0, cy: 0.770, rx: 0.102, ry: 0.086, holeY: 0.770, holeR: 0.068 },
+  { s: 40,  col: '#ff3ad8', label: '40',  cx: 0, cy: 0.625, rx: 0.118, ry: 0.094, holeY: 0.625, holeR: 0.068 },
+  { s: 30,  col: '#29e6ff', label: '30',  cx: 0, cy: 0.565, rx: 0.185, ry: 0.175, holeY: 0.465, holeR: 0.068 },
+  { s: 20,  col: '#7b68ff', label: '20',  cx: 0, cy: 0.525, rx: 0.315, ry: 0.305, holeY: 0.318, holeR: 0.072 },
+  { s: 10,  col: '#ff2fd0', label: '10',  cx: 0, cy: 0.485, rx: 0.445, ry: 0.425, holeY: 0.145, holeR: 0.076 }
+];
+
+// Upper-Left and Upper-Right 100 Gold Jackpot Corner Cups
+const CUPS = [
+  { u: -0.325, v: 0.945, r: 0.082, s: 100, col: '#ffd23a', label: 'L-100' },
+  { u:  0.325, v: 0.945, r: 0.082, s: 100, col: '#ffd23a', label: 'R-100' }
+];
+
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+
+function surf(z) {
+  if (z <= HZ0) return 0;
+  const u = clamp((z - HZ0) / (ZP - HZ0), 0, 1);
+  return RAMP_H * u * u * (3 - 2 * u);
+}
+function dsurf(z) {
+  if (z <= HZ0 || z >= ZP) return 0;
+  const L = ZP - HZ0, u = (z - HZ0) / L;
+  return RAMP_H * 6 * u * (1 - u) / L;
+}
+function BW(u, v, h = 0) {
+  return [
+    u,
+    RAMP_H + v * SPH + h * CPH,
+    ZP + v * CPH - h * SPH
+  ];
+}
+function bc(b) {
+  const dy = b.y - RAMP_H, dz = b.z - ZP;
+  return {
+    u: b.x,
+    v: dy * SPH + dz * CPH,
+    h: dy * CPH - dz * SPH,
+    vu: b.vx,
+    vv: b.vy * SPH + b.vz * CPH,
+    vh: b.vy * CPH - b.vz * SPH
+  };
+}
+function setB(b, u, v, h, vu, vv, vh) {
+  b.x = u;
+  b.y = RAMP_H + v * SPH + h * CPH;
+  b.z = ZP + v * CPH - h * SPH;
+  b.vx = vu;
+  b.vy = vv * SPH + vh * CPH;
+  b.vz = vv * CPH - vh * SPH;
+}
+
+/* Calibrated 3D -> 1376x768 Artwork Projection
+   Matches:
+   - Lane bottom (z = -0.35) -> y = 665, half-width = 503px
+   - Ball spawn (z = 0.25) -> y = 528, half-width = 335px
+   - Ramp lip (z = 2.62, y = 0.068) -> y = 405, half-width = 112px
+   - Board rings (v = 0.145..0.945) -> y = 372..212
+*/
+function P(x, y, z) {
+  if (z <= ZP + 0.001 && y <= RAMP_H + 0.06) {
+    // Lane & Ramp perspective projection anchored to vanishing point (688, 330.5)
+    const u = clamp((z - (-0.35)) / (ZP - (-0.35)), -0.2, 1.05);
+    // Perspective depth factor k: 1.0 at z=-0.35 (y=665) down to 0.223 at z=ZP (y=405)
+    const k = 1 / (1 + 3.48 * Math.max(0, u));
+    const syBase = 330.5 + (665 - 330.5) * k;
+    const scaleX = (503 * k) / LH; // px per meter laterally at this depth
+    const liftY = Math.max(0, y - surf(Math.min(z, ZP))) * scaleX * 0.85;
+    return {
+      x: 688 + x * scaleX,
+      y: syBase - liftY,
+      s: scaleX
+    };
+  }
+  // Above/beyond ramp lip -> Board projection matching artwork target bowl
+  const dy = y - RAMP_H, dz = z - ZP;
+  const v = dy * SPH + dz * CPH;
+  const h = Math.max(0, dy * CPH - dz * SPH);
+  // v in [0 .. 1.05] maps to screen Y [400 .. 198]
+  const sy = 400 - v * 196 - h * 260;
+  // Slight perspective narrowing up the board
+  const scaleX = lerp(392, 274, clamp(v / 1.0, 0, 1.2));
+  return {
+    x: 688 + x * scaleX,
+    y: sy,
+    s: scaleX * 0.82
+  };
+}
+
+// Convert client pointer X/Y into canvas (1376x768) coordinates
+function clientToCanvas(clientX, clientY) {
+  const rect = cv.getBoundingClientRect();
+  return {
+    x: (clientX - rect.left) * (CW / Math.max(1, rect.width)),
+    y: (clientY - rect.top) * (CH / Math.max(1, rect.height))
+  };
+}
+
+function laneXAtClient(clientX) {
+  const pt = clientToCanvas(clientX, 0);
+  const p0 = P(0, RB, Z0);
+  return (pt.x - 688) / p0.s;
+}
+
+/* ============================================================================
+   3. SYNTHWAVE WEB AUDIO ENGINE (Multi-Layered FM Chimes, Roll Rumble & Fanfare)
+   ============================================================================ */
+const Snd = (() => {
+  let ac = null, muted = false, rollGain = null, rollFilter = null;
+  function init() {
+    if (ac) { if (ac.state === 'suspended') ac.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    ac = new AC();
+    // Filtered wood-alley rolling rumble
+    const buf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    let b0 = 0, b1 = 0, b2 = 0;
+    for (let i = 0; i < d.length; i++) {
+      const w = Math.random() * 2 - 1;
+      b0 = 0.99 * b0 + w * 0.05;
+      b1 = 0.96 * b1 + w * 0.12;
+      b2 = 0.85 * b2 + w * 0.22;
+      d[i] = (b0 + b1 + b2) * 0.3;
+    }
+    const src = ac.createBufferSource();
+    src.buffer = buf; src.loop = true;
+    rollFilter = ac.createBiquadFilter();
+    rollFilter.type = 'bandpass';
+    rollFilter.frequency.value = 165;
+    rollFilter.Q.value = 2.4;
+    rollGain = ac.createGain();
+    rollGain.gain.value = 0;
+    src.connect(rollFilter).connect(rollGain).connect(ac.destination);
+    src.start();
+  }
+  function setMute(m) {
+    muted = m;
+    if (rollGain && ac) rollGain.gain.setTargetAtTime(0, ac.currentTime, 0.03);
+  }
+  function roll(speedNorm) {
+    if (!ac || muted) return;
+    const t = ac.currentTime;
+    const g = clamp(speedNorm, 0, 1) * 0.22;
+    rollFilter.frequency.setTargetAtTime(110 + clamp(speedNorm, 0, 1.3) * 210, t, 0.03);
+    rollGain.gain.setTargetAtTime(g, t, 0.025);
+  }
+  function tone(freq, dur, type = 'sine', gain = 0.14, delay = 0, slideTo = 0) {
+    if (!ac || muted) return;
+    const t = ac.currentTime + delay;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t);
+    if (slideTo > 0) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(gain, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+  function hit(g = 0.14, f = 220) {
+    tone(f, 0.06, 'triangle', clamp(g, 0.03, 0.25), 0, f * 0.55);
+  }
+  function launchWhoosh() {
+    tone(140, 0.16, 'sine', 0.14, 0, 320);
+  }
+  function score(pts, mult = 1) {
+    if (pts <= 0) {
+      tone(140, 0.22, 'sawtooth', 0.08, 0, 82);
+      return;
+    }
+    const base = pts >= 100 ? [523.25, 659.25, 783.99, 1046.5, 1318.5]
+               : pts >= 50  ? [440, 554.37, 659.25, 880]
+               : pts >= 30  ? [392, 493.88, 587.33]
+                            : [329.63, 440];
+    base.forEach((f, i) => {
+      tone(f * (mult > 1 ? 1.06 : 1), 0.26, 'triangle', 0.15, i * 0.055);
+      if (pts >= 50) tone(f * 2, 0.22, 'sine', 0.07, i * 0.055 + 0.015);
+    });
+  }
+  function tick() {
+    tone(1480, 0.035, 'square', 0.055, 0, 1960);
+  }
+  return { init, setMute, get muted() { return muted; }, roll, hit, launchWhoosh, score, tick };
+})();
+
+/* ============================================================================
+   4. DETERMINISTIC & RESPONSIVE BALL PHYSICS WITH RING FUNNELS & SPIN HOOK
+   ============================================================================ */
+function makeBall(v0, ang, x0 = 0, spin = 0) {
+  // Clamp v0 into playable arcade range so every valid flick clears the ramp
+  const cleanV0 = clamp(v0, 3.85, 8.6);
+  const cleanAng = clamp(ang, -0.22, 0.22);
+  return {
+    st: 'lane',
+    x: clamp(x0, -(LH - RB - 0.015), LH - RB - 0.015),
+    y: RB,
+    z: Z0,
+    vx: cleanV0 * Math.sin(cleanAng),
+    vy: 0,
+    vz: cleanV0 * Math.cos(cleanAng),
+    spin: clamp(spin, -1, 1), // Lateral curve hook ("English")
+    t: 0,
+    done: false,
+    pts: 0,
+    kind: null,
+    targetLabel: '',
+    contact: true,
+    rotP: 0,
+    rotY: 0
+  };
+}
+
+function stepBall(b, dt, onEvt) {
+  if (b.done) return;
+  b.t += dt;
+  const spd = Math.hypot(b.vx, b.vy, b.vz);
+  b.rotP += (spd / RB) * dt;
+  b.rotY += b.spin * 9 * dt;
+
+  if (b.st === 'lane') {
+    const s = dsurf(b.z), c = 1 / Math.hypot(1, s);
+    const ax = b.spin * 0.52; // Subtle curve hook down the wood lane
+    const az = -G * s * c * 0.55 - 0.012 * b.vz;
+    b.vx += ax * dt;
+    b.vz += az * dt;
+    // Never let ball stall on the ramp if launched properly
+    if (b.z > HZ0 && b.vz < 1.85) b.vz = 1.85;
+    b.x += b.vx * dt;
+    b.z += b.vz * dt;
+    b.y = surf(b.z) + RB;
+
+    const wall = LH - RB;
+    if (b.x < -wall) { b.x = -wall; b.vx = -b.vx * 0.65; onEvt && onEvt('rail', Math.abs(b.vx)); }
+    if (b.x >  wall) { b.x =  wall; b.vx = -b.vx * 0.65; onEvt && onEvt('rail', Math.abs(b.vx)); }
+
+    if (b.z >= ZP) {
+      // Launch off the ramp lip onto the inclined target board!
+      const sL = dsurf(ZP - 1e-3);
+      const sp = Math.hypot(b.vx, b.vz);
+      const launchPitch = Math.atan(sL) * 0.92 + 0.14;
+      b.vy = sp * Math.sin(launchPitch);
+      b.vz = sp * Math.cos(launchPitch);
+      b.st = 'board';
+      b.contact = false;
+      onEvt && onEvt('launch', sp);
+    }
+    return;
+  }
+
+  // Board / Airborne state
+  b.vx += b.spin * 0.85 * dt; // Spin hooks ball toward corner 100 cups
+  b.vy -= G * dt;
+  b.x += b.vx * dt;
+  b.y += b.vy * dt;
+  b.z += b.vz * dt;
+
+  let c = bc(b);
+  let { u, v, h, vu, vv, vh } = c;
+
+  // Board side walls
+  const bw = LH - RB * 0.6;
+  if (u < -bw) { u = -bw; vu = Math.abs(vu) * 0.55; onEvt && onEvt('wall', vu); }
+  if (u >  bw) { u =  bw; vu = -Math.abs(vu) * 0.55; onEvt && onEvt('wall', -vu); }
+  // Top backboard bumper
+  if (v > BL - RB) { v = BL - RB; vv = -Math.abs(vv) * 0.42; onEvt && onEvt('wall', -vv); }
+
+  // Board floor contact & rolling gravity
+  if (h <= RB) {
+    if (vh < -0.35) onEvt && onEvt('land', -vh);
+    h = RB;
+    vh = vh < -0.25 ? -vh * 0.18 : 0;
+    b.contact = true;
+    vv -= G * SPH * 0.68 * dt;
+    vu -= vu * 1.15 * dt;
+    vv -= vv * 0.85 * dt;
+
+    // Gentle magnetic funnel attraction toward nearby scoring pockets & corner cups
+    // Makes gameplay feel rewarding and authentic like real arcade skee-ball funnels
+    for (const C of CUPS) {
+      const du = C.u - u, dv = C.v - v;
+      const dist = Math.hypot(du, dv);
+      if (dist < C.r * 1.65) {
+        const pull = (1 - dist / (C.r * 1.65)) * 2.8;
+        vu += (du / (dist + 1e-4)) * pull * dt;
+        vv += (dv / (dist + 1e-4)) * pull * dt;
+        if (dist < C.r * 0.92 && Math.hypot(vu, vv) < 2.6) {
+          const w = BW(C.u, C.v, RB * 0.3);
+          b.x = w[0]; b.y = w[1]; b.z = w[2];
+          b.done = true; b.pts = C.s; b.kind = 'cup'; b.targetLabel = C.label;
+          onEvt && onEvt('score', C.s);
+          return;
+        }
+      }
+    }
+
+    // Check concentric ring pockets (from highest value 100 down to 10)
+    for (const R of RINGS) {
+      const du = (R.cx - u), dv = (R.holeY - v);
+      const distHole = Math.hypot(du, dv);
+      // Normalized ellipse distance to this ring's boundary
+      const eDist = Math.hypot((u - R.cx) / R.rx, (v - R.cy) / R.ry);
+
+      // Funnel pull into the ring's pocket hole
+      if (distHole < R.holeR * 1.75) {
+        const pull = (1 - distHole / (R.holeR * 1.75)) * 3.1;
+        vu += (du / (distHole + 1e-4)) * pull * dt;
+        vv += (dv / (distHole + 1e-4)) * pull * dt;
+      }
+
+      // Direct pocket capture
+      if (distHole < R.holeR * 0.95 && Math.hypot(vu, vv) < 2.85) {
+        const w = BW(R.cx, R.holeY, RB * 0.25);
+        b.x = w[0]; b.y = w[1]; b.z = w[2];
+        b.done = true; b.pts = R.s; b.kind = 'hole'; b.targetLabel = R.label;
+        onEvt && onEvt('score', R.s);
+        return;
+      }
+
+      // Ring plastic lip interaction when rolling down (vv < 0) inside the ring's bottom arc
+      if (vv < 0 && v <= R.cy && Math.abs(eDist - 1.0) < 0.14) {
+        // Rattle inside ring lip and funnel toward its bottom hole!
+        vv = -vv * 0.25;
+        vu += (R.cx - u) * 4.5 * dt;
+        onEvt && onEvt('rim', 0.4);
+      }
+    }
+  } else {
+    b.contact = false;
+  }
+
+  setB(b, u, v, h, vu, vv, vh);
+
+  // Settle check: if ball slows down on the board, award the smallest enclosing ring
+  if (b.contact && b.t > 0.55) {
+    const sp2 = Math.hypot(vu, vv);
+    if (sp2 < 0.24 || v < 0.06 || b.t > 4.2) {
+      // Determine which ring encloses (u, v)
+      for (const C of CUPS) {
+        if (Math.hypot(u - C.u, v - C.v) <= C.r * 1.15) {
+          const w = BW(C.u, C.v, RB * 0.3);
+          b.x = w[0]; b.y = w[1]; b.z = w[2];
+          b.done = true; b.pts = C.s; b.kind = 'cup'; b.targetLabel = C.label;
+          onEvt && onEvt('score', C.s);
+          return;
+        }
+      }
+      for (const R of RINGS) {
+        const eDist = Math.hypot((u - R.cx) / R.rx, (v - R.cy) / R.ry);
+        if (eDist <= 1.06) {
+          const w = BW(R.cx, R.holeY, RB * 0.25);
+          b.x = w[0]; b.y = w[1]; b.z = w[2];
+          b.done = true; b.pts = R.s; b.kind = 'hole'; b.targetLabel = R.label;
+          onEvt && onEvt('score', R.s);
+          return;
+        }
+      }
+      // Even if it trickles to the very bottom lip of the board, award outer 10 ring
+      const R10 = RINGS[RINGS.length - 1];
+      const w = BW(0, R10.holeY, RB * 0.25);
+      b.x = w[0]; b.y = w[1]; b.z = w[2];
+      b.done = true; b.pts = 10; b.kind = 'hole'; b.targetLabel = '10';
+      onEvt && onEvt('score', 10);
+    }
+  }
+}
+
+function simulate(v0, ang = 0, x0 = 0, spin = 0) {
+  const b = makeBall(v0, ang, x0, spin);
+  let steps = 0;
+  while (!b.done && steps < 240 * 5) { stepBall(b, DT, null); steps++; }
+  return { pts: b.pts, kind: b.kind, label: b.targetLabel, t: b.t, x: b.x, y: b.y, z: b.z };
+}
+
+// Predict trajectory points for live 3D aiming arc
+function predictTrajectory(v0, ang, x0, spin) {
+  const b = makeBall(v0, ang, x0, spin);
+  const pts = [];
+  for (let i = 0; i < 190 && !b.done; i++) {
+    stepBall(b, DT * 2, null);
+    if (i % 3 === 0) pts.push({ x: b.x, y: b.y, z: b.z, st: b.st });
+    if (b.st === 'board' && b.contact) break;
+  }
+  return { pts, end: { x: b.x, y: b.y, z: b.z } };
+}
+
+/* ============================================================================
+   5. RETROCANOPY WALLET, XP & SUPABASE SYNC
+   ============================================================================ */
+const BEST_KEY = 'rc_skee_best_v1';
+const XP_KEY = 'rc_canopy_xp';
+const SPENT_KEY = 'rc_tickets_spent_v1';
+
+let bestScore = Math.max(0, parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0);
+function getAvailableWalletTickets() {
+  const xp = Math.max(0, parseInt(localStorage.getItem(XP_KEY) || '0', 10) || 0);
+  const flightBest = Math.max(0, parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0);
+  const spent = Math.max(0, parseInt(localStorage.getItem(SPENT_KEY) || '0', 10) || 0);
+  return Math.max(0, Math.floor(Math.max(xp, flightBest) / 10) - spent);
+}
+let walletTickets = getAvailableWalletTickets();
+
+function awardPointsAndTickets(ptsEarned) {
+  if (ptsEarned <= 0) return;
+  try {
+    const prevXp = Math.max(0, parseInt(localStorage.getItem(XP_KEY) || '0', 10) || 0);
+    const nextXp = prevXp + ptsEarned;
+    localStorage.setItem(XP_KEY, String(nextXp));
+
+    // Also update active customer account in rc_accounts_db_v2 & Supabase if logged in
+    const curUser = (localStorage.getItem('rc_current_user_v1') || '').trim();
+    if (curUser) {
+      const dbRaw = JSON.parse(localStorage.getItem('rc_accounts_db_v2') || '{}') || {};
+      const k = curUser.toLowerCase();
+      if (dbRaw[k]) {
+        dbRaw[k].xp = Math.max(dbRaw[k].xp || 0, nextXp);
+        dbRaw[k].bestScore = Math.max(dbRaw[k].bestScore || 0, S.score);
+        dbRaw[k].updatedAt = new Date().toISOString();
+        localStorage.setItem('rc_accounts_db_v2', JSON.stringify(dbRaw));
+      }
+      const client = window.db || (typeof db !== 'undefined' ? db : null);
+      if (client && dbRaw[k]) {
+        client.from('arcade_accounts').upsert([{
+          username_key: k,
+          username: dbRaw[k].username || curUser,
+          xp: dbRaw[k].xp,
+          best_score: dbRaw[k].bestScore,
+          updated_at: new Date().toISOString()
+        }], { onConflict: 'username_key' }).then(() => {}).catch(() => {});
+      }
+    }
+  } catch (_) {}
+  walletTickets = getAvailableWalletTickets();
+}
+
+/* ============================================================================
+   6. GAME STATE, STREAK MULTIPLIER, BONUS TARGETS & PARTICLES
+   ============================================================================ */
+const BONUS_POOL = ['100', 'L-100', 'R-100', '50', '40'];
+
+const S = {
+  state: 'ready', // 'ready' | 'rolling' | 'scored' | 'over'
+  ballIdx: 0,
+  score: 0,
+  results: [],
+  streak: 0,
+  mult: 1,
+  maxMult: 1,
+  bonusTarget: '50', // Lit 2X bonus ring for current ball
+  aimX: 0,
+  aimAng: 0,
+  spin: 0,
+  defaultPower: 0.62, // Sweet-spot default power (50/100 ring area)
+  ball: null,
+  trail: [],
+  particles: [],
+  shockwaves: [],
+  popups: [],
+  flash: null,
+  capture: null,
+  dispTarget: 0,
+  dispShown: 0,
+  dispF: 0,
+  ticketPulse: 0,
+  time: 0,
+  rollIn: 0,
+  charging: false,
+  chargeT: 0,
+  hintT: 0,
+  overT: 0,
+  resultsShown: false
+};
+
+function pickNextBonusTarget() {
+  S.bonusTarget = BONUS_POOL[Math.floor(Math.random() * BONUS_POOL.length)];
+}
+
+function resetGame() {
+  S.state = 'ready';
+  S.ballIdx = 0;
+  S.score = 0;
+  S.results = [];
+  S.streak = 0;
+  S.mult = 1;
+  S.maxMult = 1;
+  S.aimX = 0;
+  S.aimAng = 0;
+  S.ball = null;
+  S.trail = [];
+  S.particles = [];
+  S.shockwaves = [];
+  S.popups = [];
+  S.flash = null;
+  S.capture = null;
+  S.dispTarget = 0;
+  S.dispShown = 0;
+  S.dispF = 0;
+  S.ticketPulse = 0;
+  S.rollIn = 0;
+  S.charging = false;
+  S.chargeT = 0;
+  S.overT = 0;
+  S.resultsShown = false;
+  pickNextBonusTarget();
+  document.getElementById('modal').classList.remove('show');
+}
+pickNextBonusTarget();
+
+function spawnFireworks(x, y, col, count = 34) {
+  for (let i = 0; i < count; i++) {
+    const a = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
+    const sp = 90 + Math.random() * 260;
+    S.particles.push({
+      x, y,
+      vx: Math.cos(a) * sp,
+      vy: Math.sin(a) * sp - 60,
+      r: 2.5 + Math.random() * 3.5,
+      col: i % 3 === 0 ? '#ffffff' : (i % 2 === 0 ? col : '#ffd23a'),
+      life: 0,
+      maxLife: 0.55 + Math.random() * 0.45
+    });
+  }
+  S.shockwaves.push({ x, y, col, t: 0, maxR: 95 });
+}
+
+function onEvent(type, val) {
+  if (type === 'rail' || type === 'wall') Snd.hit(val * 0.08, 190);
+  else if (type === 'rim') Snd.hit(val * 0.11, 520);
+  else if (type === 'land') Snd.hit(val * 0.09, 150);
+  else if (type === 'launch') Snd.launchWhoosh();
+  else if (type === 'score') {
+    const b = S.ball;
+    const basePts = b.pts;
+    const isBonusHit = (b.targetLabel === S.bonusTarget);
+
+    // Update Hot Streak Multiplier (40+ pts builds streak: 1x -> 2x -> 3x Fireball!)
+    if (basePts >= 40) {
+      S.streak++;
+      S.mult = S.streak >= 3 ? 3 : (S.streak >= 2 ? 2 : 1);
+      S.maxMult = Math.max(S.maxMult, S.mult);
+    } else {
+      S.streak = 0;
+      S.mult = 1;
+    }
+
+    const totalMult = S.mult * (isBonusHit ? 2 : 1);
+    const finalPts = basePts * totalMult;
+
+    S.score += finalPts;
+    S.results.push(finalPts);
+    const newTix = Math.floor(S.score / 10) - S.dispTarget;
+    S.dispTarget = Math.floor(S.score / 10);
+    if (newTix > 0) S.ticketPulse = 1.0;
+
+    awardPointsAndTickets(finalPts);
+    Snd.score(basePts, totalMult);
+
+    const p = P(b.x, b.y, b.z);
+    const col = basePts >= 100 ? '#ffd23a' : basePts >= 50 ? '#00f0ff' : '#ff3ad8';
+    spawnFireworks(p.x, p.y, col, basePts >= 100 ? 52 : 30);
+
+    const tag = totalMult > 1 ? `+${finalPts} (${totalMult}X!)` : `+${finalPts}`;
+    S.popups.push({
+      x: p.x,
+      y: p.y - 12,
+      txt: isBonusHit ? `⚡ BONUS ${tag}` : (basePts >= 100 ? `★ JACKPOT ${tag} ★` : tag),
+      col,
+      t: 0,
+      big: basePts >= 50 || totalMult > 1
+    });
+
+    S.flash = { label: b.targetLabel, pts: basePts, col, t: 0 };
+    S.capture = { x: b.x, y: b.y, z: b.z, t: 0, pts: basePts };
+    S.state = 'scored';
+    S.wait = 0.85;
+  }
+}
+
+function launch(v0, ang) {
+  if (S.state !== 'ready') return;
+  S.ball = makeBall(v0, ang, S.aimX, S.spin);
+  S.state = 'rolling';
+  S.trail = [];
+  S.charging = false;
+}
+
+function nextBall() {
+  S.ball = null;
+  S.capture = null;
+  S.ballIdx++;
+  if (S.ballIdx >= BALLS) endGame();
+  else {
+    S.state = 'ready';
+    S.rollIn = 0;
+    pickNextBonusTarget();
+  }
+}
+
+function endGame() {
+  S.state = 'over';
+  S.overT = 0;
+  Snd.roll(0);
+  if (S.score > bestScore) {
+    bestScore = S.score;
+    try { localStorage.setItem(BEST_KEY, String(bestScore)); } catch (_) {}
+  }
+  walletTickets = getAvailableWalletTickets();
+}
+
+function showResults() {
+  document.getElementById('mTitle').textContent =
+    S.score >= 600 ? 'NEO-TOKYO GRANDMASTER!' :
+    S.score >= 350 ? 'HIGH ROLLER JACKPOT!' :
+    S.score >= 200 ? 'SHINJUKU SHARP SHOOTER' : 'FRAME COMPLETE';
+  document.getElementById('mScore').textContent = S.score;
+  document.getElementById('mRank').textContent = `PEAK STREAK: ${S.maxMult}X FIREBALL`;
+  document.getElementById('mTix').textContent = `+${S.dispTarget} 🎟️`;
+  document.getElementById('mBest').textContent = bestScore;
+  document.getElementById('mWal').textContent = `🎟️ ${walletTickets.toLocaleString()}`;
+
+  const grid = document.getElementById('mBallsGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < BALLS; i++) {
+    const pts = S.results[i] ?? 0;
+    const d = document.createElement('div');
+    d.className = 'ballChip';
+    d.style.borderColor = pts >= 100 ? '#ffd23a' : pts >= 50 ? '#00f0ff' : '#ff3ad8';
+    d.style.color = pts >= 100 ? '#ffd23a' : pts >= 50 ? '#9beeff' : '#ffd1f5';
+    d.textContent = pts;
+    grid.appendChild(d);
+  }
+  document.getElementById('modal').classList.add('show');
+}
+
+/* ============================================================================
+   7. MULTI-MODE CONTROLS (Flick/Swipe, Hold-to-Charge, Spin & Shot Presets)
+   ============================================================================ */
+document.getElementById('again').addEventListener('click', () => { Snd.init(); resetGame(); });
+document.getElementById('btnNewGame').addEventListener('click', () => { Snd.init(); resetGame(); });
+
+const muteBtn = document.getElementById('mute');
+function syncMute() { muteBtn.innerHTML = Snd.muted ? '&#128263; MUTE' : '&#128266; AUDIO'; }
+muteBtn.addEventListener('click', e => { e.stopPropagation(); Snd.init(); Snd.setMute(!Snd.muted); syncMute(); });
+syncMute();
+
+// Spin buttons
+function setSpin(val) {
+  S.spin = clamp(val, -1, 1);
+  document.getElementById('btnSpinL').classList.toggle('active', S.spin < -0.1);
+  document.getElementById('btnSpin0').classList.toggle('active', Math.abs(S.spin) <= 0.1);
+  document.getElementById('btnSpinR').classList.toggle('active', S.spin > 0.1);
+}
+document.getElementById('btnSpinL').addEventListener('click', () => { Snd.init(); setSpin(-0.55); });
+document.getElementById('btnSpin0').addEventListener('click', () => { Snd.init(); setSpin(0); });
+document.getElementById('btnSpinR').addEventListener('click', () => { Snd.init(); setSpin(0.55); });
+
+// Aim buttons
+document.getElementById('btnAimL').addEventListener('click', () => {
+  Snd.init();
+  S.aimX = clamp(S.aimX - 0.045, -(LH - RB - 0.015), LH - RB - 0.015);
+});
+document.getElementById('btnAimC').addEventListener('click', () => {
+  Snd.init();
+  S.aimX = 0; S.aimAng = 0; setSpin(0);
+});
+document.getElementById('btnAimR').addEventListener('click', () => {
+  Snd.init();
+  S.aimX = clamp(S.aimX + 0.045, -(LH - RB - 0.015), LH - RB - 0.015);
+});
+
+// Hold-to-Roll Button
+const btnRollHold = document.getElementById('btnRollHold');
+btnRollHold.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  Snd.init();
+  if (S.state === 'ready' && !S.charging) {
+    S.charging = true;
+    S.chargeT = 0;
+  }
+});
+window.addEventListener('pointerup', () => {
+  if (S.charging) {
+    S.charging = false;
+    const pwr = chargePower();
+    launch(lerp(4.1, 8.2, pwr), S.aimAng);
+  }
+});
+
+// Shot Assist Presets (L-100, Bullseye 100, 50 Ring, R-100)
+document.querySelectorAll('[data-preset]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    Snd.init();
+    if (S.state !== 'ready') return;
+    const p = btn.getAttribute('data-preset');
+    if (p === 'left100') {
+      S.aimX = -0.11; S.aimAng = -0.055; setSpin(-0.55);
+      launch(7.45, S.aimAng);
+    } else if (p === 'right100') {
+      S.aimX = 0.11; S.aimAng = 0.055; setSpin(0.55);
+      launch(7.45, S.aimAng);
+    } else if (p === 'center100') {
+      S.aimX = 0; S.aimAng = 0; setSpin(0);
+      launch(7.15, 0);
+    } else if (p === 'ring50') {
+      S.aimX = 0; S.aimAng = 0; setSpin(0);
+      launch(6.35, 0);
+    }
+  });
+});
+
+// Smooth Canvas Drag & Flick-to-Roll (Locks lateral aimX once upward flick begins!)
+let drag = null;
+cv.addEventListener('pointerdown', e => {
+  Snd.init();
+  if (S.resultsShown) return;
+  if (S.state !== 'ready' || S.charging) return;
+  cv.setPointerCapture(e.pointerId);
+  cv.classList.add('drag');
+  const startX = clamp(laneXAtClient(e.clientX), -(LH - RB - 0.015), LH - RB - 0.015);
+  S.aimX = startX;
+  drag = {
+    id: e.pointerId,
+    startX: e.clientX,
+    startY: e.clientY,
+    lockedAimX: startX,
+    pts: [{ t: performance.now(), x: e.clientX, y: e.clientY }]
+  };
+});
+
+cv.addEventListener('pointermove', e => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const now = performance.now();
+  drag.pts.push({ t: now, x: e.clientX, y: e.clientY });
+  while (drag.pts.length > 2 && now - drag.pts[0].t > 150) drag.pts.shift();
+
+  // Only adjust lateral ball position while moving horizontally near the start of the gesture;
+  // once dragging upward (> 24px), lock S.aimX so the upward swipe never jerks the ball sideways!
+  const dyUp = drag.startY - e.clientY;
+  if (dyUp < 24 && S.state === 'ready') {
+    S.aimX = clamp(laneXAtClient(e.clientX), -(LH - RB - 0.015), LH - RB - 0.015);
+    drag.lockedAimX = S.aimX;
+  } else if (S.state === 'ready') {
+    S.aimX = drag.lockedAimX;
+  }
+});
+
+function flickVel(now) {
+  if (!drag) return null;
+  const pts = drag.pts.filter(p => now - p.t < 120);
+  if (pts.length < 2) return { vx: 0, vy: 0 };
+  const a = pts[0], b = pts[pts.length - 1];
+  const dt = Math.max(10, b.t - a.t) / 1000;
+  return { vx: (b.x - a.x) / dt, vy: (b.y - a.y) / dt };
+}
+
+function endDrag(e) {
+  if (!drag || e.pointerId !== drag.id) return;
+  const now = performance.now();
+  drag.pts.push({ t: now, x: e.clientX, y: e.clientY });
+  const v = flickVel(now);
+  const totalDy = drag.startY - e.clientY;
+  const totalDx = e.clientX - drag.startX;
+  drag = null;
+  cv.classList.remove('drag');
+  if (!v) return;
+
+  const refH = Math.max(480, cv.getBoundingClientRect().height);
+  const upSpeed = -v.vy;
+  if (upSpeed < refH * 0.22 && totalDy < 35) {
+    S.hintT = 1.4;
+    return;
+  }
+  const norm = clamp(Math.max(upSpeed / (refH * 1.65), totalDy / (refH * 0.52)), 0.15, 1.0);
+  const v0 = lerp(4.2, 8.15, norm);
+  const ang = clamp(Math.atan2(v.vx * 0.65 + totalDx * 2.2, Math.max(220, upSpeed)) * 0.28, -0.16, 0.16);
+  launch(v0, ang);
+}
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', e => {
+  if (drag && e.pointerId === drag.id) { drag = null; cv.classList.remove('drag'); }
+});
+
+// Keyboard Controls
+const keys = {};
+window.addEventListener('keydown', e => {
+  if (e.code === 'Space' || e.code.startsWith('Arrow')) e.preventDefault();
+  keys[e.code] = true;
+  if (e.code === 'Space' && !e.repeat && S.state === 'ready' && !drag) {
+    Snd.init();
+    S.charging = true;
+    S.chargeT = 0;
+  }
+  if (e.code === 'KeyQ') setSpin(S.spin - 0.55);
+  if (e.code === 'KeyE') setSpin(S.spin + 0.55);
+  if ((e.code === 'Enter' || e.code === 'Space') && S.resultsShown) resetGame();
+  if (e.code === 'KeyM') { Snd.setMute(!Snd.muted); syncMute(); }
+});
+window.addEventListener('keyup', e => {
+  keys[e.code] = false;
+  if (e.code === 'Space' && S.charging) {
+    S.charging = false;
+    launch(lerp(4.1, 8.2, chargePower()), S.aimAng);
+  }
+});
+
+function chargePower() {
+  const p = (S.chargeT / 0.95) % 2;
+  return p < 1 ? p : 2 - p;
+}
+
+/* ============================================================================
+   8. UPDATE LOOP
+   ============================================================================ */
+function update(dt) {
+  S.time += dt;
+  if (S.ticketPulse > 0) S.ticketPulse = Math.max(0, S.ticketPulse - dt * 1.4);
+
+  if (S.state === 'ready') {
+    S.rollIn = Math.min(1, S.rollIn + dt / 0.35);
+    const moveDir = (keys.ArrowLeft || keys.KeyA ? -1 : 0) + (keys.ArrowRight || keys.KeyD ? 1 : 0);
+    if (moveDir) {
+      if (keys.ShiftLeft || keys.ShiftRight) {
+        S.aimAng = clamp(S.aimAng + moveDir * dt * 0.18, -0.16, 0.16);
+      } else {
+        S.aimX = clamp(S.aimX + moveDir * dt * 0.32, -(LH - RB - 0.015), LH - RB - 0.015);
+      }
+    }
+    if (S.charging) S.chargeT += dt;
+  }
+
+  if (S.state === 'rolling' && S.ball) {
+    S.acc = (S.acc || 0) + Math.min(dt, 0.08);
+    while (S.acc >= DT && S.state === 'rolling') {
+      stepBall(S.ball, DT, onEvent);
+      S.acc -= DT;
+    }
+    if (S.ball) {
+      const b = S.ball;
+      S.trail.push({ x: b.x, y: b.y, z: b.z, mult: S.mult });
+      if (S.trail.length > 28) S.trail.shift();
+      const sp = Math.hypot(b.vx, b.vy, b.vz);
+      Snd.roll(b.st === 'lane' ? sp / 6.2 : (b.contact ? (sp / 4.5) * 0.65 : 0));
+    }
+  } else {
+    Snd.roll(0);
+    if (S.trail.length) S.trail.shift();
+  }
+
+  if (S.state === 'scored') {
+    S.wait -= dt;
+    if (S.capture) S.capture.t += dt;
+    if (S.wait <= 0) nextBall();
+  }
+
+  if (S.flash) {
+    S.flash.t += dt;
+    if (S.flash.t > 1.1) S.flash = null;
+  }
+
+  // Animated ticket counter & dispenser chime
+  if (S.dispShown < S.dispTarget) {
+    const rate = Math.max(12, (S.dispTarget - S.dispShown) * 2.2);
+    S.dispF += rate * dt;
+    while (S.dispF >= 1 && S.dispShown < S.dispTarget) {
+      S.dispF -= 1;
+      S.dispShown++;
+      Snd.tick();
+    }
+  } else {
+    S.dispF = 0;
+  }
+
+  if (S.state === 'over') {
+    S.overT += dt;
+    if (!S.resultsShown && S.dispShown >= S.dispTarget && S.overT > 1.1) {
+      S.resultsShown = true;
+      showResults();
+    }
+  }
+
+  // Update particles & shockwaves
+  for (let i = S.particles.length - 1; i >= 0; i--) {
+    const pt = S.particles[i];
+    pt.life += dt;
+    pt.x += pt.vx * dt;
+    pt.y += pt.vy * dt;
+    pt.vy += 420 * dt;
+    if (pt.life >= pt.maxLife) S.particles.splice(i, 1);
+  }
+  for (let i = S.shockwaves.length - 1; i >= 0; i--) {
+    S.shockwaves[i].t += dt;
+    if (S.shockwaves[i].t > 0.65) S.shockwaves.splice(i, 1);
+  }
+  S.popups.forEach(p => p.t += dt);
+  S.popups = S.popups.filter(p => p.t < 1.35);
+  if (S.hintT > 0) S.hintT -= dt;
+}
+
+/* ============================================================================
+   9. PHOTOREALISTIC + 3D HYBRID RENDERER (1376 x 768 HD Canvas)
+   ============================================================================ */
+// Artwork Ring Pixel Overlay Table (matches skee_roll_84_bg_clean.jpg 1:1)
+const ART_RINGS = {
+  '10':    { cx: 688, cy: 305, rx: 123, ry: 87, holeX: 688, holeY: 372, col: '#ff2fd0' },
+  '20':    { cx: 688, cy: 294, rx: 85,  ry: 62, holeX: 688, holeY: 338, col: '#7b68ff' },
+  '30':    { cx: 688, cy: 286, rx: 48,  ry: 36, holeX: 688, holeY: 309, col: '#29e6ff' },
+  '40':    { cx: 688, cy: 276, rx: 31,  ry: 23, holeX: 688, holeY: 276, col: '#ff3ad8' },
+  '50':    { cx: 688, cy: 247, rx: 26,  ry: 19, holeX: 688, holeY: 247, col: '#29e6ff' },
+  '100':   { cx: 688, cy: 221, rx: 24,  ry: 16, holeX: 688, holeY: 221, col: '#ff4fd8' },
+  'L-100': { cx: 599, cy: 212, rx: 22,  ry: 15, holeX: 599, holeY: 212, col: '#ffd23a' },
+  'R-100': { cx: 777, cy: 212, rx: 22,  ry: 15, holeX: 777, holeY: 212, col: '#ffd23a' }
+};
+
+function drawLaneChasers(g, t) {
+  // Animated neon light pulses racing up the 5 lane light strips in exact perspective
+  const strips = [
+    { xBot: 292, xTop: 583, col: '#00f0ff' },
+    { xBot: 530, xTop: 642, col: '#00f0ff' },
+    { xBot: 688, xTop: 688, col: '#ff3ad8' },
+    { xBot: 846, xTop: 734, col: '#00f0ff' },
+    { xBot: 1084, xTop: 793, col: '#00f0ff' }
+  ];
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  strips.forEach((st, idx) => {
+    for (let k = 0; k < 2; k++) {
+      const ph = (t * 0.65 + k * 0.5 + idx * 0.12) % 1;
+      const p0 = Math.max(0, ph - 0.14), p1 = Math.min(1, ph + 0.14);
+      const y0 = lerp(665, 412, p0), y1 = lerp(665, 412, p1);
+      const x0 = lerp(st.xBot, st.xTop, p0), x1 = lerp(st.xBot, st.xTop, p1);
+      const gr = g.createLinearGradient(x0, y0, x1, y1);
+      gr.addColorStop(0, 'rgba(0,240,255,0)');
+      gr.addColorStop(0.5, st.col);
+      gr.addColorStop(1, 'rgba(255,255,255,0)');
+      g.strokeStyle = gr;
+      g.lineWidth = lerp(7, 2.5, ph);
+      g.lineCap = 'round';
+      g.beginPath();
+      g.moveTo(x0, y0);
+      g.lineTo(x1, y1);
+      g.stroke();
+    }
+  });
+  g.restore();
+}
+
+function drawTargetBoardEffects(g, t) {
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+
+  // 1. Highlight active 2X BONUS TARGET ring with pulsing golden-cyan halo
+  const bonus = ART_RINGS[S.bonusTarget];
+  if (bonus && S.state !== 'over') {
+    const pulse = 0.55 + 0.45 * Math.sin(t * 7.5);
+    g.save();
+    g.strokeStyle = '#ffd23a';
+    g.shadowColor = '#ffd23a';
+    g.shadowBlur = 18 + pulse * 14;
+    g.lineWidth = 3 + pulse * 2;
+    g.beginPath();
+    g.ellipse(bonus.cx, bonus.cy, bonus.rx + 3, bonus.ry + 2, 0, 0, Math.PI * 2);
+    g.stroke();
+
+    // Floating "2X BONUS" micro-badge next to the lit ring
+    const bx = bonus.cx + (S.bonusTarget === 'L-100' ? -36 : S.bonusTarget === 'R-100' ? 36 : bonus.rx + 28);
+    const by = bonus.cy - 4;
+    g.font = '900 10px Orbitron';
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.fillStyle = '#ffd23a';
+    g.fillText('⚡2X', bx, by);
+    g.restore();
+  }
+
+  // 2. Hit flash on scored ring
+  if (S.flash) {
+    const F = S.flash;
+    const ar = ART_RINGS[F.label] || ART_RINGS[String(F.pts)];
+    if (ar) {
+      const a = Math.max(0, 1 - F.t / 1.1) * (0.65 + 0.35 * Math.sin(F.t * 32));
+      g.save();
+      g.globalAlpha = a;
+      g.strokeStyle = '#ffffff';
+      g.shadowColor = F.col;
+      g.shadowBlur = 28;
+      g.lineWidth = 5.5;
+      g.beginPath();
+      g.ellipse(ar.cx, ar.cy, ar.rx + 2, ar.ry + 2, 0, 0, Math.PI * 2);
+      g.stroke();
+      g.restore();
+    }
+  }
+
+  g.restore();
+}
+
+function drawAimTrajectory(g) {
+  if (S.state !== 'ready') return;
+  let pwr = S.charging ? chargePower() : S.defaultPower;
+  let ang = S.aimAng;
+  if (drag) {
+    const v = flickVel(performance.now());
+    const refH = Math.max(480, cv.getBoundingClientRect().height);
+    if (v && -v.vy > 40) {
+      pwr = clamp((-v.vy / (refH * 1.65)), 0.18, 1);
+      ang = clamp(Math.atan2(v.vx * 0.65, -v.vy) * 0.28, -0.16, 0.16);
+    }
+  }
+  const v0 = lerp(4.1, 8.2, pwr);
+  const pred = predictTrajectory(v0, ang, S.aimX, S.spin);
+  if (pred.pts.length < 2) return;
+
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  const screenPts = pred.pts.map(pt => P(pt.x, pt.y, pt.z));
+
+  // Glowing dotted trajectory curve
+  for (let i = 1; i < screenPts.length; i += 2) {
+    const q = screenPts[i];
+    const u = i / screenPts.length;
+    const dotR = lerp(4.2, 2.0, u);
+    g.fillStyle = S.mult >= 3 ? `rgba(255,210,58,${0.85 - u * 0.5})`
+                : S.mult === 2 ? `rgba(255,58,216,${0.85 - u * 0.5})`
+                : `rgba(0,240,255,${0.85 - u * 0.5})`;
+    g.shadowColor = g.fillStyle;
+    g.shadowBlur = 10;
+    g.beginPath();
+    g.arc(q.x, q.y, dotR, 0, Math.PI * 2);
+    g.fill();
+  }
+
+  // Landing reticle on the target board
+  const last = screenPts[screenPts.length - 1];
+  if (last && last.y < 410) {
+    const pulse = 0.6 + 0.4 * Math.sin(S.time * 8);
+    g.strokeStyle = '#00f0ff';
+    g.shadowColor = '#00f0ff';
+    g.shadowBlur = 12;
+    g.lineWidth = 2;
+    g.beginPath();
+    g.arc(last.x, last.y, 10 + pulse * 4, 0, Math.PI * 2);
+    g.stroke();
+  }
+  g.restore();
+}
+
+function draw3DBall(g, x, y, z, scaleMul = 1, alpha = 1, isReflection = false) {
+  const p = P(x, y, z);
+  const r = Math.max(4, RB * p.s * scaleMul * 0.58);
+  g.save();
+  g.globalAlpha = alpha;
+
+  if (!isReflection) {
+    // Outer neon aura based on streak multiplier
+    g.save();
+    g.globalCompositeOperation = 'lighter';
+    const haloCol = S.mult >= 3 ? 'rgba(255, 200, 40, 0.55)'
+                  : S.mult === 2 ? 'rgba(255, 47, 208, 0.5)'
+                  : 'rgba(0, 240, 255, 0.38)';
+    const halo = g.createRadialGradient(p.x, p.y, r * 0.6, p.x, p.y, r * 1.85);
+    halo.addColorStop(0, haloCol);
+    halo.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = halo;
+    g.beginPath();
+    g.arc(p.x, p.y, r * 1.85, 0, Math.PI * 2);
+    g.fill();
+    g.restore();
+  }
+
+  // Main 3D metallic sphere shader
+  const gr = g.createRadialGradient(p.x - r * 0.34, p.y - r * 0.38, r * 0.05, p.x, p.y, r);
+  if (S.mult >= 3) {
+    // 3X 24K Gold Fireball Skin
+    gr.addColorStop(0, '#ffffff');
+    gr.addColorStop(0.22, '#fff3a8');
+    gr.addColorStop(0.55, '#ffb800');
+    gr.addColorStop(0.84, '#6e3800');
+    gr.addColorStop(1, '#ffe66d');
+  } else if (S.mult === 2) {
+    // 2X Cyber Magenta Plasma Skin
+    gr.addColorStop(0, '#ffffff');
+    gr.addColorStop(0.22, '#ffc4f4');
+    gr.addColorStop(0.55, '#d418a8');
+    gr.addColorStop(0.84, '#2d0638');
+    gr.addColorStop(1, '#00f0ff');
+  } else {
+    // Classic 1984 Chrome & Neon Rim Skin
+    gr.addColorStop(0, '#ffffff');
+    gr.addColorStop(0.2, '#e8f4ff');
+    gr.addColorStop(0.52, '#7d88ad');
+    gr.addColorStop(0.82, '#1e1936');
+    gr.addColorStop(1, '#c6b8ff');
+  }
+
+  g.fillStyle = gr;
+  g.beginPath();
+  g.arc(p.x, p.y, r, 0, Math.PI * 2);
+  g.fill();
+
+  // Animated spinning equatorial energy seam so player feels ball roll & spin
+  if (!isReflection) {
+    const rot = S.ball ? S.ball.rotP : S.time * 1.8;
+    const tilt = (S.ball ? S.ball.spin : S.spin) * 0.65;
+    g.save();
+    g.translate(p.x, p.y);
+    g.rotate(tilt);
+    g.beginPath();
+    g.arc(0, 0, r * 0.94, 0, Math.PI * 2);
+    g.clip();
+
+    g.globalCompositeOperation = 'lighter';
+    const bandY = Math.sin(rot) * r * 0.62;
+    g.strokeStyle = S.mult >= 3 ? 'rgba(255,240,150,0.75)' : 'rgba(0,240,255,0.65)';
+    g.lineWidth = Math.max(1.5, r * 0.13);
+    g.beginPath();
+    g.ellipse(0, bandY, r * 0.92, Math.max(1.5, Math.abs(Math.cos(rot)) * r * 0.32), 0, 0, Math.PI * 2);
+    g.stroke();
+
+    // Dual neon cabinet rim reflections on the chrome ball
+    g.strokeStyle = 'rgba(255, 58, 216, 0.7)';
+    g.lineWidth = r * 0.14;
+    g.beginPath();
+    g.arc(0, 0, r * 0.82, Math.PI * 0.15, Math.PI * 0.82);
+    g.stroke();
+
+    g.strokeStyle = 'rgba(0, 240, 255, 0.65)';
+    g.lineWidth = r * 0.12;
+    g.beginPath();
+    g.arc(0, 0, r * 0.84, -Math.PI * 0.82, -Math.PI * 0.18);
+    g.stroke();
+    g.restore();
+  }
+
+  g.restore();
+  return { x: p.x, y: p.y, r };
+}
+
+function drawTrail(g) {
+  const T = S.trail;
+  if (T.length < 2) return;
+  const pts = T.map(q => P(q.x, q.y, q.z));
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  g.lineCap = 'round';
+  for (let i = 1; i < pts.length; i++) {
+    const a = pts[i - 1], b = pts[i], t = i / pts.length;
+    const w = Math.max(2, RB * b.s * 0.85 * t);
+    const hue = S.mult >= 3 ? lerp(35, 55, t) : lerp(305, 188, t);
+    g.strokeStyle = `hsla(${hue}, 100%, ${55 + t * 20}%, ${t * 0.62})`;
+    g.lineWidth = w;
+    g.beginPath();
+    g.moveTo(a.x, a.y);
+    g.lineTo(b.x, b.y);
+    g.stroke();
+
+    g.strokeStyle = `rgba(255,255,255,${t * 0.55})`;
+    g.lineWidth = Math.max(1, w * 0.28);
+    g.stroke();
+  }
+  g.restore();
+}
+
+function drawPowerMeter(g, bp, power) {
+  const h = 135, w = 16;
+  const x = clamp(bp.x + bp.r + 24, 240, 1120);
+  const y = bp.y - h * 0.65;
+  g.save();
+  // Meter housing
+  g.fillStyle = 'rgba(8, 4, 24, 0.88)';
+  g.strokeStyle = '#00f0ff';
+  g.lineWidth = 2;
+  g.beginPath();
+  g.roundRect(x, y, w, h, 8);
+  g.fill();
+  g.stroke();
+
+  // Target zone ticks (100 zone near top, 50 zone middle-upper)
+  const fh = (h - 6) * clamp(power, 0, 1);
+  const gr = g.createLinearGradient(0, y + h, 0, y);
+  gr.addColorStop(0, '#00f0ff');
+  gr.addColorStop(0.55, '#ff3ad8');
+  gr.addColorStop(1, '#ffd23a');
+  g.fillStyle = gr;
+  g.shadowColor = '#ff3ad8';
+  g.shadowBlur = 12;
+  g.beginPath();
+  g.roundRect(x + 3, y + h - 3 - fh, w - 6, Math.max(4, fh), 5);
+  g.fill();
+
+  g.shadowBlur = 0;
+  g.font = '900 10px Orbitron';
+  g.fillStyle = '#ffd23a';
+  g.textAlign = 'left';
+  g.fillText('100', x + w + 6, y + 18);
+  g.fillStyle = '#00f0ff';
+  g.fillText('50', x + w + 6, y + 48);
+  g.fillStyle = '#ff7be5';
+  g.fillText('30', x + w + 6, y + 82);
+  g.restore();
+}
+
+function drawTicketShimmer(g, t) {
+  // Shimmering 24K gold light sweep along the brass ticket arch on the right rail
+  // whenever tickets are dispensing or pulsing!
+  const active = (S.dispShown < S.dispTarget) || S.ticketPulse > 0.02;
+  const intensity = active ? 0.85 : 0.25 + 0.15 * Math.sin(t * 2.5);
+  g.save();
+  g.globalCompositeOperation = 'lighter';
+  const ph = (t * (active ? 2.4 : 0.6)) % 1;
+  // Path along the golden ticket arch in skee_roll_84_bg_clean.jpg: (1018,618) -> (1120,445) -> (1228,585) -> (1245,735)
+  const gx = lerp(1030, 1245, ph);
+  const gy = lerp(445, 720, ph);
+  const rad = g.createRadialGradient(gx, gy, 4, gx, gy, active ? 95 : 55);
+  rad.addColorStop(0, `rgba(255, 245, 170, ${0.55 * intensity})`);
+  rad.addColorStop(0.5, `rgba(255, 195, 35, ${0.28 * intensity})`);
+  rad.addColorStop(1, 'rgba(255, 180, 0, 0)');
+  g.fillStyle = rad;
+  g.beginPath();
+  g.arc(gx, gy, active ? 95 : 55, 0, Math.PI * 2);
+  g.fill();
+  g.restore();
+}
+
+function drawHUD(g) {
+  // Renders crisp glowing digital numbers directly inside the exact marquee boxes of skee_roll_84_bg_clean.jpg!
+  const ballNo = Math.min(BALLS, S.ballIdx + (S.state === 'over' ? 0 : 1));
+
+  g.save();
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+
+  // 1. BALLS Box Center: (395, 81)
+  g.font = '900 34px Orbitron';
+  g.shadowColor = '#00f0ff';
+  g.shadowBlur = 16;
+  g.fillStyle = '#e6fcff';
+  g.fillText(`${ballNo}/${BALLS}`, 395, 82);
+
+  // 2. SCORE Box Center: (988, 81)
+  g.font = '900 36px Orbitron';
+  g.shadowColor = '#00f0ff';
+  g.shadowBlur = 16;
+  g.fillStyle = '#e6fcff';
+  g.fillText(String(S.score), 988, 82);
+
+  // 3. TICKETS Sub-Marquee Box Center: (962, 171) inside (x=884..1048, y=148..195)
+  g.font = '900 15px Orbitron';
+  g.shadowColor = '#ffb800';
+  g.shadowBlur = 12;
+  g.fillStyle = '#ffd84a';
+  g.fillText(`TICKETS +${S.dispShown}`, 965, 172);
+
+  // 4. Live Streak & Wallet Telemetry Badge on Left Marquee Under-Hang (x=395, y=158)
+  g.save();
+  const wx = 310, wy = 144, ww = 195, wh = 34;
+  g.fillStyle = 'rgba(10, 6, 26, 0.84)';
+  g.strokeStyle = S.mult > 1 ? '#ffd23a' : 'rgba(0, 240, 255, 0.55)';
+  g.lineWidth = 1.6;
+  g.beginPath();
+  g.roundRect(wx, wy, ww, wh, 8);
+  g.fill();
+  g.stroke();
+
+  g.font = '800 11.5px Orbitron';
+  g.fillStyle = S.mult >= 3 ? '#ffd23a' : S.mult === 2 ? '#ff6be3' : '#9beeff';
+  g.shadowColor = g.fillStyle;
+  g.shadowBlur = 8;
+  const statusTxt = S.mult > 1
+    ? `🔥 ${S.mult}X STREAK • 🎟️ ${walletTickets}`
+    : `WALLET 🎟️ ${walletTickets.toLocaleString()}`;
+  g.fillText(statusTxt, wx + ww / 2, wy + wh / 2 + 1);
+  g.restore();
+
+  // 5. 9-Ball Frame Pip Indicators along the top of the lane apron (y=684)
+  const pipGap = 18, pipStart = 688 - pipGap * 4;
+  for (let i = 0; i < BALLS; i++) {
+    const r = S.results[i];
+    const px = pipStart + i * pipGap, py = 686;
+    g.beginPath();
+    g.arc(px, py, 4.8, 0, Math.PI * 2);
+    if (r === undefined) {
+      g.fillStyle = (i === S.ballIdx && S.state !== 'over') ? '#00f0ff' : 'rgba(255,255,255,0.2)';
+      g.shadowBlur = (i === S.ballIdx && S.state !== 'over') ? 10 : 0;
+      g.shadowColor = '#00f0ff';
+    } else {
+      g.fillStyle = r >= 100 ? '#ffd23a' : r >= 50 ? '#00f0ff' : '#ff3ad8';
+      g.shadowColor = g.fillStyle;
+      g.shadowBlur = 8;
+    }
+    g.fill();
+  }
+
+  g.restore();
+}
+
+function render() {
+  ctx.clearRect(0, 0, CW, CH);
+
+  // 1. Draw Crisp Full-Resolution 1984 Tokyo Arcade Playfield Plate (1376 x 768)
+  if (bgLoaded) {
+    ctx.drawImage(bgImg, 0, 0, CW, CH);
+  } else {
+    ctx.fillStyle = '#090418';
+    ctx.fillRect(0, 0, CW, CH);
+  }
+
+  // 2. Dynamic 3D Neon Chasers, Bonus Target Ring Halo & Ticket Dispenser Shimmer
+  drawLaneChasers(ctx, S.time);
+  drawTargetBoardEffects(ctx, S.time);
+  drawTicketShimmer(ctx, S.time);
+  drawTrail(ctx);
+
+  // 3. Ball & Real-Time Mahogany Lane Reflection
+  if (S.state === 'ready') {
+    const z = lerp(-0.15, Z0, 1 - Math.pow(1 - S.rollIn, 3));
+    const y = surf(z) + RB;
+
+    // Live 3D Trajectory Guide Arc
+    drawAimTrajectory(ctx);
+
+    // Polished mahogany reflection & soft contact shadow
+    draw3DBall(ctx, S.aimX, -y * 0.85, z, 0.95, 0.24, true);
+    const sp = P(S.aimX, surf(z), z);
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.58)';
+    ctx.beginPath();
+    ctx.ellipse(sp.x, sp.y + 8, RB * sp.s * 0.62, RB * sp.s * 0.22, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pulsing launch ring under ball
+    const pulse = 0.5 + 0.5 * Math.sin(S.time * 5.2);
+    ctx.strokeStyle = S.mult >= 3 ? '#ffd23a' : '#00f0ff';
+    ctx.shadowColor = ctx.strokeStyle;
+    ctx.shadowBlur = 14;
+    ctx.lineWidth = 2.2;
+    ctx.globalAlpha = 0.45 + pulse * 0.35;
+    ctx.beginPath();
+    ctx.ellipse(sp.x, sp.y + 4, RB * sp.s * 0.88, RB * sp.s * 0.32, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    const bp = draw3DBall(ctx, S.aimX, y, z, 1, 1, false);
+
+    if (S.charging) {
+      drawPowerMeter(ctx, bp, chargePower());
+    } else if (drag) {
+      const v = flickVel(performance.now());
+      const refH = Math.max(480, cv.getBoundingClientRect().height);
+      if (v && -v.vy > 20) drawPowerMeter(ctx, bp, clamp(-v.vy / (refH * 1.65), 0.1, 1));
+    } else if (S.rollIn >= 1) {
+      ctx.save();
+      ctx.font = '800 13px Orbitron';
+      ctx.textAlign = 'center';
+      ctx.globalAlpha = 0.68 + 0.32 * Math.sin(S.time * 3.5);
+      ctx.fillStyle = S.hintT > 0 ? '#ffd23a' : '#dffcff';
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 10;
+      const hint = S.hintT > 0
+        ? 'SWIPE UP FASTER OR HOLD [ROLL]!'
+        : 'SWIPE UP BALL • OR HOLD [SPACE / ROLL]';
+      ctx.fillText(hint, bp.x, bp.y - bp.r - 18);
+      ctx.restore();
+    }
+  } else if (S.ball && S.state === 'rolling') {
+    const b = S.ball;
+    if (b.st === 'lane') {
+      draw3DBall(ctx, b.x, 2 * surf(b.z) - b.y, b.z, 0.95, 0.22, true);
+      const sp = P(b.x, surf(b.z), b.z);
+      ctx.save();
+      ctx.fillStyle = 'rgba(0,0,0,0.52)';
+      ctx.beginPath();
+      ctx.ellipse(sp.x, sp.y + 5, RB * sp.s * 0.58, RB * sp.s * 0.2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    draw3DBall(ctx, b.x, b.y, b.z, 1, 1, false);
+  } else if (S.capture && S.capture.pts > 0 && S.capture.t < 0.42) {
+    // Ball sinking into target pocket animation
+    const c = S.capture;
+    const k = Math.max(0.08, 1 - c.t / 0.42);
+    draw3DBall(ctx, c.x, c.y, c.z, k, k, false);
+  }
+
+  // 4. Shockwaves & Particle Fireworks
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  S.shockwaves.forEach(sw => {
+    const u = sw.t / 0.65;
+    ctx.strokeStyle = sw.col;
+    ctx.globalAlpha = Math.max(0, 1 - u);
+    ctx.lineWidth = 4 * (1 - u);
+    ctx.beginPath();
+    ctx.arc(sw.x, sw.y, sw.maxR * u, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+  S.particles.forEach(pt => {
+    const u = pt.life / pt.maxLife;
+    ctx.fillStyle = pt.col;
+    ctx.globalAlpha = Math.max(0, 1 - u);
+    ctx.shadowColor = pt.col;
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, pt.r * (1 - u * 0.5), 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+
+  // 5. Floating Score Popups
+  S.popups.forEach(p => {
+    const u = p.t / 1.35;
+    const sz = (p.big ? 34 : 26) * (1 + 0.18 * Math.sin(Math.min(1, p.t * 5) * Math.PI));
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, 1 - u * u);
+    ctx.font = `900 ${sz}px Orbitron`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = 'rgba(12, 3, 28, 0.92)';
+    ctx.strokeText(p.txt, p.x, p.y - u * 64);
+    ctx.shadowColor = p.col;
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = p.col;
+    ctx.fillText(p.txt, p.x, p.y - u * 64);
+    ctx.restore();
+  });
+
+  // 6. Marquee Digital HUD
+  drawHUD(ctx);
+}
+
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.08, (now - lastT) / 1000);
+  lastT = now;
+  update(dt);
+  render();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ============================================================================
+   10. AUTOMATED TEST & DEBUG HOOKS (window.__skee)
+   ============================================================================ */
+window.__skee = {
+  simulate,
+  launch: (v0, ang = 0, x = 0, spin = 0) => {
+    S.aimX = x; S.spin = spin; S.rollIn = 1;
+    launch(v0, ang);
+  },
+  state: () => ({
+    state: S.state,
+    ball: S.ballIdx,
+    score: S.score,
+    streak: S.streak,
+    mult: S.mult,
+    bonusTarget: S.bonusTarget,
+    results: S.results.slice(),
+    tickets: S.dispShown,
+    wallet: walletTickets
+  }),
+  sweep(opts = {}) {
+    const counts = {}, byPts = {};
+    let tot = 0;
+    const v0s = opts.v0s || [4.0, 8.2, 0.15];
+    const angs = opts.angs || [-0.14, 0.14, 0.02];
+    const xs = opts.xs || [-0.15, 0, 0.15];
+    for (let v0 = v0s[0]; v0 <= v0s[1] + 1e-9; v0 += v0s[2]) {
+      for (let a = angs[0]; a <= angs[1] + 1e-9; a += angs[2]) {
+        for (const x0 of xs) {
+          const r = simulate(v0, a, x0, 0);
+          tot++;
+          counts[r.pts] = (counts[r.pts] || 0) + 1;
+          const k = r.pts;
+          if (!byPts[k]) byPts[k] = { min: v0, max: v0, ex: [+v0.toFixed(2), +a.toFixed(2), x0] };
+          byPts[k].min = Math.min(byPts[k].min, v0);
+          byPts[k].max = Math.max(byPts[k].max, v0);
+        }
+      }
+    }
+    return { tot, counts, byPts };
+  },
+  endGame: () => {
+    while (S.results.length < BALLS) {
+      S.results.push(50);
+      S.score += 50;
+      S.dispTarget = Math.floor(S.score / 10);
+    }
+    S.ballIdx = BALLS;
+    endGame();
+  }
+};
+})();
+</script>
+</body>
+</html>
