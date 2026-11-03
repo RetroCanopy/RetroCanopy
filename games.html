@@ -299,7 +299,8 @@
       body #gamesSelectionBackdrop.playing-active .tier6-lightbox-modal > button[title="Close Arcade Games Page"] {
         display: none !important;
       }
-      body #gamesSelectionBackdrop.playing-active #gamesActivePlayView {
+      body #gamesSelectionBackdrop.playing-active #gamesActivePlayView[style*="flex"],
+      body #gamesSelectionBackdrop.playing-active #skeeRollActivePlayView[style*="flex"] {
         flex: 1 1 auto !important;
         width: 100vw !important;
         height: 100% !important;
@@ -341,15 +342,29 @@
         -webkit-touch-callout: none !important;
         transform: translateZ(0) !important;
       }
+      body #gamesSelectionBackdrop.playing-active #skeeRollCanvas {
+        width: 196% !important;
+        height: 100% !important;
+        max-width: none !important;
+        margin-left: -46% !important;
+        touch-action: none !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -webkit-touch-callout: none !important;
+        transform: translateZ(0) !important;
+      }
       #sluggerControlsHint,
+      #skeeRollControlsHint,
       .slugger-kb-tag,
-      #gamesActivePlayView .slugger-controls-grid {
+      #gamesActivePlayView .slugger-controls-grid,
+      #skeeRollActivePlayView .slugger-controls-grid {
         display: none !important;
       }
       .slugger-mobile-touch-hint {
         display: none !important;
       }
-      #gamesActivePlayView .tier6-vault-footer-bar {
+      #gamesActivePlayView .tier6-vault-footer-bar,
+      #skeeRollActivePlayView .tier6-vault-footer-bar {
         flex-shrink: 0 !important;
         width: 100vw !important;
         border-radius: 0 !important;
@@ -532,7 +547,7 @@
       background-position: 92% 62%;
     }
 
-    /* Slot 01 Active Game: Shinjuku Slugger '84 (Exact Picture Preview) */
+    /* Slot 01 Active Game: Shinjuku Slugger '84 & Slot 02 Active Game: Skee Roll '84 (Exact Picture Preview) */
     .arcade-game-slot-frame.slot-slugger-active {
       background:
         url('assets/concept_gallery/shinjuku_slugger_84_hologram_batter.jpg?v=130') center center / cover no-repeat !important;
@@ -547,6 +562,20 @@
         0 0 42px rgba(57, 255, 20, 0.35);
       transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
+    .arcade-game-slot-frame.slot-skeeroll-active {
+      background:
+        url('assets/concept_gallery/skeeroll_84_dragon_card.jpg?v=175') center center / cover no-repeat !important;
+      justify-content: flex-end;
+      padding: 12px;
+      cursor: pointer;
+      border: 2.5px solid #ff2d95;
+      box-shadow:
+        inset 0 0 12px rgba(255, 45, 149, 0.72),
+        0 0 16px #ff2d95,
+        0 0 30px rgba(0, 240, 255, 0.55),
+        0 0 42px rgba(255, 215, 0, 0.35);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
     .tier6-lightbox-piece.playable-slot {
       cursor: pointer;
       border-color: #00f0ff !important;
@@ -555,7 +584,8 @@
         0 0 34px rgba(0, 240, 255, 0.42),
         inset 0 0 14px rgba(0, 240, 255, 0.32) !important;
     }
-    .tier6-lightbox-piece.playable-slot:hover .arcade-game-slot-frame.slot-slugger-active {
+    .tier6-lightbox-piece.playable-slot:hover .arcade-game-slot-frame.slot-slugger-active,
+    .tier6-lightbox-piece.playable-slot:hover .arcade-game-slot-frame.slot-skeeroll-active {
       transform: scale(1.02);
       border-color: #ffd700;
       box-shadow:
@@ -572,7 +602,8 @@
         radial-gradient(circle at 50% 45%, rgba(10, 14, 26, 0.35) 0%, rgba(8, 11, 20, 0.76) 100%);
       pointer-events: none;
     }
-    .arcade-game-slot-frame.slot-slugger-active::before {
+    .arcade-game-slot-frame.slot-slugger-active::before,
+    .arcade-game-slot-frame.slot-skeeroll-active::before {
       background: linear-gradient(180deg, transparent 58%, rgba(6, 10, 18, 0.72) 100%);
     }
 
@@ -615,7 +646,8 @@
       width: min(1560px, 96vw);
       padding: 8px 14px;
     }
-    #gamesSelectionBackdrop.playing-active #gamesActivePlayView {
+    #gamesSelectionBackdrop.playing-active #gamesActivePlayView,
+    #gamesSelectionBackdrop.playing-active #skeeRollActivePlayView {
       padding: 8px 12px 10px !important;
       gap: 8px !important;
     }
@@ -635,7 +667,8 @@
       overflow: hidden;
     }
 
-    #shinjukuSluggerCanvas {
+    #shinjukuSluggerCanvas,
+    #skeeRollCanvas {
       width: 100%;
       height: 100%;
       display: block;
@@ -2765,14 +2798,15 @@
             </div>
           </div>
 
-          <div class="tier6-lightbox-piece featured">
+          <!-- SLOT 02: SKEE ROLL '84 (CONCEPT #6: CYBER-DRAGON MOUTH 500 PT JACKPOT — LIVE PLAYABLE) -->
+          <div class="tier6-lightbox-piece featured playable-slot" onclick="window.__launchSkeeRoll84()">
             <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 02</span>
-            <div class="arcade-game-slot-frame slot-center" style="background-image:url('assets/concept_gallery/synths_midnight_run_poster.jpg?v=134');background-size:cover;background-position:center;">
-              <div class="arcade-game-slot-plaque">&#9670; COMING SOON</div>
+            <div class="arcade-game-slot-frame slot-skeeroll-active">
+              <div class="arcade-game-slot-plaque">&#9670; PLAY SKEE ROLL '84 &rarr;</div>
             </div>
             <div class="arcade-tier6-card-name">
-              SYNTH'S MIDNIGHT RUN
-              <span class="tier6-card-sub">Coming Soon &bull; 10 PTS = 1 &#127915;</span>
+              SKEE ROLL '84: CYBER DRAGON
+              <span class="tier6-card-sub">500 PT Dragon Jackpot &bull; 10 PTS = 1 &#127915;</span>
             </div>
           </div>
 
@@ -2827,8 +2861,51 @@
               RIGHT FLAP<span class="slugger-kb-tag">&nbsp;[D]</span> &#9654;
             </button>
             <div class="slugger-util-row" style="display:contents;">
+              <button type="button" class="vitrine-side-toggle-pill slugger-util-btn" onclick="window.__launchSkeeRoll84()" style="position:static;padding:8px 12px;font-size:0.6rem;border-color:#ff2d95;color:#ffb3d9;">
+                &#127923; PLAY SKEE ROLL '84
+              </button>
               <button type="button" class="vitrine-side-toggle-pill slugger-util-btn" onclick="window.__resetShinjukuSlugger()" style="position:static;padding:8px 12px;font-size:0.6rem;">
                 &#8635; NEW GAME
+              </button>
+              <button type="button" class="vitrine-side-toggle-pill slugger-util-btn" onclick="window.__returnToGamesSelectGrid()" style="position:static;padding:8px 12px;font-size:0.6rem;">
+                &larr; GAMES DECK
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: FULL 16:9 SKEE ROLL '84: CYBER-DRAGON JACKPOT PLAYABLE SCREEN (EXACT CONCEPT #6 MATCH) -->
+      <div class="tier6-vault-inner-panel" id="skeeRollActivePlayView" style="display:none;padding:14px 18px 16px;gap:12px;">
+        <div class="slugger-play-stage-wrap">
+          <canvas id="skeeRollCanvas" width="1920" height="1080"></canvas>
+        </div>
+
+        <div class="tier6-vault-footer-bar" style="padding:10px 16px;">
+          <div id="skeeRollControlsHint" style="font-size:0.76rem;color:rgba(220,238,255,0.92);">
+            <strong>SKEE ROLL '84 PHYSICS:</strong> <strong style="color:#00f0ff;">Swipe / Flick Up</strong> on the woodgrain lane (or use <kbd style="background:rgba(0,240,255,0.16);border:1px solid #00f0ff;padding:1px 6px;border-radius:4px;color:#00f0ff;font-family:'Orbitron',sans-serif;font-size:0.62rem;">&larr; / &rarr;</kbd> to aim &amp; hold/release <kbd style="background:rgba(0,240,255,0.16);border:1px solid #00f0ff;padding:1px 6px;border-radius:4px;color:#00f0ff;font-family:'Orbitron',sans-serif;font-size:0.62rem;">SPACE</kbd>)! Sink the <strong style="color:#ffd700;">500 PT Cyber-Dragon Mouth</strong> for <strong style="color:#ff2d95;">+50 Golden Tickets</strong>!
+          </div>
+          <div class="slugger-mobile-only-nav" style="grid-template-columns: 1fr 1fr 1fr !important;">
+            <a href="index.html" class="slugger-mobile-nav-btn">&#127968; HOME</a>
+            <button type="button" class="slugger-mobile-nav-btn" onclick="window.__returnToGamesSelectGrid()">&#128377;&#65039; GAMES</button>
+            <button type="button" class="slugger-mobile-nav-btn ticket-btn" onclick="window.__closeGamesSelectionModal(); window.__openTicketCounterModal();">&#127915; TICKETS</button>
+          </div>
+          <div class="slugger-controls-grid" style="display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;">
+            <button type="button" class="vitrine-side-toggle-pill slugger-flap-btn" onclick="window.__skeeNudgeAim(-1)" style="position:static;padding:8px 12px;font-size:0.6rem;">
+              &#9664; AIM LEFT<span class="slugger-kb-tag">&nbsp;[A]</span>
+            </button>
+            <button type="button" class="tc-stage6-bottom-pill slugger-flap-btn" oncontextmenu="return false;" onpointerdown="event.preventDefault(); window.__skeeStartPowerHold()" onpointerup="event.preventDefault(); window.__skeeReleasePowerRoll()" onpointercancel="window.__skeeReleasePowerRoll()" style="width:auto;padding:8px 18px;font-size:0.64rem;">
+              &#127923; HOLD &amp; RELEASE TO ROLL<span class="slugger-kb-tag">&nbsp;[SPACE]</span>
+            </button>
+            <button type="button" class="vitrine-side-toggle-pill slugger-flap-btn" onclick="window.__skeeNudgeAim(1)" style="position:static;padding:8px 12px;font-size:0.6rem;">
+              AIM RIGHT<span class="slugger-kb-tag">&nbsp;[D]</span> &#9654;
+            </button>
+            <div class="slugger-util-row" style="display:contents;">
+              <button type="button" class="vitrine-side-toggle-pill slugger-util-btn" onclick="window.__launchShinjukuSlugger()" style="position:static;padding:8px 12px;font-size:0.6rem;border-color:#00f0ff;color:#99f6ff;">
+                &#9918; PLAY SLUGGER '84
+              </button>
+              <button type="button" class="vitrine-side-toggle-pill slugger-util-btn" onclick="window.__resetSkeeRoll84()" style="position:static;padding:8px 12px;font-size:0.6rem;">
+                &#8635; NEW 9 BALLS
               </button>
               <button type="button" class="vitrine-side-toggle-pill slugger-util-btn" onclick="window.__returnToGamesSelectGrid()" style="position:static;padding:8px 12px;font-size:0.6rem;">
                 &larr; GAMES DECK
@@ -5088,9 +5165,6 @@
         window.__returnToGamesSelectGrid();
         if (gamesSelectionBackdrop) gamesSelectionBackdrop.classList.add('open');
         if (btnOpenGamesModal) btnOpenGamesModal.classList.add('active-modal-pill');
-        if (window.innerWidth <= 768) {
-          window.__launchShinjukuSlugger();
-        }
       };
 
       window.__closeGamesSelectionModal = function () {
@@ -5098,6 +5172,9 @@
         if (sluggerAnimId) {
           cancelAnimationFrame(sluggerAnimId);
           sluggerAnimId = null;
+        }
+        if (typeof window.__stopSkeeRoll84 === 'function') {
+          window.__stopSkeeRoll84();
         }
         if (document.body) document.body.classList.remove('mobile-slugger-fullscreen');
         if (document.fullscreenElement && document.exitFullscreen) {
@@ -5116,6 +5193,9 @@
           cancelAnimationFrame(sluggerAnimId);
           sluggerAnimId = null;
         }
+        if (typeof window.__stopSkeeRoll84 === 'function') {
+          window.__stopSkeeRoll84();
+        }
         if (document.body) document.body.classList.remove('mobile-slugger-fullscreen');
         if (document.fullscreenElement && document.exitFullscreen) {
           try { document.exitFullscreen().catch(() => {}); } catch (_) {}
@@ -5123,10 +5203,17 @@
         if (gamesSelectionBackdrop) gamesSelectionBackdrop.classList.remove('playing-active');
         if (gamesSelectGridView) gamesSelectGridView.style.display = 'flex';
         if (gamesActivePlayView) gamesActivePlayView.style.display = 'none';
+        const skeeView = document.getElementById('skeeRollActivePlayView');
+        if (skeeView) skeeView.style.display = 'none';
         syncGamesModalWalletLabels();
       };
 
       window.__launchShinjukuSlugger = function () {
+        if (typeof window.__stopSkeeRoll84 === 'function') {
+          window.__stopSkeeRoll84();
+        }
+        const skeeView = document.getElementById('skeeRollActivePlayView');
+        if (skeeView) skeeView.style.display = 'none';
         if (gamesSelectionBackdrop) {
           gamesSelectionBackdrop.classList.add('open');
           gamesSelectionBackdrop.classList.add('playing-active');
@@ -7558,6 +7645,955 @@
         sluggerAnimId = requestAnimationFrame(sluggerLoop);
       }
 
+      // =========================================================================
+      // 🎳 SLOT 02: SKEE ROLL '84 — CYBER-DRAGON MOUTH 500 PT JACKPOT ENGINE
+      // =========================================================================
+      const skeeCanvas = document.getElementById('skeeRollCanvas');
+      const skeeRollActivePlayView = document.getElementById('skeeRollActivePlayView');
+      const kCtx = skeeCanvas
+        ? (skeeCanvas.getContext('2d', { alpha: false, desynchronized: true }) || skeeCanvas.getContext('2d'))
+        : null;
+      if (kCtx && IS_MOBILE_PERF) {
+        try {
+          kCtx.shadowBlur = 0;
+          Object.defineProperty(kCtx, 'shadowBlur', {
+            get: function () { return 0; },
+            set: function () {},
+            configurable: true
+          });
+        } catch (_) {}
+      }
+
+      const skeeCleanBoard = new Image();
+      let skeeBoardCache = null;
+      skeeCleanBoard.onload = function () {
+        try {
+          const off = document.createElement('canvas');
+          off.width = 1920;
+          off.height = 1080;
+          const oCtx = off.getContext('2d', { alpha: false }) || off.getContext('2d');
+          if (oCtx) {
+            oCtx.drawImage(skeeCleanBoard, 0, 0, 1920, 1080);
+            skeeBoardCache = off;
+          }
+        } catch (_) {}
+      };
+      skeeCleanBoard.src = 'assets/concept_gallery/skeeroll_84_dragon_board_clean.jpg?v=175';
+
+      // Target Pockets Locked to Exact Coordinates on skeeroll_84_dragon_board_clean.jpg (1920x1080)
+      const SKEE_POCKETS_1080 = [
+        { id: 'DRAGON_500', pts: 500, label: '🐉 500 PT DRAGON JACKPOT!', x: 966, y: 404, rx: 52, ry: 48, color: '#ffd700', isDragon: true },
+        { id: 'CORNER_100_L', pts: 100, label: '★ 100 PT CORNER POCKET!', x: 636, y: 502, rx: 30, ry: 22, color: '#ffd700' },
+        { id: 'TOP_50', pts: 50, label: '50 PT POCKET!', x: 782, y: 502, rx: 34, ry: 22, color: '#ff2d95' },
+        { id: 'CORNER_100_R', pts: 100, label: '★ 100 PT CORNER POCKET!', x: 924, y: 498, rx: 32, ry: 22, color: '#00f59b' },
+        { id: 'RING_40', pts: 40, label: '40 PT RING!', x: 808, y: 552, rx: 38, ry: 24, color: '#00f0ff' },
+        { id: 'CENTER_100', pts: 100, label: '★ 100 PT BULLSEYE CUP!', x: 838, y: 626, rx: 40, ry: 27, color: '#ffae00' },
+        { id: 'RING_30', pts: 30, label: '30 PT RING!', x: 835, y: 604, rx: 112, ry: 68, color: '#ff2d95', isOuterRing: true },
+        { id: 'RING_20', pts: 20, label: '20 PT RING!', x: 835, y: 618, rx: 168, ry: 102, color: '#00f0ff', isOuterRing: true },
+        { id: 'RING_10', pts: 10, label: '10 PT BASE RING', x: 842, y: 650, rx: 210, ry: 126, color: '#00f59b', isOuterRing: true }
+      ];
+
+      let skeeAnimId = null;
+      let skeeActive = false;
+      let skeeLastLoopTime = 0;
+
+      const skee = {
+        ballsLeft: 9,
+        maxBalls: 9,
+        roundScore: 0,
+        roundTickets: 0,
+        dragonHits: 0,
+        phase: 'AIM', // 'AIM' | 'CHARGING' | 'ROLLING' | 'AIRBORNE' | 'POCKET_HOLD' | 'GAME_OVER'
+        phaseTimer: 0,
+        aimOffset: 0,       // -1.0 (left lane edge) to +1.0 (right lane edge)
+        aimOscDir: 1,
+        power: 0.68,        // 0.15 to 1.00 (0.88 - 0.98 reaches Dragon Mouth!)
+        powerDir: 1,
+        ballU: 0,           // 0 = bottom hand release, 1 = ramp lip
+        ballLat: 0,         // lateral lane offset (-1..1)
+        ballLatVel: 0,
+        rollSpeed: 0.028,
+        ballX: 1380,
+        ballY: 985,
+        ballR: 28,
+        airT: 0,
+        airDuration: 34,
+        airStartX: 1020,
+        airStartY: 800,
+        airTargetX: 838,
+        airTargetY: 626,
+        airPeakH: 150,
+        scoredPocket: null,
+        dragonBreathTimer: 0,
+        ticketStreamTimer: 0,
+        ticketRibbonOffset: 0,
+        screenShake: 0,
+        bannerText: '',
+        bannerColor: '#ffd700',
+        bannerTimer: 0,
+        trail: [],
+        particles: [],
+        smokePuffs: [],
+        floatingTexts: []
+      };
+
+      // Perspective helper: maps lane progress u (0 = foreground player release, 1 = ramp lip at base of rings)
+      // and lateral position lat (-1 = left wood rail, +1 = right neon rail) to 1920x1080 canvas coordinates
+      function getSkeeLanePoint(u, lat) {
+        const clampedU = Math.max(0, Math.min(1, u));
+        // Perspective foreshortening along the angled woodgrain lane
+        const p = Math.pow(clampedU, 0.86);
+        const centerStartX = 1410;
+        const centerStartY = 1030;
+        const centerEndX = 955;
+        const centerEndY = 790;
+        const cx = centerStartX + (centerEndX - centerStartX) * p;
+        const cy = centerStartY + (centerEndY - centerStartY) * p;
+        const halfWidthStart = 215;
+        const halfWidthEnd = 108;
+        const hw = halfWidthStart + (halfWidthEnd - halfWidthStart) * p;
+        // Lane perpendicular vector (angled slightly up-right)
+        const perpX = 0.46;
+        const perpY = -0.88;
+        const x = cx + lat * hw * perpX * 1.45;
+        const y = cy + lat * hw * perpY * 0.42;
+        const r = 30 * (1 - 0.44 * p);
+        return { x, y, r };
+      }
+
+      // Compute where a launch with (aimOffset, power) will land on the inclined target board / Dragon Mouth
+      function computeSkeeLandingTarget(aim, pwr) {
+        const normP = Math.max(0.12, Math.min(1.0, pwr));
+        if (normP >= 0.86 && aim >= 0.08) {
+          // High power + right-side aim targets the Cyber-Dragon's open 500 PT jaws at (966, 404)!
+          const dragonBlend = Math.min(1, (normP - 0.86) / 0.12);
+          return {
+            x: 880 + dragonBlend * 86 + (aim - 0.24) * 95,
+            y: 475 - dragonBlend * 71
+          };
+        }
+        const baseTargetY = 710 - normP * 270; // 0.12 -> 678 (10 ring), 0.50 -> 575 (40/100 ring), 0.80 -> 494 (top 50 / corner 100s)
+        const axisX = 850 - normP * 58;
+        const spreadX = 165;
+        return {
+          x: axisX + aim * spreadX,
+          y: baseTargetY
+        };
+      }
+
+      function evaluateSkeePocketHit(tx, ty) {
+        // 1. Check discrete cups first (Dragon Mouth 500, Corner 100s, Top 50, 40 Cup, Center 100 Bullseye)
+        for (let i = 0; i < SKEE_POCKETS_1080.length; i++) {
+          const pk = SKEE_POCKETS_1080[i];
+          if (pk.isOuterRing) continue;
+          const dx = (tx - pk.x) / pk.rx;
+          const dy = (ty - pk.y) / pk.ry;
+          if (dx * dx + dy * dy <= 1.18) {
+            return pk;
+          }
+        }
+        // 2. Check concentric outer rings (30, 20, 10)
+        for (let i = 0; i < SKEE_POCKETS_1080.length; i++) {
+          const pk = SKEE_POCKETS_1080[i];
+          if (!pk.isOuterRing) continue;
+          const dx = (tx - pk.x) / pk.rx;
+          const dy = (ty - pk.y) / pk.ry;
+          if (dx * dx + dy * dy <= 1.05) {
+            return pk;
+          }
+        }
+        // Fallback: 10 PT Base Ring
+        return SKEE_POCKETS_1080[SKEE_POCKETS_1080.length - 1];
+      }
+
+      function spawnSkeeParticles(x, y, color, count) {
+        const n = IS_MOBILE_PERF ? Math.min(count, 10) : count;
+        for (let i = 0; i < n; i++) {
+          const ang = Math.random() * Math.PI * 2;
+          const spd = 3 + Math.random() * 11;
+          skee.particles.push({
+            x,
+            y,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd - 1.5,
+            life: 24 + Math.floor(Math.random() * 18),
+            maxLife: 42,
+            color,
+            size: 3 + Math.random() * 4.5
+          });
+        }
+      }
+
+      function spawnDragonFireBurst() {
+        skee.dragonBreathTimer = 68;
+        skee.screenShake = 14;
+        const mouthX = 972;
+        const mouthY = 402;
+        const fireColors = ['#ffffff', '#fff3a1', '#ffae00', '#ff5500', '#00f0ff'];
+        const count = IS_MOBILE_PERF ? 22 : 48;
+        for (let i = 0; i < count; i++) {
+          const coneAng = 0.08 + (Math.random() - 0.5) * 0.58; // Shoots sparks out to the right just like Concept #6!
+          const spd = 7 + Math.random() * 16;
+          skee.particles.push({
+            x: mouthX + (Math.random() - 0.5) * 18,
+            y: mouthY + (Math.random() - 0.5) * 18,
+            vx: Math.cos(coneAng) * spd,
+            vy: Math.sin(coneAng) * spd,
+            life: 28 + Math.floor(Math.random() * 24),
+            maxLife: 52,
+            color: fireColors[Math.floor(Math.random() * fireColors.length)],
+            size: 2.5 + Math.random() * 5
+          });
+        }
+        for (let s = 0; s < (IS_MOBILE_PERF ? 6 : 12); s++) {
+          skee.smokePuffs.push({
+            x: mouthX + 20 + Math.random() * 60,
+            y: mouthY - 10 + (Math.random() - 0.5) * 40,
+            vx: 1.8 + Math.random() * 3.2,
+            vy: -0.8 - Math.random() * 1.5,
+            r: 18 + Math.random() * 26,
+            life: 45 + Math.floor(Math.random() * 25),
+            maxLife: 70
+          });
+        }
+      }
+
+      function prepareNextSkeeBall() {
+        if (skee.ballsLeft <= 0) {
+          skee.phase = 'GAME_OVER';
+          skee.bannerText = `ROUND COMPLETE • ${skee.roundScore} PTS (+${skee.roundTickets} 🎟️) • TAP OR SPACE TO PLAY AGAIN!`;
+          skee.bannerColor = '#ffd700';
+          skee.bannerTimer = 200;
+          return;
+        }
+        skee.phase = 'AIM';
+        skee.ballU = 0.04;
+        skee.ballLat = skee.aimOffset;
+        skee.power = 0.65;
+        skee.powerDir = 1;
+        skee.trail = [];
+        const pt = getSkeeLanePoint(skee.ballU, skee.ballLat);
+        skee.ballX = pt.x;
+        skee.ballY = pt.y;
+        skee.ballR = pt.r;
+      }
+
+      function launchSkeeBallWithParams(aimVal, powerVal) {
+        if (skee.phase === 'GAME_OVER') {
+          window.__resetSkeeRoll84();
+          return;
+        }
+        if (skee.phase !== 'AIM' && skee.phase !== 'CHARGING') return;
+        skee.aimOffset = Math.max(-0.95, Math.min(0.95, aimVal));
+        skee.power = Math.max(0.18, Math.min(1.0, powerVal));
+        skee.ballsLeft = Math.max(0, skee.ballsLeft - 1);
+        skee.phase = 'ROLLING';
+        skee.ballU = 0.04;
+        skee.ballLat = skee.aimOffset * 0.65;
+        skee.rollSpeed = 0.032 + skee.power * 0.026;
+        skee.trail = [];
+        playArcadeSfx('pitch_eject');
+      }
+
+      window.__skeeNudgeAim = function (dir) {
+        if (!skeeActive) return;
+        if (skee.phase === 'GAME_OVER') {
+          window.__resetSkeeRoll84();
+          return;
+        }
+        skee.aimOffset = Math.max(-0.92, Math.min(0.92, skee.aimOffset + dir * 0.16));
+      };
+
+      window.__skeeStartPowerHold = function () {
+        if (!skeeActive) return;
+        if (skee.phase === 'GAME_OVER') {
+          window.__resetSkeeRoll84();
+          return;
+        }
+        if (skee.phase === 'AIM') {
+          skee.phase = 'CHARGING';
+          skee.power = 0.22;
+          skee.powerDir = 1;
+        }
+      };
+
+      window.__skeeReleasePowerRoll = function () {
+        if (!skeeActive) return;
+        if (skee.phase === 'CHARGING') {
+          launchSkeeBallWithParams(skee.aimOffset, skee.power);
+        } else if (skee.phase === 'AIM') {
+          launchSkeeBallWithParams(skee.aimOffset, 0.78 + (Math.random() - 0.5) * 0.18);
+        }
+      };
+
+      window.__resetSkeeRoll84 = function () {
+        skee.ballsLeft = 9;
+        skee.maxBalls = 9;
+        skee.roundScore = 0;
+        skee.roundTickets = 0;
+        skee.dragonHits = 0;
+        skee.aimOffset = 0.12;
+        skee.power = 0.72;
+        skee.dragonBreathTimer = 36;
+        skee.ticketStreamTimer = 0;
+        skee.particles = [];
+        skee.smokePuffs = [];
+        skee.floatingTexts = [];
+        skee.bannerText = 'FLICK UP THE LANE OR PRESS SPACE • HIT THE 500 PT DRAGON MOUTH!';
+        skee.bannerColor = '#00f0ff';
+        skee.bannerTimer = 95;
+        prepareNextSkeeBall();
+        spawnDragonFireBurst();
+      };
+
+      window.__stopSkeeRoll84 = function () {
+        skeeActive = false;
+        if (skeeAnimId) {
+          cancelAnimationFrame(skeeAnimId);
+          skeeAnimId = null;
+        }
+      };
+
+      window.__launchSkeeRoll84 = function () {
+        sluggerActive = false;
+        if (sluggerAnimId) {
+          cancelAnimationFrame(sluggerAnimId);
+          sluggerAnimId = null;
+        }
+        if (gamesSelectionBackdrop) {
+          gamesSelectionBackdrop.classList.add('open');
+          gamesSelectionBackdrop.classList.add('playing-active');
+        }
+        if (gamesSelectGridView) gamesSelectGridView.style.display = 'none';
+        if (gamesActivePlayView) gamesActivePlayView.style.display = 'none';
+        if (skeeRollActivePlayView) skeeRollActivePlayView.style.display = 'flex';
+        if (window.innerWidth <= 768) {
+          if (document.body) document.body.classList.add('mobile-slugger-fullscreen');
+          try { window.scrollTo(0, 0); } catch (_) {}
+        }
+        playArcadeSfx('unlock');
+        window.__resetSkeeRoll84();
+        skeeActive = true;
+        skeeLastLoopTime = performance.now();
+        if (skeeAnimId) cancelAnimationFrame(skeeAnimId);
+        skeeAnimId = requestAnimationFrame(skeeLoop);
+      };
+
+      // Interactive Pointer Flick / Drag-and-Release on the Skee Roll Canvas
+      if (skeeCanvas) {
+        let dragActive = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let dragStartTime = 0;
+
+        function clientToCanvasCoords(clientX, clientY) {
+          const rect = skeeCanvas.getBoundingClientRect();
+          const scaleX = 1920 / Math.max(1, rect.width);
+          const scaleY = 1080 / Math.max(1, rect.height);
+          return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+          };
+        }
+
+        skeeCanvas.addEventListener('pointerdown', (e) => {
+          if (!skeeActive) return;
+          e.preventDefault();
+          if (skee.phase === 'GAME_OVER') {
+            window.__resetSkeeRoll84();
+            return;
+          }
+          const pt = clientToCanvasCoords(e.clientX, e.clientY);
+          dragActive = true;
+          dragStartX = pt.x;
+          dragStartY = pt.y;
+          dragStartTime = performance.now();
+          if (skee.phase === 'AIM') {
+            skee.phase = 'CHARGING';
+            skee.power = 0.25;
+            skee.powerDir = 1;
+          }
+        });
+
+        skeeCanvas.addEventListener('pointermove', (e) => {
+          if (!skeeActive || !dragActive) return;
+          const pt = clientToCanvasCoords(e.clientX, e.clientY);
+          const dx = pt.x - dragStartX;
+          skee.aimOffset = Math.max(-0.92, Math.min(0.92, dx / 260));
+        });
+
+        function finishSkeePointerGesture(e) {
+          if (!skeeActive || !dragActive) return;
+          dragActive = false;
+          const pt = clientToCanvasCoords(e.clientX, e.clientY);
+          const dx = pt.x - dragStartX;
+          const dy = dragStartY - pt.y; // upward flick > 0
+          const dt = Math.max(16, performance.now() - dragStartTime);
+          if (dy > 35) {
+            const flickSpeed = dy / dt;
+            const flickPower = Math.max(0.32, Math.min(0.98, 0.35 + flickSpeed * 0.38 + dy / 680));
+            const flickAim = Math.max(-0.92, Math.min(0.92, (dx + 45) / 280));
+            launchSkeeBallWithParams(flickAim, flickPower);
+          } else {
+            window.__skeeReleasePowerRoll();
+          }
+        }
+
+        skeeCanvas.addEventListener('pointerup', finishSkeePointerGesture);
+        skeeCanvas.addEventListener('pointercancel', () => {
+          if (dragActive) {
+            dragActive = false;
+            window.__skeeReleasePowerRoll();
+          }
+        });
+      }
+
+      window.addEventListener('keydown', (e) => {
+        if (!skeeActive) return;
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          e.preventDefault();
+          window.__skeeNudgeAim(-1);
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          e.preventDefault();
+          window.__skeeNudgeAim(1);
+        } else if (e.key === ' ' || e.code === 'Space') {
+          e.preventDefault();
+          if (!e.repeat) window.__skeeStartPowerHold();
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (!skeeActive) return;
+        if (e.key === ' ' || e.code === 'Space') {
+          e.preventDefault();
+          window.__skeeReleasePowerRoll();
+        }
+      });
+
+      function drawWoodenSkeeBall(x, y, r, isDragonCharge) {
+        if (!kCtx) return;
+        kCtx.save();
+        // Drop shadow on woodgrain lane
+        kCtx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        kCtx.beginPath();
+        kCtx.ellipse(x + 4, y + r * 0.75, r * 0.92, r * 0.42, 0, 0, Math.PI * 2);
+        kCtx.fill();
+
+        // Classic hardwood skee-ball sphere with warm neon rim reflection (matches Concept #6!)
+        const grad = kCtx.createRadialGradient(x - r * 0.32, y - r * 0.35, r * 0.08, x, y, r);
+        if (isDragonCharge) {
+          grad.addColorStop(0, '#fffef0');
+          grad.addColorStop(0.25, '#ffd700');
+          grad.addColorStop(0.65, '#b86b14');
+          grad.addColorStop(1, '#3b1c04');
+        } else {
+          grad.addColorStop(0, '#ebd0b3');
+          grad.addColorStop(0.28, '#b88252');
+          grad.addColorStop(0.68, '#6e4320');
+          grad.addColorStop(1, '#2b1608');
+        }
+        kCtx.fillStyle = grad;
+        kCtx.beginPath();
+        kCtx.arc(x, y, r, 0, Math.PI * 2);
+        kCtx.fill();
+
+        // Subtle wood-grain band rings across the ball
+        kCtx.strokeStyle = 'rgba(42, 20, 6, 0.42)';
+        kCtx.lineWidth = Math.max(1.2, r * 0.08);
+        kCtx.beginPath();
+        kCtx.arc(x, y, r * 0.72, 0.2 * Math.PI, 0.85 * Math.PI);
+        kCtx.stroke();
+
+        // Neon cyan/magenta edge reflection from the lane LED strips
+        kCtx.strokeStyle = isDragonCharge ? '#ffd700' : '#00f0ff';
+        kCtx.lineWidth = Math.max(1.5, r * 0.09);
+        kCtx.beginPath();
+        kCtx.arc(x, y, r * 0.94, -0.15 * Math.PI, 0.65 * Math.PI);
+        kCtx.stroke();
+
+        kCtx.restore();
+      }
+
+      function drawSkeeTicketRibbon() {
+        if (!kCtx) return;
+        // Draw the iconic streaming golden-orange ticket ribbon coming out of the "TICKET WINNER" slot at (1256, 622) just like Concept #6!
+        const slotX = 1256;
+        const slotY = 622;
+        const activeTickets = skee.roundTickets > 0 || skee.ticketStreamTimer > 0;
+        const numStubs = activeTickets ? Math.min(10, Math.max(4, skee.roundTickets + 3)) : 3;
+
+        kCtx.save();
+        for (let i = 0; i < numStubs; i++) {
+          const t = i / 8;
+          const wave = Math.sin(skee.ticketRibbonOffset * 0.12 + i * 0.7) * (activeTickets ? 8 : 2);
+          const x0 = slotX + i * 28 + wave;
+          const y0 = slotY + i * 38 + Math.sin(i * 0.5) * 12;
+          const stubW = 58;
+          const stubH = 38;
+
+          kCtx.save();
+          kCtx.translate(x0, y0);
+          kCtx.rotate(0.56 + Math.sin(i * 0.4) * 0.08);
+
+          const tGrad = kCtx.createLinearGradient(0, 0, stubW, stubH);
+          tGrad.addColorStop(0, '#ffae00');
+          tGrad.addColorStop(0.5, '#ff8800');
+          tGrad.addColorStop(1, '#d96200');
+          kCtx.fillStyle = tGrad;
+          kCtx.strokeStyle = '#3b1700';
+          kCtx.lineWidth = 1.6;
+          kCtx.fillRect(-stubW / 2, -stubH / 2, stubW, stubH);
+          kCtx.strokeRect(-stubW / 2, -stubH / 2, stubW, stubH);
+
+          kCtx.strokeStyle = 'rgba(80, 28, 0, 0.55)';
+          kCtx.setLineDash([3, 3]);
+          kCtx.beginPath();
+          kCtx.moveTo(-stubW / 2, stubH / 2);
+          kCtx.lineTo(stubW / 2, stubH / 2);
+          kCtx.stroke();
+          kCtx.setLineDash([]);
+
+          kCtx.fillStyle = '#2a0e00';
+          kCtx.font = '900 8px Orbitron, sans-serif';
+          kCtx.textAlign = 'center';
+          kCtx.fillText('TICKET', 0, -2);
+          kCtx.fillText('★ 1984 ★', 0, 9);
+          kCtx.restore();
+        }
+        kCtx.restore();
+      }
+
+      function drawSkeeHudAndAimGuide() {
+        if (!kCtx) return;
+        kCtx.save();
+
+        // 1. Update the red digital "TICKET" LED counter baked onto the board at (1055, 703)
+        kCtx.fillStyle = 'rgba(18, 6, 10, 0.92)';
+        kCtx.fillRect(1028, 686, 54, 26);
+        kCtx.font = '900 20px Orbitron, sans-serif';
+        kCtx.textAlign = 'center';
+        kCtx.textBaseline = 'middle';
+        kCtx.fillStyle = '#ff3b30';
+        kCtx.shadowColor = '#ff3b30';
+        kCtx.shadowBlur = 10;
+        kCtx.fillText(String(skee.roundTickets), 1055, 700);
+
+        // 2. Draw remaining wooden balls lined up along the ball rack at base of target board (805..1075, 772) just like Concept #6!
+        const rackBallsToShow = Math.min(5, skee.ballsLeft);
+        for (let b = 0; b < rackBallsToShow; b++) {
+          const rx = 826 + b * 54;
+          const ry = 774 - b * 4;
+          drawWoodenSkeeBall(rx, ry, 24, false);
+        }
+
+        // 3. Draw Aim Trajectory Arc when in AIM or CHARGING state
+        if (skee.phase === 'AIM' || skee.phase === 'CHARGING') {
+          const landing = computeSkeeLandingTarget(skee.aimOffset, skee.power);
+          const nearHit = evaluateSkeePocketHit(landing.x, landing.y);
+          const startPt = getSkeeLanePoint(0.08, skee.aimOffset * 0.65);
+          const lipPt = getSkeeLanePoint(0.98, skee.aimOffset * 0.85);
+
+          kCtx.save();
+          kCtx.strokeStyle = nearHit && nearHit.isDragon ? '#ffd700' : '#00f0ff';
+          kCtx.lineWidth = 4;
+          kCtx.setLineDash([10, 8]);
+          kCtx.shadowColor = kCtx.strokeStyle;
+          kCtx.shadowBlur = 14;
+          kCtx.beginPath();
+          kCtx.moveTo(startPt.x, startPt.y);
+          kCtx.quadraticCurveTo(lipPt.x, lipPt.y, landing.x, landing.y);
+          kCtx.stroke();
+          kCtx.setLineDash([]);
+
+          // Target reticle ring on the board
+          kCtx.beginPath();
+          kCtx.arc(landing.x, landing.y, 20, 0, Math.PI * 2);
+          kCtx.strokeStyle = nearHit ? nearHit.color : '#00f0ff';
+          kCtx.lineWidth = 3;
+          kCtx.stroke();
+
+          // Power Meter Bar along the right side of the lane
+          const meterX = 1525;
+          const meterY = 740;
+          const meterW = 24;
+          const meterH = 210;
+          kCtx.fillStyle = 'rgba(8, 12, 24, 0.88)';
+          kCtx.strokeStyle = '#00f0ff';
+          kCtx.lineWidth = 2;
+          kCtx.beginPath();
+          kCtx.roundRect(meterX, meterY, meterW, meterH, 12);
+          kCtx.fill();
+          kCtx.stroke();
+
+          const fillH = Math.max(8, meterH * skee.power);
+          const pGrad = kCtx.createLinearGradient(meterX, meterY + meterH, meterX, meterY);
+          pGrad.addColorStop(0, '#00f59b');
+          pGrad.addColorStop(0.6, '#00f0ff');
+          pGrad.addColorStop(0.85, '#ff2d95');
+          pGrad.addColorStop(1, '#ffd700');
+          kCtx.fillStyle = pGrad;
+          kCtx.beginPath();
+          kCtx.roundRect(meterX + 3, meterY + meterH - fillH + 3, meterW - 6, Math.max(4, fillH - 6), 9);
+          kCtx.fill();
+
+          kCtx.font = '900 12px Orbitron, sans-serif';
+          kCtx.fillStyle = '#ffd700';
+          kCtx.textAlign = 'center';
+          kCtx.fillText('DRAGON', meterX + meterW / 2, meterY - 22);
+          kCtx.fillText('ZONE ▲', meterX + meterW / 2, meterY - 8);
+          kCtx.restore();
+        }
+
+        // 4. Top-Left & Top-Right Neon Arcade Scoreboard Wings
+        const isMob = window.innerWidth <= 768;
+        const leftX = isMob ? 458 : 64;
+        const leftW = isMob ? 250 : 350;
+        kCtx.fillStyle = 'rgba(7, 11, 24, 0.90)';
+        kCtx.strokeStyle = '#00f0ff';
+        kCtx.lineWidth = 2.2;
+        kCtx.beginPath();
+        kCtx.roundRect(leftX, 18, leftW, 84, 14);
+        kCtx.fill();
+        kCtx.stroke();
+
+        kCtx.font = isMob ? '900 12px Orbitron, sans-serif' : '900 14px Orbitron, sans-serif';
+        kCtx.fillStyle = '#6cf6ff';
+        kCtx.textAlign = 'center';
+        kCtx.fillText('SKEE ROLL SCORE (10 PTS = 1 🎟️)', leftX + leftW / 2, 40);
+
+        kCtx.font = isMob ? '900 28px Orbitron, sans-serif' : '900 34px Orbitron, sans-serif';
+        kCtx.fillStyle = '#ffd700';
+        kCtx.fillText(`${skee.roundScore.toLocaleString()} PTS`, leftX + leftW / 2, 74);
+
+        const rightX = isMob ? 1212 : 1490;
+        const rightW = isMob ? 250 : 366;
+        kCtx.fillStyle = 'rgba(7, 11, 24, 0.90)';
+        kCtx.strokeStyle = '#ff2d95';
+        kCtx.lineWidth = 2.2;
+        kCtx.beginPath();
+        kCtx.roundRect(rightX, 18, rightW, 84, 14);
+        kCtx.fill();
+        kCtx.stroke();
+
+        kCtx.font = isMob ? '900 12px Orbitron, sans-serif' : '900 14px Orbitron, sans-serif';
+        kCtx.fillStyle = '#ff99cc';
+        kCtx.textAlign = 'center';
+        kCtx.fillText(`BALLS LEFT: ${skee.ballsLeft} / ${skee.maxBalls}`, rightX + rightW / 2, 40);
+
+        kCtx.font = isMob ? '900 28px Orbitron, sans-serif' : '900 34px Orbitron, sans-serif';
+        kCtx.fillStyle = '#00f59b';
+        kCtx.fillText(`+${skee.roundTickets.toLocaleString()} 🎟️ WON`, rightX + rightW / 2, 74);
+
+        kCtx.restore();
+      }
+
+      function skeeLoop(nowTs) {
+        if (!skeeActive || !kCtx) return;
+        const now = typeof nowTs === 'number' ? nowTs : performance.now();
+        const rawDtMs = skeeLastLoopTime > 0 ? (now - skeeLastLoopTime) : 16.667;
+        skeeLastLoopTime = now;
+        const frameScale = Math.min(2.2, Math.max(0.65, rawDtMs / 16.667));
+
+        kCtx.save();
+        if (skee.screenShake > 0) {
+          const sx = (Math.random() - 0.5) * skee.screenShake * 1.5;
+          const sy = (Math.random() - 0.5) * skee.screenShake * 1.5;
+          kCtx.translate(sx, sy);
+          skee.screenShake = Math.max(0, skee.screenShake - 0.75 * frameScale);
+        }
+
+        // 1. Draw the exact Concept #6 Photorealistic 1984 Cyber-Dragon Skee-Ball Cabinet Plate
+        if (skeeBoardCache) {
+          kCtx.drawImage(skeeBoardCache, 0, 0);
+        } else if (skeeCleanBoard.complete && skeeCleanBoard.naturalWidth > 0) {
+          kCtx.drawImage(skeeCleanBoard, 0, 0, 1920, 1080);
+        } else {
+          kCtx.fillStyle = '#060a12';
+          kCtx.fillRect(0, 0, 1920, 1080);
+        }
+
+        // 2. Ambient Dragon Mouth Glow & Periodic Sparks (exact Concept #6 atmosphere!)
+        if (Math.random() < 0.28 || skee.dragonBreathTimer > 0) {
+          if (skee.dragonBreathTimer > 0) skee.dragonBreathTimer -= frameScale;
+          kCtx.save();
+          const mouthGlow = kCtx.createRadialGradient(968, 404, 6, 968, 404, skee.dragonBreathTimer > 0 ? 115 : 68);
+          mouthGlow.addColorStop(0, 'rgba(255, 240, 150, 0.72)');
+          mouthGlow.addColorStop(0.45, 'rgba(255, 140, 0, 0.35)');
+          mouthGlow.addColorStop(1, 'rgba(255, 60, 0, 0)');
+          kCtx.fillStyle = mouthGlow;
+          kCtx.beginPath();
+          kCtx.arc(968, 404, skee.dragonBreathTimer > 0 ? 115 : 68, 0, Math.PI * 2);
+          kCtx.fill();
+          kCtx.restore();
+
+          if (Math.random() < 0.45) {
+            skee.particles.push({
+              x: 974 + (Math.random() - 0.5) * 14,
+              y: 404 + (Math.random() - 0.5) * 14,
+              vx: 4 + Math.random() * 8,
+              vy: (Math.random() - 0.45) * 3.5,
+              life: 16 + Math.floor(Math.random() * 14),
+              maxLife: 30,
+              color: Math.random() < 0.5 ? '#ffd700' : '#ff6a00',
+              size: 2 + Math.random() * 3
+            });
+          }
+        }
+
+        // 3. Step Ball State Machine
+        if (skee.phase === 'AIM') {
+          const pt = getSkeeLanePoint(0.05, skee.aimOffset * 0.65);
+          skee.ballX = pt.x;
+          skee.ballY = pt.y;
+          skee.ballR = pt.r;
+        } else if (skee.phase === 'CHARGING') {
+          skee.power += skee.powerDir * 0.018 * frameScale;
+          if (skee.power >= 0.99) {
+            skee.power = 0.99;
+            skee.powerDir = -1;
+          } else if (skee.power <= 0.20) {
+            skee.power = 0.20;
+            skee.powerDir = 1;
+          }
+          const pt = getSkeeLanePoint(0.05, skee.aimOffset * 0.65);
+          skee.ballX = pt.x;
+          skee.ballY = pt.y;
+          skee.ballR = pt.r;
+        } else if (skee.phase === 'ROLLING') {
+          skee.ballU += skee.rollSpeed * frameScale;
+          const pt = getSkeeLanePoint(Math.min(1, skee.ballU), skee.aimOffset * (0.65 + 0.2 * skee.ballU));
+          skee.ballX = pt.x;
+          skee.ballY = pt.y;
+          skee.ballR = pt.r;
+          skee.trail.push({ x: skee.ballX, y: skee.ballY, r: skee.ballR * 0.72, life: 14 });
+          if (skee.trail.length > 16) skee.trail.shift();
+
+          if (skee.ballU >= 1.0) {
+            // Launch off the wooden ramp lip into the target rings / Dragon Mouth!
+            skee.phase = 'AIRBORNE';
+            skee.airT = 0;
+            skee.airDuration = 28;
+            skee.airStartX = skee.ballX;
+            skee.airStartY = skee.ballY;
+            const landing = computeSkeeLandingTarget(skee.aimOffset, skee.power);
+            skee.airTargetX = landing.x;
+            skee.airTargetY = landing.y;
+            skee.airPeakH = 75 + skee.power * 95;
+            playArcadeSfx('flap');
+          }
+        } else if (skee.phase === 'AIRBORNE') {
+          skee.airT += frameScale;
+          const prog = Math.min(1, skee.airT / skee.airDuration);
+          const arcLift = Math.sin(prog * Math.PI) * skee.airPeakH;
+          skee.ballX = skee.airStartX + (skee.airTargetX - skee.airStartX) * prog;
+          skee.ballY = skee.airStartY + (skee.airTargetY - skee.airStartY) * prog - arcLift;
+          skee.ballR = 17 * (1 - 0.22 * prog);
+          skee.trail.push({ x: skee.ballX, y: skee.ballY, r: skee.ballR * 0.75, life: 14 });
+          if (skee.trail.length > 18) skee.trail.shift();
+
+          if (prog >= 1) {
+            const hitPocket = evaluateSkeePocketHit(skee.airTargetX, skee.airTargetY);
+            skee.scoredPocket = hitPocket;
+            skee.phase = 'POCKET_HOLD';
+            skee.phaseTimer = 34;
+            skee.ballX = hitPocket.x;
+            skee.ballY = hitPocket.y;
+
+            const pts = hitPocket.pts;
+            const prevTickets = Math.floor(skee.roundScore / 10);
+            skee.roundScore += pts;
+            skee.roundTickets = Math.floor(skee.roundScore / 10);
+            const ticketsJustWon = Math.max(0, skee.roundTickets - prevTickets);
+
+            // Credit points & Golden Tickets directly to the player's global Retrocanopy Wallet & Leaderboard!
+            awardSluggerPoints(pts);
+
+            if (hitPocket.isDragon) {
+              skee.dragonHits++;
+              spawnDragonFireBurst();
+              playArcadeSfx('homerun_organ');
+              skee.bannerText = `🐉 500 PT CYBER-DRAGON JACKPOT! (+50 GOLDEN TICKETS!)`;
+              skee.bannerColor = '#ffd700';
+              skee.bannerTimer = 85;
+            } else if (pts >= 100) {
+              spawnSkeeParticles(hitPocket.x, hitPocket.y, hitPocket.color, 26);
+              playArcadeSfx('extra_ball_bell');
+              skee.bannerText = `${hitPocket.label} +${pts} PTS (+${ticketsJustWon} 🎟️)!`;
+              skee.bannerColor = '#ffd700';
+              skee.bannerTimer = 55;
+            } else {
+              spawnSkeeParticles(hitPocket.x, hitPocket.y, hitPocket.color, 16);
+              playArcadeSfx('reel_hit');
+              skee.bannerText = `${hitPocket.label} +${pts} PTS!`;
+              skee.bannerColor = hitPocket.color;
+              skee.bannerTimer = 42;
+            }
+
+            if (ticketsJustWon > 0) {
+              skee.ticketStreamTimer = 50;
+            }
+
+            skee.floatingTexts.push({
+              x: hitPocket.x,
+              y: hitPocket.y - 18,
+              text: `+${pts} PTS${ticketsJustWon > 0 ? ` (+${ticketsJustWon} 🎟️)` : ''}`,
+              color: hitPocket.color,
+              life: 48,
+              maxLife: 48
+            });
+          }
+        } else if (skee.phase === 'POCKET_HOLD') {
+          skee.phaseTimer -= frameScale;
+          if (skee.phaseTimer <= 0) {
+            prepareNextSkeeBall();
+          }
+        }
+
+        // 4. Draw Streaming Golden Ticket Ribbon from the "TICKET WINNER" Dispenser
+        if (skee.ticketStreamTimer > 0) {
+          skee.ticketStreamTimer -= frameScale;
+          skee.ticketRibbonOffset += frameScale;
+        }
+        drawSkeeTicketRibbon();
+
+        // 5. Draw HUD, Ball Rack & Aim Trajectory Guide
+        drawSkeeHudAndAimGuide();
+
+        // 6. Draw Neon Light Trail & Active Rolling/Airborne Skee-Ball
+        for (let i = skee.trail.length - 1; i >= 0; i--) {
+          const tr = skee.trail[i];
+          tr.life -= frameScale;
+          if (tr.life <= 0) {
+            skee.trail.splice(i, 1);
+            continue;
+          }
+          kCtx.save();
+          kCtx.globalAlpha = (tr.life / 14) * 0.45;
+          kCtx.fillStyle = skee.power > 0.84 ? '#ffd700' : '#00f0ff';
+          kCtx.beginPath();
+          kCtx.arc(tr.x, tr.y, tr.r, 0, Math.PI * 2);
+          kCtx.fill();
+          kCtx.restore();
+        }
+
+        if (skee.phase !== 'GAME_OVER') {
+          const sinkScale = skee.phase === 'POCKET_HOLD' ? Math.max(0.2, skee.phaseTimer / 34) : 1;
+          drawWoodenSkeeBall(skee.ballX, skee.ballY, skee.ballR * sinkScale, skee.power > 0.84);
+        }
+
+        // 7. Draw Dragon Smoke Puffs & Fire Sparks
+        for (let i = skee.smokePuffs.length - 1; i >= 0; i--) {
+          const sm = skee.smokePuffs[i];
+          sm.x += sm.vx * frameScale;
+          sm.y += sm.vy * frameScale;
+          sm.r += 0.45 * frameScale;
+          sm.life -= frameScale;
+          if (sm.life <= 0) {
+            skee.smokePuffs.splice(i, 1);
+            continue;
+          }
+          kCtx.save();
+          kCtx.globalAlpha = (sm.life / sm.maxLife) * 0.34;
+          const sGrad = kCtx.createRadialGradient(sm.x, sm.y, 2, sm.x, sm.y, sm.r);
+          sGrad.addColorStop(0, 'rgba(235, 220, 255, 0.8)');
+          sGrad.addColorStop(1, 'rgba(120, 90, 160, 0)');
+          kCtx.fillStyle = sGrad;
+          kCtx.beginPath();
+          kCtx.arc(sm.x, sm.y, sm.r, 0, Math.PI * 2);
+          kCtx.fill();
+          kCtx.restore();
+        }
+
+        for (let i = skee.particles.length - 1; i >= 0; i--) {
+          const p = skee.particles[i];
+          p.x += p.vx * frameScale;
+          p.y += p.vy * frameScale;
+          p.vy += 0.18 * frameScale;
+          p.life -= frameScale;
+          if (p.life <= 0) {
+            skee.particles.splice(i, 1);
+            continue;
+          }
+          kCtx.save();
+          kCtx.globalAlpha = Math.max(0, p.life / p.maxLife);
+          kCtx.fillStyle = p.color;
+          kCtx.beginPath();
+          kCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          kCtx.fill();
+          kCtx.restore();
+        }
+
+        // 8. Draw Floating Score Callouts
+        for (let i = skee.floatingTexts.length - 1; i >= 0; i--) {
+          const ft = skee.floatingTexts[i];
+          ft.y -= 1.4 * frameScale;
+          ft.life -= frameScale;
+          if (ft.life <= 0) {
+            skee.floatingTexts.splice(i, 1);
+            continue;
+          }
+          kCtx.save();
+          kCtx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
+          kCtx.font = '900 22px Orbitron, sans-serif';
+          kCtx.textAlign = 'center';
+          kCtx.fillStyle = ft.color;
+          kCtx.strokeStyle = '#050811';
+          kCtx.lineWidth = 4;
+          kCtx.strokeText(ft.text, ft.x, ft.y);
+          kCtx.fillText(ft.text, ft.x, ft.y);
+          kCtx.restore();
+        }
+
+        // 9. Game Over Card
+        if (skee.phase === 'GAME_OVER') {
+          kCtx.save();
+          kCtx.fillStyle = 'rgba(6, 10, 22, 0.92)';
+          kCtx.strokeStyle = '#ffd700';
+          kCtx.lineWidth = 4;
+          kCtx.beginPath();
+          kCtx.roundRect(520, 360, 880, 320, 18);
+          kCtx.fill();
+          kCtx.stroke();
+
+          kCtx.textAlign = 'center';
+          kCtx.font = '900 46px Orbitron, sans-serif';
+          kCtx.fillStyle = '#ffd700';
+          kCtx.fillText("SKEE ROLL '84 COMPLETE!", 960, 440);
+
+          kCtx.font = '900 24px Orbitron, sans-serif';
+          kCtx.fillStyle = '#00f0ff';
+          kCtx.fillText(`FINAL SCORE: ${skee.roundScore} PTS   •   TICKETS WON: +${skee.roundTickets} 🎟️`, 960, 520);
+
+          kCtx.font = '800 17px Orbitron, sans-serif';
+          kCtx.fillStyle = '#ffffff';
+          kCtx.fillText('TAP ANYWHERE ON THE LANE OR PRESS SPACE FOR 9 NEW BALLS!', 960, 605);
+          kCtx.restore();
+        }
+
+        // 10. Bottom Callout Banner
+        if (skee.bannerTimer > 0) {
+          skee.bannerTimer -= frameScale;
+          kCtx.save();
+          kCtx.font = '900 22px Orbitron, sans-serif';
+          kCtx.textAlign = 'center';
+          kCtx.textBaseline = 'middle';
+          const bw = Math.max(560, kCtx.measureText(skee.bannerText).width + 64);
+          kCtx.fillStyle = 'rgba(6, 10, 18, 0.90)';
+          kCtx.strokeStyle = skee.bannerColor;
+          kCtx.lineWidth = 3;
+          kCtx.beginPath();
+          kCtx.roundRect(960 - bw / 2, 995, bw, 52, 12);
+          kCtx.fill();
+          kCtx.stroke();
+          kCtx.fillStyle = skee.bannerColor;
+          kCtx.fillText(skee.bannerText, 960, 1022);
+          kCtx.restore();
+        }
+
+        kCtx.restore();
+        skeeAnimId = requestAnimationFrame(skeeLoop);
+      }
+
       const qsParams = new URLSearchParams(window.location.search);
       if (qsParams.get('demoTickets')) {
         const tCount = parseInt(qsParams.get('demoTickets'), 10) || 0;
@@ -7565,7 +8601,19 @@
           ticketCounterLiveBadge.textContent = `🎟️ ${tCount.toLocaleString()} ${tCount === 1 ? 'TICKET' : 'TICKETS'}`;
         }
       }
-      if (qsParams.get('openDeck') === '1') {
+      if (qsParams.get('autoPlaySkee') === '1') {
+        setTimeout(() => {
+          window.__openGamesSelectionModal();
+          window.__launchSkeeRoll84();
+          if (qsParams.get('demoDragonHit') === '1') {
+            skee.aimOffset = 0.24;
+            skee.power = 0.94;
+            setTimeout(() => {
+              launchSkeeBallWithParams(0.24, 0.94);
+            }, 180);
+          }
+        }, 80);
+      } else if (qsParams.get('openDeck') === '1') {
         setTimeout(() => {
           window.__openGamesSelectionModal();
         }, 80);
