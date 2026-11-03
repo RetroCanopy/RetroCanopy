@@ -413,9 +413,9 @@ const DT = 1 / 240;
 // Target Board Pockets & Concentric Rings (board coordinates u, v in meters)
 // Mapped so P(x,y,z) projects onto the exact glowing neon rings of skee_roll_84_bg_clean.jpg!
 const RINGS = [
-  { s: 100, col: '#ff4fd8', label: '100', cx: 0, cy: 0.905, rx: 0.095, ry: 0.082, holeY: 0.905, holeR: 0.068 },
-  { s: 50,  col: '#29e6ff', label: '50',  cx: 0, cy: 0.770, rx: 0.102, ry: 0.086, holeY: 0.770, holeR: 0.068 },
-  { s: 40,  col: '#ff3ad8', label: '40',  cx: 0, cy: 0.625, rx: 0.118, ry: 0.094, holeY: 0.625, holeR: 0.068 },
+  { s: 100, col: '#ff4fd8', label: '100', cx: 0, cy: 0.905, rx: 0.092, ry: 0.064, holeY: 0.905, holeR: 0.068 },
+  { s: 50,  col: '#29e6ff', label: '50',  cx: 0, cy: 0.770, rx: 0.098, ry: 0.064, holeY: 0.770, holeR: 0.068 },
+  { s: 40,  col: '#ff3ad8', label: '40',  cx: 0, cy: 0.625, rx: 0.112, ry: 0.068, holeY: 0.625, holeR: 0.068 },
   { s: 30,  col: '#29e6ff', label: '30',  cx: 0, cy: 0.565, rx: 0.185, ry: 0.175, holeY: 0.465, holeR: 0.068 },
   { s: 20,  col: '#7b68ff', label: '20',  cx: 0, cy: 0.525, rx: 0.315, ry: 0.305, holeY: 0.318, holeR: 0.072 },
   { s: 10,  col: '#ff2fd0', label: '10',  cx: 0, cy: 0.485, rx: 0.445, ry: 0.425, holeY: 0.145, holeR: 0.076 }
@@ -423,8 +423,8 @@ const RINGS = [
 
 // Upper-Left and Upper-Right 100 Gold Jackpot Corner Cups
 const CUPS = [
-  { u: -0.325, v: 0.945, r: 0.082, s: 100, col: '#ffd23a', label: 'L-100' },
-  { u:  0.325, v: 0.945, r: 0.082, s: 100, col: '#ffd23a', label: 'R-100' }
+  { u: -0.325, v: 0.945, r: 0.086, s: 100, col: '#ffd23a', label: 'L-100' },
+  { u:  0.325, v: 0.945, r: 0.086, s: 100, col: '#ffd23a', label: 'R-100' }
 ];
 
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -601,18 +601,18 @@ const Snd = (() => {
 })();
 
 /* ============================================================================
-   4. AUTHENTIC 3D SKEE-BALL PHYSICS (Parabolic Ski-Jump, 3D Ring Rims & Funnels)
+   4. AUTHENTIC 3D SKEE-BALL PHYSICS (Parabolic Ski-Jump, Curved Backboard & Rims)
    ============================================================================ */
 function makeBall(v0, ang, x0 = 0, spin = 0) {
   const cleanV0 = clamp(v0, 3.85, 8.6);
-  const cleanAng = clamp(ang, -0.22, 0.22);
+  const cleanAng = clamp(ang, -0.28, 0.28);
   return {
     st: 'lane',
     x: clamp(x0, -(LH - RB - 0.015), LH - RB - 0.015),
     y: RB,
     z: Z0,
-    // Gentle lateral component down the narrow wooden lane so angled shots don't ricochet early
-    vx: cleanV0 * Math.sin(cleanAng) * 0.44,
+    // Controlled lateral travel down the narrow wood lane so angled shots clear the rails cleanly
+    vx: cleanV0 * Math.sin(cleanAng) * 0.35,
     vy: 0,
     vz: cleanV0 * Math.cos(cleanAng),
     ang: cleanAng,
@@ -629,20 +629,28 @@ function makeBall(v0, ang, x0 = 0, spin = 0) {
   };
 }
 
-function classifyLandingRing(u, v) {
+function findEnclosingRing(u, v) {
   for (const C of CUPS) {
-    if (Math.hypot(u - C.u, v - C.v) <= C.r * 1.18) {
-      return { pts: C.s, label: C.label, col: C.col, cx: C.u, cy: C.v };
+    if (Math.hypot(u - C.u, v - C.v) <= C.r * 1.45) {
+      return { kind: 'cup', target: C, pts: C.s, label: C.label, col: C.col, cx: C.u, cy: C.v, hr: C.r };
     }
+  }
+  if (v > 0.80 && Math.abs(u) > 0.17) {
+    const C = u < 0 ? CUPS[0] : CUPS[1];
+    return { kind: 'cup', target: C, pts: C.s, label: C.label, col: C.col, cx: C.u, cy: C.v, hr: C.r };
   }
   for (const R of RINGS) {
     const eDist = Math.hypot((u - R.cx) / R.rx, (v - R.cy) / R.ry);
-    if (eDist <= 1.02) {
-      return { pts: R.s, label: R.label, col: R.col, cx: R.cx, cy: R.holeY };
+    if (eDist <= 1.04) {
+      return { kind: 'ring', target: R, pts: R.s, label: R.label, col: R.col, cx: R.cx, cy: R.holeY, hr: R.holeR };
     }
   }
   const R10 = RINGS[RINGS.length - 1];
-  return { pts: 10, label: '10', col: R10.col, cx: 0, cy: R10.holeY };
+  return { kind: 'ring', target: R10, pts: 10, label: '10', col: R10.col, cx: 0, cy: R10.holeY, hr: R10.holeR };
+}
+
+function classifyLandingRing(u, v) {
+  return findEnclosingRing(u, v);
 }
 
 function stepBall(b, dt, onEvt) {
@@ -654,7 +662,7 @@ function stepBall(b, dt, onEvt) {
 
   if (b.st === 'lane') {
     const s = dsurf(b.z), c = 1 / Math.hypot(1, s);
-    const ax = b.spin * 0.14; // Subtle drift on the polished wood lane
+    const ax = b.spin * 0.12;
     const az = -G * s * c * 0.45 - 0.02 * b.vz;
     b.vx += ax * dt;
     b.vz += az * dt;
@@ -669,10 +677,10 @@ function stepBall(b, dt, onEvt) {
 
     if (b.z >= ZP) {
       // True parabolic ski-jump launch off the ramp lip (25 deg above the 31 deg target board!)
-      // Launches the ball cleanly into the air OVER the lower rings to land in the target pocket!
+      // Carries the ball's aimed angle (b.ang) out across the full width of the target board!
       const sp = b.vz * 0.525;
       const launchPitch = PH + (25 * Math.PI / 180);
-      b.vx = b.vx * 1.15 + b.spin * 0.22;
+      b.vx = sp * Math.sin(b.ang) * 1.45 + b.spin * 0.22;
       b.vy = sp * Math.sin(launchPitch);
       b.vz = sp * Math.cos(launchPitch);
       b.y = RAMP_H + RB * CPH;
@@ -688,7 +696,7 @@ function stepBall(b, dt, onEvt) {
   // Board / Airborne state
   b.boardT += dt;
   const prevC = bc(b);
-  b.vx += b.spin * (b.contact ? 0.35 : 0.65) * dt; // Spin hooks airborne ball toward corner 100 cups
+  b.vx += b.spin * (b.contact ? 0.25 : 0.55) * dt;
   b.vy -= G * dt;
   b.x += b.vx * dt;
   b.y += b.vy * dt;
@@ -697,92 +705,89 @@ function stepBall(b, dt, onEvt) {
   let c = bc(b);
   let { u, v, h, vu, vv, vh } = c;
 
-  // Wide oval target arena side walls (allows full access to 10/20 rings and L-100/R-100 corner cups at +-0.325m)
-  const bw = 0.435;
-  if (u < -bw) { u = -bw; vu = Math.abs(vu) * 0.48; onEvt && onEvt('wall', vu); }
-  if (u >  bw) { u =  bw; vu = -Math.abs(vu) * 0.48; onEvt && onEvt('wall', -vu); }
-  // Top curved backboard bumper
-  if (v > BL - RB) { v = BL - RB; vv = -Math.abs(vv) * 0.38; onEvt && onEvt('wall', -vv); }
+  // Curved Padded Top Backboard Arch & Side Arena Walls (encloses L-100, 100, and R-100 cleanly)
+  const bw = 0.425;
+  if (u < -bw) { u = -bw; vu = Math.abs(vu) * 0.42; onEvt && onEvt('wall', vu); }
+  if (u >  bw) { u =  bw; vu = -Math.abs(vu) * 0.42; onEvt && onEvt('wall', -vu); }
+  const topV = 1.035 - 0.28 * (u * u);
+  if (v > topV) {
+    v = topV;
+    let nx = 0.56 * u, nv = 1.0;
+    const nl = Math.hypot(nx, nv) || 1;
+    nx /= nl; nv /= nl;
+    const vn = vu * nx + vv * nv;
+    if (vn > 0) {
+      vu -= (1 + 0.35) * vn * nx;
+      vv -= (1 + 0.35) * vn * nv;
+      onEvt && onEvt('wall', vn);
+    }
+  }
 
-  // Board floor contact, 3D ring rim deflections & pocket funneling
+  // Board floor contact, 3D ring catch-cup rim deflections & physical roll into pocket holes
   if (h <= RB) {
-    if (!b.contact && vh < -0.25) {
+    if (!b.contact && vh < -0.20) {
+      // First board impact absorbs excess skid and bounces realistically
+      vu *= 0.68;
+      vv *= 0.62;
       onEvt && onEvt('land', -vh);
     }
     h = RB;
-    vh = vh < -0.30 ? -vh * 0.20 : 0;
+    vh = vh < -0.25 ? -vh * 0.28 : 0;
     b.contact = true;
 
-    // Natural downhill gravity on the 31-deg inclined board + smooth rolling friction
-    vv -= G * SPH * 0.58 * dt;
-    vu -= vu * 1.65 * dt;
-    vv -= vv * 1.25 * dt;
+    // Lower board lip barrier
+    const botV = 0.06 + 0.25 * (u * u);
+    if (v < botV) {
+      v = botV;
+      vv = Math.abs(vv) * 0.35;
+    }
 
-    // 1. Check Corner 100 Cups (L-100, R-100)
-    for (const C of CUPS) {
-      const du = C.u - u, dv = C.v - v;
-      const dist = Math.hypot(du, dv);
-      if (dist < C.r * 1.55) {
-        const pull = (1 - dist / (C.r * 1.55)) * 4.2;
-        vu += (du / (dist + 1e-4)) * pull * dt;
-        vv += (dv / (dist + 1e-4)) * pull * dt;
-        if (dist < C.r * 0.72 && Math.hypot(vu, vv) < 1.95) {
-          const w = BW(lerp(u, C.u, 0.55), lerp(v, C.v, 0.55), RB * 0.25);
-          b.x = w[0]; b.y = w[1]; b.z = w[2];
-          b.done = true; b.pts = C.s; b.kind = 'cup'; b.targetLabel = C.label;
-          onEvt && onEvt('score', C.s);
-          return;
+    const enc = findEnclosingRing(u, v);
+    if (enc.kind === 'ring') {
+      const R = enc.target;
+      const prevEDist = Math.hypot((prevC.u - R.cx) / R.rx, (prevC.v - R.cy) / R.ry);
+      const currEDist = Math.hypot((u - R.cx) / R.rx, (v - R.cy) / R.ry);
+      // Lower cradle of the active ring catches the ball and curves it physically toward its pocket hole
+      if (prevEDist <= 1.02 && currEDist > 0.985 && v <= R.cy + R.ry * 0.25) {
+        let nx = (u - R.cx) / (R.rx * R.rx);
+        let nv = (v - R.cy) / (R.ry * R.ry);
+        const nl = Math.hypot(nx, nv) || 1;
+        nx /= nl; nv /= nl;
+        const angE = Math.atan2((v - R.cy) / R.ry, (u - R.cx) / R.rx);
+        u = R.cx + Math.cos(angE) * R.rx * 0.982;
+        v = R.cy + Math.sin(angE) * R.ry * 0.982;
+        const vn = vu * nx + vv * nv;
+        if (vn > 0) {
+          vu -= (1 + 0.32) * vn * nx;
+          vv -= (1 + 0.32) * vn * nv;
+          if (Math.abs(vn) > 0.22) onEvt && onEvt('rim', Math.abs(vn));
         }
       }
     }
 
-    // 2. True 3D Elliptical Ring Divider Rim Collisions & Pocket Funneling
-    for (const R of RINGS) {
-      const prevEDist = Math.hypot((prevC.u - R.cx) / R.rx, (prevC.v - R.cy) / R.ry);
-      const currEDist = Math.hypot((u - R.cx) / R.rx, (v - R.cy) / R.ry);
+    // Dished ring trough + downhill gravity guiding the ball physically into the hole (zero teleporting!)
+    const tx = enc.cx, ty = enc.cy, hr = enc.hr;
+    const du = tx - u, dv = ty - v;
+    const dist = Math.hypot(du, dv);
 
-      // If rolling on the board and crossing a raised ring divider rim (eDist == 1.0),
-      // deflect physically off the curved 3D plastic ring wall so the ball rolls down the inside of the ring!
-      if ((prevEDist <= 1.0 && currEDist > 0.985) || (prevEDist >= 1.0 && currEDist < 1.015)) {
-        const inside = prevEDist <= 1.0;
-        let nx = (u - R.cx) / (R.rx * R.rx);
-        let nv = (v - R.cy) / (R.ry * R.ry);
-        const nLen = Math.hypot(nx, nv) || 1;
-        nx /= nLen; nv /= nLen;
+    const gravV = v > ty ? -2.8 : 1.8;
+    vv += gravV * dt;
+    const pull = 4.2 + (1 - Math.min(1, dist / 0.25)) * 5.0;
+    vu += (du / (dist + 1e-4)) * pull * dt;
+    vv += (dv / (dist + 1e-4)) * pull * dt;
+    vu -= vu * 2.2 * dt;
+    vv -= vv * 2.0 * dt;
 
-        // Keep ball on its side of the raised ring divider
-        const targetScale = inside ? 0.982 : 1.018;
-        if ((inside && currEDist > targetScale) || (!inside && currEDist < targetScale)) {
-          const angE = Math.atan2((v - R.cy) / R.ry, (u - R.cx) / R.rx);
-          u = R.cx + Math.cos(angE) * R.rx * targetScale;
-          v = R.cy + Math.sin(angE) * R.ry * targetScale;
-        }
-
-        const vn = vu * nx + vv * nv;
-        if ((inside && vn > 0) || (!inside && vn < 0)) {
-          vu -= (1 + 0.32) * vn * nx;
-          vv -= (1 + 0.32) * vn * nv;
-          if (Math.abs(vn) > 0.25) onEvt && onEvt('rim', Math.abs(vn));
-        }
-      }
-
-      // Smooth gravitational funnel into this ring's bottom pocket hole
-      const du = R.cx - u, dv = R.holeY - v;
-      const distHole = Math.hypot(du, dv);
-      if (currEDist <= 1.05 && distHole < R.holeR * 1.95) {
-        const pull = (1 - distHole / (R.holeR * 1.95)) * 5.2;
-        vu += (du / (distHole + 1e-4)) * pull * dt;
-        vv += (dv / (distHole + 1e-4)) * pull * dt;
-      }
-
-      // Capture when ball drops into the pocket hole
-      if (distHole < R.holeR * 0.72 && Math.hypot(vu, vv) < 2.1) {
-        const w = BW(lerp(u, R.cx, 0.55), lerp(v, R.holeY, 0.55), RB * 0.22);
-        b.x = w[0]; b.y = w[1]; b.z = w[2];
-        b.done = true; b.pts = R.s; b.kind = 'hole'; b.targetLabel = R.label;
-        onEvt && onEvt('score', R.s);
-        return;
-      }
+    // Score only when the ball physically rolls right over the pocket opening!
+    if (dist < hr * 0.45 && Math.hypot(vu, vv) < 1.95) {
+      const w = BW(u, v, RB * 0.25);
+      b.x = w[0]; b.y = w[1]; b.z = w[2];
+      b.done = true;
+      b.pts = enc.pts;
+      b.kind = enc.kind === 'cup' ? 'cup' : 'hole';
+      b.targetLabel = enc.label;
+      onEvt && onEvt('score', enc.pts);
+      return;
     }
   } else {
     b.contact = false;
@@ -790,16 +795,13 @@ function stepBall(b, dt, onEvt) {
 
   setB(b, u, v, h, vu, vv, vh);
 
-  // Settle check: if ball comes to rest inside a ring chamber, drop into that ring's pocket
-  if (b.contact && b.boardT > 0.35) {
-    const sp2 = Math.hypot(vu, vv);
-    if (sp2 < 0.22 || v < 0.05 || b.t > 3.8) {
-      const hit = classifyLandingRing(u, v);
-      const w = BW(hit.cx, hit.cy, RB * 0.22);
-      b.x = w[0]; b.y = w[1]; b.z = w[2];
-      b.done = true; b.pts = hit.pts; b.kind = 'hole'; b.targetLabel = hit.label;
-      onEvt && onEvt('score', hit.pts);
-    }
+  // Fallback safety if ball ever exceeds 4.5s
+  if (b.t > 4.5) {
+    const enc = findEnclosingRing(u, v);
+    const w = BW(u, v, RB * 0.25);
+    b.x = w[0]; b.y = w[1]; b.z = w[2];
+    b.done = true; b.pts = enc.pts; b.kind = 'hole'; b.targetLabel = enc.label;
+    onEvt && onEvt('score', enc.pts);
   }
 }
 
@@ -1148,10 +1150,11 @@ document.getElementById('btnSpinL').addEventListener('click', () => { Snd.init()
 document.getElementById('btnSpin0').addEventListener('click', () => { Snd.init(); setSpin(0); });
 document.getElementById('btnSpinR').addEventListener('click', () => { Snd.init(); setSpin(0.55); });
 
-// Aim buttons
+// Aim & Angle buttons
 document.getElementById('btnAimL').addEventListener('click', () => {
   Snd.init();
-  S.aimX = clamp(S.aimX - 0.045, -(LH - RB - 0.015), LH - RB - 0.015);
+  S.aimAng = clamp(S.aimAng - 0.045, -0.26, 0.26);
+  S.aimX = clamp(S.aimX - 0.025, -(LH - RB - 0.015), LH - RB - 0.015);
 });
 document.getElementById('btnAimC').addEventListener('click', () => {
   Snd.init();
@@ -1159,7 +1162,8 @@ document.getElementById('btnAimC').addEventListener('click', () => {
 });
 document.getElementById('btnAimR').addEventListener('click', () => {
   Snd.init();
-  S.aimX = clamp(S.aimX + 0.045, -(LH - RB - 0.015), LH - RB - 0.015);
+  S.aimAng = clamp(S.aimAng + 0.045, -0.26, 0.26);
+  S.aimX = clamp(S.aimX + 0.025, -(LH - RB - 0.015), LH - RB - 0.015);
 });
 
 // Hold-to-Roll Button
@@ -1187,22 +1191,22 @@ document.querySelectorAll('[data-preset]').forEach(btn => {
     if (S.state !== 'ready') return;
     const p = btn.getAttribute('data-preset');
     if (p === 'left100') {
-      S.aimX = -0.11; S.aimAng = -0.075; setSpin(-0.55);
-      launch(7.32, S.aimAng);
+      S.aimX = -0.06; S.aimAng = -0.17; setSpin(0);
+      launch(7.45, S.aimAng);
     } else if (p === 'right100') {
-      S.aimX = 0.11; S.aimAng = 0.075; setSpin(0.55);
-      launch(7.32, S.aimAng);
+      S.aimX = 0.06; S.aimAng = 0.17; setSpin(0);
+      launch(7.45, S.aimAng);
     } else if (p === 'center100') {
       S.aimX = 0; S.aimAng = 0; setSpin(0);
       launch(7.15, 0);
     } else if (p === 'ring50') {
       S.aimX = 0; S.aimAng = 0; setSpin(0);
-      launch(6.55, 0);
+      launch(6.15, 0);
     }
   });
 });
 
-// Smooth Canvas Pull-Back-to-Shoot (Slingshot) & Flick-Up-to-Roll
+// Smooth Canvas Pull-Back-to-Shoot (Slingshot Angle & Power) & Flick-Up-to-Roll
 let drag = null;
 function calcPullMetrics(startX, startY, clientX, clientY, lockedAimX) {
   const refH = Math.max(320, cv.getBoundingClientRect().height);
@@ -1213,8 +1217,12 @@ function calcPullMetrics(startX, startY, clientX, clientY, lockedAimX) {
     ? clamp((pullBackPx - 6) / Math.max(24, maxPullPx - 6), 0.08, 1.0)
     : 0;
   const targetAimX = clamp(laneXAtClient(clientX), -(LH - RB - 0.015), LH - RB - 0.015);
+  // Slingshot angling: pulling ball back-left angles shot right, pulling back-right angles shot left
+  const dxPx = clientX - startX;
+  const dyPx = Math.max(35, pullBackPx);
+  const slingAng = Math.atan2(-dxPx, dyPx) * 0.48;
   const pullAng = isPullingBack
-    ? clamp(S.aimAng + (targetAimX - lockedAimX) * 0.32, -0.16, 0.16)
+    ? clamp(S.aimAng + slingAng, -0.26, 0.26)
     : S.aimAng;
   return { refH, pullBackPx, isPullingBack, pullPower, targetAimX, pullAng };
 }
@@ -1256,8 +1264,8 @@ cv.addEventListener('pointermove', e => {
   drag.pullAng = pm.pullAng;
 
   if (pm.isPullingBack && S.state === 'ready') {
-    // While pulling back, smoothly follow horizontal finger movement & angle
-    S.aimX = lerp(drag.lockedAimX, pm.targetAimX, 0.65);
+    // While pulling back, the ball visually shifts with your finger while the anchor stays at lockedAimX
+    S.aimX = clamp(lerp(drag.lockedAimX, pm.targetAimX, 0.78), -(LH - RB - 0.015), LH - RB - 0.015);
   } else if (dyUp < 24 && S.state === 'ready') {
     S.aimX = pm.targetAimX;
     drag.lockedAimX = S.aimX;
@@ -1282,12 +1290,14 @@ function endDrag(e) {
   const v = flickVel(now);
   const totalDy = drag.startY - e.clientY;
   const totalDx = e.clientX - drag.startX;
-  const pm = calcPullMetrics(drag.startX, drag.startY, e.clientX, e.clientY, drag.lockedAimX);
+  const lockedX = drag.lockedAimX;
+  const pm = calcPullMetrics(drag.startX, drag.startY, e.clientX, e.clientY, lockedX);
   drag = null;
   cv.classList.remove('drag');
 
   // Mode 1: Pull-Back Release (Slingshot / Plunger)
   if (pm.isPullingBack && pm.pullPower > 0) {
+    S.aimX = lockedX;
     const v0 = lerp(4.1, 8.2, pm.pullPower);
     launch(v0, pm.pullAng);
     return;
@@ -1303,7 +1313,7 @@ function endDrag(e) {
   }
   const norm = clamp(Math.max(upSpeed / (refH * 1.65), totalDy / (refH * 0.52)), 0.15, 1.0);
   const v0 = lerp(4.2, 8.15, norm);
-  const ang = clamp(Math.atan2(v.vx * 0.65 + totalDx * 2.2, Math.max(220, upSpeed)) * 0.28, -0.16, 0.16);
+  const ang = clamp(S.aimAng + Math.atan2(v.vx * 0.55 + totalDx * 2.5, Math.max(160, upSpeed)) * 0.42, -0.26, 0.26);
   launch(v0, ang);
 }
 cv.addEventListener('pointerup', endDrag);
@@ -1867,21 +1877,19 @@ function render() {
   drawTicketShimmer(ctx, S.time);
   drawTrail(ctx);
 
-  // 3. Ball & Real-Time Mahogany Lane Reflection
+  // 3. Ball & Real-Time Mahogany Lane Reflection (No trajectory guide line!)
   if (S.state === 'ready') {
     const pullPwr = (drag && drag.pullBackPx >= 8) ? S.smoothPwr : (S.charging ? chargePower() : 0);
     const zBase = lerp(-0.15, Z0, 1 - Math.pow(1 - S.rollIn, 3));
     const z = zBase - pullPwr * 0.22;
     const y = surf(z) + RB;
     const bx = S.smoothAimX;
+    const anchorCenterX = (drag && drag.pullBackPx >= 8) ? drag.lockedAimX : bx;
 
-    // Live 3D Trajectory Guide Arc
-    drawAimTrajectory(ctx);
-
-    // Slingshot / Plunger Neon Tension Band when pulling ball back
+    // Slingshot / Plunger Neon Tension Band when pulling ball back (anchored at lockedAimX so it angles visibly!)
     if (pullPwr > 0.01) {
-      const anchorL = P(bx - RB * 0.95, surf(Z0) + RB * 0.35, Z0 + 0.04);
-      const anchorR = P(bx + RB * 0.95, surf(Z0) + RB * 0.35, Z0 + 0.04);
+      const anchorL = P(anchorCenterX - RB * 1.05, surf(Z0) + RB * 0.35, Z0 + 0.04);
+      const anchorR = P(anchorCenterX + RB * 1.05, surf(Z0) + RB * 0.35, Z0 + 0.04);
       const ballMid = P(bx, y, z);
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
@@ -1908,15 +1916,30 @@ function render() {
     ctx.ellipse(sp.x, sp.y + 8, RB * sp.s * 0.62, RB * sp.s * 0.22, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Pulsing launch ring under ball
+    // Pulsing launch ring under ball + compact 3D Aim Angle Chevron on the front rim of the ring
     const pulse = 0.5 + 0.5 * Math.sin(S.time * 5.2);
-    ctx.strokeStyle = pullPwr > 0.75 ? '#ffd23a' : S.mult >= 3 ? '#ffd23a' : '#00f0ff';
-    ctx.shadowColor = ctx.strokeStyle;
+    const ringCol = pullPwr > 0.75 ? '#ffd23a' : S.mult >= 3 ? '#ffd23a' : '#00f0ff';
+    ctx.strokeStyle = ringCol;
+    ctx.shadowColor = ringCol;
     ctx.shadowBlur = 14;
     ctx.lineWidth = 2.2;
-    ctx.globalAlpha = 0.45 + pulse * 0.35;
+    ctx.globalAlpha = 0.48 + pulse * 0.35;
     ctx.beginPath();
     ctx.ellipse(sp.x, sp.y + 4, RB * sp.s * (0.88 + pullPwr * 0.22), RB * sp.s * (0.32 + pullPwr * 0.08), 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Compact Aim Chevron right in front of the ball (shows angle without any lane guide line)
+    const tipWorldX = anchorCenterX + Math.sin(S.smoothAng) * 0.24;
+    const tipWorldZ = Z0 + Math.cos(S.smoothAng) * 0.18;
+    const wingL = P(anchorCenterX + Math.sin(S.smoothAng - 0.38) * 0.13, surf(Z0) + 0.005, Z0 + Math.cos(S.smoothAng - 0.38) * 0.10);
+    const wingR = P(anchorCenterX + Math.sin(S.smoothAng + 0.38) * 0.13, surf(Z0) + 0.005, Z0 + Math.cos(S.smoothAng + 0.38) * 0.10);
+    const tipP  = P(tipWorldX, surf(tipWorldZ) + 0.005, tipWorldZ);
+    ctx.globalAlpha = 0.75 + pulse * 0.25;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(wingL.x, wingL.y);
+    ctx.lineTo(tipP.x, tipP.y);
+    ctx.lineTo(wingR.x, wingR.y);
     ctx.stroke();
     ctx.restore();
 
