@@ -4583,15 +4583,24 @@ function initHomeShopScroller() {
         { styleClass: 'rc-game-style-arc08', title: 'Pro-Esports Stealth XXL Mat', titleTop: 'PRO-ESPORTS', titleMain: 'STEALTH XXL MAT', img: 'assets/merch/deskmat_topdown_4.png?v=3', href: 'deskmat_preview.html?idx=3' }
     ];
 
+    function toCarouselThumb(rawUrl) {
+        const clean = String(rawUrl || '').split('?')[0];
+        const base = clean.split('/').pop().replace(/\.(png|jpg|jpeg)$/i, '');
+        return base ? `assets/thumbs/${base}.webp?v=2` : rawUrl;
+    }
+
     // Duplicate items 2x for a seamless infinite scrolling marquee loop
     const loopItems = shopCatalog.concat(shopCatalog);
-    track.innerHTML = loopItems.map((item) => `
+    track.innerHTML = loopItems.map((item) => {
+        const thumbSrc = toCarouselThumb(item.img);
+        return `
         <a class="rc-shop-scroll-card rc-merch-scroll-card ${item.styleClass}${item.winOnly ? ' is-win-only' : ''}" href="${item.href}" draggable="false" aria-label="${item.title}">
             <div class="rc-shop-scroll-img-wrap">
-                <img class="rc-shop-scroll-img" src="${item.img}" alt="${item.title}" loading="eager" draggable="false" />
+                <img class="rc-shop-scroll-img" src="${thumbSrc}" data-fb="${item.img}" alt="" loading="eager" decoding="async" draggable="false" onerror="if(this.dataset.fb&&this.src.indexOf(this.dataset.fb)===-1){this.src=this.dataset.fb;}" />
             </div>
         </a>
-    `).join('');
+    `;
+    }).join('');
 
     // Bottom Row: Retrocanopy Arcade Games (scrolling in the opposite direction: left-to-right)
     if (gamesTrack) {
@@ -4607,10 +4616,12 @@ function initHomeShopScroller() {
             { code: 'ARC-09', styleClass: 'rc-game-style-arc09', title: 'Shibuya Valkyrie Storm', titleTop: 'SHIBUYA', titleMain: 'VALKYRIE STORM', cat: 'BOSS RUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/shibuya_valkyrie_storm_poster.jpg?v=147', href: 'games.html?openDeck=1' }
         ];
         const loopGames = arcadeCatalog.concat(arcadeCatalog);
-        gamesTrack.innerHTML = loopGames.map((game) => `
-            <a class="rc-shop-scroll-card rc-game-scroll-card ${game.styleClass}${game.comingSoon ? ' is-coming-soon' : ' is-active-game'}" href="${game.href}" draggable="false">
+        gamesTrack.innerHTML = loopGames.map((game) => {
+            const gameThumbSrc = toCarouselThumb(game.img);
+            return `
+            <a class="rc-shop-scroll-card rc-game-scroll-card ${game.styleClass}${game.comingSoon ? ' is-coming-soon' : ' is-active-game'}" href="${game.href}" draggable="false" aria-label="${game.title}">
                 <div class="rc-shop-scroll-img-wrap rc-game-scroll-img-wrap">
-                    <img class="rc-shop-scroll-img rc-game-scroll-img" src="${game.img}" alt="${game.title}" loading="eager" draggable="false" />
+                    <img class="rc-shop-scroll-img rc-game-scroll-img" src="${gameThumbSrc}" data-fb="${game.img}" alt="" loading="eager" decoding="async" draggable="false" onerror="if(this.dataset.fb&&this.src.indexOf(this.dataset.fb)===-1){this.src=this.dataset.fb;}" />
                     ${game.comingSoon ? `
                     <div class="rc-game-coming-soon-visual">
                         <div class="rc-cs-visual-plaque">
@@ -4631,7 +4642,8 @@ function initHomeShopScroller() {
                     </div>
                 </div>
             </a>
-        `).join('');
+        `;
+        }).join('');
     }
 
     let offsetPx = 0;

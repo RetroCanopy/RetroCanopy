@@ -2765,16 +2765,26 @@
             </div>
           </div>
 
-          <div class="tier6-lightbox-piece featured playable-slot" onclick="window.location.href='skee_roll.html'">
-            <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 02</span>
-            <div class="arcade-game-slot-frame slot-center" style="background-image:url('assets/concept_gallery/skee_roll_84_concept.jpg?v=2');background-size:cover;background-position:center;">
-              <div class="arcade-game-slot-plaque">&#9670; PLAY SKEE ROLL '84 &rarr;</div>
-            </div>
-            <div class="arcade-tier6-card-name">
-              SKEE ROLL '84
-              <span class="tier6-card-sub">3D Neon Alley Roller &bull; 100 PTS = 1 &#127915;</span>
-            </div>
-          </div>
+          <div class="tier6-lightbox-piece featured playable-slot" onclick="window.location.href='skee_roll.html'">
+
+            <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 02</span>
+
+            <div class="arcade-game-slot-frame slot-center" style="background-image:url('assets/concept_gallery/skee_roll_84_concept.jpg?v=2');background-size:cover;background-position:center;">
+
+              <div class="arcade-game-slot-plaque">&#9670; PLAY SKEE ROLL '84 &rarr;</div>
+
+            </div>
+
+            <div class="arcade-tier6-card-name">
+
+              SKEE ROLL '84
+
+              <span class="tier6-card-sub">3D Neon Alley Roller &bull; 100 PTS = 1 &#127915;</span>
+
+            </div>
+
+          </div>
+
 
           <div class="tier6-lightbox-piece featured">
             <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 03</span>
@@ -4618,7 +4628,7 @@
           }
         } catch (_) {}
       };
-      sluggerCleanBoard.src = 'assets/concept_gallery/shinjuku_slugger_84_board_clean.jpg?v=195';
+      sluggerCleanBoard.src = 'assets/concept_gallery/shinjuku_slugger_84_board_clean.jpg?v=205';
 
       let sluggerAnimId = null;
       let sluggerActive = false;
@@ -4642,89 +4652,102 @@
 
       // Outcome definitions that rotate/shuffle across the 5 board doors from swing to swing (1 OUT door; 1 Runner Home = 1 PT, 10 PTS = 1 TIX)
       const OUTCOMES_DEF = {
-        SINGLE:  { key: 'SINGLE',  title: 'SINGLE',   sub: '1ST BASE (+1B)',  padText: '1B',  banner: 'SINGLE (1B)!',   color: '#ffe066', fill: 'rgba(255, 224, 102, 0.20)', bases: 1 },
-        DOUBLE:  { key: 'DOUBLE',  title: 'DOUBLE',   sub: '2ND BASE (+2B)',  padText: '2B',  banner: 'DOUBLE (2B)!',   color: '#00f0ff', fill: 'rgba(0, 240, 255, 0.20)',   bases: 2 },
-        HOMERUN: { key: 'HOMERUN', title: 'HOME RUN', sub: '★ SCORE ALL ★',   padText: '★HR★', banner: '★ HOME RUN! ★', color: '#ffd700', fill: 'rgba(255, 215, 0, 0.26)',   bases: 4 },
-        TRIPLE:  { key: 'TRIPLE',  title: 'TRIPLE',   sub: '3RD BASE (+3B)',  padText: '3B',  banner: 'TRIPLE (3B)!',   color: '#b46cff', fill: 'rgba(180, 108, 255, 0.22)', bases: 3 },
-        OUT:     { key: 'OUT',     title: 'OUT',      sub: '-1 LIFE',         padText: 'OUT', banner: 'FIELD OUT! -1 LIFE', color: '#ff2d95', fill: 'rgba(255, 45, 149, 0.22)', bases: 0 }
+        SINGLE:  { key: 'SINGLE',  title: 'SINGLE',   sub: '1ST BASE (+1B)',  padText: '1B',  banner: 'SINGLE (1B)!',   color: '#ffe066', fill: 'rgba(255, 224, 102, 0.22)', bases: 1 },
+        DOUBLE:  { key: 'DOUBLE',  title: 'DOUBLE',   sub: '2ND BASE (+2B)',  padText: '2B',  banner: 'DOUBLE (2B)!',   color: '#00f0ff', fill: 'rgba(0, 240, 255, 0.22)',   bases: 2 },
+        HOMERUN: { key: 'HOMERUN', title: 'HOME RUN', sub: '★ SCORE ALL ★',   padText: '★HR★', banner: '★ HOME RUN! ★', color: '#ffd700', fill: 'rgba(255, 215, 0, 0.28)',   bases: 4 },
+        TRIPLE:  { key: 'TRIPLE',  title: 'TRIPLE',   sub: '3RD BASE (+3B)',  padText: '3B',  banner: 'TRIPLE (3B)!',   color: '#b46cff', fill: 'rgba(180, 108, 255, 0.24)', bases: 3 },
+        OUT:     { key: 'OUT',     title: 'OUT',      sub: '-1 LIFE',         padText: 'OUT', banner: 'FIELD OUT! -1 LIFE', color: '#ff2d95', fill: 'rgba(255, 45, 149, 0.24)', bases: 0 }
       };
 
       // All 3 3D '84' Pop-Bumpers Pop IN and OUT of the Machine Floor Independently & as Randomly as Possible!
       const BUMPERS_1080 = [
         // Left Retractable 3D '84' Pinball Pop-Bumper (768, 456)
-        { x: 768,  y: 456, r: 36, kick: 16.6, color: '#00f0ff', isPopBumper: true, isRetractable: true, elev: 1.0, popState: 'UP_HOLD', stateTimer: 42 + Math.floor(Math.random() * 95),  retractSpeed: 0.046, riseSpeed: 0.056, hitTimer: 0, label: "'84" },
+        { x: 768,  y: 456, r: 36, kick: 16.8, color: '#00f0ff', isPopBumper: true, isRetractable: true, elev: 1.0, popState: 'UP_HOLD', stateTimer: 42 + Math.floor(Math.random() * 95),  retractSpeed: 0.046, riseSpeed: 0.056, hitTimer: 0, label: "'84" },
         // Right Retractable 3D '84' Pinball Pop-Bumper (1152, 456)
-        { x: 1152, y: 456, r: 36, kick: 16.6, color: '#ff2d95', isPopBumper: true, isRetractable: true, elev: 1.0, popState: 'UP_HOLD', stateTimer: 78 + Math.floor(Math.random() * 115), retractSpeed: 0.052, riseSpeed: 0.062, hitTimer: 0, label: "'84" },
-      // Center Retractable 3D '84' Pinball Pop-Bumper (960, 480)
-        { x: 960,  y: 480, r: 38, kick: 17.4, color: '#ffd700', isPopBumper: true, isRetractable: true, elev: 1.0, popState: 'UP_HOLD', stateTimer: 28 + Math.floor(Math.random() * 88),  retractSpeed: 0.044, riseSpeed: 0.054, hitTimer: 0, label: "'84" }
+        { x: 1152, y: 456, r: 36, kick: 16.8, color: '#ff2d95', isPopBumper: true, isRetractable: true, elev: 1.0, popState: 'UP_HOLD', stateTimer: 78 + Math.floor(Math.random() * 115), retractSpeed: 0.052, riseSpeed: 0.062, hitTimer: 0, label: "'84" },
+        // Center Retractable 3D '84' Pinball Pop-Bumper (960, 480)
+        { x: 960,  y: 480, r: 38, kick: 17.6, color: '#ffd700', isPopBumper: true, isRetractable: true, elev: 1.0, popState: 'UP_HOLD', stateTimer: 28 + Math.floor(Math.random() * 88),  retractSpeed: 0.044, riseSpeed: 0.054, hitTimer: 0, label: "'84" }
       ];
 
-      // Continuous Zero-Pinch Pinball Playfield Side Rails, Upper Door Arch Backstop & Inlane Funnels
+      // Calibrated 1920x1080 Playfield Walls, S-Curve Chrome Wireforms (y=295..705) & Magenta Inlane Floor Rails (matching shinjuku_slugger_84_board_clean.jpg 1:1!)
       const PLAYFIELD_WALLS_1080 = [
         // Top Playfield Arch above the 3 Pitch Holes
-        { x1: 615,  y1: 128, x2: 1305, y2: 128, nx:  0.0000, ny:  1.0000, restitution: 0.78, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
-        // Upper Curved Door Arch Backstop & Corner Guides (active once ball enters playfield so ball NEVER bounces past the 5 back doors!)
-        { x1: 602,  y1: 312, x2: 668,  y2: 278, nx:  0.4576, ny:  0.8892, restitution: 0.72, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: true,  color: '#ffd700' },
-        { x1: 668,  y1: 278, x2: 960,  y2: 254, nx:  0.0819, ny:  0.9966, restitution: 0.72, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: true,  color: '#00f0ff' },
-        { x1: 960,  y1: 254, x2: 1252, y2: 278, nx: -0.0819, ny:  0.9966, restitution: 0.72, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: true,  color: '#00f0ff' },
-        { x1: 1252, y1: 278, x2: 1318, y2: 312, nx: -0.4576, ny:  0.8892, restitution: 0.72, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: true,  color: '#ffd700' },
-        // Left Side Rail -> Wide Open Inlane Channel Behind the Left Slingshot Triangle -> Left Flipper Feed
-        { x1: 615,  y1: 128, x2: 552,  y2: 730, nx:  0.9946, ny:  0.1038, restitution: 0.44, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
-        { x1: 552,  y1: 730, x2: 534,  y2: 864, nx:  0.9911, ny:  0.1331, restitution: 0.28, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
-        { x1: 534,  y1: 864, x2: 736,  y2: 952, nx:  0.3996, ny: -0.9167, restitution: 0.18, isSlingshot: false, isSideRail: false, isInlaneFloor: true,  isDoorArch: false, color: '#ff2d95' },
-        // Right Side Rail -> Wide Open Inlane Channel Behind the Right Slingshot Triangle -> Right Flipper Feed
-        { x1: 1305, y1: 128, x2: 1368, y2: 730, nx: -0.9946, ny:  0.1038, restitution: 0.44, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
-        { x1: 1368, y1: 730, x2: 1386, y2: 864, nx: -0.9911, ny:  0.1331, restitution: 0.28, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, color: '#00f0ff' },
-        { x1: 1386, y1: 864, x2: 1184, y2: 952, nx: -0.3996, ny: -0.9167, restitution: 0.18, isSlingshot: false, isSideRail: false, isInlaneFloor: true,  isDoorArch: false, color: '#ff2d95' }
+        { x1: 605,  y1: 124, x2: 1315, y2: 124, nx:  0.0000, ny:  1.0000, restitution: 0.78, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: false, isWireform: false, color: '#00f0ff' },
+        // Upper Curved Door Arch Backstop & Corner Guides (active once ball is flipped so flipped shots enter the 5 doors or rebound cleanly)
+        { x1: 590,  y1: 312, x2: 668,  y2: 276, nx:  0.4229, ny:  0.9062, restitution: 0.72, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: true,  isWireform: false, color: '#ffd700' },
+        { x1: 668,  y1: 276, x2: 960,  y2: 252, nx:  0.0819, ny:  0.9966, restitution: 0.72, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: true,  isWireform: false, color: '#00f0ff' },
+        { x1: 960,  y1: 252, x2: 1252, y2: 276, nx: -0.0819, ny:  0.9966, restitution: 0.72, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: true,  isWireform: false, color: '#00f0ff' },
+        { x1: 1252, y1: 276, x2: 1330, y2: 312, nx: -0.4229, ny:  0.9062, restitution: 0.72, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: true,  isWireform: false, color: '#ffd700' },
+
+        // Left Outer Cabinet Side Wall + S-Curve Chrome Wireform Inner Guide (prevents ball passing through the left chrome habitrail!)
+        { x1: 605,  y1: 124, x2: 530,  y2: 695, nx:  0.9915, ny:  0.1302, restitution: 0.42, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, isWireform: false, color: '#00f0ff' },
+        { x1: 642,  y1: 310, x2: 702,  y2: 422, nx:  0.8814, ny: -0.4724, restitution: 0.56, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: false, isWireform: true,  color: '#00f0ff' },
+        { x1: 702,  y1: 422, x2: 572,  y2: 515, nx:  0.5819, ny:  0.8132, restitution: 0.54, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: false, isWireform: true,  color: '#00f0ff' },
+        { x1: 572,  y1: 515, x2: 536,  y2: 698, nx:  0.9812, ny:  0.1930, restitution: 0.44, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, isWireform: true,  color: '#00f0ff' },
+
+        // Left Lower Inlane Outer Wall (x=536,y=698 -> x=546,y=826) & Magenta Inlane Floor Rail (x=546,y=826 -> x=734,y=892)
+        { x1: 536,  y1: 698, x2: 546,  y2: 826, nx:  0.9970, ny: -0.0779, restitution: 0.25, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, isWireform: false, color: '#00f0ff' },
+        { x1: 546,  y1: 826, x2: 734,  y2: 892, nx:  0.3313, ny: -0.9435, restitution: 0.14, isSlingshot: false, isSideRail: false, isInlaneFloor: true,  isDoorArch: false, isWireform: false, color: '#ff2d95' },
+
+        // Right Outer Cabinet Side Wall + S-Curve Chrome Wireform Inner Guide (prevents ball passing through the right chrome habitrail!)
+        { x1: 1315, y1: 124, x2: 1390, y2: 695, nx: -0.9915, ny:  0.1302, restitution: 0.42, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, isWireform: false, color: '#00f0ff' },
+        { x1: 1278, y1: 310, x2: 1218, y2: 422, nx: -0.8814, ny: -0.4724, restitution: 0.56, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: false, isWireform: true,  color: '#00f0ff' },
+        { x1: 1218, y1: 422, x2: 1348, y2: 515, nx: -0.5819, ny:  0.8132, restitution: 0.54, isSlingshot: false, isSideRail: false, isInlaneFloor: false, isDoorArch: false, isWireform: true,  color: '#00f0ff' },
+        { x1: 1348, y1: 515, x2: 1384, y2: 698, nx: -0.9812, ny:  0.1930, restitution: 0.44, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, isWireform: true,  color: '#00f0ff' },
+
+        // Right Lower Inlane Outer Wall (x=1384,y=698 -> x=1374,y=826) & Magenta Inlane Floor Rail (x=1374,y=826 -> x=1186,y=892)
+        { x1: 1384, y1: 698, x2: 1374, y2: 826, nx: -0.9970, ny: -0.0779, restitution: 0.25, isSlingshot: false, isSideRail: true,  isInlaneFloor: false, isDoorArch: false, isWireform: false, color: '#00f0ff' },
+        { x1: 1374, y1: 826, x2: 1186, y2: 892, nx: -0.3313, ny: -0.9435, restitution: 0.14, isSlingshot: false, isSideRail: false, isInlaneFloor: true,  isDoorArch: false, isWireform: false, color: '#ff2d95' }
       ];
 
-      // Exact 3-Sided Triangular Slingshot Bumpers Matching the Visual Cyan Triangles (Balls Roll Behind Them Down the Inlanes!)
+      // Exact 3-Sided Triangular Slingshot Bumpers Matching the Visual Cyan Triangles at (640..735, 692..824) and (1185..1280, 692..824)
       const SLINGSHOT_TRIANGLES_1080 = [
         {
           side: 'LEFT',
-          cx: 673.3,
-          cy: 808.7,
+          cx: 672.0,
+          cy: 768.0,
           hitTimer: 0,
           cooldown: 0,
           inlaneCooldown: 0,
           edges: [
             // 0: Inner-Front Kicker Face (faces the infield diamond -> kicks ball cleanly upward/across playfield)
-            { x1: 654, y1: 744, x2: 734, y2: 860, nx:  0.8232, ny: -0.5677, restitution: 0.86, isKicker: true,  color: '#00f0ff' },
+            { x1: 650, y1: 692, x2: 734, y2: 816, nx:  0.8278, ny: -0.5610, restitution: 0.88, isKicker: true,  color: '#00f0ff' },
             // 1: Bottom Inlane Roof Guide (guides ball from behind the triangle down onto the left flipper)
-            { x1: 734, y1: 860, x2: 634, y2: 822, nx: -0.3552, ny:  0.9348, restitution: 0.22, isKicker: false, color: '#00f0ff' },
+            { x1: 734, y1: 816, x2: 626, y2: 786, nx: -0.2676, ny:  0.9635, restitution: 0.20, isKicker: false, color: '#00f0ff' },
             // 2: Outer-Back Inlane Guide (guides ball smoothly behind the angled piece into the left inlane channel)
-            { x1: 634, y1: 822, x2: 654, y2: 744, nx: -0.9687, ny: -0.2484, restitution: 0.25, isKicker: false, color: '#00f0ff' }
+            { x1: 626, y1: 786, x2: 650, y2: 692, nx: -0.9689, ny: -0.2474, restitution: 0.24, isKicker: false, color: '#00f0ff' }
           ]
         },
         {
           side: 'RIGHT',
-          cx: 1246.7,
-          cy: 808.7,
+          cx: 1248.0,
+          cy: 768.0,
           hitTimer: 0,
           cooldown: 0,
           inlaneCooldown: 0,
           edges: [
             // 0: Inner-Front Kicker Face (faces the infield diamond -> kicks ball cleanly upward/across playfield)
-            { x1: 1186, y1: 860, x2: 1266, y2: 744, nx: -0.8232, ny: -0.5677, restitution: 0.86, isKicker: true,  color: '#00f0ff' },
+            { x1: 1186, y1: 816, x2: 1270, y2: 692, nx: -0.8278, ny: -0.5610, restitution: 0.88, isKicker: true,  color: '#00f0ff' },
             // 1: Outer-Back Inlane Guide (guides ball smoothly behind the angled piece into the right inlane channel)
-            { x1: 1266, y1: 744, x2: 1286, y2: 822, nx:  0.9687, ny: -0.2484, restitution: 0.25, isKicker: false, color: '#00f0ff' },
+            { x1: 1270, y1: 692, x2: 1294, y2: 786, nx:  0.9689, ny: -0.2474, restitution: 0.24, isKicker: false, color: '#00f0ff' },
             // 2: Bottom Inlane Roof Guide (guides ball from behind the triangle down onto the right flipper)
-            { x1: 1286, y1: 822, x2: 1186, y2: 860, nx:  0.3552, ny:  0.9348, restitution: 0.22, isKicker: false, color: '#00f0ff' }
+            { x1: 1294, y1: 786, x2: 1186, y2: 816, nx:  0.2676, ny:  0.9635, restitution: 0.20, isKicker: false, color: '#00f0ff' }
           ]
         }
       ];
 
-      // Real Perspective-Foreshortened 3D Pinball Flippers (Slightly Bigger: length=170, rBase=23, rTip=12) Mounted at (736, 956 & 1184, 956)
+      // Calibrated 3D Pinball Flippers Mounted at the Exact Ends of the Magenta Inlane Rails (736, 892 & 1184, 892)
+      // Frame Home Plate (960, 920) Instead of Overlapping It!
       const leftFlipper = {
         side: 'LEFT',
         pivotX: 736,
-        pivotY: 956,
-        length: 170,
+        pivotY: 892,
+        length: 162,
         perspY: 0.58,
-        rBase: 23,
+        rBase: 22,
         rTip: 12,
-        restAngle: 0.34,          // continues the exact slope of the left inlane rail toward Home Plate
-        upAngle: -0.46,           // foreshortens naturally in 3D perspective
+        restAngle: 0.34,          // continues the exact slope of the left magenta inlane rail toward Home Plate
+        upAngle: -0.48,           // foreshortens naturally in 3D perspective
         angle: 0.34,
         omega: 0,
         held: false,
@@ -4734,41 +4757,41 @@
       const rightFlipper = {
         side: 'RIGHT',
         pivotX: 1184,
-        pivotY: 956,
-        length: 170,
+        pivotY: 892,
+        length: 162,
         perspY: 0.58,
-        rBase: 23,
+        rBase: 22,
         rTip: 12,
         restAngle: Math.PI - 0.34,
-        upAngle: Math.PI + 0.46,
+        upAngle: Math.PI + 0.48,
         angle: Math.PI - 0.34,
         omega: 0,
         held: false,
         tapTimer: 0
       };
 
-      // Patrolling Mid-Field Blocker Bumper ("Infield Defender" — Option #4)
-      // Slides horizontally across y = 594 between the 3 '84' pop-bumpers and 2nd Base,
-      // deflecting flipped balls back down unless you shoot through the open lane!
+      // Patrolling Mid-Field Blocker Bumper ("Infield Defender")
+      // Slides horizontally across y = 594 between the 3 '84' pop-bumpers and 2nd Base
       const midfieldBlocker = {
         x: 960,
         y: 594,
-        halfLen: 52,      // 104px flat span + 2 * 16px rounded end-caps = 136px total blocker width
-        r: 16,            // 32px total vertical thickness
-        minX: 752,
-        maxX: 1168,
-        trackMinX: 696,
-        trackMaxX: 1224,
+        halfLen: 50,
+        r: 15,
+        minX: 760,
+        maxX: 1160,
+        trackMinX: 704,
+        trackMaxX: 1216,
         dir: 1,
-        baseSpeed: 3.8,
-        vx: 3.8,
+        baseSpeed: 3.6,
+        vx: 3.6,
         hitTimer: 0,
         cooldown: 0
       };
 
-      // Game State (3 Lives per Game, Tracks Round Points & Round Tickets, Lights Up Central Baseball Diamond!)
+      // Game State (3 Lives per Game, Tracks Inning, Balls, Strikes, Outs, Runs & Tickets!)
       const slugger = {
         round: 1,
+        inning: 1,
         lives: 3,
         maxLives: 3,
         balls: 0,
@@ -4778,15 +4801,22 @@
         roundPoints: 0,
         roundTickets: 0,
         sessionPoints: 0,
+        comboStreak: 0,
         playfieldMultiplier: 1,
         moundCooldown: 0,
         homePlateFlash: 0,
+        moundFlash: 0,
+        wireformFlashL: 0,
+        wireformFlashR: 0,
         gameOverCooldown: 0,
         middleSpawnTimer: 840,
         middleHoleFlash: 0,
         neonSurge: 0,
         extraBalls: [],
         tunnelBalls: [],
+        ballTrail: [],
+        ballSpinAngle: 0,
+        ballSpinVel: 0,
         tunnelStartX: 960,
         tunnelStartY: 310,
         tunnelTargetX: 960,
@@ -4874,7 +4904,7 @@
         syncGamesModalWalletLabels();
       }
 
-      // Points come ONLY from runners getting to Home Base (1 Runner Home = 1 Point, 10 Points = 1 Ticket!)
+      // Advance runners around the illuminated diamond (1 Runner Home = 1 Run * Playfield Multiplier, 10 PTS = 1 Ticket!)
       function advanceRunners(numBases) {
         let runsScored = 0;
         const next = [false, false, false];
@@ -4895,16 +4925,22 @@
         }
         slugger.bases = next;
         slugger.runs += runsScored;
+        slugger.comboStreak++;
+        if (slugger.comboStreak >= 3) slugger.playfieldMultiplier = 3;
+        else if (slugger.comboStreak === 2) slugger.playfieldMultiplier = 2;
+
         if (runsScored > 0) {
-          awardSluggerPoints(runsScored);
+          const ptsAwarded = runsScored * slugger.playfieldMultiplier;
+          awardSluggerPoints(ptsAwarded);
           playArcadeSfx('run_scored');
-          slugger.homePlateFlash = 48;
-          spawnBurstParticles(960, 920, '#ffd700', 22);
-          spawnBurstParticles(960, 920, '#00f0ff', 14);
+          slugger.homePlateFlash = 52;
+          spawnBurstParticles(960, 862, '#ffd700', 26);
+          spawnBurstParticles(960, 862, '#00f0ff', 16);
+          const multTag = slugger.playfieldMultiplier > 1 ? ` (${slugger.playfieldMultiplier}X STREAK!)` : '';
           spawnFloatingText(
             960,
-            882,
-            `+${runsScored} ${runsScored === 1 ? 'PT (RUNNER HOME!)' : 'PTS (RUNNERS HOME!)'}`,
+            828,
+            `+${ptsAwarded} ${ptsAwarded === 1 ? 'PT' : 'PTS'} • ${runsScored} ${runsScored === 1 ? 'RUN' : 'RUNS'} HOME!${multTag}`,
             '#ffd700'
           );
         }
@@ -4913,9 +4949,12 @@
 
       function recordOut(sourceLabel) {
         slugger.outs++;
+        slugger.inning = Math.min(9, 1 + Math.floor(slugger.outs / 1));
         slugger.lives = Math.max(0, slugger.lives - 1);
         slugger.balls = 0;
         slugger.strikes = 0;
+        slugger.comboStreak = 0;
+        slugger.playfieldMultiplier = 1;
         playArcadeSfx('umpire_out');
         if (slugger.lives <= 0) {
           const finalPts = slugger.roundPoints;
@@ -4940,37 +4979,37 @@
         slugger.lives = Math.min(4, slugger.lives + 1);
         slugger.maxLives = Math.min(4, Math.max(3, slugger.maxLives, slugger.lives));
         playArcadeSfx('extra_ball_bell');
-        spawnBurstParticles(x, y, '#ffd700', 10);
+        spawnBurstParticles(x, y, '#ffd700', 14);
         if (slugger.lives > prevLives) {
           spawnFloatingText(x, y, `EXTRA BALL (+1 LIFE • ${slugger.lives}/4)`, '#ffd700');
           slugger.bannerText = `EXTRA BALL RELEASED • +1 EXTRA LIFE (${slugger.lives}/4 LIVES)!`;
         } else {
-          spawnFloatingText(x, y, 'EXTRA BALL (MAX 4 LIVES)', '#ffd700');
-          slugger.bannerText = 'EXTRA BALL RELEASED (MAX 4 LIVES)!';
+          spawnFloatingText(x, y, 'MULTIBALL RELEASED!', '#ffd700');
+          slugger.bannerText = 'MULTIBALL RELEASED!';
         }
         slugger.bannerColor = '#ffd700';
         slugger.bannerTimer = 46;
       }
 
-      // Middle Hole (Hole #2 at 960, 158) Occasionally Releases an Extra Ball (+1 Life, Max 4 Lives) — No Other Power-Ups!
+      // Middle Hole (Hole #2 at 960, 158) Releases an Extra Ball (+1 Life, Max 4 Lives)
       function spawnMiddleHoleBonus(forceSpawn) {
         if (!forceSpawn && (slugger.extraBalls.length >= 1 || slugger.lives >= 4)) return;
         const midHole = PITCH_HOLES_1080[1];
-        slugger.middleHoleFlash = 28;
+        slugger.middleHoleFlash = 32;
         slugger.extraBalls.push({
           x: midHole.x,
           y: midHole.y + 18,
           vx: (Math.random() < 0.5 ? -1 : 1) * (2.2 + Math.random() * 1.4),
-          vy: 7.4 + Math.random() * 1.4,
-          r: 13,
+          vy: 7.2 + Math.random() * 1.3,
+          r: 14,
+          spinAngle: 0,
           hasBeenFlipped: false,
           stallFrames: 0
         });
         awardExtraBallLife(midHole.x, midHole.y + 44);
       }
 
-      // Main Ball ONLY Releases from Left Hole (#0 at 716, 160) or Right Hole (#2 at 1204, 160)
-      // Mixes direct center pitches and outer-lane pitches that feed behind the angled slingshot pieces down the inlanes!
+      // Main Ball Releases from Left Hole (#0 at 716, 160) or Right Hole (#2 at 1204, 160)
       function ejectBallFromHole(holeIdx) {
         const validHoleIdx = holeIdx === 2 ? 2 : 0;
         slugger.activeHoleIdx = validHoleIdx;
@@ -4979,16 +5018,18 @@
         slugger.ballY = h.y + 18;
         slugger.enteredPlayfield = false;
         slugger.hasBeenFlipped = false;
-        // ~35% of pitches feed down the outer lane behind the angled slingshot pieces; ~65% pitch toward center
+        slugger.ballTrail = [];
+        slugger.ballSpinVel = validHoleIdx === 0 ? 0.18 : -0.18;
+        // ~35% of pitches feed down the outer S-curve wireform / inlane; ~65% pitch toward the diamond & flippers
         const feedInlane = Math.random() < 0.35;
         if (feedInlane) {
           const outVX = 1.65 + Math.random() * 0.45;
           slugger.ballVX = validHoleIdx === 0 ? -outVX : outVX;
-          slugger.ballVY = 7.8 + Math.random() * 0.9;
+          slugger.ballVY = 7.4 + Math.random() * 0.85;
         } else {
-          const baseVX = 2.0 + Math.random() * 1.1;
+          const baseVX = 1.9 + Math.random() * 1.05;
           slugger.ballVX = validHoleIdx === 0 ? baseVX : -baseVX;
-          slugger.ballVY = 7.6 + Math.random() * 1.2;
+          slugger.ballVY = 7.2 + Math.random() * 1.1;
         }
         slugger.saucerCooldown = 36;
       }
@@ -4998,7 +5039,6 @@
         if (!skipShuffle) {
           shuffleBoardSpaces();
         }
-        // Main ball ONLY releases from Left Hole (0) or Right Hole (2), leaving Middle Hole (1) for Extra Balls!
         slugger.activeHoleIdx = Math.random() < 0.5 ? 0 : 2;
         slugger.phase = 'WINDUP';
         slugger.phaseTimer = 18;
@@ -5006,6 +5046,7 @@
         slugger.hasBeenFlipped = false;
         slugger.swungThisPitch = false;
         slugger.capturedOutcome = null;
+        slugger.ballTrail = [];
         const h = PITCH_HOLES_1080[slugger.activeHoleIdx];
         slugger.ballX = h.x;
         slugger.ballY = h.y;
@@ -5015,6 +5056,7 @@
 
       window.__resetShinjukuSlugger = function () {
         slugger.round = 1;
+        slugger.inning = 1;
         slugger.lives = 3;
         slugger.maxLives = 3;
         slugger.balls = 0;
@@ -5023,15 +5065,22 @@
         slugger.runs = 0;
         slugger.roundPoints = 0;
         slugger.roundTickets = 0;
+        slugger.comboStreak = 0;
         slugger.playfieldMultiplier = 1;
         slugger.moundCooldown = 0;
         slugger.homePlateFlash = 0;
+        slugger.moundFlash = 0;
+        slugger.wireformFlashL = 0;
+        slugger.wireformFlashR = 0;
         slugger.gameOverCooldown = 0;
         slugger.middleSpawnTimer = 840;
         slugger.middleHoleFlash = 0;
         slugger.neonSurge = 0;
         slugger.extraBalls = [];
         slugger.tunnelBalls = [];
+        slugger.ballTrail = [];
+        slugger.ballSpinAngle = 0;
+        slugger.ballSpinVel = 0.16;
         slugger.bases = [false, false, false];
         slugger.boardOrder = ['OUT', 'SINGLE', 'HOMERUN', 'DOUBLE', 'TRIPLE'];
         slugger.boardShiftFlash = 0;
@@ -5052,29 +5101,28 @@
         slugger.particles = [];
         slugger.bumperFlashes = [];
         slugger.floatingTexts = [];
-        // Randomize all 3 retractable '84' bumpers so each pops in and out independently on its own random schedule!
         BUMPERS_1080.forEach((b) => {
           b.cooldown = 0;
           b.hitTimer = 0;
-          const startUp = Math.random() < 0.72;
+          const startUp = Math.random() < 0.75;
           b.elev = startUp ? 1.0 : 0.0;
           b.popState = startUp ? 'UP_HOLD' : 'DOWN_HOLD';
-          b.stateTimer = 22 + Math.floor(Math.random() * 95);
-          b.retractSpeed = 0.032 + Math.random() * 0.048;
-          b.riseSpeed = 0.038 + Math.random() * 0.058;
+          b.stateTimer = 26 + Math.floor(Math.random() * 95);
+          b.retractSpeed = 0.032 + Math.random() * 0.045;
+          b.riseSpeed = 0.038 + Math.random() * 0.055;
         });
         slugger.gateFlash = null;
         slugger.bannerText = '';
         slugger.bannerTimer = 0;
-        slugger.activeHoleIdx = 0; // Left Hole #1 (Main ball only uses Left #0 and Right #2)
+        slugger.activeHoleIdx = 0;
         slugger.phase = 'LIVE_PLAY';
         slugger.enteredPlayfield = true;
         slugger.hasBeenFlipped = false;
         slugger.swungThisPitch = false;
         slugger.ballX = 824;
-        slugger.ballY = 605;
-        slugger.ballVX = 2.1;
-        slugger.ballVY = 6.4;
+        slugger.ballY = 580;
+        slugger.ballVX = 2.0;
+        slugger.ballVY = 6.2;
         slugger.saucerCooldown = 28;
       };
 
@@ -5133,7 +5181,6 @@
         }
         if (gamesSelectGridView) gamesSelectGridView.style.display = 'none';
         if (gamesActivePlayView) gamesActivePlayView.style.display = 'flex';
-        // On Mobile, snap to 100% Full-Screen View of the phone!
         if (window.innerWidth <= 768) {
           if (document.body) document.body.classList.add('mobile-slugger-fullscreen');
           try { window.scrollTo(0, 0); } catch (_) {}
@@ -5155,9 +5202,9 @@
       };
 
       function spawnBurstParticles(x, y, color, count) {
-        const capCount = IS_MOBILE_PERF ? Math.min(count, 7) : count;
-        if (IS_MOBILE_PERF && slugger.particles.length > 28) {
-          slugger.particles.splice(0, slugger.particles.length - 28);
+        const capCount = IS_MOBILE_PERF ? Math.min(count, 8) : count;
+        if (IS_MOBILE_PERF && slugger.particles.length > 32) {
+          slugger.particles.splice(0, slugger.particles.length - 32);
         }
         for (let i = 0; i < capCount; i++) {
           const ang = (Math.PI * 2 * i) / capCount + (Math.random() - 0.5) * 0.3;
@@ -5203,7 +5250,6 @@
           slugger.swungThisPitch = true;
           if (freshFlip) {
             playArcadeSfx('flipper_clack');
-            // Change the 5 board doors from swing to swing (always keeping 1 OUT door)!
             if (slugger.shuffleCooldown <= 0) {
               shuffleBoardSpaces();
               slugger.shuffleCooldown = 14;
@@ -5234,7 +5280,6 @@
 
         sluggerCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
-        // Zero-latency direct hardware touch handlers for mobile flappers
         sluggerCanvas.addEventListener('touchstart', (e) => {
           if (!sluggerActive) return;
           e.preventDefault();
@@ -5268,7 +5313,7 @@
         sluggerCanvas.addEventListener('touchcancel', releaseTouchPointers, { passive: true });
 
         sluggerCanvas.addEventListener('pointerdown', (e) => {
-          if (e.pointerType === 'touch') return; // Handled with zero latency by touchstart above
+          if (e.pointerType === 'touch') return;
           e.preventDefault();
           const side = getSideFromClientX(e.clientX);
           activeCanvasPointers.set(e.pointerId, side);
@@ -5333,7 +5378,7 @@
         const active = flp.held || flp.tapTimer > 0;
         const target = active ? flp.upAngle : flp.restAngle;
         const prevAngle = flp.angle;
-        const maxRate = active ? 0.36 * dt : 0.22 * dt;
+        const maxRate = active ? 0.38 * dt : 0.24 * dt;
         const diff = target - flp.angle;
         if (Math.abs(diff) <= maxRate) {
           flp.angle = target;
@@ -5343,6 +5388,7 @@
         flp.omega = (flp.angle - prevAngle) / Math.max(0.01, dt);
       }
 
+      // Authentic Rigid-Body + Solenoid Impulse Flipper Collision (supports Pull-Hitting, Center Drives, Opposite-Field Shots & Cradling!)
       function collideBallWithFlipper(flp) {
         const cosA = Math.cos(flp.angle);
         const sinA = Math.sin(flp.angle);
@@ -5358,7 +5404,7 @@
 
         const closestX = flp.pivotX + s * segDX;
         const closestY = flp.pivotY + s * segDY;
-        const capR = (flp.rBase + (flp.rTip - flp.rBase) * s) * 0.78;
+        const capR = (flp.rBase + (flp.rTip - flp.rBase) * s) * 0.80;
         const minDist = slugger.ballR + capR;
 
         let dx = slugger.ballX - closestX;
@@ -5374,10 +5420,10 @@
           const nx = dx / dist;
           const ny = dy / dist;
 
-          slugger.ballX = closestX + nx * (minDist + 0.6);
-          slugger.ballY = closestY + ny * (minDist + 0.6);
+          slugger.ballX = closestX + nx * (minDist + 0.7);
+          slugger.ballY = closestY + ny * (minDist + 0.7);
 
-          const radiusArm = s * flp.length;
+          const radiusArm = (0.28 + 0.72 * s) * flp.length;
           const surfVX = -sinA * flp.omega * radiusArm;
           const surfVY =  cosA * flp.omega * radiusArm;
 
@@ -5386,37 +5432,44 @@
           const relDotN = relVX * nx + relVY * ny;
 
           const isSwingingUp =
-            (flp.side === 'LEFT' && flp.omega < -0.02) ||
-            (flp.side === 'RIGHT' && flp.omega > 0.02);
+            (flp.side === 'LEFT' && flp.omega < -0.015) ||
+            (flp.side === 'RIGHT' && flp.omega > 0.015);
 
           if (relDotN < 0 || isSwingingUp) {
             slugger.enteredPlayfield = true;
             slugger.hasBeenFlipped = true;
-            if (isSwingingUp && ny < 0.25) {
-              // High-voltage Solenoid Flipper Strike up the elongated pinball table!
-              const leverPower = 19.5 + 6.5 * s;
+            if (isSwingingUp && ny < 0.28) {
+              // Real Pinball Bat Physics:
+              // Early contact near pivot (s = 0.0..0.35) pulls the ball to the same side;
+              // Mid-bat contact (s = 0.35..0.68) drives straight up the middle toward the center HOME RUN door;
+              // Late tip contact (s = 0.68..1.0) slices across to the opposite field!
+              const leverPower = 20.2 + 5.8 * s;
               let aimAngle = -Math.PI / 2;
               if (flp.side === 'LEFT') {
-                aimAngle = -1.96 + s * 0.86;
+                aimAngle = -2.02 + s * 0.96; // ranges from -2.02 rad (left pull) through -1.57 (center) to -1.06 (right slice)
               } else {
-                aimAngle = -1.18 - s * 0.86;
+                aimAngle = -1.12 - s * 0.96; // ranges from -1.12 rad (right pull) through -1.57 (center) to -2.08 (left slice)
               }
-              slugger.ballVX = Math.cos(aimAngle) * leverPower + slugger.ballVX * 0.14;
+              slugger.ballVX = Math.cos(aimAngle) * leverPower + slugger.ballVX * 0.16;
               slugger.ballVY = Math.sin(aimAngle) * leverPower;
+              slugger.ballSpinVel = (flp.side === 'LEFT' ? 1 : -1) * (0.22 + s * 0.25);
               slugger.screenShake = 5;
-              spawnBurstParticles(closestX, closestY, '#ffd700', 16);
-              spawnBurstParticles(closestX, closestY, '#00f0ff', 10);
+              slugger.neonSurge = Math.max(slugger.neonSurge || 0, 22);
+              spawnBurstParticles(closestX, closestY, '#ffd700', 18);
+              spawnBurstParticles(closestX, closestY, '#00f0ff', 12);
               playArcadeSfx('bat_crack');
             } else if (relDotN < 0) {
-              const restitution = 0.48;
+              // Cradling / Live-Catch damping when holding the flipper up, or smooth rolling along the resting bat
+              const isHeldUp = flp.held && Math.abs(flp.angle - flp.upAngle) < 0.08;
+              const restitution = isHeldUp ? 0.24 : 0.42;
               const j = -(1 + restitution) * relDotN;
               slugger.ballVX += j * nx;
               slugger.ballVY += j * ny;
               const tx = -ny;
               const ty = nx;
               const relDotT = relVX * tx + relVY * ty;
-              slugger.ballVX -= relDotT * 0.04 * tx;
-              slugger.ballVY -= relDotT * 0.04 * ty;
+              slugger.ballVX -= relDotT * (isHeldUp ? 0.12 : 0.04) * tx;
+              slugger.ballVY -= relDotT * (isHeldUp ? 0.12 : 0.04) * ty;
             }
           }
         }
@@ -5429,12 +5482,10 @@
 
         for (let tIdx = 0; tIdx < SLINGSHOT_TRIANGLES_1080.length; tIdx++) {
           const tri = SLINGSHOT_TRIANGLES_1080[tIdx];
-          // Quick bounding-box precheck
-          if (by < 705 || by > 900) continue;
-          if (tri.side === 'LEFT' && (bx < 590 || bx > 775)) continue;
-          if (tri.side === 'RIGHT' && (bx < 1145 || bx > 1330)) continue;
+          if (by < 660 || by > 855) continue;
+          if (tri.side === 'LEFT' && (bx < 580 || bx > 775)) continue;
+          if (tri.side === 'RIGHT' && (bx < 1145 || bx > 1340)) continue;
 
-          // Find closest point on any front-facing edge of the 3-sided triangular slingshot piece
           let bestEdge = null;
           let bestQx = 0;
           let bestQy = 0;
@@ -5444,7 +5495,6 @@
           for (let eIdx = 0; eIdx < tri.edges.length; eIdx++) {
             const e = tri.edges[eIdx];
             const signedDist = (bx - e.x1) * e.nx + (by - e.y1) * e.ny;
-            // Ignore back-facing edges unless the ball center slightly penetrated the edge
             if (signedDist < -10) continue;
 
             const wx = e.x2 - e.x1;
@@ -5467,8 +5517,6 @@
           if (bestEdge && bestDist < br && bestDist > 0.0001) {
             let nx = bestEdge.nx;
             let ny = bestEdge.ny;
-            // On the flat middle of any triangle face, use the exact analytical face normal;
-            // on the 3 rounded corners (t <= 0.10 or t >= 0.90), blend smoothly with the radial corner normal
             if (bestT <= 0.10 || bestT >= 0.90) {
               const rnx = (bx - bestQx) / bestDist;
               const rny = (by - bestQy) / bestDist;
@@ -5493,16 +5541,14 @@
             const vDotN = vx * nx + vy * ny;
 
             if (vDotN < 0) {
-              // Active Solenoid Kick ONLY when hitting the middle 68% of the Inner-Front Kicker Face from the playfield side!
-              // Hitting the top corner post (t <= 0.16) or back/bottom inlane guide edges bounces cleanly without weird kicks!
               const isFrontKickerHit =
                 bestEdge.isKicker &&
-                bestT > 0.16 &&
-                bestT < 0.84 &&
-                (nx * bestEdge.nx + ny * bestEdge.ny) > 0.88 &&
-                vDotN < -1.1;
+                bestT > 0.14 &&
+                bestT < 0.86 &&
+                (nx * bestEdge.nx + ny * bestEdge.ny) > 0.86 &&
+                vDotN < -1.0;
 
-              const rest = isFrontKickerHit ? bestEdge.restitution : Math.min(0.42, bestEdge.restitution);
+              const rest = isFrontKickerHit ? bestEdge.restitution : Math.min(0.40, bestEdge.restitution);
               vx -= (1 + rest) * vDotN * nx;
               vy -= (1 + rest) * vDotN * ny;
 
@@ -5514,17 +5560,17 @@
                   bObj.hasBeenFlipped = true;
                 }
                 const spd = Math.hypot(vx, vy);
-                const targetSpd = Math.min(16.2, Math.max(12.8, spd));
+                const targetSpd = Math.min(16.8, Math.max(13.2, spd));
                 if (spd > 0.01) {
                   vx = (vx / spd) * targetSpd;
                   vy = (vy / spd) * targetSpd;
                 }
                 if (tri.cooldown <= 0) {
                   tri.cooldown = 8;
-                  tri.hitTimer = 15;
+                  tri.hitTimer = 16;
                   slugger.neonSurge = Math.max(slugger.neonSurge || 0, 18);
                   if (isMainBall) slugger.screenShake = 4;
-                  spawnBurstParticles(bestQx, bestQy, '#00f0ff', 12);
+                  spawnBurstParticles(bestQx, bestQy, '#00f0ff', 14);
                   if (isMainBall) {
                     spawnFloatingText(bestQx, bestQy - 16, 'SLINGSHOT KICK!', '#00f0ff');
                     playArcadeSfx('slingshot_kick');
@@ -5542,22 +5588,21 @@
             }
           }
 
-          // Smooth Inlane Rollover Feed when the ball travels BEHIND the angled piece down the inlane channel!
-          const inLeftInlane = tri.side === 'LEFT' && bx >= 534 && bx <= 648 && by >= 748 && by <= 895;
-          const inRightInlane = tri.side === 'RIGHT' && bx >= 1272 && bx <= 1386 && by >= 748 && by <= 895;
+          // Smooth Inlane Rollover Feed when the ball travels BEHIND the cyan triangle down the magenta inlane channel!
+          const inLeftInlane = tri.side === 'LEFT' && bx >= 534 && bx <= 645 && by >= 710 && by <= 855;
+          const inRightInlane = tri.side === 'RIGHT' && bx >= 1275 && bx <= 1386 && by >= 710 && by <= 855;
           if (inLeftInlane || inRightInlane) {
-            if (isMainBall && slugger.ballVY > -0.5 && slugger.ballVY < 7.2) {
-              // Gentle gravity assist along the inlane channel so the ball rolls crisply onto the flipper
-              slugger.ballVY += 0.045;
-              if (by > 820) {
-                slugger.ballVX += (tri.side === 'LEFT' ? 0.055 : -0.055);
+            if (isMainBall && slugger.ballVY > -0.5 && slugger.ballVY < 7.4) {
+              slugger.ballVY += 0.05;
+              if (by > 780) {
+                slugger.ballVX += (tri.side === 'LEFT' ? 0.065 : -0.065);
               }
             }
-            if (isMainBall && tri.inlaneCooldown <= 0 && by >= 785 && by <= 855) {
+            if (isMainBall && tri.inlaneCooldown <= 0 && by >= 740 && by <= 820) {
               tri.inlaneCooldown = 48;
               const slotX = tri.side === 'LEFT' ? 584 : 1336;
-              spawnBurstParticles(slotX, 812, '#00f0ff', 8);
-              spawnFloatingText(slotX, 780, 'INLANE FEED!', '#00f0ff');
+              spawnBurstParticles(slotX, 780, '#00f0ff', 8);
+              spawnFloatingText(slotX, 748, 'INLANE FEED!', '#00f0ff');
             }
           }
         }
@@ -5566,7 +5611,6 @@
       function collideBallWithWalls() {
         for (let i = 0; i < PLAYFIELD_WALLS_1080.length; i++) {
           const w = PLAYFIELD_WALLS_1080[i];
-          // Allow newly pitched balls from the 3 top holes to roll down to the flippers before activating the door arch backstop
           if (w.isDoorArch && !slugger.hasBeenFlipped) continue;
 
           const wx = w.x2 - w.x1;
@@ -5581,7 +5625,6 @@
           const dist = Math.hypot(dx, dy);
 
           if (dist < slugger.ballR && dist > 0.001) {
-            // Use exact analytical wall normal when available so the ball never bounces at a weird angle
             let nx = typeof w.nx === 'number' ? w.nx : (dx / dist);
             let ny = typeof w.ny === 'number' ? w.ny : (dy / dist);
 
@@ -5600,14 +5643,19 @@
               slugger.ballVX -= (1 + w.restitution) * vDotN * nx;
               slugger.ballVY -= (1 + w.restitution) * vDotN * ny;
 
-              // If rolling down the pink/gold inlane floor rail onto the flipper, keep smooth forward roll along the rail tangent
+              if (w.isWireform) {
+                if (cx < 960) slugger.wireformFlashL = 18;
+                else slugger.wireformFlashR = 18;
+              }
+
+              // If rolling down the magenta inlane floor rail onto the flipper, keep smooth forward roll along the rail tangent
               if (w.isInlaneFloor && slugger.ballVY >= -1.0) {
-                const tangX = cx < 960 ? 0.9167 : -0.9167;
-                const tangY = 0.3996;
+                const tangX = cx < 960 ? 0.9435 : -0.9435;
+                const tangY = 0.3313;
                 const vTang = slugger.ballVX * tangX + slugger.ballVY * tangY;
-                if (vTang < 5.4) {
-                  slugger.ballVX += tangX * 0.35;
-                  slugger.ballVY += tangY * 0.35;
+                if (vTang < 5.6) {
+                  slugger.ballVX += tangX * 0.38;
+                  slugger.ballVY += tangY * 0.38;
                 }
               }
             }
@@ -5616,13 +5664,34 @@
         collideSingleBallWithSlingshotTriangles(slugger, true);
       }
 
+      // Interactive Pitcher's Mound Ring Sensor at (960, 745): Builds Pitch Count (BALLS / STRIKES -> Base on Balls Walk!)
+      function checkPitchersMoundSensor() {
+        if (!slugger.hasBeenFlipped || slugger.moundCooldown > 0) return;
+        const dx = slugger.ballX - 960;
+        const dy = (slugger.ballY - 745) / 0.62;
+        if (Math.hypot(dx, dy) < 42) {
+          slugger.moundCooldown = 42;
+          slugger.moundFlash = 26;
+          slugger.balls++;
+          playArcadeSfx('bumper_pop');
+          if (slugger.balls >= 4) {
+            slugger.balls = 0;
+            slugger.strikes = 0;
+            const runsScored = advanceRunners(1);
+            spawnBurstParticles(960, 745, '#00f0ff', 20);
+            spawnFloatingText(960, 712, runsScored > 0 ? 'WALK! +1 RUN HOME!' : 'BALL 4 • BASE ON BALLS!', '#00f0ff');
+          } else {
+            spawnBurstParticles(960, 745, '#00f0ff', 8);
+            spawnFloatingText(960, 718, `MOUND BONUS • BALL ${slugger.balls}/4`, '#00f0ff');
+          }
+        }
+      }
+
       function collideBallWithBumpers() {
-        // Incoming pitch glides straight down to the flippers before outfield bumpers engage!
         if (!slugger.hasBeenFlipped) return;
         for (let i = 0; i < BUMPERS_1080.length; i++) {
           const b = BUMPERS_1080[i];
           if (b.cooldown > 0) b.cooldown--;
-          // If any Retractable '84' Bumper is retracted INTO the machine floor, the ball rolls right over it!
           if (b.isRetractable && b.elev < 0.38) continue;
 
           const dx = slugger.ballX - b.x;
@@ -5634,18 +5703,15 @@
             slugger.enteredPlayfield = true;
             const nx = dx / dist;
             const ny = dy / dist;
-            // Push ball cleanly outside bumper collision radius
             slugger.ballX = b.x + nx * (minDist + 1.2);
             slugger.ballY = b.y + ny * (minDist + 1.2);
 
             if (b.isPopBumper) {
-              // True Rigid-Body Reflection + Solenoid Pop Impulse (with extra pop boost if bumper is rising out of the machine!)
               const relVX = slugger.ballVX;
               const relVY = slugger.ballVY;
               const relDotN = relVX * nx + relVY * ny;
               const inSpd = Math.hypot(relVX, relVY);
 
-              // Reflect incoming velocity across normal (nx, ny) & blend with radial solenoid pop normal
               let refVX = nx;
               let refVY = ny;
               if (inSpd > 0.5 && relDotN < 0) {
@@ -5663,7 +5729,6 @@
               slugger.ballVX = refVX * kickSpeed + (Math.random() - 0.5) * 0.9;
               slugger.ballVY = refVY * kickSpeed + (Math.random() - 0.5) * 0.9;
 
-              // Guarantee vertical component so ball never ping-pongs purely horizontally between bumpers
               if (Math.abs(slugger.ballVY) < 3.6) {
                 slugger.ballVY = (slugger.ballVY >= 0 ? 1 : -1) * 3.8;
               }
@@ -5671,15 +5736,12 @@
               if (!b.cooldown || b.cooldown <= 0) {
                 b.cooldown = 6;
                 b.hitTimer = 16;
+                slugger.strikes = (slugger.strikes + 1) % 3;
                 slugger.neonSurge = Math.max(slugger.neonSurge || 0, 22);
                 slugger.bumperFlashes.push({ x: b.x, y: b.y, r: b.r, alpha: 1.0, color: b.color });
                 slugger.screenShake = 6;
                 spawnBurstParticles(b.x + nx * b.r, b.y + ny * b.r, b.color, 18);
-                if (b.isRetractable) {
-                  spawnFloatingText(b.x, b.y - 28, "POP-UP '84 KICK!", b.color);
-                } else {
-                  spawnFloatingText(b.x, b.y - 26, "'84 POP KICK!", b.color);
-                }
+                spawnFloatingText(b.x, b.y - 28, "POP-UP '84 KICK!", b.color);
                 playArcadeSfx('bumper_bell');
               }
             }
@@ -5687,9 +5749,7 @@
         }
       }
 
-      // Collide Flipped Ball with the Patrolling Mid-Field Blocker Bumper ("Infield Defender" at y = 594)
       function collideBallWithMidfieldBlocker() {
-        // Incoming pitch glides straight down to the flippers before the mid-field blocker engages!
         if (!slugger.hasBeenFlipped) return;
 
         const blk = midfieldBlocker;
@@ -5705,7 +5765,6 @@
           const nx = dist > 0.001 ? dx / dist : 0;
           const ny = dist > 0.001 ? dy / dist : 1;
 
-          // Push ball cleanly outside blocker capsule radius
           slugger.ballX = clampedX + nx * (minDist + 1.5);
           slugger.ballY = closestY + ny * (minDist + 1.5);
 
@@ -5719,7 +5778,6 @@
             slugger.ballVX += j * nx + blk.vx * 0.38;
             slugger.ballVY += j * ny;
 
-            // Guarantee crisp downward deflection when hitting the front/bottom of the blocker, or upward bounce from above
             if (dy >= -2) {
               slugger.ballVY = Math.max(9.2, Math.abs(slugger.ballVY));
             } else {
@@ -5741,12 +5799,11 @@
         }
       }
 
-      // Gap-Free 480 Hz Door Capture along the 6 Back Doors (ONLY after ball has been flipped; 2 doors always say OUT!)
+      // Gap-Free 480 Hz Door Capture along the 5 Back Doors (ONLY after ball has been flipped)
       function checkUpperDoorCapture() {
         if (!slugger.hasBeenFlipped) return false;
         if (slugger.ballX < 645 || slugger.ballX > 1275 || slugger.ballY > 318) return false;
 
-        // Find the door slot covering this X coordinate (continuous from x=645 to x=1275 with zero gaps)
         let matchedIdx = -1;
         for (let i = 0; i < BOARD_SPACES_1080.length; i++) {
           const sp = BOARD_SPACES_1080[i];
@@ -5764,7 +5821,6 @@
         const outDef = OUTCOMES_DEF[outKey] || OUTCOMES_DEF.SINGLE;
         slugger.capturedSlotIdx = matchedIdx;
         slugger.capturedOutcome = outDef;
-        // Record tunnel entry start & deep tunnel throat target so the ball rolls into the 3D door tunnel instead of freezing!
         slugger.tunnelStartX = slugger.ballX;
         slugger.tunnelStartY = Math.max(sp.archY + 18, Math.min(sp.boardY + 12, slugger.ballY));
         slugger.tunnelTargetX = sp.archX;
@@ -5802,11 +5858,11 @@
           const basesToAdvance = outDef.bases;
           const runsScored = advanceRunners(basesToAdvance);
           if (runsScored > 0) {
-            slugger.bannerText = `${outDef.title}! • +${runsScored} ${runsScored === 1 ? 'POINT (1 RUNNER HOME!)' : `POINTS (${runsScored} RUNNERS HOME!)`}`;
-            spawnFloatingText(sp.archX, sp.archY - 22, `${outDef.title} (+${runsScored} PT${runsScored > 1 ? 'S' : ''})`, outDef.color);
+            slugger.bannerText = `${outDef.title}! • +${runsScored} ${runsScored === 1 ? 'RUN HOME!' : 'RUNS HOME!'}`;
+            spawnFloatingText(sp.archX, sp.archY - 22, `${outDef.title} (+${runsScored} RUN${runsScored > 1 ? 'S' : ''})`, outDef.color);
           } else {
             const baseName = basesToAdvance === 1 ? '1ST BASE' : basesToAdvance === 2 ? '2ND BASE' : '3RD BASE';
-            slugger.bannerText = `${outDef.title}! • RUNNER ADVANCED TO ${baseName}!`;
+            slugger.bannerText = `${outDef.title}! • RUNNER ON ${baseName}!`;
             spawnFloatingText(sp.archX, sp.archY - 22, `${outDef.title} (ON ${outDef.padText})`, outDef.color);
           }
           slugger.bannerColor = outDef.color;
@@ -5818,22 +5874,22 @@
         return true;
       }
 
-      // Helper for Extra Ball collisions & 6-Door Capture (Extra Balls score hits & advance runners without costing lives on OUT/drain!)
+      // Helper for Extra Ball collisions & 5-Door Capture
       function stepExtraBallSubstep(eb, dt, gravityPerStep) {
         eb.vy += gravityPerStep;
         eb.vx *= 0.9992;
         eb.vy *= 0.9992;
         const spd = Math.hypot(eb.vx, eb.vy);
-        if (spd > 26.0) {
-          eb.vx = (eb.vx / spd) * 26.0;
-          eb.vy = (eb.vy / spd) * 26.0;
+        if (spd > 25.5) {
+          eb.vx = (eb.vx / spd) * 25.5;
+          eb.vy = (eb.vy / spd) * 25.5;
         }
         eb.x += eb.vx * dt;
         eb.y += eb.vy * dt;
-        const depthT = Math.max(0, Math.min(1.1, (eb.y - 160) / 760));
+        eb.spinAngle = (eb.spinAngle || 0) + spd * 0.015 * dt;
+        const depthT = Math.max(0, Math.min(1.1, (eb.y - 160) / 730));
         eb.r = 12 + 8 * depthT;
 
-        // 1. Check 6-Back-Door Capture for Extra Ball (once flipped)
         if (eb.hasBeenFlipped && eb.x >= 645 && eb.x <= 1275 && eb.y <= 318) {
           for (let i = 0; i < BOARD_SPACES_1080.length; i++) {
             const sp = BOARD_SPACES_1080[i];
@@ -5842,7 +5898,6 @@
               const outDef = OUTCOMES_DEF[outKey] || OUTCOMES_DEF.SINGLE;
               slugger.gateFlash = { slotIdx: i, color: outDef.color, timer: 38 };
               slugger.neonSurge = 30;
-              // Animate Extra Ball rolling into the 3D door tunnel!
               slugger.tunnelBalls.push({
                 startX: eb.x,
                 startY: Math.max(sp.archY + 18, eb.y),
@@ -5855,29 +5910,28 @@
               spawnBurstParticles(sp.archX, sp.archY, outDef.color, 24);
               if (outDef.key === 'OUT') {
                 playArcadeSfx('bumper_bell');
-                spawnFloatingText(sp.archX, sp.archY - 22, 'EXTRA BALL OUT (NO LIFE LOST!)', '#00f0ff');
+                spawnFloatingText(sp.archX, sp.archY - 22, 'EXTRA BALL OUT (SAFE!)', '#00f0ff');
               } else {
                 playArcadeSfx(outDef.key === 'HOMERUN' ? 'homerun_organ' : 'reel_hit');
                 const runsScored = advanceRunners(outDef.bases);
                 spawnFloatingText(
                   sp.archX,
                   sp.archY - 22,
-                  runsScored > 0 ? `${outDef.title} (+${runsScored} PT!)` : `${outDef.title}!`,
+                  runsScored > 0 ? `${outDef.title} (+${runsScored} RUN!)` : `${outDef.title}!`,
                   outDef.color
                 );
                 slugger.bannerText = runsScored > 0
-                  ? `★ EXTRA BALL ${outDef.title}! +${runsScored} ${runsScored === 1 ? 'POINT' : 'POINTS'}! ★`
-                  : `★ EXTRA BALL ${outDef.title}! RUNNERS ADVANCED! ★`;
+                  ? `★ MULTIBALL ${outDef.title}! +${runsScored} ${runsScored === 1 ? 'RUN' : 'RUNS'}! ★`
+                  : `★ MULTIBALL ${outDef.title}! RUNNERS ADVANCED! ★`;
                 slugger.bannerColor = '#00f0ff';
                 slugger.bannerTimer = 55;
                 shuffleBoardSpaces();
               }
-              return true; // remove extra ball after door capture
+              return true;
             }
           }
         }
 
-        // 2. Collide Extra Ball with Left & Right Flippers
         [leftFlipper, rightFlipper].forEach((flp) => {
           const cosA = Math.cos(flp.angle);
           const sinA = Math.sin(flp.angle);
@@ -5891,7 +5945,7 @@
           s = Math.max(0, Math.min(1, s));
           const closestX = flp.pivotX + s * segDX;
           const closestY = flp.pivotY + s * segDY;
-          const capR = (flp.rBase + (flp.rTip - flp.rBase) * s) * 0.78;
+          const capR = (flp.rBase + (flp.rTip - flp.rBase) * s) * 0.80;
           const minDist = eb.r + capR;
           let dx = eb.x - closestX;
           let dy = eb.y - closestY;
@@ -5908,19 +5962,19 @@
             const relVX = eb.vx - surfVX;
             const relVY = eb.vy - surfVY;
             const relDotN = relVX * nx + relVY * ny;
-            const isSwingingUp = (flp.side === 'LEFT' && flp.omega < -0.02) || (flp.side === 'RIGHT' && flp.omega > 0.02);
+            const isSwingingUp = (flp.side === 'LEFT' && flp.omega < -0.015) || (flp.side === 'RIGHT' && flp.omega > 0.015);
             if (relDotN < 0 || isSwingingUp) {
               eb.hasBeenFlipped = true;
-              if (isSwingingUp && ny < 0.25) {
-                const leverPower = 19.5 + 6.5 * s;
-                const aimAngle = flp.side === 'LEFT' ? (-1.96 + s * 0.86) : (-1.18 - s * 0.86);
+              if (isSwingingUp && ny < 0.28) {
+                const leverPower = 20.0 + 5.8 * s;
+                const aimAngle = flp.side === 'LEFT' ? (-2.02 + s * 0.96) : (-1.12 - s * 0.96);
                 eb.vx = Math.cos(aimAngle) * leverPower + eb.vx * 0.14;
                 eb.vy = Math.sin(aimAngle) * leverPower;
                 slugger.neonSurge = Math.max(slugger.neonSurge || 0, 16);
                 spawnBurstParticles(closestX, closestY, '#00f0ff', 14);
                 playArcadeSfx('bat_crack');
               } else if (relDotN < 0) {
-                const j = -1.48 * relDotN;
+                const j = -1.42 * relDotN;
                 eb.vx += j * nx;
                 eb.vy += j * ny;
               }
@@ -5928,7 +5982,6 @@
           }
         });
 
-        // 3. Collide Extra Ball with Playfield Walls & 3-Sided Slingshot Triangles
         for (let i = 0; i < PLAYFIELD_WALLS_1080.length; i++) {
           const w = PLAYFIELD_WALLS_1080[i];
           if (w.isDoorArch && !eb.hasBeenFlipped) continue;
@@ -5956,7 +6009,6 @@
         }
         collideSingleBallWithSlingshotTriangles(eb, false);
 
-        // 4. Collide Extra Ball with Bumpers (only when popped out of the machine!)
         if (eb.hasBeenFlipped) {
           for (let i = 0; i < BUMPERS_1080.length; i++) {
             const b = BUMPERS_1080[i];
@@ -5997,7 +6049,6 @@
             }
           }
 
-          // 5. Collide Extra Ball with Patrolling Mid-Field Blocker Bumper
           const blk = midfieldBlocker;
           const clampedX = Math.max(blk.x - blk.halfLen, Math.min(blk.x + blk.halfLen, eb.x));
           const closestY = blk.y;
@@ -6027,7 +6078,6 @@
         return false;
       }
 
-      // Step the Patrolling Mid-Field Blocker Bumper ("Infield Defender") horizontally across y = 594
       function stepMidfieldBlocker(dt) {
         const blk = midfieldBlocker;
         const speedTarget = blk.baseSpeed + Math.min(2.2, slugger.roundPoints * 0.12);
@@ -6047,11 +6097,14 @@
       function stepPinballPhysicsFrame(frameScale) {
         const SUBSTEPS = IS_MOBILE_PERF ? 6 : 8;
         const dt = (frameScale || 1) / SUBSTEPS;
-        const perspFactor = 0.85 + 0.35 * Math.max(0, Math.min(1, (slugger.ballY - 160) / 760));
-        const gravityPerStep = 0.33 * perspFactor * dt;
+        const perspFactor = 0.84 + 0.36 * Math.max(0, Math.min(1, (slugger.ballY - 160) / 730));
+        const gravityPerStep = 0.31 * perspFactor * dt;
 
         if (slugger.moundCooldown > 0) slugger.moundCooldown--;
         if (slugger.homePlateFlash > 0) slugger.homePlateFlash--;
+        if (slugger.moundFlash > 0) slugger.moundFlash--;
+        if (slugger.wireformFlashL > 0) slugger.wireformFlashL--;
+        if (slugger.wireformFlashR > 0) slugger.wireformFlashR--;
         if (slugger.middleHoleFlash > 0) slugger.middleHoleFlash--;
         if (midfieldBlocker.hitTimer > 0) midfieldBlocker.hitTimer--;
         if (midfieldBlocker.cooldown > 0) midfieldBlocker.cooldown--;
@@ -6062,7 +6115,6 @@
           if (tri.inlaneCooldown > 0) tri.inlaneCooldown--;
         }
 
-        // Occasionally release an Extra Ball (+1 Life, up to 4 max) from the Middle Hole (#1 at 960, 158)
         if (slugger.middleSpawnTimer > 0) {
           slugger.middleSpawnTimer--;
           if (slugger.middleSpawnTimer <= 0) {
@@ -6071,28 +6123,25 @@
           }
         }
 
-        // Step 3D bumper hit timers & ALL 3 Retractable '84' Bumpers popping IN and OUT of the machine floor as randomly as possible!
         for (let i = 0; i < BUMPERS_1080.length; i++) {
           const b = BUMPERS_1080[i];
           if (b.hitTimer > 0) b.hitTimer--;
           if (b.isRetractable) {
-            if (!b.retractSpeed) b.retractSpeed = 0.032 + Math.random() * 0.048;
-            if (!b.riseSpeed) b.riseSpeed = 0.038 + Math.random() * 0.058;
+            if (!b.retractSpeed) b.retractSpeed = 0.032 + Math.random() * 0.045;
+            if (!b.riseSpeed) b.riseSpeed = 0.038 + Math.random() * 0.055;
 
             if (b.popState === 'UP_HOLD') {
               b.elev = 1.0;
               b.stateTimer--;
-              // Random early retract impulse or timer expiration
               if (b.stateTimer <= 0 || (b.stateTimer < 70 && Math.random() < 0.008)) {
                 b.popState = 'RETRACTING';
-                b.retractSpeed = 0.028 + Math.random() * 0.055;
+                b.retractSpeed = 0.028 + Math.random() * 0.052;
               }
             } else if (b.popState === 'RETRACTING') {
               b.elev = Math.max(0, b.elev - b.retractSpeed);
-              // Occasional random mid-retract fakeout pop-back!
               if (b.elev > 0.25 && b.elev < 0.75 && Math.random() < 0.006) {
                 b.popState = 'RISING';
-                b.riseSpeed = 0.042 + Math.random() * 0.055;
+                b.riseSpeed = 0.042 + Math.random() * 0.052;
               } else if (b.elev <= 0) {
                 b.elev = 0;
                 b.popState = 'DOWN_HOLD';
@@ -6101,10 +6150,9 @@
             } else if (b.popState === 'DOWN_HOLD') {
               b.elev = 0.0;
               b.stateTimer--;
-              // Random spontaneous pop-up impulse or timer expiration
               if (b.stateTimer <= 0 || (b.stateTimer < 60 && Math.random() < 0.009)) {
                 b.popState = 'RISING';
-                b.riseSpeed = 0.034 + Math.random() * 0.062;
+                b.riseSpeed = 0.034 + Math.random() * 0.058;
                 slugger.bumperFlashes.push({ x: b.x, y: b.y, r: b.r * 0.75, alpha: 0.75, color: b.color });
                 playArcadeSfx('bumper_pop');
               }
@@ -6125,10 +6173,10 @@
           stepMidfieldBlocker(dt);
 
           slugger.ballVY += gravityPerStep;
-          slugger.ballVX *= 0.9992;
-          slugger.ballVY *= 0.9992;
+          slugger.ballVX *= 0.9993;
+          slugger.ballVY *= 0.9993;
 
-          const maxSpd = 26.0;
+          const maxSpd = 25.5;
           const spd = Math.hypot(slugger.ballVX, slugger.ballVY);
           if (spd > maxSpd) {
             slugger.ballVX = (slugger.ballVX / spd) * maxSpd;
@@ -6137,18 +6185,15 @@
 
           slugger.ballX += slugger.ballVX * dt;
           slugger.ballY += slugger.ballVY * dt;
+          slugger.ballSpinAngle += (slugger.ballSpinVel + spd * 0.012) * dt;
 
-          // Mark ball as entered playfield once it rolls down past the upper door line (y > 325)
           if (!slugger.enteredPlayfield && slugger.ballY > 325) {
             slugger.enteredPlayfield = true;
           }
 
-          // Perspective ball radius from top pitch holes (y=160 -> r=17) to bottom flippers (y=882 -> r=28)
-          const depthT = Math.max(0, Math.min(1.1, (slugger.ballY - 160) / 760));
-          // Proportionate pinball size (~1/3 of a pop-bumper cap, slightly narrower than the flipper base)
+          const depthT = Math.max(0, Math.min(1.1, (slugger.ballY - 160) / 730));
           slugger.ballR = 12 + 8 * depthT;
 
-          // Check door capture at 480 Hz BEFORE wall bounce so any ball reaching the 6 back doors enters cleanly!
           if (checkUpperDoorCapture()) {
             return;
           }
@@ -6158,8 +6203,8 @@
           collideBallWithWalls();
           collideBallWithBumpers();
           collideBallWithMidfieldBlocker();
+          checkPitchersMoundSensor();
 
-          // Step any active Extra Balls released from the Middle Hole
           for (let ebIdx = slugger.extraBalls.length - 1; ebIdx >= 0; ebIdx--) {
             const eb = slugger.extraBalls[ebIdx];
             if (stepExtraBallSubstep(eb, dt, gravityPerStep)) {
@@ -6168,7 +6213,15 @@
           }
         }
 
-        // Clean up Extra Balls that drain past Home Plate (Extra Balls NEVER cost a life!)
+        // Record subtle plasma comet trail for high-speed flipped shots
+        const curSpd = Math.hypot(slugger.ballVX, slugger.ballVY);
+        if (slugger.hasBeenFlipped && curSpd > 9.5) {
+          slugger.ballTrail.push({ x: slugger.ballX, y: slugger.ballY, r: slugger.ballR });
+          if (slugger.ballTrail.length > 10) slugger.ballTrail.shift();
+        } else if (slugger.ballTrail.length > 0) {
+          slugger.ballTrail.shift();
+        }
+
         for (let ebIdx = slugger.extraBalls.length - 1; ebIdx >= 0; ebIdx--) {
           const eb = slugger.extraBalls[ebIdx];
           const ebSpd = Math.hypot(eb.vx, eb.vy);
@@ -6182,27 +6235,30 @@
           } else {
             eb.stallFrames = 0;
           }
-          if (eb.y > 990) {
-            spawnFloatingText(eb.x, 940, 'EXTRA BALL DRAINED (SAFE!)', '#00f0ff');
+          if (eb.y > 975) {
+            spawnFloatingText(eb.x, 930, 'EXTRA BALL DRAINED (SAFE!)', '#00f0ff');
             slugger.extraBalls.splice(ebIdx, 1);
           }
         }
 
-        // Anti-Stall / Side-Rail Ejector Guard (ensures the ball can never get wedged or stall on any rail or post!)
-        const frameSpd = Math.hypot(slugger.ballVX, slugger.ballVY);
-        if (frameSpd < 2.8) {
+        // Anti-Stall Guard (ignores balls intentionally cradled on a held flipper!)
+        const isCradledOnFlipper =
+          (leftFlipper.held && slugger.ballY > 815 && slugger.ballX > 710 && slugger.ballX < 900) ||
+          (rightFlipper.held && slugger.ballY > 815 && slugger.ballX > 1020 && slugger.ballX < 1210);
+
+        if (!isCradledOnFlipper && curSpd < 2.6) {
           slugger.stallFrames = (slugger.stallFrames || 0) + 1;
-          if (slugger.stallFrames > 10) {
-            slugger.ballVX += (960 - slugger.ballX) * 0.032 + (Math.random() - 0.5) * 2.5;
-            slugger.ballVY = Math.max(slugger.ballVY + 4.8, 5.2);
+          if (slugger.stallFrames > 14) {
+            slugger.ballVX += (960 - slugger.ballX) * 0.032 + (Math.random() - 0.5) * 2.4;
+            slugger.ballVY = Math.max(slugger.ballVY + 4.5, 5.0);
             slugger.stallFrames = 0;
           }
         } else {
           slugger.stallFrames = 0;
         }
 
-        // Check Drain Past Flippers / Home Plate (y > 990) -> Lose 1 Life (3 Lives until Game Over!)
-        if (slugger.ballY > 990) {
+        // Check Drain Past Flippers / Home Plate (y > 978) -> Lose 1 Life
+        if (slugger.ballY > 978) {
           slugger.playfieldMultiplier = 1;
           playArcadeSfx('crash');
           const isOver = recordOut('DRAINED PAST HOME PLATE');
@@ -6238,7 +6294,7 @@
 
         // 1. Glossy Obsidian Playfield Floor Reflection beneath the 3D flipper
         sCtx.save();
-        applyFlipperTransform(sCtx, 24);
+        applyFlipperTransform(sCtx, 22);
         traceTaperedCapsulePath(sCtx, flp.length, flp.rBase + 2, flp.rTip + 2);
         sCtx.fillStyle = 'rgba(180, 125, 16, 0.24)';
         sCtx.shadowColor = 'rgba(0, 240, 255, 0.30)';
@@ -6246,18 +6302,18 @@
         sCtx.fill();
         sCtx.restore();
 
-        // 2. 3D Extruded Brushed 24K Gold Vertical Side Wall (20px tall in screen Y)
+        // 2. 3D Extruded Brushed 24K Gold Vertical Side Wall (18px tall in screen Y)
         const dyStep = IS_MOBILE_PERF ? 6 : 2;
         const wallGrad = sCtx.createLinearGradient(0, -flp.rBase, flp.length, flp.rBase);
         wallGrad.addColorStop(0, '#c48f18');
         wallGrad.addColorStop(0.35, '#ffdf78');
         wallGrad.addColorStop(0.68, '#96680a');
         wallGrad.addColorStop(1, '#4d3203');
-        for (let dy = 20; dy >= 2; dy -= dyStep) {
+        for (let dy = 18; dy >= 2; dy -= dyStep) {
           sCtx.save();
           applyFlipperTransform(sCtx, dy);
           traceTaperedCapsulePath(sCtx, flp.length, flp.rBase, flp.rTip);
-          if (dy === 20) {
+          if (dy === 18) {
             sCtx.fillStyle = '#241703';
             sCtx.fill();
             sCtx.lineWidth = 2.0;
@@ -6270,14 +6326,14 @@
           sCtx.restore();
         }
 
-        // 3. Glowing Electric Neon Cyan Rim Band along the upper 3D wall edge
+        // 3. Glowing Electric Neon Cyan / Magenta Rim Band along the upper 3D wall edge
         sCtx.save();
         applyFlipperTransform(sCtx, 3);
         traceTaperedCapsulePath(sCtx, flp.length, flp.rBase + 1, flp.rTip + 1);
         sCtx.lineWidth = 4.0;
-        sCtx.strokeStyle = '#00f0ff';
+        sCtx.strokeStyle = (flp.held || flp.tapTimer > 0) ? '#ffffff' : '#00f0ff';
         sCtx.shadowColor = '#00f0ff';
-        sCtx.shadowBlur = 14;
+        sCtx.shadowBlur = (flp.held || flp.tapTimer > 0) ? 22 : 14;
         sCtx.stroke();
         sCtx.restore();
 
@@ -6298,9 +6354,8 @@
         sCtx.strokeStyle = '#ffe999';
         sCtx.stroke();
 
-        // Specular highlight ridge along the top face
-        sCtx.strokeStyle = 'rgba(255, 250, 210, 0.65)';
-        sCtx.lineWidth = 2;
+        sCtx.strokeStyle = 'rgba(255, 250, 210, 0.72)';
+        sCtx.lineWidth = 2.2;
         sCtx.beginPath();
         sCtx.moveTo(flp.rBase * 0.85, -3);
         sCtx.lineTo(flp.length - flp.rTip * 0.8, -1.5);
@@ -6333,7 +6388,7 @@
         }
       }
 
-      // Draw Sleek 3D Concentric Elliptical '84' Pinball Pop-Bumpers + Retractable Center Bumper (Pops IN and OUT of the Machine Floor)
+      // Draw Sleek 3D Concentric Elliptical '84' Pinball Pop-Bumpers + Slingshot Flash + S-Curve Wireform Chasers + Patrolling Defender
       function drawDynamicPlayfieldFX() {
         if (!sCtx) return;
         const now = performance.now();
@@ -6370,16 +6425,66 @@
           sCtx.restore();
         });
 
-        // 2. Draw the 3 Authentic 3D '84' Pinball Pop-Bumpers (Left, Right, and Center Retractable Bumper that Pops IN and OUT of the Machine Floor)
+        // 1B. S-Curve Chrome Habitrail Neon Highlight Flash when Ball Rides or Ricochets off Left/Right Wireforms
+        if (slugger.wireformFlashL > 0 || slugger.wireformFlashR > 0) {
+          sCtx.save();
+          sCtx.lineCap = 'round';
+          if (slugger.wireformFlashL > 0) {
+            sCtx.strokeStyle = `rgba(0, 240, 255, ${slugger.wireformFlashL / 18})`;
+            sCtx.shadowColor = '#00f0ff';
+            sCtx.shadowBlur = 20;
+            sCtx.lineWidth = 6;
+            sCtx.beginPath();
+            sCtx.moveTo(642, 310);
+            sCtx.lineTo(702, 422);
+            sCtx.lineTo(572, 515);
+            sCtx.lineTo(536, 698);
+            sCtx.stroke();
+          }
+          if (slugger.wireformFlashR > 0) {
+            sCtx.strokeStyle = `rgba(0, 240, 255, ${slugger.wireformFlashR / 18})`;
+            sCtx.shadowColor = '#00f0ff';
+            sCtx.shadowBlur = 20;
+            sCtx.lineWidth = 6;
+            sCtx.beginPath();
+            sCtx.moveTo(1278, 310);
+            sCtx.lineTo(1218, 422);
+            sCtx.lineTo(1348, 515);
+            sCtx.lineTo(1384, 698);
+            sCtx.stroke();
+          }
+          sCtx.restore();
+        }
+
+        // 1C. Cyan Slingshot Triangle Kicker Flash Overlay (matches the exact artwork triangles at 650..734, 692..816)
+        SLINGSHOT_TRIANGLES_1080.forEach((tri) => {
+          if (tri.hitTimer <= 0) return;
+          const a = tri.hitTimer / 16;
+          sCtx.save();
+          sCtx.strokeStyle = '#ffffff';
+          sCtx.fillStyle = `rgba(0, 240, 255, ${0.35 * a})`;
+          sCtx.shadowColor = '#00f0ff';
+          sCtx.shadowBlur = 24;
+          sCtx.lineWidth = 4;
+          sCtx.beginPath();
+          sCtx.moveTo(tri.edges[0].x1, tri.edges[0].y1);
+          sCtx.lineTo(tri.edges[0].x2, tri.edges[0].y2);
+          sCtx.lineTo(tri.edges[1].x2, tri.edges[1].y2);
+          sCtx.closePath();
+          sCtx.fill();
+          sCtx.stroke();
+          sCtx.restore();
+        });
+
+        // 2. Draw the 3 Authentic 3D '84' Pinball Pop-Bumpers
         for (let i = 0; i < BUMPERS_1080.length; i++) {
           const b = BUMPERS_1080[i];
           const elev = b.isRetractable ? Math.max(0, Math.min(1, b.elev)) : 1.0;
           const popScale = b.hitTimer > 0 ? 1 + (b.hitTimer / 16) * 0.14 : 1;
           const baseR = b.r;
           const r = baseR * popScale * (0.82 + 0.18 * elev);
-          const py = 0.62; // exact 3D playfield perspective ratio matching the 3 top pitch holes
+          const py = 0.62;
 
-          // A. Ambient Under-Playfield Neon Halo Around the Circular Playfield Socket
           sCtx.save();
           const poolR = baseR * (b.hitTimer > 0 ? 2.2 : (1.55 + 0.25 * elev));
           const poolGrad = sCtx.createRadialGradient(b.x, b.y + 4, 4, b.x, b.y + 4, poolR);
@@ -6393,12 +6498,10 @@
           sCtx.fill();
           sCtx.restore();
 
-          // B. Recessed Circular 24K Gold & Neon Playfield Silo Socket Built Into the Machine Floor (b.x, b.y + 4)
           sCtx.save();
           sCtx.translate(b.x, b.y + 4);
           sCtx.scale(1, py);
 
-          // Outer 24K Gold Beveled Socket Collar Flush with the Playfield Board
           const collarR = baseR * 1.12;
           const collarGrad = sCtx.createLinearGradient(-collarR, -collarR, collarR, collarR);
           collarGrad.addColorStop(0, '#593b04');
@@ -6410,14 +6513,12 @@
           sCtx.arc(0, 0, collarR, 0, Math.PI * 2);
           sCtx.fill();
 
-          // Neon Accent Ring on the Playfield Socket Collar
           sCtx.lineWidth = 2.6;
           sCtx.strokeStyle = b.color;
           sCtx.shadowColor = b.color;
           sCtx.shadowBlur = 12 * globalPulse;
           sCtx.stroke();
 
-          // Deep Subterranean Silo Hole Inside the Machine Floor (visible when the center bumper retracts into the machine!)
           const holeR = baseR * 0.95;
           const holeGrad = sCtx.createRadialGradient(0, 3, 2, 0, 0, holeR);
           holeGrad.addColorStop(0, '#010206');
@@ -6429,7 +6530,6 @@
           sCtx.arc(0, 0, holeR, 0, Math.PI * 2);
           sCtx.fill();
 
-          // Subterranean Neon Depth Rings Inside the Silo Hole
           for (let ring = 1; ring <= 2; ring++) {
             const rr = holeR * (1 - ring * 0.22);
             sCtx.strokeStyle = b.color;
@@ -6441,11 +6541,9 @@
           }
           sCtx.restore();
 
-          // C. Telescoping 3D Concentric Cylindrical Bumper Column & Beveled 24K Gold Crown (rises from inside the machine floor as elev: 0 -> 1)
-          const liftY = Math.round(15 * elev); // vertical 3D extrusion out of the playfield socket (0px when flush/retracted, 15px when popped out)
-          const sinkDepth = (1 - elev) * 5;    // sinks slightly down into the dark silo socket when fully retracted (elev = 0)
+          const liftY = Math.round(15 * elev);
+          const sinkDepth = (1 - elev) * 5;
 
-          // 1. 3D Cylindrical Metallic Skirt Stack (concentric elliptical slices—no flat rectangle!)
           if (liftY > 1) {
             const syStep = IS_MOBILE_PERF ? 5 : 2;
             const cylGrad = sCtx.createLinearGradient(-r, 0, r, 0);
@@ -6467,7 +6565,6 @@
               sCtx.restore();
             }
 
-            // Glowing Neon Bumper Skirt Ring Around the Mid-Waist of the Cylinder
             sCtx.save();
             sCtx.translate(b.x, b.y + 4 - liftY * 0.48);
             sCtx.scale(1, py);
@@ -6481,7 +6578,6 @@
             sCtx.restore();
           }
 
-          // 2. 3D Beveled 24K Gold Upper Bumper Crown Rim (sinks into the socket when elev -> 0, pops out when elev -> 1)
           const crownY = b.y + 4 - liftY + sinkDepth;
           sCtx.save();
           sCtx.translate(b.x, crownY);
@@ -6506,7 +6602,6 @@
           sCtx.shadowBlur = b.hitTimer > 0 ? 24 : (10 + 10 * elev);
           sCtx.stroke();
 
-          // 3. Glossy Obsidian & Neon Inner Cap Dome with Crisp '84 Emblem
           const domeR = r * 0.74;
           const domeGrad = sCtx.createRadialGradient(-domeR * 0.25, -domeR * 0.25, 2, 0, 0, domeR);
           domeGrad.addColorStop(0, '#1e2c4a');
@@ -6523,7 +6618,6 @@
           sCtx.shadowBlur = b.hitTimer > 0 ? 28 : (12 + 8 * elev);
           sCtx.stroke();
 
-          // Specular Glass Arc on Top Cap
           sCtx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
           sCtx.lineWidth = 1.8;
           sCtx.shadowBlur = 0;
@@ -6531,7 +6625,6 @@
           sCtx.arc(0, 0, domeR * 0.84, -Math.PI * 0.82, -Math.PI * 0.18);
           sCtx.stroke();
 
-          // Crisp '84 Emblem Centered on the 3D Cap
           sCtx.font = '900 18px Orbitron, sans-serif';
           sCtx.textAlign = 'center';
           sCtx.textBaseline = 'middle';
@@ -6541,7 +6634,6 @@
           sCtx.fillText(b.label || "'84", 0, 1);
           sCtx.restore();
 
-          // 4. Subterranean Silo Rim Shadow Overlay when Retracting / Retracted Into the Machine Floor (elev < 0.65)
           if (b.isRetractable && elev < 0.65) {
             const shadowAlpha = (0.65 - elev) * 0.85;
             sCtx.save();
@@ -6561,7 +6653,6 @@
         const blkW = (blk.halfLen + blk.r) * 2;
         const blkH = blk.r * 2;
 
-        // A. Recessed Horizontal Neon Guide Track Slot (x = 696..1224, y = 594)
         sCtx.save();
         const trackW = blk.trackMaxX - blk.trackMinX;
         const trackH = 14;
@@ -6576,7 +6667,6 @@
         sCtx.fill();
         sCtx.stroke();
 
-        // Inner glowing laser guide line along the track
         sCtx.strokeStyle = 'rgba(255, 45, 149, 0.58)';
         sCtx.lineWidth = 2;
         sCtx.beginPath();
@@ -6584,7 +6674,6 @@
         sCtx.lineTo(blk.trackMaxX - 12, blk.y + 4);
         sCtx.stroke();
 
-        // Left & Right 24K Gold Track End-Stop Sockets
         [blk.trackMinX + 6, blk.trackMaxX - 6].forEach((tx) => {
           sCtx.fillStyle = '#ffd700';
           sCtx.shadowColor = '#ffd700';
@@ -6595,7 +6684,6 @@
         });
         sCtx.restore();
 
-        // B. Glossy Floor Reflection & Under-Glow Beneath the Moving Blocker Bumper
         sCtx.save();
         const glowGrad = sCtx.createRadialGradient(blk.x, blk.y + 8, 6, blk.x, blk.y + 8, blk.halfLen + 36);
         glowGrad.addColorStop(0, blkHit ? 'rgba(255, 255, 255, 0.65)' : 'rgba(255, 45, 149, 0.42)');
@@ -6607,7 +6695,6 @@
         sCtx.fill();
         sCtx.restore();
 
-        // C. 3D Extruded 24K Gold & Neon Pink/Cyan Capsule Blocker Sled (12px 3D vertical extrusion)
         const blkStep = IS_MOBILE_PERF ? 6 : 3;
         const blkWallGrad = sCtx.createLinearGradient(blk.x - blkW / 2, blk.y, blk.x + blkW / 2, blk.y);
         blkWallGrad.addColorStop(0, '#3d2604');
@@ -6627,7 +6714,6 @@
               sCtx.shadowBlur = blkHit ? 24 : 14;
             }
           } else {
-            // Top Beveled Obsidian & 24K Gold Armor Plate
             const capGrad = sCtx.createLinearGradient(blk.x, topY, blk.x, topY + blkH);
             capGrad.addColorStop(0, blkHit ? '#ffffff' : '#1b2742');
             capGrad.addColorStop(0.5, blkHit ? '#ffd700' : '#0b1224');
@@ -6645,7 +6731,6 @@
           sCtx.restore();
         }
 
-        // D. Inner 24K Gold Bevel Frame, Left/Right Bumper End-Nodes & Crisp "DEFENDER" Readout
         sCtx.save();
         const faceY = blk.y - 4;
         sCtx.strokeStyle = '#ffd700';
@@ -6654,7 +6739,6 @@
         sCtx.roundRect(blk.x - blkW / 2 + 5, faceY - blk.r + 4, blkW - 10, blkH - 8, blk.r - 4);
         sCtx.stroke();
 
-        // Glowing Neon Pink Rebound Nodes on Left & Right Capsule Ends
         [blk.x - blk.halfLen + 2, blk.x + blk.halfLen - 2].forEach((nx) => {
           sCtx.fillStyle = blkHit ? '#ffffff' : '#ff2d95';
           sCtx.shadowColor = '#ff2d95';
@@ -6674,46 +6758,20 @@
         sCtx.restore();
       }
 
-      // Draw Upgraded Central Infield Baseball Diamond Inside the Machine that Lights Up the Bases Runners Are On!
+      // Draw Central Infield Baseball Diamond Calibrated 1:1 to the Artwork Base Bags!
       function drawInfieldDiamondBaseLights() {
         if (!sCtx) return;
         const now = performance.now();
         const pulse = 0.75 + 0.25 * Math.sin(now * 0.011);
 
-        // Exact 1920x1080 coordinates of the machine's central baseball diamond
-        const homePt = { x: 960,  y: 920 };
-        const firstPt = { x: 1166, y: 803 };
-        const secondPt = { x: 960, y: 701 };
-        const thirdPt = { x: 754,  y: 803 };
-        const moundPt = { x: 960,  y: 806 };
+        // Exact 1920x1080 coordinates of the machine's central baseball diamond on shinjuku_slugger_84_board_clean.jpg!
+        const homePt   = { x: 960,  y: 862 };
+        const firstPt  = { x: 1096, y: 742 };
+        const secondPt = { x: 960,  y: 650 };
+        const thirdPt  = { x: 824,  y: 742 };
+        const moundPt  = { x: 960,  y: 745 };
 
-        // 1. Rich Neon-Edged Infield Diamond Interior Glow & Foul Lines
-        sCtx.save();
-        const dGrad = sCtx.createRadialGradient(moundPt.x, moundPt.y, 18, moundPt.x, moundPt.y, 195);
-        dGrad.addColorStop(0, 'rgba(0, 240, 255, 0.14)');
-        dGrad.addColorStop(0.65, 'rgba(8, 22, 38, 0.42)');
-        dGrad.addColorStop(1, 'rgba(5, 12, 22, 0.18)');
-        sCtx.fillStyle = dGrad;
-        sCtx.beginPath();
-        sCtx.moveTo(secondPt.x, secondPt.y);
-        sCtx.lineTo(firstPt.x, firstPt.y);
-        sCtx.lineTo(homePt.x, homePt.y);
-        sCtx.lineTo(thirdPt.x, thirdPt.y);
-        sCtx.closePath();
-        sCtx.fill();
-
-        // Outer 24K Gold & Inner Neon Cyan Diamond Perimeter
-        sCtx.lineWidth = 5;
-        sCtx.strokeStyle = 'rgba(255, 215, 0, 0.42)';
-        sCtx.stroke();
-        sCtx.lineWidth = 2.5;
-        sCtx.strokeStyle = 'rgba(0, 240, 255, 0.85)';
-        sCtx.shadowColor = '#00f0ff';
-        sCtx.shadowBlur = 12;
-        sCtx.stroke();
-        sCtx.restore();
-
-        // 2. Illuminated Basepath Segments (Light Up Bright Gold/Pink When Runners Advance!)
+        // 1. Illuminated Basepath Segments (Light Up Bright Gold/Cyan/Pink on top of the artwork diamond when Runners Advance!)
         const segments = [
           { from: homePt,   to: firstPt,  active: slugger.bases[0], color: '#ffd700' },
           { from: firstPt,  to: secondPt, active: slugger.bases[1], color: '#00f0ff' },
@@ -6734,55 +6792,38 @@
           sCtx.restore();
         });
 
-        // 3. Center Pitcher's Mound Ring & Pitching Rubber at (960, 806)
-        sCtx.save();
-        sCtx.strokeStyle = 'rgba(0, 240, 255, 0.72)';
-        sCtx.lineWidth = 2.5;
-        sCtx.shadowColor = '#00f0ff';
-        sCtx.shadowBlur = 10;
-        sCtx.beginPath();
-        sCtx.ellipse(moundPt.x, moundPt.y, 44, 24, 0, 0, Math.PI * 2);
-        sCtx.stroke();
-        sCtx.fillStyle = '#ffe680';
-        sCtx.fillRect(moundPt.x - 14, moundPt.y - 2.5, 28, 5);
-        sCtx.restore();
+        // 2. Interactive Center Pitcher's Mound Ring Sensor at (960, 745)
+        if (slugger.moundFlash > 0 || slugger.balls > 0) {
+          sCtx.save();
+          const mCol = slugger.moundFlash > 0 ? '#ffffff' : '#00f0ff';
+          sCtx.strokeStyle = mCol;
+          sCtx.lineWidth = slugger.moundFlash > 0 ? 4 : 2.5;
+          sCtx.shadowColor = '#00f0ff';
+          sCtx.shadowBlur = slugger.moundFlash > 0 ? 22 : 12;
+          sCtx.beginPath();
+          sCtx.ellipse(moundPt.x, moundPt.y, 46, 28, 0, 0, Math.PI * 2);
+          sCtx.stroke();
+          sCtx.restore();
+        }
 
-        // 4. Home Base Pentagon at (960, 920) — Flashes When a Runner Reaches Home (+1 PT!)
+        // 3. Home Base Pentagon at (960, 862) — Flashes When a Runner Reaches Home (+1 PT!)
         const homeLit = slugger.homePlateFlash > 0;
-        sCtx.save();
-        sCtx.translate(homePt.x, homePt.y);
         if (homeLit) {
+          sCtx.save();
+          sCtx.translate(homePt.x, homePt.y);
           sCtx.strokeStyle = '#ffd700';
+          sCtx.fillStyle = 'rgba(255, 230, 110, 0.45)';
           sCtx.lineWidth = 4;
           sCtx.shadowColor = '#ffd700';
-          sCtx.shadowBlur = 26;
+          sCtx.shadowBlur = 28;
           sCtx.beginPath();
-          sCtx.ellipse(0, 0, 38, 22, 0, 0, Math.PI * 2);
+          sCtx.ellipse(0, 0, 42, 24, 0, 0, Math.PI * 2);
+          sCtx.fill();
           sCtx.stroke();
+          sCtx.restore();
         }
-        sCtx.fillStyle = homeLit ? '#ffffff' : '#ffe680';
-        sCtx.strokeStyle = homeLit ? '#ffd700' : '#00f0ff';
-        sCtx.lineWidth = 2.5;
-        sCtx.shadowColor = homeLit ? '#ffd700' : '#00f0ff';
-        sCtx.shadowBlur = homeLit ? 22 : 10;
-        sCtx.beginPath();
-        sCtx.moveTo(-16, -8);
-        sCtx.lineTo(16, -8);
-        sCtx.lineTo(16, 2);
-        sCtx.lineTo(0, 13);
-        sCtx.lineTo(-16, 2);
-        sCtx.closePath();
-        sCtx.fill();
-        sCtx.stroke();
 
-        sCtx.font = '900 10.5px Orbitron, sans-serif';
-        sCtx.textAlign = 'center';
-        sCtx.textBaseline = 'middle';
-        sCtx.fillStyle = homeLit ? '#ffd700' : 'rgba(180, 248, 255, 0.88)';
-        sCtx.fillText('HOME (+1 PT)', 0, -22);
-        sCtx.restore();
-
-        // 5. 3 Large Perspective 3D Base Bags (1B, 2B, 3B) That Light Up Brightly When Runners Are On Base!
+        // 4. 3 Perspective 3D Base Bags (1B at 1096,742 • 2B at 960,650 • 3B at 824,742)
         const basePads = [
           { idx: 0, label: '1B', fullLabel: 'ON 1B', x: firstPt.x,  y: firstPt.y,  activeColor: '#ffd700', glowColor: '#ffae00' },
           { idx: 1, label: '2B', fullLabel: 'ON 2B', x: secondPt.x, y: secondPt.y, activeColor: '#00f0ff', glowColor: '#00f0ff' },
@@ -6793,7 +6834,6 @@
           const occupied = slugger.bases[bp.idx];
           sCtx.save();
 
-          // A. Pulsing Floor Halo When Occupied by a Base Runner
           if (occupied) {
             const haloR = 38 + 8 * pulse;
             const hGrad = sCtx.createRadialGradient(bp.x, bp.y, 4, bp.x, bp.y, haloR);
@@ -6811,74 +6851,61 @@
             sCtx.shadowColor = bp.glowColor;
             sCtx.shadowBlur = 20;
             sCtx.beginPath();
-            sCtx.ellipse(bp.x, bp.y, 34 * pulse, 20 * pulse, 0, 0, Math.PI * 2);
+            sCtx.ellipse(bp.x, bp.y, 32 * pulse, 18 * pulse, 0, 0, Math.PI * 2);
             sCtx.stroke();
-          }
 
-          // B. 3D Extruded Perspective Diamond Base Bag
-          for (let dy = 6; dy >= 0; dy -= 3) {
-            sCtx.save();
-            sCtx.translate(bp.x, bp.y + dy);
-            sCtx.scale(1, 0.58);
-            sCtx.rotate(Math.PI / 4);
-            const bagSize = occupied ? 24 : 20;
-            sCtx.fillStyle = dy > 0
-              ? (occupied ? '#7a4b04' : '#142030')
-              : (occupied ? bp.activeColor : '#121d2e');
-            sCtx.strokeStyle = occupied ? '#ffffff' : '#ffd700';
-            sCtx.lineWidth = dy === 0 ? (occupied ? 3.2 : 2.2) : 1.5;
-            if (dy === 0) {
-              sCtx.shadowColor = occupied ? bp.glowColor : '#00f0ff';
-              sCtx.shadowBlur = occupied ? 22 : 10;
+            // 3D Lit Base Bag Overlay on Occupied Base
+            for (let dy = 5; dy >= 0; dy -= 2.5) {
+              sCtx.save();
+              sCtx.translate(bp.x, bp.y + dy);
+              sCtx.scale(1, 0.58);
+              sCtx.rotate(Math.PI / 4);
+              const bagSize = 23;
+              sCtx.fillStyle = dy > 0 ? '#7a4b04' : bp.activeColor;
+              sCtx.strokeStyle = '#ffffff';
+              sCtx.lineWidth = dy === 0 ? 3.0 : 1.5;
+              if (dy === 0) {
+                sCtx.shadowColor = bp.glowColor;
+                sCtx.shadowBlur = 20;
+              }
+              sCtx.beginPath();
+              sCtx.roundRect(-bagSize / 2, -bagSize / 2, bagSize, bagSize, 4);
+              sCtx.fill();
+              sCtx.stroke();
+              sCtx.restore();
             }
-            sCtx.beginPath();
-            sCtx.roundRect(-bagSize / 2, -bagSize / 2, bagSize, bagSize, 4);
-            sCtx.fill();
-            sCtx.stroke();
-            sCtx.restore();
-          }
-
-          // C. Center Runner Beacon Core & Base Label Badge
-          if (occupied) {
-            sCtx.save();
-            sCtx.fillStyle = '#ffffff';
-            sCtx.shadowColor = bp.activeColor;
-            sCtx.shadowBlur = 16;
-            sCtx.beginPath();
-            sCtx.arc(bp.x, bp.y - 2, 6.5, 0, Math.PI * 2);
-            sCtx.fill();
-            sCtx.restore();
 
             // Glowing "ON 1B / ON 2B / ON 3B" pill above the lit base
             sCtx.save();
-            const pillW = 68;
-            const pillH = 22;
-            const py = bp.y - 30;
+            const pillW = 66;
+            const pillH = 21;
+            const py = bp.y - 26;
             sCtx.fillStyle = 'rgba(7, 11, 22, 0.92)';
             sCtx.strokeStyle = bp.activeColor;
-            sCtx.lineWidth = 2.2;
+            sCtx.lineWidth = 2.0;
             sCtx.shadowColor = bp.glowColor;
-            sCtx.shadowBlur = 14;
+            sCtx.shadowBlur = 12;
             sCtx.beginPath();
             sCtx.roundRect(bp.x - pillW / 2, py - pillH / 2, pillW, pillH, 6);
             sCtx.fill();
             sCtx.stroke();
 
-            sCtx.font = '900 11.5px Orbitron, sans-serif';
+            sCtx.font = '900 11px Orbitron, sans-serif';
             sCtx.textAlign = 'center';
             sCtx.textBaseline = 'middle';
             sCtx.fillStyle = '#ffffff';
             sCtx.fillText(bp.fullLabel, bp.x, py + 1);
             sCtx.restore();
           } else {
+            // Subtle base label above the clean artwork 24K gold diamond bag
             sCtx.save();
-            sCtx.font = '900 12px Orbitron, sans-serif';
+            sCtx.font = '900 11px Orbitron, sans-serif';
             sCtx.textAlign = 'center';
             sCtx.textBaseline = 'middle';
-            sCtx.fillStyle = '#ffe680';
+            sCtx.fillStyle = 'rgba(255, 230, 128, 0.85)';
             sCtx.shadowColor = '#000000';
             sCtx.shadowBlur = 6;
-            sCtx.fillText(bp.label, bp.x, bp.y - 22);
+            sCtx.fillText(bp.label, bp.x, bp.y - 19);
             sCtx.restore();
           }
 
@@ -6886,14 +6913,13 @@
         });
       }
 
-      // Draw the 3 Far-Back Pitch Holes at the Top of the Board (Left & Right Release Main Ball; Middle Hole #2 Releases Extra Balls!)
+      // Draw the 3 Far-Back Pitch Holes at the Top of the Board
       function drawPitchHolesOverlay() {
         if (!sCtx) return;
         const activeHole = PITCH_HOLES_1080[slugger.activeHoleIdx] || PITCH_HOLES_1080[0];
         const midHole = PITCH_HOLES_1080[1];
         const now = performance.now();
 
-        // 1. Active Main-Ball Pitch Hole (Left #0 or Right #2)
         if (slugger.phase === 'WINDUP' || slugger.saucerCooldown > 8) {
           const pulse = 0.55 + 0.45 * Math.sin(now * 0.025);
           sCtx.save();
@@ -6923,7 +6949,6 @@
           sCtx.restore();
         }
 
-        // 2. Subtle Middle Hole (#1 at 960, 158): Only briefly highlights when an Extra Ball (+1 Life) is released
         if (midHole && slugger.middleHoleFlash > 0) {
           sCtx.save();
           sCtx.strokeStyle = 'rgba(255, 215, 0, 0.85)';
@@ -6937,12 +6962,11 @@
         }
       }
 
-      // Draw Active Extra Ball Released from the Middle Hole (#1 at 960, 158) — Subtle & Clean without Loud Power-Up Clutter
       function drawExtraPinballsAndPowerUps() {
         if (!sCtx) return;
         for (let i = 0; i < slugger.extraBalls.length; i++) {
           const eb = slugger.extraBalls[i];
-          draw24KGoldPinball(eb.x, eb.y, eb.r);
+          draw24KGoldPinball(eb.x, eb.y, eb.r, eb.spinAngle || 0);
         }
       }
 
@@ -6953,7 +6977,6 @@
         const shiftBoost = slugger.boardShiftFlash > 0 ? slugger.boardShiftFlash / 18 : 0;
         const surge = (slugger.neonSurge || 0) / 36;
 
-        // Render each of the 5 Recessed Neon Doors + Deep 3D Tunnel Throat + Glossy Floor Reflections
         for (let i = 0; i < BOARD_SPACES_1080.length; i++) {
           const sp = BOARD_SPACES_1080[i];
           const outKey = slugger.boardOrder[i] || 'SINGLE';
@@ -6963,7 +6986,6 @@
           const hw = sp.archW / 2;
           const hh = sp.archH / 2;
 
-          // A. Glossy Playfield Floor Reflection & Entry Runway Glow below each door
           sCtx.save();
           sCtx.translate(sp.archX, sp.archY + sp.archH * 0.92);
           if (sp.tilt) sCtx.rotate(sp.tilt);
@@ -6979,18 +7001,15 @@
           sCtx.stroke();
           sCtx.restore();
 
-          // B. 3D Recessed Neon Door Bay Frame, Deep Subterranean Tunnel Throat & Readout
           sCtx.save();
           sCtx.translate(sp.archX, sp.archY);
           if (sp.tilt) sCtx.rotate(sp.tilt);
 
-          // Dark obsidian recessed bay housing
           sCtx.fillStyle = '#04060d';
           sCtx.beginPath();
           sCtx.roundRect(-hw, -hh, sp.archW, sp.archH, 7);
           sCtx.fill();
 
-          // Inner illuminated color fill
           sCtx.fillStyle = isFlashed
             ? 'rgba(255, 235, 130, 0.44)'
             : shiftBoost > 0
@@ -7000,7 +7019,6 @@
           sCtx.roundRect(-hw + 4, -hh + 4, sp.archW - 8, sp.archH - 8, 5);
           sCtx.fill();
 
-          // 3D Recessed Subterranean Tunnel Chute Opening inside the Door Bay (receding perspective neon rings)
           const tunW = sp.archW - 18;
           const tunH = 22;
           const tunY = hh - tunH - 3;
@@ -7013,7 +7031,6 @@
           sCtx.roundRect(-tunW / 2, tunY, tunW, tunH, [10, 10, 4, 4]);
           sCtx.fill();
 
-          // 3 Receding Perspective Neon Tunnel Rings inside the chute throat
           for (let ring = 0; ring < 3; ring++) {
             const rProg = ((now * 0.0025 + ring * 0.33) % 1);
             const scaleW = 1 - rProg * 0.58;
@@ -7030,7 +7047,6 @@
           }
           sCtx.globalAlpha = 1;
 
-          // Outer neon tube border
           sCtx.strokeStyle = isFlashed ? '#ffffff' : def.color;
           sCtx.lineWidth = isFlashed ? 3.6 : 2.6;
           sCtx.shadowColor = def.color;
@@ -7039,7 +7055,6 @@
           sCtx.roundRect(-hw + 2, -hh + 2, sp.archW - 4, sp.archH - 4, 6);
           sCtx.stroke();
 
-          // Door Title & Subtext above the 3D tunnel throat
           sCtx.textAlign = 'center';
           sCtx.textBaseline = 'middle';
           sCtx.fillStyle = '#ffffff';
@@ -7055,7 +7070,7 @@
         }
       }
 
-      // Draw a Pinball Rolling Smoothly Into a Recessed 3D Door Tunnel Chute (Shrinking & Shading Into the Tunnel Depth!)
+      // Draw a Pinball Rolling Smoothly Into a Recessed 3D Door Tunnel Chute
       function drawPinballEnteringTunnel(startX, startY, targetX, targetY, progress, doorColor) {
         if (!sCtx || progress >= 1) return;
         const ease = progress < 0.5
@@ -7068,7 +7083,6 @@
         const alpha = progress > 0.72 ? Math.max(0, (1 - progress) / 0.28) : 1;
 
         sCtx.save();
-        // Contracting neon tunnel-swallow ring around the ball as it enters the tunnel throat
         sCtx.strokeStyle = doorColor || '#00f0ff';
         sCtx.globalAlpha = (1 - progress * 0.7) * 0.9;
         sCtx.lineWidth = 3.0;
@@ -7078,11 +7092,9 @@
         sCtx.ellipse(targetX, targetY + 4, (1 - progress * 0.65) * 32 + 6, (1 - progress * 0.65) * 16 + 4, 0, 0, Math.PI * 2);
         sCtx.stroke();
 
-        // Draw the 3D 24K Gold Pinball shrinking into the tunnel
         sCtx.globalAlpha = alpha;
-        draw24KGoldPinball(bx, by, br);
+        draw24KGoldPinball(bx, by, br, progress * 8);
 
-        // Subterranean tunnel shadow hood shading the ball as it disappears inside the chute
         sCtx.fillStyle = `rgba(2, 5, 12, ${shadowDarken})`;
         sCtx.beginPath();
         sCtx.arc(bx, by, br + 0.5, 0, Math.PI * 2);
@@ -7090,167 +7102,206 @@
         sCtx.restore();
       }
 
-      // Draw the clean 3D Metallic 24K Gold Pinball WITH NO MOTION TRAIL
-      function draw24KGoldPinball(bx, by, br) {
+      // Draw the 3D Metallic 24K Gold & Chrome Pinball with Spinning Baseball Seams & Dynamic Playfield Reflection
+      function draw24KGoldPinball(bx, by, br, spinAngle) {
         if (!sCtx) return;
+
+        // 1. Subtle High-Speed Plasma Ribbon Trail when launched off a flipper
+        if (slugger.ballTrail && slugger.ballTrail.length > 2 && bx === slugger.ballX && by === slugger.ballY) {
+          sCtx.save();
+          for (let i = 1; i < slugger.ballTrail.length; i++) {
+            const p0 = slugger.ballTrail[i - 1];
+            const p1 = slugger.ballTrail[i];
+            const t = i / slugger.ballTrail.length;
+            sCtx.strokeStyle = slugger.playfieldMultiplier >= 2
+              ? `rgba(255, 215, 0, ${t * 0.38})`
+              : `rgba(0, 240, 255, ${t * 0.34})`;
+            sCtx.lineWidth = Math.max(2, br * 0.9 * t);
+            sCtx.lineCap = 'round';
+            sCtx.beginPath();
+            sCtx.moveTo(p0.x, p0.y);
+            sCtx.lineTo(p1.x, p1.y);
+            sCtx.stroke();
+          }
+          sCtx.restore();
+        }
+
         sCtx.save();
 
+        // 2. Glossy Obsidian Playfield Reflection & Contact Shadow
         const reflY = by + br * 0.78;
-        const reflGrad = sCtx.createRadialGradient(bx, reflY, br * 0.1, bx, reflY, br * 0.92);
-        reflGrad.addColorStop(0, 'rgba(212, 160, 24, 0.42)');
-        reflGrad.addColorStop(0.55, 'rgba(212, 160, 24, 0.14)');
-        reflGrad.addColorStop(1, 'rgba(212, 160, 24, 0)');
+        const reflGrad = sCtx.createRadialGradient(bx, reflY, br * 0.1, bx, reflY, br * 1.05);
+        reflGrad.addColorStop(0, 'rgba(212, 160, 24, 0.46)');
+        reflGrad.addColorStop(0.55, 'rgba(0, 240, 255, 0.16)');
+        reflGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         sCtx.fillStyle = reflGrad;
         sCtx.beginPath();
-        sCtx.ellipse(bx, reflY, br * 0.88, br * 0.38, 0, 0, Math.PI * 2);
+        sCtx.ellipse(bx, reflY, br * 0.92, br * 0.42, 0, 0, Math.PI * 2);
         sCtx.fill();
 
+        // 3. 3D 24K Gold & Chrome Sphere Shader
         const sphereGrad = sCtx.createRadialGradient(
-          bx - br * 0.28,
-          by - br * 0.32,
+          bx - br * 0.30,
+          by - br * 0.34,
           br * 0.06,
           bx,
           by,
           br
         );
         sphereGrad.addColorStop(0, '#ffffff');
-        sphereGrad.addColorStop(0.16, '#fff0a6');
-        sphereGrad.addColorStop(0.42, '#e8b624');
-        sphereGrad.addColorStop(0.72, '#8c6106');
-        sphereGrad.addColorStop(0.90, '#2b1b03');
-        sphereGrad.addColorStop(1, '#cfa01c');
+        sphereGrad.addColorStop(0.18, '#fff2b2');
+        sphereGrad.addColorStop(0.45, '#e8b624');
+        sphereGrad.addColorStop(0.74, '#8c6106');
+        sphereGrad.addColorStop(0.91, '#2b1b03');
+        sphereGrad.addColorStop(1, '#ffdf73');
 
         sCtx.fillStyle = sphereGrad;
         sCtx.beginPath();
         sCtx.arc(bx, by, br, 0, Math.PI * 2);
         sCtx.fill();
 
-        sCtx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+        // 4. Spinning 3D Neon Baseball Seam & Cabinet Rim Reflections
+        const rot = typeof spinAngle === 'number' ? spinAngle : (slugger.ballSpinAngle || 0);
+        sCtx.save();
+        sCtx.translate(bx, by);
+        sCtx.rotate(rot);
         sCtx.beginPath();
-        sCtx.arc(bx - br * 0.30, by - br * 0.32, Math.max(2, br * 0.13), 0, Math.PI * 2);
+        sCtx.arc(0, 0, br * 0.92, 0, Math.PI * 2);
+        sCtx.clip();
+
+        sCtx.strokeStyle = 'rgba(255, 45, 149, 0.62)';
+        sCtx.lineWidth = Math.max(1.4, br * 0.11);
+        sCtx.beginPath();
+        sCtx.arc(-br * 0.48, 0, br * 0.68, -0.75, 0.75);
+        sCtx.stroke();
+        sCtx.beginPath();
+        sCtx.arc(br * 0.48, 0, br * 0.68, Math.PI - 0.75, Math.PI + 0.75);
+        sCtx.stroke();
+        sCtx.restore();
+
+        // Specular highlight & cyan rim reflection
+        sCtx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+        sCtx.beginPath();
+        sCtx.arc(bx - br * 0.30, by - br * 0.32, Math.max(2, br * 0.14), 0, Math.PI * 2);
         sCtx.fill();
 
-        sCtx.strokeStyle = 'rgba(255, 232, 125, 0.85)';
-        sCtx.lineWidth = Math.max(1.5, br * 0.05);
+        sCtx.strokeStyle = 'rgba(0, 240, 255, 0.65)';
+        sCtx.lineWidth = Math.max(1.5, br * 0.08);
         sCtx.beginPath();
-        sCtx.arc(bx, by, br * 0.96, 0.15 * Math.PI, 0.85 * Math.PI);
+        sCtx.arc(bx, by, br * 0.94, 0.15 * Math.PI, 0.85 * Math.PI);
         sCtx.stroke();
 
         sCtx.restore();
       }
 
-      // Draw Live Top HUD Scoreboard Tracking Round Points, Round Tickets (10 PTS = 1 TIX) & Lives!
+      // Draw Live Top HUD Scoreboard Inside the Native 6 Neon Scoreboard Cells of shinjuku_slugger_84_board_clean.jpg!
       function drawLiveHudOverlay() {
         if (!sCtx) return;
         sCtx.save();
         const isMobileHud = window.innerWidth <= 768;
 
-        // 1. Left Scoreboard Wing: ROUND POINTS (1 Runner Home = 1 Point)
-        // On Full-Screen Mobile (canvas x = 438..1482), center left wing in x = 442..676 (center x = 559)
-        const leftBoxX = isMobileHud ? 442 : 150;
-        const leftBoxW = isMobileHud ? 236 : 478;
-        const leftTextX = isMobileHud ? 560 : 389;
-        const leftGrad = sCtx.createLinearGradient(leftBoxX, 10, leftBoxX, 98);
-        leftGrad.addColorStop(0, '#070b18');
-        leftGrad.addColorStop(0.55, '#0d091c');
-        leftGrad.addColorStop(1, '#160924');
-        sCtx.fillStyle = leftGrad;
-        sCtx.beginPath();
-        sCtx.roundRect(leftBoxX, 10, leftBoxW, 88, 12);
-        sCtx.fill();
-        if (isMobileHud) {
+        if (!isMobileHud) {
+          // Desktop / 16:9 View: Render Live Neon Pink/Gold Digits Directly Inside the 6 Native Scoreboard Cells!
+          // Cell Centers at y = 72:
+          // INNING: x = 230 | BALLS: x = 390 | STRIKES: x = 538 | OUTS: x = 1365 | RUNS: x = 1498 | TICKETS: x = 1665
+          sCtx.font = '900 34px Orbitron, sans-serif';
+          sCtx.textAlign = 'center';
+          sCtx.textBaseline = 'middle';
+
+          const cells = [
+            { x: 230,  val: String(slugger.inning || 1), col: '#ff2d95' },
+            { x: 390,  val: String(slugger.balls || 0),  col: '#ff2d95' },
+            { x: 538,  val: String(slugger.strikes || 0), col: '#ff2d95' },
+            { x: 1365, val: String(slugger.outs || 0),   col: '#ff2d95' },
+            { x: 1498, val: String(slugger.roundPoints).padStart(2, '0'), col: '#ffd700' },
+            { x: 1665, val: `${slugger.roundTickets} 🎟`, col: '#ff2d95' }
+          ];
+          cells.forEach((c) => {
+            sCtx.fillStyle = c.col;
+            sCtx.shadowColor = c.col;
+            sCtx.shadowBlur = 14;
+            sCtx.fillText(c.val, c.x, 73);
+          });
+        } else {
+          // Portrait Mobile View (cropped to x = 438..1482): Compact Left & Right Scoreboard Wings Inside Visible Viewport
+          const leftBoxX = 442, leftBoxW = 236, leftTextX = 560;
+          sCtx.fillStyle = 'rgba(7, 11, 24, 0.92)';
           sCtx.strokeStyle = 'rgba(0, 240, 255, 0.65)';
           sCtx.lineWidth = 2;
+          sCtx.beginPath();
+          sCtx.roundRect(leftBoxX, 10, leftBoxW, 86, 12);
+          sCtx.fill();
           sCtx.stroke();
-        }
 
-        sCtx.font = isMobileHud ? '900 13px Orbitron, sans-serif' : '900 17px Orbitron, sans-serif';
-        sCtx.textAlign = 'center';
-        sCtx.textBaseline = 'middle';
-        sCtx.fillStyle = '#6cf6ff';
-        sCtx.shadowColor = 'rgba(0, 240, 255, 0.75)';
-        sCtx.shadowBlur = 10;
-        sCtx.fillText(isMobileHud ? 'ROUND POINTS' : 'ROUND POINTS (HOME = +1 PT)', leftTextX, 29);
+          sCtx.font = '900 12px Orbitron, sans-serif';
+          sCtx.textAlign = 'center';
+          sCtx.textBaseline = 'middle';
+          sCtx.fillStyle = '#6cf6ff';
+          sCtx.fillText('RUNS / POINTS', leftTextX, 29);
 
-        sCtx.font = isMobileHud ? '900 32px Orbitron, sans-serif' : '900 38px Orbitron, sans-serif';
-        sCtx.fillStyle = '#ffd700';
-        sCtx.shadowColor = 'rgba(255, 215, 0, 0.85)';
-        sCtx.shadowBlur = 14;
-        sCtx.fillText(`${slugger.roundPoints.toLocaleString()} PTS`, leftTextX, 68);
+          sCtx.font = '900 30px Orbitron, sans-serif';
+          sCtx.fillStyle = '#ffd700';
+          sCtx.fillText(`${slugger.roundPoints} PTS`, leftTextX, 66);
 
-        // 2. Right Scoreboard Wing: ROUND TICKETS (10 Points = 1 Ticket)
-        // On Full-Screen Mobile (canvas x = 438..1482), center right wing in x = 1242..1478 (center x = 1360)
-        const rightBoxX = isMobileHud ? 1242 : 1292;
-        const rightBoxW = isMobileHud ? 236 : 478;
-        const rightTextX = isMobileHud ? 1360 : 1531;
-        const rightGrad = sCtx.createLinearGradient(rightBoxX, 10, rightBoxX, 98);
-        rightGrad.addColorStop(0, '#070b18');
-        rightGrad.addColorStop(0.55, '#0d091c');
-        rightGrad.addColorStop(1, '#160924');
-        sCtx.fillStyle = rightGrad;
-        sCtx.beginPath();
-        sCtx.roundRect(rightBoxX, 10, rightBoxW, 88, 12);
-        sCtx.fill();
-        if (isMobileHud) {
+          const rightBoxX = 1242, rightBoxW = 236, rightTextX = 1360;
+          sCtx.fillStyle = 'rgba(7, 11, 24, 0.92)';
           sCtx.strokeStyle = 'rgba(255, 45, 149, 0.65)';
           sCtx.lineWidth = 2;
+          sCtx.beginPath();
+          sCtx.roundRect(rightBoxX, 10, rightBoxW, 86, 12);
+          sCtx.fill();
           sCtx.stroke();
+
+          sCtx.font = '900 12px Orbitron, sans-serif';
+          sCtx.fillStyle = '#6cf6ff';
+          sCtx.fillText('ROUND TICKETS', rightTextX, 29);
+
+          sCtx.font = '900 30px Orbitron, sans-serif';
+          sCtx.fillStyle = '#ff3898';
+          sCtx.fillText(`${slugger.roundTickets} TIX`, rightTextX, 66);
         }
 
-        sCtx.font = isMobileHud ? '900 13px Orbitron, sans-serif' : '900 17px Orbitron, sans-serif';
-        sCtx.textAlign = 'center';
-        sCtx.textBaseline = 'middle';
-        sCtx.fillStyle = '#6cf6ff';
-        sCtx.shadowColor = 'rgba(0, 240, 255, 0.75)';
-        sCtx.shadowBlur = 10;
-        sCtx.fillText(isMobileHud ? 'ROUND TICKETS' : 'ROUND TICKETS (10 PTS = 1 TIX)', rightTextX, 29);
-
-        sCtx.font = isMobileHud ? '900 32px Orbitron, sans-serif' : '900 38px Orbitron, sans-serif';
-        sCtx.fillStyle = '#ff3898';
-        sCtx.shadowColor = 'rgba(255, 45, 149, 0.90)';
-        sCtx.shadowBlur = 14;
-        sCtx.fillText(`${slugger.roundTickets.toLocaleString()} TIX`, rightTextX, 68);
-
-        // 3. Centered Lives Pill Below Top Title Banner
+        // 3. Centered Lives & Streak Multiplier Pill Below Top Title Banner (y = 88)
         const maxOrbs = Math.min(4, Math.max(3, slugger.maxLives));
-        const livesW = 114 + maxOrbs * 34;
-        const badgeH = 34;
-        const by = 88;
+        const hasMult = slugger.playfieldMultiplier > 1;
+        const livesW = 118 + maxOrbs * 32 + (hasMult ? 92 : 0);
+        const badgeH = 32;
+        const by = 90;
         const bx = 960 - livesW / 2;
 
-        sCtx.fillStyle = 'rgba(7, 11, 24, 0.94)';
-        sCtx.strokeStyle = slugger.lives === 1 ? '#ff2d95' : '#00f0ff';
-        sCtx.lineWidth = 2.2;
-        sCtx.shadowColor = slugger.lives === 1 ? '#ff2d95' : '#00f0ff';
+        sCtx.fillStyle = 'rgba(7, 11, 24, 0.92)';
+        sCtx.strokeStyle = slugger.lives === 1 ? '#ff2d95' : (hasMult ? '#ffd700' : '#00f0ff');
+        sCtx.lineWidth = 2.0;
+        sCtx.shadowColor = sCtx.strokeStyle;
         sCtx.shadowBlur = 12;
         sCtx.beginPath();
-        sCtx.roundRect(bx, by, livesW, badgeH, 17);
+        sCtx.roundRect(bx, by, livesW, badgeH, 16);
         sCtx.fill();
         sCtx.stroke();
 
-        sCtx.font = '900 12.5px Orbitron, sans-serif';
+        sCtx.font = '900 12px Orbitron, sans-serif';
         sCtx.textAlign = 'left';
         sCtx.textBaseline = 'middle';
         sCtx.fillStyle = '#ffffff';
         sCtx.shadowBlur = 6;
-        sCtx.fillText('LIVES:', bx + 18, by + badgeH / 2 + 1);
+        sCtx.fillText('LIVES:', bx + 16, by + badgeH / 2 + 1);
 
         for (let i = 0; i < maxOrbs; i++) {
           const alive = i < slugger.lives;
-          const cx = bx + 98 + i * 34;
+          const cx = bx + 92 + i * 32;
           const cy = by + badgeH / 2;
           sCtx.save();
           sCtx.beginPath();
-          sCtx.arc(cx, cy, 9.5, 0, Math.PI * 2);
+          sCtx.arc(cx, cy, 9, 0, Math.PI * 2);
           if (alive) {
-            const orbGrad = sCtx.createRadialGradient(cx - 3, cy - 3, 1, cx, cy, 9.5);
+            const orbGrad = sCtx.createRadialGradient(cx - 3, cy - 3, 1, cx, cy, 9);
             orbGrad.addColorStop(0, '#ffffff');
             orbGrad.addColorStop(0.35, '#ffd700');
             orbGrad.addColorStop(1, '#c48808');
             sCtx.fillStyle = orbGrad;
             sCtx.strokeStyle = '#00f0ff';
             sCtx.shadowColor = '#ffd700';
-            sCtx.shadowBlur = 12;
+            sCtx.shadowBlur = 10;
           } else {
             sCtx.fillStyle = 'rgba(20, 26, 40, 0.85)';
             sCtx.strokeStyle = 'rgba(255, 45, 149, 0.45)';
@@ -7262,7 +7313,14 @@
           sCtx.restore();
         }
 
-        // 4. Mobile On-Screen Instruction Pill Across the Bottom Apron ("TAP SCREEN FOR FLAPPERS")
+        if (hasMult) {
+          sCtx.font = '900 12px Orbitron, sans-serif';
+          sCtx.fillStyle = '#ffd700';
+          sCtx.shadowColor = '#ffd700';
+          sCtx.shadowBlur = 10;
+          sCtx.fillText(`🔥 ${slugger.playfieldMultiplier}X`, bx + 92 + maxOrbs * 32 + 8, by + badgeH / 2 + 1);
+        }
+
         if (isMobileHud && slugger.bannerTimer <= 0) {
           const hintW = 640;
           const hintH = 38;
@@ -7344,7 +7402,6 @@
         const now = typeof nowTs === 'number' ? nowTs : performance.now();
         const rawDtMs = sluggerLastLoopTime > 0 ? (now - sluggerLastLoopTime) : 16.667;
         sluggerLastLoopTime = now;
-        // Frame-rate independent delta-time multiplier (keeps full arcade speed even if mobile screen runs at 30/60/120Hz)
         const frameScale = Math.min(2.2, Math.max(0.65, rawDtMs / 16.667));
 
         if (leftFlipper.tapTimer > 0) leftFlipper.tapTimer = Math.max(0, leftFlipper.tapTimer - frameScale);
@@ -7363,7 +7420,7 @@
           slugger.screenShake = Math.max(0, slugger.screenShake - 0.8 * frameScale);
         }
 
-        // 1. Draw the clean 1920x1080 Elongated Deep-Runway Pinball-Baseball Playfield Plate (1:1 pre-scaled GPU texture copy)
+        // 1. Draw the clean 1920x1080 Elongated Deep-Runway Pinball-Baseball Playfield Plate
         if (sluggerBoardCache) {
           sCtx.drawImage(sluggerBoardCache, 0, 0);
         } else if (sluggerCleanBoard.complete && sluggerCleanBoard.naturalWidth > 0) {
@@ -7373,13 +7430,13 @@
           sCtx.fillRect(0, 0, 1920, 1080);
         }
 
-        // 2. Draw the 6 Dynamic Board Doors (SINGLE, DOUBLE, TRIPLE, HOME RUN, and 2 OUT Doors) with 3D Tunnel Throats
+        // 2. Draw the 5 Dynamic Board Doors (SINGLE, DOUBLE, TRIPLE, HOME RUN, and OUT) with 3D Tunnel Throats
         drawDynamicBoardSpaces();
 
         // 3. Draw Kinetic Mid-Field Mechanisms & Amplified Neon Illumination
         drawDynamicPlayfieldFX();
 
-        // 4. Draw Upgraded Central Baseball Diamond & Illuminated Base-Runners Inside the Machine
+        // 4. Draw Calibrated Central Baseball Diamond & Illuminated Base-Runners
         drawInfieldDiamondBaseLights();
 
         // 5. Draw Active Left/Right Pitch Hole Indicator & Middle Bonus Chute Overlay
@@ -7398,7 +7455,7 @@
           }
         }
 
-        // 6. Step & Draw 480 Hz Pinball Physics + Rotating 3D Flippers + Middle Hole Extra Balls & Power-Ups
+        // 6. Step & Draw 480 Hz Pinball Physics + Rotating 3D Flippers + Middle Hole Extra Balls
         const hole = PITCH_HOLES_1080[slugger.activeHoleIdx] || PITCH_HOLES_1080[0];
 
         if (slugger.phase === 'WINDUP') {
@@ -7413,7 +7470,7 @@
           draw3DPinballFlipper(leftFlipper);
           draw3DPinballFlipper(rightFlipper);
           drawExtraPinballsAndPowerUps();
-          draw24KGoldPinball(slugger.ballX, slugger.ballY, slugger.ballR);
+          draw24KGoldPinball(slugger.ballX, slugger.ballY, slugger.ballR, slugger.ballSpinAngle);
           if (slugger.phaseTimer <= 0) {
             slugger.phase = 'LIVE_PLAY';
             ejectBallFromHole(slugger.activeHoleIdx);
@@ -7424,7 +7481,7 @@
           draw3DPinballFlipper(leftFlipper);
           draw3DPinballFlipper(rightFlipper);
           drawExtraPinballsAndPowerUps();
-          draw24KGoldPinball(slugger.ballX, slugger.ballY, slugger.ballR);
+          draw24KGoldPinball(slugger.ballX, slugger.ballY, slugger.ballR, slugger.ballSpinAngle);
         } else if (slugger.phase === 'POCKET_HOLD') {
           stepFlipperAngle(leftFlipper, frameScale);
           stepFlipperAngle(rightFlipper, frameScale);
@@ -7432,7 +7489,6 @@
           draw3DPinballFlipper(leftFlipper);
           draw3DPinballFlipper(rightFlipper);
           drawExtraPinballsAndPowerUps();
-          // Smoothly roll the Pinball into the 3D Door Tunnel Chute instead of freezing on the board!
           const tunnelProgress = Math.min(1, (42 - slugger.phaseTimer) / 24);
           const doorCol = slugger.capturedOutcome ? slugger.capturedOutcome.color : '#ffd700';
           drawPinballEnteringTunnel(
@@ -7528,7 +7584,7 @@
           sCtx.restore();
         }
 
-        // 10. Draw Live HUD Readouts (Round Points, Round Tickets & 3 Lives)
+        // 10. Draw Live HUD Readouts inside the Native 6 Scoreboard Cells
         drawLiveHudOverlay();
 
         // 11. Draw Game Over Card if all 3 Lives are used
@@ -7538,19 +7594,21 @@
         if (slugger.bannerTimer > 0) {
           slugger.bannerTimer--;
           sCtx.save();
-          sCtx.font = '900 28px Orbitron, sans-serif';
+          sCtx.font = '900 26px Orbitron, sans-serif';
           sCtx.textAlign = 'center';
           sCtx.textBaseline = 'middle';
           const bw = Math.max(540, sCtx.measureText(slugger.bannerText).width + 72);
-          sCtx.fillStyle = 'rgba(6, 10, 18, 0.88)';
+          sCtx.fillStyle = 'rgba(6, 10, 18, 0.90)';
           sCtx.strokeStyle = slugger.bannerColor;
           sCtx.lineWidth = 3;
           sCtx.shadowColor = slugger.bannerColor;
           sCtx.shadowBlur = 20;
-          sCtx.fillRect(960 - bw / 2, 955, bw, 58);
-          sCtx.strokeRect(960 - bw / 2, 955, bw, 58);
+          sCtx.beginPath();
+          sCtx.roundRect(960 - bw / 2, 998, bw, 52, 12);
+          sCtx.fill();
+          sCtx.stroke();
           sCtx.fillStyle = slugger.bannerColor;
-          sCtx.fillText(slugger.bannerText, 960, 985);
+          sCtx.fillText(slugger.bannerText, 960, 1025);
           sCtx.restore();
         }
 

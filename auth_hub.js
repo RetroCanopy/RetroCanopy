@@ -324,8 +324,73 @@
     localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(locAdm));
   }
 
+  const SUPABASE_REST_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/rest/v1';
+  const SUPABASE_PUB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4YXZ2cnF5enB3c2N6cGl3bXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MDksImV4cCI6MjEwNzU4NjgwOX0.XvOWwBlOBjGYxkQrD8eZvnaWaKb0qMW9HVtWhlnI6Yo';
+
+  async function syncSupabaseAdminAccounts(pushFirst = false) {
+    if (!window.location.protocol.startsWith('http')) return;
+    try {
+      const headers = {
+        apikey: SUPABASE_PUB_KEY,
+        Authorization: `Bearer ${SUPABASE_PUB_KEY}`,
+        'Content-Type': 'application/json'
+      };
+      if (!pushFirst) {
+        const res = await fetch(`${SUPABASE_REST_URL}/admin_accounts?select=*`, { headers, cache: 'no-store' });
+        if (res.ok) {
+          const rows = await res.json();
+          if (Array.isArray(rows) && rows.length > 0) {
+            const incoming = {};
+            rows.forEach((r) => {
+              if (!r || !r.email_key) return;
+              incoming[r.email_key.toLowerCase()] = {
+                name: r.name || 'Admin',
+                email: r.email || r.email_key,
+                password: r.password_hash || '',
+                status: r.status || 'Pending',
+                deleted: Boolean(r.deleted),
+                isOwner: Boolean(r.is_owner),
+                createdAt: r.created_at || '',
+                updatedAt: r.updated_at || new Date().toISOString()
+              };
+            });
+            mergeAdminAccountsMap(incoming);
+          }
+        }
+      } else {
+        const fullDb = getAdminAccountsDb();
+        const rows = Object.keys(fullDb).map((k) => {
+          const rec = fullDb[k];
+          const emailKey = (rec?.email || k || '').trim().toLowerCase();
+          if (!emailKey) return null;
+          return {
+            email_key: emailKey,
+            name: rec.name || 'Admin',
+            email: rec.email || emailKey,
+            password_hash: rec.password || '',
+            status: rec.status || 'Pending',
+            deleted: Boolean(rec.deleted),
+            is_owner: Boolean(rec.isOwner),
+            updated_at: rec.updatedAt || new Date().toISOString()
+          };
+        }).filter(Boolean);
+        if (rows.length > 0) {
+          await fetch(`${SUPABASE_REST_URL}/admin_accounts?on_conflict=email_key`, {
+            method: 'POST',
+            headers: {
+              ...headers,
+              Prefer: 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(rows)
+          });
+        }
+      }
+    } catch (_) {}
+  }
+
   async function syncCloudAdminAccounts(pushFirst = false) {
     if (!window.location.protocol.startsWith('http')) return;
+    await syncSupabaseAdminAccounts(pushFirst);
     try {
       if (!pushFirst) {
         const res = await fetch(`https://ntfy.sh/${CLOUD_ADMIN_SYNC_TOPIC}/json?poll=1&since=12h`, { cache: 'no-store' });
