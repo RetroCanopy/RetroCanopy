@@ -2648,7 +2648,7 @@
       <div class="mobile-arcade-cta-row">
         <button type="button" class="mobile-arcade-cta-btn" onclick="window.__openGamesSelectionModal()">
           <span class="mobile-cta-title">&#128377;&#65039; PLAY GAMES</span>
-          <span class="mobile-cta-sub">Shinjuku Slugger '84</span>
+          <span class="mobile-cta-sub">Skee Roll '84</span>
         </button>
         <button type="button" class="mobile-arcade-cta-btn ticket-cta" onclick="window.__openTicketCounterModal()">
           <span class="mobile-cta-title">&#127915; TICKET COUNTER</span>
@@ -2753,46 +2753,36 @@
 
         <!-- 3 UNIFORM VOLUMETRIC 24K GOLD SPOTLIGHT & FLOOR HALO GAME SLOTS -->
         <div class="tier6-lightbox-stage">
-          <!-- SLOT 01: SHINJUKU SLUGGER '84 (EXACT PICTURE + LIVE PLAYABLE DIGITAL PINBALL BASEBALL) -->
-          <div class="tier6-lightbox-piece featured playable-slot" onclick="window.__launchShinjukuSlugger()">
-            <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 01</span>
-            <div class="arcade-game-slot-frame slot-slugger-active">
-              <div class="arcade-game-slot-plaque">&#9670; PLAY SLUGGER '84 &rarr;</div>
-            </div>
-            <div class="arcade-tier6-card-name">
-              SHINJUKU SLUGGER '84
-              <span class="tier6-card-sub">Digital Pinball Baseball &bull; 10 PTS = 1 &#127915;</span>
-            </div>
-          </div>
-
+          <!-- SLOT 01: SKEE ROLL '84 (LIVE PLAYABLE 3D NEON ALLEY ROLLER) -->
           <div class="tier6-lightbox-piece featured playable-slot" onclick="window.location.href='skee_roll.html'">
-
-            <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 02</span>
-
+            <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 01</span>
             <div class="arcade-game-slot-frame slot-center" style="background-image:url('assets/concept_gallery/skee_roll_84_concept.jpg?v=2');background-size:cover;background-position:center;">
-
               <div class="arcade-game-slot-plaque">&#9670; PLAY SKEE ROLL '84 &rarr;</div>
-
             </div>
-
             <div class="arcade-tier6-card-name">
-
               SKEE ROLL '84
-
               <span class="tier6-card-sub">3D Neon Alley Roller &bull; 100 PTS = 1 &#127915;</span>
-
             </div>
-
           </div>
-
 
           <div class="tier6-lightbox-piece featured">
-            <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 03</span>
+            <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 02</span>
             <div class="arcade-game-slot-frame slot-right" style="background-image:url('assets/concept_gallery/86_outrun_horizon_chase_poster.jpg?v=134');background-size:cover;background-position:center;">
               <div class="arcade-game-slot-plaque">&#9670; COMING SOON</div>
             </div>
             <div class="arcade-tier6-card-name">
               86 OUTRUN HORIZON CHASE
+              <span class="tier6-card-sub">Coming Soon &bull; 10 PTS = 1 &#127915;</span>
+            </div>
+          </div>
+
+          <div class="tier6-lightbox-piece featured">
+            <span class="arcade-tier6-card-tag">&#9670; ARCADE SLOT 03</span>
+            <div class="arcade-game-slot-frame slot-right" style="background-image:url('assets/concept_gallery/shibuya_hoverboard_blitz_poster.jpg?v=147');background-size:cover;background-position:center;">
+              <div class="arcade-game-slot-plaque">&#9670; COMING SOON</div>
+            </div>
+            <div class="arcade-tier6-card-name">
+              SHIBUYA HOVERBOARD BLITZ
               <span class="tier6-card-sub">Coming Soon &bull; 10 PTS = 1 &#127915;</span>
             </div>
           </div>
@@ -5136,9 +5126,6 @@
         window.__returnToGamesSelectGrid();
         if (gamesSelectionBackdrop) gamesSelectionBackdrop.classList.add('open');
         if (btnOpenGamesModal) btnOpenGamesModal.classList.add('active-modal-pill');
-        if (window.innerWidth <= 768) {
-          window.__launchShinjukuSlugger();
-        }
       };
 
       window.__closeGamesSelectionModal = function () {
@@ -5175,6 +5162,8 @@
       };
 
       window.__launchShinjukuSlugger = function () {
+        window.location.href = 'shinjuku_slugger.html';
+        return;
         if (gamesSelectionBackdrop) {
           gamesSelectionBackdrop.classList.add('open');
           gamesSelectionBackdrop.classList.add('playing-active');
@@ -7623,21 +7612,20 @@
           ticketCounterLiveBadge.textContent = `🎟️ ${tCount.toLocaleString()} ${tCount === 1 ? 'TICKET' : 'TICKETS'}`;
         }
       }
-      if (qsParams.get('openDeck') === '1') {
+      if (qsParams.get('openDeck') === '1' || qsParams.get('open') === 'games') {
         setTimeout(() => {
           window.__openGamesSelectionModal();
         }, 80);
-      } else if (qsParams.get('openTickets') === '1') {
+      } else if (qsParams.get('openTickets') === '1' || qsParams.get('open') === 'tickets') {
         setTimeout(() => {
           window.__openTicketCounterModal();
           if (qsParams.get('openTier6') === '1' && typeof window.__openTier6VaultLightbox === 'function') {
             window.__openTier6VaultLightbox('both');
           }
         }, 80);
-      } else if (qsParams.get('autoPlaySlugger') === '1' || window.innerWidth <= 768) {
+      } else if (qsParams.get('autoPlaySlugger') === '1') {
         setTimeout(() => {
           window.__openGamesSelectionModal();
-          window.__launchShinjukuSlugger();
           if (qsParams.get('demoRunners') === '1') {
             slugger.bases = [true, true, false];
             slugger.roundPoints = 12;
