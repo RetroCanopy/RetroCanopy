@@ -2679,9 +2679,6 @@
                 🤖 VS. CPU BOT
               </button>
             </div>
-            <div style="font-size:0.72rem;color:#94a3b8;margin-top:2px;font-weight:600;">
-              🎮 <strong style="color:#38bdf8;">LIVE CONTROLS:</strong> Steer with <strong>WASD / Arrow Keys</strong> + <strong>SPACE</strong> to Dash (or let your Bot AI auto-pilot!)
-            </div>
             <button class="btn-arena-battle" id="overlayRematchBtn" style="display:none;" onclick="triggerBattle()">
               ⚔️ FIGHT NOW
             </button>
@@ -3536,27 +3533,6 @@
     // LIVE REAL-TIME MULTIPLAYER PVP ENGINE (SUPABASE REALTIME + BROADCAST BUS)
     // =========================================================================
     const LIVE_CLIENT_ID = "peer_" + Math.random().toString(36).slice(2, 10) + "_" + Date.now().toString(36);
-    const liveKeys = { up: false, down: false, left: false, right: false, dash: false };
-    const remoteGuestKeys = { up: false, down: false, left: false, right: false, dash: false };
-
-    window.addEventListener("keydown", (e) => {
-      if (document.activeElement && ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
-      const k = e.key.toLowerCase();
-      if (k === "w" || k === "arrowup") { liveKeys.up = true; }
-      if (k === "s" || k === "arrowdown") { liveKeys.down = true; }
-      if (k === "a" || k === "arrowleft") { liveKeys.left = true; }
-      if (k === "d" || k === "arrowright") { liveKeys.right = true; }
-      if (k === " ") { liveKeys.dash = true; if (sim.running) e.preventDefault(); }
-    });
-
-    window.addEventListener("keyup", (e) => {
-      const k = e.key.toLowerCase();
-      if (k === "w" || k === "arrowup") liveKeys.up = false;
-      if (k === "s" || k === "arrowdown") liveKeys.down = false;
-      if (k === "a" || k === "arrowleft") liveKeys.left = false;
-      if (k === "d" || k === "arrowright") liveKeys.right = false;
-      if (k === " ") liveKeys.dash = false;
-    });
 
     const livePvp = {
       searching: false,
@@ -3860,45 +3836,6 @@
         "#00ff88"
       );
 
-      // If Guest, send live keyboard inputs to Host at 30Hz (mirror left/right to match Guest's left-side perspective)
-      if (livePvp.role === "guest") {
-        livePvp.inputIntervalId = setInterval(() => {
-          if (!sim.running || !sim.isLiveMultiplayer) return;
-          sendRoomPacket({
-            type: "guest_input",
-            keys: {
-              up: liveKeys.up,
-              down: liveKeys.down,
-              left: liveKeys.right,
-              right: liveKeys.left,
-              dash: liveKeys.dash
-            }
-          });
-        }, 33);
-      }
-    }
-
-    function applyManualPilotSteering(bot, keysObj, defaultBrain) {
-      if (!keysObj) return defaultBrain;
-      const dx = (keysObj.right ? 1 : 0) - (keysObj.left ? 1 : 0);
-      const dy = (keysObj.down ? 1 : 0) - (keysObj.up ? 1 : 0);
-
-      if (keysObj.dash && bot.abilityCd <= 0 && bot.abilityState === "ready") {
-        bot.abilityState = "charging";
-        bot.abilityTimer = 26;
-        bot.chargeAngle = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) : bot.angle;
-        emit3DSparks(bot.x, bot.y, "#38bdf8", 14, 7.0);
-        addFloatText(bot.x, bot.y - 42, "⚡ MANUAL OVERDRIVE DASH!", "#38bdf8");
-      }
-
-      if (dx !== 0 || dy !== 0) {
-        return {
-          desiredAngle: Math.atan2(dy, dx),
-          throttle: bot.abilityState === "charging" ? 2.05 : 1.32,
-          turnMult: 1.55
-        };
-      }
-      return defaultBrain;
     }
 
     function broadcastHostArenaState() {
@@ -5973,12 +5910,7 @@
           continue;
         }
 
-        const aiBrain = evaluateBotBrain(bot, other);
-        const { desiredAngle, throttle, turnMult } = (bot.team === "player")
-          ? applyManualPilotSteering(bot, liveKeys, aiBrain)
-          : (sim.isLiveMultiplayer && sim.liveRole === "host"
-              ? applyManualPilotSteering(bot, remoteGuestKeys, aiBrain)
-              : aiBrain);
+        const { desiredAngle, throttle, turnMult } = evaluateBotBrain(bot, other);
 
         const empScale = bot.empStunTimer > 0 ? 0.08 : 1.0;
         const cryoScale = bot.cryoTimer > 0 ? 0.65 : 1.0;
