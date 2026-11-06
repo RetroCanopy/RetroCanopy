@@ -3096,6 +3096,205 @@
       }
     }
 
+
+    /* =========================================================================
+       REAL-TIME SUBSYSTEM BREAKDOWN HUD, GARAGE PIT REPAIR & 50% ADD-ON RESALE
+       ========================================================================= */
+    .hud-parts-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .hud-part-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.48rem;
+      font-weight: 900;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(52, 211, 153, 0.45);
+      color: #34d399;
+      letter-spacing: 0.2px;
+      transition: all 0.2s ease;
+    }
+    .hud-part-pill.damaged {
+      border-color: rgba(251, 191, 36, 0.75);
+      background: rgba(120, 53, 15, 0.45);
+      color: #fbbf24;
+    }
+    .hud-part-pill.crippled {
+      border-color: rgba(244, 63, 94, 0.9);
+      background: rgba(136, 19, 55, 0.65);
+      color: #fda4af;
+      animation: pulseCrippledPart 0.85s infinite alternate;
+    }
+    @keyframes pulseCrippledPart {
+      0% { transform: scale(1); box-shadow: 0 0 0 rgba(244, 63, 94, 0); }
+      100% { transform: scale(1.03); box-shadow: 0 0 8px rgba(244, 63, 94, 0.65); }
+    }
+
+    .pit-condition-box {
+      margin-top: 10px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(9, 13, 22, 0.96) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 14px;
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .pit-condition-box.injured-warning {
+      border-color: rgba(251, 191, 36, 0.65);
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.12);
+    }
+    .pit-condition-box.crippled-danger {
+      border-color: rgba(244, 63, 94, 0.8);
+      box-shadow: 0 0 18px rgba(244, 63, 94, 0.2);
+    }
+    .pit-cond-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+    .pit-cond-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+    }
+    .pit-part-card {
+      background: rgba(6, 9, 17, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9px;
+      padding: 5px 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .pit-part-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.52rem;
+      font-weight: 800;
+    }
+    .pit-part-bar {
+      height: 5px;
+      background: #0f172a;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .pit-part-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+    .pit-part-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .pit-part-pen {
+      font-size: 0.62rem;
+      color: #94a3b8;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .btn-fix-part {
+      background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+      color: #090612;
+      border: none;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.48rem;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-fix-part:hover {
+      filter: brightness(1.1);
+    }
+    .btn-heal-all {
+      width: 100%;
+      background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+      color: #04130b;
+      border: 1px solid #86efac;
+      border-radius: 9px;
+      padding: 6px 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 900;
+      cursor: pointer;
+      letter-spacing: 0.4px;
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+    .btn-heal-all:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+    .btn-sell-addon {
+      background: rgba(244, 63, 94, 0.16);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.48);
+      border-radius: 9px;
+      padding: 8px 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.14s ease;
+      white-space: nowrap;
+    }
+    .btn-sell-addon:hover {
+      background: rgba(244, 63, 94, 0.32);
+      border-color: #fb7185;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    .quick-sell-strip {
+      background: rgba(244, 63, 94, 0.09);
+      border: 1px dashed rgba(244, 63, 94, 0.4);
+      border-radius: 10px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .quick-sell-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .chip-sell-50 {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      color: #fde047;
+      border-radius: 7px;
+      padding: 3px 7px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.50rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .chip-sell-50:hover {
+      background: rgba(244, 63, 94, 0.28);
+      border-color: #fb7185;
+      color: #fff;
+    }
+
   </style>
 </head>
 <body>
@@ -3239,6 +3438,24 @@
         </div>
       </div>
 
+      <!-- REAL-TIME PART INTEGRITY, PIT CREW REPAIR & 50% ADD-ON BUYBACK -->
+      <div class="pit-condition-box" id="garageConditionBox">
+        <div class="pit-cond-header">
+          <span id="garageCondTitle" style="color:#34d399;">🛠️ BOT INTEGRITY: 100% MINT</span>
+          <span id="garageCondSub" style="color:#94a3b8;font-size:0.50rem;">ALL SYSTEMS OPTIMAL</span>
+        </div>
+        <div class="pit-cond-grid" id="garagePartsGrid"></div>
+        <div id="garagePenaltySummary" style="font-size:0.68rem;color:#fde047;font-weight:700;display:none;"></div>
+        <button type="button" class="btn-heal-all" id="btnGarageHealAll" style="display:none;" onclick="healAllBotParts()">🛠️ PIT OVERHAUL — HEAL ALL (-15%)</button>
+        <div class="quick-sell-strip" id="garageQuickSellStrip" style="display:none;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:0.49rem;font-weight:900;color:#fda4af;display:flex;justify-content:space-between;">
+            <span>💰 NEED DIAMONDS? SELL ADD-ON FOR 50%:</span>
+            <span style="color:#94a3b8;">INSTANT REFUND</span>
+          </div>
+          <div class="quick-sell-chips" id="garageQuickSellChips"></div>
+        </div>
+      </div>
+
       <!-- BIG CLEAN SHOP BUTTON -->
       <div class="sidebar-actions">
         <button class="btn-shop" onclick="openShopModal('tire')">
@@ -3295,6 +3512,7 @@
               <span id="hudPRoundScore" style="color:#34d399;">ROUNDS: 0</span>
             </div>
             <div class="stamina-track"><div class="stamina-fill" id="hudPStamBar"></div></div>
+            <div class="hud-parts-row" id="hudPParts"></div>
             <div class="hud-modules-row" id="hudPMods"></div>
           </div>
 
@@ -3321,6 +3539,7 @@
               <span id="hudERoundScore" style="color:#fb7185;">ROUNDS: 0</span>
             </div>
             <div class="stamina-track"><div class="stamina-fill" id="hudEStamBar"></div></div>
+            <div class="hud-parts-row" id="hudEParts"></div>
             <div class="hud-modules-row" id="hudEMods"></div>
           </div>
         </div>
@@ -3331,6 +3550,19 @@
             <div class="overlay-banner" id="overlayBannerText">READY TO RUMBLE!</div>
             <div class="overlay-enemy-desc" id="overlayEnemyDesc">
               Pick your Diamond Bet and jump into a battle!
+            </div>
+
+            <!-- 🔧 PRE-FIGHT / POST-BATTLE INJURY & PIT REPAIR BAR (OPTION A: FIGHT INJURED OR HEAL) -->
+            <div class="pit-condition-box" id="overlayInjuryBox" style="width:100%;display:none;">
+              <div class="pit-cond-header">
+                <span id="overlayInjuryTitle" style="color:#fbbf24;">⚠️ BOT INJURED — CHOOSE: FIGHT INJURED (FREE) OR HEAL PARTS</span>
+                <span id="overlayGritBadge" style="color:#34d399;font-size:0.50rem;">🦿 +15% GRIT XP IF YOU WIN INJURED!</span>
+              </div>
+              <div class="pit-cond-grid" id="overlayPartsGrid"></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+                <span id="overlayInjuryPenText" style="font-size:0.68rem;color:#fda4af;font-weight:700;"></span>
+                <button type="button" class="btn-heal-all" id="btnOverlayHealAll" style="width:auto;padding:5px 12px;" onclick="healAllBotParts()">🛠️ HEAL ALL PARTS</button>
+              </div>
             </div>
 
             <!-- 🎰 SIMPLE, FUN DIAMOND BET BAR -->
@@ -3791,6 +4023,7 @@
         scrap: 0,
         cpuXp: 0,
         tickets: 0,
+        partIntegrity: { tires: 100, armor: 100, weapon: 100, core: 100 },
         econV2: true,
         ownedIds: [],
         loadout: { ...EMPTY_LOADOUT },
@@ -3814,6 +4047,7 @@
       scrap: 0,
       cpuXp: 0,
       tickets: 0,
+      partIntegrity: { tires: 100, armor: 100, weapon: 100, core: 100 },
       wagerAmount: 0,
       isAllInWager: false,
       gameMode: "pvp", // "pvp" (Live Online Random Player) | "cpu" (Similar-Level CPU Bot)
@@ -3851,6 +4085,7 @@
         scrap: Math.max(0, Number(state.scrap) || 0),
         cpuXp: Math.max(0, Number(state.cpuXp) || 0),
         tickets: Math.max(0, Number(state.tickets) || 0),
+        partIntegrity: normalizePartIntegrity(state.partIntegrity),
         econV2: true,
         ownedIds: Array.isArray(state.ownedIds) ? [...state.ownedIds] : [],
         loadout: normalizeLoadout(state.loadout),
@@ -3948,6 +4183,7 @@
         typeof record.tickets === "number" ? record.tickets : 0,
         globalTickets
       );
+      state.partIntegrity = normalizePartIntegrity(bp.partIntegrity);
       state.ownedIds = Array.isArray(bp.ownedIds) ? [...bp.ownedIds] : [];
       state.loadout = normalizeLoadout(bp.loadout);
       state.elo = typeof bp.elo === "number" && !Number.isNaN(bp.elo) ? bp.elo : 1000;
@@ -4767,8 +5003,13 @@
         updatePlayerUI();
       }
 
+      sim.startedInjuredGrit = qualifiesForUnderdogGritBonus(state.partIntegrity);
       sim.running = true;
       document.getElementById("battleOverlay").classList.add("hidden");
+      if (isPlayerBotInjured()) {
+        const avgInt = Math.round((state.partIntegrity.tires + state.partIntegrity.armor + state.partIntegrity.weapon + state.partIntegrity.core) / 4);
+        addFloatText(380, 340, `⚠️ ENTERING PIT AT ${avgInt}% INTEGRITY!`, "#fbbf24");
+      }
 
       const oppPeer = livePvp.role === "host" ? roomSpec.guestPeer : roomSpec.hostPeer;
       const potTotal = stake * 2;
@@ -5348,8 +5589,13 @@
         if (diff < 0) return `<span style="color:#fb7185;font-weight:800;">▼ ${diff}</span>`;
         return `<span style="color:#64748b;">BASE</span>`;
       }
-      document.getElementById("baseHpVal").textContent = p.maxHp;
-      document.getElementById("bonusHpVal").innerHTML = fmtDelta(p.maxHp - 750);
+      const partMults = computeBotMultipliersFromParts(state.partIntegrity);
+      const effGarageHp = Math.round(p.maxHp * partMults.hpCapMult);
+      document.getElementById("baseHpVal").textContent = effGarageHp;
+      document.getElementById("bonusHpVal").innerHTML = effGarageHp < p.maxHp
+        ? `<span style="color:#fb7185;font-weight:800;">⚠️ INJURED (${p.maxHp})</span>`
+        : fmtDelta(p.maxHp - 750);
+      renderBotConditionPanels();
 
       document.getElementById("basePwrVal").textContent = p.power;
       document.getElementById("bonusPwrVal").innerHTML = fmtDelta(p.power - 50);
@@ -5665,25 +5911,30 @@
             `;
           }
         } else if (attachedSlotKey) {
-          // PURCHASED AND CURRENTLY ATTACHED ON BOT
+          // PURCHASED AND CURRENTLY ATTACHED ON BOT (WITH 50% SELL OPTION)
+          const sellRefund = Math.max(25, Math.floor(priceNum * 0.5));
           actionRowsHtml = `
             <div class="shop-foot-row">
-              <button class="btn-buy-equip unequip" onclick="event.stopPropagation(); unequipSlot('${attachedSlotKey}')">🔌 DETACH FROM ${attachedSlotKey.toUpperCase()}</button>
+              <button class="btn-buy-equip unequip" onclick="event.stopPropagation(); unequipSlot('${attachedSlotKey}')">🔌 DETACH</button>
+              <button class="btn-sell-addon" onclick="event.stopPropagation(); sellOwnedAddon('${item.id}')" title="Sell for 50% of cost paid">💰 SELL (+${sellRefund} 💎)</button>
             </div>
           `;
         } else {
-          // PURCHASED IN ARMORY, READY TO ATTACH FOR FREE
+          // PURCHASED IN ARMORY, READY TO ATTACH FOR FREE OR SELL FOR 50%
+          const sellRefund = Math.max(25, Math.floor(priceNum * 0.5));
           if (sd.cat === "botAbilities") {
             actionRowsHtml = `
               <div class="shop-foot-row">
-                <button class="btn-buy-equip owned-equip" onclick="event.stopPropagation(); equipOwnedItem('botAbil1', '${item.id}')">🔩 ATTACH ABIL 1</button>
-                <button class="btn-buy-equip owned-equip" onclick="event.stopPropagation(); equipOwnedItem('botAbil2', '${item.id}')">🔩 ATTACH ABIL 2</button>
+                <button class="btn-buy-equip owned-equip" onclick="event.stopPropagation(); equipOwnedItem('botAbil1', '${item.id}')">🔩 ABIL 1</button>
+                <button class="btn-buy-equip owned-equip" onclick="event.stopPropagation(); equipOwnedItem('botAbil2', '${item.id}')">🔩 ABIL 2</button>
+                <button class="btn-sell-addon" onclick="event.stopPropagation(); sellOwnedAddon('${item.id}')" title="Sell for 50% of cost paid">💰 +${sellRefund} 💎</button>
               </div>
             `;
           } else {
             actionRowsHtml = `
               <div class="shop-foot-row">
                 <button class="btn-buy-equip owned-equip" onclick="event.stopPropagation(); equipOwnedItem('${slotKey}', '${item.id}')">🔩 ATTACH TO BOT</button>
+                <button class="btn-sell-addon" onclick="event.stopPropagation(); sellOwnedAddon('${item.id}')" title="Sell for 50% of cost paid">💰 SELL (+${sellRefund} 💎)</button>
               </div>
             `;
           }
@@ -6015,15 +6266,20 @@
       }
     }
 
-    function createPhysicsBot(cp, team, name, color, x, y, angle, scaleMult = 1.0) {
+    function createPhysicsBot(cp, team, name, color, x, y, angle, scaleMult = 1.0, initialParts = null) {
+      const parts = normalizePartIntegrity(initialParts || (team === "player" ? state.partIntegrity : { tires: 100, armor: 100, weapon: 100, core: 100 }));
+      const pMults = computeBotMultipliersFromParts(parts);
+      const effectiveStartMaxHp = Math.max(260, Math.round(cp.maxHp * pMults.hpCapMult));
       return {
         team, name,
         sprite: (cp.loadout && cp.loadout.tire) ? UNIFIED_HULL_ONLY_SKIN : UNIFIED_BASE_SKIN,
         color, x, y,
         vx: 0, vy: 0, angle,
         cp,
-        hp: cp.maxHp,
-        maxHp: cp.maxHp,
+        parts,
+        uninjuredMaxHp: cp.maxHp,
+        hp: effectiveStartMaxHp,
+        maxHp: effectiveStartMaxHp,
         radius: Math.round(62 * scaleMult),
         airTimer: 0,
         clashCd: 0, sawCd: 0, knockStun: 0, hitFlash: 0, guardFlash: 0,
@@ -6918,9 +7174,16 @@
         const staked = sim.escrowWager || 0;
         sim.escrowWager = 0;
 
+        // Persist real-time part wear from this battle onto the player's bot!
+        if (pBot && pBot.parts) {
+          state.partIntegrity = normalizePartIntegrity(pBot.parts);
+        }
+
         if (state.gameMode === "cpu") {
           const cpuObj = getActiveSimilarCpu();
-          const xpEarned = won ? (Number(cpuObj.reward) || 200) : Math.max(60, Math.round((Number(cpuObj.reward) || 200) * 0.35));
+          const baseCpuXp = won ? (Number(cpuObj.reward) || 200) : Math.max(60, Math.round((Number(cpuObj.reward) || 200) * 0.35));
+          const gritBonusXp = (won && sim.startedInjuredGrit) ? Math.round(baseCpuXp * 0.15) : 0;
+          const xpEarned = baseCpuXp + gritBonusXp;
           const diamondsFromXp = xpEarned; // 1 XP = 1 💎 Diamond from CPU Bot Training!
           state.cpuXp = (state.cpuXp || 0) + xpEarned;
 
@@ -7077,13 +7340,28 @@
       }
 
       for (const bot of sim.bots) {
+        const livePartMults = computeBotMultipliersFromParts(bot.parts);
+        const cdStep = livePartMults.cooldownRateMult;
         if (bot.clashCd > 0) bot.clashCd--;
         if (bot.sawCd > 0) bot.sawCd--;
         if (bot.knockStun > 0) bot.knockStun--;
         if (bot.hitFlash > 0) bot.hitFlash--;
         if (bot.guardFlash > 0) bot.guardFlash--;
-        if (bot.abilityCd > 0) bot.abilityCd--;
-        if (bot.dodgeCd > 0) bot.dodgeCd--;
+        if (bot.abilityCd > 0) bot.abilityCd = Math.max(0, bot.abilityCd - cdStep);
+        if (bot.dodgeCd > 0) bot.dodgeCd = Math.max(0, bot.dodgeCd - cdStep);
+        // Real-time visual sparks/smoke when individual parts are damaged/crippled!
+        if (bot.parts) {
+          if (bot.parts.tires < 55 && Math.hypot(bot.vx, bot.vy) > 2.2 && sim.ticks % 7 === 0) {
+            spawnFloorMark(bot.x, bot.y, "skid", 15, bot.angle);
+            if (bot.parts.tires < 25) emit3DSparks(bot.x - Math.cos(bot.angle) * 26, bot.y - Math.sin(bot.angle) * 26, "#fbbf24", 3, 4.0);
+          }
+          if (bot.parts.weapon < 50 && sim.ticks % 14 === 0) {
+            emitSmokePuff(bot.x + Math.cos(bot.angle) * 32, bot.y + Math.sin(bot.angle) * 32, true, 11);
+          }
+          if (bot.parts.core < 45 && sim.ticks % 18 === 0) {
+            emit3DSparks(bot.x, bot.y, "#38bdf8", 3, 4.2);
+          }
+        }
         if (bot.wallSlamCd > 0) bot.wallSlamCd--;
         if (bot.debrisCd > 0) bot.debrisCd--;
         if (bot.flipCd > 0) bot.flipCd--;
@@ -7129,9 +7407,11 @@
         let diff = desiredAngle - bot.angle;
         while (diff > Math.PI) diff -= Math.PI * 2;
         while (diff < -Math.PI) diff += Math.PI * 2;
-        bot.angle += Math.sign(diff) * Math.min(Math.abs(diff), bot.cp.turnRateRad * turnMult * stunScale);
+        const tireTurnScale = livePartMults ? livePartMults.turnMult : 1.0;
+        const tireSpeedScale = livePartMults ? livePartMults.speedMult : 1.0;
+        bot.angle += Math.sign(diff) * Math.min(Math.abs(diff), bot.cp.turnRateRad * turnMult * stunScale * tireTurnScale);
 
-        const accel = bot.cp.accelPx * throttle * stunScale;
+        const accel = bot.cp.accelPx * throttle * stunScale * tireSpeedScale;
         bot.vx += Math.cos(bot.angle) * accel;
         bot.vy += Math.sin(bot.angle) * accel;
         const drag = bot.z > 6 ? 0.95 : (bot.cryoTimer > 0 ? 0.94 : 0.89);
@@ -7176,6 +7456,8 @@
           spawnArmorDebris(bot.x, bot.y, bot.color, 4, 7.5);
           spawnFloorMark(bot.x, bot.y, "crater", 34);
           triggerCameraFocus(bot.x, bot.y, 1.15, 22, 4);
+          damageBotSubsystem(bot, "tires", 9 + Math.round(impactSpeed * 0.6));
+          damageBotSubsystem(bot, "armor", 8 + Math.round(impactSpeed * 0.5));
           addFloatText(bot.x, bot.y - 48, `💥🧱 WALL-SLAM CRUSH! -${slamDmg}`, "#f43f5e");
         }
 
@@ -7222,6 +7504,8 @@
                 sim.shake = 16;
                 spawnArmorDebris(bot.x, bot.y, bot.color, 6, 9.5);
                 triggerCameraFocus(cs.x, cs.y, 1.18, 24, 4);
+                damageBotSubsystem(bot, "tires", 14);
+                damageBotSubsystem(bot, "armor", 12);
                 addFloatText(bot.x, bot.y - 36, `⚙️💥 SAW SHRED! -${sawDmg}`, "#ff8c00");
                 emit3DSparks(cs.x + snx * cs.currentRadius, cs.y + sny * cs.currentRadius, "#ff8c00", 36, 10.5);
               }
@@ -7325,8 +7609,17 @@
           if (dHit < targetBot.radius + prj.radius) {
             const isAirJuggle = targetBot.z > 10 || targetBot.airTimer > 0;
             const airMult = isAirJuggle ? 1.5 : 1.0;
-            const armorMult = prj.kind === "rail" ? (1 - targetBot.cp.armorReduction * 0.25) : (1 - targetBot.cp.armorReduction * 0.55);
-            const finalDmg = Math.round(prj.dmg * armorMult * (targetBot.cryoTimer > 0 ? 1.25 : 1.0) * airMult);
+            const atkWpnMult = prj.attacker && prj.attacker.parts ? computeBotMultipliersFromParts(prj.attacker.parts).weaponDmgMult : 1.0;
+            const defPartMults = computeBotMultipliersFromParts(targetBot.parts);
+            const armorMult = prj.kind === "rail" ? (1 - targetBot.cp.armorReduction * defPartMults.armorDefMult * 0.25) : (1 - targetBot.cp.armorReduction * defPartMults.armorDefMult * 0.55);
+            const finalDmg = Math.round(prj.dmg * atkWpnMult * armorMult * defPartMults.incomingVulnMult * (targetBot.cryoTimer > 0 ? 1.25 : 1.0) * airMult);
+            if (prj.kind === "rail" || prj.kind === "mortar") {
+              damageBotSubsystem(targetBot, "core", 8);
+              damageBotSubsystem(targetBot, "armor", 7);
+            } else {
+              damageBotSubsystem(targetBot, "tires", 6);
+              damageBotSubsystem(targetBot, "armor", 5);
+            }
             targetBot.hp = Math.max(0, targetBot.hp - finalDmg);
             targetBot.hitFlash = 7;
 
@@ -7560,6 +7853,20 @@
       const ePipsEl = document.getElementById("hudERoundPips");
       if (pPipsEl) pPipsEl.innerHTML = renderRoundPipsHtml(sim.roundResults, "player");
       if (ePipsEl) ePipsEl.innerHTML = renderRoundPipsHtml(sim.roundResults, "enemy");
+
+      // Render Real-Time 4-Subsystem Telemetry Pills (Tires, Armor, Weapon, Core)
+      function renderHudPartsHtml(partsObj) {
+        const pt = normalizePartIntegrity(partsObj);
+        return SUBSYSTEM_DEFS.map(sd => {
+          const val = pt[sd.key];
+          const st = getPartStatusInfo(val);
+          return `<div class="hud-part-pill ${st.cls}" title="${sd.label}: ${val}% (${st.label})"><span>${sd.icon}${sd.label.slice(0,3)}</span><span>${val}%</span></div>`;
+        }).join("");
+      }
+      const pPartsEl = document.getElementById("hudPParts");
+      const ePartsEl = document.getElementById("hudEParts");
+      if (pPartsEl) pPartsEl.innerHTML = renderHudPartsHtml(pBot.parts);
+      if (ePartsEl) ePartsEl.innerHTML = renderHudPartsHtml(eBot.parts);
     }
 
     function applyDynamicStrikeProcs(attacker, defender, dmgDealt) {
@@ -7679,9 +7986,20 @@
         const chargeMult = botA.abilityState === "charging" ? 1.35 : 1.0;
         const effArmor = botA.cp.has("wpn_08") ? botB.cp.armorReduction * 0.5 : botB.cp.armorReduction;
         const cryoVuln = botB.cryoTimer > 0 ? 1.25 : 1.0;
-        const dmg = Math.round(botA.cp.baseStrikeDmg * zoneMult * velMult * chargeMult * (1 - effArmor) * cryoVuln);
+        const aMults = computeBotMultipliersFromParts(botA.parts);
+        const bMults = computeBotMultipliersFromParts(botB.parts);
+        const dmg = Math.max(2, Math.round(botA.cp.baseStrikeDmg * aMults.weaponDmgMult * zoneMult * velMult * chargeMult * (1 - effArmor * bMults.armorDefMult) * bMults.incomingVulnMult * cryoVuln));
 
         botB.hp = Math.max(0, botB.hp - dmg);
+        // Directional subsystem breakdown: Rear hits Core & Armor; Flank shreds Tires & Armor; Weapon wear on attacker
+        damageBotSubsystem(botA, "weapon", 3);
+        if (isRear) {
+          damageBotSubsystem(botB, "core", 11);
+          damageBotSubsystem(botB, "armor", 8);
+        } else {
+          damageBotSubsystem(botB, "tires", 11);
+          damageBotSubsystem(botB, "armor", 7);
+        }
         botB.hitFlash = 7;
         if (botA.abilityState === "charging") { botA.abilityState = "ready"; botA.abilityCd = 65; }
         sim.shake = isRear ? 15 : 10;
@@ -7708,9 +8026,19 @@
         const chargeMult = botB.abilityState === "charging" ? 1.35 : 1.0;
         const effArmor = botB.cp.has("wpn_08") ? botA.cp.armorReduction * 0.5 : botA.cp.armorReduction;
         const cryoVuln = botA.cryoTimer > 0 ? 1.25 : 1.0;
-        const dmg = Math.round(botB.cp.baseStrikeDmg * zoneMult * velMult * chargeMult * (1 - effArmor) * cryoVuln);
+        const bMults = computeBotMultipliersFromParts(botB.parts);
+        const aMults = computeBotMultipliersFromParts(botA.parts);
+        const dmg = Math.max(2, Math.round(botB.cp.baseStrikeDmg * bMults.weaponDmgMult * zoneMult * velMult * chargeMult * (1 - effArmor * aMults.armorDefMult) * aMults.incomingVulnMult * cryoVuln));
 
         botA.hp = Math.max(0, botA.hp - dmg);
+        damageBotSubsystem(botB, "weapon", 3);
+        if (isRear) {
+          damageBotSubsystem(botA, "core", 11);
+          damageBotSubsystem(botA, "armor", 8);
+        } else {
+          damageBotSubsystem(botA, "tires", 11);
+          damageBotSubsystem(botA, "armor", 7);
+        }
         botA.hitFlash = 7;
         if (botB.abilityState === "charging") { botB.abilityState = "ready"; botB.abilityCd = 65; }
         sim.shake = isRear ? 15 : 10;
@@ -7771,11 +8099,18 @@
       const bGuard = botA.cp.has("wpn_08") ? botB.cp.frontGuardBlock * 0.5 : botB.cp.frontGuardBlock;
       const aGuard = botB.cp.has("wpn_08") ? botA.cp.frontGuardBlock * 0.5 : botA.cp.frontGuardBlock;
 
-      const aDmgToB = Math.round(aForce * (1 - bGuard) * (botB.cryoTimer > 0 ? 1.25 : 1.0));
-      const bDmgToA = Math.round(bForce * (1 - aGuard) * (botA.cryoTimer > 0 ? 1.25 : 1.0));
+      const aHeadMults = computeBotMultipliersFromParts(botA.parts);
+      const bHeadMults = computeBotMultipliersFromParts(botB.parts);
+      const aDmgToB = Math.max(2, Math.round(aForce * aHeadMults.weaponDmgMult * (1 - bGuard * bHeadMults.armorDefMult) * bHeadMults.incomingVulnMult * (botB.cryoTimer > 0 ? 1.25 : 1.0)));
+      const bDmgToA = Math.max(2, Math.round(bForce * bHeadMults.weaponDmgMult * (1 - aGuard * aHeadMults.armorDefMult) * aHeadMults.incomingVulnMult * (botA.cryoTimer > 0 ? 1.25 : 1.0)));
 
       botB.hp = Math.max(0, botB.hp - aDmgToB);
       botA.hp = Math.max(0, botA.hp - bDmgToA);
+      // Head-on clashes wear down both bots' Weapons and Armor!
+      damageBotSubsystem(botA, "weapon", 7);
+      damageBotSubsystem(botB, "weapon", 7);
+      damageBotSubsystem(botA, "armor", 6);
+      damageBotSubsystem(botB, "armor", 6);
       botA.guardFlash = 8;
       botB.guardFlash = 8;
       if (botA.abilityState === "charging") { botA.abilityState = "ready"; botA.abilityCd = 65; }
@@ -9300,6 +9635,312 @@
         </div>
       `;
       document.body.appendChild(modal);
+    }
+
+
+    // =========================================================================
+    // SUBSYSTEM DURABILITY, REAL-TIME BATTLE BREAKDOWN, PIT REPAIR & 50% RESALE
+    // =========================================================================
+    const SUBSYSTEM_DEFS = [
+      { key: "tires",  label: "TIRES",  icon: "🛞", penDamaged: "-25% Speed",    penCrippled: "-50% Speed (Blown)" },
+      { key: "armor",  label: "ARMOR",  icon: "🛡️", penDamaged: "Max HP Cap 86%", penCrippled: "Max HP Cap 68% (+25% Dmg)" },
+      { key: "weapon", label: "WEAPON", icon: "⚔️", penDamaged: "-25% Weapon Dmg", penCrippled: "-65% Weapon (Jammed)" },
+      { key: "core",   label: "CORE",   icon: "⚡", penDamaged: "+35% Cooldowns",  penCrippled: "+70% Cooldowns (Shorted)" }
+    ];
+
+    function normalizePartIntegrity(raw) {
+      if (!raw || typeof raw !== "object") {
+        return { tires: 100, armor: 100, weapon: 100, core: 100 };
+      }
+      return {
+        tires:  Math.max(0, Math.min(100, Math.round(typeof raw.tires === "number" ? raw.tires : 100))),
+        armor:  Math.max(0, Math.min(100, Math.round(typeof raw.armor === "number" ? raw.armor : 100))),
+        weapon: Math.max(0, Math.min(100, Math.round(typeof raw.weapon === "number" ? raw.weapon : 100))),
+        core:   Math.max(0, Math.min(100, Math.round(typeof raw.core === "number" ? raw.core : 100)))
+      };
+    }
+
+    function getPartStatusInfo(pct) {
+      const val = Math.max(0, Math.min(100, Math.round(pct)));
+      if (val < 25) {
+        return { state: "crippled", label: "CRIPPLED", color: "#fb7185", cls: "crippled" };
+      }
+      if (val < 60) {
+        return { state: "damaged", label: "DAMAGED", color: "#fbbf24", cls: "damaged" };
+      }
+      return { state: "optimal", label: "OPTIMAL", color: "#34d399", cls: "" };
+    }
+
+    function computeBotMultipliersFromParts(parts) {
+      const p = normalizePartIntegrity(parts);
+      // Armor affects starting HP cap (65% at 0 armor -> 100% at 100 armor) and defense multiplier
+      const hpCapMult = 0.65 + 0.35 * (p.armor / 100);
+      const armorDefMult = p.armor < 25 ? 0.60 : (p.armor < 60 ? 0.80 : 1.0);
+      const incomingVulnMult = p.armor < 25 ? 1.25 : (p.armor < 60 ? 1.08 : 1.0);
+      // Tires affect speed & turning
+      const speedMult = p.tires < 25 ? 0.50 : (p.tires < 60 ? 0.75 : (0.85 + 0.15 * (p.tires / 100)));
+      const turnMult = p.tires < 25 ? 0.62 : (p.tires < 60 ? 0.82 : 1.0);
+      // Weapon affects melee & ranged damage
+      const weaponDmgMult = p.weapon < 25 ? 0.35 : (p.weapon < 60 ? 0.75 : (0.85 + 0.15 * (p.weapon / 100)));
+      // Core affects cooldowns & stamina recovery
+      const cooldownRateMult = p.core < 25 ? 0.55 : (p.core < 60 ? 0.74 : 1.0);
+      return {
+        hpCapMult,
+        armorDefMult,
+        incomingVulnMult,
+        speedMult,
+        turnMult,
+        weaponDmgMult,
+        cooldownRateMult
+      };
+    }
+
+    function getPartRepairCost(partKey) {
+      const p = normalizePartIntegrity(state.partIntegrity);
+      const missing = Math.max(0, 100 - (p[partKey] ?? 100));
+      if (missing <= 0) return 0;
+      const tierInfo = getPlayerRigTierInfo();
+      const ratePerPct = 0.45 + (tierInfo.equippedCount * 0.08);
+      return Math.max(5, Math.round(missing * ratePerPct));
+    }
+
+    function getTotalRepairAllCost() {
+      let sum = 0;
+      for (const sd of SUBSYSTEM_DEFS) {
+        sum += getPartRepairCost(sd.key);
+      }
+      if (sum <= 0) return 0;
+      return Math.max(5, Math.round(sum * 0.85)); // 15% bundle discount for Pit Overhaul!
+    }
+
+    function isPlayerBotInjured() {
+      const p = normalizePartIntegrity(state.partIntegrity);
+      return p.tires < 100 || p.armor < 100 || p.weapon < 100 || p.core < 100;
+    }
+
+    function qualifiesForUnderdogGritBonus(partsSnapshot) {
+      const p = normalizePartIntegrity(partsSnapshot || state.partIntegrity);
+      const avg = (p.tires + p.armor + p.weapon + p.core) / 4;
+      return avg < 82 || p.tires < 60 || p.armor < 60 || p.weapon < 60 || p.core < 60;
+    }
+
+    function healSingleBotPart(partKey) {
+      if (!ensurePilotLoggedIn()) return;
+      const cost = getPartRepairCost(partKey);
+      if (cost <= 0) return;
+      if (state.scrap < cost) {
+        showShopToast(`⚠️ NEED ${cost} 💎 TO REPAIR ${partKey.toUpperCase()}! Sell an Add-On for 50% 💎 or Fight Injured!`, "#fb7185");
+        openBuyDiamondsModal(cost - state.scrap);
+        return;
+      }
+      state.scrap -= cost;
+      state.partIntegrity = normalizePartIntegrity(state.partIntegrity);
+      state.partIntegrity[partKey] = 100;
+      persistWalletAndRig();
+      updatePlayerUI();
+      if (!sim.running) setupStagingArena();
+      showShopToast(`🔧 REPAIRED ${partKey.toUpperCase()} TO 100% (-${cost} 💎)!`, "#34d399");
+    }
+
+    function healAllBotParts() {
+      if (!ensurePilotLoggedIn()) return;
+      const cost = getTotalRepairAllCost();
+      if (cost <= 0) return;
+      if (state.scrap < cost) {
+        showShopToast(`⚠️ NEED ${cost} 💎 FOR FULL PIT OVERHAUL! Sell an Add-On for 50% 💎 or Fight Injured!`, "#fb7185");
+        openBuyDiamondsModal(cost - state.scrap);
+        return;
+      }
+      state.scrap -= cost;
+      state.partIntegrity = { tires: 100, armor: 100, weapon: 100, core: 100 };
+      persistWalletAndRig();
+      updatePlayerUI();
+      if (!sim.running) setupStagingArena();
+      showShopToast(`🛠️ FULL PIT CREW OVERHAUL COMPLETE — ALL PARTS 100% (-${cost} 💎)!`, "#34d399");
+    }
+
+    function sellOwnedAddon(itemId) {
+      if (!ensurePilotLoggedIn()) return;
+      if (!state.ownedIds.includes(itemId)) return;
+      const item = findAddonById(itemId);
+      const paidCost = item ? (Number(item.cost) || 200) : 200;
+      const refund = Math.max(25, Math.floor(paidCost * 0.5));
+
+      // Detach from any slot where it is currently equipped
+      for (const k of Object.keys(state.loadout)) {
+        if (state.loadout[k] === itemId) {
+          state.loadout[k] = null;
+        }
+      }
+      state.ownedIds = state.ownedIds.filter(id => id !== itemId);
+      state.scrap += refund;
+      state.previewAddonId = null;
+
+      persistWalletAndRig();
+      updatePlayerUI();
+      if (!document.getElementById("shopModalBackdrop").classList.contains("hidden")) {
+        switchShopSlot(state.activeShopSlot);
+      }
+      const vaultBackdrop = document.getElementById("buyDiamondsModalBackdrop");
+      if (vaultBackdrop && !vaultBackdrop.classList.contains("hidden")) {
+        openBuyDiamondsModal(0);
+      }
+      if (!sim.running) setupStagingArena();
+
+      const itemName = item ? (item.dynamicRole || item.name) : itemId;
+      showShopToast(`💰 SOLD ${itemName} FOR +${refund.toLocaleString()} 💎 (50% BUYBACK)!`, "#fbbf24");
+    }
+
+    function renderBotConditionPanels() {
+      const p = normalizePartIntegrity(state.partIntegrity);
+      const avg = Math.round((p.tires + p.armor + p.weapon + p.core) / 4);
+      const mults = computeBotMultipliersFromParts(p);
+      const healAllCost = getTotalRepairAllCost();
+      const anyCrippled = p.tires < 25 || p.armor < 25 || p.weapon < 25 || p.core < 25;
+      const anyDamaged = p.tires < 60 || p.armor < 60 || p.weapon < 60 || p.core < 60;
+
+      const penalties = [];
+      if (p.armor < 98) penalties.push(`Max HP ${Math.round(mults.hpCapMult * 100)}%`);
+      if (p.weapon < 60) penalties.push(`Weapon ${p.weapon < 25 ? '-65%' : '-25%'}`);
+      if (p.tires < 60) penalties.push(`Speed ${p.tires < 25 ? '-50%' : '-25%'}`);
+      if (p.core < 60) penalties.push(`Cooldowns ${p.core < 25 ? '+70%' : '+35%'}`);
+
+      function buildPartCardsHtml() {
+        return SUBSYSTEM_DEFS.map(sd => {
+          const val = p[sd.key];
+          const st = getPartStatusInfo(val);
+          const fixCost = getPartRepairCost(sd.key);
+          const penTxt = val < 25 ? sd.penCrippled : (val < 60 ? sd.penDamaged : "100% Eff.");
+          return `
+            <div class="pit-part-card">
+              <div class="pit-part-top">
+                <span style="color:#f8fafc;">${sd.icon} ${sd.label}</span>
+                <span style="color:${st.color};">${val}%</span>
+              </div>
+              <div class="pit-part-bar">
+                <div class="pit-part-fill" style="width:${val}%;background:${st.color};"></div>
+              </div>
+              <div class="pit-part-foot">
+                <span class="pit-part-pen" style="color:${val < 60 ? st.color : '#64748b'};">${penTxt}</span>
+                ${fixCost > 0 ? `<button type="button" class="btn-fix-part" onclick="event.stopPropagation(); healSingleBotPart('${sd.key}')">🔧 ${fixCost}💎</button>` : `<span style="font-family:'Orbitron',sans-serif;font-size:0.44rem;color:#34d399;font-weight:900;">OK</span>`}
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      const cardsHtml = buildPartCardsHtml();
+
+      // 1. Update Garage Condition Panel
+      const gBox = document.getElementById("garageConditionBox");
+      const gTitle = document.getElementById("garageCondTitle");
+      const gSub = document.getElementById("garageCondSub");
+      const gGrid = document.getElementById("garagePartsGrid");
+      const gPen = document.getElementById("garagePenaltySummary");
+      const gHealBtn = document.getElementById("btnGarageHealAll");
+
+      if (gBox && gGrid) {
+        gBox.classList.toggle("injured-warning", anyDamaged && !anyCrippled);
+        gBox.classList.toggle("crippled-danger", anyCrippled);
+        gGrid.innerHTML = cardsHtml;
+        if (gTitle) {
+          gTitle.textContent = avg >= 100
+            ? "🛠️ BOT INTEGRITY: 100% MINT"
+            : (anyCrippled ? `🚨 BOT CRIPPLED: ${avg}% INTEGRITY` : `⚠️ BOT INJURED: ${avg}% INTEGRITY`);
+          gTitle.style.color = anyCrippled ? "#fb7185" : (avg < 100 ? "#fbbf24" : "#34d399");
+        }
+        if (gSub) {
+          gSub.textContent = avg >= 100 ? "ALL SUBSYSTEMS OPTIMAL" : "PLAY INJURED OR HEAL";
+        }
+        if (gPen) {
+          if (penalties.length > 0) {
+            gPen.style.display = "block";
+            gPen.innerHTML = `⚠️ INJURY EFFECT: <span style="color:#fda4af;">${penalties.join(" · ")}</span>`;
+          } else {
+            gPen.style.display = "none";
+          }
+        }
+        if (gHealBtn) {
+          if (healAllCost > 0) {
+            gHealBtn.style.display = "block";
+            gHealBtn.textContent = `🛠️ HEAL ALL SUBSYSTEMS (${healAllCost} 💎 · -15% BUNDLE)`;
+          } else {
+            gHealBtn.style.display = "none";
+          }
+        }
+      }
+
+      // 2. Update Quick-Sell 50% Strip in Garage (visible whenever player owns add-ons)
+      const qStrip = document.getElementById("garageQuickSellStrip");
+      const qChips = document.getElementById("garageQuickSellChips");
+      if (qStrip && qChips) {
+        if (Array.isArray(state.ownedIds) && state.ownedIds.length > 0) {
+          qStrip.style.display = "flex";
+          qChips.innerHTML = state.ownedIds.map(id => {
+            const it = findAddonById(id);
+            if (!it) return "";
+            const refund = Math.max(25, Math.floor((Number(it.cost) || 200) * 0.5));
+            return `<button type="button" class="chip-sell-50" onclick="sellOwnedAddon('${it.id}')" title="Sell ${it.name} for 50% of cost paid (+${refund} 💎)">💰 SELL ${it.code} (+${refund} 💎)</button>`;
+          }).join("");
+        } else {
+          qStrip.style.display = "none";
+        }
+      }
+
+      // 3. Update Pre-Fight / Post-Battle Arena Overlay Injury Box
+      const oBox = document.getElementById("overlayInjuryBox");
+      const oGrid = document.getElementById("overlayPartsGrid");
+      const oPen = document.getElementById("overlayInjuryPenText");
+      const oHealBtn = document.getElementById("btnOverlayHealAll");
+      const oRematchBtn = document.getElementById("overlayRematchBtn");
+      const oCpuBtn = document.getElementById("btnStartCpuSim");
+
+      if (oBox && oGrid) {
+        if (healAllCost > 0) {
+          oBox.style.display = "flex";
+          oBox.classList.toggle("injured-warning", anyDamaged && !anyCrippled);
+          oBox.classList.toggle("crippled-danger", anyCrippled);
+          oGrid.innerHTML = cardsHtml;
+          if (oPen) {
+            oPen.textContent = penalties.length > 0
+              ? `⚡ Playing Injured: ${penalties.join(" · ")} (or Heal parts above)`
+              : `⚡ Bot has minor wear (${avg}% integrity) — Heal above or Fight Injured for free!`;
+          }
+          if (oHealBtn) {
+            oHealBtn.textContent = `🛠️ HEAL ALL (${healAllCost} 💎)`;
+          }
+          if (oRematchBtn) {
+            oRematchBtn.textContent = avg < 85 ? `⚔️ FIGHT INJURED (${avg}% INTEGRITY · FREE)` : `⚔️ FIGHT NOW`;
+          }
+          if (oCpuBtn) {
+            oCpuBtn.textContent = avg < 85 ? `🤖 FIGHT CPU INJURED (+15% GRIT XP)` : `🤖 VS. CPU BOT`;
+          }
+        } else {
+          oBox.style.display = "none";
+          if (oRematchBtn) oRematchBtn.textContent = `⚔️ FIGHT NOW`;
+          if (oCpuBtn) oCpuBtn.textContent = `🤖 VS. CPU BOT`;
+        }
+      }
+    }
+
+    function damageBotSubsystem(bot, partKey, rawDmg, attacker) {
+      if (!bot || !bot.parts) return;
+      const cur = typeof bot.parts[partKey] === "number" ? bot.parts[partKey] : 100;
+      if (cur <= 0) return;
+      const next = Math.max(0, Math.round(cur - rawDmg));
+      bot.parts[partKey] = next;
+
+      const sd = SUBSYSTEM_DEFS.find(s => s.key === partKey) || { label: partKey.toUpperCase(), icon: "⚙️" };
+      // Check if crossed 60% (DAMAGED) or 25% (CRIPPLED) threshold in real time!
+      if (cur >= 60 && next < 60 && next >= 25) {
+        emit3DSparks(bot.x, bot.y, "#fbbf24", 16, 7.5);
+        addFloatText(bot.x, bot.y - 62, `⚠️ ${sd.icon} ${sd.label} DAMAGED (${next}%)!`, "#fbbf24");
+      } else if (cur >= 25 && next < 25) {
+        spawnArmorDebris(bot.x, bot.y, bot.color, 5, 9.0);
+        emit3DSparks(bot.x, bot.y, "#fb7185", 26, 9.5);
+        triggerCameraFocus(bot.x, bot.y, 1.15, 22, 3);
+        addFloatText(bot.x, bot.y - 68, `🚨 ${sd.icon} ${sd.label} CRIPPLED (${next}%)!`, "#fb7185");
+      }
     }
 
     function openBuyDiamondsModal(shortfallAmount = 0) {
