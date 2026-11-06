@@ -2502,6 +2502,383 @@
       margin-bottom: 1px;
     }
 
+
+    /* =========================================================================
+       LIVE SPECTATOR BANNER & SHIBUYA PIT BROADCAST DECK (SPECTATE + LIVE CHAT)
+       ========================================================================= */
+    .right-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .spectator-top-banner {
+      position: absolute;
+      top: 86px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 35;
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.95) 0%, rgba(127, 29, 29, 0.92) 50%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1.5px solid rgba(251, 113, 133, 0.75);
+      border-radius: 999px;
+      padding: 7px 18px;
+      display: none;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85), 0 0 20px rgba(225, 29, 72, 0.45);
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+    }
+    .spectator-top-banner.active {
+      display: inline-flex;
+    }
+    .spec-live-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff2a55;
+      box-shadow: 0 0 10px #ff2a55;
+      animation: specPulse 1s infinite alternate;
+    }
+    @keyframes specPulse {
+      from { opacity: 0.45; transform: scale(0.9); }
+      to   { opacity: 1.0; transform: scale(1.15); }
+    }
+    .spec-banner-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 0.8px;
+    }
+    .spec-watchers-pill {
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: #fde047;
+    }
+    .btn-leave-spectate {
+      background: linear-gradient(180deg, #e11d48 0%, #9f1239 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 999px;
+      padding: 5px 13px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 900;
+      cursor: pointer;
+      letter-spacing: 0.6px;
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+    .btn-leave-spectate:hover {
+      transform: scale(1.04);
+      filter: brightness(1.12);
+    }
+
+    /* Bottom Split Deck: Left = Live Fights Happening Now | Right = Shibuya Pit Live Chat */
+    .pit-broadcast-deck {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 14px;
+      width: 100%;
+      min-height: 250px;
+      max-height: 290px;
+    }
+
+    .broadcast-card {
+      background: linear-gradient(180deg, rgba(20, 27, 43, 0.96) 0%, rgba(10, 14, 23, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        0 16px 38px rgba(0, 0, 0, 0.8);
+    }
+
+    .broadcast-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(9, 13, 22, 0.85);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .broadcast-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #f8fafc;
+      letter-spacing: 0.8px;
+    }
+
+    .broadcast-count-pill {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(225, 29, 72, 0.2);
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      color: #fda4af;
+    }
+    .broadcast-count-pill.chat-online {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: rgba(52, 211, 153, 0.45);
+      color: #34d399;
+    }
+
+    /* Live Fights List */
+    .live-fights-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .live-fight-item {
+      background: linear-gradient(165deg, rgba(30, 41, 59, 0.78) 0%, rgba(15, 23, 42, 0.92) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .live-fight-item:hover {
+      border-color: rgba(56, 189, 248, 0.55);
+      transform: translateY(-1px);
+    }
+    .live-fight-item.watching {
+      border-color: #fbbf24;
+      background: linear-gradient(165deg, rgba(120, 53, 15, 0.35) 0%, rgba(15, 23, 42, 0.95) 100%);
+    }
+
+    .lf-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .lf-fighters {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.70rem;
+      font-weight: 900;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .lf-vs-badge {
+      font-size: 0.56rem;
+      color: #fbbf24;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(251, 191, 36, 0.15);
+    }
+
+    .lf-meta {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 700;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .lf-hp-dual {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      width: 100%;
+      margin-top: 2px;
+    }
+    .lf-mini-bar {
+      height: 4px;
+      background: #060911;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .lf-mini-fill {
+      height: 100%;
+      transition: width 0.2s ease;
+    }
+
+    .btn-watch-fight {
+      background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+      color: #090612;
+      border: none;
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.60rem;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 4px 10px rgba(0, 0, 0, 0.7);
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+    .btn-watch-fight:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+    .btn-watch-fight.watching {
+      background: linear-gradient(180deg, #e11d48 0%, #9f1239 100%);
+      color: #ffffff;
+    }
+
+    /* Shibuya Pit Live Chat */
+    .pit-chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 9px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.82rem;
+    }
+
+    .chat-line {
+      line-height: 1.3;
+      word-break: break-word;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.55);
+      border-left: 2px solid rgba(56, 189, 248, 0.45);
+    }
+    .chat-line.system {
+      background: rgba(251, 191, 36, 0.10);
+      border-left-color: #fbbf24;
+      color: #fde68a;
+      font-weight: 700;
+    }
+    .chat-elo-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 800;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.14);
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-right: 4px;
+    }
+    .chat-author {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 900;
+      color: #38bdf8;
+      margin-right: 5px;
+    }
+    .chat-text {
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .pit-chat-footer {
+      padding: 8px 10px;
+      background: rgba(9, 13, 22, 0.92);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      border-radius: 9px;
+      padding: 7px 11px;
+      color: #ffffff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      outline: none;
+    }
+    .chat-input:focus {
+      border-color: #38bdf8;
+    }
+
+    .btn-chat-send {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      color: #041019;
+      border: none;
+      border-radius: 9px;
+      padding: 7px 14px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .chat-emote-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+    .chat-emote-lbl {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.52rem;
+      font-weight: 800;
+      color: #64748b;
+      letter-spacing: 0.5px;
+    }
+    .chat-emote-btns {
+      display: flex;
+      gap: 5px;
+    }
+    .btn-hype-emote {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 7px;
+      padding: 3px 8px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease;
+    }
+    .btn-hype-emote:hover {
+      transform: translateY(-2px) scale(1.1);
+      background: rgba(56, 189, 248, 0.25);
+      border-color: #38bdf8;
+    }
+
+    @media (max-width: 960px) {
+      .pit-broadcast-deck {
+        grid-template-columns: 1fr;
+        max-height: none;
+      }
+      .broadcast-card {
+        min-height: 220px;
+        max-height: 260px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2775,6 +3152,69 @@
             <button class="btn-arena-battle" id="overlayRematchBtn" style="display:none;" onclick="triggerBattle()">
               ⚔️ FIGHT NOW
             </button>
+          </div>
+        </div>
+
+        <!-- LIVE SPECTATOR BROADCAST BANNER (VISIBLE WHEN WATCHING ANOTHER MATCH) -->
+        <div class="spectator-top-banner" id="spectatorTopBanner">
+          <span class="spec-live-dot"></span>
+          <span class="spec-banner-title" id="spectatorBannerTitle">SPECTATING LIVE: @PILOT_1 vs @PILOT_2</span>
+          <span class="spec-watchers-pill" id="spectatorWatchersCount">👁️ 1 WATCHING</span>
+          <button type="button" class="btn-leave-spectate" onclick="leaveSpectatorMode()">✕ LEAVE STREAM</button>
+        </div>
+      </section>
+
+      <!-- BOTTOM BROADCAST DECK: LIVE FIGHTS SPECTATOR QUEUE + SHIBUYA PIT LIVE CHAT -->
+      <section class="pit-broadcast-deck" id="pitBroadcastDeck">
+        <!-- LEFT CARD: LIVE FIGHTS HAPPENING NOW -->
+        <div class="broadcast-card">
+          <div class="broadcast-card-header">
+            <div class="broadcast-header-left">
+              <span class="spec-live-dot"></span>
+              <span>🔴 LIVE FIGHTS HAPPENING NOW</span>
+            </div>
+            <span class="broadcast-count-pill" id="liveFightsCountBadge">1 LIVE</span>
+          </div>
+          <div class="live-fights-list" id="liveFightsList">
+            <!-- Populated dynamically by renderLiveFightsList() -->
+          </div>
+        </div>
+
+        <!-- RIGHT CARD: SHIBUYA PIT LIVE CHAT -->
+        <div class="broadcast-card">
+          <div class="broadcast-card-header">
+            <div class="broadcast-header-left">
+              <span class="pilot-status-dot"></span>
+              <span>💬 SHIBUYA PIT LIVE CHAT</span>
+            </div>
+            <span class="broadcast-count-pill chat-online" id="pitChatOnlineBadge">🟢 PIT ONLINE</span>
+          </div>
+          <div class="pit-chat-messages" id="pitChatFeed">
+            <!-- Populated dynamically by appendPitChatMessage() -->
+          </div>
+          <div class="pit-chat-footer">
+            <form class="chat-input-row" onsubmit="event.preventDefault(); sendPitChatFromInput();">
+              <input
+                type="text"
+                id="pitChatInput"
+                class="chat-input"
+                maxlength="160"
+                placeholder="Send message to Shibuya Pit..."
+                autocomplete="off"
+              />
+              <button type="submit" class="btn-chat-send">SEND</button>
+            </form>
+            <div class="chat-emote-strip">
+              <span class="chat-emote-lbl">⚡ HYPE REACTIONS:</span>
+              <div class="chat-emote-btns">
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('🔥', '🔥 PURE FIRE!')">🔥</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚙️', '⚙️ SAW SHRED!')">⚙️</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💀', '💀 BRUTAL KO!')">💀</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💎', '💎 HIGH ROLLER!')">💎</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚔️', '⚔️ CLASH!')">⚔️</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('👑', '👑 CHAMPION!')">👑</button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -3928,11 +4368,14 @@
         `🟢 LIVE PVP VS ${oppPeer.callsign}! 🔒 LOWEST WAGER: 💎 ${stake.toLocaleString()} (POT: 💎 ${potTotal.toLocaleString()})`,
         "#00ff88"
       );
-
+      if (livePvp.role === "host") {
+        startBroadcastStreamForLocalMatch();
+      }
     }
 
     function broadcastHostArenaState() {
-      if (!sim.isLiveMultiplayer || sim.liveRole !== "host" || !sim.running) return;
+      if (!sim.running || sim.liveRole === "guest" || sim.liveRole === "spectator") return;
+      if (!livePvp.activeRoomId) return;
       const [hostBot, guestBot] = sim.bots;
       if (!hostBot || !guestBot) return;
 
@@ -5280,6 +5723,9 @@
 
     function triggerBattle() {
       if (!ensurePilotLoggedIn()) return;
+      if (sim.liveRole === "spectator") {
+        leaveSpectatorMode();
+      }
       setupStagingArena();
       const stake = getEffectiveWager(); // Lowest wager between the 2 players!
       sim.escrowWager = stake;
@@ -5294,6 +5740,8 @@
         const potTotal = stake * 2;
         addFloatText(800, 380, `🔒 MATCH WAGER: 💎 ${stake.toLocaleString()} · 🏆 WINNER TAKES ALL: 💎 ${potTotal.toLocaleString()}!`, "#ffd700");
       }
+      // Open a broadcast room so spectators in other tabs/devices can watch this fight live!
+      startBroadcastStreamForLocalMatch();
     }
 
     function emit3DSparks(x, y, color, count = 16, speed = 6.5) {
@@ -5865,8 +6313,8 @@
     function stepArenaPhysics() {
       if (!sim.running) return;
 
-      // In a Live Real-Time PvP match, Guest receives 30Hz authoritative physics from Host
-      if (sim.isLiveMultiplayer && sim.liveRole === "guest") {
+      // In a Live Real-Time PvP match or Live Spectator stream, Guest/Spectator receives 30Hz authoritative physics from Host
+      if (sim.isLiveMultiplayer && (sim.liveRole === "guest" || sim.liveRole === "spectator")) {
         for (let i = sim.sparks.length - 1; i >= 0; i--) {
           const s = sim.sparks[i];
           s.x += s.vx; s.y += s.vy; s.life--;
@@ -5933,7 +6381,7 @@
           addFloatText(800, 380, rdBanner, "#ffd700");
         }
         syncHudReadout();
-        if (sim.isLiveMultiplayer && sim.liveRole === "host" && sim.ticks % 2 === 0) {
+        if (livePvp.activeRoomId && sim.liveRole !== "guest" && sim.liveRole !== "spectator" && sim.ticks % 2 === 0) {
           broadcastHostArenaState();
         }
         return;
@@ -6028,6 +6476,27 @@
         const won = sim.pRoundsWon > sim.eRoundsWon;
 
         sim.running = false;
+        if (sim.liveRole === "spectator_ai") {
+          leaveSpectatorMode();
+          return;
+        }
+        if (livePvp.activeRoomId) {
+          const finishedRoomId = livePvp.activeRoomId;
+          const winBotName = won ? pBot.name : eBot.name;
+          const loseBotName = won ? eBot.name : pBot.name;
+          const potWon = (sim.escrowWager || 0) * 2;
+          sendLobbySignal({ type: "match_beacon_end", roomId: finishedRoomId });
+          sendLobbySignal({
+            type: "pit_chat",
+            chat: {
+              id: "sys_end_" + finishedRoomId,
+              kind: "system",
+              text: `🏆 MATCH RESULT: ${winBotName} defeated ${loseBotName} (${sim.pRoundsWon}-${sim.eRoundsWon})${potWon > 0 ? ' & swept 💎 ' + potWon.toLocaleString() + '!' : '!'}`
+            }
+          });
+          pitSpectator.activeMatches.delete(finishedRoomId);
+          renderLiveFightsList();
+        }
         const overlay = document.getElementById("battleOverlay");
         const banner = document.getElementById("overlayBannerText");
         const desc = document.getElementById("overlayEnemyDesc");
@@ -6066,6 +6535,18 @@
             }
           }
           state.activeSimilarCpu = generateSimilarLevelCpuBot();
+          if (livePvp.activeRoomId) {
+            sendRoomPacket({
+              type: "match_end",
+              winnerRole: won ? "host" : "guest",
+              hostFinalHp: Math.max(0, Math.round(pBot.hp)),
+              guestFinalHp: Math.max(0, Math.round(eBot.hp)),
+              agreedWager: staked
+            });
+            sim.isLiveMultiplayer = false;
+            sim.liveRole = null;
+            cleanupLiveRoomChannels();
+          }
         } else {
           // If Host in a Live Real-Time PvP match, broadcast match_end to Guest immediately!
           if (sim.isLiveMultiplayer && sim.liveRole === "host") {
@@ -6588,6 +7069,9 @@
       if (sim.shake > 0) sim.shake *= 0.84;
 
       syncHudReadout();
+      if (livePvp.activeRoomId && sim.liveRole !== "guest" && sim.liveRole !== "spectator" && sim.ticks % 2 === 0) {
+        broadcastHostArenaState();
+      }
     }
 
     function formatUfcClock(seconds) {
@@ -7663,10 +8147,519 @@
       requestAnimationFrame(renderTopDown3D);
     }
 
+
+    // =========================================================================
+    // 5. LIVE SPECTATOR STREAMING & SHIBUYA PIT LIVE CHAT ENGINE
+    // =========================================================================
+    const pitSpectator = {
+      activeMatches: new Map(), // roomId -> beacon object
+      watchingRoomId: null,
+      beaconIntervalId: null,
+      watchersByRoom: new Map(), // roomId -> Set of clientIds
+      chatHistory: []
+    };
+
+    function appendPitChatMessage(msgObj) {
+      const feed = document.getElementById("pitChatFeed");
+      if (!feed) return;
+
+      // Deduplicate by message id
+      if (msgObj.id && pitSpectator.chatHistory.some(m => m.id === msgObj.id)) return;
+      pitSpectator.chatHistory.push(msgObj);
+      if (pitSpectator.chatHistory.length > 60) pitSpectator.chatHistory.shift();
+
+      const div = document.createElement("div");
+      if (msgObj.kind === "system") {
+        div.className = "chat-line system";
+        div.textContent = msgObj.text;
+      } else {
+        div.className = "chat-line";
+        const eloSpan = document.createElement("span");
+        eloSpan.className = "chat-elo-tag";
+        eloSpan.textContent = `🏆 ${msgObj.elo || 1000}`;
+
+        const authorSpan = document.createElement("span");
+        authorSpan.className = "chat-author";
+        authorSpan.textContent = `${msgObj.callsign || "@PILOT"}:`;
+
+        const textSpan = document.createElement("span");
+        textSpan.className = "chat-text";
+        textSpan.textContent = msgObj.text || "";
+
+        div.appendChild(eloSpan);
+        div.appendChild(authorSpan);
+        div.appendChild(textSpan);
+      }
+      feed.appendChild(div);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function sendPitChatPacket(chatPayload) {
+      appendPitChatMessage(chatPayload);
+      sendLobbySignal({
+        type: "pit_chat",
+        chat: chatPayload
+      });
+    }
+
+    function sendPitChatFromInput() {
+      const inp = document.getElementById("pitChatInput");
+      if (!inp) return;
+      const txt = inp.value.trim();
+      if (!txt) return;
+      inp.value = "";
+
+      const payload = {
+        id: "chat_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+        kind: "user",
+        callsign: state.pilotCallsign || "@PILOT",
+        elo: state.elo || 1000,
+        text: txt,
+        ts: Date.now()
+      };
+      sendPitChatPacket(payload);
+    }
+
+    function sendPitHypeReaction(emoji, labelText) {
+      const payload = {
+        id: "emote_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+        kind: "user",
+        callsign: state.pilotCallsign || "@PILOT",
+        elo: state.elo || 1000,
+        text: `${emoji} ${labelText}`,
+        emote: emoji,
+        roomId: pitSpectator.watchingRoomId || livePvp.activeRoomId || null,
+        ts: Date.now()
+      };
+      sendPitChatPacket(payload);
+      spawnFloatingArenaEmote(emoji, state.pilotCallsign || "@PILOT");
+      if (livePvp.activeRoomId) {
+        sendRoomPacket({
+          type: "spectator_emote",
+          emoji,
+          callsign: state.pilotCallsign || "@PILOT"
+        });
+      }
+    }
+
+    function spawnFloatingArenaEmote(emoji, callsign) {
+      const rx = 460 + Math.random() * 680;
+      const ry = 260 + Math.random() * 360;
+      addFloatText(rx, ry, `${emoji} ${callsign}`, "#fde047");
+    }
+
+    function startBroadcastStreamForLocalMatch() {
+      // If already in a 2-human room as host, use that room; otherwise open a live spectator room for this match
+      if (!livePvp.activeRoomId) {
+        const roomId = "stream_" + LIVE_CLIENT_ID + "_" + Date.now();
+        livePvp.activeRoomId = roomId;
+        livePvp.role = "host";
+        sim.isLiveMultiplayer = true;
+        sim.liveRole = "host";
+
+        if (typeof BroadcastChannel !== "undefined") {
+          livePvp.bcRoom = new BroadcastChannel("rc_botpit_" + roomId);
+          livePvp.bcRoom.onmessage = (ev) => {
+            if (ev && ev.data) handleRoomPacket(ev.data);
+          };
+        }
+        if (window.db) {
+          try {
+            const rch = window.db.channel("rc_botpit_" + roomId, {
+              config: { broadcast: { self: false } }
+            });
+            rch.on("broadcast", { event: "room_pkt" }, (payload) => {
+              if (payload && payload.payload) handleRoomPacket(payload.payload);
+            });
+            rch.subscribe();
+            livePvp.supaRoomChannel = rch;
+          } catch (_) {}
+        }
+      }
+
+      broadcastMatchBeaconNow();
+      if (pitSpectator.beaconIntervalId) clearInterval(pitSpectator.beaconIntervalId);
+      pitSpectator.beaconIntervalId = setInterval(() => {
+        if (!sim.running || sim.liveRole === "spectator" || sim.liveRole === "guest") {
+          clearInterval(pitSpectator.beaconIntervalId);
+          pitSpectator.beaconIntervalId = null;
+          return;
+        }
+        broadcastMatchBeaconNow();
+      }, 1000);
+
+      const [pBot, eBot] = sim.bots;
+      if (pBot && eBot) {
+        const pot = (sim.escrowWager || 0) * 2;
+        sendLobbySignal({
+          type: "pit_chat",
+          chat: {
+            id: "sys_start_" + livePvp.activeRoomId,
+            kind: "system",
+            text: `📢 LIVE FIGHT STARTED: ${pBot.name} vs ${eBot.name}${pot > 0 ? ' (🎰 POT: 💎 ' + pot.toLocaleString() + ')' : ''} — Click 👁️ WATCH LIVE!`
+          }
+        });
+      }
+    }
+
+    function broadcastMatchBeaconNow() {
+      if (!sim.running || !livePvp.activeRoomId || sim.liveRole === "spectator" || sim.liveRole === "guest") return;
+      const [pBot, eBot] = sim.bots;
+      if (!pBot || !eBot) return;
+
+      const watchersSet = pitSpectator.watchersByRoom.get(livePvp.activeRoomId);
+      const watchersCount = watchersSet ? watchersSet.size : 0;
+
+      const beacon = {
+        roomId: livePvp.activeRoomId,
+        hostClientId: LIVE_CLIENT_ID,
+        p1Name: pBot.name,
+        p1Hp: Math.max(0, Math.round(pBot.hp)),
+        p1MaxHp: pBot.maxHp,
+        p1Loadout: pBot.cp ? pBot.cp.loadout : state.loadout,
+        p1BaseStats: { ...BASE_STATS },
+        p2Name: eBot.name,
+        p2Hp: Math.max(0, Math.round(eBot.hp)),
+        p2MaxHp: eBot.maxHp,
+        p2Loadout: eBot.cp ? eBot.cp.loadout : {},
+        p2BaseStats: { ...BASE_STATS },
+        currentRound: sim.currentRound || 1,
+        pRoundsWon: sim.pRoundsWon || 0,
+        eRoundsWon: sim.eRoundsWon || 0,
+        timeLeft: Math.round(sim.timeLeft || 180),
+        pot: (sim.escrowWager || 0) * 2,
+        watchers: watchersCount,
+        updatedAt: Date.now()
+      };
+      pitSpectator.activeMatches.set(beacon.roomId, beacon);
+      sendLobbySignal({ type: "match_beacon", beacon });
+      renderLiveFightsList();
+    }
+
+    function spectateLiveMatch(roomId) {
+      if (!ensurePilotLoggedIn()) return;
+
+      // Special case: Built-in 24/7 Championship AI Exhibition Stream when no other human room is specified
+      if (roomId === "featured_ai_stream") {
+        startFeaturedAiSpectatorStream();
+        return;
+      }
+
+      const beacon = pitSpectator.activeMatches.get(roomId);
+      if (!beacon) return;
+
+      // If we are already the fighter in this room, no need to spectate ourselves
+      if (livePvp.activeRoomId === roomId && sim.liveRole !== "spectator") {
+        return;
+      }
+
+      cancelLivePvpSearch();
+      cleanupLiveRoomChannels();
+
+      pitSpectator.watchingRoomId = roomId;
+      livePvp.activeRoomId = roomId;
+      livePvp.role = "spectator";
+      sim.isLiveMultiplayer = true;
+      sim.liveRole = "spectator";
+      sim.running = true;
+
+      // Build the two bots matching the beacon's exact 6-slot loadouts
+      const p1Prof = computeBotCombatProfile(beacon.p1BaseStats || BASE_STATS, normalizeLoadout(beacon.p1Loadout));
+      const p2Prof = computeBotCombatProfile(beacon.p2BaseStats || BASE_STATS, normalizeLoadout(beacon.p2Loadout));
+      const bot1 = createPhysicsBot(p1Prof, "player", beacon.p1Name, "#ffd700", 340, 450, 0, 1.0);
+      const bot2 = createPhysicsBot(p2Prof, "enemy", beacon.p2Name, "#f43f5e", 1260, 450, Math.PI, 1.0);
+      bot1.hp = beacon.p1Hp;
+      bot2.hp = beacon.p2Hp;
+      sim.bots = [bot1, bot2];
+      sim.currentRound = beacon.currentRound || 1;
+      sim.pRoundsWon = beacon.pRoundsWon || 0;
+      sim.eRoundsWon = beacon.eRoundsWon || 0;
+      sim.timeLeft = beacon.timeLeft || 180;
+      sim.escrowWager = Math.round((beacon.pot || 0) / 2);
+
+      document.getElementById("hudPName").textContent = beacon.p1Name;
+      document.getElementById("hudEName").textContent = beacon.p2Name;
+      document.getElementById("battleOverlay").classList.add("hidden");
+
+      const bannerEl = document.getElementById("spectatorTopBanner");
+      const titleEl = document.getElementById("spectatorBannerTitle");
+      const watchEl = document.getElementById("spectatorWatchersCount");
+      if (bannerEl) bannerEl.classList.add("active");
+      if (titleEl) titleEl.textContent = `SPECTATING LIVE: ${beacon.p1Name} ⚡ ${beacon.p2Name}`;
+      if (watchEl) watchEl.textContent = `👁️ ${(beacon.watchers || 0) + 1} WATCHING`;
+
+      // Subscribe to the room's 30Hz stream
+      if (typeof BroadcastChannel !== "undefined") {
+        livePvp.bcRoom = new BroadcastChannel("rc_botpit_" + roomId);
+        livePvp.bcRoom.onmessage = (ev) => {
+          if (ev && ev.data) handleRoomPacket(ev.data);
+        };
+      }
+      if (window.db) {
+        try {
+          const rch = window.db.channel("rc_botpit_" + roomId, {
+            config: { broadcast: { self: false } }
+          });
+          rch.on("broadcast", { event: "room_pkt" }, (payload) => {
+            if (payload && payload.payload) handleRoomPacket(payload.payload);
+          });
+          rch.subscribe();
+          livePvp.supaRoomChannel = rch;
+        } catch (_) {}
+      }
+
+      sendRoomPacket({
+        type: "spectator_join",
+        roomId,
+        clientId: LIVE_CLIENT_ID,
+        callsign: state.pilotCallsign || "@PILOT"
+      });
+
+      syncHudReadout();
+      renderLiveFightsList();
+    }
+
+    function startFeaturedAiSpectatorStream() {
+      cancelLivePvpSearch();
+      cleanupLiveRoomChannels();
+
+      pitSpectator.watchingRoomId = "featured_ai_stream";
+      sim.isLiveMultiplayer = false;
+      sim.liveRole = "spectator_ai";
+      sim.escrowWager = 1000;
+
+      setupStagingArena();
+      const archA = ONLINE_PVP_ARCHETYPES[0];
+      const archB = ONLINE_PVP_ARCHETYPES[1];
+      const loA = buildRandomLoadoutWithSlotCount(4);
+      const loB = buildRandomLoadoutWithSlotCount(4);
+      const profA = computeBotCombatProfile(BASE_STATS, loA);
+      const profB = computeBotCombatProfile(BASE_STATS, loB);
+
+      const botA = createPhysicsBot(profA, "player", "@SHIBUYA_KING", "#ffd700", 340, 450, 0, 1.0);
+      const botB = createPhysicsBot(profB, "enemy", "@RONIN_VORTEX", "#f43f5e", 1260, 450, Math.PI, 1.0);
+      sim.bots = [botA, botB];
+      document.getElementById("hudPName").textContent = botA.name;
+      document.getElementById("hudEName").textContent = botB.name;
+      document.getElementById("battleOverlay").classList.add("hidden");
+
+      const bannerEl = document.getElementById("spectatorTopBanner");
+      const titleEl = document.getElementById("spectatorBannerTitle");
+      const watchEl = document.getElementById("spectatorWatchersCount");
+      if (bannerEl) bannerEl.classList.add("active");
+      if (titleEl) titleEl.textContent = `SPECTATING PIT TV: ${botA.name} ⚡ ${botB.name}`;
+      if (watchEl) watchEl.textContent = `👁️ LIVE MAIN EVENT`;
+
+      sim.running = true;
+      syncHudReadout();
+      renderLiveFightsList();
+    }
+
+    function leaveSpectatorMode() {
+      if (pitSpectator.watchingRoomId && pitSpectator.watchingRoomId !== "featured_ai_stream") {
+        sendRoomPacket({
+          type: "spectator_leave",
+          roomId: pitSpectator.watchingRoomId,
+          clientId: LIVE_CLIENT_ID
+        });
+      }
+      pitSpectator.watchingRoomId = null;
+      sim.isLiveMultiplayer = false;
+      sim.liveRole = null;
+      sim.running = false;
+      cleanupLiveRoomChannels();
+
+      const bannerEl = document.getElementById("spectatorTopBanner");
+      if (bannerEl) bannerEl.classList.remove("active");
+
+      setupStagingArena();
+      updatePlayerUI();
+      renderLiveFightsList();
+    }
+
+    function renderLiveFightsList() {
+      const listEl = document.getElementById("liveFightsList");
+      const badgeEl = document.getElementById("liveFightsCountBadge");
+      if (!listEl) return;
+
+      const now = Date.now();
+      const liveItems = [];
+      for (const [rid, b] of pitSpectator.activeMatches.entries()) {
+        if (now - (b.updatedAt || 0) > 4500) {
+          pitSpectator.activeMatches.delete(rid);
+          continue;
+        }
+        liveItems.push(b);
+      }
+
+      if (badgeEl) {
+        badgeEl.textContent = `${liveItems.length + 1} LIVE`;
+      }
+
+      const cardsHtml = liveItems.map(b => {
+        const isMyOwnFight = (livePvp.activeRoomId === b.roomId && sim.liveRole !== "spectator");
+        const isWatching = (pitSpectator.watchingRoomId === b.roomId);
+        const p1Pct = Math.max(0, Math.min(100, Math.round((b.p1Hp / Math.max(1, b.p1MaxHp)) * 100)));
+        const p2Pct = Math.max(0, Math.min(100, Math.round((b.p2Hp / Math.max(1, b.p2MaxHp)) * 100)));
+        const clockStr = formatUfcClock(b.timeLeft || 180);
+        const potStr = b.pot > 0 ? `💎 ${b.pot.toLocaleString()} POT` : `FREE MATCH`;
+
+        let btnHtml = "";
+        if (isMyOwnFight) {
+          btnHtml = `<button type="button" class="btn-watch-fight" style="background:#10b981;color:#04130d;cursor:default;">⚔️ YOUR FIGHT</button>`;
+        } else if (isWatching) {
+          btnHtml = `<button type="button" class="btn-watch-fight watching" onclick="leaveSpectatorMode()">🔴 WATCHING (EXIT)</button>`;
+        } else {
+          btnHtml = `<button type="button" class="btn-watch-fight" onclick="spectateLiveMatch('${b.roomId}')">👁️ WATCH LIVE</button>`;
+        }
+
+        return `
+          <div class="live-fight-item ${isWatching ? 'watching' : ''}">
+            <div class="lf-info">
+              <div class="lf-fighters">
+                <span style="color:#fbbf24;">${b.p1Name}</span>
+                <span class="lf-vs-badge">VS</span>
+                <span style="color:#fb7185;">${b.p2Name}</span>
+              </div>
+              <div class="lf-meta">
+                <span>🥊 RD ${b.currentRound}/3 (${b.pRoundsWon}-${b.eRoundsWon})</span>
+                <span>⏱️ ${clockStr}</span>
+                <span style="color:#38bdf8;">🎰 ${potStr}</span>
+                <span style="color:#fde047;">👁️ ${b.watchers || 0}</span>
+              </div>
+              <div class="lf-hp-dual">
+                <div class="lf-mini-bar"><div class="lf-mini-fill" style="width:${p1Pct}%;background:#00ff88;"></div></div>
+                <div class="lf-mini-bar"><div class="lf-mini-fill" style="width:${p2Pct}%;background:#ff2a55;"></div></div>
+              </div>
+            </div>
+            ${btnHtml}
+          </div>
+        `;
+      });
+
+      // Always include the 24/7 Shibuya Main Event AI Exhibition Channel so players can test spectating anytime!
+      const isWatchingAi = pitSpectator.watchingRoomId === "featured_ai_stream";
+      cardsHtml.push(`
+        <div class="live-fight-item ${isWatchingAi ? 'watching' : ''}">
+          <div class="lf-info">
+            <div class="lf-fighters">
+              <span style="color:#38bdf8;">@SHIBUYA_KING</span>
+              <span class="lf-vs-badge">VS</span>
+              <span style="color:#f43f5e;">@RONIN_VORTEX</span>
+            </div>
+            <div class="lf-meta">
+              <span>📺 24/7 PIT TV EXHIBITION</span>
+              <span style="color:#fbbf24;">🎰 💎 2,000 POT</span>
+              <span>🥊 3x3:00 CHAMPIONSHIP</span>
+            </div>
+          </div>
+          ${
+            isWatchingAi
+              ? `<button type="button" class="btn-watch-fight watching" onclick="leaveSpectatorMode()">🔴 WATCHING (EXIT)</button>`
+              : `<button type="button" class="btn-watch-fight" onclick="spectateLiveMatch('featured_ai_stream')">👁️ WATCH LIVE</button>`
+          }
+        </div>
+      `);
+
+      listEl.innerHTML = cardsHtml.join("");
+    }
+
+    // Hook into Lobby Signals & Room Packets for Spectator & Live Chat
+    const _origHandleLobbySignal = handleLobbySignal;
+    handleLobbySignal = function(msg) {
+      _origHandleLobbySignal(msg);
+      if (!msg || !msg.type) return;
+      if (msg.type === "match_beacon" && msg.beacon) {
+        pitSpectator.activeMatches.set(msg.beacon.roomId, {
+          ...msg.beacon,
+          updatedAt: Date.now()
+        });
+        renderLiveFightsList();
+      } else if (msg.type === "match_beacon_end" && msg.roomId) {
+        pitSpectator.activeMatches.delete(msg.roomId);
+        renderLiveFightsList();
+      } else if (msg.type === "pit_chat" && msg.chat) {
+        appendPitChatMessage(msg.chat);
+        if (msg.chat.emote) {
+          spawnFloatingArenaEmote(msg.chat.emote, msg.chat.callsign || "@PILOT");
+        }
+      }
+    };
+
+    const _origHandleRoomPacket = handleRoomPacket;
+    handleRoomPacket = function(pkt) {
+      _origHandleRoomPacket(pkt);
+      if (!pkt || !pkt.type) return;
+
+      if (pkt.type === "spectator_join" && livePvp.activeRoomId) {
+        if (!pitSpectator.watchersByRoom.has(livePvp.activeRoomId)) {
+          pitSpectator.watchersByRoom.set(livePvp.activeRoomId, new Set());
+        }
+        pitSpectator.watchersByRoom.get(livePvp.activeRoomId).add(pkt.clientId);
+        addFloatText(800, 220, `👁️ ${pkt.callsign || '@SPECTATOR'} IS WATCHING LIVE!`, "#fde047");
+        broadcastMatchBeaconNow();
+      } else if (pkt.type === "spectator_leave" && livePvp.activeRoomId) {
+        const set = pitSpectator.watchersByRoom.get(livePvp.activeRoomId);
+        if (set) set.delete(pkt.clientId);
+        broadcastMatchBeaconNow();
+      } else if (pkt.type === "spectator_emote") {
+        spawnFloatingArenaEmote(pkt.emoji || "🔥", pkt.callsign || "@SPECTATOR");
+      } else if (pkt.type === "host_state" && sim.liveRole === "spectator" && sim.running) {
+        sim.ticks = pkt.ticks || sim.ticks;
+        sim.timeLeft = typeof pkt.timeLeft === "number" ? pkt.timeLeft : sim.timeLeft;
+        sim.currentRound = pkt.currentRound || 1;
+        sim.pRoundsWon = pkt.pRoundsWon || 0;
+        sim.eRoundsWon = pkt.eRoundsWon || 0;
+        sim.intermissionTimer = pkt.intermissionTimer || 0;
+        sim.intermissionSummary = pkt.intermissionSummary || null;
+        if (Array.isArray(pkt.roundResults)) {
+          sim.roundResults = pkt.roundResults;
+        }
+        if (pkt.centerSaw && sim.centerSaw) {
+          Object.assign(sim.centerSaw, pkt.centerSaw);
+        }
+        const [bot1, bot2] = sim.bots;
+        if (bot1 && pkt.hostBot) {
+          const prevHp = bot1.hp;
+          Object.assign(bot1, pkt.hostBot);
+          if (bot1.hp < prevHp) emit3DSparks(bot1.x, bot1.y, "#00ff88", 10, 6.0);
+        }
+        if (bot2 && pkt.guestBot) {
+          const prevHp = bot2.hp;
+          Object.assign(bot2, pkt.guestBot);
+          if (bot2.hp < prevHp) emit3DSparks(bot2.x, bot2.y, "#ff2a55", 10, 6.0);
+        }
+        if (Array.isArray(pkt.projectiles)) {
+          sim.projectiles = pkt.projectiles;
+        }
+        sim.clashLock = pkt.clashLock || null;
+        syncHudReadout();
+      } else if (pkt.type === "match_end" && sim.liveRole === "spectator") {
+        const [bot1, bot2] = sim.bots;
+        const winName = pkt.winnerRole === "host" ? (bot1 ? bot1.name : "PLAYER 1") : (bot2 ? bot2.name : "PLAYER 2");
+        addFloatText(800, 380, `🏆 STREAM FINISHED — WINNER: ${winName}!`, "#00ff88");
+        setTimeout(() => {
+          if (sim.liveRole === "spectator") leaveSpectatorMode();
+        }, 2800);
+      }
+    };
+
+    function bootPitSpectatorAndChat() {
+      initLiveLobbyChannels();
+      appendPitChatMessage({
+        id: "welcome_sys_1",
+        kind: "system",
+        text: "📢 WELCOME TO SHIBUYA BOT PIT! Chat live with other pilots or click 👁️ WATCH LIVE on any active fight!"
+      });
+      renderLiveFightsList();
+      setInterval(renderLiveFightsList, 2000);
+    }
+
     updatePlayerUI();
     setupStagingArena();
     restorePilotSessionOnBoot();
     renderTopDown3D();
+    bootPitSpectatorAndChat();
   </script>
 </body>
 </html>
