@@ -4627,7 +4627,7 @@ function initHomeShopScroller() {
             title: 'Shibuya Bot Pit',
             titleTop: 'SHIBUYA 3D ARENA',
             titleMain: 'BOT PIT',
-            img: 'assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg',
+            img: 'assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg',
             href: 'shibuya_bot_pit.html'
         };
         gamesTrack.innerHTML = `
