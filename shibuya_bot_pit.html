@@ -3352,7 +3352,7 @@
         <div class="base-stats-bar" style="margin-top: 10px;">
           <div class="stat-cell">
             <span class="stat-label">❤️ HP</span>
-            <span class="stat-value hp" id="baseHpVal">750</span>
+            <span class="stat-value hp" id="baseHpVal">1250</span>
             <span class="stat-bonus" id="bonusHpVal"></span>
           </div>
           <div class="stat-cell">
@@ -3476,7 +3476,7 @@
 
         <div class="enemy-intel-strip">
           <span>MATCHED OPPONENT: <strong id="enemyIntelName">@KAZUYA_99</strong></span>
-          <span id="enemyIntelStats" style="color:#fbbf24;font-family:'Orbitron',sans-serif;font-size:0.70rem;">750 HP · 50 PWR · 50 SPD · 50 AGI</span>
+          <span id="enemyIntelStats" style="color:#fbbf24;font-family:'Orbitron',sans-serif;font-size:0.70rem;">1250 HP · 50 PWR · 50 SPD · 50 AGI</span>
         </div>
 
         <!-- LIVE ONLINE PVP & SIMILAR-LVL CPU MATCHMAKING TOOLS -->
@@ -3504,7 +3504,7 @@
                   <span class="round-pip"></span><span class="round-pip"></span><span class="round-pip"></span>
                 </span>
               </span>
-              <span id="hudPHp">750 / 750 HP</span>
+              <span id="hudPHp">1250 / 1250 HP</span>
             </div>
             <div class="hp-track"><div class="hp-fill player" id="hudPBar"></div></div>
             <div class="stamina-row">
@@ -3525,7 +3525,7 @@
 
           <div class="fighter-bar-card enemy">
             <div class="f-row">
-              <span id="hudEHp">750 / 750 HP</span>
+              <span id="hudEHp">1250 / 1250 HP</span>
               <span style="color:#fb7185;display:inline-flex;align-items:center;" id="hudENameWrap">
                 <span class="round-pips-row" id="hudERoundPips">
                   <span class="round-pip"></span><span class="round-pip"></span><span class="round-pip"></span>
@@ -3823,7 +3823,7 @@
     const SAW_BLADE_3D_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mr_saw_blade.png";
     const ARENA_10_BG_SKIN = "assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg";
 
-    const BASE_STATS = { power: 50, speed: 50, agility: 50, hp: 750 };
+    const BASE_STATS = { power: 50, speed: 50, agility: 50, hp: 1250 };
 
     // All 20 Real Blender 5.2 Top-Down 3D PBR Transparent Mount Sprites
     const MOUNT_3D_SPRITES = {
@@ -4663,7 +4663,7 @@
         bounty,
         wager: oppWager,
         color: profile.color,
-        baseStats: { power: 50, speed: 50, agility: 50, hp: 750 },
+        baseStats: { power: 50, speed: 50, agility: 50, hp: 1250 },
         loadout,
         bio: `🌐 Live Online Match vs. ${profile.callsign} (${profile.region}) — ${oppSlots}/6 3D Upgrades Equipped!`
       };
@@ -4701,7 +4701,7 @@
         color: arch.color,
         reward,
         wager: cpuWager,
-        baseStats: { power: 50, speed: 50, agility: 50, hp: 750 },
+        baseStats: { power: 50, speed: 50, agility: 50, hp: 1250 },
         loadout,
         desc: `🤖 Matched to your Rig Level (LVL.${cpuLvl} · ${cpuSlotCount}/6 Upgrades) — ${arch.role}.`
       };
@@ -5316,7 +5316,7 @@
           losses: 5,
           bounty: 380,
           color: "#00f5ff",
-          baseStats: { power: 50, speed: 50, agility: 50, hp: 750 },
+          baseStats: { power: 50, speed: 50, agility: 50, hp: 1250 },
           loadout: decoded.l || DYNAMIC_PRESETS.assassin,
           bio: `Custom 6-Slot Player Rig imported via Battle Code from ${decoded.c || "@CHALLENGER"}!`
         };
@@ -5373,11 +5373,12 @@
       power = Math.max(15, power);
       speed = Math.max(15, speed);
       agility = Math.max(15, agility);
-      const maxHp = Math.max(420, Math.round((baseStats.hp || 750) + bonusHp));
+      const scaledBonusHp = bonusHp > 0 ? Math.round(bonusHp * 1.4) : bonusHp;
+      const maxHp = Math.max(850, Math.round((baseStats.hp || 1250) + scaledBonusHp));
 
       const effAttack = Math.round(power * 1.15 + speed * 0.35 + agility * 0.25);
       // Scaled for 3x3:00 Championship Rounds so bots trade tactical combinations over full rounds
-      let baseStrikeDmg = Math.round((18 + effAttack * 0.32) * 0.38);
+      let baseStrikeDmg = Math.round((18 + effAttack * 0.32) * 0.31);
       if (equippedIds.has("wpn_10")) baseStrikeDmg = Math.round(baseStrikeDmg * 0.85); // Grappler Claw weakness: -15% raw hit damage
       if (equippedIds.has("wpn_abil_12")) baseStrikeDmg = Math.round(baseStrikeDmg * 0.88); // Executioner weakness: -12% front clash damage
 
@@ -5594,7 +5595,7 @@
       document.getElementById("baseHpVal").textContent = effGarageHp;
       document.getElementById("bonusHpVal").innerHTML = effGarageHp < p.maxHp
         ? `<span style="color:#fb7185;font-weight:800;">⚠️ INJURED (${p.maxHp})</span>`
-        : fmtDelta(p.maxHp - 750);
+        : fmtDelta(p.maxHp - 1250);
       renderBotConditionPanels();
 
       document.getElementById("basePwrVal").textContent = p.power;
@@ -5785,7 +5786,7 @@
       }
 
       const rows = [
-        { label: "HIT POINTS", base: 750, cur: curProf.maxHp, next: nextProf.maxHp, max: 1450, col: "#34d399" },
+        { label: "HIT POINTS", base: 1250, cur: curProf.maxHp, next: nextProf.maxHp, max: 2200, col: "#34d399" },
         { label: "POWER",      base: 50,  cur: curProf.power, next: nextProf.power, max: 165,  col: "#fbbf24" },
         { label: "SPEED",      base: 50,  cur: curProf.speed, next: nextProf.speed, max: 165,  col: "#38bdf8" },
         { label: "AGILITY",    base: 50,  cur: curProf.agility, next: nextProf.agility, max: 165, col: "#f472b6" }
@@ -7445,7 +7446,7 @@
         // High-Velocity Wall-Slam Crushes!
         if (wallTouch && impactSpeed > 6.4 && bot.wallSlamCd <= 0) {
           bot.wallSlamCd = 28;
-          const slamDmg = Math.round(impactSpeed * 3.4 * (1 - bot.cp.armorReduction * 0.45));
+          const slamDmg = Math.round(impactSpeed * 2.4 * (1 - bot.cp.armorReduction * 0.45));
           bot.hp = Math.max(0, bot.hp - slamDmg);
           bot.hitFlash = 8;
           bot.knockStun = Math.max(bot.knockStun, 14);
@@ -7497,7 +7498,7 @@
 
               if (bot.sawCd <= 0) {
                 bot.sawCd = 22;
-                const sawDmg = Math.round(68 * (1 - bot.cp.armorReduction * 0.45) * (bot.cryoTimer > 0 ? 1.25 : 1.0));
+                const sawDmg = Math.round(46 * (1 - bot.cp.armorReduction * 0.45) * (bot.cryoTimer > 0 ? 1.25 : 1.0));
                 bot.hp = Math.max(0, bot.hp - sawDmg);
                 bot.hitFlash = 9;
                 bot.knockStun = 14;
