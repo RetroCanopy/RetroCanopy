@@ -3316,6 +3316,7 @@
       <a href="games.html?openTickets=1" class="elo-pill" id="pilotTicketsDisplay" style="border-color:rgba(251,191,36,0.55);color:#fde047;text-decoration:none;" title="Win PvP Battles to earn Golden Tickets for the Ticket Counter!">🎟️ 0 TICKETS</a>
       <div class="scrap-top-pill" id="topScrapDisplay" onclick="openBuyDiamondsModal()" style="cursor:pointer;" title="Click to Purchase Diamonds">💎 0</div>
       <button type="button" class="top-nav-pill" style="background:linear-gradient(180deg,#38bdf8 0%,#0284c7 100%);color:#041019;border-color:#7dd3fc;font-weight:900;" onclick="openBuyDiamondsModal()" title="Purchase Diamonds in-game">💎 BUY DIAMONDS</button>
+      <button type="button" class="top-nav-pill" id="btnSoundToggle" onclick="BotPitAudio.toggleMute()" style="border-color:rgba(52,211,153,0.5);color:#34d399;font-weight:900;" title="Toggle Arena Combat Sound & Audio FX">🔊 SOUND: ON</button>
       <div class="cloud-save-pill" id="cloudSyncBadge">☁️ SAVED</div>
     </div>
 
@@ -5005,6 +5006,7 @@
 
       sim.startedInjuredGrit = qualifiesForUnderdogGritBonus(state.partIntegrity);
       sim.running = true;
+      BotPitAudio.playBell(2);
       document.getElementById("battleOverlay").classList.add("hidden");
       if (isPlayerBotInjured()) {
         const avgInt = Math.round((state.partIntegrity.tires + state.partIntegrity.armor + state.partIntegrity.weapon + state.partIntegrity.core) / 4);
@@ -6014,6 +6016,7 @@
       if (!sim.running) setupStagingArena();
 
       const sd = SLOT_DEFS.find(s => s.key === slotKey);
+      BotPitAudio.playCashChime();
       showShopToast(`✅ PURCHASED & ATTACHED: ${item ? (item.dynamicRole || item.name) : itemId} ON ${sd ? sd.label : slotKey} (-${price} 💎)!`, "#34d399");
     }
 
@@ -6517,6 +6520,49 @@
       let throttle = 0.78;
       let turnMult = 1.0;
 
+      // 0. DETECT OPPONENT INJURIES & SHIFT AI STRATEGY TO EXPLOIT WEAKNESS ("PREDATOR / FINISH-HIM MODE")
+      const oppParts = normalizePartIntegrity(other.parts);
+      const oppHpPct = other.hp / Math.max(1, other.maxHp);
+      const oppTiresInjured = oppParts.tires < 60;
+      const oppWeaponInjured = oppParts.weapon < 60;
+      const oppArmorBreached = oppParts.armor < 60;
+      const oppCoreShorted = oppParts.core < 55;
+      const oppIsVulnerable = oppTiresInjured || oppWeaponInjured || oppArmorBreached || oppCoreShorted || oppHpPct < 0.42;
+
+      let activePredatorTactic = null;
+      if (oppIsVulnerable) {
+        if (oppHpPct < 0.38 || oppArmorBreached) {
+          activePredatorTactic = "KILLER_FINISH";
+        } else if (oppTiresInjured) {
+          activePredatorTactic = "FLANK_CRIPPLED_TIRES";
+        } else if (oppWeaponInjured) {
+          activePredatorTactic = "BULLDOZE_JAMMED_WEAPON";
+        } else {
+          activePredatorTactic = "PRESS_SHORTED_CORE";
+        }
+        // Cancel passive pacing/retreat if we have at least 22% stamina — smell blood and press the attack!
+        if (bot.stamina > 22 && bot.staminaState !== "gassed") {
+          bot.pacingTimer = 0;
+          bot.retreatTimer = 0;
+        }
+        // Announce strategy shift when switching into a new predator tactic
+        if (bot.activePredatorTactic !== activePredatorTactic && (!bot.predatorCalloutCd || bot.predatorCalloutCd <= 0)) {
+          bot.activePredatorTactic = activePredatorTactic;
+          bot.predatorCalloutCd = 190;
+          BotPitAudio.playPredatorLock();
+          const tacticLabels = {
+            KILLER_FINISH: "🦈 SMELLS BLOOD — FINISHING INJURED BOT!",
+            FLANK_CRIPPLED_TIRES: "🎯 OPPONENT TIRES DAMAGED — CIRCLING FOR BACKSTAB!",
+            BULLDOZE_JAMMED_WEAPON: "🔨 OPPONENT WEAPON JAMMED — FULL BULLDOZE PRESS!",
+            PRESS_SHORTED_CORE: "⚡ OPPONENT CORE SHORTED — RELENTLESS BLITZ!"
+          };
+          addFloatText(bot.x, bot.y - 60, tacticLabels[activePredatorTactic] || "🦈 PREDATOR PRESS!", "#00ff88");
+        }
+      } else {
+        bot.activePredatorTactic = null;
+      }
+      if (bot.predatorCalloutCd > 0) bot.predatorCalloutCd--;
+
       // 1. If GASSED or in TACTICAL PACING mode, circle on the outside & maintain spacing to recover stamina!
       if (bot.staminaState === "gassed" || (bot.pacingTimer > 0 && bot.grappleTimer <= 0)) {
         const idealRange = bot.staminaState === "gassed" ? 450 : 370;
@@ -6679,9 +6725,12 @@
       while (aimDiff > Math.PI) aimDiff -= Math.PI * 2;
       while (aimDiff < -Math.PI) aimDiff += Math.PI * 2;
 
-      if (bot.abilityCd <= 0 && bot.stamina >= 36 && dist > 125 && dist < 390 && Math.abs(aimDiff) < 0.42) {
+      // Trigger charge attacks faster and from wider angles when pressing an injured opponent!
+      const minStamForCharge = bot.activePredatorTactic ? 22 : 36;
+      const aimConeForCharge = bot.activePredatorTactic ? 0.62 : 0.42;
+      if (bot.abilityCd <= 0 && bot.stamina >= minStamForCharge && dist > 105 && dist < 430 && Math.abs(aimDiff) < aimConeForCharge) {
         bot.abilityState = "windup";
-        bot.abilityTimer = 13;
+        bot.abilityTimer = bot.activePredatorTactic ? 9 : 13;
       }
 
       if (sawDangerous && Math.hypot(other.x - cs.x, other.y - cs.y) < 340 && dist > 160) {
@@ -6689,7 +6738,27 @@
         const lineupX = Math.max(220, Math.min(1380, other.x + Math.cos(sawToEnemyAng) * 120));
         const lineupY = Math.max(175, Math.min(725, other.y + Math.sin(sawToEnemyAng) * 120));
         desiredAngle = Math.atan2(lineupY - bot.y, lineupX - bot.x);
-        throttle = 0.82;
+        throttle = bot.activePredatorTactic ? 1.12 : 0.82;
+      } else if (bot.activePredatorTactic === "FLANK_CRIPPLED_TIRES" && dist < 340) {
+        // Opponent's tires are damaged/blown — orbit behind their rear blindspot for 1.85x Backstab crits!
+        const rearAng = other.angle + Math.PI;
+        const rearSpotX = other.x + Math.cos(rearAng) * 88;
+        const rearSpotY = other.y + Math.sin(rearAng) * 88;
+        desiredAngle = Math.atan2(rearSpotY - bot.y, rearSpotX - bot.x);
+        throttle = 1.18;
+        turnMult = 1.45;
+      } else if (bot.activePredatorTactic === "BULLDOZE_JAMMED_WEAPON") {
+        // Opponent's weapon is jammed — steamroll straight through them at high throttle!
+        desiredAngle = toOther;
+        throttle = 1.24;
+        turnMult = 1.25;
+      } else if (bot.activePredatorTactic === "KILLER_FINISH" || bot.activePredatorTactic === "PRESS_SHORTED_CORE") {
+        // Opponent's armor is breached or HP is critical — relentless finish-him pursuit!
+        const leadX = other.x + other.vx * 6;
+        const leadY = other.y + other.vy * 6;
+        desiredAngle = Math.atan2(leadY - bot.y, leadX - bot.x);
+        throttle = 1.28;
+        turnMult = 1.35;
       } else {
         desiredAngle = toOther;
         throttle = 0.84;
@@ -6743,6 +6812,7 @@
             bouncesLeft: 0
           });
           emit3DSparks(muzzleX, muzzleY, "#38bdf8", 14, 7.5);
+          BotPitAudio.playWeaponFire("rail");
           addFloatText(bot.x, bot.y - 54, "🎯 RAILGUN SNIPE!", "#38bdf8");
         } else if (rngKey === "rng_04") {
           // Quad-Pod Homing Micro-Missile Swarm: 3 homing missiles!
@@ -7145,6 +7215,7 @@
 
         // Match is decided (Best of 3 winner)!
         const won = sim.pRoundsWon > sim.eRoundsWon;
+        BotPitAudio.playVictoryFanfare(won);
 
         sim.running = false;
         if (sim.liveRole === "spectator_ai") {
@@ -7459,6 +7530,7 @@
           triggerCameraFocus(bot.x, bot.y, 1.15, 22, 4);
           damageBotSubsystem(bot, "tires", 9 + Math.round(impactSpeed * 0.6));
           damageBotSubsystem(bot, "armor", 8 + Math.round(impactSpeed * 0.5));
+          BotPitAudio.playClash(true);
           addFloatText(bot.x, bot.y - 48, `💥🧱 WALL-SLAM CRUSH! -${slamDmg}`, "#f43f5e");
         }
 
@@ -7507,6 +7579,7 @@
                 triggerCameraFocus(cs.x, cs.y, 1.18, 24, 4);
                 damageBotSubsystem(bot, "tires", 14);
                 damageBotSubsystem(bot, "armor", 12);
+                BotPitAudio.playSawBuzz();
                 addFloatText(bot.x, bot.y - 36, `⚙️💥 SAW SHRED! -${sawDmg}`, "#ff8c00");
                 emit3DSparks(cs.x + snx * cs.currentRadius, cs.y + sny * cs.currentRadius, "#ff8c00", 36, 10.5);
               }
@@ -7532,6 +7605,7 @@
         pBot.clashCd = 20;
         eBot.clashCd = 20;
 
+        BotPitAudio.playClash(false);
         resolveBotClash(pBot, eBot, nx, ny);
       }
 
@@ -7822,17 +7896,24 @@
         eStamBar.style.width = `${eStamPct}%`;
         eStamBar.className = "stamina-fill" + (eBot.staminaState === "gassed" ? " gassed" : (eBot.pacingTimer > 0 ? " pacing" : ""));
       }
+      function fmtBotTacticHud(b, stamPct) {
+        if (b.staminaState === "gassed") return { txt: `⚠️ GASSED (${stamPct}%)`, col: "#fb7185" };
+        if (b.activePredatorTactic === "KILLER_FINISH") return { txt: `🦈 FINISH HIM! (${stamPct}%)`, col: "#00ff88" };
+        if (b.activePredatorTactic === "FLANK_CRIPPLED_TIRES") return { txt: `🎯 FLANK TIRES (${stamPct}%)`, col: "#00ff88" };
+        if (b.activePredatorTactic === "BULLDOZE_JAMMED_WEAPON") return { txt: `🔨 BULLDOZE WPN (${stamPct}%)`, col: "#00ff88" };
+        if (b.activePredatorTactic === "PRESS_SHORTED_CORE") return { txt: `⚡ BLITZ CORE (${stamPct}%)`, col: "#00ff88" };
+        if (b.pacingTimer > 0) return { txt: `🔄 PACING (${stamPct}%)`, col: "#fbbf24" };
+        return { txt: `⚡ ${stamPct}% STAMINA`, col: "#38bdf8" };
+      }
       if (pStamTxt) {
-        pStamTxt.textContent = pBot.staminaState === "gassed"
-          ? `⚠️ GASSED (${pStamPct}%)`
-          : (pBot.pacingTimer > 0 ? `🔄 PACING (${pStamPct}%)` : `⚡ ${pStamPct}% STAMINA`);
-        pStamTxt.style.color = pBot.staminaState === "gassed" ? "#fb7185" : (pBot.pacingTimer > 0 ? "#fbbf24" : "#38bdf8");
+        const pHud = fmtBotTacticHud(pBot, pStamPct);
+        pStamTxt.textContent = pHud.txt;
+        pStamTxt.style.color = pHud.col;
       }
       if (eStamTxt) {
-        eStamTxt.textContent = eBot.staminaState === "gassed"
-          ? `⚠️ GASSED (${eStamPct}%)`
-          : (eBot.pacingTimer > 0 ? `🔄 PACING (${eStamPct}%)` : `⚡ ${eStamPct}% STAMINA`);
-        eStamTxt.style.color = eBot.staminaState === "gassed" ? "#fb7185" : (eBot.pacingTimer > 0 ? "#fbbf24" : "#38bdf8");
+        const eHud = fmtBotTacticHud(eBot, eStamPct);
+        eStamTxt.textContent = eHud.txt;
+        eStamTxt.style.color = eHud.col;
       }
 
       // Update Round Title, Pips, and 3:00 M:SS Clock
@@ -9642,6 +9723,282 @@
     // =========================================================================
     // SUBSYSTEM DURABILITY, REAL-TIME BATTLE BREAKDOWN, PIT REPAIR & 50% RESALE
     // =========================================================================
+
+    // =========================================================================
+    // PROCEDURAL WEBAUDIO ARENA SOUND & COMBAT SFX ENGINE (ZERO EXTERNAL FILES)
+    // =========================================================================
+    const BotPitAudio = {
+      ctx: null,
+      muted: localStorage.getItem("rc_botpit_muted") === "1",
+      lastClashMs: 0,
+      lastSawMs: 0,
+
+      init() {
+        if (this.ctx) {
+          if (this.ctx.state === "suspended") {
+            this.ctx.resume().catch(() => {});
+          }
+          return this.ctx;
+        }
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return null;
+        try {
+          this.ctx = new AudioCtx();
+        } catch (_) {
+          this.ctx = null;
+        }
+        return this.ctx;
+      },
+
+      syncButton() {
+        const btn = document.getElementById("btnSoundToggle");
+        if (!btn) return;
+        if (this.muted) {
+          btn.textContent = "🔇 SOUND: MUTED";
+          btn.style.color = "#94a3b8";
+          btn.style.borderColor = "rgba(148,163,184,0.35)";
+        } else {
+          btn.textContent = "🔊 SOUND: ON";
+          btn.style.color = "#34d399";
+          btn.style.borderColor = "rgba(52,211,153,0.55)";
+        }
+      },
+
+      toggleMute() {
+        this.muted = !this.muted;
+        localStorage.setItem("rc_botpit_muted", this.muted ? "1" : "0");
+        this.syncButton();
+        if (!this.muted) {
+          this.init();
+          this.playCashChime();
+        }
+      },
+
+      playBell(strikes = 1) {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        for (let s = 0; s < strikes; s++) {
+          const t0 = ctx.currentTime + s * 0.22;
+          [784, 1176, 1568, 2093].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = idx % 2 === 0 ? "sine" : "triangle";
+            osc.frequency.setValueAtTime(freq, t0);
+            gain.gain.setValueAtTime(0.16 / (idx + 1), t0);
+            gain.gain.exponentialRampToValueAtTime(0.0008, t0 + 0.85);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(t0);
+            osc.stop(t0 + 0.88);
+          });
+        }
+      },
+
+      playClash(heavy = false) {
+        if (this.muted) return;
+        const nowMs = performance.now();
+        if (nowMs - this.lastClashMs < 75) return;
+        this.lastClashMs = nowMs;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+
+        // Low-end sub impact punch
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(heavy ? 135 : 165, t0);
+        osc.frequency.exponentialRampToValueAtTime(36, t0 + (heavy ? 0.26 : 0.16));
+        gain.gain.setValueAtTime(heavy ? 0.34 : 0.22, t0);
+        gain.gain.exponentialRampToValueAtTime(0.001, t0 + (heavy ? 0.28 : 0.18));
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t0);
+        osc.stop(t0 + (heavy ? 0.30 : 0.20));
+
+        // Metallic crunch burst
+        const bufLen = Math.floor(ctx.sampleRate * (heavy ? 0.16 : 0.09));
+        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.35));
+        }
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(heavy ? 1150 : 1650, t0);
+        filter.Q.setValueAtTime(2.4, t0);
+        const nGain = ctx.createGain();
+        nGain.gain.setValueAtTime(heavy ? 0.26 : 0.16, t0);
+        nGain.gain.exponentialRampToValueAtTime(0.001, t0 + (heavy ? 0.16 : 0.09));
+        noise.connect(filter);
+        filter.connect(nGain);
+        nGain.connect(ctx.destination);
+        noise.start(t0);
+      },
+
+      playSawBuzz() {
+        if (this.muted) return;
+        const nowMs = performance.now();
+        if (nowMs - this.lastSawMs < 120) return;
+        this.lastSawMs = nowMs;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(290, t0);
+        osc.frequency.linearRampToValueAtTime(460, t0 + 0.08);
+        osc.frequency.linearRampToValueAtTime(240, t0 + 0.22);
+        gain.gain.setValueAtTime(0.18, t0);
+        gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.24);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t0);
+        osc.stop(t0 + 0.25);
+      },
+
+      playPartBreak(isCrippled = false) {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        const freqs = isCrippled ? [620, 310, 580, 260] : [520, 340];
+        freqs.forEach((f, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "square";
+          osc.frequency.setValueAtTime(f, t0 + idx * 0.07);
+          gain.gain.setValueAtTime(0.13, t0 + idx * 0.07);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + (idx + 1) * 0.07);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0 + idx * 0.07);
+          osc.stop(t0 + (idx + 1) * 0.075);
+        });
+      },
+
+      playPredatorLock() {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        [880, 1174, 1568].forEach((f, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(f, t0 + idx * 0.045);
+          gain.gain.setValueAtTime(0.09, t0 + idx * 0.045);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.045 + 0.09);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0 + idx * 0.045);
+          osc.stop(t0 + idx * 0.045 + 0.095);
+        });
+      },
+
+      playWeaponFire(kind = "rail") {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        if (kind === "rail") {
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(1400, t0);
+          osc.frequency.exponentialRampToValueAtTime(180, t0 + 0.16);
+          gain.gain.setValueAtTime(0.16, t0);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.17);
+        } else if (kind === "mortar") {
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(220, t0);
+          osc.frequency.exponentialRampToValueAtTime(55, t0 + 0.24);
+          gain.gain.setValueAtTime(0.22, t0);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.25);
+        } else {
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(680, t0);
+          osc.frequency.exponentialRampToValueAtTime(220, t0 + 0.12);
+          gain.gain.setValueAtTime(0.12, t0);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.13);
+        }
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t0);
+        osc.stop(t0 + 0.26);
+      },
+
+      playWrenchHeal() {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        [523, 659, 784, 1046].forEach((f, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(f, t0 + idx * 0.055);
+          gain.gain.setValueAtTime(0.14, t0 + idx * 0.055);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.055 + 0.12);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0 + idx * 0.055);
+          osc.stop(t0 + idx * 0.055 + 0.13);
+        });
+      },
+
+      playCashChime() {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        [987.77, 1318.51].forEach((f, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(f, t0 + idx * 0.075);
+          gain.gain.setValueAtTime(0.14, t0 + idx * 0.075);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.075 + 0.22);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0 + idx * 0.075);
+          osc.stop(t0 + idx * 0.075 + 0.24);
+        });
+      },
+
+      playVictoryFanfare(won = true) {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        const notes = won ? [523.25, 659.25, 783.99, 1046.5] : [392.0, 349.23, 311.13, 261.63];
+        notes.forEach((f, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = won ? "triangle" : "sawtooth";
+          osc.frequency.setValueAtTime(f, t0 + idx * 0.11);
+          gain.gain.setValueAtTime(0.16, t0 + idx * 0.11);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.11 + 0.32);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t0 + idx * 0.11);
+          osc.stop(t0 + idx * 0.11 + 0.34);
+        });
+      }
+    };
+
+    // Auto-unlock WebAudio on first user pointer/keyboard gesture
+    ["pointerdown", "keydown"].forEach(evName => {
+      window.addEventListener(evName, () => {
+        if (!BotPitAudio.muted) BotPitAudio.init();
+      }, { once: true, passive: true });
+    });
+    setTimeout(() => BotPitAudio.syncButton(), 50);
+
     const SUBSYSTEM_DEFS = [
       { key: "tires",  label: "TIRES",  icon: "🛞", penDamaged: "-25% Speed",    penCrippled: "-50% Speed (Blown)" },
       { key: "armor",  label: "ARMOR",  icon: "🛡️", penDamaged: "Max HP Cap 86%", penCrippled: "Max HP Cap 68% (+25% Dmg)" },
@@ -9740,6 +10097,7 @@
       persistWalletAndRig();
       updatePlayerUI();
       if (!sim.running) setupStagingArena();
+      BotPitAudio.playWrenchHeal();
       showShopToast(`🔧 REPAIRED ${partKey.toUpperCase()} TO 100% (-${cost} 💎)!`, "#34d399");
     }
 
@@ -9757,6 +10115,7 @@
       persistWalletAndRig();
       updatePlayerUI();
       if (!sim.running) setupStagingArena();
+      BotPitAudio.playWrenchHeal();
       showShopToast(`🛠️ FULL PIT CREW OVERHAUL COMPLETE — ALL PARTS 100% (-${cost} 💎)!`, "#34d399");
     }
 
@@ -9789,6 +10148,7 @@
       if (!sim.running) setupStagingArena();
 
       const itemName = item ? (item.dynamicRole || item.name) : itemId;
+      BotPitAudio.playCashChime();
       showShopToast(`💰 SOLD ${itemName} FOR +${refund.toLocaleString()} 💎 (50% BUYBACK)!`, "#fbbf24");
     }
 
@@ -9934,9 +10294,11 @@
       const sd = SUBSYSTEM_DEFS.find(s => s.key === partKey) || { label: partKey.toUpperCase(), icon: "⚙️" };
       // Check if crossed 60% (DAMAGED) or 25% (CRIPPLED) threshold in real time!
       if (cur >= 60 && next < 60 && next >= 25) {
+        BotPitAudio.playPartBreak(false);
         emit3DSparks(bot.x, bot.y, "#fbbf24", 16, 7.5);
         addFloatText(bot.x, bot.y - 62, `⚠️ ${sd.icon} ${sd.label} DAMAGED (${next}%)!`, "#fbbf24");
       } else if (cur >= 25 && next < 25) {
+        BotPitAudio.playPartBreak(true);
         spawnArmorDebris(bot.x, bot.y, bot.color, 5, 9.0);
         emit3DSparks(bot.x, bot.y, "#fb7185", 26, 9.5);
         triggerCameraFocus(bot.x, bot.y, 1.15, 22, 3);
