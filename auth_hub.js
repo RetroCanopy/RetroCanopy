@@ -105,8 +105,7 @@
     } catch (_) {
       db = {};
     }
-    // Remove legacy/duplicate owner keys so ONLY 1 Owner entry exists
-    delete db['josephdanielcole1994@gmail.com'];
+    // Remove duplicate owner alias key so ONLY 1 Owner entry exists
     delete db['josephcole001.a1@gmail.com'];
 
     const ownerKey = OWNER_ADMIN_EMAIL.toLowerCase();
@@ -280,7 +279,7 @@
     const locAdm = getAdminAccountsDb();
     Object.keys(incomingMap).forEach((k) => {
       const lowerK = k.toLowerCase();
-      if (lowerK === 'josephdanielcole1994@gmail.com' || isOwnerEmail(lowerK)) return;
+      if (isOwnerEmail(lowerK)) return;
       const srvA = incomingMap[k];
       if (!srvA || typeof srvA !== 'object') return;
       const locA = locAdm[lowerK];

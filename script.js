@@ -4405,7 +4405,7 @@ function initSubpageLofiMusic() {
         }
         if (!window.RetroAuthHub && !document.querySelector('script[src*="auth_hub.js"]')) {
             const authScript = document.createElement('script');
-            authScript.src = 'auth_hub.js?v=153';
+            authScript.src = 'auth_hub.js?v=154';
             document.head.appendChild(authScript);
         }
     } catch (_) {}
