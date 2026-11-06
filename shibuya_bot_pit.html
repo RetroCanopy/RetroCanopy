@@ -3848,13 +3848,19 @@
         "#00ff88"
       );
 
-      // If Guest, send live keyboard inputs to Host at 30Hz
+      // If Guest, send live keyboard inputs to Host at 30Hz (mirror left/right to match Guest's left-side perspective)
       if (livePvp.role === "guest") {
         livePvp.inputIntervalId = setInterval(() => {
           if (!sim.running || !sim.isLiveMultiplayer) return;
           sendRoomPacket({
             type: "guest_input",
-            keys: { ...liveKeys }
+            keys: {
+              up: liveKeys.up,
+              down: liveKeys.down,
+              left: liveKeys.right,
+              right: liveKeys.left,
+              dash: liveKeys.dash
+            }
           });
         }, 33);
       }
@@ -3954,26 +3960,41 @@
         if (pkt.centerSaw && sim.centerSaw) {
           Object.assign(sim.centerSaw, pkt.centerSaw);
         }
-        // On Guest screen: sim.bots[0] is Guest (player), sim.bots[1] is Host (enemy)
+        // Mirror X (1600 - x) on Guest screen so Guest's own bot (sim.bots[0]) is on the left under their HUD bar
+        const mirrorBot = (src) => ({
+          ...src,
+          x: 1600 - src.x,
+          vx: -src.vx,
+          angle: Math.PI - src.angle,
+          turretAngle: Math.PI - (src.turretAngle || 0)
+        });
         const [myBot, hostEnemyBot] = sim.bots;
         if (myBot && pkt.guestBot) {
           const prevHp = myBot.hp;
-          Object.assign(myBot, pkt.guestBot);
+          Object.assign(myBot, mirrorBot(pkt.guestBot));
           if (myBot.hp < prevHp) {
             emit3DSparks(myBot.x, myBot.y, "#ff2a55", 10, 6.0);
           }
         }
         if (hostEnemyBot && pkt.hostBot) {
           const prevHp = hostEnemyBot.hp;
-          Object.assign(hostEnemyBot, pkt.hostBot);
+          Object.assign(hostEnemyBot, mirrorBot(pkt.hostBot));
           if (hostEnemyBot.hp < prevHp) {
             emit3DSparks(hostEnemyBot.x, hostEnemyBot.y, "#00ff88", 10, 6.0);
           }
         }
         if (Array.isArray(pkt.projectiles)) {
-          sim.projectiles = pkt.projectiles;
+          sim.projectiles = pkt.projectiles.map(p => ({
+            ...p,
+            x: 1600 - p.x,
+            angle: Math.PI - (p.angle || 0)
+          }));
         }
-        sim.clashLock = pkt.clashLock || null;
+        sim.clashLock = pkt.clashLock ? {
+          ...pkt.clashLock,
+          x: 1600 - pkt.clashLock.x,
+          advantage: -pkt.clashLock.advantage
+        } : null;
         syncHudReadout();
       } else if (pkt.type === "match_end" && sim.liveRole === "guest") {
         // Authoritative match result from Host
@@ -6542,6 +6563,15 @@
     // 4. TRUE 3D PBR SPRITE LAYER COMPOSITOR (ALL 20 BLENDER 5.2 MOUNTS!)
     // =========================================================================
     let rTicks = 0;
+    let lastPhysicsStepMs = performance.now();
+
+    // Keep live multiplayer physics stepping smoothly even if a player's browser tab is in the background
+    setInterval(() => {
+      if (sim.running && performance.now() - lastPhysicsStepMs > 30) {
+        lastPhysicsStepMs = performance.now();
+        stepArenaPhysics();
+      }
+    }, 18);
 
     function draw3DMountSprite(targetCtx, id, drawSize, spinRad = 0) {
       const src = MOUNT_3D_SPRITES[id];
@@ -6963,6 +6993,7 @@
     function renderTopDown3D() {
       rTicks++;
       if (sim.running) {
+        lastPhysicsStepMs = performance.now();
         stepArenaPhysics();
       }
 
