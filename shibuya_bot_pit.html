@@ -3392,7 +3392,7 @@
               <span class="spec-live-dot"></span>
               <span>🔴 LIVE FIGHTS HAPPENING NOW</span>
             </div>
-            <span class="broadcast-count-pill" id="liveFightsCountBadge">1 LIVE</span>
+            <span class="broadcast-count-pill" id="liveFightsCountBadge">0 LIVE</span>
           </div>
           <div class="live-fights-list" id="liveFightsList">
             <!-- Populated dynamically by renderLiveFightsList() -->
@@ -8879,7 +8879,18 @@
       }
 
       if (badgeEl) {
-        badgeEl.textContent = `${liveItems.length + 1} LIVE`;
+        badgeEl.textContent = `${liveItems.length} LIVE`;
+        badgeEl.style.opacity = liveItems.length > 0 ? "1" : "0.55";
+      }
+
+      if (liveItems.length === 0) {
+        listEl.innerHTML = `
+          <div class="no-fights-empty">
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.74rem;font-weight:800;color:#64748b;margin-bottom:4px;">📡 NO LIVE BATTLES HAPPENING RIGHT NOW</div>
+            <div style="font-size:0.76rem;color:#475569;">When players start a battle in the arena, their live stream will appear here automatically to watch!</div>
+          </div>
+        `;
+        return;
       }
 
       const cardsHtml = liveItems.map(b => {
@@ -8922,30 +8933,6 @@
           </div>
         `;
       });
-
-      // Always include the 24/7 Shibuya Main Event AI Exhibition Channel so players can test spectating anytime!
-      const isWatchingAi = pitSpectator.watchingRoomId === "featured_ai_stream";
-      cardsHtml.push(`
-        <div class="live-fight-item ${isWatchingAi ? 'watching' : ''}">
-          <div class="lf-info">
-            <div class="lf-fighters">
-              <span style="color:#38bdf8;">@SHIBUYA_KING</span>
-              <span class="lf-vs-badge">VS</span>
-              <span style="color:#f43f5e;">@RONIN_VORTEX</span>
-            </div>
-            <div class="lf-meta">
-              <span>📺 24/7 PIT TV EXHIBITION</span>
-              <span style="color:#fbbf24;">🎰 💎 2,000 POT</span>
-              <span>🥊 3x3:00 CHAMPIONSHIP</span>
-            </div>
-          </div>
-          ${
-            isWatchingAi
-              ? `<button type="button" class="btn-watch-fight watching" onclick="leaveSpectatorMode()">🔴 WATCHING (EXIT)</button>`
-              : `<button type="button" class="btn-watch-fight" onclick="spectateLiveMatch('featured_ai_stream')">👁️ WATCH LIVE</button>`
-          }
-        </div>
-      `);
 
       listEl.innerHTML = cardsHtml.join("");
     }
