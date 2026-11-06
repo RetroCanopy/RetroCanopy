@@ -3113,7 +3113,10 @@
       </div>
       <div class="elo-pill" id="pilotEloDisplay">🏆 1,000</div>
       <div class="record-pill" id="pilotRecordDisplay">⚔️ 0W - 0L</div>
-      <div class="scrap-top-pill" id="topScrapDisplay">💎 3,500</div>
+      <div class="elo-pill" id="pilotXpDisplay" style="border-color:rgba(56,189,248,0.45);color:#38bdf8;" title="Battle CPU Bots to earn XP — every XP converts into Diamonds!">⚡ 0 XP</div>
+      <a href="games.html?openTickets=1" class="elo-pill" id="pilotTicketsDisplay" style="border-color:rgba(251,191,36,0.55);color:#fde047;text-decoration:none;" title="Win PvP Battles to earn Golden Tickets for the Ticket Counter!">🎟️ 0 TICKETS</a>
+      <div class="scrap-top-pill" id="topScrapDisplay" onclick="openBuyDiamondsModal()" style="cursor:pointer;" title="Click to Purchase Diamonds">💎 0</div>
+      <button type="button" class="top-nav-pill" style="background:linear-gradient(180deg,#38bdf8 0%,#0284c7 100%);color:#041019;border-color:#7dd3fc;font-weight:900;" onclick="openBuyDiamondsModal()" title="Purchase Diamonds in-game">💎 BUY DIAMONDS</button>
       <div class="cloud-save-pill" id="cloudSyncBadge">☁️ SAVED</div>
     </div>
 
@@ -3144,7 +3147,7 @@
             <div class="name">🤖 MY BOT GARAGE</div>
           </div>
           <div class="rig-lvl-pill" id="botRigSubTag">LVL 1</div>
-          <div class="scrap-pill" id="scrapReadout">💎 3,500</div>
+          <div class="scrap-pill" id="scrapReadout">💎 0</div>
         </div>
 
         <div class="base-stats-bar" style="margin-top: 10px;">
@@ -3472,12 +3475,12 @@
         </div>
         <div class="shop-header-actions">
           <div class="shop-toast-banner" id="shopToastBanner">✅ UPGRADE PURCHASED & ATTACHED!</div>
-          <div class="shop-scrap-vault" id="shopScrapBalance">💎 3,500 DIAMONDS</div>
+          <div class="shop-scrap-vault" id="shopScrapBalance">💎 0 DIAMONDS</div>
           <button class="shop-tab active" id="toggleDynamicBtn" onclick="toggleDynamicFilter()">
             ⭐ 5 DYNAMIC PICKS
           </button>
-          <button class="shop-tab" onclick="addFreeScrap()" style="color:#34d399;">+1,000 💎 FREE</button>
-          <button class="shop-tab" onclick="resetShopInventory()" style="color:#fb7185;" title="Reset owned upgrades & restore 3,500 Diamonds">🔄 RESET PURCHASES</button>
+          <button class="shop-tab" onclick="openBuyDiamondsModal()" style="background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;border-color:#fde047;font-weight:900;">💎 BUY DIAMONDS</button>
+          <button class="shop-tab" onclick="resetShopInventory()" style="color:#fb7185;" title="Reset owned upgrades to 0 Diamonds">🔄 RESET PURCHASES</button>
           <button class="btn-close-shop" onclick="closeShopModal()">✕ CLOSE</button>
         </div>
       </div>
@@ -3775,6 +3778,8 @@
       return copy;
     }
 
+    const ECONOMY_V2_MIGRATION_KEY = "rc_botpit_zero_diamond_econ_v2";
+
     function createDefaultAccountProgress(username, email, password) {
       const cleanName = String(username || "PILOT").trim().replace(/^@/, "");
       return {
@@ -3783,13 +3788,16 @@
         email: String(email || `${cleanName.toLowerCase()}@retrocanopy.com`).trim().toLowerCase(),
         password: String(password || ""),
         pilotCallsign: "@" + cleanName.toUpperCase().slice(0, 16),
-        scrap: 3500,
+        scrap: 0,
+        cpuXp: 0,
+        tickets: 0,
+        econV2: true,
         ownedIds: [],
         loadout: { ...EMPTY_LOADOUT },
         elo: 1000,
         pvpWins: 0,
         pvpLosses: 0,
-        wagerAmount: 250,
+        wagerAmount: 0,
         clearedLevels: [],
         updatedAt: Date.now()
       };
@@ -3803,8 +3811,10 @@
       elo: 1000,
       pvpWins: 0,
       pvpLosses: 0,
-      scrap: 3500,
-      wagerAmount: 250,
+      scrap: 0,
+      cpuXp: 0,
+      tickets: 0,
+      wagerAmount: 0,
       isAllInWager: false,
       gameMode: "pvp", // "pvp" (Live Online Random Player) | "cpu" (Similar-Level CPU Bot)
       currentLevel: 1,
@@ -3839,6 +3849,9 @@
         email: state.loggedInEmail || `${uKey}@retrocanopy.com`,
         pilotCallsign: state.pilotCallsign,
         scrap: Math.max(0, Number(state.scrap) || 0),
+        cpuXp: Math.max(0, Number(state.cpuXp) || 0),
+        tickets: Math.max(0, Number(state.tickets) || 0),
+        econV2: true,
         ownedIds: Array.isArray(state.ownedIds) ? [...state.ownedIds] : [],
         loadout: normalizeLoadout(state.loadout),
         elo: Math.max(100, Number(state.elo) || 1000),
@@ -3871,6 +3884,16 @@
         createdAt: Date.now()
       };
       existingSite.botPitData = progressSnapshot;
+      existingSite.tickets = Math.max(Number(existingSite.tickets) || 0, progressSnapshot.tickets);
+      // In games.html Ticket Counter, 10 rc_canopy_xp = 1 Golden Ticket (🎟️)
+      const minTicketCounterPoints = progressSnapshot.tickets * 10;
+      existingSite.xp = Math.max(Number(existingSite.xp) || 0, minTicketCounterPoints);
+      try {
+        const curGlobalPts = parseInt(localStorage.getItem("rc_canopy_xp") || "0", 10) || 0;
+        if (minTicketCounterPoints > curGlobalPts) {
+          localStorage.setItem("rc_canopy_xp", String(minTicketCounterPoints));
+        }
+      } catch (_) {}
       existingSite.highScores = existingSite.highScores || {};
       existingSite.highScores["Shibuya Bot Pit"] = Math.max(
         Number(existingSite.highScores["Shibuya Bot Pit"]) || 0,
@@ -3911,17 +3934,26 @@
     function applyAccountProgressToState(uKey, record) {
       const cleanName = String(record.username || uKey).trim().replace(/^@/, "");
       const bp = record.botPitData || record;
+      // Migrate legacy accounts that had the old 3,500 starter grant & 0 owned upgrades to the new 0-Diamond economy
+      const isLegacyUnmigrated = !bp.econV2 && bp.scrap === 3500 && (!bp.ownedIds || bp.ownedIds.length === 0);
       state.loggedInUserKey = uKey.toLowerCase();
       state.loggedInUsername = cleanName;
       state.loggedInEmail = String(record.email || bp.email || `${uKey}@retrocanopy.com`);
       state.pilotCallsign = bp.pilotCallsign || ("@" + cleanName.toUpperCase().slice(0, 16));
-      state.scrap = typeof bp.scrap === "number" && !Number.isNaN(bp.scrap) ? bp.scrap : 3500;
+      state.scrap = isLegacyUnmigrated ? 0 : (typeof bp.scrap === "number" && !Number.isNaN(bp.scrap) ? bp.scrap : 0);
+      state.cpuXp = typeof bp.cpuXp === "number" && !Number.isNaN(bp.cpuXp) ? bp.cpuXp : 0;
+      const globalTickets = Math.floor((parseInt(localStorage.getItem("rc_canopy_xp") || "0", 10) || 0) / 10);
+      state.tickets = Math.max(
+        typeof bp.tickets === "number" && !Number.isNaN(bp.tickets) ? bp.tickets : 0,
+        typeof record.tickets === "number" ? record.tickets : 0,
+        globalTickets
+      );
       state.ownedIds = Array.isArray(bp.ownedIds) ? [...bp.ownedIds] : [];
       state.loadout = normalizeLoadout(bp.loadout);
       state.elo = typeof bp.elo === "number" && !Number.isNaN(bp.elo) ? bp.elo : 1000;
       state.pvpWins = typeof bp.pvpWins === "number" && !Number.isNaN(bp.pvpWins) ? bp.pvpWins : 0;
       state.pvpLosses = typeof bp.pvpLosses === "number" && !Number.isNaN(bp.pvpLosses) ? bp.pvpLosses : 0;
-      state.wagerAmount = typeof bp.wagerAmount === "number" && !Number.isNaN(bp.wagerAmount) ? bp.wagerAmount : 250;
+      state.wagerAmount = isLegacyUnmigrated ? 0 : (typeof bp.wagerAmount === "number" && !Number.isNaN(bp.wagerAmount) ? Math.min(bp.wagerAmount, state.scrap) : 0);
       state.clearedLevels = Array.isArray(bp.clearedLevels) ? [...bp.clearedLevels] : [];
       state.isAllInWager = false;
 
@@ -3983,7 +4015,7 @@
         const rec = bpMap[k] || siteMap[k] || {};
         const bData = rec.botPitData || rec;
         const call = bData.pilotCallsign || ("@" + (rec.username || k).toUpperCase());
-        const dm = typeof bData.scrap === "number" ? bData.scrap : 3500;
+        const dm = typeof bData.scrap === "number" ? bData.scrap : 0;
         const mods = bData.loadout ? Object.values(bData.loadout).filter(Boolean).length : 0;
         return `<button type="button" class="pilot-saved-chip" onclick="instantLoginSavedPilotAccount('${k.replace(/'/g, "\'")}')">⚡ AUTO-LOGIN ${call} · 💎 ${dm.toLocaleString()} · ${mods}/6</button>`;
       }).join("");
@@ -4910,30 +4942,24 @@
         state.scrap += totalWon;
         state.elo += 28;
         state.pvpWins++;
+        awardPvpVictoryTicket();
         persistWalletAndRig();
         banner.textContent = staked > 0
-          ? `🏆 LIVE PVP VICTORY! +${totalWon.toLocaleString()} 💎 POT (+28 🏆)`
-          : `🏆 LIVE PVP VICTORY VS. ${chObj.callsign}! (+28 🏆)`;
+          ? `🏆 LIVE PVP WIN! +1 🎟️ TICKET & +${totalWon.toLocaleString()} 💎 POT (+28 🏆)`
+          : `🏆 LIVE PVP WIN VS. ${chObj.callsign}! +1 🎟️ TICKET (+28 🏆)`;
         banner.style.color = "#00ff88";
-        desc.textContent = staked > 0
-          ? `Lowest Wager was 💎 ${staked.toLocaleString()} each — you swept the live 💎 ${totalWon.toLocaleString()} pot from ${chObj.callsign}!`
-          : `You defeated live player ${chObj.callsign}!`;
+        desc.textContent = `🎟️ You earned +1 Golden Ticket for the Ticket Counter (Total: ${state.tickets} 🎟️)${staked > 0 ? ' + swept the 💎 ' + totalWon.toLocaleString() + ' wager pot!' : '!'}`;
       } else {
         state.elo = Math.max(800, state.elo - 16);
         state.pvpLosses++;
-        let bailoutMsg = "";
-        if (staked > 0 && state.scrap < 100) {
-          state.scrap += 250;
-          bailoutMsg = " · +250 💎 Sponsor Bailout!";
-        }
         persistWalletAndRig();
         banner.textContent = staked > 0
           ? `💥 DEFEATED BY LIVE PLAYER ${chObj.callsign} (-${staked.toLocaleString()} 💎)`
           : `💥 DEFEATED BY LIVE PLAYER ${chObj.callsign} (-16 🏆)`;
         banner.style.color = "#ff2a55";
         desc.textContent = staked > 0
-          ? `${chObj.callsign} won the live 💎 ${(staked * 2).toLocaleString()} Winner-Takes-All pot${bailoutMsg}`
-          : `Live match completed — upgrade your bot or rematch below!`;
+          ? `${chObj.callsign} won the live 💎 ${(staked * 2).toLocaleString()} Winner-Takes-All pot — fight CPU bots for XP/Diamonds or buy Diamonds!`
+          : `Live match completed — fight CPU bots to earn XP & Diamonds or rematch below!`;
       }
 
       sim.isLiveMultiplayer = false;
@@ -5307,6 +5333,10 @@
       document.getElementById("pilotCallsignDisplay").textContent = state.pilotCallsign;
       document.getElementById("pilotEloDisplay").textContent = `🏆 ${state.elo.toLocaleString()}`;
       document.getElementById("pilotRecordDisplay").textContent = `⚔️ ${state.pvpWins}W - ${state.pvpLosses}L`;
+      const xpEl = document.getElementById("pilotXpDisplay");
+      if (xpEl) xpEl.textContent = `⚡ ${(state.cpuXp || 0).toLocaleString()} XP`;
+      const tkEl = document.getElementById("pilotTicketsDisplay");
+      if (tkEl) tkEl.textContent = `🎟️ ${(state.tickets || 0).toLocaleString()} TICKET${state.tickets === 1 ? '' : 'S'}`;
       document.getElementById("topScrapDisplay").textContent = `💎 ${state.scrap.toLocaleString()}`;
       document.getElementById("scrapReadout").textContent = `💎 ${state.scrap.toLocaleString()} DIAMONDS`;
 
@@ -5464,7 +5494,7 @@
     }
 
     function resetShopInventory() {
-      state.scrap = 3500;
+      state.scrap = 0;
       state.ownedIds = [];
       state.loadout = { tire: null, wpn1: null, wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null };
       state.previewAddonId = null;
@@ -5472,7 +5502,7 @@
       updatePlayerUI();
       switchShopSlot(state.activeShopSlot);
       if (!sim.running) setupStagingArena();
-      showShopToast("🔄 INVENTORY RESET — 💎 3,500 DIAMONDS READY TO SPEND!", "#fbbf24");
+      showShopToast("🔄 INVENTORY RESET TO 0 💎 — FIGHT CPU BOTS FOR XP OR BUY DIAMONDS!", "#fbbf24");
     }
 
     function previewAddonOnRig(addonId) {
@@ -5710,8 +5740,8 @@
 
       if (!state.ownedIds.includes(itemId)) {
         if (state.scrap < price) {
-          showShopToast(`⚠️ NEED ${price} 💎 DIAMONDS! Click '+1,000 💎 FREE' above!`, "#fb7185");
-          alert(`Not enough Diamonds (Need 💎 ${price}, you have 💎 ${state.scrap}). Click '+1,000 💎 FREE' at the top of the Shop or win battles to earn more!`);
+          showShopToast(`⚠️ NEED ${price} 💎 DIAMONDS! Fight CPU Bots for XP or Buy Diamonds!`, "#fb7185");
+          openBuyDiamondsModal(price - state.scrap);
           return;
         }
         state.scrap -= price;
@@ -6890,32 +6920,33 @@
 
         if (state.gameMode === "cpu") {
           const cpuObj = getActiveSimilarCpu();
+          const xpEarned = won ? (Number(cpuObj.reward) || 200) : Math.max(60, Math.round((Number(cpuObj.reward) || 200) * 0.35));
+          const diamondsFromXp = xpEarned; // 1 XP = 1 💎 Diamond from CPU Bot Training!
+          state.cpuXp = (state.cpuXp || 0) + xpEarned;
+
           if (won) {
-            const totalWon = staked * 2;
-            state.scrap += totalWon;
+            const totalWagerWon = staked * 2;
+            const totalDiamondsAdded = diamondsFromXp + totalWagerWon;
+            state.scrap += totalDiamondsAdded;
             persistWalletAndRig();
             banner.textContent = staked > 0
-              ? `🏆 WON ${sim.pRoundsWon}-${sim.eRoundsWon}! +${totalWon.toLocaleString()} 💎 POT`
-              : `🏆 CPU DEFEATED! (FREE MATCH)`;
+              ? `🏆 CPU DEFEATED! +${xpEarned} ⚡ XP ➔ +${totalDiamondsAdded.toLocaleString()} 💎 DIAMONDS!`
+              : `🏆 CPU DEFEATED! +${xpEarned} ⚡ XP ➔ +${diamondsFromXp.toLocaleString()} 💎 DIAMONDS!`;
             banner.style.color = "#00ff88";
             desc.textContent = staked > 0
-              ? `Matched Wager was 💎 ${staked.toLocaleString()} each — you took the entire 💎 ${totalWon.toLocaleString()} pot!`
-              : `You defeated ${cpuObj.name}! Set a Diamond Wager below to win 2x stakes!`;
+              ? `Earned +${xpEarned} Combat XP (+${diamondsFromXp} 💎) + swept the 💎 ${totalWagerWon.toLocaleString()} wager pot!`
+              : `Fighting CPU bots grants Combat XP that converts into Diamonds (+${xpEarned} ⚡ XP = +${diamondsFromXp} 💎)!`;
           } else {
+            state.scrap += diamondsFromXp;
+            persistWalletAndRig();
             if (staked > 0) {
-              let bailoutMsg = "";
-              if (state.scrap < 100) {
-                state.scrap += 250;
-                bailoutMsg = " · +250 💎 Sponsor Bailout!";
-              }
-              persistWalletAndRig();
-              banner.textContent = `💥 DEFEATED! LOST -${staked.toLocaleString()} 💎 WAGER`;
+              banner.textContent = `💥 DEFEATED BY CPU (-${staked} 💎 WAGER · +${xpEarned} ⚡ XP = +${diamondsFromXp} 💎)`;
               banner.style.color = "#ff2a55";
-              desc.textContent = `CPU took the 💎 ${(staked * 2).toLocaleString()} Winner-Takes-All pot${bailoutMsg}`;
+              desc.textContent = `Lost 💎 ${staked.toLocaleString()} wager, but earned +${xpEarned} Combat XP (+${diamondsFromXp} 💎 Diamonds) for battling the CPU!`;
             } else {
-              banner.textContent = `💥 DEFEATED BY ${cpuObj.name}`;
+              banner.textContent = `💥 DEFEATED BY ${cpuObj.name} (+${xpEarned} ⚡ XP ➔ +${diamondsFromXp} 💎)`;
               banner.style.color = "#ff2a55";
-              desc.textContent = "Free match — no Diamonds lost! Upgrade your bot or rematch below!";
+              desc.textContent = `Even in defeat, battling CPU bots earned you +${xpEarned} Combat XP (+${diamondsFromXp} 💎 Diamonds)!`;
             }
           }
           state.activeSimilarCpu = generateSimilarLevelCpuBot();
@@ -6945,41 +6976,34 @@
             sim.liveRole = null;
             cleanupLiveRoomChannels();
           }
-          // Live Online PvP Outcome — Winner Takes All (2x Lowest Matched Wager)
+          // Live Online PvP Outcome — Winner earns +1 Golden Ticket (🎟️) for the Ticket Counter + 2x Lowest Matched Wager!
           const chObj = getActivePvpOpponent();
           if (won) {
             const totalWon = staked * 2;
             state.scrap += totalWon;
             state.elo += 28;
             state.pvpWins++;
+            awardPvpVictoryTicket();
             persistWalletAndRig();
             localStorage.setItem("unit17_elo", String(state.elo));
             localStorage.setItem("unit17_pvp_wins", String(state.pvpWins));
             banner.textContent = staked > 0
-              ? `🏆 WON ${sim.pRoundsWon}-${sim.eRoundsWon}! +${totalWon.toLocaleString()} 💎 POT (+28 🏆)`
-              : `🏆 PVP VICTORY VS. ${chObj.callsign}! (+28 🏆)`;
+              ? `🏆 PVP WIN! +1 🎟️ TICKET & +${totalWon.toLocaleString()} 💎 POT (+28 🏆)`
+              : `🏆 PVP VICTORY VS. ${chObj.callsign}! +1 🎟️ TICKET (+28 🏆)`;
             banner.style.color = "#38bdf8";
-            desc.textContent = staked > 0
-              ? `Lowest Wager was 💎 ${staked.toLocaleString()} each — you swept the 💎 ${totalWon.toLocaleString()} pot from ${chObj.callsign}!`
-              : `You defeated ${chObj.callsign}! Raise your wager to play for Diamonds!`;
+            desc.textContent = `🎟️ Earned +1 Golden Ticket for the Ticket Counter (Total: ${state.tickets} 🎟️)${staked > 0 ? ' + swept the 💎 ' + totalWon.toLocaleString() + ' pot!' : '!'}`;
           } else {
             state.elo = Math.max(800, state.elo - 16);
             state.pvpLosses++;
             persistWalletAndRig();
             if (staked > 0) {
-              let bailoutMsg = "";
-              if (state.scrap < 100) {
-                state.scrap += 250;
-                bailoutMsg = " · +250 💎 Sponsor Bailout!";
-              }
-              persistWalletAndRig();
               banner.textContent = `💥 DEFEATED BY ${chObj.callsign} (-${staked.toLocaleString()} 💎)`;
               banner.style.color = "#ff2a55";
-              desc.textContent = `${chObj.callsign} took the 💎 ${(staked * 2).toLocaleString()} Winner-Takes-All pot${bailoutMsg}`;
+              desc.textContent = `${chObj.callsign} took the 💎 ${(staked * 2).toLocaleString()} Winner-Takes-All pot — fight CPU bots for XP/Diamonds or buy Diamonds!`;
             } else {
               banner.textContent = `💥 DEFEATED BY ${chObj.callsign} (-16 🏆)`;
               banner.style.color = "#ff2a55";
-              desc.textContent = `Free match — no Diamonds lost! Upgrade your bot in the Shop or battle again!`;
+              desc.textContent = `Fight CPU bots to earn XP & Diamonds or upgrade your bot in the Shop!`;
             }
           }
           if (!state.customFriendChallenger) {
@@ -9016,6 +9040,308 @@
         }, 2800);
       }
     };
+
+
+    // =========================================================================
+    // GOLDEN TICKET REWARD (PVP WINS) & IN-GAME DIAMOND STORE
+    // =========================================================================
+    const DIAMOND_STORE_PACKS = [
+      {
+        id: "pack_starter",
+        badge: "ROOKIE BOOST",
+        diamonds: 500,
+        bonus: 0,
+        priceUsd: "$0.99",
+        color: "#38bdf8",
+        desc: "Enough Diamonds to unlock 2–3 Tier-1/Tier-2 3D modules immediately."
+      },
+      {
+        id: "pack_pit_fighter",
+        badge: "POPULAR · +10% BONUS",
+        diamonds: 1500,
+        bonus: 150,
+        priceUsd: "$2.99",
+        color: "#34d399",
+        desc: "Outfit a full 6-Slot Street Tuned Rig + extra Diamonds for PvP wagers."
+      },
+      {
+        id: "pack_champion_crate",
+        badge: "BEST VALUE · +25% BONUS",
+        diamonds: 3500,
+        bonus: 700,
+        priceUsd: "$4.99",
+        color: "#fbbf24",
+        featured: true,
+        desc: "Unlock an entire Tier-3/Tier-4 Heavy Assault Loadout + high-roller wager bankroll."
+      },
+      {
+        id: "pack_shibuya_king",
+        badge: "PRO SYNDICATE · +35% BONUS",
+        diamonds: 8000,
+        bonus: 2000,
+        priceUsd: "$9.99",
+        color: "#a855f7",
+        desc: "Unlock multiple complete 6-Slot builds (Bulldozer, Sniper, Spinner & Cryo)!"
+      },
+      {
+        id: "pack_founders_vault",
+        badge: "FOUNDER'S VAULT · +50% BONUS",
+        diamonds: 20000,
+        bonus: 5000,
+        priceUsd: "$19.99",
+        color: "#f43f5e",
+        desc: "Enough Diamonds to buy every single 3D Tire, Weapon & Ability in the Armory!"
+      }
+    ];
+
+    function awardPvpVictoryTicket() {
+      state.tickets = (state.tickets || 0) + 1;
+      // Sync with RetroCanopy Ticket Counter (1 Golden Ticket = 10 Canopy Points in games.html)
+      try {
+        const curPts = parseInt(localStorage.getItem("rc_canopy_xp") || "0", 10) || 0;
+        const nextPts = Math.max(curPts + 10, state.tickets * 10);
+        localStorage.setItem("rc_canopy_xp", String(nextPts));
+      } catch (_) {}
+      addFloatText(800, 310, "🎟️ +1 GOLDEN ARCADE TICKET EARNED! (REDEEM AT TICKET COUNTER)", "#fde047");
+    }
+
+    function ensureDiamondStoreModalInjected() {
+      if (document.getElementById("buyDiamondsModalBackdrop")) return;
+
+      const style = document.createElement("style");
+      style.textContent = `
+        .diamond-store-backdrop {
+          position: fixed;
+          inset: 0;
+          z-index: 98000;
+          background: radial-gradient(circle at 50% 25%, rgba(15, 23, 42, 0.88) 0%, rgba(4, 6, 12, 0.96) 100%);
+          backdrop-filter: blur(16px);
+          display: none;
+          align-items: center;
+          justify-content: center;
+          padding: 16px;
+        }
+        .diamond-store-backdrop.active {
+          display: flex;
+        }
+        .diamond-store-card {
+          width: 100%;
+          max-width: 820px;
+          background: linear-gradient(180deg, #161f33 0%, #090d16 100%);
+          border: 1.5px solid rgba(56, 189, 248, 0.55);
+          border-radius: 24px;
+          padding: 22px 24px;
+          box-shadow: 0 32px 90px rgba(0, 0, 0, 0.96), 0 0 42px rgba(56, 189, 248, 0.2);
+          color: #f8fafc;
+          max-height: 92vh;
+          overflow-y: auto;
+        }
+        .diamond-store-top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding-bottom: 14px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          margin-bottom: 14px;
+        }
+        .diamond-store-title h2 {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 1.25rem;
+          font-weight: 900;
+          color: #ffffff;
+          margin: 0 0 4px;
+          letter-spacing: 1px;
+        }
+        .diamond-store-title p {
+          font-size: 0.84rem;
+          color: #94a3b8;
+          margin: 0;
+          font-weight: 600;
+        }
+        .diamond-packs-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+          gap: 12px;
+          margin-bottom: 14px;
+        }
+        .diamond-pack-item {
+          background: linear-gradient(180deg, rgba(30, 41, 59, 0.85) 0%, rgba(11, 15, 25, 0.95) 100%);
+          border: 1.5px solid rgba(255, 255, 255, 0.1);
+          border-radius: 18px;
+          padding: 14px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 10px;
+          position: relative;
+          transition: transform 0.14s ease, border-color 0.14s ease;
+        }
+        .diamond-pack-item:hover {
+          transform: translateY(-2px);
+          border-color: rgba(56, 189, 248, 0.65);
+        }
+        .diamond-pack-item.featured {
+          border-color: #fbbf24;
+          box-shadow: 0 0 24px rgba(251, 191, 36, 0.2);
+        }
+        .dp-badge {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 0.54rem;
+          font-weight: 900;
+          padding: 3px 9px;
+          border-radius: 999px;
+          align-self: flex-start;
+          letter-spacing: 0.6px;
+        }
+        .dp-amount {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 1.32rem;
+          font-weight: 900;
+          color: #ffffff;
+          display: flex;
+          align-items: baseline;
+          gap: 6px;
+        }
+        .dp-bonus {
+          font-size: 0.72rem;
+          color: #34d399;
+          font-weight: 800;
+        }
+        .dp-desc {
+          font-size: 0.78rem;
+          color: #cbd5e1;
+          line-height: 1.35;
+          font-weight: 600;
+        }
+        .dp-buy-btn {
+          width: 100%;
+          padding: 11px 14px;
+          border-radius: 12px;
+          border: none;
+          background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+          color: #090612;
+          font-family: 'Orbitron', sans-serif;
+          font-size: 0.78rem;
+          font-weight: 900;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          box-shadow: inset 0 1px 1px rgba(255,255,255,0.5), 0 6px 16px rgba(217,119,6,0.35);
+        }
+        .dp-buy-btn:hover {
+          filter: brightness(1.08);
+        }
+        .diamond-store-earn-note {
+          background: rgba(15, 23, 42, 0.85);
+          border: 1px solid rgba(52, 211, 153, 0.35);
+          border-radius: 14px;
+          padding: 10px 14px;
+          font-size: 0.80rem;
+          color: #cbd5e1;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+      `;
+      document.head.appendChild(style);
+
+      const modal = document.createElement("div");
+      modal.id = "buyDiamondsModalBackdrop";
+      modal.className = "diamond-store-backdrop";
+      modal.onclick = (e) => {
+        if (e.target === modal) closeBuyDiamondsModal();
+      };
+
+      const packsHtml = DIAMOND_STORE_PACKS.map(pk => {
+        const total = pk.diamonds + pk.bonus;
+        return `
+          <div class="diamond-pack-item ${pk.featured ? 'featured' : ''}">
+            <div>
+              <div class="dp-badge" style="background:${pk.color}22;color:${pk.color};border:1px solid ${pk.color}66;">${pk.badge}</div>
+              <div class="dp-amount" style="margin-top:8px;">
+                <span>💎 ${total.toLocaleString()}</span>
+                ${pk.bonus > 0 ? `<span class="dp-bonus">(+${pk.bonus} BONUS)</span>` : ''}
+              </div>
+              <div class="dp-desc" style="margin-top:6px;">${pk.desc}</div>
+            </div>
+            <button type="button" class="dp-buy-btn" onclick="purchaseDiamondPack('${pk.id}')">
+              <span>⚡ INSTANT TOP-UP</span>
+              <span style="background:rgba(0,0,0,0.22);padding:2px 8px;border-radius:999px;">${pk.priceUsd}</span>
+            </button>
+          </div>
+        `;
+      }).join("");
+
+      modal.innerHTML = `
+        <div class="diamond-store-card" onclick="event.stopPropagation()">
+          <div class="diamond-store-top">
+            <div class="diamond-store-title">
+              <h2>💎 SHIBUYA BOT PIT — DIAMOND VAULT STORE</h2>
+              <p id="diamondStoreSubMsg">Top up Diamonds instantly for 3D Upgrades &amp; High-Roller PvP Wagers, or earn Diamonds for free by battling CPU Bots for XP!</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="shop-scrap-vault" id="diamondStoreVaultReadout">💎 0</div>
+              <button type="button" class="btn-close-shop" onclick="closeBuyDiamondsModal()">✕ CLOSE</button>
+            </div>
+          </div>
+
+          <div class="diamond-packs-grid">
+            ${packsHtml}
+          </div>
+
+          <div class="diamond-store-earn-note">
+            <span>🤖 <strong>FREE PLAY-TO-EARN PATH:</strong> Every CPU Bot match awards <strong>Combat XP (⚡)</strong> that converts 1:1 into <strong>Diamonds (💎)</strong>! Every <strong>PvP Victory</strong> awards <strong>+1 Golden Ticket (🎟️)</strong> for the RetroCanopy Ticket Counter!</span>
+            <button type="button" class="shop-tab" style="color:#34d399;border-color:#34d399;" onclick="closeBuyDiamondsModal(); closeShopModal(); matchSimilarLevelCpu(false);">🤖 FIGHT CPU FOR XP &rarr;</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function openBuyDiamondsModal(shortfallAmount = 0) {
+      if (!ensurePilotLoggedIn()) return;
+      ensureDiamondStoreModalInjected();
+      const vaultEl = document.getElementById("diamondStoreVaultReadout");
+      if (vaultEl) vaultEl.textContent = `💎 ${state.scrap.toLocaleString()}`;
+      const subEl = document.getElementById("diamondStoreSubMsg");
+      if (subEl) {
+        if (shortfallAmount > 0) {
+          subEl.innerHTML = `<span style="color:#fbbf24;font-weight:800;">⚠️ You need 💎 ${shortfallAmount.toLocaleString()} more Diamonds for that upgrade!</span> Choose a Diamond Pack below or fight CPU Bots to earn XP &amp; Diamonds:`;
+        } else {
+          subEl.textContent = "Top up Diamonds instantly for 3D Upgrades & High-Roller PvP Wagers, or earn Diamonds for free by battling CPU Bots for XP!";
+        }
+      }
+      document.getElementById("buyDiamondsModalBackdrop").classList.add("active");
+    }
+
+    function closeBuyDiamondsModal() {
+      const el = document.getElementById("buyDiamondsModalBackdrop");
+      if (el) el.classList.remove("active");
+    }
+
+    function purchaseDiamondPack(packId) {
+      if (!ensurePilotLoggedIn()) return;
+      const pk = DIAMOND_STORE_PACKS.find(p => p.id === packId);
+      if (!pk) return;
+      const totalCredited = pk.diamonds + pk.bonus;
+      state.scrap += totalCredited;
+      persistWalletAndRig();
+      updatePlayerUI();
+      const vaultEl = document.getElementById("diamondStoreVaultReadout");
+      if (vaultEl) vaultEl.textContent = `💎 ${state.scrap.toLocaleString()}`;
+      if (!document.getElementById("shopModalBackdrop").classList.contains("hidden")) {
+        switchShopSlot(state.activeShopSlot);
+      }
+      showShopToast(`💎 +${totalCredited.toLocaleString()} DIAMONDS CREDITED (${pk.priceUsd})!`, "#34d399");
+      const subEl = document.getElementById("diamondStoreSubMsg");
+      if (subEl) {
+        subEl.innerHTML = `<span style="color:#34d399;font-weight:800;">✅ PURCHASE COMPLETE: +${totalCredited.toLocaleString()} 💎 added to ${state.pilotCallsign}'s Vault!</span>`;
+      }
+    }
 
     function bootPitSpectatorAndChat() {
       initLiveLobbyChannels();
