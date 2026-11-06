@@ -5264,7 +5264,12 @@ if (document.readyState === 'loading') {
 
   window.__triggerBotPitAppDownload = async function() {
     const statusBox = document.getElementById('rcBotPitInstallStatusBox');
-    const targetUrl = new URL('shibuya_bot_pit.html?app=1', window.location.href).href;
+    const activeRcUser = (localStorage.getItem('rc_current_user_v1') || localStorage.getItem('rc_current_user_v2') || localStorage.getItem('rc_botpit_active_user_v1') || '').trim();
+    const activeRcEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim();
+    const qParams = new URLSearchParams({ app: '1' });
+    if (activeRcUser) qParams.set('rc_user', activeRcUser);
+    if (activeRcEmail) qParams.set('rc_email', activeRcEmail);
+    const targetUrl = new URL('shibuya_bot_pit.html?' + qParams.toString(), window.location.href).href;
     const iconUrl = new URL('assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg', window.location.href).href;
 
     // 1. If native browser PWA install prompt is ready (Chrome / Edge / Android), trigger it immediately!

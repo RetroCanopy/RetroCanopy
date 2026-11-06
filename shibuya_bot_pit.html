@@ -3644,6 +3644,96 @@
     const BOTPIT_ACTIVE_USER_KEY = "rc_botpit_active_user_v1";
     const SITE_ACCOUNTS_KEY = "rc_accounts_db_v2";
     const SITE_CURRENT_USER_KEY = "rc_current_user_v2";
+    const SITE_CURRENT_USER_V1_KEY = "rc_current_user_v1";
+    const SITE_ADMIN_ACCOUNTS_KEY = "rc_admin_accounts_v2";
+    const SITE_CURRENT_ADMIN_EMAIL_KEY = "rc_current_admin_email_v1";
+    const SITE_IS_ADMIN_KEY = "rc_is_admin_v1";
+
+    function getAdminAccountsMap() {
+      let db = {};
+      try {
+        const raw = localStorage.getItem(SITE_ADMIN_ACCOUNTS_KEY);
+        db = raw ? JSON.parse(raw) : {};
+      } catch (_) {
+        db = {};
+      }
+      db["josephcole001.ai@gmail.com"] = {
+        name: "Joseph Cole",
+        email: "josephcole001.ai@gmail.com",
+        password: db["josephcole001.ai@gmail.com"]?.password || "Admin001!",
+        status: "Approved",
+        isOwner: true
+      };
+      return db;
+    }
+
+    function detectRetroCanopySiteSession() {
+      const bpMap = getBotPitAccountsMap();
+      const siteMap = getSiteAccountsMap();
+      const adminMap = getAdminAccountsMap();
+
+      // Check URL query param ?rc_user= passed from main site or standalone App Launcher
+      let urlUser = "";
+      let urlEmail = "";
+      try {
+        const params = new URLSearchParams(window.location.search || "");
+        urlUser = (params.get("rc_user") || "").trim().replace(/^@/, "");
+        urlEmail = (params.get("rc_email") || "").trim().toLowerCase();
+      } catch (_) {}
+
+      // 1. Check active RetroCanopy Owner / Approved Admin session from auth_hub.js
+      const isAdmin = localStorage.getItem(SITE_IS_ADMIN_KEY) === "true";
+      const adminEmail = (localStorage.getItem(SITE_CURRENT_ADMIN_EMAIL_KEY) || urlEmail || "").trim().toLowerCase();
+      const v1User = (localStorage.getItem(SITE_CURRENT_USER_V1_KEY) || urlUser || "").trim();
+
+      if ((isAdmin && adminEmail) || (urlEmail && adminMap[urlEmail])) {
+        const admRec = adminMap[adminEmail] || {
+          name: v1User || adminEmail.split("@")[0],
+          email: adminEmail,
+          password: ""
+        };
+        const cleanUser = (v1User || admRec.name || adminEmail.split("@")[0]).replace(/\s*\(Owner\)\s*/i, "").trim().replace(/^@/, "") || "PILOT";
+        const uKey = cleanUser.toLowerCase();
+        const existing = bpMap[uKey] || siteMap[uKey];
+        const record = existing
+          ? { ...existing, username: existing.username || cleanUser, email: admRec.email || existing.email }
+          : createDefaultAccountProgress(cleanUser, admRec.email, admRec.password || "pilot123");
+        return { uKey, record, isRetroCanopySSO: true };
+      }
+
+      // 2. Check active RetroCanopy site user (v1, v2, URL param, or active BotPit user)
+      const rawKey = (
+        v1User ||
+        localStorage.getItem(SITE_CURRENT_USER_KEY) ||
+        localStorage.getItem(BOTPIT_ACTIVE_USER_KEY) ||
+        ""
+      ).trim().replace(/^@/, "");
+
+      if (rawKey) {
+        const uKey = rawKey.toLowerCase();
+        if (bpMap[uKey] || siteMap[uKey]) {
+          return {
+            uKey,
+            record: { ...(siteMap[uKey] || {}), ...(bpMap[uKey] || {}) },
+            isRetroCanopySSO: true
+          };
+        }
+        for (const k of Object.keys(adminMap)) {
+          const a = adminMap[k];
+          const aNameClean = String(a.name || "").replace(/\s*\(Owner\)\s*/i, "").trim().toLowerCase();
+          if (k === uKey || aNameClean === uKey || k.split("@")[0] === uKey) {
+            const cleanName = String(a.name || uKey).replace(/\s*\(Owner\)\s*/i, "").trim();
+            const normKey = cleanName.toLowerCase();
+            const rec = bpMap[normKey] || siteMap[normKey] || createDefaultAccountProgress(cleanName, a.email, a.password || "");
+            return { uKey: normKey, record: rec, isRetroCanopySSO: true };
+          }
+        }
+        const autoRec = createDefaultAccountProgress(rawKey, urlEmail || `${uKey}@retrocanopy.com`, "");
+        return { uKey, record: autoRec, isRetroCanopySSO: true };
+      }
+
+      return null;
+    }
 
     function getBotPitAccountsMap() {
       try {
@@ -3837,6 +3927,9 @@
 
       localStorage.setItem(BOTPIT_ACTIVE_USER_KEY, state.loggedInUserKey);
       localStorage.setItem(SITE_CURRENT_USER_KEY, state.loggedInUserKey);
+      if (!localStorage.getItem(SITE_CURRENT_USER_V1_KEY)) {
+        localStorage.setItem(SITE_CURRENT_USER_V1_KEY, state.loggedInUsername || state.loggedInUserKey);
+      }
 
       persistWalletAndRig();
       updatePlayerUI();
@@ -3862,6 +3955,21 @@
     function renderSavedAccountChips() {
       const bpMap = getBotPitAccountsMap();
       const siteMap = getSiteAccountsMap();
+      const adminMap = getAdminAccountsMap();
+
+      // Ensure any approved RetroCanopy Admin accounts on this device are also available in bpMap
+      for (const emailKey of Object.keys(adminMap)) {
+        const adm = adminMap[emailKey];
+        if (adm && adm.status === "Approved" && !adm.deleted) {
+          const cleanName = String(adm.name || emailKey.split("@")[0]).replace(/\s*\(Owner\)\s*/i, "").trim();
+          const uKey = cleanName.toLowerCase();
+          if (!bpMap[uKey] && !siteMap[uKey]) {
+            bpMap[uKey] = createDefaultAccountProgress(cleanName, adm.email, adm.password || "");
+          }
+        }
+      }
+      saveBotPitAccountsMap(bpMap);
+
       const allKeys = Array.from(new Set([...Object.keys(bpMap), ...Object.keys(siteMap)]));
       const wrap = document.getElementById("pilotSavedAccountsWrap");
       const list = document.getElementById("pilotSavedChipsList");
@@ -3877,8 +3985,17 @@
         const call = bData.pilotCallsign || ("@" + (rec.username || k).toUpperCase());
         const dm = typeof bData.scrap === "number" ? bData.scrap : 3500;
         const mods = bData.loadout ? Object.values(bData.loadout).filter(Boolean).length : 0;
-        return `<button type="button" class="pilot-saved-chip" onclick="fillSavedPilotAccount('${k.replace(/'/g, "\'")}')">${call} · 💎 ${dm.toLocaleString()} · ${mods}/6</button>`;
+        return `<button type="button" class="pilot-saved-chip" onclick="instantLoginSavedPilotAccount('${k.replace(/'/g, "\'")}')">⚡ AUTO-LOGIN ${call} · 💎 ${dm.toLocaleString()} · ${mods}/6</button>`;
       }).join("");
+    }
+
+    function instantLoginSavedPilotAccount(uKey) {
+      const bpMap = getBotPitAccountsMap();
+      const siteMap = getSiteAccountsMap();
+      const rec = bpMap[uKey] || siteMap[uKey];
+      if (!rec) return;
+      applyAccountProgressToState(uKey, rec);
+      closePilotAuthGateModal();
     }
 
     function fillSavedPilotAccount(uKey) {
@@ -3962,6 +4079,29 @@
             }
           }
         } catch (_) {}
+      }
+
+      // 1b. Check RetroCanopy Owner & Approved Admin accounts (rc_admin_accounts_v2)
+      const adminMap = getAdminAccountsMap();
+      const ownerAliases = ["josephcole001.ai@gmail.com", "josephcole001.a1@gmail.com", "joseph", "joseph cole"];
+      for (const aKey of Object.keys(adminMap)) {
+        const adm = adminMap[aKey];
+        if (!adm || adm.deleted || adm.status !== "Approved") continue;
+        const cleanAdminName = String(adm.name || aKey.split("@")[0]).replace(/\s*\(Owner\)\s*/i, "").trim();
+        const isMatch =
+          aKey === idLower ||
+          (adm.email && adm.email.toLowerCase() === idLower) ||
+          cleanAdminName.toLowerCase() === idLower ||
+          (adm.isOwner && ownerAliases.includes(idLower));
+        if (isMatch && adm.password && (adm.password === rawPass || adm.password.toLowerCase() === rawPass.toLowerCase())) {
+          const uKey = cleanAdminName.toLowerCase();
+          const existing = bpMap[uKey] || siteMap[uKey] || createDefaultAccountProgress(cleanAdminName, adm.email, adm.password);
+          bpMap[uKey] = { ...existing, username: cleanAdminName, email: adm.email, password: adm.password };
+          saveBotPitAccountsMap(bpMap);
+          applyAccountProgressToState(uKey, bpMap[uKey]);
+          closePilotAuthGateModal();
+          return;
+        }
       }
 
       // 2. Check local BotPit & Site Account stores
@@ -4055,7 +4195,25 @@
     }
 
     async function restorePilotSessionOnBoot() {
-      const bootKey = (localStorage.getItem(BOTPIT_ACTIVE_USER_KEY) || localStorage.getItem(SITE_CURRENT_USER_KEY) || "").trim().toLowerCase();
+      // Automatically detect active RetroCanopy login (Owner, Approved Admin, or Site User)
+      const ssoSession = detectRetroCanopySiteSession();
+      if (ssoSession && ssoSession.uKey && ssoSession.record) {
+        const bpMap = getBotPitAccountsMap();
+        if (!bpMap[ssoSession.uKey]) {
+          bpMap[ssoSession.uKey] = ssoSession.record;
+          saveBotPitAccountsMap(bpMap);
+        }
+        applyAccountProgressToState(ssoSession.uKey, bpMap[ssoSession.uKey]);
+        closePilotAuthGateModal();
+      }
+
+      const bootKey = (
+        (ssoSession && ssoSession.uKey) ||
+        localStorage.getItem(BOTPIT_ACTIVE_USER_KEY) ||
+        localStorage.getItem(SITE_CURRENT_USER_KEY) ||
+        localStorage.getItem(SITE_CURRENT_USER_V1_KEY) ||
+        ""
+      ).trim().toLowerCase();
       if (!bootKey) {
         openPilotAuthGateModal();
         return;
@@ -9265,7 +9423,12 @@
 
   window.__triggerBotPitAppDownload = async function() {
     const statusBox = document.getElementById('rcBotPitInstallStatusBox');
-    const targetUrl = new URL('shibuya_bot_pit.html?app=1', window.location.href).href;
+    const activeRcUser = (localStorage.getItem('rc_current_user_v1') || localStorage.getItem('rc_current_user_v2') || localStorage.getItem('rc_botpit_active_user_v1') || '').trim();
+    const activeRcEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim();
+    const qParams = new URLSearchParams({ app: '1' });
+    if (activeRcUser) qParams.set('rc_user', activeRcUser);
+    if (activeRcEmail) qParams.set('rc_email', activeRcEmail);
+    const targetUrl = new URL('shibuya_bot_pit.html?' + qParams.toString(), window.location.href).href;
     const iconUrl = new URL('assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg', window.location.href).href;
 
     // 1. If native browser PWA install prompt is ready (Chrome / Edge / Android), trigger it immediately!
