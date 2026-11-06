@@ -3305,14 +3305,22 @@
     }
 
     async function restorePilotSessionOnBoot() {
-      const activeKey = (localStorage.getItem(BOTPIT_ACTIVE_USER_KEY) || localStorage.getItem(SITE_CURRENT_USER_KEY) || "").trim().toLowerCase();
-      if (!activeKey) {
+      const bootKey = (localStorage.getItem(BOTPIT_ACTIVE_USER_KEY) || localStorage.getItem(SITE_CURRENT_USER_KEY) || "").trim().toLowerCase();
+      if (!bootKey) {
         openPilotAuthGateModal();
         return;
       }
 
       const bpMap = getBotPitAccountsMap();
       const siteMap = getSiteAccountsMap();
+      const activeKey = bootKey;
+
+      // Immediately apply local cached session so there's zero delay
+      const localExisting = bpMap[activeKey] || siteMap[activeKey];
+      if (localExisting && !state.loggedInUserKey) {
+        applyAccountProgressToState(activeKey, localExisting);
+        closePilotAuthGateModal();
+      }
 
       // Check Supabase Cloud for latest bot_pit_data if connected
       if (window.db) {
@@ -3338,11 +3346,15 @@
         } catch (_) {}
       }
 
+      // If the user switched accounts or started a match while cloud fetch was in flight, do not overwrite!
+      if ((state.loggedInUserKey && state.loggedInUserKey !== activeKey) || sim.running || livePvp.searching || livePvp.activeRoomId) {
+        return;
+      }
       const existing = bpMap[activeKey] || siteMap[activeKey];
       if (existing) {
         applyAccountProgressToState(activeKey, existing);
         closePilotAuthGateModal();
-      } else {
+      } else if (!state.loggedInUserKey) {
         openPilotAuthGateModal();
       }
     }
