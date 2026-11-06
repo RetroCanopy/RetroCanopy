@@ -1,4 +1,4 @@
-﻿-- ==============================================================================
+-- ==============================================================================
 -- RETROCANOPY SUPABASE DATABASE SCHEMA
 -- Execute this script in Supabase Dashboard -> SQL Editor -> Run
 -- ==============================================================================
@@ -107,3 +107,84 @@ SET
     price = EXCLUDED.price,
     image_url = EXCLUDED.image_url,
     badge = EXCLUDED.badge;
+
+-- ==============================================================================
+-- 5. ADMIN & AUTH ACCOUNTS TABLE (PROTECTED ROUTES & OWNER APPROVAL)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.admin_accounts (
+    email_key TEXT PRIMARY KEY,
+    auth_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    password_hash TEXT DEFAULT '',
+    status TEXT NOT NULL DEFAULT 'Pending' CHECK (status IN ('Pending', 'Approved', 'Denied', 'Revoked')),
+    is_owner BOOLEAN NOT NULL DEFAULT false,
+    deleted BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_accounts_auth_user_id ON public.admin_accounts(auth_user_id);
+CREATE INDEX IF NOT EXISTS idx_admin_accounts_status ON public.admin_accounts(status);
+
+INSERT INTO public.admin_accounts (email_key, name, email, status, is_owner, deleted)
+VALUES ('josephcole001.ai@gmail.com', 'Joseph Cole (Owner)', 'josephcole001.ai@gmail.com', 'Approved', true, false)
+ON CONFLICT (email_key) DO UPDATE
+SET status = 'Approved', is_owner = true, deleted = false, updated_at = now();
+
+-- ==============================================================================
+-- 6. ARCADE ACCOUNTS & LEADERBOARD TABLE
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.arcade_accounts (
+    username_key TEXT PRIMARY KEY,
+    auth_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    username TEXT NOT NULL,
+    pin TEXT DEFAULT '',
+    email TEXT,
+    xp INTEGER NOT NULL DEFAULT 0,
+    best_score INTEGER NOT NULL DEFAULT 0,
+    used_coupons JSONB NOT NULL DEFAULT '{}'::jsonb,
+    active_checkout_coupon TEXT DEFAULT '',
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_arcade_accounts_best_score ON public.arcade_accounts(best_score DESC);
+CREATE INDEX IF NOT EXISTS idx_arcade_accounts_auth_user_id ON public.arcade_accounts(auth_user_id);
+
+ALTER TABLE public.admin_accounts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.arcade_accounts ENABLE ROW LEVEL SECURITY;
+
+GRANT SELECT, INSERT, UPDATE ON public.admin_accounts TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE ON public.arcade_accounts TO anon, authenticated;
+
+CREATE POLICY "Allow read admin_accounts"
+    ON public.admin_accounts FOR SELECT
+    TO anon, authenticated
+    USING (true);
+
+CREATE POLICY "Allow insert admin_accounts"
+    ON public.admin_accounts FOR INSERT
+    TO anon, authenticated
+    WITH CHECK (email_key = lower(email));
+
+CREATE POLICY "Allow update admin_accounts"
+    ON public.admin_accounts FOR UPDATE
+    TO anon, authenticated
+    USING (true)
+    WITH CHECK (email_key = lower(email));
+
+CREATE POLICY "Allow read arcade_accounts"
+    ON public.arcade_accounts FOR SELECT
+    TO anon, authenticated
+    USING (true);
+
+CREATE POLICY "Allow insert arcade_accounts"
+    ON public.arcade_accounts FOR INSERT
+    TO anon, authenticated
+    WITH CHECK (username_key = lower(username));
+
+CREATE POLICY "Allow update arcade_accounts"
+    ON public.arcade_accounts FOR UPDATE
+    TO anon, authenticated
+    USING (true)
+    WITH CHECK (username_key = lower(username));

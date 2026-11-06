@@ -4397,7 +4397,9 @@ function initSubpageLofiMusic() {
     try {
         sessionStorage.setItem('rc_from_internal', '1');
         sessionStorage.setItem('rc_intro_seen', '1');
-        if (localStorage.getItem('rc_is_admin_v1') !== 'true') {
+        const curPath = (window.location.pathname || '').toLowerCase();
+        const hasPilotLogin = Boolean(localStorage.getItem('rc_current_user_v2') || localStorage.getItem('rc_botpit_active_user_v1'));
+        if (localStorage.getItem('rc_is_admin_v1') !== 'true' && !hasPilotLogin && !curPath.includes('shibuya_bot_pit')) {
             window.location.replace('index.html');
             return;
         }
@@ -4605,28 +4607,33 @@ function initHomeShopScroller() {
 
     // Bottom Row: Retrocanopy Arcade Games (scrolling in the opposite direction: left-to-right)
     if (gamesTrack) {
-        const arcadeCatalog = [
-            { code: 'ARC-02', styleClass: 'rc-game-style-arc02', title: "Skee Roll '84", titleTop: 'SHINJUKU', titleMain: "SKEE ROLL '84", cat: 'ARCADE', badge: 'PLAY NOW', comingSoon: false, img: 'assets/concept_gallery/skee_roll_84_concept.jpg?v=2', href: 'skee_roll.html' },
-            { code: 'ARC-03', styleClass: 'rc-game-style-arc03', title: '86 Outrun Horizon Chase', titleTop: "'86 OUTRUN", titleMain: 'HORIZON CHASE', cat: 'OUTRUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/86_outrun_horizon_chase_poster.jpg?v=147', href: 'games.html?openDeck=1' },
-            { code: 'ARC-04', styleClass: 'rc-game-style-arc04', title: 'Shibuya Hoverboard Blitz', titleTop: 'SHIBUYA HOVERBOARD', titleMain: '⚡ BLITZ ⚡', cat: 'GRIND', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/shibuya_hoverboard_blitz_poster.jpg?v=147', href: 'games.html?openDeck=1' },
-            { code: 'ARC-06', styleClass: 'rc-game-style-arc06', title: 'Cyber-Shrine Skyway Run', titleTop: 'CYBER-SHRINE', titleMain: 'SKYWAY RUN', cat: 'RUNNER', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/cyber_shrine_skyway_run_poster.jpg?v=147', href: 'games.html?openDeck=1' },
-            { code: 'ARC-07', styleClass: 'rc-game-style-arc07', title: 'Wangan Midnight Chase', titleTop: 'WANGAN MIDNIGHT', titleMain: 'CHASE', cat: 'DRIFT', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/wangan_midnight_chase_poster.jpg?v=147', href: 'games.html?openDeck=1' },
-            { code: 'ARC-08', styleClass: 'rc-game-style-arc08', title: 'Akihabara Rooftop Slalom', titleTop: 'AKIHABARA', titleMain: 'ROOFTOP SLALOM', cat: 'SLALOM', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/akihabara_rooftop_slalom_poster.jpg?v=147', href: 'games.html?openDeck=1' },
-            { code: 'ARC-09', styleClass: 'rc-game-style-arc09', title: 'Shibuya Valkyrie Storm', titleTop: 'SHIBUYA', titleMain: 'VALKYRIE STORM', cat: 'BOSS RUN', badge: 'COMING SOON', comingSoon: true, img: 'assets/concept_gallery/shibuya_valkyrie_storm_poster.jpg?v=147', href: 'games.html?openDeck=1' }
-        ];
-        const loopGames = arcadeCatalog.concat(arcadeCatalog);
-        gamesTrack.innerHTML = loopGames.map((game) => {
-            const gameThumbSrc = toCarouselThumb(game.img);
-            return `
-            <a class="rc-shop-scroll-card rc-game-scroll-card ${game.styleClass}${game.comingSoon ? ' is-coming-soon' : ' is-active-game'}" href="${game.href}" draggable="false" aria-label="${game.title}">
+        const gamesViewport = document.getElementById('rc-games-scroll-viewport');
+        if (gamesViewport) {
+            gamesViewport.style.justifyContent = 'flex-start';
+            gamesViewport.style.paddingLeft = 'clamp(28px, 4.5vw, 68px)';
+            gamesViewport.style.paddingRight = 'clamp(28px, 4.5vw, 68px)';
+            gamesViewport.style.maskImage = 'none';
+            gamesViewport.style.webkitMaskImage = 'none';
+            gamesViewport.style.cursor = 'default';
+        }
+        gamesTrack.style.transform = 'none';
+        gamesTrack.style.willChange = 'auto';
+        gamesTrack.style.width = '100%';
+        gamesTrack.style.justifyContent = 'flex-start';
+
+        const game = {
+            code: 'BOT-PIT',
+            styleClass: 'rc-game-style-arc02',
+            title: 'Shibuya Bot Pit',
+            titleTop: 'SHIBUYA 3D ARENA',
+            titleMain: 'BOT PIT',
+            img: 'assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg',
+            href: 'shibuya_bot_pit.html'
+        };
+        gamesTrack.innerHTML = `
+            <a class="rc-shop-scroll-card rc-game-scroll-card ${game.styleClass} is-active-game" href="${game.href}" draggable="false" aria-label="${game.title}">
                 <div class="rc-shop-scroll-img-wrap rc-game-scroll-img-wrap">
-                    <img class="rc-shop-scroll-img rc-game-scroll-img" src="${gameThumbSrc}" data-fb="${game.img}" alt="" loading="eager" decoding="async" draggable="false" onerror="if(this.dataset.fb&&this.src.indexOf(this.dataset.fb)===-1){this.src=this.dataset.fb;}" />
-                    ${game.comingSoon ? `
-                    <div class="rc-game-coming-soon-visual">
-                        <div class="rc-cs-visual-plaque">
-                            <span class="rc-cs-visual-title">COMING SOON</span>
-                        </div>
-                    </div>` : ''}
+                    <img class="rc-shop-scroll-img rc-game-scroll-img" src="${game.img}" data-fb="${game.img}" alt="" loading="eager" decoding="async" draggable="false" />
                 </div>
                 <div class="rc-game-name-plaque">
                     <div class="rc-game-unique-title">
@@ -4642,7 +4649,6 @@ function initHomeShopScroller() {
                 </div>
             </a>
         `;
-        }).join('');
     }
 
     let offsetPx = 0;
@@ -4776,7 +4782,6 @@ function initHomeShopScroller() {
     }
 
     bindCarouselSwipe(document.getElementById('rc-shop-scroll-viewport'), false);
-    bindCarouselSwipe(document.getElementById('rc-games-scroll-viewport'), true);
 
     function tickScroller(now) {
         const dt = Math.min(0.06, Math.max(0.001, (now - lastTime) / 1000));
@@ -4797,20 +4802,7 @@ function initHomeShopScroller() {
             track.style.transform = `translate3d(${-offsetPx}px, 0, 0)`;
         }
 
-        // Middle Row: Arcade games scrolling left-to-right (opposite direction) + touch swipe & momentum
-        if (gamesTrack) {
-            const gamesHalfWidth = gamesTrack.scrollWidth / 2;
-            if (gamesHalfWidth > 0 && !gamesDragActive) {
-                if (Math.abs(gamesMomentumVel) > 8) {
-                    gamesPosPx = wrapInfiniteOffset(gamesPosPx + gamesMomentumVel * dt, gamesHalfWidth);
-                    gamesMomentumVel *= Math.pow(0.04, dt);
-                } else {
-                    gamesMomentumVel = 0;
-                    gamesPosPx = wrapInfiniteOffset(gamesPosPx - speedPxPerSec * dt, gamesHalfWidth);
-                }
-                gamesTrack.style.transform = `translate3d(${-gamesPosPx}px, 0, 0)`;
-            }
-        }
+        // Middle Row: Static single BattleBots game positioned on the left (not a carousel)
 
         requestAnimationFrame(tickScroller);
     }

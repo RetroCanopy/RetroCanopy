@@ -92,38 +92,7 @@
   function getAccountsDb() {
     try {
       const raw = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '{}') || {};
-      const admDb = getAdminAccountsDb();
-      const approvedNames = new Set(['joseph', 'joseph cole (owner)']);
-      const approvedEmails = new Set(OWNER_EMAIL_ALIASES);
-      Object.values(admDb).forEach((a) => {
-        if (a && a.status === 'Approved' && !a.deleted) {
-          if (a.name) approvedNames.add(a.name.trim().toLowerCase());
-          if (a.email) {
-            approvedEmails.add(a.email.trim().toLowerCase());
-            approvedNames.add(a.email.split('@')[0].trim().toLowerCase());
-          }
-        }
-      });
-      const filtered = {};
-      let changed = false;
-      Object.keys(raw).forEach((k) => {
-        const rec = raw[k];
-        if (!rec) {
-          changed = true;
-          return;
-        }
-        const uname = (rec.username || k || '').trim().toLowerCase();
-        const uemail = (rec.email || '').trim().toLowerCase();
-        if (approvedNames.has(uname) || (uemail && approvedEmails.has(uemail))) {
-          filtered[k] = rec;
-        } else {
-          changed = true;
-        }
-      });
-      if (changed) {
-        localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(filtered));
-      }
-      return filtered;
+      return raw && typeof raw === 'object' ? raw : {};
     } catch (_) {
       return {};
     }
@@ -548,7 +517,9 @@
   function verifyActiveAdminSessionStillValid() {
     if (localStorage.getItem(IS_ADMIN_KEY) !== 'true') {
       localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
-      localStorage.removeItem(CURRENT_USER_KEY);
+      if (!localStorage.getItem('rc_botpit_active_user_v1')) {
+        localStorage.removeItem(CURRENT_USER_KEY);
+      }
       return false;
     }
     const activeEmail = (localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY) || '').trim().toLowerCase();
@@ -843,7 +814,8 @@
       try {
         sessionStorage.setItem('rc_from_internal', '1');
       } catch (_) {}
-      if (!path.includes('admin') && !isAdminLoggedIn()) {
+      const hasBotPitLogin = Boolean(localStorage.getItem('rc_botpit_active_user_v1'));
+      if (!path.includes('admin') && !path.includes('shibuya_bot_pit') && !isAdminLoggedIn() && !getCurrentUser() && !hasBotPitLogin) {
         window.location.replace('index.html');
       }
       return;

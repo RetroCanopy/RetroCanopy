@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>window.location.replace("shibuya_bot_pit.html");</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JARVIS DEEP DIVE // Shibuya Citadel '84: Hero &amp; Tower Defense RPG | RetroCanopy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #04050c;
+      --bg-panel: rgba(12, 16, 32, 0.92);
+      --cyan: #00f0ff;
+      --magenta: #ff2a85;
+      --gold: #ffd447;
+      --green: #00ff9d;
+      --purple: #b545ff;
+      --text-main: #f4f7ff;
+      --text-muted: rgba(215, 228, 255, 0.78);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background:
+        radial-gradient(circle at 18% 12%, rgba(0, 240, 255, 0.14), transparent 38%),
+        radial-gradient(circle at 84% 20%, rgba(255, 42, 133, 0.14), transparent 42%),
+        radial-gradient(circle at 50% 85%, rgba(255, 212, 71, 0.10), transparent 48%),
+        var(--bg-deep);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      line-height: 1.55;
+      padding-bottom: 90px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 7, 16, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.35);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 0.98rem;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-gold {
+      background: rgba(255, 212, 71, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .nav-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-pill {
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 240, 255, 0.38);
+      background: rgba(0, 240, 255, 0.1);
+      transition: all 0.18s ease;
+    }
+
+    .nav-pill:hover {
+      background: var(--cyan);
+      color: #040611;
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.6);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 24px 0;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(16, 23, 46, 0.96), rgba(9, 12, 26, 0.98));
+      border: 1.5px solid rgba(0, 240, 255, 0.4);
+      border-radius: 22px;
+      padding: 30px 34px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 36px rgba(0, 240, 255, 0.14);
+      margin-bottom: 30px;
+    }
+
+    .eyebrow {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.16em;
+      margin-bottom: 8px;
+    }
+
+    .hero-h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.55rem, 3vw, 2.35rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 10px;
+      line-height: 1.18;
+    }
+
+    .hero-h1 span { color: var(--cyan); text-shadow: 0 0 18px rgba(0, 240, 255, 0.55); }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 1060px;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      margin: 30px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Interactive Playable Mini-Prototype Stage */
+    .sim-layout {
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 24px;
+      align-items: start;
+      margin-bottom: 34px;
+    }
+
+    @media (max-width: 980px) {
+      .sim-layout { grid-template-columns: 1fr; }
+    }
+
+    .phone-frame {
+      background: #060916;
+      border: 2.5px solid var(--cyan);
+      border-radius: 26px;
+      padding: 14px;
+      box-shadow: 0 20px 55px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 240, 255, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .phone-hud-top {
+      background: rgba(12, 18, 38, 0.95);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .xp-bar-outer {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .xp-bar-inner {
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(90deg, var(--cyan), var(--gold));
+      transition: width 0.2s ease;
+    }
+
+    #tdCanvas {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background: radial-gradient(circle at 50% 30%, #151e3f 0%, #070a18 100%);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      display: block;
+      touch-action: none;
+    }
+
+    .phone-controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .ctrl-btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 9px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--cyan);
+      background: rgba(0, 240, 255, 0.14);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .ctrl-btn:hover {
+      background: var(--cyan);
+      color: #040714;
+      box-shadow: 0 0 14px rgba(0, 240, 255, 0.6);
+    }
+
+    .ctrl-btn.gold {
+      border-color: var(--gold);
+      background: rgba(255, 212, 71, 0.16);
+      color: var(--gold);
+    }
+
+    .ctrl-btn.gold:hover {
+      background: var(--gold);
+      color: #050712;
+    }
+
+    /* Right Column Breakdown */
+    .pillars-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pillar-card {
+      background: var(--bg-panel);
+      border: 1px solid rgba(0, 240, 255, 0.28);
+      border-radius: 18px;
+      padding: 20px 22px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+    }
+
+    .pillar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+
+    .pillar-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .pillar-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(255, 42, 133, 0.16);
+      border: 1px solid var(--magenta);
+      color: #ff8cc0;
+    }
+
+    .pillar-list {
+      padding-left: 18px;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pillar-list strong { color: #fff; }
+
+    /* 3 Sub-Variations Grid */
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 20px;
+      margin-bottom: 34px;
+    }
+
+    .mode-card {
+      background: linear-gradient(180deg, rgba(16, 22, 44, 0.96), rgba(9, 12, 25, 0.98));
+      border: 1.5px solid rgba(255, 212, 71, 0.35);
+      border-radius: 20px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mode-badge {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+
+    .mode-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    /* 20 Combined Concept Arts Grid (#02 + #05) */
+    .art-grid-20 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 1100px) { .art-grid-20 { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px) { .art-grid-20 { grid-template-columns: repeat(2, 1fr); } }
+
+    .art-card {
+      background: #060914;
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .art-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.85), 0 0 16px rgba(255, 212, 71, 0.35);
+    }
+
+    .art-card img {
+      width: 100%;
+      aspect-ratio: 9 / 11;
+      object-fit: cover;
+      display: block;
+    }
+
+    .art-card-cap {
+      padding: 7px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #e6f2ff;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <span>◆ JARVIS // CONCEPT #02 + TOWER DEFENSE EXPANSION</span>
+      <span class="badge-gold">HERO ACTION + TURRET MERGE RPG</span>
+    </div>
+    <nav class="nav-row">
+      <a href="#liveSimSection" class="nav-pill">🕹️ INTERACTIVE PROTOTYPE</a>
+      <a href="#variationsSection" class="nav-pill">⚡ 3 GAMEPLAY VARIATIONS</a>
+      <a href="#artGallerySection" class="nav-pill">🎨 20 CONCEPT BOARDS</a>
+      <a href="jarvis_game_concepts.html" class="nav-pill">← ALL 10 GAMES</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero-banner">
+      <div class="eyebrow">CONCEPT #02 + #05 FUSION // THE #1 HYBRID MOBILE APP FORMULA</div>
+      <h1 class="hero-h1">SHIBUYA CITADEL '84: <span>Hero Archer + Neon Tower Defense</span></h1>
+      <p class="hero-desc">
+        Sir, combining <strong>#02 (Shibuya Archer '84: One-Thumb Stop-&amp;-Shoot Hero)</strong> with <strong>Tower Defense</strong> creates the highest-retaining mobile genre of 2025–2026 (inspired by <em>Archero</em> + <em>Thronefall</em> + <em>Rush Royale</em>). Instead of passively watching towers shoot, <strong>you actively move your Misfit Hero with one thumb</strong>—dodging boss lasers and auto-firing—while building and merging <strong>Neon Cyber-Turrets</strong> around the Stage 6 Valkyrie Vault!
+      </p>
+    </section>
+
+    <h2 class="section-title" id="liveSimSection">🕹️ LIVE INTERACTIVE MINI-PROTOTYPE (TEST HERO + TURRET MERGE LOOP)</h2>
+    <div class="sim-layout">
+      <!-- Left: Interactive Canvas Mini-Prototype -->
+      <div class="phone-frame">
+        <div class="phone-hud-top">
+          <div class="hud-row">
+            <span id="simWaveTxt" style="color:#00f0ff;">WAVE 1 / 5 • SHIBUYA ROOFTOP</span>
+            <span id="simLvlTxt" style="color:#00ff9d;">PILOT LVL 1</span>
+          </div>
+          <div class="xp-bar-outer">
+            <div class="xp-bar-inner" id="simXpBar"></div>
+          </div>
+          <div class="hud-row" style="font-size:0.66rem;color:#ffd447;">
+            <span id="simYenTxt">⚡ 120 YEN</span>
+            <span id="simVaultTxt">🛡️ VAULT HP: 100%</span>
+            <span id="simTicketsTxt">🎟️ 0 TICKETS</span>
+          </div>
+        </div>
+
+        <canvas id="tdCanvas" width="390" height="520"></canvas>
+
+        <div class="phone-controls">
+          <button class="ctrl-btn" onclick="spawnTurret()">➕ BUILD TURRET (40¥)</button>
+          <button class="ctrl-btn" onclick="mergeTurrets()">⚡ MERGE TURRETS</button>
+          <button class="ctrl-btn gold" onclick="triggerHeroOverdrive()">🌟 24K OVERDRIVE</button>
+        </div>
+        <div style="font-size:0.74rem;color:var(--text-muted);text-align:center;">
+          👆 <strong>Drag anywhere on the screen</strong> to move your Hero (release to auto-shoot!). Click buttons above to spawn/merge Neon Turrets.
+        </div>
+      </div>
+
+      <!-- Right: Expanded Core Pillars -->
+      <div class="pillars-stack">
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-title">1. The 2-Phase "Build &amp; Raid" Core Loop (60–90s Per Wave)</span>
+            <span class="pillar-tag">THRONEFALL + ARCHERO</span>
+          </div>
+          <ul class="pillar-list">
+            <li><strong>Phase A — 10-Second Prep &amp; Merge:</strong> Spend Yen dropped by drones to place <strong>Neon Turrets</strong> on tactical rooftop pads or drag two Lv.1 Turrets together to evolve a <strong>Lv.2 Twin-Railgun / Cryo Tower</strong>.</li>
+            <li><strong>Phase B — 45-Second One-Thumb Hero Wave:</strong> Synth-drones and Bosozoku mechs march down the neon lanes toward your <strong>Stage 6 Valkyrie Vault</strong>. Drag with one thumb to position your Hero in chokepoints; release your thumb to unleash rapid-fire plasma arrows alongside your turrets!</li>
+          </ul>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-title">2. Dual Level-Up System (In-Run 3-Perk Draft + Persistent Account Level)</span>
+            <span class="pillar-tag">3.4x DAY-7 RETENTION</span>
+          </div>
+          <ul class="pillar-list">
+            <li><strong>In-Run Pilot Level (LVL 1 → 10 Every Stage):</strong> Vacuuming glowing XP shards fills your top bar and pauses for a <strong>3-Perk Hologram Draft</strong> that buffs <em>both</em> your Hero and your Towers (e.g., <em>"Ricochet Arrows"</em>, <em>"Turrets Fire Chain Lightning"</em>, <em>"2x Yen Drop"</em>).</li>
+            <li><strong>Persistent Account Level (Synced to Supabase):</strong> Even if the Vault falls on Wave 4, all XP and Yen earned permanently level up your <strong>Pilot Rank, Valkyrie Hoodie Armor, Cyber-Owl Pet, and Starting Turret Deck</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <span class="pillar-title">3. Direct RetroCanopy Brand &amp; Golden Ticket Synergy</span>
+            <span class="pillar-tag">100 PTS = 1 🎟️</span>
+          </div>
+          <ul class="pillar-list">
+            <li><strong>What You Are Defending:</strong> The centerpiece at the bottom of the rooftop is the glowing <strong>24K Gold Stage 6 Valkyrie Merchandise Vault</strong>. Protecting it reinforces the prize players are working toward!</li>
+            <li><strong>Ticket Payouts:</strong> Every Wave Cleared awards points (`100 PTS = 1 🎟️`), and every <strong>5th-Wave Boss KO</strong> drops a guaranteed Golden Ticket Chest synced directly to the Ticket Counter.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 Ways to Structure the Game -->
+    <h2 class="section-title" id="variationsSection">⚡ 3 WAYS WE CAN STRUCTURE THIS GAME (CHOOSE YOUR FAVORITE STYLE)</h2>
+    <div class="modes-grid">
+      <div class="mode-card">
+        <div class="mode-badge">OPTION A // RECOMMENDED (BEST OF BOTH WORLDS)</div>
+        <h3 class="mode-title">Roaming Hero + 6 Tactical Turret Pads</h3>
+        <p style="font-size:0.9rem;color:var(--text-muted);">
+          Your Hero moves freely across the rooftop (exact <em>Shibuya Archer '84</em> one-thumb dodge &amp; stop-to-shoot) while an S-curve neon highway snakes toward your Vault with <strong>6 Turret Pads</strong> along the edges. You collect Yen from kills and step onto a pad (or tap it) to build/merge turrets mid-fight!
+        </p>
+        <div style="margin-top:auto;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);font-size:0.8rem;color:var(--cyan);font-weight:700;">
+          ✓ Highest action engagement • ✓ Super clean on mobile portrait screens
+        </div>
+      </div>
+
+      <div class="mode-card">
+        <div class="mode-badge">OPTION B // WALL DEFENDER + TURRET GRID</div>
+        <h3 class="mode-title">Fortress Barricade Archer + 3x4 Merge Grid</h3>
+        <p style="font-size:0.9rem;color:var(--text-muted);">
+          Your Hero stands atop the <strong>Penthouse Neon Barricade</strong> at the bottom of the screen, sliding left/right to aim and dodge boss missiles, while a <strong>3x4 Turret Merge Grid</strong> sits directly in front of the wall. Drag turrets to merge them while your Hero snipes high-priority targets.
+        </p>
+        <div style="margin-top:auto;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);font-size:0.8rem;color:var(--cyan);font-weight:700;">
+          ✓ Easiest one-thumb play • ✓ Deepest turret-merging puzzle feel
+        </div>
+      </div>
+
+      <div class="mode-card">
+        <div class="mode-badge">OPTION C // THRONEFALL DAY/NIGHT CYCLE</div>
+        <h3 class="mode-title">Shibuya Outpost Builder &amp; Night Siege</h3>
+        <p style="font-size:0.9rem;color:var(--text-muted);">
+          During the <strong>Synth-Sunset Phase</strong>, walk your Hero around the rooftop to construct Laser Towers, Yen Generators, and Shield Gates. Hit <strong>"START NIGHT WAVE"</strong> and defend the outpost from 360-degree drone swarms until dawn!
+        </p>
+        <div style="margin-top:auto;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);font-size:0.8rem;color:var(--cyan);font-weight:700;">
+          ✓ Best strategic pacing • ✓ Epic Boss Siege finales every 5th Night
+        </div>
+      </div>
+    </div>
+
+    <!-- 20 Concept Arts Gallery (#02 Shibuya Archer + #05 Neon Turret Merge) -->
+    <h2 class="section-title" id="artGallerySection">🎨 20 CONCEPT ART BOARDS (SHIBUYA ARCHER #02 + NEON TURRET MERGE #05)</h2>
+    <div class="art-grid-20" id="combinedArtGrid"></div>
+  </main>
+
+  <script>
+    // =========================================================================
+    // MINI PLAYABLE HERO + TOWER DEFENSE PROTOTYPE ON CANVAS
+    // =========================================================================
+    const canvas = document.getElementById('tdCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const state = {
+      wave: 1,
+      lvl: 1,
+      xp: 25,
+      yen: 120,
+      vaultHp: 100,
+      tickets: 0,
+      overdriveTimer: 0,
+      hero: { x: 195, y: 390, r: 15, moving: false, fireCd: 0 },
+      turretPads: [
+        { x: 95, y: 165, lvl: 1, cd: 0, color: '#00f0ff' },
+        { x: 295, y: 165, lvl: 1, cd: 15, color: '#ff2a85' },
+        { x: 95, y: 295, lvl: 0, cd: 0, color: '#00f0ff' },
+        { x: 295, y: 295, lvl: 0, cd: 0, color: '#ffd447' }
+      ],
+      enemies: [],
+      bullets: [],
+      particles: [],
+      spawnTimer: 0
+    };
+
+    // Waypoints for enemy lane down the center
+    const LANE_PATH = [
+      { x: 195, y: 20 },
+      { x: 195, y: 140 },
+      { x: 155, y: 220 },
+      { x: 235, y: 310 },
+      { x: 195, y: 465 }
+    ];
+
+    function updateHud() {
+      document.getElementById('simWaveTxt').textContent = `WAVE ${state.wave} / 5 • SHIBUYA CITADEL`;
+      document.getElementById('simLvlTxt').textContent = `PILOT LVL ${state.lvl} ★`;
+      document.getElementById('simXpBar').style.width = `${state.xp}%`;
+      document.getElementById('simYenTxt').textContent = `⚡ ${state.yen} YEN`;
+      document.getElementById('simVaultTxt').textContent = `🛡️ VAULT: ${state.vaultHp}%`;
+      document.getElementById('simTicketsTxt').textContent = `🎟️ ${state.tickets} TICKETS`;
+    }
+
+    function addXp(amount) {
+      state.xp += amount;
+      if (state.xp >= 100) {
+        state.xp -= 100;
+        state.lvl += 1;
+        state.tickets += 1;
+        spawnFloatingBurst(state.hero.x, state.hero.y, '#ffd447', 18);
+      }
+      updateHud();
+    }
+
+    function spawnTurret() {
+      const empty = state.turretPads.find(p => p.lvl === 0);
+      if (!empty) {
+        mergeTurrets();
+        return;
+      }
+      if (state.yen >= 40) {
+        state.yen -= 40;
+        empty.lvl = 1;
+        spawnFloatingBurst(empty.x, empty.y, '#00f0ff', 14);
+        updateHud();
+      }
+    }
+
+    function mergeTurrets() {
+      const active = state.turretPads.filter(p => p.lvl > 0);
+      if (active.length >= 2) {
+        active[0].lvl += 1;
+        active[0].color = '#ffd447';
+        if (active[1] && active[1].lvl === 1) {
+          active[1].lvl = 0;
+        }
+        spawnFloatingBurst(active[0].x, active[0].y, '#ffd447', 20);
+        addXp(35);
+      }
+    }
+
+    function triggerHeroOverdrive() {
+      state.overdriveTimer = 180;
+      addXp(45);
+    }
+
+    function spawnFloatingBurst(x, y, color, count) {
+      for (let i = 0; i < count; i++) {
+        const a = (Math.PI * 2 * i) / count;
+        state.particles.push({
+          x, y,
+          vx: Math.cos(a) * (1.5 + Math.random() * 2.5),
+          vy: Math.sin(a) * (1.5 + Math.random() * 2.5),
+          life: 24,
+          color
+        });
+      }
+    }
+
+    // Pointer drag for One-Thumb Hero movement
+    let isDragging = false;
+    function setHeroPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      state.hero.x = Math.max(30, Math.min(canvas.width - 30, (clientX - rect.left) * scaleX));
+      state.hero.y = Math.max(80, Math.min(canvas.height - 70, (clientY - rect.top) * scaleY));
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      state.hero.moving = true;
+      setHeroPos(e);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      setHeroPos(e);
+    });
+    window.addEventListener('pointerup', () => {
+      isDragging = false;
+      state.hero.moving = false;
+    });
+
+    function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 1. Draw Cyberpunk Grid Background
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.08)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 30) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 30) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      }
+
+      // 2. Draw Enemy Neon Highway Lane
+      ctx.strokeStyle = 'rgba(255, 42, 133, 0.35)';
+      ctx.lineWidth = 34;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      LANE_PATH.forEach((pt, idx) => idx === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y));
+      ctx.stroke();
+
+      // 3. Draw Stage 6 Valkyrie Prize Vault at Bottom
+      ctx.fillStyle = 'rgba(255, 212, 71, 0.16)';
+      ctx.strokeStyle = '#ffd447';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.roundRect(115, 465, 160, 42, 10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#ffd447';
+      ctx.font = '800 11px Orbitron, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('STAGE 6 VALKYRIE VAULT', 195, 490);
+
+      // 4. Spawn Enemies
+      state.spawnTimer++;
+      if (state.spawnTimer % 55 === 0) {
+        const isBoss = state.spawnTimer % 275 === 0;
+        state.enemies.push({
+          x: LANE_PATH[0].x,
+          y: LANE_PATH[0].y,
+          wp: 1,
+          hp: isBoss ? 120 : 30 + state.lvl * 8,
+          maxHp: isBoss ? 120 : 30 + state.lvl * 8,
+          speed: isBoss ? 0.65 : 1.15,
+          r: isBoss ? 18 : 11,
+          isBoss
+        });
+      }
+
+      // 5. Update & Draw Turret Pads
+      state.turretPads.forEach((pad, idx) => {
+        ctx.fillStyle = 'rgba(12, 20, 42, 0.9)';
+        ctx.strokeStyle = pad.lvl > 0 ? pad.color : 'rgba(255,255,255,0.22)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(pad.x - 26, pad.y - 26, 52, 52, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        if (pad.lvl > 0) {
+          ctx.fillStyle = pad.color;
+          ctx.font = '900 10px Orbitron, sans-serif';
+          ctx.fillText(`TURRET`, pad.x, pad.y - 4);
+          ctx.fillText(`LVL ${pad.lvl}`, pad.x, pad.y + 11);
+
+          pad.cd++;
+          const fireRate = Math.max(14, 34 - pad.lvl * 6);
+          if (pad.cd >= fireRate && state.enemies.length > 0) {
+            pad.cd = 0;
+            const target = state.enemies[0];
+            const ang = Math.atan2(target.y - pad.y, target.x - pad.x);
+            state.bullets.push({
+              x: pad.x, y: pad.y,
+              vx: Math.cos(ang) * 6.5,
+              vy: Math.sin(ang) * 6.5,
+              dmg: 12 * pad.lvl,
+              color: pad.color
+            });
+          }
+        } else {
+          ctx.fillStyle = 'rgba(255,255,255,0.4)';
+          ctx.font = '700 9px Orbitron, sans-serif';
+          ctx.fillText('PAD ' + (idx + 1), pad.x, pad.y + 4);
+        }
+      });
+
+      // 6. Update & Draw Hero (Stop-and-Shoot Archero Mechanic!)
+      if (state.overdriveTimer > 0) state.overdriveTimer--;
+      const heroColor = state.overdriveTimer > 0 ? '#ffd447' : '#00f0ff';
+
+      // Hero Auto-Fires when stationary (or always in Overdrive)
+      state.hero.fireCd++;
+      const heroFireInterval = state.overdriveTimer > 0 ? 7 : 16;
+      if ((!state.hero.moving || state.overdriveTimer > 0) && state.hero.fireCd >= heroFireInterval && state.enemies.length > 0) {
+        state.hero.fireCd = 0;
+        const target = state.enemies[0];
+        const baseAng = Math.atan2(target.y - state.hero.y, target.x - state.hero.x);
+        const spread = state.lvl >= 2 || state.overdriveTimer > 0 ? [-0.14, 0, 0.14] : [0];
+        spread.forEach(offset => {
+          state.bullets.push({
+            x: state.hero.x,
+            y: state.hero.y,
+            vx: Math.cos(baseAng + offset) * 8,
+            vy: Math.sin(baseAng + offset) * 8,
+            dmg: 16 + state.lvl * 4,
+            color: heroColor
+          });
+        });
+      }
+
+      // Draw Hero Circle
+      ctx.save();
+      ctx.shadowColor = heroColor;
+      ctx.shadowBlur = 14;
+      ctx.fillStyle = '#091428';
+      ctx.strokeStyle = heroColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(state.hero.x, state.hero.y, state.hero.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.font = '900 9px Orbitron, sans-serif';
+      ctx.fillText('HERO', state.hero.x, state.hero.y + 3);
+      ctx.restore();
+
+      // 7. Update & Draw Bullets
+      for (let i = state.bullets.length - 1; i >= 0; i--) {
+        const b = state.bullets[i];
+        b.x += b.vx;
+        b.y += b.vy;
+        ctx.fillStyle = b.color;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        let hit = false;
+        for (let j = state.enemies.length - 1; j >= 0; j--) {
+          const en = state.enemies[j];
+          if (Math.hypot(b.x - en.x, b.y - en.y) < en.r + 5) {
+            en.hp -= b.dmg;
+            hit = true;
+            if (en.hp <= 0) {
+              state.yen += en.isBoss ? 45 : 15;
+              if (en.isBoss) state.wave = (state.wave % 5) + 1;
+              addXp(en.isBoss ? 40 : 14);
+              spawnFloatingBurst(en.x, en.y, en.isBoss ? '#ffd447' : '#ff2a85', 10);
+              state.enemies.splice(j, 1);
+            }
+            break;
+          }
+        }
+        if (hit || b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) {
+          state.bullets.splice(i, 1);
+        }
+      }
+
+      // 8. Update & Draw Enemies along Lane
+      for (let i = state.enemies.length - 1; i >= 0; i--) {
+        const en = state.enemies[i];
+        const targetWp = LANE_PATH[en.wp];
+        const dx = targetWp.x - en.x;
+        const dy = targetWp.y - en.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 6) {
+          en.wp++;
+          if (en.wp >= LANE_PATH.length) {
+            state.vaultHp = Math.max(10, state.vaultHp - 5);
+            state.enemies.splice(i, 1);
+            updateHud();
+            continue;
+          }
+        } else {
+          en.x += (dx / dist) * en.speed;
+          en.y += (dy / dist) * en.speed;
+        }
+
+        ctx.fillStyle = en.isBoss ? '#ffd447' : '#ff2a85';
+        ctx.beginPath();
+        ctx.arc(en.x, en.y, en.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#050814';
+        ctx.font = '900 8px Orbitron, sans-serif';
+        ctx.fillText(en.isBoss ? 'BOSS' : 'BOT', en.x, en.y + 3);
+      }
+
+      // 9. Particles
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const p = state.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        if (p.life <= 0) {
+          state.particles.splice(i, 1);
+          continue;
+        }
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life / 24;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      requestAnimationFrame(tick);
+    }
+    updateHud();
+    requestAnimationFrame(tick);
+
+    // =========================================================================
+    // RENDER 20 COMBINED CONCEPT ARTS (#02 SHIBUYA ARCHER + #05 TURRET MERGE)
+    // =========================================================================
+    const ART_ITEMS = [
+      { folder: 'concept_02', idx: 1, title: 'Shibuya Rooftop Hero Dodge' },
+      { folder: 'concept_02', idx: 2, title: '3-Perk Hologram Skill Draft' },
+      { folder: 'concept_02', idx: 3, title: 'Mecha-Samurai Boss Siege' },
+      { folder: 'concept_02', idx: 4, title: 'Akihabara Arcade Defense' },
+      { folder: 'concept_02', idx: 5, title: 'Torii Priestess Level Blessing' },
+      { folder: 'concept_02', idx: 6, title: '24K Orbital Blades Overdrive' },
+      { folder: 'concept_02', idx: 7, title: 'Stealth Fog Searchlight Wave' },
+      { folder: 'concept_02', idx: 8, title: 'Conveyor & Laser Chokepoint' },
+      { folder: 'concept_02', idx: 9, title: 'Valkyrie Hoodie Hero Gear' },
+      { folder: 'concept_02', idx: 10, title: 'Stage Clear +5 Ticket Payout' },
+      { folder: 'concept_05', idx: 1, title: '3x5 Turret Grid & U-Highway' },
+      { folder: 'concept_05', idx: 2, title: 'Drag-&-Merge Lv.3 Railgun' },
+      { folder: 'concept_05', idx: 3, title: 'Mecha-Shogun Lane Boss' },
+      { folder: 'concept_05', idx: 4, title: '3-Card Turret Overclock Draft' },
+      { folder: 'concept_05', idx: 5, title: '24K Gold Hoodie Vault Defense' },
+      { folder: 'concept_05', idx: 6, title: 'Cyan/Magenta Turret Link Beams' },
+      { folder: 'concept_05', idx: 7, title: 'Orbital Synthwave Ultimate' },
+      { folder: 'concept_05', idx: 8, title: 'Dual-Lane Co-Op Neon Bridge' },
+      { folder: 'concept_05', idx: 9, title: '5-Turret Blueprint Deck UI' },
+      { folder: 'concept_05', idx: 10, title: '3-Star Citadel Ticket Clear' }
+    ];
+
+    const gridEl = document.getElementById('combinedArtGrid');
+    gridEl.innerHTML = ART_ITEMS.map((item, i) => {
+      const num = String(item.idx).padStart(2, '0');
+      const url = `assets/concept_gallery/jarvis_100/${item.folder}/art_${num}.jpg`;
+      return `
+        <div class="art-card" onclick="window.open('${url}', '_blank')">
+          <img src="${url}" alt="${item.title}" loading="lazy" />
+          <div class="art-card-cap">
+            <span>${item.title}</span>
+            <span style="color:#ffd447;font-family:'Orbitron',sans-serif;font-size:0.65rem;">#${String(i + 1).padStart(2, '0')}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  </script>
+</body>
+</html>

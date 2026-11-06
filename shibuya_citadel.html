@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>window.location.replace("shibuya_bot_pit.html");</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <title>SHIBUYA CITADEL '84 — 10 Stunning Visual Options &amp; Playable RPG | RetroCanopy</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #04050c;
+      --cyan: #00f0ff;
+      --magenta: #ff2a85;
+      --gold: #ffd447;
+      --green: #00ff9d;
+      --purple: #b545ff;
+      --text: #f4f7ff;
+      --muted: rgba(215, 228, 255, 0.78);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 18% 10%, rgba(0, 240, 255, 0.14), transparent 38%),
+        radial-gradient(circle at 82% 18%, rgba(255, 42, 133, 0.14), transparent 42%),
+        radial-gradient(circle at 50% 88%, rgba(255, 212, 71, 0.10), transparent 46%),
+        var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    /* Sticky Top Navigation */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 7, 16, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1.5px solid rgba(0, 240, 255, 0.35);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 0.96rem;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      background: rgba(255, 212, 71, 0.16);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .nav-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(12, 18, 38, 0.92);
+      border: 1.5px solid rgba(0, 240, 255, 0.5);
+      color: #e6fbff;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .nav-pill:hover, .nav-pill.active {
+      background: var(--cyan);
+      color: #030612;
+      border-color: #fff;
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.6);
+    }
+
+    .nav-pill.gold {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .nav-pill.gold:hover {
+      background: var(--gold);
+      color: #040610;
+    }
+
+    .container {
+      max-width: 1460px;
+      margin: 0 auto;
+      padding: 24px 20px 0;
+    }
+
+    /* Main Split Layout: Left = Playable Cabinet, Right = 10 Stunning Visual Options Selector */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 455px 1fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    @media (max-width: 1080px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Column: Playable Cabinet */
+    .playable-col {
+      position: sticky;
+      top: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @media (max-width: 1080px) {
+      .playable-col {
+        position: static;
+      }
+    }
+
+    .game-cabinet {
+      position: relative;
+      width: 100%;
+      max-width: 450px;
+      background: #060916;
+      border: 2.5px solid var(--cyan);
+      border-radius: 24px;
+      box-shadow:
+        0 22px 65px rgba(0, 0, 0, 0.92),
+        0 0 40px rgba(0, 240, 255, 0.25),
+        0 0 70px rgba(255, 42, 133, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cabinet-hud {
+      background: linear-gradient(180deg, rgba(10, 15, 34, 0.98), rgba(6, 9, 22, 0.96));
+      border-bottom: 1.5px solid rgba(0, 240, 255, 0.38);
+      padding: 9px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+    }
+
+    .hud-line-1 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .lvl-pill {
+      background: rgba(0, 255, 157, 0.16);
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: 2px 9px;
+      border-radius: 6px;
+      font-size: 10px;
+    }
+
+    .xp-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--gold));
+      transition: width 0.2s ease;
+    }
+
+    .hud-line-2 {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      color: #d6e8ff;
+    }
+
+    #gameCanvas {
+      width: 100%;
+      aspect-ratio: 450 / 680;
+      display: block;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .bottom-dock {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 8px 10px 10px;
+      background: rgba(6, 9, 22, 0.98);
+      border-top: 1.5px solid rgba(0, 240, 255, 0.32);
+    }
+
+    .dock-btn {
+      padding: 9px 6px;
+      border-radius: 12px;
+      border: 1.5px solid var(--cyan);
+      background: linear-gradient(180deg, rgba(16, 26, 56, 0.95), rgba(8, 12, 28, 0.98));
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9.5px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      transition: all 0.15s ease;
+    }
+
+    .dock-btn span.sub {
+      font-family: 'Outfit', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .dock-btn:hover {
+      border-color: #fff;
+      background: rgba(0, 240, 255, 0.25);
+    }
+
+    .dock-btn.gold-btn {
+      border-color: var(--gold);
+      background: linear-gradient(180deg, rgba(55, 40, 10, 0.95), rgba(24, 16, 4, 0.98));
+      color: var(--gold);
+    }
+
+    /* Overlay Modals inside Cabinet */
+    .overlay-modal {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      background: rgba(4, 6, 16, 0.91);
+      backdrop-filter: blur(8px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .overlay-modal.open { display: flex; }
+
+    .draft-kicker {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 0.18em;
+    }
+
+    .draft-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 16px rgba(0, 240, 255, 0.7);
+    }
+
+    .perk-cards-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .perk-card-btn {
+      background: linear-gradient(135deg, rgba(16, 26, 56, 0.96), rgba(10, 14, 32, 0.98));
+      border: 1.5px solid var(--cyan);
+      border-radius: 14px;
+      padding: 11px 14px;
+      color: #fff;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.16s ease;
+    }
+
+    .perk-card-btn:hover {
+      border-color: var(--gold);
+      transform: scale(1.02);
+      box-shadow: 0 0 22px rgba(255, 212, 71, 0.45);
+    }
+
+    .perk-icon {
+      font-size: 22px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .perk-info h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11.5px;
+      font-weight: 900;
+      color: var(--cyan);
+      margin-bottom: 2px;
+    }
+
+    .perk-info p {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      color: rgba(230, 240, 255, 0.85);
+      line-height: 1.3;
+    }
+
+    /* Right Column: 10 Reimagined Visual Options Gallery */
+    .options-header-card {
+      background: linear-gradient(135deg, rgba(16, 23, 46, 0.95), rgba(9, 12, 26, 0.98));
+      border: 1.5px solid rgba(0, 240, 255, 0.38);
+      border-radius: 20px;
+      padding: 22px 26px;
+      margin-bottom: 20px;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75);
+    }
+
+    .options-h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+      font-weight: 900;
+      color: #fff;
+      margin: 4px 0 8px;
+    }
+
+    .options-h1 span { color: var(--gold); }
+
+    .options-grid-10 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 680px) {
+      .options-grid-10 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .opt-card {
+      background: rgba(10, 14, 30, 0.95);
+      border: 2px solid rgba(0, 240, 255, 0.28);
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.7);
+    }
+
+    .opt-card.active-skin {
+      border-color: var(--gold);
+      box-shadow: 0 16px 44px rgba(0, 0, 0, 0.9), 0 0 26px rgba(255, 212, 71, 0.45);
+    }
+
+    .opt-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--cyan);
+    }
+
+    .opt-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      background: #050814;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .opt-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.25s ease;
+    }
+
+    .opt-img-wrap:hover img {
+      transform: scale(1.02);
+    }
+
+    .opt-footer {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: linear-gradient(180deg, rgba(12, 18, 38, 0.98), rgba(7, 10, 22, 0.99));
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .opt-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .opt-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .opt-btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .apply-skin-btn {
+      flex: 1;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 900;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--gold);
+      background: rgba(255, 212, 71, 0.16);
+      color: var(--gold);
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .apply-skin-btn:hover, .opt-card.active-skin .apply-skin-btn {
+      background: var(--gold);
+      color: #050712;
+      box-shadow: 0 0 16px rgba(255, 212, 71, 0.6);
+    }
+
+    .zoom-btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 240, 255, 0.45);
+      background: rgba(0, 240, 255, 0.1);
+      color: #dff8ff;
+      cursor: pointer;
+    }
+
+    /* Fullscreen Lightbox */
+    .lightbox-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(2, 4, 12, 0.93);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lightbox-backdrop.open { display: flex; }
+
+    .lightbox-box {
+      max-width: 980px;
+      width: 100%;
+      background: #090e20;
+      border: 2px solid var(--cyan);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .lightbox-box img {
+      max-height: 82vh;
+      max-width: 100%;
+      border-radius: 12px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--cyan);
+      background: #050814;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-nav">
+    <div class="brand-title">
+      <span>◆ SHIBUYA CITADEL '84 // 10 VISUAL OPTIONS STUDIO</span>
+      <span class="brand-badge">OPTION A: HERO ARCHER + 6 TURRET PADS</span>
+    </div>
+    <div class="nav-group">
+      <button type="button" class="nav-pill gold" onclick="openLightbox('assets/concept_gallery/citadel_10_options/citadel_10_options_master_sheet.jpg', 'All 10 Reimagined Visual Options — Master Comparison Sheet')">🖼️ VIEW 10-OPTION MASTER SHEET</button>
+      <a href="games.html?openTickets=1" class="nav-pill">🎟️ TICKET COUNTER</a>
+      <a href="games.html" class="nav-pill">◀ ARCADE</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="workspace-grid">
+
+      <!-- LEFT COLUMN: LIVE PLAYABLE GAME WITH TEXTURED AI SPRITES & DYNAMIC SKIN SWITCHING -->
+      <div class="playable-col">
+        <div class="game-cabinet">
+          <div class="cabinet-hud">
+            <div class="hud-line-1">
+              <span id="hudWave" style="color:var(--cyan);">WAVE 1 / 10 • SHIBUYA SKYLINE</span>
+              <span class="lvl-pill" id="hudPilotLvl">PILOT LVL 1</span>
+            </div>
+            <div class="xp-track">
+              <div class="xp-fill" id="hudXpBar"></div>
+            </div>
+            <div class="hud-line-2">
+              <span id="hudYen" style="color:var(--gold);">⚡ 120 YEN</span>
+              <span id="hudScore" style="color:#fff;">PTS: 0</span>
+              <span id="hudVault" style="color:var(--green);">🛡️ VAULT: 100%</span>
+              <span id="hudTickets" style="color:var(--gold);">🎟️ +0</span>
+            </div>
+          </div>
+
+          <canvas id="gameCanvas" width="450" height="680"></canvas>
+
+          <div class="bottom-dock">
+            <button type="button" class="dock-btn" onclick="buildNextTurret()">
+              <span>➕ BUILD TURRET</span>
+              <span class="sub">40 YEN (TAP PAD)</span>
+            </button>
+            <button type="button" class="dock-btn" onclick="mergeAvailableTurrets()">
+              <span>⚡ MERGE TURRETS</span>
+              <span class="sub">EVOLVE LVL +1</span>
+            </button>
+            <button type="button" class="dock-btn gold-btn" onclick="activateOverdrive()">
+              <span>🌟 24K OVERDRIVE</span>
+              <span class="sub">80 YEN • GOD MODE</span>
+            </button>
+          </div>
+
+          <!-- 3-PERK LEVEL-UP HOLOGRAM DRAFT MODAL -->
+          <div class="overlay-modal" id="perkDraftModal">
+            <div class="draft-kicker">★ PILOT LEVEL UP! ★</div>
+            <div class="draft-title" id="draftTitleTxt">CHOOSE 1 CYBER-SYNERGY PERK</div>
+            <div class="perk-cards-col" id="perkCardsContainer"></div>
+          </div>
+
+          <!-- STAGE CLEAR / GAME OVER MODAL -->
+          <div class="overlay-modal" id="gameOverModal">
+            <div class="draft-kicker" id="endKicker">SHIBUYA CITADEL '84</div>
+            <div class="draft-title" id="endTitle">STAGE COMPLETE!</div>
+            <div style="font-size:30px;font-weight:900;color:var(--gold);margin:4px 0;" id="endScore">0 PTS</div>
+            <div style="font-family:'Outfit',sans-serif;font-size:13px;color:#d6e8ff;max-width:290px;">
+              Every 100 PTS = +1 Golden Arcade Ticket (🎟️) synced to your RetroCanopy Wallet!
+            </div>
+            <div style="background:rgba(255,212,71,0.14);border:1.5px solid var(--gold);border-radius:12px;padding:10px 18px;color:var(--gold);font-size:13px;font-weight:900;" id="endTicketsBox">
+              🎟️ +0 GOLDEN TICKETS EARNED
+            </div>
+            <div style="display:flex;gap:10px;width:100%;max-width:300px;margin-top:8px;">
+              <button type="button" class="dock-btn gold-btn" style="padding:12px;" onclick="resetGame()">↻ PLAY AGAIN</button>
+              <a href="games.html?openTickets=1" class="dock-btn" style="padding:12px;text-decoration:none;justify-content:center;">🎟️ REDEEM PRIZES</a>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:0.78rem;color:var(--muted);text-align:center;">
+          👆 <strong>Drag anywhere on the arena</strong> to move your Hero Archer (release to auto-fire!). Click any of the <strong>10 Visual Options on the right</strong> to switch the live game's theme!
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: 10 REIMAGINED STUNNING VISUAL OPTIONS -->
+      <div>
+        <div class="options-header-card">
+          <div style="font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:800;color:var(--cyan);letter-spacing:0.14em;">
+            JARVIS VISUAL R&amp;D // 10 REIMAGINED LOOKS FOR OPTION A
+          </div>
+          <h1 class="options-h1">10 Stunning Visual Options for <span>Shibuya Citadel '84</span></h1>
+          <p style="font-size:0.94rem;color:var(--muted);">
+            Each option below reimagines <strong>Option A (Roaming Hero Archer + 6 Tactical Turret Pads + S-Curve Highway + 24K Gold Vault)</strong> with rich AI-rendered environments, glowing turret pedestals, boss sprites, and volumetric plasma beams. Click <strong>"⚡ LOAD SKIN IN LIVE GAME"</strong> on any card to test that visual theme immediately on the playable cabinet!
+          </p>
+        </div>
+
+        <div class="options-grid-10" id="optionsGrid10"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Fullscreen Lightbox Modal -->
+  <div class="lightbox-backdrop" id="lightboxModal" onclick="closeLightbox()">
+    <div class="lightbox-box" onclick="event.stopPropagation()">
+      <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+      <img id="lightboxImg" src="" alt="Visual Option Zoom" />
+      <div id="lightboxTitle" style="font-family:'Orbitron',sans-serif;font-size:0.86rem;color:var(--cyan);font-weight:800;text-align:center;"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth_hub.js?v=147"></script>
+  <script>
+    (() => {
+      'use strict';
+
+      const VISUAL_OPTIONS = [
+        {
+          id: 1,
+          title: "01 • Shibuya Rain-Slicked Rooftop Raid",
+          sub: "Wet Neon Skyscraper Arena • Triple Cyan Plasma Arrows • 6 Tactical Turrets",
+          roadCol: "#00f0ff",
+          accent: "#00f0ff",
+          bossKey: "samurai"
+        },
+        {
+          id: 2,
+          title: "02 • 24K Gold Overdrive Stormblade",
+          sub: "Spinning 24K Gold Orbital Blades • Chain Lightning Grid • Golden Vault Defense",
+          roadCol: "#ffd447",
+          accent: "#ffd447",
+          bossKey: "shogun"
+        },
+        {
+          id: 3,
+          title: "03 • Mecha-Samurai Bullet-Hell Siege",
+          sub: "Towering Floor-10 Samurai Boss • Spiral Bullet Rings • Merged Railgun Pads",
+          roadCol: "#ff2a85",
+          accent: "#ff4196",
+          bossKey: "samurai"
+        },
+        {
+          id: 4,
+          title: "04 • Cyber-Shrine Torii & Neon Sakura",
+          sub: "Holographic Shinto Torii Sanctuary • Bioluminescent Sakura Path • Spirit Towers",
+          roadCol: "#00ffbe",
+          accent: "#00ffbe",
+          bossKey: "dragon"
+        },
+        {
+          id: 5,
+          title: "05 • Akihabara Vintage Arcade Brawl",
+          sub: "CRT Cabinet Room Chokepoints • Neon Drone Swarm • Lv.4 Omega Turrets",
+          roadCol: "#b545ff",
+          accent: "#00f0ff",
+          bossKey: "oni"
+        },
+        {
+          id: 6,
+          title: "06 • Conveyor & Laser Hazard Fortress",
+          sub: "High-Tech Laser Barrier Corridor • Dual-Lane Turret Crossfire • Hero Sniping",
+          roadCol: "#00dcff",
+          accent: "#ff2a85",
+          bossKey: "shogun"
+        },
+        {
+          id: 7,
+          title: "07 • Shinjuku Crossing Swarm Citadel",
+          sub: "Dense Glitch-Bot Horde • 24K Orbital Katanas + 6 Turret Pads Firing in Sync",
+          roadCol: "#ffa500",
+          accent: "#ffd447",
+          bossKey: "oni"
+        },
+        {
+          id: 8,
+          title: "08 • Shinkansen Bullet-Train Tracks",
+          sub: "High-Speed Neon Subway Arena • Express Train Hazards • Tesla Coil Defense",
+          roadCol: "#00ff9d",
+          accent: "#00ff9d",
+          bossKey: "shogun"
+        },
+        {
+          id: 9,
+          title: "09 • Motherboard Silicon Circuit Core",
+          sub: "Conductive Gold Microchip Floor • High-Voltage Capacitor Turrets • Virus Boss",
+          roadCol: "#00f0ff",
+          accent: "#ffd447",
+          bossKey: "dragon"
+        },
+        {
+          id: 10,
+          title: "10 • Penthouse Sanctuary Boss Finale",
+          sub: "Floor 100 Neon Skyline Summit • All 6 Lv.4 Omega Turrets • +25 Golden Tickets",
+          roadCol: "#ffd447",
+          accent: "#00f0ff",
+          bossKey: "dragon"
+        }
+      ];
+
+      let activeOptionId = 1;
+
+      // Preload all sprites & 10 arena backgrounds for the live playable canvas
+      const SPRITES = {};
+      function loadImg(key, src) {
+        const img = new Image();
+        img.src = src;
+        SPRITES[key] = img;
+      }
+
+      const baseDir = 'assets/concept_gallery/citadel_10_options';
+      for (let i = 1; i <= 10; i++) {
+        const num = String(i).padStart(2, '0');
+        loadImg(`arena_${i}`, `${baseDir}/arena_bg_${num}.jpg`);
+      }
+      loadImg('hero', `${baseDir}/sprites/hero_archer.png`);
+      loadImg('owl', `${baseDir}/sprites/cyber_owl.png`);
+      loadImg('vault', `${baseDir}/sprites/vault_24k.png`);
+      loadImg('turret_1', `${baseDir}/sprites/turret_lv1.png`);
+      loadImg('turret_2', `${baseDir}/sprites/turret_lv2.png`);
+      loadImg('turret_3', `${baseDir}/sprites/turret_lv3.png`);
+      loadImg('turret_4', `${baseDir}/sprites/turret_lv4.png`);
+      loadImg('boss_samurai', `${baseDir}/sprites/boss_samurai.png`);
+      loadImg('boss_shogun', `${baseDir}/sprites/boss_shogun.png`);
+      loadImg('boss_oni', `${baseDir}/sprites/boss_oni.png`);
+      loadImg('boss_dragon', `${baseDir}/sprites/boss_dragon.png`);
+
+      function renderOptionsGrid() {
+        const grid = document.getElementById('optionsGrid10');
+        grid.innerHTML = VISUAL_OPTIONS.map(opt => {
+          const num = String(opt.id).padStart(2, '0');
+          const imgUrl = `${baseDir}/option_${num}.jpg?v=2`;
+          const isActive = opt.id === activeOptionId;
+          return `
+            <article class="opt-card ${isActive ? 'active-skin' : ''}" id="opt-card-${opt.id}">
+              <div class="opt-img-wrap" onclick="openLightbox('${imgUrl}', '${opt.title.replace(/'/g, "\\'")}')">
+                <img src="${imgUrl}" alt="${opt.title}" loading="lazy" />
+              </div>
+              <div class="opt-footer">
+                <div class="opt-title">${opt.title}</div>
+                <div class="opt-sub">${opt.sub}</div>
+                <div class="opt-btn-row">
+                  <button type="button" class="apply-skin-btn" onclick="applyVisualOption(${opt.id})">
+                    ${isActive ? '★ ACTIVE IN LIVE GAME' : '⚡ LOAD SKIN IN LIVE GAME'}
+                  </button>
+                  <button type="button" class="zoom-btn" onclick="openLightbox('${imgUrl}', '${opt.title.replace(/'/g, "\\'")}')">🔍 ZOOM</button>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+      }
+
+      window.applyVisualOption = function (id) {
+        activeOptionId = id;
+        renderOptionsGrid();
+        const opt = VISUAL_OPTIONS.find(o => o.id === id);
+        if (opt) {
+          addPopup(W / 2, 140, `🎨 LOADED ${opt.title.split('•')[1].trim().toUpperCase()}!`, opt.accent);
+        }
+      };
+
+      window.openLightbox = function (src, title) {
+        document.getElementById('lightboxImg').src = src;
+        document.getElementById('lightboxTitle').textContent = title || '';
+        document.getElementById('lightboxModal').classList.add('open');
+      };
+
+      window.closeLightbox = function () {
+        document.getElementById('lightboxModal').classList.remove('open');
+      };
+
+      renderOptionsGrid();
+
+      // =======================================================================
+      // PLAYABLE CANVAS ENGINE WITH TEXTURED AI SPRITES & VOLUMETRIC GLOW
+      // =======================================================================
+      const cv = document.getElementById('gameCanvas');
+      const ctx = cv.getContext('2d');
+      const W = cv.width, H = cv.height;
+      const XP_KEY = 'rc_canopy_xp';
+
+      const PERK_POOL = [
+        { id: 'multishot', icon: '🏹', name: 'TRIPLE PLASMA ARROWS', desc: 'Your Hero fires +2 diagonal plasma arrows on every shot.' },
+        { id: 'ricochet', icon: '⚡', name: 'CHAIN LIGHTNING ARROWS', desc: 'Hero arrows & Turret shots bounce to a second drone for 65% damage.' },
+        { id: 'turret_speed', icon: '🔫', name: 'OVERCLOCK TURRET GRID', desc: 'All 6 Tactical Turret Pads fire +35% faster and deal +20% crit damage.' },
+        { id: 'cryo_turrets', icon: '❄️', name: 'CRYO-SLOW FIELD', desc: 'Turret hits chill drones, slowing their movement speed by 35%.' },
+        { id: 'owl_pet', icon: '🦉', name: 'SYNTH CYBER-OWL COMPANION', desc: 'Summons Synth the Owl to orbit your Hero and auto-snipe nearby enemies.' },
+        { id: 'yen_magnet', icon: '💰', name: '24K GOLD YEN MAGNET', desc: 'Drones drop +50% more Yen and +35% bonus Score Points.' }
+      ];
+
+      const ROAD = [
+        { x: 225, y: 20 },
+        { x: 225, y: 120 },
+        { x: 115, y: 195 },
+        { x: 115, y: 300 },
+        { x: 335, y: 380 },
+        { x: 335, y: 485 },
+        { x: 225, y: 560 },
+        { x: 225, y: 615 }
+      ];
+
+      const INITIAL_PADS = [
+        { id: 0, x: 325, y: 115 },
+        { id: 1, x: 230, y: 235 },
+        { id: 2, x: 52,  y: 250 },
+        { id: 3, x: 215, y: 355 },
+        { id: 4, x: 396, y: 435 },
+        { id: 5, x: 115, y: 515 }
+      ];
+
+      const TURRET_SPECS = [
+        { name: 'LV.1 PULSE', col: '#00f0ff', rate: 32, dmg: 18, spr: 'turret_1' },
+        { name: 'LV.2 RAIL',  col: '#ff2a85', rate: 22, dmg: 35, spr: 'turret_2' },
+        { name: 'LV.3 TESLA', col: '#ffd447', rate: 15, dmg: 60, spr: 'turret_3' },
+        { name: 'LV.4 OMEGA', col: '#00ff9d', rate: 10, dmg: 105, spr: 'turret_4' }
+      ];
+
+      const G = {
+        paused: false,
+        gameOver: false,
+        wave: 1,
+        maxWaves: 10,
+        waveSpawned: 0,
+        waveToSpawn: 8,
+        spawnCd: 0,
+        pilotLvl: 1,
+        xp: 0,
+        xpNext: 100,
+        yen: 120,
+        score: 0,
+        ticketsDispensed: 0,
+        vaultHp: 100,
+        overdriveT: 0,
+        perks: { multishot: 1, ricochet: 0, turret_speed: 0, cryo_turrets: 0, owl_pet: 1, yen_magnet: 0 },
+        hero: { x: 225, y: 485, r: 24, moving: false, fireCd: 0, owlAngle: 0 },
+        pads: [],
+        enemies: [],
+        bullets: [],
+        lasers: [],
+        particles: [],
+        popups: []
+      };
+
+      function awardTicketsToWallet(newTickets) {
+        if (newTickets <= 0) return;
+        try {
+          const prevXp = Math.max(0, parseInt(localStorage.getItem(XP_KEY) || '0', 10) || 0);
+          localStorage.setItem(XP_KEY, String(prevXp + newTickets * 10));
+        } catch (_) {}
+      }
+
+      function syncHud() {
+        const opt = VISUAL_OPTIONS.find(o => o.id === activeOptionId) || VISUAL_OPTIONS[0];
+        document.getElementById('hudWave').textContent =
+          G.wave % 5 === 0 ? `⚠️ BOSS WAVE ${G.wave}/${G.maxWaves}` : `WAVE ${G.wave}/${G.maxWaves} • ${opt.title.split('•')[1].trim().slice(0, 16).toUpperCase()}`;
+        document.getElementById('hudPilotLvl').textContent = `PILOT LVL ${G.pilotLvl}`;
+        document.getElementById('hudXpBar').style.width = `${Math.min(100, Math.round((G.xp / G.xpNext) * 100))}%`;
+        document.getElementById('hudYen').textContent = `⚡ ${G.yen} YEN`;
+        document.getElementById('hudScore').textContent = `PTS: ${G.score}`;
+        document.getElementById('hudVault').textContent = `🛡️ VAULT: ${G.vaultHp}%`;
+
+        const totalTix = Math.floor(G.score / 100);
+        if (totalTix > G.ticketsDispensed) {
+          const diff = totalTix - G.ticketsDispensed;
+          G.ticketsDispensed = totalTix;
+          awardTicketsToWallet(diff);
+          addPopup(W / 2, 95, `🎟️ +${diff} GOLDEN TICKET!`, '#ffd447');
+        }
+        document.getElementById('hudTickets').textContent = `🎟️ +${G.ticketsDispensed}`;
+      }
+
+      window.resetGame = function () {
+        G.paused = false;
+        G.gameOver = false;
+        G.wave = 1;
+        G.waveSpawned = 0;
+        G.waveToSpawn = 8;
+        G.spawnCd = 15;
+        G.pilotLvl = 1;
+        G.xp = 0;
+        G.xpNext = 100;
+        G.yen = 120;
+        G.score = 0;
+        G.ticketsDispensed = 0;
+        G.vaultHp = 100;
+        G.overdriveT = 0;
+        G.perks = { multishot: 1, ricochet: 0, turret_speed: 0, cryo_turrets: 0, owl_pet: 1, yen_magnet: 0 };
+
+        G.hero.x = 225;
+        G.hero.y = 485;
+        G.hero.moving = false;
+        G.hero.fireCd = 0;
+
+        // Start with 2 pre-built turrets so the arena immediately feels alive!
+        G.pads = INITIAL_PADS.map((p, idx) => ({
+          id: p.id,
+          x: p.x,
+          y: p.y,
+          lvl: idx === 0 ? 2 : (idx === 2 ? 1 : 0),
+          cd: 0
+        }));
+
+        G.enemies = [];
+        G.bullets = [];
+        G.lasers = [];
+        G.particles = [];
+        G.popups = [];
+
+        document.getElementById('perkDraftModal').classList.remove('open');
+        document.getElementById('gameOverModal').classList.remove('open');
+        syncHud();
+      };
+
+      function addPopup(x, y, txt, col = '#00f0ff') {
+        G.popups.push({ x, y, txt, col, life: 42, maxLife: 42 });
+      }
+
+      function addBurst(x, y, col, count = 12) {
+        for (let i = 0; i < count; i++) {
+          const a = (Math.PI * 2 * i) / count + Math.random() * 0.3;
+          const sp = 1.5 + Math.random() * 3.2;
+          G.particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, col, life: 24 });
+        }
+      }
+
+      function gainXp(amount) {
+        G.xp += amount;
+        if (G.xp >= G.xpNext && !G.paused && !G.gameOver) {
+          G.xp -= G.xpNext;
+          G.pilotLvl += 1;
+          G.xpNext = Math.round(G.xpNext * 1.28);
+          openPerkDraft();
+        }
+        syncHud();
+      }
+
+      function openPerkDraft() {
+        G.paused = true;
+        const shuffled = PERK_POOL.slice().sort(() => Math.random() - 0.5).slice(0, 3);
+        const container = document.getElementById('perkCardsContainer');
+        document.getElementById('draftTitleTxt').textContent = `PILOT LVL ${G.pilotLvl} — PICK 1 SYNERGY PERK`;
+
+        container.innerHTML = shuffled.map(p => `
+          <button type="button" class="perk-card-btn" onclick="selectPerk('${p.id}')">
+            <div class="perk-icon">${p.icon}</div>
+            <div class="perk-info">
+              <h4>${p.name} (LV.${G.perks[p.id] + 1})</h4>
+              <p>${p.desc}</p>
+            </div>
+          </button>
+        `).join('');
+        document.getElementById('perkDraftModal').classList.add('open');
+      }
+
+      window.selectPerk = function (perkId) {
+        G.perks[perkId] = (G.perks[perkId] || 0) + 1;
+        document.getElementById('perkDraftModal').classList.remove('open');
+        G.paused = false;
+        addBurst(G.hero.x, G.hero.y, '#ffd447', 22);
+        addPopup(G.hero.x, G.hero.y - 22, `⚡ PERK UNLOCKED!`, '#ffd447');
+        syncHud();
+      };
+
+      window.buildNextTurret = function () {
+        if (G.paused || G.gameOver) return;
+        const emptyPad = G.pads.find(p => p.lvl === 0);
+        if (!emptyPad) {
+          window.mergeAvailableTurrets();
+          return;
+        }
+        if (G.yen < 40) {
+          addPopup(G.hero.x, G.hero.y - 18, 'NEED 40 YEN!', '#ff2a85');
+          return;
+        }
+        G.yen -= 40;
+        emptyPad.lvl = 1;
+        addBurst(emptyPad.x, emptyPad.y, '#00f0ff', 16);
+        addPopup(emptyPad.x, emptyPad.y - 16, 'TURRET BUILT!', '#00f0ff');
+        syncHud();
+      };
+
+      window.mergeAvailableTurrets = function () {
+        if (G.paused || G.gameOver) return;
+        for (let lv = 1; lv <= 3; lv++) {
+          const matching = G.pads.filter(p => p.lvl === lv);
+          if (matching.length >= 2) {
+            matching[0].lvl = lv + 1;
+            matching[1].lvl = 0;
+            addBurst(matching[0].x, matching[0].y, '#ffd447', 24);
+            addPopup(matching[0].x, matching[0].y - 18, `★ MERGED LV.${lv + 1}!`, '#ffd447');
+            gainXp(32);
+            syncHud();
+            return;
+          }
+        }
+        addPopup(W / 2, H / 2, 'NEED 2 IDENTICAL TURRETS!', '#ff2a85');
+      };
+
+      window.activateOverdrive = function () {
+        if (G.paused || G.gameOver) return;
+        if (G.yen < 80) {
+          addPopup(G.hero.x, G.hero.y - 18, 'NEED 80 YEN!', '#ff2a85');
+          return;
+        }
+        G.yen -= 80;
+        G.overdriveT = 300;
+        addBurst(G.hero.x, G.hero.y, '#ffd447', 28);
+        addPopup(G.hero.x, G.hero.y - 24, '🌟 24K GOLD OVERDRIVE!', '#ffd447');
+        syncHud();
+      };
+
+      // One-Thumb Hero Drag + Tap Turret Pad
+      let draggingHero = false;
+      function toCanvasCoords(e) {
+        const rect = cv.getBoundingClientRect();
+        const cx = e.touches ? e.touches[0].clientX : e.clientX;
+        const cy = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: ((cx - rect.left) / rect.width) * W,
+          y: ((cy - rect.top) / rect.height) * H
+        };
+      }
+
+      cv.addEventListener('pointerdown', (e) => {
+        if (G.paused || G.gameOver) return;
+        const pt = toCanvasCoords(e);
+        for (const pad of G.pads) {
+          if (Math.hypot(pt.x - pad.x, pt.y - pad.y) <= 32) {
+            if (pad.lvl === 0 && G.yen >= 40) {
+              G.yen -= 40;
+              pad.lvl = 1;
+              addBurst(pad.x, pad.y, '#00f0ff', 16);
+              addPopup(pad.x, pad.y - 16, 'TURRET BUILT!', '#00f0ff');
+              syncHud();
+              return;
+            } else if (pad.lvl > 0 && pad.lvl < 4 && G.yen >= 60) {
+              G.yen -= 60;
+              pad.lvl += 1;
+              addBurst(pad.x, pad.y, '#ffd447', 20);
+              addPopup(pad.x, pad.y - 16, `UPGRADED LV.${pad.lvl}!`, '#ffd447');
+              gainXp(25);
+              syncHud();
+              return;
+            }
+          }
+        }
+        draggingHero = true;
+        G.hero.moving = true;
+        G.hero.x = Math.max(30, Math.min(W - 30, pt.x));
+        G.hero.y = Math.max(60, Math.min(H - 80, pt.y));
+      });
+
+      cv.addEventListener('pointermove', (e) => {
+        if (!draggingHero || G.paused || G.gameOver) return;
+        const pt = toCanvasCoords(e);
+        G.hero.x = Math.max(30, Math.min(W - 30, pt.x));
+        G.hero.y = Math.max(60, Math.min(H - 80, pt.y));
+      });
+
+      window.addEventListener('pointerup', () => {
+        draggingHero = false;
+        G.hero.moving = false;
+      });
+
+      function spawnWaveEnemy() {
+        const isBoss = (G.wave % 3 === 0 && G.waveSpawned === 2) || (G.waveSpawned === G.waveToSpawn - 1);
+        const baseHp = (36 + G.wave * 18) * (isBoss ? 3.5 : 1);
+        const opt = VISUAL_OPTIONS.find(o => o.id === activeOptionId) || VISUAL_OPTIONS[0];
+        G.enemies.push({
+          x: ROAD[0].x,
+          y: ROAD[0].y,
+          wp: 1,
+          hp: baseHp,
+          maxHp: baseHp,
+          speed: isBoss ? 0.68 : (1.15 + Math.min(0.6, G.wave * 0.05)),
+          r: isBoss ? 28 : 17,
+          isBoss,
+          spr: isBoss ? `boss_${opt.bossKey}` : 'boss_oni',
+          chillT: 0
+        });
+      }
+
+      function finishGame(won) {
+        G.gameOver = true;
+        document.getElementById('endKicker').textContent = won ? '★ CITADEL DEFENDED! ★' : 'VAULT BREACHED • RUN COMPLETE';
+        document.getElementById('endTitle').textContent = won ? 'SHIBUYA GRANDMASTER!' : `REACHED WAVE ${G.wave}`;
+        document.getElementById('endScore').textContent = `${G.score.toLocaleString()} PTS`;
+        document.getElementById('endTicketsBox').textContent = `🎟️ +${G.ticketsDispensed} GOLDEN TICKETS EARNED`;
+        document.getElementById('gameOverModal').classList.add('open');
+      }
+
+      function findNearestEnemy(x, y, exclude = null) {
+        let best = null, bestD = 999999;
+        for (const en of G.enemies) {
+          if (en === exclude) continue;
+          const d = Math.hypot(en.x - x, en.y - y);
+          if (d < bestD) { bestD = d; best = en; }
+        }
+        return best;
+      }
+
+      function drawCircularSprite(img, x, y, r, borderCol, glowCol) {
+        ctx.save();
+        ctx.shadowColor = glowCol || borderCol;
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#081024';
+        ctx.fill();
+
+        if (img && img.complete && img.naturalWidth > 0) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(x, y, r - 2, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
+          ctx.restore();
+        }
+
+        ctx.strokeStyle = borderCol;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawRoundedPadSprite(img, x, y, halfSize, borderCol, label) {
+        ctx.save();
+        ctx.shadowColor = borderCol;
+        ctx.shadowBlur = 14;
+        ctx.fillStyle = '#081024';
+        ctx.beginPath();
+        ctx.roundRect(x - halfSize, y - halfSize, halfSize * 2, halfSize * 2, 12);
+        ctx.fill();
+
+        if (img && img.complete && img.naturalWidth > 0) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.roundRect(x - halfSize + 2, y - halfSize + 2, (halfSize - 2) * 2, (halfSize - 2) * 2, 10);
+          ctx.clip();
+          ctx.drawImage(img, x - halfSize, y - halfSize, halfSize * 2, halfSize * 2);
+          ctx.restore();
+        }
+
+        ctx.strokeStyle = borderCol;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(x - halfSize, y - halfSize, halfSize * 2, halfSize * 2, 12);
+        ctx.stroke();
+
+        if (label) {
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = 'rgba(6, 10, 24, 0.92)';
+          ctx.strokeStyle = borderCol;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.roundRect(x - halfSize - 2, y + halfSize - 10, (halfSize + 2) * 2, 16, 5);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#fff';
+          ctx.font = '900 8.5px Orbitron, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(label, x, y + halfSize + 1);
+        }
+        ctx.restore();
+      }
+
+      function step() {
+        if (!G.paused && !G.gameOver) {
+          if (G.overdriveT > 0) G.overdriveT--;
+
+          // 1. Wave Spawning
+          if (G.waveSpawned < G.waveToSpawn) {
+            G.spawnCd--;
+            if (G.spawnCd <= 0) {
+              spawnWaveEnemy();
+              G.waveSpawned++;
+              G.spawnCd = Math.max(26, 54 - G.wave * 2);
+            }
+          } else if (G.enemies.length === 0) {
+            const waveBonusPts = 60 + G.wave * 20;
+            G.score += waveBonusPts;
+            G.yen += 40;
+            addPopup(W / 2, H / 2, `WAVE ${G.wave} CLEAR! +${waveBonusPts} PTS`, '#00ff9d');
+            gainXp(45);
+            if (G.wave >= G.maxWaves) {
+              finishGame(true);
+            } else {
+              G.wave += 1;
+              G.waveSpawned = 0;
+              G.waveToSpawn = 7 + G.wave * 2;
+              G.spawnCd = 40;
+              syncHud();
+            }
+          }
+
+          // 2. Turret Pads Firing
+          const speedBoost = 1 + G.perks.turret_speed * 0.35;
+          for (const pad of G.pads) {
+            if (pad.lvl <= 0) continue;
+            const spec = TURRET_SPECS[Math.min(TURRET_SPECS.length - 1, pad.lvl - 1)];
+            pad.cd += speedBoost;
+            if (pad.cd >= spec.rate) {
+              const target = findNearestEnemy(pad.x, pad.y);
+              if (target && Math.hypot(target.x - pad.x, target.y - pad.y) <= 240) {
+                pad.cd = 0;
+                const ang = Math.atan2(target.y - pad.y, target.x - pad.x);
+                G.bullets.push({
+                  x: pad.x, y: pad.y,
+                  vx: Math.cos(ang) * 8.0,
+                  vy: Math.sin(ang) * 8.0,
+                  dmg: spec.dmg * (1 + G.perks.turret_speed * 0.2),
+                  col: spec.col,
+                  canBounce: G.perks.ricochet > 0,
+                  chill: G.perks.cryo_turrets > 0
+                });
+                G.lasers.push({ x1: pad.x, y1: pad.y, x2: target.x, y2: target.y, col: spec.col, life: 6 });
+              }
+            }
+          }
+
+          // 3. One-Thumb Hero Stop-and-Shoot
+          const opt = VISUAL_OPTIONS.find(o => o.id === activeOptionId) || VISUAL_OPTIONS[0];
+          G.hero.fireCd++;
+          const heroInterval = G.overdriveT > 0 ? 7 : 15;
+          if ((!G.hero.moving || G.overdriveT > 0) && G.hero.fireCd >= heroInterval) {
+            const target = findNearestEnemy(G.hero.x, G.hero.y);
+            if (target) {
+              G.hero.fireCd = 0;
+              const baseAng = Math.atan2(target.y - G.hero.y, target.x - G.hero.x);
+              const extra = G.perks.multishot + (G.overdriveT > 0 ? 1 : 0);
+              const angles = [0];
+              if (extra >= 1) angles.push(-0.16, 0.16);
+              if (extra >= 2) angles.push(-0.30, 0.30);
+
+              for (const off of angles) {
+                G.bullets.push({
+                  x: G.hero.x, y: G.hero.y,
+                  vx: Math.cos(baseAng + off) * 9.5,
+                  vy: Math.sin(baseAng + off) * 9.5,
+                  dmg: (24 + G.pilotLvl * 5) * (G.overdriveT > 0 ? 1.6 : 1),
+                  col: G.overdriveT > 0 ? '#ffd447' : opt.accent,
+                  canBounce: G.perks.ricochet > 0,
+                  chill: false
+                });
+              }
+            }
+          }
+
+          // 4. Synth Cyber-Owl Companion
+          if (G.perks.owl_pet > 0) {
+            G.hero.owlAngle += 0.055;
+            const ox = G.hero.x + Math.cos(G.hero.owlAngle) * 44;
+            const oy = G.hero.y + Math.sin(G.hero.owlAngle) * 44;
+            if (G.hero.fireCd % 20 === 0 && G.enemies.length > 0) {
+              const t = findNearestEnemy(ox, oy);
+              if (t) {
+                const a = Math.atan2(t.y - oy, t.x - ox);
+                G.bullets.push({
+                  x: ox, y: oy,
+                  vx: Math.cos(a) * 8.5,
+                  vy: Math.sin(a) * 8.5,
+                  dmg: 20 * G.perks.owl_pet,
+                  col: '#ffd447',
+                  canBounce: true,
+                  chill: false
+                });
+              }
+            }
+          }
+
+          // 5. Update Bullets
+          for (let i = G.bullets.length - 1; i >= 0; i--) {
+            const b = G.bullets[i];
+            b.x += b.vx;
+            b.y += b.vy;
+
+            let hitEnemy = null;
+            for (let j = G.enemies.length - 1; j >= 0; j--) {
+              const en = G.enemies[j];
+              if (Math.hypot(b.x - en.x, b.y - en.y) <= en.r + 5) {
+                hitEnemy = en;
+                en.hp -= b.dmg;
+                if (b.chill) en.chillT = 90;
+
+                if (en.hp <= 0) {
+                  const yenGain = Math.round((en.isBoss ? 50 : 14) * (1 + G.perks.yen_magnet * 0.5));
+                  const ptsGain = Math.round((en.isBoss ? 100 : 25) * (1 + G.perks.yen_magnet * 0.35));
+                  G.yen += yenGain;
+                  G.score += ptsGain;
+                  addBurst(en.x, en.y, en.isBoss ? '#ffd447' : '#ff2a85', en.isBoss ? 24 : 12);
+                  addPopup(en.x, en.y - 12, `+${ptsGain} PTS`, en.isBoss ? '#ffd447' : '#00f0ff');
+                  G.enemies.splice(j, 1);
+                  gainXp(en.isBoss ? 55 : 18);
+                }
+                break;
+              }
+            }
+
+            if (hitEnemy) {
+              if (b.canBounce) {
+                const nextEn = findNearestEnemy(b.x, b.y, hitEnemy);
+                if (nextEn && Math.hypot(nextEn.x - b.x, nextEn.y - b.y) <= 140) {
+                  const a = Math.atan2(nextEn.y - b.y, nextEn.x - b.x);
+                  b.vx = Math.cos(a) * 8.5;
+                  b.vy = Math.sin(a) * 8.5;
+                  b.dmg *= 0.65;
+                  b.canBounce = false;
+                  continue;
+                }
+              }
+              G.bullets.splice(i, 1);
+            } else if (b.x < 0 || b.x > W || b.y < 0 || b.y > H) {
+              G.bullets.splice(i, 1);
+            }
+          }
+
+          // 6. Update Enemies along S-Curve Road
+          for (let i = G.enemies.length - 1; i >= 0; i--) {
+            const en = G.enemies[i];
+            if (en.chillT > 0) en.chillT--;
+            const spd = en.speed * (en.chillT > 0 ? 0.62 : 1);
+            const wp = ROAD[en.wp];
+            const dx = wp.x - en.x;
+            const dy = wp.y - en.y;
+            const d = Math.hypot(dx, dy);
+            if (d <= 6) {
+              en.wp++;
+              if (en.wp >= ROAD.length) {
+                G.vaultHp = Math.max(0, G.vaultHp - (en.isBoss ? 30 : 12));
+                addBurst(225, 625, '#ff2a85', 18);
+                G.enemies.splice(i, 1);
+                syncHud();
+                if (G.vaultHp <= 0) {
+                  finishGame(false);
+                  break;
+                }
+                continue;
+              }
+            } else {
+              en.x += (dx / d) * spd;
+              en.y += (dy / d) * spd;
+            }
+          }
+        }
+
+        for (let i = G.lasers.length - 1; i >= 0; i--) {
+          G.lasers[i].life--;
+          if (G.lasers[i].life <= 0) G.lasers.splice(i, 1);
+        }
+        for (let i = G.particles.length - 1; i >= 0; i--) {
+          const p = G.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life--;
+          if (p.life <= 0) G.particles.splice(i, 1);
+        }
+        for (let i = G.popups.length - 1; i >= 0; i--) {
+          const pp = G.popups[i];
+          pp.y -= 0.7;
+          pp.life--;
+          if (pp.life <= 0) G.popups.splice(i, 1);
+        }
+
+        draw();
+        requestAnimationFrame(step);
+      }
+
+      function draw() {
+        const opt = VISUAL_OPTIONS.find(o => o.id === activeOptionId) || VISUAL_OPTIONS[0];
+        ctx.clearRect(0, 0, W, H);
+
+        // 1. Draw Active AI Rooftop Arena Background
+        const bgImg = SPRITES[`arena_${activeOptionId}`];
+        if (bgImg && bgImg.complete && bgImg.naturalWidth > 0) {
+          ctx.drawImage(bgImg, 0, 0, W, H);
+          ctx.fillStyle = 'rgba(4, 7, 18, 0.32)';
+          ctx.fillRect(0, 0, W, H);
+        }
+
+        // 2. Draw Glowing S-Curve Neon Highway Track
+        ctx.save();
+        ctx.shadowColor = opt.roadCol;
+        ctx.shadowBlur = 16;
+        ctx.strokeStyle = opt.roadCol;
+        ctx.lineWidth = 34;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ROAD.forEach((p, idx) => idx === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = 'rgba(8, 12, 26, 0.85)';
+        ctx.lineWidth = 26;
+        ctx.beginPath();
+        ROAD.forEach((p, idx) => idx === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+        ctx.stroke();
+
+        ctx.strokeStyle = opt.roadCol;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([7, 9]);
+        ctx.beginPath();
+        ROAD.forEach((p, idx) => idx === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+        ctx.stroke();
+        ctx.restore();
+
+        // 3. Draw 24K Gold Vault Sprite at Bottom of S-Curve
+        drawRoundedPadSprite(SPRITES.vault, 225, 622, 34, '#ffd447', '24K VAULT');
+
+        // 4. Draw 6 Tactical Turret Pads with AI Turret Artwork
+        for (const pad of G.pads) {
+          if (pad.lvl > 0) {
+            const spec = TURRET_SPECS[Math.min(TURRET_SPECS.length - 1, pad.lvl - 1)];
+            drawRoundedPadSprite(SPRITES[spec.spr], pad.x, pad.y, 28, spec.col, spec.name);
+          } else {
+            ctx.save();
+            ctx.fillStyle = 'rgba(8, 14, 32, 0.86)';
+            ctx.strokeStyle = 'rgba(0, 240, 255, 0.45)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(pad.x - 26, pad.y - 26, 52, 52, 12);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = '#00f0ff';
+            ctx.font = '800 8.5px Orbitron, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('+ TURRET', pad.x, pad.y - 2);
+            ctx.fillStyle = '#ffd447';
+            ctx.fillText('40 YEN', pad.x, pad.y + 10);
+            ctx.restore();
+          }
+        }
+
+        // 5. Draw Laser Beams
+        for (const l of G.lasers) {
+          ctx.save();
+          ctx.strokeStyle = l.col;
+          ctx.shadowColor = l.col;
+          ctx.shadowBlur = 10;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(l.x1, l.y1);
+          ctx.lineTo(l.x2, l.y2);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // 6. Draw Enemies with Textured Boss/Drone Badges
+        for (const en of G.enemies) {
+          const col = en.isBoss ? '#ffd447' : (en.chillT > 0 ? '#00f0ff' : '#ff2a85');
+          drawCircularSprite(SPRITES[en.spr], en.x, en.y, en.r, col, col);
+
+          // HP Bar
+          const bw = en.r * 2;
+          ctx.fillStyle = 'rgba(6, 10, 24, 0.85)';
+          ctx.fillRect(en.x - en.r, en.y - en.r - 9, bw, 5);
+          ctx.fillStyle = col;
+          ctx.fillRect(en.x - en.r, en.y - en.r - 9, bw * Math.max(0, en.hp / en.maxHp), 5);
+        }
+
+        // 7. Draw Hero Archer & Synth Cyber-Owl Companion
+        const hCol = G.overdriveT > 0 ? '#ffd447' : opt.accent;
+        drawCircularSprite(SPRITES.hero, G.hero.x, G.hero.y, G.hero.r, hCol, hCol);
+
+        if (G.perks.owl_pet > 0) {
+          const ox = G.hero.x + Math.cos(G.hero.owlAngle) * 44;
+          const oy = G.hero.y + Math.sin(G.hero.owlAngle) * 44;
+          drawCircularSprite(SPRITES.owl, ox, oy, 13, '#ffd447', '#00f0ff');
+        }
+
+        // 8. Draw Plasma Arrow Projectiles
+        for (const b of G.bullets) {
+          ctx.save();
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = b.col;
+          ctx.shadowColor = b.col;
+          ctx.shadowBlur = 12;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // 9. Particles & Popups
+        for (const p of G.particles) {
+          ctx.fillStyle = p.col;
+          ctx.globalAlpha = Math.max(0, p.life / 24);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        for (const pp of G.popups) {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, pp.life / pp.maxLife);
+          ctx.font = '900 11px Orbitron, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = pp.col;
+          ctx.shadowColor = '#000';
+          ctx.shadowBlur = 6;
+          ctx.fillText(pp.txt, pp.x, pp.y);
+          ctx.restore();
+        }
+      }
+
+      resetGame();
+      requestAnimationFrame(step);
+    })();
+  </script>
+</body>
+</html>
