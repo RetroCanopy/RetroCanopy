@@ -4787,6 +4787,7 @@
     }
 
     function matchRandomOnlinePlayer(startImmediately = false) {
+      if (!ensurePilotLoggedIn()) return;
       state.customFriendChallenger = null;
       if (!startImmediately || !state.activeOnlineOpponent || state.gameMode !== "pvp") {
         state.activeOnlineOpponent = generateRandomOnlinePlayer();
@@ -4801,6 +4802,7 @@
     }
 
     function matchSimilarLevelCpu(startImmediately = false) {
+      if (!ensurePilotLoggedIn()) return;
       if (!startImmediately || !state.activeSimilarCpu || state.gameMode !== "cpu") {
         state.activeSimilarCpu = generateSimilarLevelCpuBot();
       }
@@ -4875,6 +4877,7 @@
     }
 
     function challengeFriendRigCode() {
+      if (!ensurePilotLoggedIn()) return;
       const raw = prompt("Paste another player's Rig Battle Code (starts with U17-) to battle their bot:");
       if (!raw || !raw.trim().startsWith("U17-")) return;
       try {
@@ -5069,6 +5072,7 @@
     }
 
     function setWagerAmount(amt) {
+      if (!ensurePilotLoggedIn()) return;
       state.isAllInWager = false;
       state.wagerAmount = Math.max(0, Math.min(Number(amt) || 0, state.scrap));
       persistWalletAndRig();
@@ -5076,12 +5080,14 @@
     }
 
     function setWagerAllIn() {
+      if (!ensurePilotLoggedIn()) return;
       state.isAllInWager = true;
       state.wagerAmount = Math.max(0, state.scrap);
       updatePlayerUI();
     }
 
     function promptCustomWager() {
+      if (!ensurePilotLoggedIn()) return;
       const raw = prompt(`Enter your proposed Diamond Wager (Available Vault: 💎 ${state.scrap.toLocaleString()}):`, String(getPlayerProposedWager()));
       if (raw === null) return;
       const parsed = parseInt(raw.replace(/[^0-9]/g, ""), 10);
@@ -8423,6 +8429,7 @@
     }
 
     function sendPitChatFromInput() {
+      if (!ensurePilotLoggedIn()) return;
       const inp = document.getElementById("pitChatInput");
       if (!inp) return;
       const txt = inp.value.trim();
@@ -8441,6 +8448,7 @@
     }
 
     function sendPitHypeReaction(emoji, labelText) {
+      if (!ensurePilotLoggedIn()) return;
       const payload = {
         id: "emote_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
         kind: "user",
