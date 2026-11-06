@@ -2350,6 +2350,86 @@
       color: #ffffff;
     }
 
+
+    /* =========================================================================
+       LIVE REAL-TIME PVP MATCHMAKING RADAR & CONTROLS BADGE
+       ========================================================================= */
+    .live-queue-box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(14, 116, 144, 0.28) 0%, rgba(15, 23, 42, 0.92) 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.55);
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.22);
+    }
+    .live-queue-box.active {
+      display: flex;
+    }
+    .live-radar-spinner {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 3px solid rgba(56, 189, 248, 0.25);
+      border-top-color: #38bdf8;
+      animation: liveRadarSpin 0.85s linear infinite;
+    }
+    @keyframes liveRadarSpin {
+      to { transform: rotate(360deg); }
+    }
+    .live-queue-status {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      color: #38bdf8;
+      letter-spacing: 0.8px;
+      text-align: center;
+    }
+    .live-queue-sub {
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      text-align: center;
+    }
+    .live-queue-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+    .btn-queue-action {
+      background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+      color: #f8fafc;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-queue-action.instant {
+      background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+      color: #090612;
+      border-color: #fde047;
+    }
+    .live-pvp-pill-hud {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 900;
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.45);
+    }
+
   </style>
 </head>
 <body>
@@ -2514,7 +2594,7 @@
         <!-- LIVE ONLINE PVP & SIMILAR-LVL CPU MATCHMAKING TOOLS -->
         <div class="pvp-tools-row visible" id="pvpToolsRow">
           <div style="display:flex;gap:6px;flex-wrap:wrap;" id="matchmakingActionBtns">
-            <button class="btn-pvp-tool primary" onclick="matchRandomOnlinePlayer(false)">🌐 FIND RANDOM ONLINE PLAYER</button>
+            <button class="btn-pvp-tool primary" onclick="startLivePvpMatchmaking()">🌐 FIND LIVE ONLINE PLAYER</button>
             <button class="btn-pvp-tool" style="background:linear-gradient(180deg,#34d399 0%,#059669 100%);color:#04130e;" onclick="matchSimilarLevelCpu(false)">🤖 GENERATE SIMILAR-LVL CPU</button>
             <button class="btn-pvp-tool" onclick="copyMyRigCode()">🔗 COPY MY RIG CODE</button>
             <button class="btn-pvp-tool" onclick="challengeFriendRigCode()">⚔️ ENTER FRIEND RIG CODE</button>
@@ -2580,13 +2660,27 @@
               </div>
             </div>
 
-            <div class="overlay-choice-row">
-              <button class="btn-arena-battle pvp-live" onclick="matchRandomOnlinePlayer(true)">
-                🌐 ONLINE PVP
+            <!-- LIVE REAL-TIME PVP MATCHMAKING RADAR -->
+            <div class="live-queue-box" id="livePvpQueueBox">
+              <div class="live-radar-spinner"></div>
+              <div class="live-queue-status" id="liveQueueStatusTxt">📡 SEARCHING FOR LIVE ONLINE PLAYER...</div>
+              <div class="live-queue-sub" id="liveQueueSubTxt">Broadcasting your 6-Slot Rig &amp; Wager on Supabase Realtime...</div>
+              <div class="live-queue-actions">
+                <button type="button" class="btn-queue-action instant" onclick="fallbackToCloudPilotPvp()">⚡ BATTLE CLOUD PILOT NOW</button>
+                <button type="button" class="btn-queue-action" onclick="cancelLivePvpSearch()">✕ CANCEL</button>
+              </div>
+            </div>
+
+            <div class="overlay-choice-row" id="overlayChoiceRow">
+              <button class="btn-arena-battle pvp-live" id="btnStartLivePvp" onclick="startLivePvpMatchmaking()">
+                🌐 LIVE ONLINE PVP
               </button>
-              <button class="btn-arena-battle cpu-sim" onclick="matchSimilarLevelCpu(true)">
+              <button class="btn-arena-battle cpu-sim" id="btnStartCpuSim" onclick="matchSimilarLevelCpu(true)">
                 🤖 VS. CPU BOT
               </button>
+            </div>
+            <div style="font-size:0.72rem;color:#94a3b8;margin-top:2px;font-weight:600;">
+              🎮 <strong style="color:#38bdf8;">LIVE CONTROLS:</strong> Steer with <strong>WASD / Arrow Keys</strong> + <strong>SPACE</strong> to Dash (or let your Bot AI auto-pilot!)
             </div>
             <button class="btn-arena-battle" id="overlayRematchBtn" style="display:none;" onclick="triggerBattle()">
               ⚔️ FIGHT NOW
@@ -3423,6 +3517,527 @@
         loadout,
         desc: `🤖 Matched to your Rig Level (LVL.${cpuLvl} · ${cpuSlotCount}/6 Upgrades) — ${arch.role}.`
       };
+    }
+
+
+    // =========================================================================
+    // LIVE REAL-TIME MULTIPLAYER PVP ENGINE (SUPABASE REALTIME + BROADCAST BUS)
+    // =========================================================================
+    const LIVE_CLIENT_ID = "peer_" + Math.random().toString(36).slice(2, 10) + "_" + Date.now().toString(36);
+    const liveKeys = { up: false, down: false, left: false, right: false, dash: false };
+    const remoteGuestKeys = { up: false, down: false, left: false, right: false, dash: false };
+
+    window.addEventListener("keydown", (e) => {
+      if (document.activeElement && ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+      const k = e.key.toLowerCase();
+      if (k === "w" || k === "arrowup") { liveKeys.up = true; }
+      if (k === "s" || k === "arrowdown") { liveKeys.down = true; }
+      if (k === "a" || k === "arrowleft") { liveKeys.left = true; }
+      if (k === "d" || k === "arrowright") { liveKeys.right = true; }
+      if (k === " ") { liveKeys.dash = true; if (sim.running) e.preventDefault(); }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      const k = e.key.toLowerCase();
+      if (k === "w" || k === "arrowup") liveKeys.up = false;
+      if (k === "s" || k === "arrowdown") liveKeys.down = false;
+      if (k === "a" || k === "arrowleft") liveKeys.left = false;
+      if (k === "d" || k === "arrowright") liveKeys.right = false;
+      if (k === " ") liveKeys.dash = false;
+    });
+
+    const livePvp = {
+      searching: false,
+      searchStartMs: 0,
+      searchTimerId: null,
+      announceIntervalId: null,
+      inputIntervalId: null,
+      knownPeers: new Map(), // clientId -> peerSpec
+      supaLobbyChannel: null,
+      supaRoomChannel: null,
+      bcLobby: null,
+      bcRoom: null,
+      activeRoomId: null,
+      role: null, // "host" | "guest"
+      hostPeer: null,
+      guestPeer: null,
+      agreedWager: 0
+    };
+
+    function getMyPeerSpec() {
+      const pInfo = getPlayerRigTierInfo();
+      return {
+        clientId: LIVE_CLIENT_ID,
+        userKey: state.loggedInUserKey || "guest",
+        callsign: state.pilotCallsign || "@PILOT",
+        elo: state.elo || 1000,
+        rigLevel: pInfo.rigLevel,
+        equippedCount: pInfo.equippedCount,
+        wager: getPlayerProposedWager(),
+        color: "#38bdf8",
+        baseStats: { ...BASE_STATS },
+        loadout: { ...state.loadout },
+        searchingAt: livePvp.searchStartMs || Date.now()
+      };
+    }
+
+    function initLiveLobbyChannels() {
+      // 1. Same-machine / Multi-tab zero-latency BroadcastChannel
+      if (typeof BroadcastChannel !== "undefined" && !livePvp.bcLobby) {
+        livePvp.bcLobby = new BroadcastChannel("rc_botpit_live_lobby_v1");
+        livePvp.bcLobby.onmessage = (ev) => {
+          if (ev && ev.data) handleLobbySignal(ev.data);
+        };
+      }
+
+      // 2. Global Cross-Device Supabase Realtime Broadcast + Presence Channel
+      if (window.db && !livePvp.supaLobbyChannel) {
+        try {
+          const ch = window.db.channel("rc_botpit_live_lobby_v1", {
+            config: { broadcast: { self: false }, presence: { key: LIVE_CLIENT_ID } }
+          });
+          ch.on("broadcast", { event: "lobby_signal" }, (payload) => {
+            if (payload && payload.payload) handleLobbySignal(payload.payload);
+          });
+          ch.subscribe();
+          livePvp.supaLobbyChannel = ch;
+        } catch (_) {}
+      }
+    }
+
+    function sendLobbySignal(msg) {
+      initLiveLobbyChannels();
+      if (livePvp.bcLobby) {
+        try { livePvp.bcLobby.postMessage(msg); } catch (_) {}
+      }
+      if (livePvp.supaLobbyChannel) {
+        try {
+          livePvp.supaLobbyChannel.send({
+            type: "broadcast",
+            event: "lobby_signal",
+            payload: msg
+          });
+        } catch (_) {}
+      }
+    }
+
+    function handleLobbySignal(msg) {
+      if (!msg || !msg.type) return;
+
+      if (msg.type === "queue_announce" && msg.peer && msg.peer.clientId !== LIVE_CLIENT_ID) {
+        livePvp.knownPeers.set(msg.peer.clientId, { ...msg.peer, lastSeen: Date.now() });
+        // If we are also searching right now, check if we should pair immediately!
+        if (livePvp.searching && !livePvp.activeRoomId) {
+          // Immediately reply with our announce so both peers know about each other
+          const mySpec = getMyPeerSpec();
+          // Deterministic host election: earlier searchingAt wins (tie-breaker: clientId comparison)
+          const other = msg.peer;
+          const iAmHost = (mySpec.searchingAt < other.searchingAt) ||
+            (mySpec.searchingAt === other.searchingAt && mySpec.clientId < other.clientId);
+
+          if (iAmHost) {
+            pairWithLivePeer(mySpec, other);
+          } else {
+            sendLobbySignal({ type: "queue_announce", peer: mySpec });
+          }
+        }
+      } else if (msg.type === "queue_leave" && msg.clientId) {
+        livePvp.knownPeers.delete(msg.clientId);
+      } else if (msg.type === "match_pair" && msg.room) {
+        const rm = msg.room;
+        if (livePvp.searching && !livePvp.activeRoomId &&
+            (rm.hostPeer.clientId === LIVE_CLIENT_ID || rm.guestPeer.clientId === LIVE_CLIENT_ID)) {
+          acceptLiveRoomMatch(rm);
+        }
+      }
+    }
+
+    function pairWithLivePeer(hostSpec, guestSpec) {
+      if (livePvp.activeRoomId) return;
+      const roomId = "room_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
+      const agreedWager = Math.min(Number(hostSpec.wager) || 0, Number(guestSpec.wager) || 0);
+      const roomPayload = {
+        roomId,
+        agreedWager,
+        hostPeer: hostSpec,
+        guestPeer: guestSpec,
+        startedAt: Date.now()
+      };
+      sendLobbySignal({ type: "match_pair", room: roomPayload });
+      acceptLiveRoomMatch(roomPayload);
+    }
+
+    function startLivePvpMatchmaking() {
+      if (!ensurePilotLoggedIn()) return;
+      if (sim.running) return;
+
+      state.gameMode = "pvp";
+      syncModeButtonsUI();
+
+      livePvp.searching = true;
+      livePvp.activeRoomId = null;
+      livePvp.searchStartMs = Date.now();
+
+      const qBox = document.getElementById("livePvpQueueBox");
+      const choiceRow = document.getElementById("overlayChoiceRow");
+      const statusTxt = document.getElementById("liveQueueStatusTxt");
+      const subTxt = document.getElementById("liveQueueSubTxt");
+      if (qBox) qBox.classList.add("active");
+      if (choiceRow) choiceRow.style.display = "none";
+      document.getElementById("battleOverlay").classList.remove("hidden");
+
+      initLiveLobbyChannels();
+      const mySpec = getMyPeerSpec();
+      sendLobbySignal({ type: "queue_announce", peer: mySpec });
+
+      // Check if there is already a fresh searching peer in knownPeers
+      const now = Date.now();
+      for (const [cid, peer] of livePvp.knownPeers.entries()) {
+        if (now - (peer.lastSeen || 0) < 6000 && cid !== LIVE_CLIENT_ID) {
+          pairWithLivePeer(peer, mySpec);
+          return;
+        }
+      }
+
+      if (livePvp.announceIntervalId) clearInterval(livePvp.announceIntervalId);
+      livePvp.announceIntervalId = setInterval(() => {
+        if (!livePvp.searching || livePvp.activeRoomId) return;
+        const elapsedSec = Math.floor((Date.now() - livePvp.searchStartMs) / 1000);
+        const remainSec = Math.max(0, 12 - elapsedSec);
+        if (statusTxt) {
+          statusTxt.textContent = `📡 SEARCHING LIVE ARENA QUEUE... (${remainSec}s)`;
+        }
+        if (subTxt) {
+          subTxt.innerHTML = `Your Wager: <strong style="color:#38bdf8;">💎 ${getPlayerProposedWager().toLocaleString()}</strong> · Waiting for another real player online...`;
+        }
+        sendLobbySignal({ type: "queue_announce", peer: getMyPeerSpec() });
+      }, 450);
+    }
+
+    function cancelLivePvpSearch() {
+      livePvp.searching = false;
+      if (livePvp.announceIntervalId) {
+        clearInterval(livePvp.announceIntervalId);
+        livePvp.announceIntervalId = null;
+      }
+      sendLobbySignal({ type: "queue_leave", clientId: LIVE_CLIENT_ID });
+      const qBox = document.getElementById("livePvpQueueBox");
+      const choiceRow = document.getElementById("overlayChoiceRow");
+      if (qBox) qBox.classList.remove("active");
+      if (choiceRow) choiceRow.style.display = "grid";
+    }
+
+    function fallbackToCloudPilotPvp() {
+      cancelLivePvpSearch();
+      sim.isLiveMultiplayer = false;
+      sim.liveRole = null;
+      matchRandomOnlinePlayer(true);
+    }
+
+    function cleanupLiveRoomChannels() {
+      if (livePvp.inputIntervalId) {
+        clearInterval(livePvp.inputIntervalId);
+        livePvp.inputIntervalId = null;
+      }
+      if (livePvp.bcRoom) {
+        try { livePvp.bcRoom.close(); } catch (_) {}
+        livePvp.bcRoom = null;
+      }
+      if (livePvp.supaRoomChannel && window.db) {
+        try { window.db.removeChannel(livePvp.supaRoomChannel); } catch (_) {}
+        livePvp.supaRoomChannel = null;
+      }
+      livePvp.activeRoomId = null;
+    }
+
+    function sendRoomPacket(pkt) {
+      if (livePvp.bcRoom) {
+        try { livePvp.bcRoom.postMessage(pkt); } catch (_) {}
+      }
+      if (livePvp.supaRoomChannel) {
+        try {
+          livePvp.supaRoomChannel.send({
+            type: "broadcast",
+            event: "room_pkt",
+            payload: pkt
+          });
+        } catch (_) {}
+      }
+    }
+
+    function acceptLiveRoomMatch(roomSpec) {
+      if (livePvp.activeRoomId === roomSpec.roomId) return;
+      cancelLivePvpSearch();
+      cleanupLiveRoomChannels();
+
+      livePvp.activeRoomId = roomSpec.roomId;
+      livePvp.hostPeer = roomSpec.hostPeer;
+      livePvp.guestPeer = roomSpec.guestPeer;
+      livePvp.agreedWager = roomSpec.agreedWager;
+      livePvp.role = (roomSpec.hostPeer.clientId === LIVE_CLIENT_ID) ? "host" : "guest";
+
+      const oppPeer = livePvp.role === "host" ? roomSpec.guestPeer : roomSpec.hostPeer;
+
+      // Configure state.activeOnlineOpponent with the real human opponent's exact bot and wager!
+      state.activeOnlineOpponent = {
+        id: "live_" + oppPeer.clientId,
+        callsign: oppPeer.callsign,
+        region: "LIVE REAL-TIME PLAYER",
+        rankTitle: `🟢 LIVE ONLINE PLAYER (LVL.${oppPeer.rigLevel || 1})`,
+        elo: oppPeer.elo || 1000,
+        rigLevel: oppPeer.rigLevel || 1,
+        bounty: 350,
+        wager: oppPeer.wager,
+        color: "#f43f5e",
+        baseStats: oppPeer.baseStats || { ...BASE_STATS },
+        loadout: normalizeLoadout(oppPeer.loadout),
+        isRealHumanPlayer: true,
+        bio: `🟢 LIVE REAL-TIME PVP vs. ${oppPeer.callsign}`
+      };
+
+      state.gameMode = "pvp";
+      updatePlayerUI();
+
+      // Connect dedicated room channels (BroadcastChannel + Supabase Room Channel)
+      if (typeof BroadcastChannel !== "undefined") {
+        livePvp.bcRoom = new BroadcastChannel("rc_botpit_" + roomSpec.roomId);
+        livePvp.bcRoom.onmessage = (ev) => {
+          if (ev && ev.data) handleRoomPacket(ev.data);
+        };
+      }
+
+      if (window.db) {
+        try {
+          const rch = window.db.channel("rc_botpit_" + roomSpec.roomId, {
+            config: { broadcast: { self: false } }
+          });
+          rch.on("broadcast", { event: "room_pkt" }, (payload) => {
+            if (payload && payload.payload) handleRoomPacket(payload.payload);
+          });
+          rch.subscribe();
+          livePvp.supaRoomChannel = rch;
+        } catch (_) {}
+      }
+
+      startLiveSynchronizedBattle(roomSpec);
+    }
+
+    function startLiveSynchronizedBattle(roomSpec) {
+      sim.isLiveMultiplayer = true;
+      sim.liveRole = livePvp.role;
+
+      setupStagingArena();
+
+      const stake = roomSpec.agreedWager;
+      sim.escrowWager = stake;
+      if (stake > 0) {
+        state.scrap = Math.max(0, state.scrap - stake);
+        persistWalletAndRig();
+        updatePlayerUI();
+      }
+
+      sim.running = true;
+      document.getElementById("battleOverlay").classList.add("hidden");
+
+      const oppPeer = livePvp.role === "host" ? roomSpec.guestPeer : roomSpec.hostPeer;
+      const potTotal = stake * 2;
+      addFloatText(
+        800,
+        360,
+        `🟢 LIVE PVP VS ${oppPeer.callsign}! 🔒 LOWEST WAGER: 💎 ${stake.toLocaleString()} (POT: 💎 ${potTotal.toLocaleString()})`,
+        "#00ff88"
+      );
+
+      // If Guest, send live keyboard inputs to Host at 30Hz
+      if (livePvp.role === "guest") {
+        livePvp.inputIntervalId = setInterval(() => {
+          if (!sim.running || !sim.isLiveMultiplayer) return;
+          sendRoomPacket({
+            type: "guest_input",
+            keys: { ...liveKeys }
+          });
+        }, 33);
+      }
+    }
+
+    function applyManualPilotSteering(bot, keysObj, defaultBrain) {
+      if (!keysObj) return defaultBrain;
+      const dx = (keysObj.right ? 1 : 0) - (keysObj.left ? 1 : 0);
+      const dy = (keysObj.down ? 1 : 0) - (keysObj.up ? 1 : 0);
+
+      if (keysObj.dash && bot.abilityCd <= 0 && bot.abilityState === "ready") {
+        bot.abilityState = "charging";
+        bot.abilityTimer = 26;
+        bot.chargeAngle = (dx !== 0 || dy !== 0) ? Math.atan2(dy, dx) : bot.angle;
+        emit3DSparks(bot.x, bot.y, "#38bdf8", 14, 7.0);
+        addFloatText(bot.x, bot.y - 42, "⚡ MANUAL OVERDRIVE DASH!", "#38bdf8");
+      }
+
+      if (dx !== 0 || dy !== 0) {
+        return {
+          desiredAngle: Math.atan2(dy, dx),
+          throttle: bot.abilityState === "charging" ? 2.05 : 1.32,
+          turnMult: 1.55
+        };
+      }
+      return defaultBrain;
+    }
+
+    function broadcastHostArenaState() {
+      if (!sim.isLiveMultiplayer || sim.liveRole !== "host" || !sim.running) return;
+      const [hostBot, guestBot] = sim.bots;
+      if (!hostBot || !guestBot) return;
+
+      const serializeBot = (b) => ({
+        x: Math.round(b.x * 10) / 10,
+        y: Math.round(b.y * 10) / 10,
+        vx: Math.round(b.vx * 100) / 100,
+        vy: Math.round(b.vy * 100) / 100,
+        z: Math.round((b.z || 0) * 10) / 10,
+        angle: Math.round(b.angle * 1000) / 1000,
+        turretAngle: Math.round((b.turretAngle || 0) * 1000) / 1000,
+        hp: Math.max(0, Math.round(b.hp)),
+        maxHp: b.maxHp,
+        hitFlash: b.hitFlash || 0,
+        dodgeTimer: b.dodgeTimer || 0,
+        grappleTimer: b.grappleTimer || 0,
+        cryoTimer: b.cryoTimer || 0,
+        empStunTimer: b.empStunTimer || 0,
+        beamTimer: b.beamTimer || 0,
+        armorStage: b.armorStage
+      });
+
+      sendRoomPacket({
+        type: "host_state",
+        ticks: sim.ticks,
+        timeLeft: Math.round(sim.timeLeft * 100) / 100,
+        centerSaw: sim.centerSaw ? {
+          state: sim.centerSaw.state,
+          x: sim.centerSaw.x,
+          y: Math.round(sim.centerSaw.y * 10) / 10,
+          currentRadius: Math.round(sim.centerSaw.currentRadius * 10) / 10,
+          spinAngle: Math.round(sim.centerSaw.spinAngle * 100) / 100
+        } : null,
+        hostBot: serializeBot(hostBot),
+        guestBot: serializeBot(guestBot),
+        projectiles: sim.projectiles.slice(0, 12).map(p => ({
+          kind: p.kind,
+          x: Math.round(p.x),
+          y: Math.round(p.y),
+          angle: Math.round((p.angle || 0) * 100) / 100,
+          spin: Math.round((p.spin || 0) * 100) / 100,
+          life: p.life,
+          maxLife: p.maxLife || 95
+        })),
+        clashLock: sim.clashLock ? {
+          x: Math.round(sim.clashLock.x),
+          y: Math.round(sim.clashLock.y),
+          advantage: sim.clashLock.advantage
+        } : null
+      });
+    }
+
+    function handleRoomPacket(pkt) {
+      if (!pkt || !pkt.type) return;
+
+      if (pkt.type === "guest_input" && sim.liveRole === "host") {
+        if (pkt.keys) {
+          remoteGuestKeys.up = Boolean(pkt.keys.up);
+          remoteGuestKeys.down = Boolean(pkt.keys.down);
+          remoteGuestKeys.left = Boolean(pkt.keys.left);
+          remoteGuestKeys.right = Boolean(pkt.keys.right);
+          remoteGuestKeys.dash = Boolean(pkt.keys.dash);
+        }
+      } else if (pkt.type === "host_state" && sim.liveRole === "guest" && sim.running) {
+        sim.ticks = pkt.ticks || sim.ticks;
+        sim.timeLeft = typeof pkt.timeLeft === "number" ? pkt.timeLeft : sim.timeLeft;
+        if (pkt.centerSaw && sim.centerSaw) {
+          Object.assign(sim.centerSaw, pkt.centerSaw);
+        }
+        // On Guest screen: sim.bots[0] is Guest (player), sim.bots[1] is Host (enemy)
+        const [myBot, hostEnemyBot] = sim.bots;
+        if (myBot && pkt.guestBot) {
+          const prevHp = myBot.hp;
+          Object.assign(myBot, pkt.guestBot);
+          if (myBot.hp < prevHp) {
+            emit3DSparks(myBot.x, myBot.y, "#ff2a55", 10, 6.0);
+          }
+        }
+        if (hostEnemyBot && pkt.hostBot) {
+          const prevHp = hostEnemyBot.hp;
+          Object.assign(hostEnemyBot, pkt.hostBot);
+          if (hostEnemyBot.hp < prevHp) {
+            emit3DSparks(hostEnemyBot.x, hostEnemyBot.y, "#00ff88", 10, 6.0);
+          }
+        }
+        if (Array.isArray(pkt.projectiles)) {
+          sim.projectiles = pkt.projectiles;
+        }
+        sim.clashLock = pkt.clashLock || null;
+        syncHudReadout();
+      } else if (pkt.type === "match_end" && sim.liveRole === "guest") {
+        // Authoritative match result from Host
+        const [myBot, hostEnemyBot] = sim.bots;
+        if (myBot && hostEnemyBot) {
+          if (pkt.winnerRole === "guest") {
+            myBot.hp = Math.max(1, pkt.guestFinalHp || 120);
+            hostEnemyBot.hp = 0;
+          } else {
+            myBot.hp = 0;
+            hostEnemyBot.hp = Math.max(1, pkt.hostFinalHp || 120);
+          }
+        }
+        finalizeLiveGuestMatch(pkt.winnerRole === "guest");
+      }
+    }
+
+    function finalizeLiveGuestMatch(guestWon) {
+      if (!sim.running) return;
+      sim.running = false;
+      const overlay = document.getElementById("battleOverlay");
+      const banner = document.getElementById("overlayBannerText");
+      const desc = document.getElementById("overlayEnemyDesc");
+      const chObj = getActivePvpOpponent();
+      const staked = sim.escrowWager || 0;
+      sim.escrowWager = 0;
+
+      if (guestWon) {
+        const totalWon = staked * 2;
+        state.scrap += totalWon;
+        state.elo += 28;
+        state.pvpWins++;
+        persistWalletAndRig();
+        banner.textContent = staked > 0
+          ? `🏆 LIVE PVP VICTORY! +${totalWon.toLocaleString()} 💎 POT (+28 🏆)`
+          : `🏆 LIVE PVP VICTORY VS. ${chObj.callsign}! (+28 🏆)`;
+        banner.style.color = "#00ff88";
+        desc.textContent = staked > 0
+          ? `Lowest Wager was 💎 ${staked.toLocaleString()} each — you swept the live 💎 ${totalWon.toLocaleString()} pot from ${chObj.callsign}!`
+          : `You defeated live player ${chObj.callsign}!`;
+      } else {
+        state.elo = Math.max(800, state.elo - 16);
+        state.pvpLosses++;
+        let bailoutMsg = "";
+        if (staked > 0 && state.scrap < 100) {
+          state.scrap += 250;
+          bailoutMsg = " · +250 💎 Sponsor Bailout!";
+        }
+        persistWalletAndRig();
+        banner.textContent = staked > 0
+          ? `💥 DEFEATED BY LIVE PLAYER ${chObj.callsign} (-${staked.toLocaleString()} 💎)`
+          : `💥 DEFEATED BY LIVE PLAYER ${chObj.callsign} (-16 🏆)`;
+        banner.style.color = "#ff2a55";
+        desc.textContent = staked > 0
+          ? `${chObj.callsign} won the live 💎 ${(staked * 2).toLocaleString()} Winner-Takes-All pot${bailoutMsg}`
+          : `Live match completed — upgrade your bot or rematch below!`;
+      }
+
+      sim.isLiveMultiplayer = false;
+      sim.liveRole = null;
+      cleanupLiveRoomChannels();
+      updatePlayerUI();
+      syncHudReadout();
+      overlay.classList.remove("hidden");
     }
 
     function matchRandomOnlinePlayer(startImmediately = false) {
@@ -4557,6 +5172,9 @@
 
       document.getElementById("battleOverlay").classList.remove("hidden");
       syncHudReadout();
+      if (sim.isLiveMultiplayer && sim.liveRole === "host" && sim.ticks % 2 === 0) {
+        broadcastHostArenaState();
+      }
     }
 
     function triggerBattle() {
@@ -5071,6 +5689,21 @@
     function stepArenaPhysics() {
       if (!sim.running) return;
 
+      // In a Live Real-Time PvP match, Guest receives 30Hz authoritative physics from Host
+      if (sim.isLiveMultiplayer && sim.liveRole === "guest") {
+        for (let i = sim.sparks.length - 1; i >= 0; i--) {
+          const s = sim.sparks[i];
+          s.x += s.vx; s.y += s.vy; s.life--;
+          if (s.life <= 0) sim.sparks.splice(i, 1);
+        }
+        for (let i = sim.floatTexts.length - 1; i >= 0; i--) {
+          const ft = sim.floatTexts[i];
+          ft.y -= 0.85; ft.life--;
+          if (ft.life <= 0) sim.floatTexts.splice(i, 1);
+        }
+        return;
+      }
+
       // Smooth Dynamic Camera Interpolation
       if (sim.camHoldTimer > 0) {
         sim.camHoldTimer--;
@@ -5150,6 +5783,19 @@
           }
           state.activeSimilarCpu = generateSimilarLevelCpuBot();
         } else {
+          // If Host in a Live Real-Time PvP match, broadcast match_end to Guest immediately!
+          if (sim.isLiveMultiplayer && sim.liveRole === "host") {
+            sendRoomPacket({
+              type: "match_end",
+              winnerRole: won ? "host" : "guest",
+              hostFinalHp: Math.max(0, Math.round(pBot.hp)),
+              guestFinalHp: Math.max(0, Math.round(eBot.hp)),
+              agreedWager: staked
+            });
+            sim.isLiveMultiplayer = false;
+            sim.liveRole = null;
+            cleanupLiveRoomChannels();
+          }
           // Live Online PvP Outcome — Winner Takes All (2x Lowest Matched Wager)
           const chObj = getActivePvpOpponent();
           if (won) {
@@ -5294,7 +5940,12 @@
           continue;
         }
 
-        const { desiredAngle, throttle, turnMult } = evaluateBotBrain(bot, other);
+        const aiBrain = evaluateBotBrain(bot, other);
+        const { desiredAngle, throttle, turnMult } = (bot.team === "player")
+          ? applyManualPilotSteering(bot, liveKeys, aiBrain)
+          : (sim.isLiveMultiplayer && sim.liveRole === "host"
+              ? applyManualPilotSteering(bot, remoteGuestKeys, aiBrain)
+              : aiBrain);
 
         const empScale = bot.empStunTimer > 0 ? 0.08 : 1.0;
         const cryoScale = bot.cryoTimer > 0 ? 0.65 : 1.0;
