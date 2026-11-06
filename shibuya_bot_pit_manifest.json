@@ -1,0 +1,25 @@
+{
+  "name": "Shibuya Bot Pit \u2014 3D BattleBots Arena",
+  "short_name": "Shibuya Bot Pit",
+  "description": "Build your 6-Slot 3D BattleBot, wager Diamonds in 3x3:00 UFC-style rounds, spectate live fights, and chat in the Shibuya Pit.",
+  "start_url": "./shibuya_bot_pit.html?app=1",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07080c",
+  "theme_color": "#fbbf24",
+  "icons": [
+    {
+      "src": "assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -4631,7 +4631,7 @@ function initHomeShopScroller() {
             href: 'shibuya_bot_pit.html'
         };
         gamesTrack.innerHTML = `
-            <a class="rc-shop-scroll-card rc-game-scroll-card ${game.styleClass} is-active-game" href="${game.href}" draggable="false" aria-label="${game.title}">
+            <a class="rc-shop-scroll-card rc-game-scroll-card ${game.styleClass} is-active-game" href="${game.href}" onclick="window.__openBotPitAppOverlay(event)" draggable="false" aria-label="${game.title}">
                 <div class="rc-shop-scroll-img-wrap rc-game-scroll-img-wrap">
                     <img class="rc-shop-scroll-img rc-game-scroll-img" src="${game.img}" data-fb="${game.img}" alt="" loading="eager" decoding="async" draggable="false" />
                 </div>
@@ -4886,3 +4886,442 @@ if (document.readyState === 'loading') {
     initHomeShopScroller();
     initSubpageLofiMusic();
 }
+
+
+/* =========================================================================
+   SHIBUYA BOT PIT — APP DOWNLOAD & INSTANT LAUNCH OVERLAY MODAL
+   ========================================================================= */
+(function() {
+  if (window.__openBotPitAppOverlay) return;
+
+  // Link manifest & service worker so Chrome/Edge/Android/iOS recognize the installable PWA
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const mf = document.createElement('link');
+    mf.rel = 'manifest';
+    mf.href = 'shibuya_bot_pit_manifest.json';
+    document.head.appendChild(mf);
+  }
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('botpit_sw.js').catch(() => {});
+    });
+  }
+
+  let deferredInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+  });
+
+  function ensureBotPitOverlayInjected() {
+    if (document.getElementById('rcBotPitAppOverlay')) return;
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .rc-botpit-app-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: radial-gradient(circle at 50% 25%, rgba(15, 23, 42, 0.86) 0%, rgba(4, 6, 12, 0.96) 100%);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        font-family: 'Rajdhani', system-ui, -apple-system, sans-serif;
+        color: #f8fafc;
+      }
+      .rc-botpit-app-backdrop.active {
+        display: flex;
+        animation: rcBotPitFadeIn 0.2s ease-out;
+      }
+      @keyframes rcBotPitFadeIn {
+        from { opacity: 0; transform: scale(0.96); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+      .rc-botpit-app-card {
+        width: 100%;
+        max-width: 540px;
+        background: linear-gradient(180deg, #161f33 0%, #0a0e18 100%);
+        border: 1.5px solid rgba(251, 191, 36, 0.55);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow:
+          inset 0 1px 2px rgba(255, 255, 255, 0.25),
+          0 32px 90px rgba(0, 0, 0, 0.96),
+          0 0 42px rgba(251, 191, 36, 0.22);
+        position: relative;
+      }
+      .rc-botpit-hero-banner {
+        position: relative;
+        width: 100%;
+        height: 215px;
+        background: url('assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg') center/cover no-repeat;
+        border-bottom: 2px solid rgba(251, 191, 36, 0.45);
+      }
+      .rc-botpit-hero-banner::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(7, 10, 18, 0.15) 0%, rgba(10, 14, 24, 0.94) 100%);
+      }
+      .rc-botpit-close-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 4;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        background: rgba(9, 13, 22, 0.78);
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 900;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.14s ease;
+      }
+      .rc-botpit-close-btn:hover {
+        background: #e11d48;
+        border-color: #fb7185;
+        transform: scale(1.06);
+      }
+      .rc-botpit-live-pill {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 4;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(52, 211, 153, 0.55);
+        color: #34d399;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.60rem;
+        font-weight: 900;
+        padding: 4px 11px;
+        border-radius: 999px;
+        letter-spacing: 0.8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+      }
+      .rc-botpit-app-body {
+        padding: 0 24px 22px;
+        position: relative;
+        z-index: 3;
+      }
+      .rc-botpit-icon-header {
+        display: flex;
+        align-items: flex-end;
+        gap: 16px;
+        margin-top: -46px;
+        margin-bottom: 14px;
+      }
+      .rc-botpit-app-icon {
+        width: 92px;
+        height: 92px;
+        border-radius: 22px;
+        border: 2.5px solid #fbbf24;
+        box-shadow:
+          0 14px 32px rgba(0, 0, 0, 0.95),
+          0 0 24px rgba(251, 191, 36, 0.42);
+        object-fit: cover;
+        background: #07080c;
+        flex-shrink: 0;
+      }
+      .rc-botpit-title-col {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        padding-bottom: 2px;
+      }
+      .rc-botpit-studio-tag {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.58rem;
+        font-weight: 800;
+        color: #fbbf24;
+        letter-spacing: 1px;
+      }
+      .rc-botpit-title-col h2 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.38rem;
+        font-weight: 900;
+        color: #ffffff;
+        letter-spacing: 1px;
+        margin: 0;
+        line-height: 1.1;
+      }
+      .rc-botpit-sub {
+        font-size: 0.84rem;
+        color: #94a3b8;
+        font-weight: 600;
+      }
+      .rc-botpit-specs-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        background: rgba(9, 13, 22, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 9px 8px;
+        margin-bottom: 14px;
+        text-align: center;
+      }
+      .rc-spec-box {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .rc-spec-lbl {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.48rem;
+        font-weight: 800;
+        color: #64748b;
+        letter-spacing: 0.5px;
+      }
+      .rc-spec-val {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 900;
+        color: #f8fafc;
+      }
+      .rc-botpit-desc {
+        font-size: 0.88rem;
+        line-height: 1.38;
+        color: #cbd5e1;
+        margin-bottom: 16px;
+        font-weight: 600;
+      }
+      .rc-botpit-cta-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .rc-btn-download-app {
+        width: 100%;
+        padding: 14px 18px;
+        border-radius: 14px;
+        border: none;
+        background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+        color: #090612;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.88rem;
+        font-weight: 900;
+        letter-spacing: 1px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow:
+          inset 0 2px 2px rgba(255, 255, 255, 0.6),
+          0 10px 26px rgba(217, 119, 6, 0.45);
+        transition: transform 0.14s ease, filter 0.14s ease;
+      }
+      .rc-btn-download-app:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.08);
+      }
+      .rc-btn-play-browser {
+        width: 100%;
+        padding: 13px 18px;
+        border-radius: 14px;
+        border: 1.5px solid rgba(56, 189, 248, 0.55);
+        background: linear-gradient(180deg, rgba(14, 165, 233, 0.25) 0%, rgba(15, 23, 42, 0.92) 100%);
+        color: #38bdf8;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.80rem;
+        font-weight: 900;
+        letter-spacing: 1px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.14s ease;
+      }
+      .rc-btn-play-browser:hover {
+        background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+        color: #041019;
+        transform: translateY(-1px);
+      }
+      .rc-install-status-box {
+        display: none;
+        margin-top: 10px;
+        padding: 10px 13px;
+        border-radius: 12px;
+        background: rgba(16, 185, 129, 0.14);
+        border: 1px solid rgba(52, 211, 153, 0.45);
+        color: #a7f3d0;
+        font-size: 0.78rem;
+        font-weight: 600;
+        line-height: 1.35;
+        text-align: center;
+      }
+      .rc-install-status-box.visible {
+        display: block;
+      }
+      @media (max-width: 540px) {
+        .rc-botpit-hero-banner { height: 165px; }
+        .rc-botpit-app-body { padding: 0 16px 18px; }
+        .rc-botpit-app-icon { width: 76px; height: 76px; border-radius: 18px; }
+        .rc-botpit-title-col h2 { font-size: 1.12rem; }
+        .rc-btn-download-app { font-size: 0.76rem; padding: 12px 14px; }
+        .rc-btn-play-browser { font-size: 0.72rem; padding: 11px 14px; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    const modal = document.createElement('div');
+    modal.id = 'rcBotPitAppOverlay';
+    modal.className = 'rc-botpit-app-backdrop';
+    modal.onclick = (ev) => {
+      if (ev.target === modal) window.__closeBotPitAppOverlay();
+    };
+
+    modal.innerHTML = `
+      <div class="rc-botpit-app-card" role="dialog" aria-modal="true" aria-label="Download Shibuya Bot Pit App">
+        <div class="rc-botpit-hero-banner">
+          <span class="rc-botpit-live-pill">🟢OFFICIAL RETROCANOPY APP</span>
+          <button type="button" class="rc-botpit-close-btn" onclick="window.__closeBotPitAppOverlay()" title="Close">✕</button>
+        </div>
+        <div class="rc-botpit-app-body">
+          <div class="rc-botpit-icon-header">
+            <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" alt="Shibuya Bot Pit App Icon" class="rc-botpit-app-icon" />
+            <div class="rc-botpit-title-col">
+              <span class="rc-botpit-studio-tag">RETROCANOPY ARENA LABS</span>
+              <h2>SHIBUYA BOT PIT</h2>
+              <span class="rc-botpit-sub">3D Wheeled BattleBots · Live PvP · 6-Slot Garage</span>
+            </div>
+          </div>
+
+          <div class="rc-botpit-specs-grid">
+            <div class="rc-spec-box">
+              <span class="rc-spec-lbl">RATING</span>
+              <span class="rc-spec-val" style="color:#fbbf24;">★ 4.9</span>
+            </div>
+            <div class="rc-spec-box">
+              <span class="rc-spec-lbl">FORMAT</span>
+              <span class="rc-spec-val" style="color:#38bdf8;">3x3:00 RD</span>
+            </div>
+            <div class="rc-spec-box">
+              <span class="rc-spec-lbl">MODE</span>
+              <span class="rc-spec-val" style="color:#34d399;">LIVE PVP</span>
+            </div>
+            <div class="rc-spec-box">
+              <span class="rc-spec-lbl">PLATFORM</span>
+              <span class="rc-spec-val">iOS/AND/PC</span>
+            </div>
+          </div>
+
+          <p class="rc-botpit-desc">
+            Install the <strong>Shibuya Bot Pit App</strong> to your device for full-screen 60fps 3D BattleBox combat, instant Pilot Cloud Saves, Live Spectating, and Pit Chat—or jump straight into the arena in your browser!
+          </p>
+
+          <div class="rc-botpit-cta-stack">
+            <button type="button" class="rc-btn-download-app" onclick="window.__triggerBotPitAppDownload()">
+              <span>📲 DOWNLOAD &amp; INSTALL APP</span>
+              <span style="font-size:0.66rem;background:rgba(0,0,0,0.22);padding:2px 8px;border-radius:999px;">FREE · 2.4 MB</span>
+            </button>
+            <button type="button" class="rc-btn-play-browser" onclick="window.__launchBotPitInBrowser()">
+              <span>🕹️ PLAY INSTANTLY IN BROWSER</span>
+              <span>→</span>
+            </button>
+          </div>
+
+          <div class="rc-install-status-box" id="rcBotPitInstallStatusBox"></div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  window.__openBotPitAppOverlay = function(ev) {
+    if (ev && typeof ev.preventDefault === 'function') {
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
+    ensureBotPitOverlayInjected();
+    const el = document.getElementById('rcBotPitAppOverlay');
+    const statusBox = document.getElementById('rcBotPitInstallStatusBox');
+    if (statusBox) statusBox.classList.remove('visible');
+    if (el) el.classList.add('active');
+  };
+
+  window.__closeBotPitAppOverlay = function() {
+    const el = document.getElementById('rcBotPitAppOverlay');
+    if (el) el.classList.remove('active');
+  };
+
+  window.__launchBotPitInBrowser = function() {
+    window.__closeBotPitAppOverlay();
+    const curPath = (window.location.pathname || '').toLowerCase();
+    if (!curPath.includes('shibuya_bot_pit')) {
+      window.location.href = 'shibuya_bot_pit.html';
+    }
+  };
+
+  window.__triggerBotPitAppDownload = async function() {
+    const statusBox = document.getElementById('rcBotPitInstallStatusBox');
+    const targetUrl = new URL('shibuya_bot_pit.html?app=1', window.location.href).href;
+    const iconUrl = new URL('assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg', window.location.href).href;
+
+    // 1. If native browser PWA install prompt is ready (Chrome / Edge / Android), trigger it immediately!
+    if (deferredInstallPrompt) {
+      try {
+        deferredInstallPrompt.prompt();
+        const choice = await Promise.race([deferredInstallPrompt.userChoice, new Promise(r => setTimeout(() => r(null), 1500))]);
+        deferredInstallPrompt = null;
+        if (choice && choice.outcome === 'accepted') {
+          if (statusBox) {
+            statusBox.innerHTML = '✅ <strong>SHIBUYA BOT PIT APP INSTALLED!</strong> Launching arena now...';
+            statusBox.classList.add('visible');
+          }
+          setTimeout(() => window.__launchBotPitInBrowser(), 1200);
+          return;
+        }
+      } catch (_) {}
+    }
+
+    // 2. Generate & download a standalone 1-click Shibuya Bot Pit App Launcher file + show platform instructions!
+    const launcherHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Shibuya Bot Pit — Standalone App</title>
+  <link rel="icon" href="${iconUrl}" />
+  <link rel="apple-touch-icon" href="${iconUrl}" />
+  <style>
+    html, body, iframe { margin: 0; padding: 0; width: 100%; height: 100%; border: none; background: #07080c; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <iframe src="${targetUrl}" allow="autoplay; fullscreen; clipboard-write" allowfullscreen></iframe>
+</body>
+</html>`;
+
+    try {
+      const blob = new Blob([launcherHtml], { type: 'text/html' });
+      const dlUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = dlUrl;
+      a.download = 'Shibuya_Bot_Pit_App.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(dlUrl), 4000);
+    } catch (_) {}
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent || '');
+    if (statusBox) {
+      if (isIOS) {
+        statusBox.innerHTML = '📲 <strong>iOS APP INSTALL:</strong> Tap <strong>Share ⬆️</strong> in Safari and tap <strong>"Add to Home Screen ➕"</strong> to install the full-screen <strong>Shibuya Bot Pit</strong> App Icon! (Or tap <em>Play Instantly in Browser</em> above!)';
+      } else {
+        statusBox.innerHTML = '✅ <strong>Shibuya_Bot_Pit_App.html downloaded!</strong> Open it anytime to launch the standalone App, or click the <strong>Install App ➕</strong> icon in your browser address bar!';
+      }
+      statusBox.classList.add('visible');
+    }
+  };
+})();
