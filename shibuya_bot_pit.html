@@ -2430,6 +2430,78 @@
       border: 1px solid rgba(52, 211, 153, 0.45);
     }
 
+
+    /* =========================================================================
+       UFC 3-ROUND SCORECARD PIPS & REACTOR STAMINA BARS
+       ========================================================================= */
+    .stamina-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.52rem;
+      font-weight: 800;
+      color: #38bdf8;
+      margin-top: 4px;
+      margin-bottom: 2px;
+      letter-spacing: 0.5px;
+    }
+    .fighter-bar-card.enemy .stamina-row {
+      flex-direction: row-reverse;
+    }
+    .stamina-track {
+      width: 100%;
+      height: 6px;
+      background: #05070b;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.95);
+    }
+    .stamina-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #0284c7, #38bdf8, #00f5ff);
+      transition: width 0.08s linear;
+    }
+    .stamina-fill.pacing {
+      background: linear-gradient(90deg, #ca8a04, #fbbf24);
+    }
+    .stamina-fill.gassed {
+      background: linear-gradient(90deg, #dc2626, #f97316);
+    }
+    .round-pips-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin: 0 6px;
+    }
+    .round-pip {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(148, 163, 184, 0.25);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      display: inline-block;
+    }
+    .round-pip.won-player {
+      background: #00ff88;
+      border-color: #34d399;
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
+    }
+    .round-pip.won-enemy {
+      background: #ff2a55;
+      border-color: #fb7185;
+      box-shadow: 0 0 8px rgba(255, 42, 85, 0.8);
+    }
+    .ufc-round-badge {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 900;
+      color: #fbbf24;
+      letter-spacing: 1.1px;
+      margin-bottom: 1px;
+    }
+
   </style>
 </head>
 <body>
@@ -2610,25 +2682,46 @@
         <div class="arena-hud">
           <div class="fighter-bar-card player">
             <div class="f-row">
-              <span style="color:#fbbf24;" id="hudPName">YOUR UNIT-17</span>
+              <span style="color:#fbbf24;display:inline-flex;align-items:center;" id="hudPNameWrap">
+                <span id="hudPName">YOUR UNIT-17</span>
+                <span class="round-pips-row" id="hudPRoundPips">
+                  <span class="round-pip"></span><span class="round-pip"></span><span class="round-pip"></span>
+                </span>
+              </span>
               <span id="hudPHp">750 / 750 HP</span>
             </div>
             <div class="hp-track"><div class="hp-fill player" id="hudPBar"></div></div>
+            <div class="stamina-row">
+              <span id="hudPStamTxt">⚡ 100% STAMINA</span>
+              <span id="hudPRoundScore" style="color:#34d399;">ROUNDS: 0</span>
+            </div>
+            <div class="stamina-track"><div class="stamina-fill" id="hudPStamBar"></div></div>
             <div class="hud-modules-row" id="hudPMods"></div>
           </div>
 
           <div class="center-clock">
-            <div class="tag" id="hudSawStatus">CENTER SAW: OFF</div>
-            <div class="val" id="hudClock">50.0s</div>
-            <div class="hud-wager-pot" id="hudWagerPot">🎰 POT: 💎 805</div>
+            <div class="ufc-round-badge" id="hudRoundTitle">🥊 ROUND 1 OF 3</div>
+            <div class="val" id="hudClock">3:00</div>
+            <div class="tag" id="hudSawStatus" style="margin-top:2px;">CENTER SAW: OFF</div>
+            <div class="hud-wager-pot" id="hudWagerPot">🎰 POT: 💎 500</div>
           </div>
 
           <div class="fighter-bar-card enemy">
             <div class="f-row">
               <span id="hudEHp">750 / 750 HP</span>
-              <span id="hudEName" style="color:#fb7185;">LV.1 ROOKIE UNIT-17</span>
+              <span style="color:#fb7185;display:inline-flex;align-items:center;" id="hudENameWrap">
+                <span class="round-pips-row" id="hudERoundPips">
+                  <span class="round-pip"></span><span class="round-pip"></span><span class="round-pip"></span>
+                </span>
+                <span id="hudEName">LV.1 ROOKIE UNIT-17</span>
+              </span>
             </div>
             <div class="hp-track"><div class="hp-fill enemy" id="hudEBar"></div></div>
+            <div class="stamina-row">
+              <span id="hudEStamTxt">⚡ 100% STAMINA</span>
+              <span id="hudERoundScore" style="color:#fb7185;">ROUNDS: 0</span>
+            </div>
+            <div class="stamina-track"><div class="stamina-fill" id="hudEStamBar"></div></div>
             <div class="hud-modules-row" id="hudEMods"></div>
           </div>
         </div>
@@ -3859,13 +3952,22 @@
         cryoTimer: b.cryoTimer || 0,
         empStunTimer: b.empStunTimer || 0,
         beamTimer: b.beamTimer || 0,
-        armorStage: b.armorStage
+        armorStage: b.armorStage,
+        stamina: Math.round(b.stamina ?? 100),
+        staminaState: b.staminaState || "fresh",
+        pacingTimer: b.pacingTimer || 0
       });
 
       sendRoomPacket({
         type: "host_state",
         ticks: sim.ticks,
         timeLeft: Math.round(sim.timeLeft * 100) / 100,
+        currentRound: sim.currentRound || 1,
+        pRoundsWon: sim.pRoundsWon || 0,
+        eRoundsWon: sim.eRoundsWon || 0,
+        intermissionTimer: sim.intermissionTimer || 0,
+        intermissionSummary: sim.intermissionSummary || null,
+        roundResults: sim.roundResults || [],
         centerSaw: sim.centerSaw ? {
           state: sim.centerSaw.state,
           x: sim.centerSaw.x,
@@ -3906,6 +4008,17 @@
       } else if (pkt.type === "host_state" && sim.liveRole === "guest" && sim.running) {
         sim.ticks = pkt.ticks || sim.ticks;
         sim.timeLeft = typeof pkt.timeLeft === "number" ? pkt.timeLeft : sim.timeLeft;
+        sim.currentRound = pkt.currentRound || 1;
+        sim.pRoundsWon = pkt.eRoundsWon || 0;
+        sim.eRoundsWon = pkt.pRoundsWon || 0;
+        sim.intermissionTimer = pkt.intermissionTimer || 0;
+        sim.intermissionSummary = pkt.intermissionSummary || null;
+        if (Array.isArray(pkt.roundResults)) {
+          sim.roundResults = pkt.roundResults.map(r => ({
+            ...r,
+            winner: r.winner === "player" ? "enemy" : "player"
+          }));
+        }
         if (pkt.centerSaw && sim.centerSaw) {
           Object.assign(sim.centerSaw, pkt.centerSaw);
         }
@@ -4172,7 +4285,8 @@
       const maxHp = Math.max(420, Math.round((baseStats.hp || 750) + bonusHp));
 
       const effAttack = Math.round(power * 1.15 + speed * 0.35 + agility * 0.25);
-      let baseStrikeDmg = Math.round(18 + effAttack * 0.32);
+      // Scaled for 3x3:00 Championship Rounds so bots trade tactical combinations over full rounds
+      let baseStrikeDmg = Math.round((18 + effAttack * 0.32) * 0.38);
       if (equippedIds.has("wpn_10")) baseStrikeDmg = Math.round(baseStrikeDmg * 0.85); // Grappler Claw weakness: -15% raw hit damage
       if (equippedIds.has("wpn_abil_12")) baseStrikeDmg = Math.round(baseStrikeDmg * 0.88); // Executioner weakness: -12% front clash damage
 
@@ -5077,7 +5191,16 @@
         vz: 0,
         omega: 0,
         armorStage: 3,
-        wallSlamCd: 0
+        wallSlamCd: 0,
+        stamina: 100,
+        maxStamina: 100,
+        staminaState: "fresh", // "fresh" | "pacing" | "gassed"
+        pacingTimer: 0,
+        flurryCount: 0,
+        circleDir: Math.random() < 0.5 ? 1 : -1,
+        roundDmgDealt: 0,
+        roundStrikes: 0,
+        octagonControl: 0
       };
     }
 
@@ -5087,7 +5210,15 @@
 
       sim.running = false;
       sim.ticks = 0;
-      sim.timeLeft = 50.0;
+      sim.roundDurationSec = 180.0; // 3:00 Minute Championship Rounds!
+      sim.timeLeft = 180.0;
+      sim.currentRound = 1;
+      sim.maxRounds = 3;
+      sim.pRoundsWon = 0;
+      sim.eRoundsWon = 0;
+      sim.roundResults = []; // ["player", "enemy", ...]
+      sim.intermissionTimer = 0;
+      sim.intermissionSummary = null;
       sim.shake = 0;
       sim.hitStop = 0;
       sim.slowMoTimer = 0;
@@ -5203,6 +5334,59 @@
       return best;
     }
 
+    function drainBotStamina(bot, amount) {
+      if (!bot) return;
+      // Agile/light rigs burn slightly less stamina; heavy power rigs burn slightly more
+      const effMult = Math.max(0.75, Math.min(1.25, 1.0 + (bot.cp.power - bot.cp.agility) * 0.003));
+      bot.stamina = Math.max(0, bot.stamina - amount * effMult);
+      if (bot.stamina <= 14 && bot.staminaState !== "gassed") {
+        bot.staminaState = "gassed";
+        bot.pacingTimer = Math.max(bot.pacingTimer, 135);
+        if (bot.abilityState === "charging" || bot.abilityState === "windup") {
+          bot.abilityState = "recover";
+          bot.abilityTimer = 25;
+        }
+        addFloatText(bot.x, bot.y - 46, "⚠️ GASSED! LOW STAMINA!", "#f97316");
+      } else if (bot.stamina < 38 && bot.staminaState === "fresh") {
+        bot.staminaState = "pacing";
+        bot.pacingTimer = Math.max(bot.pacingTimer, 105 + Math.floor(Math.random() * 45));
+      }
+    }
+
+    function stepBotStaminaAndPacing(bot, other) {
+      const dist = Math.hypot(other.x - bot.x, other.y - bot.y) || 1;
+      if (bot.pacingTimer > 0) bot.pacingTimer--;
+
+      // Accrue Octagon Center Control for Judges' Scorecard when near center
+      const distFromCenter = Math.hypot(bot.x - 800, bot.y - 450);
+      if (distFromCenter < 340) {
+        bot.octagonControl = (bot.octagonControl || 0) + 1;
+      }
+
+      // Continuous stamina drain when charging/ramming
+      if (bot.abilityState === "charging") {
+        drainBotStamina(bot, 0.36);
+      } else {
+        // Stamina regeneration: faster when pacing/circling at range, slower when brawling up close
+        const isCircling = bot.pacingTimer > 0 || bot.staminaState !== "fresh" || dist > 260;
+        const baseRegen = isCircling ? 0.28 : 0.11;
+        const agiBonus = (bot.cp.agility - 50) * 0.0015;
+        bot.stamina = Math.min(bot.maxStamina, bot.stamina + Math.max(0.06, baseRegen + agiBonus));
+      }
+
+      if (bot.staminaState === "gassed" && bot.stamina >= 46) {
+        bot.staminaState = "fresh";
+        addFloatText(bot.x, bot.y - 42, "⚡ STAMINA RECOVERED!", "#38bdf8");
+      } else if (bot.staminaState === "pacing" && bot.stamina >= 68 && bot.pacingTimer <= 0) {
+        bot.staminaState = "fresh";
+      }
+
+      // Periodically flip circling direction so footwork looks organic like a UFC octagon dance
+      if (sim.ticks % 160 === 0 && Math.random() < 0.5) {
+        bot.circleDir = -bot.circleDir;
+      }
+    }
+
     function evaluateBotBrain(bot, other) {
       const dx = other.x - bot.x;
       const dy = other.y - bot.y;
@@ -5211,8 +5395,23 @@
       const cs = sim.centerSaw;
 
       let desiredAngle = toOther;
-      let throttle = 1.0;
+      let throttle = 0.78;
       let turnMult = 1.0;
+
+      // 1. If GASSED or in TACTICAL PACING mode, circle on the outside & maintain spacing to recover stamina!
+      if (bot.staminaState === "gassed" || (bot.pacingTimer > 0 && bot.grappleTimer <= 0)) {
+        const idealRange = bot.staminaState === "gassed" ? 450 : 370;
+        const radialErr = (dist - idealRange) / 180; // negative if too close, positive if far
+        const tangentAng = toOther + (bot.circleDir || 1) * (Math.PI * 0.52);
+        const moveX = Math.cos(tangentAng) * 0.82 + Math.cos(toOther) * Math.max(-0.95, Math.min(0.65, radialErr));
+        const moveY = Math.sin(tangentAng) * 0.82 + Math.sin(toOther) * Math.max(-0.95, Math.min(0.65, radialErr));
+        // Keep away from arena walls while circling
+        const centerPullX = (800 - bot.x) * 0.0012;
+        const centerPullY = (450 - bot.y) * 0.0012;
+        desiredAngle = Math.atan2(moveY + centerPullY, moveX + centerPullX);
+        const paceSpeed = bot.staminaState === "gassed" ? 0.44 : 0.58;
+        return { desiredAngle, throttle: paceSpeed, turnMult: 1.15 };
+      }
 
       if (bot.grappleTimer > 0 && bot.grappleTarget) {
         const targetX = DOME.slotX;
@@ -5249,6 +5448,8 @@
             if (urgency > 0.56 && bot.dodgeCd <= 0) {
               const hasJets = bot.cp.has("bot_abil_01");
               const hasSprint = bot.cp.has("tire_15");
+              if (bot.stamina < 18) return { desiredAngle: escAng, throttle: 0.75, turnMult: 1.2 };
+              drainBotStamina(bot, 14);
               bot.dodgeTimer = 16;
               bot.dodgeCd = Math.round((hasJets ? 48 : 68) * (hasSprint ? 0.75 : 1.0));
               bot.dodgeAngle = escAng;
@@ -5280,7 +5481,12 @@
         const hasDrift = bot.cp.has("tire_12");
         const hasSprint = bot.cp.has("tire_15");
 
-        bot.dodgeTimer = hasDrift ? 21 : 17;
+        if (bot.stamina >= 18) {
+          drainBotStamina(bot, 14);
+          bot.dodgeTimer = hasDrift ? 21 : 17;
+        } else {
+          return { desiredAngle: toOther, throttle: 0.55, turnMult: 1.0 };
+        }
         bot.dodgeCd = Math.round((hasJets ? 50 : 72) * (hasSprint ? 0.75 : 1.0));
 
         const perp1 = other.angle + Math.PI / 2;
@@ -5354,7 +5560,7 @@
       while (aimDiff > Math.PI) aimDiff -= Math.PI * 2;
       while (aimDiff < -Math.PI) aimDiff += Math.PI * 2;
 
-      if (bot.abilityCd <= 0 && dist > 115 && dist < 400 && Math.abs(aimDiff) < 0.45) {
+      if (bot.abilityCd <= 0 && bot.stamina >= 36 && dist > 125 && dist < 390 && Math.abs(aimDiff) < 0.42) {
         bot.abilityState = "windup";
         bot.abilityTimer = 13;
       }
@@ -5364,10 +5570,10 @@
         const lineupX = Math.max(220, Math.min(1380, other.x + Math.cos(sawToEnemyAng) * 120));
         const lineupY = Math.max(175, Math.min(725, other.y + Math.sin(sawToEnemyAng) * 120));
         desiredAngle = Math.atan2(lineupY - bot.y, lineupX - bot.x);
-        throttle = 1.14;
+        throttle = 0.82;
       } else {
         desiredAngle = toOther;
-        throttle = 1.18;
+        throttle = 0.84;
       }
 
       return { desiredAngle, throttle, turnMult };
@@ -5403,7 +5609,7 @@
 
         if (rngKey === "rng_01") {
           // Twin-Barrel Gauss Railgun Sniper: Hyper-velocity AP rail-slug!
-          bot.rangedCd = 102;
+          bot.rangedCd = 145; drainBotStamina(bot, 7);
           sim.projectiles.push({
             kind: "rail",
             owner: bot.team,
@@ -5413,7 +5619,7 @@
             vy: Math.sin(bot.turretAngle) * 22,
             angle: bot.turretAngle,
             radius: 14,
-            dmg: 54,
+            dmg: 22,
             life: 75,
             bouncesLeft: 0
           });
@@ -5421,7 +5627,7 @@
           addFloatText(bot.x, bot.y - 54, "🎯 RAILGUN SNIPE!", "#38bdf8");
         } else if (rngKey === "rng_04") {
           // Quad-Pod Homing Micro-Missile Swarm: 3 homing missiles!
-          bot.rangedCd = 132;
+          bot.rangedCd = 175; drainBotStamina(bot, 8);
           for (const spread of [-0.32, 0, 0.32]) {
             const ang = bot.turretAngle + spread;
             sim.projectiles.push({
@@ -5434,7 +5640,7 @@
               vy: Math.sin(ang) * 10.5,
               angle: ang,
               radius: 13,
-              dmg: 24,
+              dmg: 10,
               life: 110,
               bouncesLeft: 0
             });
@@ -5443,7 +5649,7 @@
           addFloatText(bot.x, bot.y - 54, "🚀 MISSILE SWARM!", "#fb923c");
         } else if (rngKey === "rng_08") {
           // Heavy Rotary Vulcan Saw-Disc Launcher: Ricocheting buzzsaw disc!
-          bot.rangedCd = 58;
+          bot.rangedCd = 95; drainBotStamina(bot, 5);
           sim.projectiles.push({
             kind: "sawdisc",
             owner: bot.team,
@@ -5454,7 +5660,7 @@
             angle: bot.turretAngle,
             spin: 0,
             radius: 22,
-            dmg: 36,
+            dmg: 15,
             life: 135,
             bouncesLeft: 2
           });
@@ -5462,7 +5668,7 @@
           addFloatText(bot.x, bot.y - 54, "⚙️ SAW-DISC LAUNCH!", "#fbbf24");
         } else if (rngKey === "rng_13") {
           // High-Voltage Plasma Siege Mortar: Arcing molten plasma bomb!
-          bot.rangedCd = 140;
+          bot.rangedCd = 185; drainBotStamina(bot, 9);
           sim.projectiles.push({
             kind: "mortar",
             owner: bot.team,
@@ -5472,7 +5678,7 @@
             vy: Math.sin(bot.turretAngle) * 11.5,
             angle: bot.turretAngle,
             radius: 20,
-            dmg: 50,
+            dmg: 20,
             life: 95,
             maxLife: 95,
             bouncesLeft: 0
@@ -5481,7 +5687,7 @@
           addFloatText(bot.x, bot.y - 54, "☄️ PLASMA MORTAR!", "#ff8c00");
         } else if (rngKey === "rng_18") {
           // Continuous-Beam Tesla Arc & Laser Obliterator: Lock-on beam!
-          bot.rangedCd = 150;
+          bot.rangedCd = 195; drainBotStamina(bot, 9);
           bot.beamTimer = 38;
           addFloatText(bot.x, bot.y - 54, "⚡ LASER OBLITERATOR!", "#ec4899");
         }
@@ -5708,10 +5914,118 @@
       const cs = sim.centerSaw;
       if (!pBot || !eBot) return;
 
+      // Handle 4.5-second Between-Rounds Corner Pit-Stop Intermission
+      if (sim.intermissionTimer > 0) {
+        sim.intermissionTimer--;
+        // Welders spark on both bots in their corners while repairing
+        if (sim.intermissionTimer % 8 === 0) {
+          emit3DSparks(pBot.x, pBot.y, "#00ff88", 5, 4.0);
+          emit3DSparks(eBot.x, eBot.y, "#38bdf8", 5, 4.0);
+        }
+        if (sim.intermissionTimer <= 0) {
+          // Start Next Round!
+          sim.currentRound = (sim.currentRound || 1) + 1;
+          sim.timeLeft = sim.roundDurationSec || 180.0;
+          sim.intermissionSummary = null;
+          const rdBanner = sim.currentRound === 3 && sim.pRoundsWon === 1 && sim.eRoundsWon === 1
+            ? "🔥 FINAL ROUND 3 — SUDDEN DEATH! FIGHT!"
+            : `🔔 ROUND ${sim.currentRound} OF 3 — FIGHT!`;
+          addFloatText(800, 380, rdBanner, "#ffd700");
+        }
+        syncHudReadout();
+        if (sim.isLiveMultiplayer && sim.liveRole === "host" && sim.ticks % 2 === 0) {
+          broadcastHostArenaState();
+        }
+        return;
+      }
+
       if (pBot.hp <= 0 || eBot.hp <= 0 || sim.timeLeft <= 0) {
         const pPct = pBot.hp / pBot.maxHp;
         const ePct = eBot.hp / eBot.maxHp;
-        const won = pBot.hp > 0 && (eBot.hp <= 0 || pPct >= ePct);
+        const isKo = pBot.hp <= 0 || eBot.hp <= 0;
+
+        // Judges' 10-Point Must Scoring for the Round (Damage Dealt + Remaining HP% + Octagon Control)
+        const pScoreMetric = (pBot.roundDmgDealt || 0) * 1.0 + (pPct * 350) + (pBot.octagonControl || 0) * 0.08;
+        const eScoreMetric = (eBot.roundDmgDealt || 0) * 1.0 + (ePct * 350) + (eBot.octagonControl || 0) * 0.08;
+
+        const roundWonByPlayer = isKo
+          ? (pBot.hp > 0 && eBot.hp <= 0)
+          : (pScoreMetric >= eScoreMetric);
+
+        sim.pRoundsWon = (sim.pRoundsWon || 0) + (roundWonByPlayer ? 1 : 0);
+        sim.eRoundsWon = (sim.eRoundsWon || 0) + (roundWonByPlayer ? 0 : 1);
+        if (!Array.isArray(sim.roundResults)) sim.roundResults = [];
+        const winMethod = isKo ? "TKO / KNOCKDOWN (10-8)" : "JUDGES DECISION (10-9)";
+        sim.roundResults.push({
+          round: sim.currentRound || 1,
+          winner: roundWonByPlayer ? "player" : "enemy",
+          method: winMethod,
+          pDmg: Math.round(pBot.roundDmgDealt || 0),
+          eDmg: Math.round(eBot.roundDmgDealt || 0)
+        });
+
+        // Check if more rounds are needed (Best of 3: first to 2 round wins!)
+        const matchDecided = sim.pRoundsWon >= 2 || sim.eRoundsWon >= 2 || (sim.currentRound || 1) >= 3;
+
+        if (!matchDecided) {
+          // Enter 4.5-second UFC Corner Pit-Stop Intermission before the next round!
+          sim.intermissionTimer = 270;
+          const rNum = sim.currentRound || 1;
+          const rWinnerName = roundWonByPlayer ? pBot.name : eBot.name;
+          sim.intermissionSummary = {
+            round: rNum,
+            winnerName: rWinnerName,
+            winnerTeam: roundWonByPlayer ? "player" : "enemy",
+            method: winMethod,
+            pRounds: sim.pRoundsWon,
+            eRounds: sim.eRoundsWon,
+            pDmg: Math.round(pBot.roundDmgDealt || 0),
+            eDmg: Math.round(eBot.roundDmgDealt || 0)
+          };
+
+          // Reset both bots to their starting corners, weld +45% of missing HP (or 65% if TKO'd), and recharge Stamina to 100%!
+          for (const b of [pBot, eBot]) {
+            const isP = b.team === "player";
+            b.x = isP ? 340 : 1260;
+            b.y = 450;
+            b.vx = 0; b.vy = 0; b.vz = 0; b.z = 0; b.omega = 0;
+            b.angle = isP ? 0 : Math.PI;
+            b.turretAngle = b.angle;
+            if (b.hp <= 0) {
+              b.hp = Math.round(b.maxHp * 0.65);
+            } else {
+              const missing = b.maxHp - b.hp;
+              b.hp = Math.min(b.maxHp, Math.round(b.hp + missing * 0.45));
+            }
+            b.stamina = b.maxStamina;
+            b.staminaState = "fresh";
+            b.pacingTimer = 0;
+            b.flurryCount = 0;
+            b.abilityState = "ready";
+            b.abilityTimer = 0;
+            b.knockStun = 0;
+            b.empStunTimer = 0;
+            b.cryoTimer = 0;
+            b.thermiteTimer = 0;
+            b.grappleTimer = 0;
+            b.grappleTarget = null;
+            b.roundDmgDealt = 0;
+            b.roundStrikes = 0;
+            b.octagonControl = 0;
+          }
+          sim.projectiles = [];
+          sim.clashLock = null;
+          if (sim.centerSaw) {
+            sim.centerSaw.state = "off";
+            sim.centerSaw.timer = 150;
+            sim.centerSaw.currentRadius = 0;
+          }
+          syncHudReadout();
+          return;
+        }
+
+        // Match is decided (Best of 3 winner)!
+        const won = sim.pRoundsWon > sim.eRoundsWon;
 
         sim.running = false;
         const overlay = document.getElementById("battleOverlay");
@@ -5728,7 +6042,7 @@
             state.scrap += totalWon;
             persistWalletAndRig();
             banner.textContent = staked > 0
-              ? `🏆 WINNER TAKES ALL! +${totalWon.toLocaleString()} 💎 POT`
+              ? `🏆 WON ${sim.pRoundsWon}-${sim.eRoundsWon}! +${totalWon.toLocaleString()} 💎 POT`
               : `🏆 CPU DEFEATED! (FREE MATCH)`;
             banner.style.color = "#00ff88";
             desc.textContent = staked > 0
@@ -5777,7 +6091,7 @@
             localStorage.setItem("unit17_elo", String(state.elo));
             localStorage.setItem("unit17_pvp_wins", String(state.pvpWins));
             banner.textContent = staked > 0
-              ? `🏆 WINNER TAKES ALL! +${totalWon.toLocaleString()} 💎 POT (+28 🏆)`
+              ? `🏆 WON ${sim.pRoundsWon}-${sim.eRoundsWon}! +${totalWon.toLocaleString()} 💎 POT (+28 🏆)`
               : `🏆 PVP VICTORY VS. ${chObj.callsign}! (+28 🏆)`;
             banner.style.color = "#38bdf8";
             desc.textContent = staked > 0
@@ -5889,6 +6203,7 @@
 
         const other = bot.team === "player" ? eBot : pBot;
         stepBotDynamicModules(bot, other);
+        stepBotStaminaAndPacing(bot, other);
 
         // Grounded Heavy Mech Z-Axis Physics (low height cap, fast gravity, no bouncy floatiness)
         if (bot.z > 0 || bot.vz !== 0) {
@@ -5915,7 +6230,8 @@
         const empScale = bot.empStunTimer > 0 ? 0.08 : 1.0;
         const cryoScale = bot.cryoTimer > 0 ? 0.65 : 1.0;
         const airControlScale = bot.z > 6 ? 0.35 : 1.0;
-        const stunScale = (bot.knockStun > 0 ? 0.22 : 1.0) * empScale * cryoScale * airControlScale;
+        const staminaScale = bot.staminaState === "gassed" ? 0.55 : (bot.stamina < 30 ? 0.78 : 0.88);
+        const stunScale = (bot.knockStun > 0 ? 0.22 : 1.0) * empScale * cryoScale * airControlScale * staminaScale;
 
         // Apply Rotational Angular Momentum (omega) + counter-steering
         bot.angle += bot.omega;
@@ -6274,6 +6590,28 @@
       syncHudReadout();
     }
 
+    function formatUfcClock(seconds) {
+      const s = Math.max(0, Math.ceil(seconds));
+      const m = Math.floor(s / 60);
+      const rem = s % 60;
+      return `${m}:${String(rem).padStart(2, "0")}`;
+    }
+
+    function renderRoundPipsHtml(roundResults, forTeam) {
+      const pips = [];
+      for (let i = 0; i < 3; i++) {
+        const res = roundResults && roundResults[i];
+        let cls = "round-pip";
+        if (res) {
+          if (res.winner === forTeam) {
+            cls += forTeam === "player" ? " won-player" : " won-enemy";
+          }
+        }
+        pips.push(`<span class="${cls}"></span>`);
+      }
+      return pips.join("");
+    }
+
     function syncHudReadout() {
       const [pBot, eBot] = sim.bots;
       if (!pBot || !eBot) return;
@@ -6281,11 +6619,73 @@
       document.getElementById("hudPBar").style.width = `${(pBot.hp / pBot.maxHp) * 100}%`;
       document.getElementById("hudEHp").textContent = `${Math.ceil(eBot.hp)} / ${eBot.maxHp} HP`;
       document.getElementById("hudEBar").style.width = `${(eBot.hp / eBot.maxHp) * 100}%`;
-      document.getElementById("hudClock").textContent = `${sim.timeLeft.toFixed(1)}s`;
+
+      // Update Stamina Bars & States
+      const pStamPct = Math.max(0, Math.min(100, Math.round(pBot.stamina ?? 100)));
+      const eStamPct = Math.max(0, Math.min(100, Math.round(eBot.stamina ?? 100)));
+      const pStamBar = document.getElementById("hudPStamBar");
+      const eStamBar = document.getElementById("hudEStamBar");
+      const pStamTxt = document.getElementById("hudPStamTxt");
+      const eStamTxt = document.getElementById("hudEStamTxt");
+
+      if (pStamBar) {
+        pStamBar.style.width = `${pStamPct}%`;
+        pStamBar.className = "stamina-fill" + (pBot.staminaState === "gassed" ? " gassed" : (pBot.pacingTimer > 0 ? " pacing" : ""));
+      }
+      if (eStamBar) {
+        eStamBar.style.width = `${eStamPct}%`;
+        eStamBar.className = "stamina-fill" + (eBot.staminaState === "gassed" ? " gassed" : (eBot.pacingTimer > 0 ? " pacing" : ""));
+      }
+      if (pStamTxt) {
+        pStamTxt.textContent = pBot.staminaState === "gassed"
+          ? `⚠️ GASSED (${pStamPct}%)`
+          : (pBot.pacingTimer > 0 ? `🔄 PACING (${pStamPct}%)` : `⚡ ${pStamPct}% STAMINA`);
+        pStamTxt.style.color = pBot.staminaState === "gassed" ? "#fb7185" : (pBot.pacingTimer > 0 ? "#fbbf24" : "#38bdf8");
+      }
+      if (eStamTxt) {
+        eStamTxt.textContent = eBot.staminaState === "gassed"
+          ? `⚠️ GASSED (${eStamPct}%)`
+          : (eBot.pacingTimer > 0 ? `🔄 PACING (${eStamPct}%)` : `⚡ ${eStamPct}% STAMINA`);
+        eStamTxt.style.color = eBot.staminaState === "gassed" ? "#fb7185" : (eBot.pacingTimer > 0 ? "#fbbf24" : "#38bdf8");
+      }
+
+      // Update Round Title, Pips, and 3:00 M:SS Clock
+      const rdTitle = document.getElementById("hudRoundTitle");
+      if (rdTitle) {
+        const cRd = sim.currentRound || 1;
+        rdTitle.textContent = sim.intermissionTimer > 0
+          ? `🔧 CORNER PIT-STOP (${Math.ceil(sim.intermissionTimer / 60)}s)`
+          : (cRd === 3 && sim.pRoundsWon === 1 && sim.eRoundsWon === 1 ? "🔥 FINAL ROUND 3" : `🥊 ROUND ${cRd} OF 3`);
+      }
+      document.getElementById("hudClock").textContent = formatUfcClock(sim.timeLeft);
+
+      const pScoreEl = document.getElementById("hudPRoundScore");
+      const eScoreEl = document.getElementById("hudERoundScore");
+      if (pScoreEl) pScoreEl.textContent = `ROUNDS: ${sim.pRoundsWon || 0}/2`;
+      if (eScoreEl) eScoreEl.textContent = `ROUNDS: ${sim.eRoundsWon || 0}/2`;
+
+      const pPipsEl = document.getElementById("hudPRoundPips");
+      const ePipsEl = document.getElementById("hudERoundPips");
+      if (pPipsEl) pPipsEl.innerHTML = renderRoundPipsHtml(sim.roundResults, "player");
+      if (ePipsEl) ePipsEl.innerHTML = renderRoundPipsHtml(sim.roundResults, "enemy");
     }
 
     function applyDynamicStrikeProcs(attacker, defender, dmgDealt) {
-      if (dmgDealt >= 68 && (!defender.debrisCd || defender.debrisCd <= 0)) {
+      if (attacker) {
+        attacker.roundDmgDealt = (attacker.roundDmgDealt || 0) + Math.max(0, dmgDealt);
+        attacker.roundStrikes = (attacker.roundStrikes || 0) + 1;
+        attacker.flurryCount = (attacker.flurryCount || 0) + 1;
+        drainBotStamina(attacker, 7.5);
+        // After 2 solid exchanges in a flurry, step back & circle like a UFC fighter resetting!
+        if (attacker.flurryCount >= 2) {
+          attacker.flurryCount = 0;
+          attacker.pacingTimer = Math.max(attacker.pacingTimer, 85 + Math.floor(Math.random() * 55));
+        }
+      }
+      if (defender) {
+        drainBotStamina(defender, 5.0);
+      }
+      if (dmgDealt >= 26 && (!defender.debrisCd || defender.debrisCd <= 0)) {
         defender.debrisCd = 75;
         spawnArmorDebris(defender.x, defender.y, defender.color, 2, 7.5);
       }
@@ -7220,6 +7620,42 @@
         ctx.strokeText(ft.text, ft.x, ft.y);
         ctx.fillStyle = ft.color;
         ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+      }
+
+      // Render UFC Between-Rounds Corner Pit-Stop Scorecard Banner!
+      if (sim.intermissionTimer > 0 && sim.intermissionSummary) {
+        const sum = sim.intermissionSummary;
+        const secLeft = Math.ceil(sim.intermissionTimer / 60);
+        ctx.save();
+        ctx.fillStyle = "rgba(7, 10, 18, 0.88)";
+        ctx.strokeStyle = "#fbbf24";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(450, 295, 700, 250, 18);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.textAlign = "center";
+        ctx.font = "900 16px Orbitron, sans-serif";
+        ctx.fillStyle = "#fbbf24";
+        ctx.fillText(`🥊 END OF ROUND ${sum.round} OF 3 — ${sum.method}`, 800, 340);
+
+        ctx.font = "900 26px Orbitron, sans-serif";
+        ctx.fillStyle = sum.winnerTeam === "player" ? "#00ff88" : "#ff2a55";
+        ctx.fillText(`🏆 ROUND ${sum.round} WINNER: ${sum.winnerName}`, 800, 382);
+
+        ctx.font = "800 16px Orbitron, sans-serif";
+        ctx.fillStyle = "#f8fafc";
+        ctx.fillText(`SERIES SCORE: ${sum.pRounds} - ${sum.eRounds} (BEST OF 3) · ROUND DMG: ${sum.pDmg} vs ${sum.eDmg}`, 800, 422);
+
+        ctx.font = "700 14px Rajdhani, sans-serif";
+        ctx.fillStyle = "#38bdf8";
+        ctx.fillText("🔧 CORNER CREW: Welding +45% Missing Armor & Recharging Reactor Stamina to 100%!", 800, 462);
+
+        ctx.font = "900 18px Orbitron, sans-serif";
+        ctx.fillStyle = "#fde047";
+        ctx.fillText(`🔔 NEXT ROUND STARTS IN ${secLeft}s...`, 800, 508);
         ctx.restore();
       }
 
