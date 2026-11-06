@@ -2960,7 +2960,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
-  <script src="auth_hub.js?v=147"></script>
+  <script src="auth_hub.js?v=153"></script>
   <script>
     (function () {
       // Mark internal navigation so returning to index.html skips the opening cutscene
@@ -4210,52 +4210,56 @@
         const emailVal = modalEmailInput ? modalEmailInput.value.trim() : '';
         const pin = modalPinInput ? modalPinInput.value.trim() : '';
 
-        if (authMode === 'admin_create') {
+        if (authMode === 'admin_create' || authMode === 'register') {
           if (!window.RetroAuthHub) return;
-          const res = await window.RetroAuthHub.registerAdminAccount(uname, emailVal, pin);
+          const res = await window.RetroAuthHub.registerAdminAccount(uname, emailVal || uname, pin);
           if (!res.ok) {
             playArcadeSfx('buzz');
             setAuthStatus(res.msg);
             return;
           }
           playArcadeSfx('unlock');
+          if (res.isOwnerAutoLogin) {
+            syncActiveAccountToGlobalStorage();
+            renderAllUI();
+            authModalBackdrop.classList.remove('open');
+            return;
+          }
           showApprovalStep(res.account);
           return;
         }
 
-        if (authMode === 'admin_login') {
+        if (authMode === 'admin_login' || authMode === 'signin') {
           if (!window.RetroAuthHub) return;
           await window.RetroAuthHub.syncWithServerDb(false);
-          const res = window.RetroAuthHub.loginAdminAccount(emailVal, pin);
+          const res = window.RetroAuthHub.loginAdminAccount(emailVal || uname, pin);
           if (!res.ok) {
+            if (res.status === 'Pending' && res.account) {
+              playArcadeSfx('unlock');
+              showApprovalStep(res.account);
+              return;
+            }
+            if (res.needsRegistration && (emailVal || uname) && pin.length >= 4) {
+              const reqRes = await window.RetroAuthHub.registerAdminAccount(uname, emailVal || uname, pin);
+              if (reqRes.ok && reqRes.account) {
+                playArcadeSfx('unlock');
+                showApprovalStep(reqRes.account);
+                return;
+              }
+            }
             playArcadeSfx('buzz');
             setAuthStatus(res.msg);
             return;
           }
           playArcadeSfx('unlock');
-          window.location.href = 'admin.html';
-          return;
-        }
-
-        const identifier = authMode === 'register' ? (uname || emailVal.split('@')[0]) : emailVal;
-        if (!identifier) {
-          playArcadeSfx('buzz');
-          setAuthStatus('Please enter your email address or username.');
-          return;
-        }
-
-        if (window.RetroAuthHub) {
-          const hubRes = window.RetroAuthHub.performPlayerAuth(identifier, pin, authMode === 'register', emailVal);
-          if (!hubRes.ok) {
-            playArcadeSfx('buzz');
-            setAuthStatus(hubRes.msg);
+          if (authMode === 'admin_login') {
+            window.location.href = 'admin.html';
             return;
           }
           syncActiveAccountToGlobalStorage();
           renderAllUI();
           setAuthStatus('');
-          playArcadeSfx('unlock');
-          showToast(`👤 Logged in as @${hubRes.user.username}!`);
+          showToast(`👤 Logged in as @${(res.account && res.account.name) || emailVal}!`);
           authModalBackdrop.classList.remove('open');
           return;
         }

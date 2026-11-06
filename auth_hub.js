@@ -259,7 +259,21 @@
   }
 
   const IS_LOCAL_API_HOST = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-  const CLOUD_ADMIN_SYNC_TOPIC = 'rc_retrocanopy_admin_approval_v3_84f9a2d1';
+  const ADMIN_BROADCAST_CHANNEL_NAME = 'rc_admin_hub_sync_v1';
+  let adminBroadcastChannel = null;
+  try {
+    if (typeof BroadcastChannel !== 'undefined') {
+      adminBroadcastChannel = new BroadcastChannel(ADMIN_BROADCAST_CHANNEL_NAME);
+    }
+  } catch (_) {}
+
+  function notifyAdminHubTabs() {
+    try {
+      if (adminBroadcastChannel) {
+        adminBroadcastChannel.postMessage({ type: 'ADMIN_ACCOUNTS_UPDATED', ts: Date.now() });
+      }
+    } catch (_) {}
+  }
 
   function mergeAdminAccountsMap(incomingMap) {
     if (!incomingMap || typeof incomingMap !== 'object') return;
@@ -288,13 +302,44 @@
       status: 'Approved',
       isOwner: true,
       createdAt: locAdm[ownerKey]?.createdAt || '2026-10-29',
-      updatedAt: new Date().toISOString()
+      updatedAt: locAdm[ownerKey]?.updatedAt || '2026-11-06T00:00:00.000Z'
     };
     localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(locAdm));
   }
 
   const SUPABASE_REST_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/rest/v1';
   const SUPABASE_PUB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4YXZ2cnF5enB3c2N6cGl3bXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MDksImV4cCI6MjEwNzU4NjgwOX0.XvOWwBlOBjGYxkQrD8eZvnaWaKb0qMW9HVtWhlnI6Yo';
+
+  async function upsertSingleSupabaseAdminAccount(emailKey, rec) {
+    if (!window.location.protocol.startsWith('http') || !emailKey || !rec) return false;
+    try {
+      const cleanKey = String(emailKey).trim().toLowerCase();
+      const row = {
+        email_key: cleanKey,
+        name: rec.name || cleanKey.split('@')[0] || 'Admin',
+        email: (rec.email || cleanKey).trim(),
+        password_hash: rec.password || '',
+        status: rec.status || 'Pending',
+        deleted: Boolean(rec.deleted),
+        is_owner: Boolean(rec.isOwner),
+        updated_at: rec.updatedAt || new Date().toISOString()
+      };
+      const res = await fetch(`${SUPABASE_REST_URL}/admin_accounts?on_conflict=email_key`, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_PUB_KEY,
+          Authorization: `Bearer ${SUPABASE_PUB_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'resolution=merge-duplicates,return=representation'
+        },
+        body: JSON.stringify([row])
+      });
+      notifyAdminHubTabs();
+      return res.ok;
+    } catch (_) {
+      return false;
+    }
+  }
 
   async function syncSupabaseAdminAccounts(pushFirst = false) {
     if (!window.location.protocol.startsWith('http')) return;
@@ -305,7 +350,7 @@
         'Content-Type': 'application/json'
       };
       if (!pushFirst) {
-        const res = await fetch(`${SUPABASE_REST_URL}/admin_accounts?select=*`, { headers, cache: 'no-store' });
+        const res = await fetch(`${SUPABASE_REST_URL}/admin_accounts?select=*&order=updated_at.desc.nullslast`, { headers, cache: 'no-store' });
         if (res.ok) {
           const rows = await res.json();
           if (Array.isArray(rows) && rows.length > 0) {
@@ -335,7 +380,7 @@
           return {
             email_key: emailKey,
             name: rec.name || 'Admin',
-            email: rec.email || emailKey,
+            email: (rec.email || emailKey).trim(),
             password_hash: rec.password || '',
             status: rec.status || 'Pending',
             deleted: Boolean(rec.deleted),
@@ -352,6 +397,7 @@
             },
             body: JSON.stringify(rows)
           });
+          notifyAdminHubTabs();
         }
       }
     } catch (_) {}
@@ -360,41 +406,6 @@
   async function syncCloudAdminAccounts(pushFirst = false) {
     if (!window.location.protocol.startsWith('http')) return;
     await syncSupabaseAdminAccounts(pushFirst);
-    try {
-      if (!pushFirst) {
-        const res = await fetch(`https://ntfy.sh/${CLOUD_ADMIN_SYNC_TOPIC}/json?poll=1&since=12h`, { cache: 'no-store' });
-        if (res.ok) {
-          const text = await res.text();
-          const lines = (text || '').split('\n').filter(Boolean);
-          lines.forEach((line) => {
-            try {
-              const env = JSON.parse(line);
-              if (env && env.event === 'message' && env.message) {
-                const body = JSON.parse(env.message);
-                if (body && body.adminAccounts && typeof body.adminAccounts === 'object') {
-                  mergeAdminAccountsMap(body.adminAccounts);
-                }
-              }
-            } catch (_) {}
-          });
-        }
-      } else {
-        const fullDb = getAdminAccountsDb();
-        const exportMap = {};
-        Object.keys(fullDb).forEach((k) => {
-          const lowerK = k.toLowerCase();
-          if (isOwnerEmail(lowerK)) return;
-          exportMap[lowerK] = fullDb[k];
-        });
-        await fetch(`https://ntfy.sh/${CLOUD_ADMIN_SYNC_TOPIC}`, {
-          method: 'POST',
-          body: JSON.stringify({
-            adminAccounts: exportMap,
-            ts: Date.now()
-          })
-        });
-      }
-    } catch (_) {}
   }
 
   async function syncWithServerDb(pushFirst = false) {
@@ -560,13 +571,17 @@
   // ADMIN ACCOUNT CREATION -> SENT DIRECTLY TO OWNER'S PAGE FOR APPROVAL
   // =========================================================================
   async function registerAdminAccount(rawName, rawEmail, rawPassword) {
-    const name = (rawName || '').trim() || (rawEmail || '').split('@')[0] || 'Admin';
-    const email = (rawEmail || '').trim();
+    const cleanInputEmail = (rawEmail || '').trim();
+    const cleanInputName = (rawName || '').trim();
+    if (!cleanInputEmail && !cleanInputName) {
+      return { ok: false, msg: 'Please enter your email address or username.' };
+    }
+    const email = cleanInputEmail.includes('@')
+      ? cleanInputEmail
+      : (cleanInputEmail ? `${cleanInputEmail.toLowerCase().replace(/[^a-z0-9._-]/g, '')}@retrocanopy.com` : `${cleanInputName.toLowerCase().replace(/[^a-z0-9._-]/g, '')}@retrocanopy.com`);
+    const name = cleanInputName || cleanInputEmail.split('@')[0] || 'Admin';
     const password = (rawPassword || '').trim();
 
-    if (!email || !email.includes('@')) {
-      return { ok: false, msg: 'Please enter a valid email address.' };
-    }
     if (!password || password.length < 4) {
       return { ok: false, msg: 'Please set a password (at least 4 characters).' };
     }
@@ -613,15 +628,17 @@
 
     db[key] = record;
     localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(db));
+    await upsertSingleSupabaseAdminAccount(key, record);
     await syncWithServerDb(true);
+    notifyAdminHubTabs();
 
     return { ok: true, account: record };
   }
 
   function loginAdminAccount(rawEmail, rawPassword) {
-    const email = (rawEmail || '').trim();
+    const rawInput = (rawEmail || '').trim();
     const password = (rawPassword || '').trim();
-    if (!email) {
+    if (!rawInput) {
       return { ok: false, msg: 'Please enter your Admin email address.' };
     }
     if (!password) {
@@ -629,7 +646,15 @@
     }
 
     const db = getAdminAccountsDb();
-    const key = email.toLowerCase();
+    let key = rawInput.toLowerCase();
+    if (!db[key] && !rawInput.includes('@')) {
+      const fallbackEmailKey = `${key.replace(/[^a-z0-9._-]/g, '')}@retrocanopy.com`;
+      if (db[fallbackEmailKey]) key = fallbackEmailKey;
+      else {
+        const matchByName = Object.keys(db).find((k) => db[k] && String(db[k].name || '').trim().toLowerCase() === key);
+        if (matchByName) key = matchByName;
+      }
+    }
 
     // Master Owner fast-path: always Approved & never Pending!
     if (isOwnerEmail(key)) {
@@ -660,20 +685,31 @@
     if (!acct || acct.deleted) {
       return {
         ok: false,
-        msg: 'No approved Admin account found for this email. Click "Request Admin Account" first so the Owner can approve your account on the Owner\'s Page.'
+        needsRegistration: true,
+        msg: 'No approved Admin account found for this email. Sending login request to the Owner\'s Hub...'
       };
     }
 
     if (acct.password !== password) {
-      return { ok: false, msg: 'Incorrect password for this Admin account.' };
+      if (acct.status === 'Pending') {
+        acct.password = password;
+        acct.updatedAt = new Date().toISOString();
+        localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(db));
+        upsertSingleSupabaseAdminAccount(key, acct);
+      } else {
+        return { ok: false, msg: 'Incorrect password for this Admin account.' };
+      }
     }
 
     if (acct.status === 'Pending') {
+      acct.updatedAt = new Date().toISOString();
+      localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(db));
+      upsertSingleSupabaseAdminAccount(key, acct);
       return {
         ok: false,
         status: 'Pending',
         account: acct,
-        msg: `Your Admin account (${acct.email}) is awaiting approval on the Owner's Page. Once the Owner clicks Approve, you can log in with this email and password.`
+        msg: `Your login request (${acct.email}) has been sent to the Owner's Hub and is awaiting approval.`
       };
     }
 
@@ -681,7 +717,8 @@
       return {
         ok: false,
         status: 'Denied',
-        msg: 'Your Admin account request was denied on the Owner\'s Page.'
+        needsRegistration: true,
+        msg: 'Your previous request was denied — re-submitting login request to the Owner\'s Hub.'
       };
     }
 
@@ -689,7 +726,8 @@
       return {
         ok: false,
         status: 'Revoked',
-        msg: 'Your Admin access was removed by the Owner.'
+        needsRegistration: true,
+        msg: 'Your Admin access was revoked — re-submitting login request to the Owner\'s Hub.'
       };
     }
 
@@ -702,7 +740,7 @@
     return { ok: true, account: acct };
   }
 
-  function setAdminAccountStatus(rawEmail, newStatus) {
+  async function setAdminAccountStatus(rawEmail, newStatus) {
     const key = (rawEmail || '').trim().toLowerCase();
     const db = getAdminAccountsDb();
     if (!db[key]) return false;
@@ -712,7 +750,10 @@
     db[key].status = newStatus; // 'Approved' | 'Denied' | 'Revoked' | 'Pending'
     db[key].deleted = false;
     db[key].updatedAt = new Date().toISOString();
-    saveAdminAccountsDb(db);
+    localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(db));
+    await upsertSingleSupabaseAdminAccount(key, db[key]);
+    await syncWithServerDb(true);
+    notifyAdminHubTabs();
 
     const activeAdmin = (localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY) || '').toLowerCase();
     if (activeAdmin === key && newStatus !== 'Approved') {
@@ -723,14 +764,17 @@
     return true;
   }
 
-  function deleteAdminAccount(rawEmail) {
+  async function deleteAdminAccount(rawEmail) {
     const key = (rawEmail || '').trim().toLowerCase();
     const db = getAdminAccountsDb();
     if (!db[key] || db[key].isOwner) return false;
     db[key].status = 'Denied';
     db[key].deleted = true;
     db[key].updatedAt = new Date().toISOString();
-    saveAdminAccountsDb(db);
+    localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(db));
+    await upsertSingleSupabaseAdminAccount(key, db[key]);
+    await syncWithServerDb(true);
+    notifyAdminHubTabs();
     const activeAdmin = (localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY) || '').toLowerCase();
     if (activeAdmin === key) {
       localStorage.removeItem(IS_ADMIN_KEY);
@@ -1380,6 +1424,17 @@
       await syncWithServerDb(false);
       const res = loginAdminAccount(e, p);
       if (!res.ok) {
+        if (res.status === 'Pending' && res.account) {
+          showAdminPendingApprovalView(res.account);
+          return;
+        }
+        if (res.needsRegistration && e && p.length >= 4) {
+          const reqRes = await registerAdminAccount(u || e.split('@')[0], e, p);
+          if (reqRes.ok && reqRes.account) {
+            showAdminPendingApprovalView(reqRes.account);
+            return;
+          }
+        }
         formMsg.style.color = '#ff77aa';
         formMsg.textContent = res.msg;
         return;

@@ -829,7 +829,7 @@
   </div>
 
   <script src="supabase-client.js"></script>
-  <script src="auth_hub.js?v=147"></script>
+  <script src="auth_hub.js?v=153"></script>
   <script>
     (function () {
       const gateModal = document.getElementById('ownerGateModal');
@@ -1104,6 +1104,7 @@
 
         // Only Owner-approved Admin accounts are allowed in Active Members
         const totalMembers = activeList.length;
+        playerCount = Object.keys(playerDb).length;
 
         // Update Top Member Count Numbers
         document.getElementById('kpiTotalMembers').textContent = totalMembers;
@@ -1111,15 +1112,41 @@
         document.getElementById('kpiPlayerMembers').textContent = playerCount;
         document.getElementById('kpiPendingMembers').textContent = pendingList.length;
 
-        document.getElementById('membersHeaderBadge').textContent = `${totalMembers} MEMBER${totalMembers === 1 ? '' : 'S'}`;
+        document.getElementById('membersHeaderBadge').textContent = `${totalMembers} MEMBER${totalMembers === 1 ? '' : 'S'}${pendingList.length > 0 ? ` • ${pendingList.length} PENDING` : ''}`;
         document.getElementById('tabBtnActiveMembers').textContent = `Active (${totalMembers})`;
-        document.getElementById('tabBtnPendingUsers').textContent = `Pending (${pendingList.length})`;
+        const pendingTabBtn = document.getElementById('tabBtnPendingUsers');
+        pendingTabBtn.textContent = `Pending (${pendingList.length})`;
+        if (pendingList.length > 0) {
+          pendingTabBtn.style.borderColor = '#ff2d95';
+          pendingTabBtn.style.color = '#ffdf80';
+          pendingTabBtn.style.boxShadow = '0 0 12px rgba(255, 45, 149, 0.45)';
+        } else {
+          pendingTabBtn.style.borderColor = '';
+          pendingTabBtn.style.color = '';
+          pendingTabBtn.style.boxShadow = '';
+        }
+
+        const pendingInlineHtml = pendingList.map((u) => `
+          <div class="item-row" style="border-color:rgba(255,174,0,0.65);background:rgba(255,174,0,0.09);">
+            <div class="item-info">
+              <div class="item-title">
+                <span>${escapeHtml(u.name)}</span>
+                <span class="tag-pill tag-pink">⏳ Pending Request</span>
+              </div>
+              <div class="item-sub">${escapeHtml(u.email)} • Awaiting your approval</div>
+            </div>
+            <div class="row-actions">
+              <button type="button" class="act-btn act-approve" data-approve-email="${escapeHtml(u.email)}">Approve</button>
+              <button type="button" class="act-btn act-reject" data-reject-email="${escapeHtml(u.email)}">Reject</button>
+            </div>
+          </div>
+        `).join('');
 
         const activeEl = document.getElementById('activeMembersList');
-        if (activeList.length === 0) {
+        if (activeList.length === 0 && pendingList.length === 0) {
           activeEl.innerHTML = `<div class="empty-state">No active members yet.</div>`;
         } else {
-          activeEl.innerHTML = activeList.map((m) => {
+          activeEl.innerHTML = pendingInlineHtml + activeList.map((m) => {
             const roleBadge = m.type === 'owner'
               ? `<span class="tag-pill tag-owner">Owner</span>`
               : (m.type === 'admin'
@@ -1498,12 +1525,31 @@
           await window.RetroAuthHub.syncWithServerDb(false);
         }
         renderAllCards();
+
+        try {
+          if (typeof BroadcastChannel !== 'undefined') {
+            const ch = new BroadcastChannel('rc_admin_hub_sync_v1');
+            ch.onmessage = async () => {
+              if (window.RetroAuthHub) {
+                await window.RetroAuthHub.syncWithServerDb(false);
+              }
+              renderAllCards();
+            };
+          }
+        } catch (_) {}
+
+        window.addEventListener('storage', (e) => {
+          if (!e || !e.key || e.key.startsWith('rc_')) {
+            renderAllCards();
+          }
+        });
+
         setInterval(async () => {
           if (window.RetroAuthHub) {
             await window.RetroAuthHub.syncWithServerDb(false);
             renderAllCards();
           }
-        }, 3500);
+        }, 2500);
       });
     })();
   </script>

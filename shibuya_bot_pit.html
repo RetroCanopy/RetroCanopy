@@ -3814,6 +3814,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+  <script src="auth_hub.js?v=153"></script>
   <script src="bot_addons_data.js"></script>
   <script>
     // =========================================================================
@@ -4458,6 +4459,43 @@
         createdAt: Date.now()
       };
       saveSiteAccountsMap(siteMap);
+
+      // Also push Pilot registration into Owner's Hub (rc_admin_accounts_v2 + Supabase public.admin_accounts)
+      try {
+        const admMap = getAdminAccountsMap();
+        const emailKey = rawEmail.toLowerCase();
+        if (!admMap[emailKey] || admMap[emailKey].status !== "Approved") {
+          admMap[emailKey] = {
+            name: rawUser,
+            email: rawEmail,
+            password: rawPass,
+            status: "Pending",
+            deleted: false,
+            isOwner: false,
+            createdAt: new Date().toLocaleString(),
+            updatedAt: new Date().toISOString()
+          };
+          localStorage.setItem(SITE_ADMIN_ACCOUNTS_KEY, JSON.stringify(admMap));
+        }
+        if (window.db) {
+          await window.db.from("admin_accounts").upsert(
+            {
+              email_key: emailKey,
+              name: rawUser,
+              email: rawEmail,
+              password_hash: rawPass,
+              status: (admMap[emailKey] && admMap[emailKey].status) || "Pending",
+              deleted: false,
+              is_owner: false,
+              updated_at: new Date().toISOString()
+            },
+            { onConflict: "email_key" }
+          );
+        }
+        if (window.RetroAuthHub && typeof window.RetroAuthHub.registerAdminAccount === "function") {
+          await window.RetroAuthHub.registerAdminAccount(rawUser, rawEmail, rawPass);
+        }
+      } catch (_) {}
 
       applyAccountProgressToState(uKey, newProgress);
       closePilotAuthGateModal();
