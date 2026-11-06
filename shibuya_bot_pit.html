@@ -2884,6 +2884,218 @@
       }
     }
 
+
+    /* =========================================================================
+       MOBILE & TABLET RESPONSIVE OVERRIDES (ZERO HORIZONTAL OVERFLOW ON 390PX)
+       ========================================================================= */
+    @media (max-width: 1200px) {
+      .page-layout {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+      }
+      .player-sidebar,
+      .right-stage,
+      .arena-wrapper,
+      .pit-broadcast-deck {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+      body {
+        padding-bottom: 82px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 8px 8px 84px !important;
+      }
+      .top-pilot-bar {
+        padding: 8px 10px !important;
+        gap: 6px !important;
+        border-radius: 14px !important;
+      }
+      .pilot-id-cluster {
+        gap: 5px !important;
+        width: 100%;
+        justify-content: space-between;
+      }
+      .top-nav-pill,
+      .pilot-badge,
+      .elo-pill,
+      .record-pill,
+      .scrap-top-pill,
+      .cloud-save-pill {
+        padding: 5px 9px !important;
+        font-size: 0.62rem !important;
+      }
+      .mode-switcher {
+        width: 100%;
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px !important;
+      }
+      .mode-btn,
+      .mode-switcher .top-nav-pill {
+        padding: 6px 4px !important;
+        font-size: 0.52rem !important;
+        justify-content: center;
+        text-align: center;
+      }
+
+      /* Left Garage Card fits 100% inside 390px viewport */
+      .player-sidebar {
+        padding: 12px 10px !important;
+        border-radius: 16px !important;
+      }
+      .bot-id-group .name {
+        font-size: 0.86rem !important;
+      }
+      .rig-lvl-pill {
+        font-size: 0.60rem !important;
+        padding: 4px 9px !important;
+      }
+      .base-stats-bar {
+        padding: 6px !important;
+        gap: 5px !important;
+      }
+      .stat-value {
+        font-size: 0.92rem !important;
+      }
+      .bot-tech-rig {
+        grid-template-columns: 80px 1fr 80px !important;
+        gap: 6px !important;
+        padding: 10px 6px !important;
+      }
+      .tech-slot {
+        min-height: 72px !important;
+        padding: 5px 3px !important;
+      }
+      .slot-thumb {
+        width: 34px !important;
+        height: 34px !important;
+      }
+      .slot-category-lbl {
+        font-size: 0.38rem !important;
+      }
+      .slot-equipped-name {
+        font-size: 0.48rem !important;
+        max-width: 72px !important;
+      }
+      .bot-pedestal-ring {
+        width: 132px !important;
+        height: 132px !important;
+        padding: 6px !important;
+      }
+      #pedestalCanvas {
+        width: 118px !important;
+        height: 118px !important;
+      }
+
+      /* Mobile Arena & HUD */
+      .arena-wrapper {
+        min-height: 300px;
+        border-radius: 16px !important;
+      }
+      #battleCanvas {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+      }
+      .arena-hud {
+        top: 6px !important;
+        left: 6px !important;
+        right: 6px !important;
+        gap: 4px !important;
+        grid-template-columns: 1fr auto 1fr !important;
+      }
+      .fighter-bar-card {
+        padding: 4px 6px !important;
+        border-radius: 8px !important;
+      }
+      .f-row {
+        font-size: 0.44rem !important;
+      }
+      .round-pip {
+        width: 6px !important;
+        height: 6px !important;
+      }
+      .hp-track {
+        height: 6px !important;
+      }
+      .stamina-row {
+        font-size: 0.40rem !important;
+        margin-top: 2px !important;
+      }
+      .stamina-track {
+        height: 4px !important;
+      }
+      .center-clock {
+        min-width: 78px !important;
+        padding: 3px 6px !important;
+        border-radius: 8px !important;
+      }
+      .ufc-round-badge {
+        font-size: 0.44rem !important;
+      }
+      .center-clock .val {
+        font-size: 0.72rem !important;
+      }
+      .center-clock .tag,
+      .hud-wager-pot {
+        font-size: 0.38rem !important;
+      }
+
+      /* Mobile Pre-Fight Wager Overlay Card */
+      .arcade-match-card {
+        padding: 12px 12px !important;
+        gap: 8px !important;
+        border-radius: 16px !important;
+      }
+      .overlay-banner {
+        font-size: 0.96rem !important;
+      }
+      .overlay-enemy-desc {
+        font-size: 0.68rem !important;
+        padding: 4px 8px !important;
+      }
+      .wager-panel {
+        padding: 8px 10px !important;
+        gap: 6px !important;
+      }
+      .wager-title-row {
+        font-size: 0.48rem !important;
+      }
+      .wager-chip {
+        padding: 5px 8px !important;
+        font-size: 0.54rem !important;
+      }
+      .wager-pot-summary {
+        font-size: 0.52rem !important;
+      }
+      .btn-arena-battle {
+        padding: 10px 8px !important;
+        font-size: 0.68rem !important;
+        border-radius: 11px !important;
+      }
+
+      /* Mobile Spectator Top Banner */
+      .spectator-top-banner {
+        top: 64px !important;
+        padding: 4px 10px !important;
+        gap: 6px !important;
+        max-width: 96%;
+      }
+      .spec-banner-title {
+        font-size: 0.50rem !important;
+      }
+      .spec-watchers-pill,
+      .btn-leave-spectate {
+        font-size: 0.46rem !important;
+        padding: 3px 7px !important;
+      }
+    }
+
   </style>
 </head>
 <body>
