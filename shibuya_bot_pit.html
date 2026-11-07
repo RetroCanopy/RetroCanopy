@@ -5818,6 +5818,422 @@
       }
     }
 
+    /* =========================================================================
+       👥 FRIENDS LIST, ONLINE/OFFLINE PRESENCE & PRIVATE 1-ON-1 LOGGED CHATS
+       ========================================================================= */
+    .friends-top-btn {
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.25) 0%, rgba(15, 23, 42, 0.94) 100%) !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.65) !important;
+      color: #f0f9ff !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-weight: 900 !important;
+      cursor: pointer;
+    }
+    .friends-top-btn:hover {
+      border-color: #fbbf24 !important;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
+    }
+    .friends-online-dot-pill {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(52, 211, 153, 0.45);
+      color: #34d399;
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.50rem;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+    }
+    .social-unread-pill {
+      background: linear-gradient(180deg, #f43f5e 0%, #be123c 100%);
+      border: 1px solid #fda4af;
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.52rem;
+      font-weight: 900;
+      box-shadow: 0 0 10px rgba(244, 63, 94, 0.75);
+      animation: socialPulseBadge 1.3s infinite ease-in-out;
+    }
+    .social-unread-pill.hidden {
+      display: none !important;
+    }
+    @keyframes socialPulseBadge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+
+    /* 2-Tab Comms Switcher inside #pitChatBroadcastCard */
+    .pit-comms-tab-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 7px 10px;
+      background: rgba(6, 9, 18, 0.92);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+      flex-shrink: 0;
+    }
+    .pit-comms-tab-btn {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1.5px solid rgba(148, 163, 184, 0.26);
+      color: #94a3b8;
+      border-radius: 9px;
+      padding: 7px 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.14s ease;
+    }
+    .pit-comms-tab-btn.active {
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.30) 0%, rgba(15, 23, 42, 0.96) 100%);
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.32);
+    }
+    .comms-tab-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    .comms-tab-panel.comms-panel-hidden {
+      display: none !important;
+    }
+    @media (max-width: 960px) {
+      body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) .pit-comms-tab-bar,
+      body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) .comms-tab-panel {
+        display: none !important;
+      }
+      body:not(.mobile-play-active) #pitChatBroadcastCard.tab-expanded {
+        min-height: 360px !important;
+        max-height: 480px !important;
+      }
+    }
+
+    /* Friends List, Requests & Discover Sub-Views */
+    .friends-subview {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    .friends-subview.hidden {
+      display: none !important;
+    }
+    .friend-add-form {
+      display: flex;
+      gap: 6px;
+      padding: 8px 10px;
+      background: rgba(10, 15, 28, 0.85);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      flex-shrink: 0;
+    }
+    .friends-subnav-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      padding: 6px 10px;
+      background: rgba(8, 12, 22, 0.82);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      flex-shrink: 0;
+    }
+    .friends-subnav-btn {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: #94a3b8;
+      border-radius: 7px;
+      padding: 5px 4px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.50rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.14s ease;
+    }
+    .friends-subnav-btn.active {
+      background: rgba(251, 191, 36, 0.20);
+      border-color: #fbbf24;
+      color: #fde047;
+    }
+    .friends-list-scroll {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .friend-row-card {
+      background: linear-gradient(180deg, rgba(22, 31, 50, 0.92) 0%, rgba(11, 16, 28, 0.96) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 11px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color 0.14s ease;
+    }
+    .friend-row-card.is-online {
+      border-color: rgba(52, 211, 153, 0.52);
+      box-shadow: inset 0 0 12px rgba(16, 185, 129, 0.08);
+    }
+    .friend-row-card.has-unread {
+      border-color: #f43f5e;
+      box-shadow: 0 0 14px rgba(244, 63, 94, 0.25);
+    }
+    .friend-row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .friend-id-wrap {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+    .friend-status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .friend-status-dot.online {
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+    .friend-status-dot.offline {
+      background: #475569;
+      border: 1px solid #64748b;
+    }
+    .friend-callsign-txt {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 900;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .friend-status-badge {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.46rem;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 999px;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .friend-status-badge.online {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(52, 211, 153, 0.55);
+      color: #34d399;
+    }
+    .friend-status-badge.offline {
+      background: rgba(71, 85, 105, 0.25);
+      border: 1px solid rgba(100, 116, 139, 0.4);
+      color: #94a3b8;
+    }
+    .friend-last-msg {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.25;
+    }
+    .friend-row-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .btn-friend-act {
+      background: rgba(14, 165, 233, 0.22);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      color: #7dd3fc;
+      border-radius: 7px;
+      padding: 5px 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.52rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.14s ease;
+    }
+    .btn-friend-act:hover {
+      background: #38bdf8;
+      color: #041019;
+    }
+    .btn-friend-act.primary-chat {
+      flex: 1;
+      justify-content: center;
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.32) 0%, rgba(3, 105, 161, 0.42) 100%);
+      border-color: #38bdf8;
+      color: #f0f9ff;
+    }
+    .btn-friend-act.accept {
+      background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+      border-color: #6ee7b7;
+      color: #03150e;
+    }
+    .btn-friend-act.danger {
+      background: rgba(244, 63, 94, 0.16);
+      border-color: rgba(251, 113, 133, 0.4);
+      color: #fda4af;
+      padding: 5px 8px;
+    }
+
+    /* Private 1-on-1 DM Thread View */
+    .dm-thread-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 8px 10px;
+      background: rgba(8, 13, 25, 0.94);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.28);
+      flex-shrink: 0;
+    }
+    .dm-messages-feed {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(5, 8, 16, 0.65);
+    }
+    .dm-msg-bubble {
+      max-width: 86%;
+      padding: 7px 10px;
+      border-radius: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.78rem;
+      line-height: 1.32;
+      word-break: break-word;
+    }
+    .dm-msg-bubble.mine {
+      align-self: flex-end;
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.28) 0%, rgba(3, 105, 161, 0.36) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      color: #f0f9ff;
+      border-bottom-right-radius: 3px;
+    }
+    .dm-msg-bubble.theirs {
+      align-self: flex-start;
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.92) 0%, rgba(15, 23, 42, 0.96) 100%);
+      border: 1px solid rgba(52, 211, 153, 0.42);
+      color: #e2e8f0;
+      border-bottom-left-radius: 3px;
+    }
+    .dm-msg-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.46rem;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+    .dm-quick-strip {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-top: 2px;
+    }
+    .dm-quick-strip::-webkit-scrollbar { display: none; }
+    .btn-dm-quick {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      color: #cbd5e1;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.64rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-dm-quick:hover {
+      border-color: #fbbf24;
+      color: #fde047;
+    }
+
+    /* Floating New Private Message / Friend Request Notification Toast */
+    .social-notify-toast {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-130%);
+      z-index: 99500;
+      width: min(94vw, 480px);
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.97) 0%, rgba(8, 12, 24, 0.99) 100%);
+      border: 2px solid #38bdf8;
+      border-radius: 16px;
+      padding: 11px 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.92), 0 0 26px rgba(56, 189, 248, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .social-notify-toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .social-notify-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+    .social-notify-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 900;
+      color: #38bdf8;
+      letter-spacing: 0.6px;
+    }
+    .social-notify-text {
+      font-size: 0.80rem;
+      font-weight: 700;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
   </style>
 </head>
 <body>
@@ -5839,6 +6255,11 @@
       <a href="games.html?openTickets=1" class="elo-pill" id="pilotTicketsDisplay" style="border-color:rgba(251,191,36,0.55);color:#fde047;text-decoration:none;" title="Win PvP Battles to earn Golden Tickets for the Ticket Counter!">🎟️ 0 TICKETS</a>
       <div class="scrap-top-pill" id="topScrapDisplay" onclick="openBuyDiamondsModal()" style="cursor:pointer;" title="Click to Purchase Diamonds">💎 0</div>
       <button type="button" class="top-nav-pill" style="background:linear-gradient(180deg,#38bdf8 0%,#0284c7 100%);color:#041019;border-color:#7dd3fc;font-weight:900;" onclick="openBuyDiamondsModal()" title="Purchase Diamonds in-game">💎 BUY DIAMONDS</button>
+      <button type="button" class="top-nav-pill friends-top-btn" id="topFriendsNavBtn" onclick="openFriendsCommsTab()" title="Open Friends List, Online/Offline Status &amp; Private 1-on-1 Chats">
+        <span>👥 FRIENDS &amp; CHATS</span>
+        <span class="friends-online-dot-pill" id="topFriendsOnlineBadge">🟢 0</span>
+        <span class="social-unread-pill hidden" id="topFriendsUnreadBadge">0</span>
+      </button>
       <button type="button" class="top-nav-pill" id="btnSoundToggle" onclick="BotPitAudio.toggleMute()" style="border-color:rgba(52,211,153,0.5);color:#34d399;font-weight:900;" title="Toggle Arena Combat Sound & Audio FX">🔊 SOUND: ON</button>
       <div class="cloud-save-pill" id="cloudSyncBadge">☁️ SAVED</div>
     </div>
@@ -5870,14 +6291,26 @@
       <button class="mode-btn" style="background:linear-gradient(180deg,#fbbf24 0%,#b45309 100%);color:#09060d;border-color:#fde047;font-weight:900;" onclick="openSkillTreeModal()" title="Open Shibuya Syndicate Skill Tree (5 Tabs · 135 Upgrades)">
         🌳 SKILL TREE
       </button>
-      <button class="mode-btn" onclick="challengeFriendRigCode()" title="Battle a friend's Rig Code or copy yours">
-        🤝 FRIEND CODE
+      <button class="mode-btn" onclick="openFriendsCommsTab()" title="Open Friends List, Online Status &amp; Private 1-on-1 Chats">
+        👥 FRIENDS &amp; CHATS
       </button>
       <button class="top-nav-pill logout-btn" id="btnLogoutPilot" onclick="logoutPilotAccount()" title="Log Out or Switch Pilot Account">
         🔒 LOG OUT / SWITCH
       </button>
     </div>
   </header>
+
+  <!-- 💬 FLOATING NEW PRIVATE MESSAGE & FRIEND REQUEST NOTIFICATION TOAST -->
+  <div class="social-notify-toast" id="socialNotificationToast" role="status" aria-live="polite">
+    <div class="social-notify-left">
+      <span class="social-notify-tag" id="socialNotifyTag">💬 NEW PRIVATE MESSAGE</span>
+      <span class="social-notify-text" id="socialNotifyText">@FRIEND sent you a message!</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      <button type="button" class="btn-friend-act accept" id="socialNotifyActionBtn" onclick="handleSocialNotifyAction()">💬 OPEN CHAT</button>
+      <button type="button" class="btn-friend-act danger" onclick="hideSocialNotificationToast()">✕</button>
+    </div>
+  </div>
 
   <div class="page-layout">
 
@@ -6024,6 +6457,11 @@
         <button class="btn-shop" style="background:linear-gradient(180deg,#f59e0b 0%,#991b1b 100%);color:#fef3c7;border-color:#fde047;" onclick="openSkillTreeModal()">
           🌳 BOT SKILL TREE (5 TABS · 135 NODES)
         </button>
+        <button class="btn-shop" style="background:linear-gradient(180deg,#0284c7 0%,#0f172a 100%);color:#e0f2fe;border-color:#38bdf8;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="openFriendsCommsTab()">
+          <span>👥 FRIENDS &amp; PRIVATE CHATS</span>
+          <span class="friends-online-dot-pill" id="garageFriendsOnlineBadge">🟢 0</span>
+          <span class="social-unread-pill hidden" id="garageFriendsUnreadBadge">0</span>
+        </button>
         <button class="btn-battle" id="sideBattleBtn" onclick="beginPreBattleWizard(state.gameMode || 'pvp')">BATTLE</button>
       </div>
       </div>
@@ -6111,8 +6549,12 @@
 
         <!-- 📱 MOBILE LANDSCAPE BATTLE CORNER ICON BAR (CHAT LEFT OVERLAY TOGGLE + CTRL/GARAGE) -->
         <div class="mobile-battle-corner-bar" id="mobileBattleCornerBar">
-          <button type="button" class="btn-mobile-corner-icon chat-btn" id="btnMobileChatToggle" onclick="toggleMobileChatOverlay()" title="Toggle Left-Side Live Chat Overlay">
-            💬 CHAT
+          <button type="button" class="btn-mobile-corner-icon chat-btn" id="btnMobileChatToggle" onclick="toggleMobileChatOverlay()" title="Toggle Left-Side Live Chat &amp; Friends Overlay">
+            <span>💬 CHAT</span>
+            <span class="social-unread-pill hidden" id="mobCornerUnreadBadge">0</span>
+          </button>
+          <button type="button" class="btn-mobile-corner-icon chat-btn" onclick="toggleMobileChatOverlay(true); switchPitCommsTab('friends');" title="Open Friends List &amp; Private Chats">
+            <span>👥 FRIENDS</span>
           </button>
           <button type="button" class="btn-mobile-corner-icon" id="mobCornerCtrlBtn" onclick="setControlMode(state.controlMode === 'controlled' ? 'simulated' : 'controlled')" title="Switch Controlled vs. AI Simulated Mode">
             🎮 CTRL
@@ -6293,12 +6735,12 @@
         </div>
       </div>
 
-      <!-- DEDICATED RIGHT-COLUMN SHIBUYA PIT LIVE CHAT -->
+      <!-- DEDICATED RIGHT-COLUMN SHIBUYA PIT LIVE CHAT + SEPARATE FRIENDS & PRIVATE CHATS TAB -->
       <div class="broadcast-card tab-expanded" id="pitChatBroadcastCard">
-        <div class="broadcast-card-header expandable-tab-trigger" onclick="if(window.innerWidth <= 960 && !document.body.classList.contains('mobile-play-active')) toggleHomeTab('pitChatBroadcastCard')" title="Shibuya Pit Live Chat">
+        <div class="broadcast-card-header expandable-tab-trigger" onclick="if(window.innerWidth <= 960 && !document.body.classList.contains('mobile-play-active')) toggleHomeTab('pitChatBroadcastCard')" title="Shibuya Pit Live Chat &amp; Friends">
           <div class="broadcast-header-left">
             <span class="pilot-status-dot"></span>
-            <span>💬 SHIBUYA PIT LIVE CHAT</span>
+            <span id="pitCommsCardHeaderTitle">💬 PIT CHAT &amp; 👥 FRIENDS</span>
           </div>
           <div class="mob-play-header-actions">
             <button type="button" class="mob-play-header-btn" id="mobPlayCtrlToggleBtn" onclick="event.stopPropagation(); setControlMode(state.controlMode === 'controlled' ? 'simulated' : 'controlled')">🎮 CTRL</button>
@@ -6306,34 +6748,125 @@
           </div>
           <button type="button" class="btn-close-mobile-chat" onclick="event.stopPropagation(); toggleMobileChatOverlay(false)" title="Close Chat Overlay">✕</button>
           <div style="display:flex;align-items:center;gap:6px;" class="home-chat-badge-group">
+            <span class="social-unread-pill hidden" id="headerFriendsUnreadBadge">0 NEW</span>
             <span class="broadcast-count-pill chat-online" id="pitChatOnlineBadge">🟢 PIT ONLINE</span>
             <span class="home-tab-chevron" id="chev_pitChatBroadcastCard">▾ EXPAND</span>
           </div>
         </div>
-        <div class="pit-chat-messages" id="pitChatFeed">
-          <!-- Populated dynamically by appendPitChatMessage() -->
+
+        <!-- 2-TAB SWITCHER: [💬 PUBLIC CHAT] vs [👥 FRIENDS & PRIVATE CHATS] -->
+        <div class="pit-comms-tab-bar" id="pitCommsTabSwitcher">
+          <button type="button" class="pit-comms-tab-btn active" id="commsTabBtnPublic" onclick="switchPitCommsTab('public')">
+            <span>💬 PUBLIC CHAT</span>
+          </button>
+          <button type="button" class="pit-comms-tab-btn" id="commsTabBtnFriends" onclick="switchPitCommsTab('friends')">
+            <span>👥 FRIENDS &amp; DMS</span>
+            <span class="friends-online-dot-pill" id="commsTabOnlineBadge">🟢 0</span>
+            <span class="social-unread-pill hidden" id="commsTabUnreadBadge">0</span>
+          </button>
         </div>
-        <div class="pit-chat-footer">
-          <form class="chat-input-row" onsubmit="event.preventDefault(); sendPitChatFromInput();">
-            <input
-              type="text"
-              id="pitChatInput"
-              class="chat-input"
-              maxlength="160"
-              placeholder="Send message to Shibuya Pit..."
-              autocomplete="off"
-            />
-            <button type="submit" class="btn-chat-send">SEND</button>
-          </form>
-          <div class="chat-emote-strip">
-            <span class="chat-emote-lbl">⚡ HYPE REACTIONS:</span>
-            <div class="chat-emote-btns">
-              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('🔥', '🔥 PURE FIRE!')">🔥</button>
-              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚙️', '⚙️ SAW SHRED!')">⚙️</button>
-              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💀', '💀 BRUTAL KO!')">💀</button>
-              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💎', '💎 HIGH ROLLER!')">💎</button>
-              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚔️', '⚔️ CLASH!')">⚔️</button>
-              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('👑', '👑 CHAMPION!')">👑</button>
+
+        <!-- TAB PANEL 1: PUBLIC SHIBUYA PIT CHAT -->
+        <div class="comms-tab-panel" id="publicPitChatPanel">
+          <div class="pit-chat-messages" id="pitChatFeed">
+            <!-- Populated dynamically by appendPitChatMessage() -->
+          </div>
+          <div class="pit-chat-footer">
+            <form class="chat-input-row" onsubmit="event.preventDefault(); sendPitChatFromInput();">
+              <input
+                type="text"
+                id="pitChatInput"
+                class="chat-input"
+                maxlength="160"
+                placeholder="Send public message to Shibuya Pit..."
+                autocomplete="off"
+              />
+              <button type="submit" class="btn-chat-send">SEND</button>
+            </form>
+            <div class="chat-emote-strip">
+              <span class="chat-emote-lbl">⚡ HYPE REACTIONS:</span>
+              <div class="chat-emote-btns">
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('🔥', '🔥 PURE FIRE!')">🔥</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚙️', '⚙️ SAW SHRED!')">⚙️</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💀', '💀 BRUTAL KO!')">💀</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💎', '💎 HIGH ROLLER!')">💎</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚔️', '⚔️ CLASH!')">⚔️</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('👑', '👑 CHAMPION!')">👑</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB PANEL 2: SEPARATE FRIENDS LIST (ONLINE/OFFLINE) & PRIVATE 1-ON-1 LOGGED CHATS -->
+        <div class="comms-tab-panel comms-panel-hidden" id="friendsAndDmPanel">
+          <!-- SUB-VIEW A: FRIENDS LIST, REQUESTS & DISCOVER PILOTS -->
+          <div class="friends-subview" id="friendsDirectorySubView">
+            <form class="friend-add-form" onsubmit="event.preventDefault(); sendFriendRequestFromInput();">
+              <input
+                type="text"
+                id="addFriendCallsignInput"
+                class="chat-input"
+                maxlength="32"
+                placeholder="Add friend by @CALLSIGN or username..."
+                autocomplete="off"
+              />
+              <button type="submit" class="btn-chat-send" style="padding:0 11px;font-size:0.60rem;white-space:nowrap;">➕ ADD</button>
+            </form>
+
+            <div class="friends-subnav-row">
+              <button type="button" class="friends-subnav-btn active" id="fSubBtn_list" onclick="switchFriendsSubTab('list')">
+                <span>👥 FRIENDS</span>
+                <span id="fSubCount_list">(0)</span>
+              </button>
+              <button type="button" class="friends-subnav-btn" id="fSubBtn_requests" onclick="switchFriendsSubTab('requests')">
+                <span>📩 REQUESTS</span>
+                <span id="fSubCount_requests">(0)</span>
+              </button>
+              <button type="button" class="friends-subnav-btn" id="fSubBtn_discover" onclick="switchFriendsSubTab('discover')">
+                <span>🔍 PILOTS</span>
+                <span id="fSubCount_discover"></span>
+              </button>
+            </div>
+
+            <div class="friends-list-scroll" id="friendsListBody">
+              <!-- Populated dynamically by renderFriendsAndSocialUI() -->
+            </div>
+          </div>
+
+          <!-- SUB-VIEW B: PRIVATE 1-ON-1 LOGGED CHAT THREAD WITH SELECTED FRIEND -->
+          <div class="friends-subview hidden" id="privateDmThreadSubView">
+            <div class="dm-thread-header">
+              <button type="button" class="btn-friend-act" onclick="closeFriendPrivateChat()">← FRIENDS</button>
+              <div style="display:flex;flex-direction:column;align-items:center;min-width:0;flex:1;">
+                <span class="friend-callsign-txt" id="dmHeaderCallsign">@FRIEND</span>
+                <span id="dmHeaderStatusTxt" style="font-size:0.60rem;color:#34d399;font-weight:700;">🟢 ONLINE · PRIVATE CHAT</span>
+              </div>
+              <span class="friend-status-badge online" style="background:rgba(56,189,248,0.16);border-color:rgba(56,189,248,0.45);color:#7dd3fc;">🔒 PRIVATE</span>
+            </div>
+
+            <div class="dm-messages-feed" id="dmMessagesFeed">
+              <!-- Populated dynamically by renderActivePrivateDmThread() -->
+            </div>
+
+            <div class="pit-chat-footer">
+              <form class="chat-input-row" onsubmit="event.preventDefault(); sendPrivateDmFromInput();">
+                <input
+                  type="text"
+                  id="dmMessageInput"
+                  class="chat-input"
+                  maxlength="240"
+                  placeholder="Send private message..."
+                  autocomplete="off"
+                />
+                <button type="submit" class="btn-chat-send">SEND</button>
+              </form>
+              <div class="dm-quick-strip">
+                <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('👋 Yo! Online now?')">👋 Yo!</button>
+                <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('⚔️ Want to 1v1 in Live PvP?')">⚔️ 1v1 PvP?</button>
+                <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('🔥 GG! Great battle!')">🔥 GG!</button>
+                <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('💎 High-roller wager match?')">💎 Wager?</button>
+                <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('👍 Ready when you are!')">👍 Ready!</button>
+              </div>
             </div>
           </div>
         </div>
@@ -6987,6 +7520,7 @@
 
     const ECONOMY_V2_MIGRATION_KEY = "rc_botpit_zero_diamond_econ_v2";
     const SEASON_RESET_V3_KEY = "rc_botpit_season_reset_v3";
+    const SEASON_RESET_V4_KEY = "rc_botpit_season_reset_v4";
 
     function getXpNeededForNextBotLevel(lvl) {
       const l = Math.max(1, Number(lvl) || 1);
@@ -7088,6 +7622,7 @@
         partIntegrity: { tires: 100, armor: 100, weapon: 100, core: 100 },
         econV2: true,
         seasonResetV3: true,
+        seasonResetV4: true,
         ownedIds: [],
         loadout: { ...EMPTY_LOADOUT },
         elo: 1000,
@@ -7106,12 +7641,15 @@
         let bpChanged = false;
         for (const k of Object.keys(bpMap)) {
           const rec = bpMap[k];
-          if (rec && !rec.seasonResetV3) {
+          if (rec && (!rec.seasonResetV3 || !rec.seasonResetV4)) {
             rec.botLevel = 1;
             rec.totalXpEarned = 0;
             rec.scrap = 0;
             rec.cpuXp = 0;
             rec.tickets = 0;
+            rec.elo = 1000;
+            rec.pvpWins = 0;
+            rec.pvpLosses = 0;
             rec.ownedIds = [];
             rec.loadout = { ...EMPTY_LOADOUT };
             rec.skillRanks = {};
@@ -7119,6 +7657,7 @@
             rec.wagerAmount = 0;
             rec.partIntegrity = { tires: 100, armor: 100, weapon: 100, core: 100 };
             rec.seasonResetV3 = true;
+            rec.seasonResetV4 = true;
             bpChanged = true;
           }
         }
@@ -7130,7 +7669,7 @@
           const sRec = siteMap[k];
           if (!sRec) continue;
           const bp = sRec.botPitData;
-          if (!bp || !bp.seasonResetV3) {
+          if (!bp || !bp.seasonResetV3 || !bp.seasonResetV4) {
             sRec.tickets = 0;
             sRec.xp = 0;
             if (bp && typeof bp === "object") {
@@ -7139,6 +7678,9 @@
               bp.scrap = 0;
               bp.cpuXp = 0;
               bp.tickets = 0;
+              bp.elo = 1000;
+              bp.pvpWins = 0;
+              bp.pvpLosses = 0;
               bp.ownedIds = [];
               bp.loadout = { ...EMPTY_LOADOUT };
               bp.skillRanks = {};
@@ -7146,15 +7688,17 @@
               bp.wagerAmount = 0;
               bp.partIntegrity = { tires: 100, armor: 100, weapon: 100, core: 100 };
               bp.seasonResetV3 = true;
+              bp.seasonResetV4 = true;
             }
             siteChanged = true;
           }
         }
         if (siteChanged) saveSiteAccountsMap(siteMap);
 
-        if (localStorage.getItem(SEASON_RESET_V3_KEY) !== "1") {
+        if (localStorage.getItem(SEASON_RESET_V3_KEY) !== "1" || localStorage.getItem(SEASON_RESET_V4_KEY) !== "1") {
           localStorage.setItem("rc_canopy_xp", "0");
           localStorage.setItem(SEASON_RESET_V3_KEY, "1");
+          localStorage.setItem(SEASON_RESET_V4_KEY, "1");
         }
       } catch (_) {}
     }
@@ -7222,6 +7766,9 @@
         partIntegrity: normalizePartIntegrity(state.partIntegrity),
         econV2: true,
         seasonResetV3: true,
+        seasonResetV4: true,
+        isOnline: state._explicitOffline ? false : true,
+        lastSeenAt: Date.now(),
         ownedIds: Array.isArray(state.ownedIds) ? [...state.ownedIds] : [],
         loadout: normalizeLoadout(state.loadout),
         elo: Math.max(100, Number(state.elo) || 1000),
@@ -7305,33 +7852,34 @@
     function applyAccountProgressToState(uKey, record) {
       const cleanName = String(record.username || uKey).trim().replace(/^@/, "");
       const bp = record.botPitData || record;
-      // Enforce Season Reset V3: if this account has not been reset to Level 1 / 0 Diamonds / 0 XP yet, reset it now!
-      const needsSeasonResetV3 = !bp.seasonResetV3;
+      // Enforce Season Reset V4: if this account has not been reset to Level 1 / 0 Diamonds / 0 XP yet, reset it now!
+      const needsSeasonReset = !bp.seasonResetV3 || !bp.seasonResetV4;
+      state._explicitOffline = false;
       state.loggedInUserKey = uKey.toLowerCase();
       state.loggedInUsername = cleanName;
       state.loggedInEmail = String(record.email || bp.email || `${uKey}@retrocanopy.com`);
       state.pilotCallsign = bp.pilotCallsign || ("@" + cleanName.toUpperCase().slice(0, 16));
-      state.scrap = needsSeasonResetV3 ? 0 : (typeof bp.scrap === "number" && !Number.isNaN(bp.scrap) ? bp.scrap : 0);
-      state.cpuXp = needsSeasonResetV3 ? 0 : (typeof bp.cpuXp === "number" && !Number.isNaN(bp.cpuXp) ? bp.cpuXp : 0);
-      state.totalXpEarned = needsSeasonResetV3
+      state.scrap = needsSeasonReset ? 0 : (typeof bp.scrap === "number" && !Number.isNaN(bp.scrap) ? bp.scrap : 0);
+      state.cpuXp = needsSeasonReset ? 0 : (typeof bp.cpuXp === "number" && !Number.isNaN(bp.cpuXp) ? bp.cpuXp : 0);
+      state.totalXpEarned = needsSeasonReset
         ? 0
         : (typeof bp.totalXpEarned === "number" && !Number.isNaN(bp.totalXpEarned) ? bp.totalXpEarned : state.cpuXp);
       const lvlProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned);
       state.botLevel = lvlProg.botLevel;
-      state.tickets = needsSeasonResetV3
+      state.tickets = needsSeasonReset
         ? 0
         : (typeof bp.tickets === "number" && !Number.isNaN(bp.tickets) ? bp.tickets : 0);
-      state.partIntegrity = needsSeasonResetV3
+      state.partIntegrity = needsSeasonReset
         ? { tires: 100, armor: 100, weapon: 100, core: 100 }
         : normalizePartIntegrity(bp.partIntegrity);
-      state.ownedIds = needsSeasonResetV3 ? [] : (Array.isArray(bp.ownedIds) ? [...bp.ownedIds] : []);
-      state.loadout = needsSeasonResetV3 ? { ...EMPTY_LOADOUT } : normalizeLoadout(bp.loadout);
-      state.elo = needsSeasonResetV3 ? 1000 : (typeof bp.elo === "number" && !Number.isNaN(bp.elo) ? bp.elo : 1000);
-      state.pvpWins = needsSeasonResetV3 ? 0 : (typeof bp.pvpWins === "number" && !Number.isNaN(bp.pvpWins) ? bp.pvpWins : 0);
-      state.pvpLosses = needsSeasonResetV3 ? 0 : (typeof bp.pvpLosses === "number" && !Number.isNaN(bp.pvpLosses) ? bp.pvpLosses : 0);
-      state.wagerAmount = needsSeasonResetV3 ? 0 : (typeof bp.wagerAmount === "number" && !Number.isNaN(bp.wagerAmount) ? Math.min(bp.wagerAmount, state.scrap) : 0);
-      state.clearedLevels = needsSeasonResetV3 ? [] : (Array.isArray(bp.clearedLevels) ? [...bp.clearedLevels] : []);
-      state.skillRanks = needsSeasonResetV3 ? {} : ((bp.skillRanks && typeof bp.skillRanks === "object") ? { ...bp.skillRanks } : {});
+      state.ownedIds = needsSeasonReset ? [] : (Array.isArray(bp.ownedIds) ? [...bp.ownedIds] : []);
+      state.loadout = needsSeasonReset ? { ...EMPTY_LOADOUT } : normalizeLoadout(bp.loadout);
+      state.elo = needsSeasonReset ? 1000 : (typeof bp.elo === "number" && !Number.isNaN(bp.elo) ? bp.elo : 1000);
+      state.pvpWins = needsSeasonReset ? 0 : (typeof bp.pvpWins === "number" && !Number.isNaN(bp.pvpWins) ? bp.pvpWins : 0);
+      state.pvpLosses = needsSeasonReset ? 0 : (typeof bp.pvpLosses === "number" && !Number.isNaN(bp.pvpLosses) ? bp.pvpLosses : 0);
+      state.wagerAmount = needsSeasonReset ? 0 : (typeof bp.wagerAmount === "number" && !Number.isNaN(bp.wagerAmount) ? Math.min(bp.wagerAmount, state.scrap) : 0);
+      state.clearedLevels = needsSeasonReset ? [] : (Array.isArray(bp.clearedLevels) ? [...bp.clearedLevels] : []);
+      state.skillRanks = needsSeasonReset ? {} : ((bp.skillRanks && typeof bp.skillRanks === "object") ? { ...bp.skillRanks } : {});
       state.isAllInWager = false;
       // Set currentLevel to the next uncleared Quest (1..10)
       let nextQuest = 1;
@@ -7355,6 +7903,7 @@
       try { persistWalletAndRig(); } catch (e) { console.error("persistWalletAndRig error:", e); }
       try { updatePlayerUI(); } catch (e) { console.error("updatePlayerUI error:", e); }
       try { if (!sim.running) setupStagingArena(); } catch (e) { console.error("setupStagingArena error:", e); }
+      try { if (typeof onSocialPilotLogin === "function") onSocialPilotLogin(); } catch (e) { console.error("onSocialPilotLogin error:", e); }
     }
 
     function ensurePilotLoggedIn() {
@@ -7467,6 +8016,8 @@
       if (sim && sim.running) {
         sim.running = false;
       }
+      state._explicitOffline = true;
+      try { if (typeof onSocialPilotLogout === "function") onSocialPilotLogout(); } catch (_) {}
       persistWalletAndRig();
       state.loggedInUserKey = null;
       state.loggedInUsername = "";
@@ -15573,6 +16124,16 @@
         const authorSpan = document.createElement("span");
         authorSpan.className = "chat-author";
         authorSpan.textContent = `${msgObj.callsign || "@PILOT"}:`;
+        const senderKey = (msgObj.userKey || String(msgObj.callsign || "").replace(/^@/, "")).trim().toLowerCase();
+        if (senderKey && senderKey !== state.loggedInUserKey) {
+          authorSpan.style.cursor = "pointer";
+          authorSpan.title = `Click to add or message ${msgObj.callsign || "@PILOT"}`;
+          authorSpan.onclick = () => {
+            if (typeof handlePublicChatAuthorClick === "function") {
+              handlePublicChatAuthorClick(senderKey, msgObj.callsign || "@PILOT");
+            }
+          };
+        }
 
         const textSpan = document.createElement("span");
         textSpan.className = "chat-text";
@@ -15605,6 +16166,7 @@
       const payload = {
         id: "chat_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
         kind: "user",
+        userKey: state.loggedInUserKey || "",
         callsign: state.pilotCallsign || "@PILOT",
         elo: state.elo || 1000,
         text: txt,
@@ -15618,6 +16180,7 @@
       const payload = {
         id: "emote_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
         kind: "user",
+        userKey: state.loggedInUserKey || "",
         callsign: state.pilotCallsign || "@PILOT",
         elo: state.elo || 1000,
         text: `${emoji} ${labelText}`,
@@ -16988,15 +17551,1226 @@
       }
     }
 
+    // =========================================================================
+    // 👥 FRIENDS LIST, ONLINE/OFFLINE PRESENCE & PRIVATE LOGGED CHATS ENGINE
+    // =========================================================================
+    const SOCIAL_STORAGE_FRIENDS_KEY = "rc_botpit_friendships_v1";
+    const SOCIAL_STORAGE_DMS_KEY     = "rc_botpit_dm_history_v1";
+    const SOCIAL_STORAGE_READ_KEY    = "rc_botpit_dm_read_ts_v1";
+
+    const socialState = {
+      activeCommsTab: "public",      // "public" | "friends"
+      activeFriendsSubTab: "friends",// "friends" | "requests" | "discover"
+      friendships: [],               // Array of { pair_key, requester_key, requester_callsign, addressee_key, addressee_callsign, status, updated_at }
+      dmMessagesByThread: {},        // thread_key -> Array of { msg_id, thread_key, sender_key, sender_callsign, receiver_key, receiver_callsign, message_text, is_read, created_at }
+      knownMsgIds: new Set(),
+      lastReadTsByFriend: {},        // friendUserKey -> epoch ms
+      presenceMap: new Map(),        // userKey -> { callsign, lastSeenMs, isOnline, statusText }
+      directoryPilots: new Map(),    // userKey -> { userKey, callsign, elo, botLevel, lastSeenMs }
+      activeChatFriendKey: null,
+      activeChatFriendCallsign: null,
+      toastTimer: null,
+      toastActionCallback: null,
+      presenceTimerId: null,
+      cloudPollTimerId: null,
+      initialSyncDone: false
+    };
+
+    function makePairKey(userA, userB) {
+      const a = normalizeAuthKey(userA);
+      const b = normalizeAuthKey(userB);
+      return a < b ? `${a}::${b}` : `${b}::${a}`;
+    }
+
+    function loadSocialLocalCache() {
+      try {
+        const rawF = localStorage.getItem(SOCIAL_STORAGE_FRIENDS_KEY);
+        if (rawF) {
+          const parsed = JSON.parse(rawF);
+          if (Array.isArray(parsed)) socialState.friendships = parsed;
+        }
+      } catch (_) {}
+      try {
+        const rawD = localStorage.getItem(SOCIAL_STORAGE_DMS_KEY);
+        if (rawD) {
+          const parsed = JSON.parse(rawD);
+          if (parsed && typeof parsed === "object") {
+            socialState.dmMessagesByThread = parsed;
+            Object.values(parsed).forEach(arr => {
+              if (Array.isArray(arr)) {
+                arr.forEach(m => { if (m && m.msg_id) socialState.knownMsgIds.add(m.msg_id); });
+              }
+            });
+          }
+        }
+      } catch (_) {}
+      try {
+        const rawR = localStorage.getItem(SOCIAL_STORAGE_READ_KEY);
+        if (rawR) {
+          const parsed = JSON.parse(rawR);
+          if (parsed && typeof parsed === "object") socialState.lastReadTsByFriend = parsed;
+        }
+      } catch (_) {}
+    }
+
+    function saveSocialLocalCache() {
+      try {
+        localStorage.setItem(SOCIAL_STORAGE_FRIENDS_KEY, JSON.stringify(socialState.friendships));
+      } catch (_) {}
+      try {
+        localStorage.setItem(SOCIAL_STORAGE_DMS_KEY, JSON.stringify(socialState.dmMessagesByThread));
+      } catch (_) {}
+      try {
+        localStorage.setItem(SOCIAL_STORAGE_READ_KEY, JSON.stringify(socialState.lastReadTsByFriend));
+      } catch (_) {}
+    }
+
+    function playSocialNotificationChime() {
+      try {
+        if (typeof BotPitAudio !== "undefined" && BotPitAudio.playTone) {
+          BotPitAudio.playTone(740, "sine", 0.09, 0.08, 980);
+          setTimeout(() => BotPitAudio.playTone(1174, "triangle", 0.14, 0.09, 1318), 85);
+        }
+      } catch (_) {}
+    }
+
+    function showSocialNotificationToast(tagText, messageText, actionLabel, onAction) {
+      const toastEl = document.getElementById("socialNotificationToast");
+      const tagEl = document.getElementById("socialNotifyTag");
+      const txtEl = document.getElementById("socialNotifyText");
+      const btnEl = document.getElementById("socialNotifyActionBtn");
+      if (!toastEl || !tagEl || !txtEl) return;
+
+      tagEl.textContent = tagText || "💬 NEW PRIVATE MESSAGE";
+      txtEl.textContent = messageText || "";
+      if (btnEl) {
+        btnEl.textContent = actionLabel || "OPEN CHAT";
+      }
+      socialState.toastActionCallback = typeof onAction === "function" ? onAction : () => openFriendsCommsTab();
+      toastEl.classList.add("visible");
+      playSocialNotificationChime();
+
+      if (socialState.toastTimer) clearTimeout(socialState.toastTimer);
+      socialState.toastTimer = setTimeout(() => {
+        hideSocialNotificationToast();
+      }, 7500);
+    }
+
+    function hideSocialNotificationToast() {
+      const toastEl = document.getElementById("socialNotificationToast");
+      if (toastEl) toastEl.classList.remove("visible");
+    }
+
+    function handleSocialNotifyAction() {
+      const cb = socialState.toastActionCallback;
+      hideSocialNotificationToast();
+      if (typeof cb === "function") cb();
+      else openFriendsCommsTab();
+    }
+
+    function switchPitCommsTab(tab) {
+      socialState.activeCommsTab = tab === "friends" ? "friends" : "public";
+      const tabPub = document.getElementById("commsTabPublicBtn");
+      const tabFri = document.getElementById("commsTabFriendsBtn");
+      const panPub = document.getElementById("publicPitChatPanel");
+      const panFri = document.getElementById("friendsAndDmPanel");
+
+      if (tabPub) tabPub.classList.toggle("active", socialState.activeCommsTab === "public");
+      if (tabFri) tabFri.classList.toggle("active", socialState.activeCommsTab === "friends");
+      if (panPub) panPub.classList.toggle("comms-panel-hidden", socialState.activeCommsTab !== "public");
+      if (panFri) panFri.classList.toggle("comms-panel-hidden", socialState.activeCommsTab !== "friends");
+
+      if (socialState.activeCommsTab === "friends") {
+        syncSocialDataFromCloud(false);
+        renderFriendsAndSocialUI();
+        if (socialState.activeChatFriendKey) {
+          markFriendThreadRead(socialState.activeChatFriendKey);
+          renderActivePrivateDmThread();
+        }
+      }
+    }
+
+    function openFriendsCommsTab(friendKeyToOpen = null, friendCallsign = null) {
+      if (typeof isMobileViewport === "function" && isMobileViewport()) {
+        document.body.classList.remove("mob-play-active");
+        if (typeof switchMobileView === "function") {
+          switchMobileView("chat");
+        }
+      }
+      switchPitCommsTab("friends");
+      const deckEl = document.getElementById("pitChatBroadcastCard");
+      if (deckEl && (!isMobileViewport || !isMobileViewport())) {
+        deckEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      if (friendKeyToOpen) {
+        openFriendPrivateChat(friendKeyToOpen, friendCallsign || ("@" + friendKeyToOpen.toUpperCase()));
+      }
+    }
+
+    function switchFriendsSubTab(subTab) {
+      socialState.activeFriendsSubTab = subTab || "friends";
+      ["Friends", "Requests", "Discover"].forEach(k => {
+        const btn = document.getElementById("fSubTab" + k);
+        if (btn) btn.classList.toggle("active", socialState.activeFriendsSubTab === k.toLowerCase());
+      });
+      renderFriendsAndSocialUI();
+    }
+
+    function getPilotOnlineInfo(userKey) {
+      const k = normalizeAuthKey(userKey);
+      if (!k) return { isOnline: false, label: "OFFLINE" };
+      if (state.loggedInUserKey && normalizeAuthKey(state.loggedInUserKey) === k) {
+        return { isOnline: true, label: "ONLINE NOW" };
+      }
+      const pres = socialState.presenceMap.get(k);
+      const now = Date.now();
+      if (pres && pres.isOnline !== false && (now - (pres.lastSeenMs || 0)) < 50000) {
+        return { isOnline: true, label: pres.statusText || "ONLINE" };
+      }
+      const dir = socialState.directoryPilots.get(k);
+      if (dir && dir.isOnline !== false && (now - (dir.lastSeenMs || 0)) < 55000) {
+        return { isOnline: true, label: "ONLINE" };
+      }
+      return { isOnline: false, label: "OFFLINE" };
+    }
+
+    function broadcastMyPresenceHeartbeat(isOffline = false) {
+      if (!state.loggedInUserKey) return;
+      const myKey = normalizeAuthKey(state.loggedInUserKey);
+      const myCall = state.pilotCallsign || ("@" + myKey.toUpperCase());
+      const now = Date.now();
+      const statusText = sim && sim.running ? "IN BATTLE" : "ONLINE";
+
+      socialState.presenceMap.set(myKey, {
+        callsign: myCall,
+        lastSeenMs: now,
+        isOnline: !isOffline,
+        statusText: isOffline ? "OFFLINE" : statusText
+      });
+
+      sendLobbySignal({
+        type: isOffline ? "presence_offline" : "presence_heartbeat",
+        userKey: myKey,
+        callsign: myCall,
+        elo: state.elo || 1000,
+        botLevel: state.botLevel || 1,
+        statusText: isOffline ? "OFFLINE" : statusText,
+        ts: now
+      });
+
+      // Also update lastSeenAt in Supabase arcade_accounts so friends who log in right after see accurate online status
+      if (window.db) {
+        const acct = loadLocalAccountRecord(myKey);
+        if (acct && acct.progress) {
+          acct.progress.lastSeenAt = isOffline ? 0 : now;
+          acct.progress.isOnline = !isOffline;
+          window.db
+            .from("arcade_accounts")
+            .update({ progress: acct.progress, updated_at: new Date().toISOString() })
+            .eq("username", myKey)
+            .then(() => {})
+            .catch(() => {});
+        }
+      }
+    }
+
+    function onSocialPilotLogin() {
+      loadSocialLocalCache();
+      broadcastMyPresenceHeartbeat(false);
+      syncSocialDataFromCloud(true);
+      renderFriendsAndSocialUI();
+      updateSocialUnreadBadges();
+    }
+
+    function onSocialPilotLogout() {
+      broadcastMyPresenceHeartbeat(true);
+      socialState.activeChatFriendKey = null;
+      socialState.activeChatFriendCallsign = null;
+      closeFriendPrivateChat();
+      renderFriendsAndSocialUI();
+      updateSocialUnreadBadges();
+    }
+
+    function upsertFriendshipRecord(rec) {
+      if (!rec || !rec.pair_key) return;
+      const idx = socialState.friendships.findIndex(f => f.pair_key === rec.pair_key);
+      if (idx >= 0) {
+        socialState.friendships[idx] = { ...socialState.friendships[idx], ...rec };
+      } else {
+        socialState.friendships.push(rec);
+      }
+      saveSocialLocalCache();
+    }
+
+    function storeIncomingOrOutgoingDm(msgObj, triggerNotification = false) {
+      if (!msgObj || !msgObj.msg_id || !msgObj.thread_key) return false;
+      const isNew = !socialState.knownMsgIds.has(msgObj.msg_id);
+      socialState.knownMsgIds.add(msgObj.msg_id);
+
+      if (!Array.isArray(socialState.dmMessagesByThread[msgObj.thread_key])) {
+        socialState.dmMessagesByThread[msgObj.thread_key] = [];
+      }
+      const list = socialState.dmMessagesByThread[msgObj.thread_key];
+      if (!list.some(m => m.msg_id === msgObj.msg_id)) {
+        list.push(msgObj);
+        list.sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+        saveSocialLocalCache();
+      }
+
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      const senderKey = normalizeAuthKey(msgObj.sender_key || "");
+      const receiverKey = normalizeAuthKey(msgObj.receiver_key || "");
+
+      if (isNew && myKey && receiverKey === myKey && senderKey !== myKey) {
+        const isViewingThisThreadNow =
+          socialState.activeCommsTab === "friends" &&
+          socialState.activeChatFriendKey &&
+          normalizeAuthKey(socialState.activeChatFriendKey) === senderKey;
+
+        if (isViewingThisThreadNow) {
+          markFriendThreadRead(senderKey);
+          renderActivePrivateDmThread();
+        } else if (triggerNotification) {
+          const senderCall = msgObj.sender_callsign || ("@" + senderKey.toUpperCase());
+          showSocialNotificationToast(
+            `💬 NEW MESSAGE FROM ${senderCall}`,
+            `"${String(msgObj.message_text || "").slice(0, 68)}"`,
+            "REPLY",
+            () => openFriendsCommsTab(senderKey, senderCall)
+          );
+        }
+      } else if (
+        myKey &&
+        (senderKey === myKey || receiverKey === myKey) &&
+        socialState.activeChatFriendKey &&
+        makePairKey(myKey, socialState.activeChatFriendKey) === msgObj.thread_key
+      ) {
+        renderActivePrivateDmThread();
+      }
+
+      updateSocialUnreadBadges();
+      renderFriendsAndSocialUI();
+      return isNew;
+    }
+
+    function getUnreadDmCountForFriend(friendKey) {
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      const fKey = normalizeAuthKey(friendKey || "");
+      if (!myKey || !fKey) return 0;
+      const tKey = makePairKey(myKey, fKey);
+      const msgs = socialState.dmMessagesByThread[tKey] || [];
+      const lastReadMs = Number(socialState.lastReadTsByFriend[`${myKey}::${fKey}`]) || 0;
+      let unread = 0;
+      for (const m of msgs) {
+        if (normalizeAuthKey(m.receiver_key) === myKey && normalizeAuthKey(m.sender_key) === fKey) {
+          const msgMs = new Date(m.created_at || 0).getTime();
+          if (!m.is_read && msgMs > lastReadMs) unread++;
+        }
+      }
+      return unread;
+    }
+
+    function markFriendThreadRead(friendKey) {
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      const fKey = normalizeAuthKey(friendKey || "");
+      if (!myKey || !fKey) return;
+      const tKey = makePairKey(myKey, fKey);
+      socialState.lastReadTsByFriend[`${myKey}::${fKey}`] = Date.now();
+      const msgs = socialState.dmMessagesByThread[tKey] || [];
+      let hadUnread = false;
+      for (const m of msgs) {
+        if (normalizeAuthKey(m.receiver_key) === myKey && !m.is_read) {
+          m.is_read = true;
+          hadUnread = true;
+        }
+      }
+      saveSocialLocalCache();
+      updateSocialUnreadBadges();
+
+      if (hadUnread && window.db) {
+        window.db
+          .from("botpit_direct_messages")
+          .update({ is_read: true })
+          .eq("thread_key", tKey)
+          .eq("receiver_key", myKey)
+          .eq("is_read", false)
+          .then(() => {})
+          .catch(() => {});
+      }
+    }
+
+    async function syncSocialDataFromCloud(isInitialLogin = false) {
+      loadSocialLocalCache();
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+
+      // Also scan local accounts for pilot discovery
+      const localStore = loadLocalAccountsStore();
+      Object.keys(localStore).forEach(k => {
+        const rec = localStore[k];
+        const normK = normalizeAuthKey(k);
+        if (!normK) return;
+        const p = rec && rec.progress ? rec.progress : {};
+        socialState.directoryPilots.set(normK, {
+          userKey: normK,
+          callsign: (rec && rec.callsign) || p.callsign || ("@" + normK.toUpperCase()),
+          elo: Number(p.elo) || 1000,
+          botLevel: Number(p.botLevel) || 1,
+          lastSeenMs: Number(p.lastSeenAt) || 0,
+          isOnline: Boolean(p.isOnline)
+        });
+      });
+
+      if (!window.db) {
+        renderFriendsAndSocialUI();
+        updateSocialUnreadBadges();
+        return;
+      }
+
+      try {
+        // 1. Fetch Pilot Directory & Online status from arcade_accounts
+        const { data: accountsData } = await window.db
+          .from("arcade_accounts")
+          .select("username, callsign, progress, updated_at")
+          .limit(100);
+
+        if (Array.isArray(accountsData)) {
+          accountsData.forEach(row => {
+            const uKey = normalizeAuthKey(row.username || "");
+            if (!uKey) return;
+            const p = row.progress && typeof row.progress === "object" ? row.progress : {};
+            const updMs = row.updated_at ? new Date(row.updated_at).getTime() : 0;
+            const seenMs = Number(p.lastSeenAt) || updMs || 0;
+            socialState.directoryPilots.set(uKey, {
+              userKey: uKey,
+              callsign: row.callsign || p.callsign || ("@" + uKey.toUpperCase()),
+              elo: Number(p.elo) || 1000,
+              botLevel: Number(p.botLevel) || 1,
+              lastSeenMs: seenMs,
+              isOnline: p.isOnline !== false && (Date.now() - seenMs) < 55000
+            });
+          });
+        }
+
+        if (!myKey) {
+          renderFriendsAndSocialUI();
+          updateSocialUnreadBadges();
+          return;
+        }
+
+        // 2. Fetch Friendships involving this pilot
+        const { data: fRows } = await window.db
+          .from("botpit_friendships")
+          .select("*")
+          .or(`requester_key.eq.${myKey},addressee_key.eq.${myKey}`)
+          .order("updated_at", { ascending: false });
+
+        if (Array.isArray(fRows)) {
+          const prevPendingIds = new Set(
+            socialState.friendships
+              .filter(f => f.status === "pending" && normalizeAuthKey(f.addressee_key) === myKey)
+              .map(f => f.pair_key)
+          );
+
+          fRows.forEach(r => upsertFriendshipRecord(r));
+
+          // Check for newly arrived incoming friend requests
+          fRows.forEach(r => {
+            if (r.status === "pending" && normalizeAuthKey(r.addressee_key) === myKey && !prevPendingIds.has(r.pair_key)) {
+              const reqCall = r.requester_callsign || ("@" + r.requester_key.toUpperCase());
+              showSocialNotificationToast(
+                "👋 NEW FRIEND REQUEST",
+                `${reqCall} sent you a friend request!`,
+                "VIEW REQUESTS",
+                () => {
+                  openFriendsCommsTab();
+                  switchFriendsSubTab("requests");
+                }
+              );
+            }
+          });
+        }
+
+        // 3. Fetch Full Logged Direct Message History for this pilot so they can pick up right where they left off!
+        const { data: dmRows } = await window.db
+          .from("botpit_direct_messages")
+          .select("*")
+          .or(`sender_key.eq.${myKey},receiver_key.eq.${myKey}`)
+          .order("created_at", { ascending: true })
+          .limit(400);
+
+        if (Array.isArray(dmRows)) {
+          let newestUnreadMsg = null;
+          dmRows.forEach(m => {
+            const wasNew = storeIncomingOrOutgoingDm(m, !isInitialLogin);
+            const rKey = normalizeAuthKey(m.receiver_key || "");
+            const sKey = normalizeAuthKey(m.sender_key || "");
+            const lastReadMs = Number(socialState.lastReadTsByFriend[`${myKey}::${sKey}`]) || 0;
+            const msgMs = new Date(m.created_at || 0).getTime();
+            if (rKey === myKey && !m.is_read && msgMs > lastReadMs && (wasNew || isInitialLogin)) {
+              newestUnreadMsg = m;
+            }
+          });
+
+          // If player just logged in and had unread messages waiting for them while offline, notify them!
+          if (isInitialLogin && newestUnreadMsg) {
+            const sKey = normalizeAuthKey(newestUnreadMsg.sender_key);
+            const sCall = newestUnreadMsg.sender_callsign || ("@" + sKey.toUpperCase());
+            showSocialNotificationToast(
+              `💬 UNREAD MESSAGE FROM ${sCall}`,
+              `"${String(newestUnreadMsg.message_text || "").slice(0, 68)}"`,
+              "OPEN CHAT",
+              () => openFriendsCommsTab(sKey, sCall)
+            );
+          }
+        }
+      } catch (_) {}
+
+      socialState.initialSyncDone = true;
+      renderFriendsAndSocialUI();
+      updateSocialUnreadBadges();
+      if (socialState.activeChatFriendKey) {
+        renderActivePrivateDmThread();
+      }
+    }
+
+    async function sendFriendRequestFromInput() {
+      if (!ensurePilotLoggedIn()) return;
+      const inputEl = document.getElementById("friendSearchInput");
+      if (!inputEl) return;
+      const rawTarget = (inputEl.value || "").trim().replace(/^@+/, "");
+      if (!rawTarget) {
+        showShopToast("⚠️ Enter a Pilot Callsign or Username to add!", "#fbbf24");
+        return;
+      }
+      inputEl.value = "";
+      await sendFriendRequestToTarget(rawTarget, "@" + rawTarget.toUpperCase());
+    }
+
+    async function sendFriendRequestToTarget(targetKeyRaw, targetCallsignRaw) {
+      if (!ensurePilotLoggedIn()) return;
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      let targetKey = normalizeAuthKey(targetKeyRaw || "");
+      if (!targetKey) return;
+
+      // Also check if the user typed a callsign that matches a known pilot in directoryPilots
+      if (!socialState.directoryPilots.has(targetKey)) {
+        for (const [uKey, info] of socialState.directoryPilots.entries()) {
+          const cleanCall = normalizeAuthKey(String(info.callsign || "").replace(/^@+/, ""));
+          if (cleanCall === targetKey) {
+            targetKey = uKey;
+            targetCallsignRaw = info.callsign;
+            break;
+          }
+        }
+      }
+
+      if (targetKey === myKey) {
+        showShopToast("⚠️ You cannot send a friend request to yourself!", "#fb7185");
+        return;
+      }
+
+      const dirInfo = socialState.directoryPilots.get(targetKey);
+      const targetCallsign = (dirInfo && dirInfo.callsign) || targetCallsignRaw || ("@" + targetKey.toUpperCase());
+      const myCallsign = state.pilotCallsign || ("@" + myKey.toUpperCase());
+      const pairKey = makePairKey(myKey, targetKey);
+
+      const existing = socialState.friendships.find(f => f.pair_key === pairKey);
+      if (existing) {
+        if (existing.status === "accepted") {
+          showShopToast(`🤝 ${targetCallsign} is already on your Friends List!`, "#34d399");
+          openFriendPrivateChat(targetKey, targetCallsign);
+          return;
+        }
+        if (existing.status === "pending" && normalizeAuthKey(existing.addressee_key) === myKey) {
+          await acceptFriendRequest(pairKey);
+          return;
+        }
+        if (existing.status === "pending") {
+          showShopToast(`⏳ Friend request to ${targetCallsign} is already pending!`, "#38bdf8");
+          return;
+        }
+      }
+
+      const record = {
+        pair_key: pairKey,
+        requester_key: myKey,
+        requester_callsign: myCallsign,
+        addressee_key: targetKey,
+        addressee_callsign: targetCallsign,
+        status: "pending",
+        updated_at: new Date().toISOString()
+      };
+
+      upsertFriendshipRecord(record);
+      renderFriendsAndSocialUI();
+      updateSocialUnreadBadges();
+      showShopToast(`➕ Friend request sent to ${targetCallsign}!`, "#34d399");
+
+      if (window.db) {
+        try {
+          await window.db
+            .from("botpit_friendships")
+            .upsert(record, { onConflict: "pair_key" });
+        } catch (_) {}
+      }
+
+      sendLobbySignal({
+        type: "social_friend_req",
+        friendship: record
+      });
+    }
+
+    async function acceptFriendRequest(pairKey) {
+      if (!ensurePilotLoggedIn()) return;
+      const rec = socialState.friendships.find(f => f.pair_key === pairKey);
+      if (!rec) return;
+      rec.status = "accepted";
+      rec.updated_at = new Date().toISOString();
+      saveSocialLocalCache();
+      renderFriendsAndSocialUI();
+      updateSocialUnreadBadges();
+
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      const friendKey = normalizeAuthKey(rec.requester_key) === myKey ? normalizeAuthKey(rec.addressee_key) : normalizeAuthKey(rec.requester_key);
+      const friendCall = normalizeAuthKey(rec.requester_key) === myKey ? rec.addressee_callsign : rec.requester_callsign;
+      showShopToast(`🤝 You and ${friendCall} are now Friends!`, "#34d399");
+
+      if (window.db) {
+        try {
+          await window.db
+            .from("botpit_friendships")
+            .update({ status: "accepted", updated_at: rec.updated_at })
+            .eq("pair_key", pairKey);
+        } catch (_) {}
+      }
+
+      sendLobbySignal({
+        type: "social_friend_accept",
+        friendship: rec
+      });
+      switchFriendsSubTab("friends");
+    }
+
+    async function declineOrRemoveFriend(pairKey) {
+      socialState.friendships = socialState.friendships.filter(f => f.pair_key !== pairKey);
+      saveSocialLocalCache();
+      renderFriendsAndSocialUI();
+      updateSocialUnreadBadges();
+
+      if (window.db) {
+        try {
+          await window.db
+            .from("botpit_friendships")
+            .delete()
+            .eq("pair_key", pairKey);
+        } catch (_) {}
+      }
+    }
+
+    function handlePublicChatAuthorClick(senderKey, callsign) {
+      if (!ensurePilotLoggedIn()) return;
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      const targetKey = normalizeAuthKey(senderKey || String(callsign || "").replace(/^@+/, ""));
+      if (!targetKey || targetKey === myKey) return;
+
+      const pairKey = makePairKey(myKey, targetKey);
+      const existing = socialState.friendships.find(f => f.pair_key === pairKey);
+      openFriendsCommsTab();
+      if (existing && existing.status === "accepted") {
+        openFriendPrivateChat(targetKey, callsign || ("@" + targetKey.toUpperCase()));
+      } else {
+        sendFriendRequestToTarget(targetKey, callsign || ("@" + targetKey.toUpperCase()));
+        openFriendPrivateChat(targetKey, callsign || ("@" + targetKey.toUpperCase()));
+      }
+    }
+
+    function openFriendPrivateChat(friendKey, friendCallsign) {
+      if (!ensurePilotLoggedIn()) return;
+      const fKey = normalizeAuthKey(friendKey || "");
+      if (!fKey) return;
+      const dir = socialState.directoryPilots.get(fKey);
+      const fCall = friendCallsign || (dir && dir.callsign) || ("@" + fKey.toUpperCase());
+
+      socialState.activeChatFriendKey = fKey;
+      socialState.activeChatFriendCallsign = fCall;
+
+      const dirView = document.getElementById("friendsDirectorySubView");
+      const dmView = document.getElementById("privateDmThreadSubView");
+      if (dirView) dirView.classList.add("subview-hidden");
+      if (dmView) dmView.classList.remove("subview-hidden");
+
+      markFriendThreadRead(fKey);
+      renderActivePrivateDmThread();
+      syncSocialDataFromCloud(false);
+
+      const inp = document.getElementById("privateDmInput");
+      if (inp) setTimeout(() => inp.focus(), 60);
+    }
+
+    function closeFriendPrivateChat() {
+      socialState.activeChatFriendKey = null;
+      socialState.activeChatFriendCallsign = null;
+      const dirView = document.getElementById("friendsDirectorySubView");
+      const dmView = document.getElementById("privateDmThreadSubView");
+      if (dmView) dmView.classList.add("subview-hidden");
+      if (dirView) dirView.classList.remove("subview-hidden");
+      renderFriendsAndSocialUI();
+    }
+
+    function formatDmTimestamp(isoStr) {
+      if (!isoStr) return "";
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return "";
+      const now = new Date();
+      const sameDay = d.toDateString() === now.toDateString();
+      const timePart = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      if (sameDay) return `Today ${timePart}`;
+      const datePart = d.toLocaleDateString([], { month: "short", day: "numeric" });
+      return `${datePart}, ${timePart}`;
+    }
+
+    function escapeSocialHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderActivePrivateDmThread() {
+      const fKey = normalizeAuthKey(socialState.activeChatFriendKey || "");
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      if (!fKey || !myKey) return;
+
+      const fCall = socialState.activeChatFriendCallsign || ("@" + fKey.toUpperCase());
+      const statusInfo = getPilotOnlineInfo(fKey);
+
+      const nameEl = document.getElementById("dmPartnerCallsign");
+      const dotEl = document.getElementById("dmPartnerStatusDot");
+      const subEl = document.getElementById("dmPartnerStatusSub");
+      if (nameEl) nameEl.textContent = fCall;
+      if (dotEl) {
+        dotEl.className = "friend-status-dot " + (statusInfo.isOnline ? "online" : "offline");
+      }
+      if (subEl) {
+        subEl.textContent = statusInfo.isOnline
+          ? `🟢 ${statusInfo.label} · PRIVATE LOGGED CHAT`
+          : `⚫ OFFLINE · MESSAGES SAVED FOR NEXT LOGIN`;
+        subEl.style.color = statusInfo.isOnline ? "#34d399" : "#94a3b8";
+      }
+
+      const feedEl = document.getElementById("privateDmFeed");
+      if (!feedEl) return;
+
+      const tKey = makePairKey(myKey, fKey);
+      const msgs = socialState.dmMessagesByThread[tKey] || [];
+
+      if (msgs.length === 0) {
+        feedEl.innerHTML = `
+          <div class="friends-empty-state">
+            🔒 <strong>PRIVATE CHAT WITH ${escapeSocialHtml(fCall)}</strong><br>
+            Messages here are strictly private between you and ${escapeSocialHtml(fCall)}.<br>
+            All chat history is logged automatically so you can pick up right where you left off anytime!
+          </div>`;
+        return;
+      }
+
+      feedEl.innerHTML = msgs.map(m => {
+        const isMine = normalizeAuthKey(m.sender_key) === myKey;
+        const authorLabel = isMine ? "YOU" : escapeSocialHtml(m.sender_callsign || fCall);
+        const timeLabel = formatDmTimestamp(m.created_at);
+        return `
+          <div class="dm-msg-bubble ${isMine ? 'mine' : 'theirs'}">
+            <div class="dm-msg-meta">
+              <span>${authorLabel}</span>
+              <span>·</span>
+              <span>${escapeSocialHtml(timeLabel)}</span>
+            </div>
+            <div class="dm-msg-text">${escapeSocialHtml(m.message_text)}</div>
+          </div>
+        `;
+      }).join("");
+
+      feedEl.scrollTop = feedEl.scrollHeight;
+    }
+
+    async function sendPrivateDmFromInput() {
+      if (!ensurePilotLoggedIn()) return;
+      const inp = document.getElementById("privateDmInput");
+      if (!inp) return;
+      const text = (inp.value || "").trim();
+      if (!text) return;
+      inp.value = "";
+      await dispatchPrivateDirectMessage(text);
+    }
+
+    async function sendPrivateQuickMsg(text) {
+      if (!ensurePilotLoggedIn()) return;
+      await dispatchPrivateDirectMessage(text);
+    }
+
+    async function dispatchPrivateDirectMessage(text) {
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      const fKey = normalizeAuthKey(socialState.activeChatFriendKey || "");
+      if (!myKey || !fKey || !text) return;
+
+      const myCall = state.pilotCallsign || ("@" + myKey.toUpperCase());
+      const fCall = socialState.activeChatFriendCallsign || ("@" + fKey.toUpperCase());
+      const tKey = makePairKey(myKey, fKey);
+      const nowIso = new Date().toISOString();
+
+      const msgObj = {
+        msg_id: "dm_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
+        thread_key: tKey,
+        sender_key: myKey,
+        sender_callsign: myCall,
+        receiver_key: fKey,
+        receiver_callsign: fCall,
+        message_text: String(text).slice(0, 240),
+        is_read: false,
+        created_at: nowIso
+      };
+
+      storeIncomingOrOutgoingDm(msgObj, false);
+      renderActivePrivateDmThread();
+
+      // Persist to Supabase botpit_direct_messages so history is logged across logoffs/devices
+      if (window.db) {
+        try {
+          await window.db.from("botpit_direct_messages").insert(msgObj);
+        } catch (_) {}
+      }
+
+      // Broadcast real-time private DM notification packet over channel
+      sendLobbySignal({
+        type: "social_private_dm",
+        dm: msgObj
+      });
+    }
+
+    function updateSocialUnreadBadges() {
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      let totalUnreadDms = 0;
+      let pendingRequests = 0;
+      let onlineFriendsCount = 0;
+
+      if (myKey) {
+        // Count pending friend requests addressed to me
+        socialState.friendships.forEach(f => {
+          if (f.status === "pending" && normalizeAuthKey(f.addressee_key) === myKey) {
+            pendingRequests++;
+          } else if (f.status === "accepted") {
+            const otherKey = normalizeAuthKey(f.requester_key) === myKey ? normalizeAuthKey(f.addressee_key) : normalizeAuthKey(f.requester_key);
+            if (getPilotOnlineInfo(otherKey).isOnline) onlineFriendsCount++;
+          }
+        });
+
+        // Count unread messages across all threads
+        Object.keys(socialState.dmMessagesByThread).forEach(tKey => {
+          const list = socialState.dmMessagesByThread[tKey] || [];
+          list.forEach(m => {
+            if (normalizeAuthKey(m.receiver_key) === myKey) {
+              const sKey = normalizeAuthKey(m.sender_key);
+              const lastReadMs = Number(socialState.lastReadTsByFriend[`${myKey}::${sKey}`]) || 0;
+              const msgMs = new Date(m.created_at || 0).getTime();
+              if (!m.is_read && msgMs > lastReadMs) totalUnreadDms++;
+            }
+          });
+        });
+      }
+
+      const totalAlerts = totalUnreadDms + pendingRequests;
+
+      // Update Top Header Bar Badges
+      const topOnlineEl = document.getElementById("topFriendsOnlineBadge");
+      const topUnreadEl = document.getElementById("topFriendsUnreadBadge");
+      if (topOnlineEl) topOnlineEl.textContent = `${onlineFriendsCount} ONLINE`;
+      if (topUnreadEl) {
+        topUnreadEl.textContent = String(totalAlerts);
+        topUnreadEl.classList.toggle("has-unread", totalAlerts > 0);
+      }
+
+      // Update Garage Sidebar Button Badges
+      const garOnlineEl = document.getElementById("garageFriendsOnlineBadge");
+      const garUnreadEl = document.getElementById("garageFriendsUnreadBadge");
+      if (garOnlineEl) garOnlineEl.textContent = `${onlineFriendsCount} ONLINE`;
+      if (garUnreadEl) {
+        garUnreadEl.textContent = `${totalAlerts} NEW`;
+        garUnreadEl.style.display = totalAlerts > 0 ? "inline-flex" : "none";
+      }
+
+      // Update Comms Tab Bar Badge
+      const commsBadgeEl = document.getElementById("commsTabFriendsBadge");
+      if (commsBadgeEl) {
+        commsBadgeEl.textContent = String(totalAlerts);
+        commsBadgeEl.classList.toggle("show", totalAlerts > 0);
+      }
+
+      // Update Mobile Corner & Bottom Nav Badges
+      const mobCornerEl = document.getElementById("mobCornerUnreadBadge");
+      if (mobCornerEl) {
+        mobCornerEl.textContent = String(totalAlerts);
+        mobCornerEl.style.display = totalAlerts > 0 ? "inline-flex" : "none";
+      }
+      const mobNavChatBtn = document.getElementById("mobNavChat");
+      if (mobNavChatBtn) {
+        const lbl = mobNavChatBtn.querySelector(".m-lbl");
+        if (lbl) lbl.textContent = totalAlerts > 0 ? `CHATS (${totalAlerts})` : "CHAT & FRIENDS";
+      }
+
+      // Update Sub-tab counts
+      const acceptedCount = myKey
+        ? socialState.friendships.filter(f => f.status === "accepted" && (normalizeAuthKey(f.requester_key) === myKey || normalizeAuthKey(f.addressee_key) === myKey)).length
+        : 0;
+      const fSubFriends = document.getElementById("fSubTabFriends");
+      const fSubReqs = document.getElementById("fSubTabRequests");
+      if (fSubFriends) fSubFriends.textContent = `👥 MY FRIENDS (${acceptedCount})`;
+      if (fSubReqs) {
+        fSubReqs.textContent = pendingRequests > 0 ? `📩 REQUESTS (${pendingRequests}!)` : `📩 REQUESTS (0)`;
+        fSubReqs.style.color = pendingRequests > 0 ? "#fb7185" : "";
+      }
+    }
+
+    function renderFriendsAndSocialUI() {
+      const container = document.getElementById("friendsListScrollArea");
+      if (!container) return;
+
+      const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+      if (!myKey) {
+        container.innerHTML = `
+          <div class="friends-empty-state">
+            🔑 <strong>SIGN IN TO USE FRIENDS &amp; PRIVATE CHATS</strong><br>
+            Log in or create a Pilot Callsign to add friends, see when friends are Online or Offline, and keep private logged chat histories!
+            <div style="margin-top:8px;">
+              <button type="button" class="f-act-btn chat-btn" onclick="openAuthModal('login')">🔑 LOGIN / REGISTER</button>
+            </div>
+          </div>`;
+        return;
+      }
+
+      const sub = socialState.activeFriendsSubTab || "friends";
+
+      if (sub === "friends") {
+        const myAccepted = socialState.friendships.filter(
+          f => f.status === "accepted" && (normalizeAuthKey(f.requester_key) === myKey || normalizeAuthKey(f.addressee_key) === myKey)
+        );
+
+        // Also include any pilots who have exchanged private DMs with us so no chat history is ever hidden
+        const friendMap = new Map();
+        myAccepted.forEach(f => {
+          const isReq = normalizeAuthKey(f.requester_key) === myKey;
+          const otherKey = isReq ? normalizeAuthKey(f.addressee_key) : normalizeAuthKey(f.requester_key);
+          const otherCall = isReq ? f.addressee_callsign : f.requester_callsign;
+          friendMap.set(otherKey, {
+            userKey: otherKey,
+            callsign: otherCall || ("@" + otherKey.toUpperCase()),
+            pairKey: f.pair_key,
+            isFriend: true
+          });
+        });
+
+        Object.keys(socialState.dmMessagesByThread).forEach(tKey => {
+          const msgs = socialState.dmMessagesByThread[tKey] || [];
+          if (msgs.length === 0) return;
+          const lastMsg = msgs[msgs.length - 1];
+          const sKey = normalizeAuthKey(lastMsg.sender_key);
+          const rKey = normalizeAuthKey(lastMsg.receiver_key);
+          if (sKey !== myKey && rKey !== myKey) return;
+          const otherKey = sKey === myKey ? rKey : sKey;
+          const otherCall = sKey === myKey ? lastMsg.receiver_callsign : lastMsg.sender_callsign;
+          if (!friendMap.has(otherKey)) {
+            friendMap.set(otherKey, {
+              userKey: otherKey,
+              callsign: otherCall || ("@" + otherKey.toUpperCase()),
+              pairKey: tKey,
+              isFriend: false
+            });
+          }
+        });
+
+        const entries = Array.from(friendMap.values());
+        if (entries.length === 0) {
+          container.innerHTML = `
+            <div class="friends-empty-state">
+              👥 <strong>YOUR FRIENDS LIST IS EMPTY</strong><br>
+              Enter a Pilot Callsign above or click <strong>🌐 FIND PILOTS</strong> to send a Friend Request and start a private chat!
+              <div style="margin-top:8px;">
+                <button type="button" class="f-act-btn add-btn" onclick="switchFriendsSubTab('discover')">🌐 FIND PILOTS TO ADD</button>
+              </div>
+            </div>`;
+          return;
+        }
+
+        // Sort: unread messages first, then ONLINE friends first, then alphabetical
+        entries.sort((a, b) => {
+          const uA = getUnreadDmCountForFriend(a.userKey);
+          const uB = getUnreadDmCountForFriend(b.userKey);
+          if (uA !== uB) return uB - uA;
+          const onA = getPilotOnlineInfo(a.userKey).isOnline ? 1 : 0;
+          const onB = getPilotOnlineInfo(b.userKey).isOnline ? 1 : 0;
+          if (onA !== onB) return onB - onA;
+          return a.callsign.localeCompare(b.callsign);
+        });
+
+        container.innerHTML = entries.map(item => {
+          const st = getPilotOnlineInfo(item.userKey);
+          const unread = getUnreadDmCountForFriend(item.userKey);
+          const tKey = makePairKey(myKey, item.userKey);
+          const msgs = socialState.dmMessagesByThread[tKey] || [];
+          const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null;
+          const lastSnippet = lastMsg
+            ? `${normalizeAuthKey(lastMsg.sender_key) === myKey ? 'You: ' : ''}${String(lastMsg.message_text || '').slice(0, 34)}`
+            : "Click 💬 CHAT to start a private conversation";
+          const safeCall = escapeSocialHtml(item.callsign);
+
+          return `
+            <div class="friend-row-card ${unread > 0 ? 'has-unread' : ''}">
+              <div class="friend-row-left" onclick="openFriendPrivateChat('${item.userKey}', '${safeCall}')">
+                <span class="friend-status-dot ${st.isOnline ? 'online' : 'offline'}"></span>
+                <div class="friend-info-col">
+                  <div class="friend-callsign-line">
+                    <span class="friend-callsign-txt">${safeCall}</span>
+                    <span class="friend-status-label ${st.isOnline ? 'online' : 'offline'}">${st.isOnline ? '🟢 ' + st.label : '⚫ OFFLINE'}</span>
+                  </div>
+                  <div class="friend-last-msg">${escapeSocialHtml(lastSnippet)}</div>
+                </div>
+              </div>
+              <div class="friend-row-actions">
+                <button type="button" class="f-act-btn chat-btn" onclick="openFriendPrivateChat('${item.userKey}', '${safeCall}')">
+                  💬 CHAT ${unread > 0 ? `<span class="friend-unread-pill">${unread}</span>` : ''}
+                </button>
+                ${item.isFriend
+                  ? `<button type="button" class="f-act-btn decline-btn" title="Remove Friend" onclick="declineOrRemoveFriend('${item.pairKey}')">✕</button>`
+                  : `<button type="button" class="f-act-btn add-btn" onclick="sendFriendRequestToTarget('${item.userKey}', '${safeCall}')">➕ ADD</button>`}
+              </div>
+            </div>
+          `;
+        }).join("");
+        return;
+      }
+
+      if (sub === "requests") {
+        const incoming = socialState.friendships.filter(
+          f => f.status === "pending" && normalizeAuthKey(f.addressee_key) === myKey
+        );
+        const outgoing = socialState.friendships.filter(
+          f => f.status === "pending" && normalizeAuthKey(f.requester_key) === myKey
+        );
+
+        if (incoming.length === 0 && outgoing.length === 0) {
+          container.innerHTML = `
+            <div class="friends-empty-state">
+              📩 <strong>NO PENDING FRIEND REQUESTS</strong><br>
+              Use the search bar above or switch to <strong>🌐 FIND PILOTS</strong> to send a friend request!
+            </div>`;
+          return;
+        }
+
+        let html = "";
+        incoming.forEach(req => {
+          const otherKey = normalizeAuthKey(req.requester_key);
+          const otherCall = escapeSocialHtml(req.requester_callsign || ("@" + otherKey.toUpperCase()));
+          const st = getPilotOnlineInfo(otherKey);
+          html += `
+            <div class="friend-row-card has-unread">
+              <div class="friend-row-left">
+                <span class="friend-status-dot ${st.isOnline ? 'online' : 'offline'}"></span>
+                <div class="friend-info-col">
+                  <div class="friend-callsign-line">
+                    <span class="friend-callsign-txt">${otherCall}</span>
+                    <span class="friend-status-label ${st.isOnline ? 'online' : 'offline'}">${st.isOnline ? '🟢 ONLINE' : '⚫ OFFLINE'}</span>
+                  </div>
+                  <div class="friend-last-msg">📩 Sent you a Friend Request!</div>
+                </div>
+              </div>
+              <div class="friend-row-actions">
+                <button type="button" class="f-act-btn accept-btn" onclick="acceptFriendRequest('${req.pair_key}')">✓ ACCEPT</button>
+                <button type="button" class="f-act-btn decline-btn" onclick="declineOrRemoveFriend('${req.pair_key}')">✕</button>
+              </div>
+            </div>`;
+        });
+
+        outgoing.forEach(req => {
+          const otherKey = normalizeAuthKey(req.addressee_key);
+          const otherCall = escapeSocialHtml(req.addressee_callsign || ("@" + otherKey.toUpperCase()));
+          const st = getPilotOnlineInfo(otherKey);
+          html += `
+            <div class="friend-row-card">
+              <div class="friend-row-left">
+                <span class="friend-status-dot ${st.isOnline ? 'online' : 'offline'}"></span>
+                <div class="friend-info-col">
+                  <div class="friend-callsign-line">
+                    <span class="friend-callsign-txt">${otherCall}</span>
+                    <span class="friend-status-label ${st.isOnline ? 'online' : 'offline'}">${st.isOnline ? '🟢 ONLINE' : '⚫ OFFLINE'}</span>
+                  </div>
+                  <div class="friend-last-msg">⏳ Outgoing Request Pending...</div>
+                </div>
+              </div>
+              <div class="friend-row-actions">
+                <button type="button" class="f-act-btn chat-btn" onclick="openFriendPrivateChat('${otherKey}', '${otherCall}')">💬 MESSAGE</button>
+                <button type="button" class="f-act-btn decline-btn" onclick="declineOrRemoveFriend('${req.pair_key}')">CANCEL</button>
+              </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+        return;
+      }
+
+      // sub === "discover"
+      const allPilots = Array.from(socialState.directoryPilots.values()).filter(p => p.userKey && p.userKey !== myKey);
+      allPilots.sort((a, b) => {
+        const onA = getPilotOnlineInfo(a.userKey).isOnline ? 1 : 0;
+        const onB = getPilotOnlineInfo(b.userKey).isOnline ? 1 : 0;
+        if (onA !== onB) return onB - onA;
+        return a.callsign.localeCompare(b.callsign);
+      });
+
+      if (allPilots.length === 0) {
+        container.innerHTML = `
+          <div class="friends-empty-state">
+            🌐 <strong>SEARCH PILOTS BY CALLSIGN</strong><br>
+            Type any pilot's callsign in the box above and press <strong>➕ ADD</strong>!
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = allPilots.map(p => {
+        const st = getPilotOnlineInfo(p.userKey);
+        const safeCall = escapeSocialHtml(p.callsign);
+        const pairKey = makePairKey(myKey, p.userKey);
+        const rel = socialState.friendships.find(f => f.pair_key === pairKey);
+        let actionHtml = `<button type="button" class="f-act-btn add-btn" onclick="sendFriendRequestToTarget('${p.userKey}', '${safeCall}')">➕ ADD FRIEND</button>`;
+        if (rel && rel.status === "accepted") {
+          actionHtml = `<span style="font-size:8px;color:#34d399;font-weight:900;">✓ FRIENDS</span>`;
+        } else if (rel && rel.status === "pending") {
+          actionHtml = `<span style="font-size:8px;color:#fbbf24;font-weight:900;">⏳ PENDING</span>`;
+        }
+
+        return `
+          <div class="friend-row-card">
+            <div class="friend-row-left" onclick="openFriendPrivateChat('${p.userKey}', '${safeCall}')">
+              <span class="friend-status-dot ${st.isOnline ? 'online' : 'offline'}"></span>
+              <div class="friend-info-col">
+                <div class="friend-callsign-line">
+                  <span class="friend-callsign-txt">${safeCall}</span>
+                  <span class="friend-status-label ${st.isOnline ? 'online' : 'offline'}">${st.isOnline ? '🟢 ' + st.label : '⚫ OFFLINE'}</span>
+                </div>
+                <div class="friend-last-msg">LVL ${p.botLevel || 1} BOT · ELO ${p.elo || 1000}</div>
+              </div>
+            </div>
+            <div class="friend-row-actions">
+              ${actionHtml}
+              <button type="button" class="f-act-btn chat-btn" onclick="openFriendPrivateChat('${p.userKey}', '${safeCall}')">💬 DM</button>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
     function bootPitSpectatorAndChat() {
+      // Hook social signals into handleLobbySignal
+      const _origHandleLobbySignalForSocial = handleLobbySignal;
+      handleLobbySignal = function(msg) {
+        if (msg && msg.type) {
+          if (msg.type === "presence_heartbeat" || msg.type === "presence_offline") {
+            const uKey = normalizeAuthKey(msg.userKey || "");
+            if (uKey) {
+              const isOff = msg.type === "presence_offline";
+              socialState.presenceMap.set(uKey, {
+                callsign: msg.callsign || ("@" + uKey.toUpperCase()),
+                lastSeenMs: isOff ? 0 : Date.now(),
+                isOnline: !isOff,
+                statusText: isOff ? "OFFLINE" : (msg.statusText || "ONLINE")
+              });
+              if (!socialState.directoryPilots.has(uKey)) {
+                socialState.directoryPilots.set(uKey, {
+                  userKey: uKey,
+                  callsign: msg.callsign || ("@" + uKey.toUpperCase()),
+                  elo: msg.elo || 1000,
+                  botLevel: msg.botLevel || 1,
+                  lastSeenMs: Date.now(),
+                  isOnline: !isOff
+                });
+              }
+              updateSocialUnreadBadges();
+              if (socialState.activeCommsTab === "friends") {
+                renderFriendsAndSocialUI();
+                if (socialState.activeChatFriendKey === uKey) renderActivePrivateDmThread();
+              }
+            }
+            return;
+          }
+          if (msg.type === "social_friend_req" && msg.friendship) {
+            const f = msg.friendship;
+            const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+            if (myKey && (normalizeAuthKey(f.addressee_key) === myKey || normalizeAuthKey(f.requester_key) === myKey)) {
+              upsertFriendshipRecord(f);
+              updateSocialUnreadBadges();
+              renderFriendsAndSocialUI();
+              if (normalizeAuthKey(f.addressee_key) === myKey) {
+                const reqCall = f.requester_callsign || ("@" + f.requester_key.toUpperCase());
+                showSocialNotificationToast(
+                  "👋 NEW FRIEND REQUEST",
+                  `${reqCall} wants to add you as a friend!`,
+                  "VIEW REQUEST",
+                  () => {
+                    openFriendsCommsTab();
+                    switchFriendsSubTab("requests");
+                  }
+                );
+              }
+            }
+            return;
+          }
+          if (msg.type === "social_friend_accept" && msg.friendship) {
+            const f = msg.friendship;
+            const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+            if (myKey && (normalizeAuthKey(f.addressee_key) === myKey || normalizeAuthKey(f.requester_key) === myKey)) {
+              upsertFriendshipRecord(f);
+              updateSocialUnreadBadges();
+              renderFriendsAndSocialUI();
+              if (normalizeAuthKey(f.requester_key) === myKey) {
+                const accCall = f.addressee_callsign || ("@" + f.addressee_key.toUpperCase());
+                showSocialNotificationToast(
+                  "🤝 FRIEND REQUEST ACCEPTED",
+                  `${accCall} accepted your friend request!`,
+                  "OPEN CHAT",
+                  () => openFriendsCommsTab(normalizeAuthKey(f.addressee_key), accCall)
+                );
+              }
+            }
+            return;
+          }
+          if (msg.type === "social_private_dm" && msg.dm) {
+            const dm = msg.dm;
+            const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+            if (myKey && (normalizeAuthKey(dm.receiver_key) === myKey || normalizeAuthKey(dm.sender_key) === myKey)) {
+              storeIncomingOrOutgoingDm(dm, true);
+            }
+            return;
+          }
+        }
+        return _origHandleLobbySignalForSocial(msg);
+      };
+
       initLiveLobbyChannels();
       appendPitChatMessage({
         id: "welcome_sys_1",
         kind: "system",
-        text: "📢 WELCOME TO SHIBUYA BOT PIT! Chat live with other pilots or click 👁️ WATCH LIVE on any active fight!"
+        text: "📢 WELCOME TO SHIBUYA BOT PIT! Chat live with other pilots, click any pilot name to add friends, or switch to 👥 FRIENDS & DMS for private chats!"
       });
       renderLiveFightsList();
       setInterval(renderLiveFightsList, 2000);
+
+      // Start Friends & Private Chat presence heartbeats + cloud polling
+      loadSocialLocalCache();
+      syncSocialDataFromCloud(true);
+      broadcastMyPresenceHeartbeat(false);
+      socialState.presenceTimerId = setInterval(() => broadcastMyPresenceHeartbeat(false), 12000);
+      socialState.cloudPollTimerId = setInterval(() => syncSocialDataFromCloud(false), 9000);
+      window.addEventListener("beforeunload", () => {
+        broadcastMyPresenceHeartbeat(true);
+      });
     }
 
     // =========================================================================
