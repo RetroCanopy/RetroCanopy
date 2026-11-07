@@ -5090,7 +5090,7 @@
 
           <div class="center-clock">
             <div class="ufc-round-badge" id="hudRoundTitle">🥊 ROUND 1 OF 3</div>
-            <div class="val" id="hudClock">3:00</div>
+            <div class="val" id="hudClock">1:30</div>
             <div class="tag" id="hudSawStatus" style="margin-top:2px;">CENTER SAW: OFF</div>
             <div class="hud-wager-pot" id="hudWagerPot">🎰 POT: 💎 500</div>
           </div>
@@ -6988,10 +6988,16 @@
       }
 
       sim.startedInjuredGrit = qualifiesForUnderdogGritBonus(state.partIntegrity);
+      sim.preFightCountdownTicks = 600; // 10-second countdown (10 to 1) before fight starts
+      sim.lastCountdownSec = 10;
       sim.running = true;
       if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
-      BotPitAudio.playBell(2);
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
       document.getElementById("battleOverlay").classList.add("hidden");
+      const arenaEl = document.getElementById("battleCanvas") || document.getElementById("arenaSection");
+      if (arenaEl && typeof arenaEl.scrollIntoView === "function") {
+        try { arenaEl.scrollIntoView({ behavior: "instant", block: "center" }); } catch (_) {}
+      }
       if (isPlayerBotInjured()) {
         const avgInt = Math.round((state.partIntegrity.tires + state.partIntegrity.armor + state.partIntegrity.weapon + state.partIntegrity.core) / 4);
         addFloatText(380, 340, `⚠️ ENTERING PIT AT ${avgInt}% INTEGRITY!`, "#fbbf24");
@@ -7051,6 +7057,7 @@
         currentRound: sim.currentRound || 1,
         pRoundsWon: sim.pRoundsWon || 0,
         eRoundsWon: sim.eRoundsWon || 0,
+        preFightCountdownTicks: sim.preFightCountdownTicks || 0,
         intermissionTimer: sim.intermissionTimer || 0,
         intermissionSummary: sim.intermissionSummary || null,
         roundResults: sim.roundResults || [],
@@ -7121,6 +7128,7 @@
         sim.currentRound = pkt.currentRound || 1;
         sim.pRoundsWon = pkt.eRoundsWon || 0;
         sim.eRoundsWon = pkt.pRoundsWon || 0;
+        sim.preFightCountdownTicks = pkt.preFightCountdownTicks || 0;
         sim.intermissionTimer = pkt.intermissionTimer || 0;
         sim.intermissionSummary = pkt.intermissionSummary || null;
         if (Array.isArray(pkt.roundResults)) {
@@ -7509,18 +7517,18 @@
       if (equippedIds.has("wpn_01")) frontGuardBlock = Math.min(0.72, frontGuardBlock + 0.30); // Wedge strength: +30% front block
       if (equippedIds.has("wpn_05")) frontGuardBlock *= 0.85; // Flipper weakness: -15% front guard while resetting
 
-      let topSpeedPx = 5.2 + speed * 0.092;
-      let accelPx = 0.34 + speed * 0.0072;
+      let topSpeedPx = 4.35 + speed * 0.072;
+      let accelPx = 0.25 + speed * 0.0052;
       if (equippedIds.has("tire_15")) {
-        topSpeedPx *= 1.38;
-        accelPx *= 1.38;
+        topSpeedPx *= 1.28;
+        accelPx *= 1.28;
       }
       if (equippedIds.has("tire_05")) {
         topSpeedPx *= 0.80; // Tank Tracks weakness: -20% top speed
         accelPx *= 0.84;
       }
 
-      let turnRateRad = 0.045 + agility * 0.0018;
+      let turnRateRad = 0.036 + agility * 0.0014;
       if (equippedIds.has("tire_04")) turnRateRad *= 1.45; // Mecanum strength: +45% turn rate
       if (equippedIds.has("tire_05")) turnRateRad *= 0.76; // Tank Tracks weakness: slow turning
 
@@ -8021,14 +8029,30 @@
       if (!ensurePilotLoggedIn()) return;
       state.postMatchSummary = null;
       if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
-      if (state.gameMode === "cpu") {
+      const overlay = document.getElementById("battleOverlay");
+      if (overlay) overlay.classList.add("hidden");
+      const arenaEl = document.getElementById("battleCanvas") || document.getElementById("arenaSection");
+      if (arenaEl && typeof arenaEl.scrollIntoView === "function") {
+        try { arenaEl.scrollIntoView({ behavior: "instant", block: "center" }); } catch (_) {}
+      }
+
+      if (state.gameMode === "cpu" || state.customFriendChallenger) {
         triggerBattle();
       } else {
-        if (state.customFriendChallenger) {
-          triggerBattle();
-        } else {
-          startLivePvpMatchmaking();
+        // Check if a live human peer is actively waiting right now; otherwise snap straight into the live fight!
+        initLiveLobbyChannels();
+        const mySpec = getMyPeerSpec();
+        const now = Date.now();
+        for (const [cid, peer] of livePvp.knownPeers.entries()) {
+          if (now - (peer.lastSeen || 0) < 3500 && cid !== LIVE_CLIENT_ID) {
+            pairWithLivePeer(mySpec, peer);
+            return;
+          }
         }
+        if (!state.activeOnlineOpponent) {
+          state.activeOnlineOpponent = generateRandomOnlinePlayer();
+        }
+        triggerBattle();
       }
     }
 
@@ -8495,7 +8519,10 @@
     const sim = {
       running: false,
       ticks: 0,
-      timeLeft: 50.0,
+      timeLeft: 90.0,
+      roundDurationSec: 90.0,
+      preFightCountdownTicks: 0,
+      lastCountdownSec: 0,
       shake: 0,
       hitStop: 0,
       slowMoTimer: 0,
@@ -8780,7 +8807,7 @@
       // ONCE-PER-ROUND 2x MINI-BOT AMBUSH MAPS (Arena 12, Arena 13, Arena 17)
       if (hType && hType.startsWith("minibot_")) {
         if (!Array.isArray(sim.miniBots)) sim.miniBots = [];
-        const elapsed = (sim.roundDurationSec || 180.0) - sim.timeLeft;
+        const elapsed = (sim.roundDurationSec || 90.0) - sim.timeLeft;
 
         if (!sim.miniBotsSpawnedThisRound) {
           const remain = Math.max(1, Math.ceil(6.0 - elapsed));
@@ -9069,8 +9096,10 @@
 
       sim.running = false;
       sim.ticks = 0;
-      sim.roundDurationSec = 180.0; // 3:00 Minute Championship Rounds!
-      sim.timeLeft = 180.0;
+      sim.roundDurationSec = 90.0; // 90-Second (1:30) Championship Rounds!
+      sim.timeLeft = 90.0;
+      sim.preFightCountdownTicks = 0;
+      sim.lastCountdownSec = 0;
       sim.currentRound = 1;
       sim.maxRounds = 3;
       sim.pRoundsWon = 0;
@@ -9178,9 +9207,16 @@
         persistWalletAndRig();
         updatePlayerUI();
       }
+      sim.preFightCountdownTicks = 600; // 10-second countdown (10 to 1) before fight starts!
+      sim.lastCountdownSec = 10;
       sim.running = true;
       if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
       document.getElementById("battleOverlay").classList.add("hidden");
+      const arenaEl = document.getElementById("battleCanvas") || document.getElementById("arenaSection");
+      if (arenaEl && typeof arenaEl.scrollIntoView === "function") {
+        try { arenaEl.scrollIntoView({ behavior: "instant", block: "center" }); } catch (_) {}
+      }
       if (stake > 0) {
         const potTotal = stake * 2;
         addFloatText(800, 380, `🔒 MATCH WAGER: 💎 ${stake.toLocaleString()} · 🏆 WINNER TAKES ALL: 💎 ${potTotal.toLocaleString()}!`, "#ffd700");
@@ -9288,7 +9324,7 @@
       const cs = sim.centerSaw;
 
       let desiredAngle = toOther;
-      let throttle = 0.78;
+      let throttle = 0.68;
       let turnMult = 1.0;
 
       // 0. DETECT OPPONENT INJURIES & SHIFT AI STRATEGY TO EXPLOIT WEAKNESS ("PREDATOR / FINISH-HIM MODE")
@@ -9508,7 +9544,7 @@
           bot.abilityTimer = 24;
           bot.abilityCd = 65;
         }
-        return { desiredAngle, throttle: 2.0, turnMult };
+        return { desiredAngle, throttle: 1.55, turnMult };
       }
 
       if (bot.abilityState === "recover") {
@@ -9627,8 +9663,8 @@
           bot.dodgeTimer = 18;
           bot.dodgeAngle = ramAng;
           bot.dodgeCd = 36;
-          bot.vx += Math.cos(ramAng) * 14.8;
-          bot.vy += Math.sin(ramAng) * 14.8;
+          bot.vx += Math.cos(ramAng) * 11.2;
+          bot.vy += Math.sin(ramAng) * 11.2;
           drainBotStamina(bot, 8);
           emit3DSparks(bot.x - Math.cos(ramAng) * 34, bot.y - Math.sin(ramAng) * 34, "#38bdf8", 18, 8.0);
           addPulseRing(bot.x, bot.y, 115, "#38bdf8");
@@ -9924,7 +9960,11 @@
 
       // In a Live Real-Time PvP match or Live Spectator stream, Guest/Spectator receives authoritative physics from Host + 60 FPS dead-reckoning
       if (sim.isLiveMultiplayer && (sim.liveRole === "guest" || sim.liveRole === "spectator")) {
-        sim.timeLeft = Math.max(0, sim.timeLeft - 1 / 60);
+        if ((sim.preFightCountdownTicks || 0) <= 0) {
+          sim.timeLeft = Math.max(0, sim.timeLeft - 1 / 60);
+        } else {
+          sim.preFightCountdownTicks = Math.max(0, sim.preFightCountdownTicks - 1);
+        }
         if (sim.centerSaw && sim.centerSaw.state === "active") {
           sim.centerSaw.spinAngle = (sim.centerSaw.spinAngle || 0) + 0.34;
         }
@@ -9970,11 +10010,43 @@
       }
 
       sim.ticks++;
-      sim.timeLeft = Math.max(0, sim.timeLeft - 1 / 60);
 
       const [pBot, eBot] = sim.bots;
       const cs = sim.centerSaw;
       if (!pBot || !eBot) return;
+
+      // ⏱️ 10-TO-1 PRE-FIGHT COUNTDOWN BEFORE ROUND 1 BEGINS!
+      if (sim.preFightCountdownTicks > 0) {
+        sim.preFightCountdownTicks--;
+        const secRem = Math.ceil(sim.preFightCountdownTicks / 60);
+        if (secRem !== sim.lastCountdownSec && secRem >= 1) {
+          sim.lastCountdownSec = secRem;
+          if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+        }
+        pBot.vx = 0; pBot.vy = 0;
+        eBot.vx = 0; eBot.vy = 0;
+        for (let i = sim.sparks.length - 1; i >= 0; i--) {
+          const s = sim.sparks[i];
+          s.x += s.vx; s.y += s.vy; s.life--;
+          if (s.life <= 0) sim.sparks.splice(i, 1);
+        }
+        for (let i = sim.floatTexts.length - 1; i >= 0; i--) {
+          const ft = sim.floatTexts[i];
+          ft.y -= 0.85; ft.life--;
+          if (ft.life <= 0) sim.floatTexts.splice(i, 1);
+        }
+        if (sim.preFightCountdownTicks <= 0) {
+          if (typeof BotPitAudio !== "undefined") BotPitAudio.playBell(2);
+          addFloatText(800, 360, "🔔 ROUND 1 OF 3 — FIGHT!", "#00ff88");
+        }
+        syncHudReadout();
+        if (livePvp.activeRoomId && sim.liveRole !== "guest" && sim.liveRole !== "spectator" && sim.ticks % 2 === 0) {
+          broadcastHostArenaState(sim.ticks % 4 === 0);
+        }
+        return;
+      }
+
+      sim.timeLeft = Math.max(0, sim.timeLeft - 1 / 60);
 
       // Handle 4.5-second Between-Rounds Corner Pit-Stop Intermission
       if (sim.intermissionTimer > 0) {
@@ -9987,7 +10059,7 @@
         if (sim.intermissionTimer <= 0) {
           // Start Next Round!
           sim.currentRound = (sim.currentRound || 1) + 1;
-          sim.timeLeft = sim.roundDurationSec || 180.0;
+          sim.timeLeft = sim.roundDurationSec || 90.0;
           sim.intermissionSummary = null;
           sim.miniBots = [];
           sim.miniBotsSpawnedThisRound = false;
@@ -10355,8 +10427,8 @@
         const cryoScale = bot.cryoTimer > 0 ? 0.65 : 1.0;
         const airControlScale = bot.z > 6 ? 0.35 : 1.0;
         const staminaScale = isManual
-          ? (bot.staminaState === "gassed" ? 0.78 : 1.05)
-          : (bot.staminaState === "gassed" ? 0.65 : (bot.stamina < 30 ? 0.85 : 1.0));
+          ? (bot.staminaState === "gassed" ? 0.72 : 0.94)
+          : (bot.staminaState === "gassed" ? 0.62 : (bot.stamina < 30 ? 0.80 : 0.90));
         const knockPenalty = isManual ? (bot.knockStun > 0 ? 0.56 : 1.0) : (bot.knockStun > 0 ? 0.28 : 1.0);
         const stunScale = knockPenalty * empScale * cryoScale * airControlScale * staminaScale;
 
@@ -10375,7 +10447,7 @@
         const tireSpeedScale = livePartMults ? livePartMults.speedMult : 1.0;
         const maxTurnStep = bot.cp.turnRateRad * turnMult * stunScale * tireTurnScale;
         if (isManual && Math.abs(diff) < 0.42) {
-          bot.angle += diff * 0.48;
+          bot.angle += diff * 0.42;
         } else {
           bot.angle += Math.sign(diff) * Math.min(Math.abs(diff), maxTurnStep);
         }
@@ -10383,21 +10455,21 @@
         const accel = bot.cp.accelPx * throttle * stunScale * tireSpeedScale;
         if (isManual) {
           if (throttle > 0.02) {
-            // Blend direct input direction (72%) with chassis nose heading (28%) so manual steering responds on Frame 1 with faster acceleration!
-            const dirX = Math.cos(desiredAngle) * 0.72 + Math.cos(bot.angle) * 0.28;
-            const dirY = Math.sin(desiredAngle) * 0.72 + Math.sin(bot.angle) * 0.28;
-            bot.vx += dirX * accel * 1.24;
-            bot.vy += dirY * accel * 1.24;
+            // Smooth, balanced manual steering & acceleration
+            const dirX = Math.cos(desiredAngle) * 0.68 + Math.cos(bot.angle) * 0.32;
+            const dirY = Math.sin(desiredAngle) * 0.68 + Math.sin(bot.angle) * 0.32;
+            bot.vx += dirX * accel * 0.96;
+            bot.vy += dirY * accel * 0.96;
           } else {
             // Smooth active braking when player releases keys/joystick
             bot.vx *= 0.84;
             bot.vy *= 0.84;
           }
         } else {
-          bot.vx += Math.cos(bot.angle) * accel * 1.12;
-          bot.vy += Math.sin(bot.angle) * accel * 1.12;
+          bot.vx += Math.cos(bot.angle) * accel * 0.90;
+          bot.vy += Math.sin(bot.angle) * accel * 0.90;
         }
-        const drag = bot.z > 6 ? 0.95 : (bot.cryoTimer > 0 ? 0.94 : 0.90);
+        const drag = bot.z > 6 ? 0.94 : (bot.cryoTimer > 0 ? 0.92 : 0.87);
         bot.vx *= drag;
         bot.vy *= drag;
 
@@ -10912,13 +10984,17 @@
         eStamTxt.style.color = eHud.col;
       }
 
-      // Update Round Title, Pips, and 3:00 M:SS Clock
+      // Update Round Title, Pips, and 1:30 (90s) M:SS Clock
       const rdTitle = document.getElementById("hudRoundTitle");
       if (rdTitle) {
         const cRd = sim.currentRound || 1;
-        rdTitle.textContent = sim.intermissionTimer > 0
-          ? `🔧 CORNER PIT-STOP (${Math.ceil(sim.intermissionTimer / 60)}s)`
-          : (cRd === 3 && sim.pRoundsWon === 1 && sim.eRoundsWon === 1 ? "🔥 FINAL ROUND 3" : `🥊 ROUND ${cRd} OF 3`);
+        if (sim.preFightCountdownTicks > 0) {
+          rdTitle.textContent = `⏱️ FIGHT STARTS IN ${Math.ceil(sim.preFightCountdownTicks / 60)}s`;
+        } else if (sim.intermissionTimer > 0) {
+          rdTitle.textContent = `🔧 CORNER PIT-STOP (${Math.ceil(sim.intermissionTimer / 60)}s)`;
+        } else {
+          rdTitle.textContent = cRd === 3 && sim.pRoundsWon === 1 && sim.eRoundsWon === 1 ? "🔥 FINAL ROUND 3" : `🥊 ROUND ${cRd} OF 3`;
+        }
       }
       document.getElementById("hudClock").textContent = formatUfcClock(sim.timeLeft);
 
@@ -12087,6 +12163,54 @@
         ctx.restore();
       }
 
+      // Render 10-to-1 Pre-Fight Countdown Banner in Center of Live Arena!
+      if (sim.running && sim.preFightCountdownTicks > 0) {
+        const secRem = Math.max(1, Math.ceil(sim.preFightCountdownTicks / 60));
+        const subProgress = (sim.preFightCountdownTicks % 60) / 60;
+        const pulseScale = 1 + Math.sin(subProgress * Math.PI) * 0.08;
+        const pName = (sim.bots[0] && sim.bots[0].name) ? sim.bots[0].name : state.pilotCallsign;
+        const eName = (sim.bots[1] && sim.bots[1].name) ? sim.bots[1].name : "OPPONENT";
+        const activeCol = secRem <= 3 ? "#f43f5e" : (secRem <= 6 ? "#fbbf24" : "#38bdf8");
+
+        ctx.save();
+        const cw = 440, ch = 176;
+        const cx = 800 - cw / 2, cy = 450 - ch / 2;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.90)";
+        ctx.shadowBlur = 28;
+        ctx.fillStyle = "rgba(7, 10, 20, 0.86)";
+        ctx.strokeStyle = activeCol;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(cx, cy, cw, ch, 18);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.stroke();
+
+        ctx.textAlign = "center";
+        ctx.font = "900 12px Orbitron, sans-serif";
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText(`⚔️ ${activeMap ? activeMap.badge + ' · ' + activeMap.name : 'SHIBUYA BOT PIT'} · 90s ROUNDS`, 800, cy + 28);
+
+        ctx.font = "800 13px Orbitron, sans-serif";
+        ctx.fillStyle = "#e2e8f0";
+        ctx.fillText(`${String(pName).slice(0, 16)}   ⚡   ${String(eName).slice(0, 16)}`, 800, cy + 50);
+
+        ctx.save();
+        ctx.translate(800, cy + 108);
+        ctx.scale(pulseScale, pulseScale);
+        ctx.font = "900 58px Orbitron, sans-serif";
+        ctx.fillStyle = activeCol;
+        ctx.shadowColor = activeCol;
+        ctx.shadowBlur = 18;
+        ctx.fillText(String(secRem), 0, 16);
+        ctx.restore();
+
+        ctx.font = "900 12px Orbitron, sans-serif";
+        ctx.fillStyle = "#fde047";
+        ctx.fillText(`FIGHT STARTS IN ${secRem} SECOND${secRem === 1 ? '' : 'S'}...`, 800, cy + 158);
+        ctx.restore();
+      }
+
       // Render Clean, Modern Between-Rounds Scorecard Banner!
       if (sim.intermissionTimer > 0 && sim.intermissionSummary) {
         const sum = sim.intermissionSummary;
@@ -12328,7 +12452,7 @@
         currentRound: sim.currentRound || 1,
         pRoundsWon: sim.pRoundsWon || 0,
         eRoundsWon: sim.eRoundsWon || 0,
-        timeLeft: Math.round(sim.timeLeft || 180),
+        timeLeft: Math.round(sim.timeLeft || 90),
         pot: (sim.escrowWager || 0) * 2,
         watchers: watchersCount,
         updatedAt: Date.now()
@@ -12377,7 +12501,7 @@
       sim.currentRound = beacon.currentRound || 1;
       sim.pRoundsWon = beacon.pRoundsWon || 0;
       sim.eRoundsWon = beacon.eRoundsWon || 0;
-      sim.timeLeft = beacon.timeLeft || 180;
+      sim.timeLeft = beacon.timeLeft || 90;
       sim.escrowWager = Math.round((beacon.pot || 0) / 2);
 
       document.getElementById("hudPName").textContent = beacon.p1Name;
@@ -12517,7 +12641,7 @@
         const isWatching = (pitSpectator.watchingRoomId === b.roomId);
         const p1Pct = Math.max(0, Math.min(100, Math.round((b.p1Hp / Math.max(1, b.p1MaxHp)) * 100)));
         const p2Pct = Math.max(0, Math.min(100, Math.round((b.p2Hp / Math.max(1, b.p2MaxHp)) * 100)));
-        const clockStr = formatUfcClock(b.timeLeft || 180);
+        const clockStr = formatUfcClock(b.timeLeft || 90);
         const potStr = b.pot > 0 ? `💎 ${b.pot.toLocaleString()} POT` : `FREE MATCH`;
 
         let btnHtml = "";
@@ -12602,6 +12726,7 @@
         sim.currentRound = pkt.currentRound || 1;
         sim.pRoundsWon = pkt.pRoundsWon || 0;
         sim.eRoundsWon = pkt.eRoundsWon || 0;
+        sim.preFightCountdownTicks = pkt.preFightCountdownTicks || 0;
         sim.intermissionTimer = pkt.intermissionTimer || 0;
         sim.intermissionSummary = pkt.intermissionSummary || null;
         if (Array.isArray(pkt.roundResults)) {
@@ -13688,12 +13813,12 @@
         if (bot.abilityTimer <= 0) {
           bot.abilityState = "ready";
         }
-        return { desiredAngle: bot.chargeAngle || bot.angle, throttle: 1.85, turnMult: 0.65 };
+        return { desiredAngle: bot.chargeAngle || bot.angle, throttle: 1.45, turnMult: 0.65 };
       }
 
       const rawX = Number(inp.moveX) || 0;
       const rawY = Number(inp.moveY) || 0;
-      const lerpRate = (Math.hypot(rawX, rawY) > 0.05) ? 0.40 : 0.30;
+      const lerpRate = (Math.hypot(rawX, rawY) > 0.05) ? 0.36 : 0.28;
       inp.smoothX = (inp.smoothX || 0) + (rawX - (inp.smoothX || 0)) * lerpRate;
       inp.smoothY = (inp.smoothY || 0) + (rawY - (inp.smoothY || 0)) * lerpRate;
 
@@ -13702,8 +13827,8 @@
       const mag = Math.hypot(mx, my);
       if (mag > 0.05) {
         const desiredAngle = Math.atan2(my, mx);
-        const throttle = Math.min(1.0, mag) * 1.32;
-        return { desiredAngle, throttle, turnMult: 3.1 };
+        const throttle = Math.min(1.0, mag) * 1.05;
+        return { desiredAngle, throttle, turnMult: 2.3 };
       }
       // When thumbstick/keys are released, hold current heading and brake smoothly
       return { desiredAngle: bot.angle, throttle: 0, turnMult: 1.0 };
