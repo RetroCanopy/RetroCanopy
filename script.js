@@ -1095,11 +1095,8 @@ function initGamerIntro() {
     let activeWebAudioFallbackMode = null;
 
     const audioUnlockVectors = [
-        'pointermove', 'mousemove', 'pointerover', 'mouseover', 'mouseenter',
-        'wheel', 'scroll', 'focus', 'pageshow', 'visibilitychange',
-        'deviceorientation', 'devicemotion',
         'click', 'keydown', 'keyup', 'pointerdown', 'pointerup', 'mousedown', 'mouseup',
-        'touchstart', 'touchmove', 'touchend'
+        'touchstart', 'touchend'
     ];
 
     function removeAudioUnlockListeners() {
@@ -1256,41 +1253,6 @@ function initGamerIntro() {
 
     function tryStartIntroHtmlAudio(isUserGesture = false) {
         if (window.__rcSkipIntroOnLoad || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT' || nativeIntroAudioActive) return;
-        const introVid = document.getElementById('rc-cinema-intro-video');
-        if (introVid && !introVid.paused && !introVid.muted) {
-            introHtmlAudioStarted = true;
-            if (prebuiltIntroAudio && !prebuiltIntroAudio.paused) {
-                try { prebuiltIntroAudio.pause(); prebuiltIntroAudio.muted = true; } catch (_) {}
-            }
-            stopWebAudioBufferFallback();
-            return;
-        }
-        if (introVid && introVid.muted) {
-            try {
-                introVid.muted = false;
-                introVid.volume = 0.92;
-                const vp = introVid.play();
-                if (vp && typeof vp.then === 'function') {
-                    vp.then(() => {
-                        introHtmlAudioStarted = true;
-                        if (prebuiltIntroAudio && !prebuiltIntroAudio.paused) {
-                            try { prebuiltIntroAudio.pause(); prebuiltIntroAudio.muted = true; } catch (_) {}
-                        }
-                        if (window.__rcEarlyIntroSource) {
-                            try { window.__rcEarlyIntroSource.stop(); } catch (_) {}
-                            window.__rcEarlyIntroSource = null;
-                        }
-                        stopWebAudioBufferFallback();
-                    }).catch(() => {
-                        introVid.muted = true;
-                        introVid.play().catch(() => {});
-                    });
-                    return;
-                }
-            } catch (_) {
-                introVid.muted = true;
-            }
-        }
         if (!prebuiltIntroAudio) return;
         prebuiltIntroAudio.muted = false;
         prebuiltIntroAudio.volume = 0.88;
@@ -1301,12 +1263,13 @@ function initGamerIntro() {
         }
         // NEVER interrupt an in-flight play() request (even across pointerdown -> mousedown -> click on the same tap)!
         if (introPlayPending) return;
-        // Sync currentTime at most ONCE when starting after 0.6s if audio was blocked at 0.0s
-        if (!introGestureSynced && prebuiltIntroAudio.readyState >= 2) {
-            const elapsedSec = Math.min(9.0, Math.max(0, (performance.now() - introStartPerfNow) / 1000));
-            if (elapsedSec > 0.6 && Math.abs(prebuiltIntroAudio.currentTime - elapsedSec) > 0.45) {
+        // Keep audio synced to actual video playback position (never wall-clock page load time)
+        const introVidSync = document.getElementById('rc-cinema-intro-video');
+        if (!introGestureSynced && prebuiltIntroAudio.readyState >= 2 && introVidSync && introVidSync.currentTime > 0.6) {
+            const vidSec = Math.min(9.0, introVidSync.currentTime);
+            if (Math.abs(prebuiltIntroAudio.currentTime - vidSec) > 0.6) {
                 introGestureSynced = true;
-                try { prebuiltIntroAudio.currentTime = elapsedSec; } catch (_) {}
+                try { prebuiltIntroAudio.currentTime = vidSec; } catch (_) {}
             }
         }
         try {
@@ -4257,36 +4220,76 @@ function initGamerIntro() {
         }
     }
 
-    function scheduleIntroTransition(holdMs = 10000) {
+    function finishIntroWithLogoHold(holdLogoMs = 2200) {
+        if (sequenceComplete || introCraneTimer) return;
+        if (introTransitionTimer) {
+            clearTimeout(introTransitionTimer);
+            introTransitionTimer = null;
+        }
+        // Hold on the final glowing RETROCANOPY logo frame so it never feels rushed on mobile or desktop
+        introTransitionTimer = setTimeout(() => {
+            if (sequenceComplete) return;
+            const fgVid = document.getElementById('rc-cinema-intro-video');
+            if (fgVid) fgVid.classList.add('video-fade-out');
+            fadeIntroAudio();
+            introCraneTimer = setTimeout(() => {
+                if (sequenceComplete) return;
+                skipEntireIntro();
+            }, 1050);
+        }, holdLogoMs);
+    }
+
+    function scheduleIntroTransition(holdMs = 15500) {
         if (introTransitionScheduled || sequenceComplete) return;
         introTransitionScheduled = true;
         if (introTransitionTimer) clearTimeout(introTransitionTimer);
         if (introCraneTimer) clearTimeout(introCraneTimer);
 
         const introVideoEl = document.getElementById('rc-cinema-intro-video');
-        if (introVideoEl && !introVideoEl._endedBound) {
-            introVideoEl._endedBound = true;
-            introVideoEl.addEventListener('ended', () => {
-                if (!sequenceComplete) {
-                    skipEntireIntro();
-                }
-            });
+        const isMobile = window.innerWidth <= 900 || (window.matchMedia && window.matchMedia('(max-aspect-ratio: 4/3)').matches);
+        const rate = isMobile ? 0.85 : 0.92;
+
+        if (introVideoEl) {
+            try {
+                introVideoEl.muted = true;
+                introVideoEl.defaultPlaybackRate = rate;
+                introVideoEl.playbackRate = rate;
+            } catch (_) {}
+
+            if (!introVideoEl._endedBound) {
+                introVideoEl._endedBound = true;
+                introVideoEl.addEventListener('ended', () => {
+                    if (!sequenceComplete) {
+                        finishIntroWithLogoHold(2200);
+                    }
+                });
+            }
         }
 
-        introTransitionTimer = setTimeout(() => {
+        const armSafetyTimer = () => {
             if (sequenceComplete) return;
-            const fgVid = document.getElementById('rc-cinema-intro-video');
-            if (fgVid) fgVid.classList.add('video-fade-out');
-            const bgVid = document.getElementById('rc-cinema-intro-bg-video');
-            if (bgVid) bgVid.classList.add('video-fade-out');
-            fadeIntroAudio();
-
-            // Transition directly to the main stage (no old hologram butler intro!)
-            introCraneTimer = setTimeout(() => {
+            if (introTransitionTimer) clearTimeout(introTransitionTimer);
+            // Safety fallback timer only starts AFTER video is actually playing (15.5s)
+            introTransitionTimer = setTimeout(() => {
                 if (sequenceComplete) return;
-                skipEntireIntro();
-            }, 850);
-        }, holdMs);
+                finishIntroWithLogoHold(400);
+            }, holdMs);
+        };
+
+        if (introVideoEl && !introVideoEl.paused && introVideoEl.readyState >= 3) {
+            armSafetyTimer();
+        } else if (introVideoEl) {
+            introVideoEl.addEventListener('playing', armSafetyTimer, { once: true });
+            // Ultimate fallback if video fails to load on slow connection
+            introTransitionTimer = setTimeout(() => {
+                if (sequenceComplete) return;
+                if (!introVideoEl || introVideoEl.paused || introVideoEl.currentTime < 0.2) {
+                    finishIntroWithLogoHold(200);
+                }
+            }, 22000);
+        } else {
+            armSafetyTimer();
+        }
     }
 
     // Schedule the title screen progression immediately — no click required

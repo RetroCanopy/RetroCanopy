@@ -30,7 +30,7 @@
 
     <!-- High-Production Movie Studio Intro Atmosphere & Widescreen Letterbox Stage -->
     <div class="cinema-intro-fx" id="cinema-intro-fx" aria-hidden="true">
-        <video id="rc-cinema-intro-video" class="rc-cinema-intro-video" src="assets/retrocanopy_intro_video.mp4?v=104" autoplay playsinline webkit-playsinline preload="auto"></video>
+        <video id="rc-cinema-intro-video" class="rc-cinema-intro-video" src="assets/retrocanopy_intro_video.mp4?v=105" autoplay muted playsinline webkit-playsinline preload="auto"></video>
         <div class="cinema-letterbox cinema-letterbox-top"></div>
         <div class="cinema-letterbox cinema-letterbox-bottom"></div>
     </div>
@@ -84,162 +84,59 @@
                 return;
             }
 
-            // 1. Primary path: play #rc-cinema-intro-video UNMUTED with its native 192kbps stereo AAC audio stream
-            var webAudioFallbackStarted = false;
-            var tryWebAudioIntro = function () {
-                if (webAudioFallbackStarted || window.__rcSkipIntroOnLoad) return;
-                if (v && !v.paused && !v.muted) return;
-                if (a && !a.paused && !a.muted) return;
-                try {
-                    var AudioCtx = window.AudioContext || window.webkitAudioContext;
-                    if (!AudioCtx) return;
-                    if (!window.__rcEarlyAudioCtx) {
-                        window.__rcEarlyAudioCtx = new AudioCtx();
-                    }
-                    var ctx = window.__rcEarlyAudioCtx;
-                    if (ctx.state === 'suspended') {
-                        ctx.resume().catch(function () {});
-                    }
-                    if (!window.__rcEarlyIntroBufPromise) {
-                        window.__rcEarlyIntroBufPromise = fetch('assets/intro_theme.mp3?v=104')
-                            .then(function (r) { return r.arrayBuffer(); })
-                            .then(function (ab) { return ctx.decodeAudioData(ab); })
-                            .catch(function () { return null; });
-                    }
-                    window.__rcEarlyIntroBufPromise.then(function (buf) {
-                        if (!buf || webAudioFallbackStarted || window.__rcSkipIntroOnLoad) return;
-                        if ((v && !v.paused && !v.muted) || (a && !a.paused && !a.muted)) return;
-                        var startPlayBuf = function () {
-                            if (webAudioFallbackStarted || window.__rcSkipIntroOnLoad) return;
-                            if ((v && !v.paused && !v.muted) || (a && !a.paused && !a.muted)) return;
-                            if (ctx.state !== 'running') return;
-                            try {
-                                webAudioFallbackStarted = true;
-                                var src = ctx.createBufferSource();
-                                var gain = ctx.createGain();
-                                src.buffer = buf;
-                                gain.gain.setValueAtTime(0.92, ctx.currentTime);
-                                src.connect(gain);
-                                gain.connect(ctx.destination);
-                                var offset = (v && v.currentTime > 0 && v.currentTime < buf.duration - 0.1) ? v.currentTime : 0;
-                                src.start(0, offset);
-                                window.__rcEarlyIntroSource = src;
-                                window.__rcEarlyIntroGain = gain;
-                            } catch (_) {
-                                webAudioFallbackStarted = false;
-                            }
-                        };
-                        if (ctx.state === 'running') {
-                            startPlayBuf();
-                        } else {
-                            ctx.addEventListener('statechange', startPlayBuf);
-                            ctx.resume().then(startPlayBuf).catch(function () {});
-                        }
-                    });
-                } catch (_) {}
-            };
-
-            var startUnmutedVideo = function () {
-                if (window.__rcSkipIntroOnLoad || !v) return;
-                v.muted = false;
-                v.volume = 0.92;
-                try {
-                    var p = v.play();
-                    if (p && typeof p.then === 'function') {
-                        p.then(function () {
-                            // Native unmuted video audio succeeded! Silence backup <audio> & WebAudio so they never double-play
-                            v.muted = false;
-                            v.volume = 0.92;
-                            if (a && !a.paused) {
-                                try { a.pause(); a.muted = true; } catch (_) {}
-                            }
-                            if (window.__rcEarlyIntroSource) {
-                                try { window.__rcEarlyIntroSource.stop(); } catch (_) {}
-                                window.__rcEarlyIntroSource = null;
-                            }
-                            var oldIfr = document.getElementById('rc-autoplay-audio-iframe');
-                            if (oldIfr) {
-                                try { oldIfr.src = 'about:blank'; oldIfr.remove(); } catch (_) {}
-                            }
-                        }).catch(function () {
-                            // Browser blocked unmuted <video> on cold tab: keep video playing & fire <audio> + WebAudio + iframe allow="autoplay" fallback
-                            v.muted = true;
-                            v.play().catch(function () {});
-                            var launchFallbacks = function () {
-                                tryWebAudioIntro();
-                                if (!document.getElementById('rc-autoplay-audio-iframe') && !window.__rcSkipIntroOnLoad) {
-                                    try {
-                                        var ifr = document.createElement('iframe');
-                                        ifr.id = 'rc-autoplay-audio-iframe';
-                                        ifr.allow = 'autoplay';
-                                        ifr.src = 'assets/intro_theme.mp3?v=104';
-                                        ifr.style.cssText = 'position:fixed;width:0;height:0;border:0;opacity:0;pointer-events:none;';
-                                        ifr.setAttribute('aria-hidden', 'true');
-                                        document.body.appendChild(ifr);
-                                    } catch (_) {}
-                                }
-                            };
-                            if (a && a.paused) {
-                                a.muted = false;
-                                a.volume = 0.92;
-                                if (v.currentTime > 0.1) {
-                                    try { a.currentTime = v.currentTime; } catch (_) {}
-                                }
-                                a.play().catch(launchFallbacks);
-                            } else {
-                                launchFallbacks();
-                            }
-                        });
-                    }
-                } catch (_) {}
-            };
-
-            startUnmutedVideo();
+            // 1. Keep #rc-cinema-intro-video strictly muted so mobile hardware video playback NEVER stutters or pauses!
             if (v) {
-                v.addEventListener('loadedmetadata', startUnmutedVideo, { once: true });
-                v.addEventListener('canplay', startUnmutedVideo, { once: true });
+                v.muted = true;
+                var isMobileViewport = window.innerWidth <= 900 || (window.matchMedia && window.matchMedia('(max-aspect-ratio: 4/3)').matches);
+                var targetRate = isMobileViewport ? 0.85 : 0.92;
+                try {
+                    v.defaultPlaybackRate = targetRate;
+                    v.playbackRate = targetRate;
+                } catch (_) {}
+                v.addEventListener('loadedmetadata', function () {
+                    try { v.playbackRate = targetRate; } catch (_) {}
+                });
+                v.addEventListener('playing', function () {
+                    window.__rcIntroVideoPlayingStartMs = performance.now();
+                    try { v.playbackRate = targetRate; } catch (_) {}
+                });
+                v.play().catch(function () {});
             }
 
-            // Continuous zero-tap unmute retry on lifecycle/focus/sensor/movement events while intro is active
-            var retryUnmute = function () {
-                if (window.__rcSkipIntroOnLoad || !document.body || !document.body.classList.contains('cinema-intro-active')) return;
-                if (v && !v.paused && !v.muted) return;
-                if (a && !a.paused && !a.muted) return;
-                if (window.__rcEarlyAudioCtx && window.__rcEarlyAudioCtx.state === 'suspended') {
-                    window.__rcEarlyAudioCtx.resume().catch(function () {});
-                }
-                if (v) {
-                    v.muted = false;
-                    v.volume = 0.92;
-                    var up = v.play();
-                    if (up && typeof up.then === 'function') {
-                        up.then(function () {
-                            if (a && !a.paused) {
-                                try { a.pause(); a.muted = true; } catch (_) {}
-                            }
-                            if (window.__rcEarlyIntroSource) {
-                                try { window.__rcEarlyIntroSource.stop(); } catch (_) {}
-                                window.__rcEarlyIntroSource = null;
-                            }
-                            var oldIfr = document.getElementById('rc-autoplay-audio-iframe');
-                            if (oldIfr) {
-                                try { oldIfr.src = 'about:blank'; oldIfr.remove(); } catch (_) {}
-                            }
+            // 2. Play audio via #intro-title-audio (never touching v.muted so video never stutters)
+            var audioStarted = false;
+            var audioPending = false;
+            var tryPlayAudio = function () {
+                if (window.__rcSkipIntroOnLoad || !a || audioStarted || audioPending) return;
+                if (!document.body || !document.body.classList.contains('cinema-intro-active')) return;
+                try {
+                    a.muted = false;
+                    a.volume = 0.90;
+                    audioPending = true;
+                    var p = a.play();
+                    if (p && typeof p.then === 'function') {
+                        p.then(function () {
+                            audioPending = false;
+                            audioStarted = true;
                         }).catch(function () {
-                            v.muted = true;
-                            v.play().catch(function () {});
-                            if (a && a.paused) {
-                                a.muted = false;
-                                a.volume = 0.92;
-                                try { a.currentTime = v.currentTime || 0; } catch (_) {}
-                                a.play().catch(function () {});
-                            }
+                            audioPending = false;
                         });
+                    } else {
+                        audioPending = false;
                     }
+                } catch (_) {
+                    audioPending = false;
                 }
             };
-            ['pageshow', 'focus', 'visibilitychange', 'pointermove', 'mousemove', 'pointerover', 'wheel', 'scroll', 'deviceorientation', 'devicemotion', 'touchstart', 'pointerdown', 'keydown', 'click'].forEach(function (ev) {
-                window.addEventListener(ev, retryUnmute, { passive: true, capture: true });
+
+            tryPlayAudio();
+            if (a) {
+                a.addEventListener('canplay', tryPlayAudio, { once: true });
+            }
+
+            // Only retry audio on real user gestures (never on devicemotion/deviceorientation/mousemove!)
+            ['touchstart', 'touchend', 'pointerdown', 'mousedown', 'keydown', 'click'].forEach(function (ev) {
+                window.addEventListener(ev, tryPlayAudio, { passive: true, capture: true });
             });
         })();
     </script>
@@ -543,7 +440,7 @@
     <!-- Stage container (crew characters and section tabs removed; Synth owl butler & login preserved) -->
     <div id="crew-stage" class="crew-stage" aria-hidden="true"></div>
 
-    <script src="script.js?v=213"></script>
+    <script src="script.js?v=214"></script>
     <script src="auth_hub.js?v=154"></script>
 </body>
 
