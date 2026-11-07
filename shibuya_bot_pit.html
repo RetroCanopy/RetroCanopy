@@ -3919,7 +3919,7 @@
       box-shadow: 0 0 14px rgba(251, 191, 36, 0.30);
     }
 
-    /* 8. Centered Full-Screen Game Layout & Expandable Home Screen Tabs */
+    /* 8. Responsive Layout: PC Dedicated Right-Side Live Chat Column + Mobile Expandable Tabs */
     .page-layout {
       max-width: 1240px !important;
       margin: 0 auto !important;
@@ -3928,26 +3928,28 @@
       gap: 12px !important;
       align-items: stretch !important;
     }
-    body:not(.mobile-play-active) #arenaSection,
-    body:not(.mobile-play-active) #pitBroadcastDeck {
-      display: contents !important;
-    }
-    body:not(.mobile-play-active) .arena-wrapper {
-      order: 1 !important;
-      width: 100% !important;
-      margin: 0 auto !important;
-    }
-    body:not(.mobile-play-active) #rigSection {
-      order: 2 !important;
-      width: 100% !important;
-    }
-    body:not(.mobile-play-active) #liveFightsBroadcastCard {
-      order: 3 !important;
-      width: 100% !important;
-    }
-    body:not(.mobile-play-active) #pitChatBroadcastCard {
-      order: 4 !important;
-      width: 100% !important;
+    @media (max-width: 960px) {
+      body:not(.mobile-play-active) #arenaSection,
+      body:not(.mobile-play-active) #pitBroadcastDeck {
+        display: contents !important;
+      }
+      body:not(.mobile-play-active) .arena-wrapper {
+        order: 1 !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+      }
+      body:not(.mobile-play-active) #rigSection {
+        order: 2 !important;
+        width: 100% !important;
+      }
+      body:not(.mobile-play-active) #liveFightsBroadcastCard {
+        order: 3 !important;
+        width: 100% !important;
+      }
+      body:not(.mobile-play-active) #pitChatBroadcastCard {
+        order: 4 !important;
+        width: 100% !important;
+      }
     }
 
     /* Expandable Tab Trigger Headers & Collapsible Bodies */
@@ -3983,24 +3985,107 @@
       border-bottom: none !important;
       box-shadow: none !important;
     }
-    body:not(.mobile-play-active) #liveFightsBroadcastCard:not(.tab-expanded),
-    body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) {
+    body:not(.mobile-play-active) #liveFightsBroadcastCard:not(.tab-expanded) {
       min-height: 0 !important;
       max-height: none !important;
     }
-    body:not(.mobile-play-active) #liveFightsBroadcastCard:not(.tab-expanded) #liveFightsList,
-    body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) #pitChatFeed,
-    body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) .pit-chat-footer {
+    body:not(.mobile-play-active) #liveFightsBroadcastCard:not(.tab-expanded) #liveFightsList {
       display: none !important;
     }
-    body:not(.mobile-play-active) #liveFightsBroadcastCard:not(.tab-expanded) .broadcast-card-header,
-    body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) .broadcast-card-header {
+    body:not(.mobile-play-active) #liveFightsBroadcastCard:not(.tab-expanded) .broadcast-card-header {
       border-bottom: none !important;
     }
-    body:not(.mobile-play-active) #liveFightsBroadcastCard.tab-expanded,
-    body:not(.mobile-play-active) #pitChatBroadcastCard.tab-expanded {
-      min-height: 220px !important;
-      max-height: 320px !important;
+    body:not(.mobile-play-active) #liveFightsBroadcastCard.tab-expanded {
+      min-height: 180px !important;
+      max-height: 260px !important;
+    }
+    @media (max-width: 960px) {
+      body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) {
+        min-height: 0 !important;
+        max-height: none !important;
+      }
+      body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) #pitChatFeed,
+      body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) .pit-chat-footer {
+        display: none !important;
+      }
+      body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) .broadcast-card-header {
+        border-bottom: none !important;
+      }
+      body:not(.mobile-play-active) #pitChatBroadcastCard.tab-expanded {
+        min-height: 220px !important;
+        max-height: 320px !important;
+      }
+    }
+
+    /* =========================================================================
+       PC DEDICATED RIGHT-SIDE LIVE CHAT SECTION (ALWAYS ON THE RIGHT OF SCREEN)
+       ========================================================================= */
+    @media (min-width: 961px) {
+      body:not(.mobile-play-active) .page-layout {
+        max-width: 1720px !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 360px !important;
+        gap: 16px !important;
+        align-items: start !important;
+      }
+      body:not(.mobile-play-active) #arenaSection {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+      }
+      body:not(.mobile-play-active) #rigSection {
+        grid-column: 1 !important;
+        grid-row: 2 !important;
+        width: 100% !important;
+      }
+      body:not(.mobile-play-active) #pitBroadcastDeck {
+        grid-column: 2 !important;
+        grid-row: 1 / span 3 !important;
+        position: sticky !important;
+        top: 12px !important;
+        height: calc(100vh - 86px) !important;
+        max-height: calc(100vh - 86px) !important;
+        width: 360px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        margin: 0 !important;
+      }
+      #pitBroadcastDeck #pitChatBroadcastCard {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        height: 100% !important;
+        border: 1.5px solid rgba(56, 189, 248, 0.38) !important;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(7, 11, 20, 0.98) 100%) !important;
+        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.85) !important;
+      }
+      #pitBroadcastDeck #pitChatBroadcastCard #pitChatFeed {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow-y: auto !important;
+      }
+      #pitBroadcastDeck #pitChatBroadcastCard .pit-chat-footer {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
+      #pitBroadcastDeck #pitChatBroadcastCard .chat-emote-strip {
+        display: flex !important;
+      }
+      #pitBroadcastDeck #chev_pitChatBroadcastCard,
+      #btnMobileChatToggle,
+      .btn-close-mobile-chat {
+        display: none !important;
+      }
     }
 
     @media (max-width: 960px) {
@@ -4176,23 +4261,67 @@
       border-color: rgba(251, 191, 36, 0.50);
       color: #fde047;
     }
-    body.mobile-play-active:not(.mobile-chat-open) #pitBroadcastDeck {
-      display: none !important;
+    @media (max-width: 960px) {
+      body.mobile-play-active:not(.mobile-chat-open) #pitBroadcastDeck {
+        display: none !important;
+      }
+      body.mobile-play-active.mobile-chat-open #pitBroadcastDeck {
+        display: flex !important;
+        flex-direction: column !important;
+        position: absolute !important;
+        top: 86px !important;
+        left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px)) !important;
+        bottom: 14px !important;
+        width: min(320px, 44%) !important;
+        height: auto !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: 80 !important;
+      }
+      body.mobile-play-active .home-chat-badge-group,
+      body.mobile-play-active .mob-play-header-actions {
+        display: none !important;
+      }
+      body.mobile-play-active .btn-close-mobile-chat {
+        display: inline-block !important;
+      }
     }
-    body.mobile-play-active.mobile-chat-open #pitBroadcastDeck {
-      display: flex !important;
-      flex-direction: column !important;
-      position: absolute !important;
-      top: 86px !important;
-      left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px)) !important;
-      bottom: 14px !important;
-      width: min(320px, 44%) !important;
-      height: auto !important;
-      max-height: none !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      z-index: 80 !important;
+
+    /* PC Battle Mode: Keep Live Chat ALWAYS in its own dedicated right-hand section! */
+    @media (min-width: 961px) {
+      body.mobile-play-active .page-layout {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 360px !important;
+        align-items: stretch !important;
+        justify-content: stretch !important;
+      }
+      body.mobile-play-active #arenaSection {
+        grid-column: 1 !important;
+        width: 100% !important;
+        height: 100dvh !important;
+      }
+      body.mobile-play-active #pitBroadcastDeck {
+        grid-column: 2 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        position: static !important;
+        width: 360px !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        padding: 12px 12px 12px 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        background: #05070e !important;
+        z-index: 80 !important;
+      }
+      body.mobile-play-active .mob-play-header-actions,
+      body.mobile-play-active #btnMobileChatToggle,
+      body.mobile-play-active .btn-close-mobile-chat {
+        display: none !important;
+      }
     }
+
     body.mobile-play-active #pitChatBroadcastCard {
       flex: 1 1 auto !important;
       height: 100% !important;
@@ -4200,17 +4329,10 @@
       max-height: none !important;
       border-radius: 14px !important;
       border: 1.5px solid rgba(56, 189, 248, 0.48) !important;
-      background: rgba(7, 11, 20, 0.82) !important;
+      background: rgba(7, 11, 20, 0.90) !important;
       backdrop-filter: blur(8px) !important;
       -webkit-backdrop-filter: blur(8px) !important;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.85) !important;
-    }
-    body.mobile-play-active .home-chat-badge-group,
-    body.mobile-play-active .mob-play-header-actions {
-      display: none !important;
-    }
-    body.mobile-play-active .btn-close-mobile-chat {
-      display: inline-block !important;
     }
     body.mobile-play-active .btn-mobile-return-garage {
       display: block !important;
@@ -4221,6 +4343,297 @@
       z-index: 85 !important;
       overflow-y: auto !important;
       padding: 12px !important;
+    }
+
+    /* =========================================================================
+       FULL-SCREEN ARENA MAP SELECTION MODAL (PVP & CPU · ALL 7 ARENAS)
+       ========================================================================= */
+    .fs-map-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 96000;
+      background: radial-gradient(circle at 50% 35%, rgba(15, 23, 42, 0.96) 0%, rgba(4, 6, 12, 0.99) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .fs-map-modal-backdrop.active {
+      display: flex;
+    }
+    .fs-map-shell {
+      width: 100%;
+      max-width: 1280px;
+      height: 100%;
+      max-height: 96dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      margin: auto;
+    }
+    .fs-map-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      border-radius: 16px;
+      padding: 10px 16px;
+    }
+    .fs-map-top-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .fs-map-step-pill {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      color: #041019;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 900;
+      padding: 5px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.8px;
+    }
+    .fs-map-top-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: #f8fafc;
+      letter-spacing: 1px;
+    }
+    .fs-map-wager-pill {
+      background: rgba(251, 191, 36, 0.16);
+      border: 1px solid rgba(251, 191, 36, 0.5);
+      color: #fde047;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 900;
+      padding: 5px 13px;
+      border-radius: 999px;
+    }
+    .fs-map-stage {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+    }
+    .fs-map-arrow-btn {
+      width: 64px;
+      height: 120px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.92) 0%, rgba(15, 23, 42, 0.96) 100%);
+      border: 2px solid rgba(56, 189, 248, 0.55);
+      color: #38bdf8;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      flex-shrink: 0;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 18px rgba(56, 189, 248, 0.2);
+      transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+      user-select: none;
+    }
+    .fs-map-arrow-btn span.lbl {
+      font-size: 0.52rem;
+      letter-spacing: 0.8px;
+      color: #cbd5e1;
+    }
+    .fs-map-arrow-btn:hover {
+      transform: scale(1.05);
+      border-color: #fbbf24;
+      color: #fbbf24;
+      background: rgba(30, 41, 59, 0.98);
+    }
+    .fs-map-arrow-btn:active {
+      transform: scale(0.96);
+    }
+    .fs-map-viewport {
+      position: relative;
+      flex: 1 1 auto;
+      height: 100%;
+      max-height: 58dvh;
+      aspect-ratio: 16 / 9;
+      background: #060912;
+      border-radius: 22px;
+      border: 2.5px solid #fbbf24;
+      box-shadow: 0 24px 65px rgba(0, 0, 0, 0.95), 0 0 36px rgba(251, 191, 36, 0.25);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fs-map-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.28s ease;
+    }
+    .fs-map-viewport-top-overlays {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      pointer-events: none;
+      flex-wrap: wrap;
+    }
+    .fs-map-counter-pill {
+      background: rgba(7, 10, 18, 0.86);
+      border: 1.5px solid rgba(255, 255, 255, 0.24);
+      color: #f8fafc;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 900;
+      padding: 5px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.8px;
+      backdrop-filter: blur(8px);
+    }
+    .fs-map-hazard-pill {
+      background: rgba(7, 10, 18, 0.88);
+      border: 1.5px solid #fbbf24;
+      color: #fde047;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 900;
+      padding: 5px 13px;
+      border-radius: 999px;
+      letter-spacing: 0.6px;
+      backdrop-filter: blur(8px);
+    }
+    .fs-map-info-panel {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.96) 0%, rgba(9, 13, 22, 0.98) 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.35);
+      border-radius: 18px;
+      padding: 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+    }
+    .fs-map-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .fs-map-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.18rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 1px;
+    }
+    .fs-map-subtitle {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #fbbf24;
+    }
+    .fs-map-desc {
+      font-size: 0.92rem;
+      color: #e2e8f0;
+      line-height: 1.38;
+      font-weight: 600;
+    }
+    .fs-map-dots-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      padding-top: 2px;
+    }
+    .fs-map-dot-chip {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1.5px solid rgba(148, 163, 184, 0.32);
+      color: #94a3b8;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 900;
+      padding: 5px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+    .fs-map-dot-chip.active {
+      background: rgba(251, 191, 36, 0.22);
+      border-color: #fbbf24;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.35);
+    }
+    .fs-map-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 4px;
+    }
+    .fs-map-select-btn {
+      flex: 1;
+      padding: 14px 22px;
+      border-radius: 14px;
+      border: 2px solid #6ee7b7;
+      background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+      color: #03150e;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.96rem;
+      font-weight: 900;
+      letter-spacing: 1.4px;
+      cursor: pointer;
+      box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.55), 0 10px 28px rgba(16, 185, 129, 0.5);
+      transition: transform 0.14s ease, filter 0.14s ease;
+    }
+    .fs-map-select-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+    @media (max-width: 760px) {
+      .fs-map-modal-backdrop {
+        padding: 8px 10px;
+      }
+      .fs-map-arrow-btn {
+        width: 44px;
+        height: 82px;
+        font-size: 1.15rem;
+      }
+      .fs-map-arrow-btn span.lbl {
+        display: none;
+      }
+      .fs-map-name {
+        font-size: 0.90rem;
+      }
+      .fs-map-desc {
+        font-size: 0.78rem;
+      }
+      .fs-map-select-btn {
+        padding: 11px 14px;
+        font-size: 0.76rem;
+      }
     }
 
     /* Transparent On-Screen Controls on Mobile / Touch */
@@ -4397,17 +4810,19 @@
         font-size: 0.58rem !important;
       }
       .touch-joystick-zone {
-        width: 96px;
-        height: 96px;
+        width: 126px;
+        height: 126px;
+        touch-action: none;
       }
       .touch-joystick-base {
-        width: 88px;
-        height: 88px;
+        width: 106px;
+        height: 106px;
       }
       .touch-joystick-knob {
-        width: 36px;
-        height: 36px;
-        font-size: 0.38rem;
+        width: 44px;
+        height: 44px;
+        font-size: 0.42rem;
+        transition: transform 0.04s linear;
       }
       .manual-ctrl-hint-pill {
         display: none;
@@ -4476,6 +4891,9 @@
       </button>
       <button class="mode-btn campaign" id="modeBtnCampaign" onclick="matchSimilarLevelCpu(false)">
         🤖 VS. CPU
+      </button>
+      <button class="mode-btn" style="border-color:rgba(251,191,36,0.65);color:#fde047;" onclick="openFullScreenMapSelector()" title="Open Full-Screen Map Selector (7 Arenas)">
+        🗺️ MAPS (7)
       </button>
       <button class="mode-btn" onclick="challengeFriendRigCode()" title="Battle a friend's Rig Code or copy yours">
         🤝 FRIEND CODE
@@ -4612,7 +5030,7 @@
       <!-- BIG CLEAN SHOP BUTTON -->
       <div class="sidebar-actions">
         <button class="btn-shop" onclick="openShopModal('tire')">
-          🛒 UPGRADE SHOP (180 ITEMS)
+          🛒 UPGRADE SHOP (5 PER SLOT)
         </button>
         <button class="btn-battle" id="sideBattleBtn" onclick="beginPreBattleWizard(state.gameMode || 'pvp')">BATTLE</button>
       </div>
@@ -4636,8 +5054,8 @@
         <!-- LIVE ONLINE PVP & SIMILAR-LVL CPU MATCHMAKING TOOLS -->
         <div class="pvp-tools-row visible" id="pvpToolsRow">
           <div style="display:flex;gap:6px;flex-wrap:wrap;" id="matchmakingActionBtns">
-            <button class="btn-pvp-tool primary" onclick="startLivePvpMatchmaking()">🌐 FIND LIVE ONLINE PLAYER</button>
-            <button class="btn-pvp-tool" style="background:linear-gradient(180deg,#34d399 0%,#059669 100%);color:#04130e;" onclick="matchSimilarLevelCpu(false)">🤖 GENERATE SIMILAR-LVL CPU</button>
+            <button class="btn-pvp-tool primary" onclick="beginPreBattleWizard('pvp')">🌐 FIND LIVE ONLINE PLAYER</button>
+            <button class="btn-pvp-tool" style="background:linear-gradient(180deg,#34d399 0%,#059669 100%);color:#04130e;" onclick="beginPreBattleWizard('cpu')">🤖 GENERATE SIMILAR-LVL CPU</button>
             <button class="btn-pvp-tool" onclick="copyMyRigCode()">🔗 COPY MY RIG CODE</button>
             <button class="btn-pvp-tool" onclick="challengeFriendRigCode()">⚔️ ENTER FRIEND RIG CODE</button>
           </div>
@@ -4764,13 +5182,18 @@
               </div>
             </div>
 
-            <!-- STEP 1: CHOOSE PVP OR CPU BUTTONS -->
-            <div class="overlay-choice-row" id="overlayChoiceRow">
-              <button class="btn-arena-battle pvp-live" id="btnStartLivePvp" onclick="beginPreBattleWizard('pvp')">
-                🌐 LIVE ONLINE PVP
-              </button>
-              <button class="btn-arena-battle cpu-sim" id="btnStartCpuSim" onclick="beginPreBattleWizard('cpu')">
-                🤖 VS. CPU BOT
+            <!-- STEP 1: CHOOSE PVP, CPU, OR FULL-SCREEN MAP SELECTION -->
+            <div id="overlayChoiceRow" style="display:flex;flex-direction:column;gap:8px;width:100%;">
+              <div class="overlay-choice-row" style="width:100%;">
+                <button class="btn-arena-battle pvp-live" id="btnStartLivePvp" onclick="beginPreBattleWizard('pvp')">
+                  🌐 LIVE ONLINE PVP
+                </button>
+                <button class="btn-arena-battle cpu-sim" id="btnStartCpuSim" onclick="beginPreBattleWizard('cpu')">
+                  🤖 VS. CPU BOT
+                </button>
+              </div>
+              <button type="button" class="btn-pre-step-next" id="btnHomeOpenMapSelect" style="width:100%;padding:11px 16px;font-size:0.74rem;background:linear-gradient(180deg,rgba(251,191,36,0.24) 0%,rgba(217,119,6,0.32) 100%);border:1.5px solid #fbbf24;color:#fde047;" onclick="openFullScreenMapSelector()">
+                🗺️ MAP SELECTION (ARENA 01, 02, 07, 11, 12, 13, 17)
               </button>
             </div>
 
@@ -4799,18 +5222,28 @@
               </div>
             </div>
 
-            <!-- STEP 3: SELECT YOUR ARENA MAP -->
+            <!-- STEP 3: SELECT YOUR ARENA MAP (OPENS FULL-SCREEN MAP SHOWCASE) -->
             <div class="pre-step-box" id="preStepMapWrap" style="display:none;">
-              <div class="arena-map-selector">
+              <div class="arena-map-selector" style="gap:10px;">
                 <div class="arena-map-title-row">
-                  <span>🗺️ TAP AN ARENA MAP</span>
-                  <span id="activeMapSubtitleTxt" style="color:#fbbf24;">Center Rip-Saw &amp; Corner Furnaces</span>
+                  <span id="inlineMapTitleBadge" style="color:#fbbf24;font-weight:900;">🔥 ARENA 01 · SHIBUYA FURNACE PIT</span>
+                  <span id="activeMapSubtitleTxt" style="color:#38bdf8;">MAP 1 OF 7</span>
                 </div>
-                <div class="arena-map-grid" id="overlayMapChips"></div>
+                <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;border:2px solid #fbbf24;background:#05070e;">
+                  <img id="inlineMapArtImg" src="assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg" alt="Arena Map Preview" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                </div>
+                <div id="inlineMapDescTxt" style="font-size:0.80rem;color:#e2e8f0;line-height:1.35;text-align:left;background:rgba(15,23,42,0.85);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);">
+                  Classic underground octagon with the emerging Center Rip-Saw and 4 glowing corner blast furnaces.
+                </div>
+                <div style="display:flex;gap:8px;width:100%;">
+                  <button type="button" class="btn-pre-step-back" style="flex:1;" onclick="cycleArenaMap(-1)">◀ LEFT</button>
+                  <button type="button" class="btn-pre-step-next launch" id="btnConfirmMapLaunch" style="flex:2;" onclick="confirmPreBattleAndLaunch()">✅ SELECT &amp; FIGHT!</button>
+                  <button type="button" class="btn-pre-step-back" style="flex:1;" onclick="cycleArenaMap(1)">RIGHT ▶</button>
+                </div>
               </div>
               <div class="pre-step-nav-row">
-                <button type="button" class="btn-pre-step-back" onclick="setPreBattleStep('wager')">← WAGER</button>
-                <button type="button" class="btn-pre-step-next launch" id="btnConfirmMapLaunch" onclick="confirmPreBattleAndLaunch()">⚔️ START BATTLE!</button>
+                <button type="button" class="btn-pre-step-back" onclick="setPreBattleStep('wager')">← BACK TO WAGER</button>
+                <button type="button" class="btn-pre-step-next" onclick="openFullScreenMapSelector()">🖼️ EXPAND FULL SCREEN</button>
               </div>
             </div>
 
@@ -4843,74 +5276,128 @@
         </div>
       </section>
 
-      <!-- BOTTOM BROADCAST DECK: LIVE FIGHTS SPECTATOR QUEUE + SHIBUYA PIT LIVE CHAT -->
-      <section class="pit-broadcast-deck" id="pitBroadcastDeck">
-        <!-- EXPANDABLE TAB 2: LIVE FIGHTS HAPPENING NOW -->
-        <div class="broadcast-card" id="liveFightsBroadcastCard">
-          <div class="broadcast-card-header expandable-tab-trigger" onclick="toggleHomeTab('liveFightsBroadcastCard')" title="Tap to Expand or Collapse Live Fights">
-            <div class="broadcast-header-left">
-              <span class="spec-live-dot"></span>
-              <span>🔴 LIVE FIGHTS HAPPENING NOW</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span class="broadcast-count-pill" id="liveFightsCountBadge">0 LIVE</span>
-              <span class="home-tab-chevron" id="chev_liveFightsBroadcastCard">▾ EXPAND</span>
-            </div>
-          </div>
-          <div class="live-fights-list" id="liveFightsList">
-            <!-- Populated dynamically by renderLiveFightsList() -->
-          </div>
-        </div>
-
-        <!-- EXPANDABLE TAB 3: SHIBUYA PIT LIVE CHAT -->
-        <div class="broadcast-card" id="pitChatBroadcastCard">
-          <div class="broadcast-card-header expandable-tab-trigger" onclick="if(!document.body.classList.contains('mobile-play-active')) toggleHomeTab('pitChatBroadcastCard')" title="Tap to Expand or Collapse Live Chat">
-            <div class="broadcast-header-left">
-              <span class="pilot-status-dot"></span>
-              <span>💬 SHIBUYA PIT LIVE CHAT</span>
-            </div>
-            <div class="mob-play-header-actions">
-              <button type="button" class="mob-play-header-btn" id="mobPlayCtrlToggleBtn" onclick="event.stopPropagation(); setControlMode(state.controlMode === 'controlled' ? 'simulated' : 'controlled')">🎮 CTRL</button>
-              <button type="button" class="mob-play-header-btn garage" onclick="event.stopPropagation(); exitMobilePlayMode()">🔧 GARAGE</button>
-            </div>
-            <button type="button" class="btn-close-mobile-chat" onclick="event.stopPropagation(); toggleMobileChatOverlay(false)" title="Close Chat Overlay">✕</button>
-            <div style="display:flex;align-items:center;gap:6px;" class="home-chat-badge-group">
-              <span class="broadcast-count-pill chat-online" id="pitChatOnlineBadge">🟢 PIT ONLINE</span>
-              <span class="home-tab-chevron" id="chev_pitChatBroadcastCard">▾ EXPAND</span>
-            </div>
-          </div>
-          <div class="pit-chat-messages" id="pitChatFeed">
-            <!-- Populated dynamically by appendPitChatMessage() -->
-          </div>
-          <div class="pit-chat-footer">
-            <form class="chat-input-row" onsubmit="event.preventDefault(); sendPitChatFromInput();">
-              <input
-                type="text"
-                id="pitChatInput"
-                class="chat-input"
-                maxlength="160"
-                placeholder="Send message to Shibuya Pit..."
-                autocomplete="off"
-              />
-              <button type="submit" class="btn-chat-send">SEND</button>
-            </form>
-            <div class="chat-emote-strip">
-              <span class="chat-emote-lbl">⚡ HYPE REACTIONS:</span>
-              <div class="chat-emote-btns">
-                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('🔥', '🔥 PURE FIRE!')">🔥</button>
-                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚙️', '⚙️ SAW SHRED!')">⚙️</button>
-                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💀', '💀 BRUTAL KO!')">💀</button>
-                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💎', '💎 HIGH ROLLER!')">💎</button>
-                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚔️', '⚔️ CLASH!')">⚔️</button>
-                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('👑', '👑 CHAMPION!')">👑</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
     </div>
 
+    <!-- DEDICATED RIGHT-SIDE BROADCAST & LIVE CHAT SECTION (ALWAYS ON THE RIGHT ON PC) -->
+    <aside class="pit-broadcast-deck" id="pitBroadcastDeck">
+      <!-- EXPANDABLE TAB 2: LIVE FIGHTS HAPPENING NOW -->
+      <div class="broadcast-card" id="liveFightsBroadcastCard">
+        <div class="broadcast-card-header expandable-tab-trigger" onclick="toggleHomeTab('liveFightsBroadcastCard')" title="Tap to Expand or Collapse Live Fights">
+          <div class="broadcast-header-left">
+            <span class="spec-live-dot"></span>
+            <span>🔴 LIVE FIGHTS HAPPENING NOW</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="broadcast-count-pill" id="liveFightsCountBadge">0 LIVE</span>
+            <span class="home-tab-chevron" id="chev_liveFightsBroadcastCard">▾ EXPAND</span>
+          </div>
+        </div>
+        <div class="live-fights-list" id="liveFightsList">
+          <!-- Populated dynamically by renderLiveFightsList() -->
+        </div>
+      </div>
+
+      <!-- DEDICATED RIGHT-COLUMN SHIBUYA PIT LIVE CHAT -->
+      <div class="broadcast-card tab-expanded" id="pitChatBroadcastCard">
+        <div class="broadcast-card-header expandable-tab-trigger" onclick="if(window.innerWidth <= 960 && !document.body.classList.contains('mobile-play-active')) toggleHomeTab('pitChatBroadcastCard')" title="Shibuya Pit Live Chat">
+          <div class="broadcast-header-left">
+            <span class="pilot-status-dot"></span>
+            <span>💬 SHIBUYA PIT LIVE CHAT</span>
+          </div>
+          <div class="mob-play-header-actions">
+            <button type="button" class="mob-play-header-btn" id="mobPlayCtrlToggleBtn" onclick="event.stopPropagation(); setControlMode(state.controlMode === 'controlled' ? 'simulated' : 'controlled')">🎮 CTRL</button>
+            <button type="button" class="mob-play-header-btn garage" onclick="event.stopPropagation(); exitMobilePlayMode()">🔧 GARAGE</button>
+          </div>
+          <button type="button" class="btn-close-mobile-chat" onclick="event.stopPropagation(); toggleMobileChatOverlay(false)" title="Close Chat Overlay">✕</button>
+          <div style="display:flex;align-items:center;gap:6px;" class="home-chat-badge-group">
+            <span class="broadcast-count-pill chat-online" id="pitChatOnlineBadge">🟢 PIT ONLINE</span>
+            <span class="home-tab-chevron" id="chev_pitChatBroadcastCard">▾ EXPAND</span>
+          </div>
+        </div>
+        <div class="pit-chat-messages" id="pitChatFeed">
+          <!-- Populated dynamically by appendPitChatMessage() -->
+        </div>
+        <div class="pit-chat-footer">
+          <form class="chat-input-row" onsubmit="event.preventDefault(); sendPitChatFromInput();">
+            <input
+              type="text"
+              id="pitChatInput"
+              class="chat-input"
+              maxlength="160"
+              placeholder="Send message to Shibuya Pit..."
+              autocomplete="off"
+            />
+            <button type="submit" class="btn-chat-send">SEND</button>
+          </form>
+          <div class="chat-emote-strip">
+            <span class="chat-emote-lbl">⚡ HYPE REACTIONS:</span>
+            <div class="chat-emote-btns">
+              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('🔥', '🔥 PURE FIRE!')">🔥</button>
+              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚙️', '⚙️ SAW SHRED!')">⚙️</button>
+              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💀', '💀 BRUTAL KO!')">💀</button>
+              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💎', '💎 HIGH ROLLER!')">💎</button>
+              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚔️', '⚔️ CLASH!')">⚔️</button>
+              <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('👑', '👑 CHAMPION!')">👑</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- 🗺️ FULL-SCREEN ARENA MAP SELECTION SHOWCASE MODAL (ALL 7 ARENAS AVAILABLE IN PVP & CPU) -->
+  <div class="fs-map-modal-backdrop" id="fullScreenMapModal">
+    <div class="fs-map-shell">
+      <div class="fs-map-topbar">
+        <div class="fs-map-top-left">
+          <span class="fs-map-step-pill" id="fsMapStepPill">STEP 2 OF 2 · ARENA SELECT</span>
+          <span class="fs-map-top-title" id="fsMapModeTitle">🗺️ SELECT YOUR BATTLE ARENA (ALL 7 MAPS AVAILABLE FOR PVP &amp; CPU)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span class="fs-map-wager-pill" id="fsMapWagerPill">🔒 WAGER: 💎 250</span>
+          <button type="button" class="btn-pre-step-back" onclick="closeFullScreenMapSelector(true)">← BACK TO WAGER</button>
+        </div>
+      </div>
+
+      <div class="fs-map-stage">
+        <button type="button" class="fs-map-arrow-btn prev" onclick="cycleArenaMap(-1)" title="Previous Arena Map (Left Arrow)">
+          <span>◀</span>
+          <span class="lbl">PREV</span>
+        </button>
+
+        <div class="fs-map-viewport" id="fsMapViewport">
+          <img id="fsMapArtImg" src="assets/concept_gallery/battlebots_topdown_3d/01_arena_battle_wide.jpg" alt="Selected Arena Map Preview" />
+          <div class="fs-map-viewport-top-overlays">
+            <span class="fs-map-counter-pill" id="fsMapCounterPill">ARENA 1 OF 7 · PVP &amp; CPU READY</span>
+            <span class="fs-map-hazard-pill" id="fsMapHazardPill">⚙️ CENTER RIP-SAW + CORNER FURNACES</span>
+          </div>
+        </div>
+
+        <button type="button" class="fs-map-arrow-btn next" onclick="cycleArenaMap(1)" title="Next Arena Map (Right Arrow)">
+          <span>▶</span>
+          <span class="lbl">NEXT</span>
+        </button>
+      </div>
+
+      <div class="fs-map-info-panel">
+        <div class="fs-map-title-row">
+          <div class="fs-map-name" id="fsMapTitle">🔥 ARENA 01 · SHIBUYA FURNACE PIT</div>
+          <div class="fs-map-subtitle" id="fsMapSubtitle">Center Rip-Saw &amp; 4 Corner Furnace Geysers</div>
+        </div>
+        <div class="fs-map-desc" id="fsMapDesc">
+          Center slot rip-saw erupts periodically while 4 corner furnace grates blast molten geysers. Available in both Live Online PvP and VS. CPU modes!
+        </div>
+        <div class="fs-map-dots-row" id="fsMapDots"></div>
+        <div class="fs-map-actions-row">
+          <button type="button" class="btn-pre-step-back" onclick="cycleArenaMap(-1)">◀ LEFT</button>
+          <button type="button" class="fs-map-select-btn" id="fsMapConfirmBtn" onclick="confirmPreBattleAndLaunch()">
+            ✅ SELECT ARENA 01 &amp; START BATTLE!
+          </button>
+          <button type="button" class="btn-pre-step-back" onclick="cycleArenaMap(1)">RIGHT ▶</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- MOBILE STICKY BOTTOM NAVIGATION BAR -->
@@ -4944,9 +5431,6 @@
         <div class="shop-header-actions">
           <div class="shop-toast-banner" id="shopToastBanner">✅ UPGRADE PURCHASED & ATTACHED!</div>
           <div class="shop-scrap-vault" id="shopScrapBalance">💎 0 DIAMONDS</div>
-          <button class="shop-tab active" id="toggleDynamicBtn" onclick="toggleDynamicFilter()">
-            ⭐ 5 DYNAMIC PICKS
-          </button>
           <button class="shop-tab" onclick="openBuyDiamondsModal()" style="background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;border-color:#fde047;font-weight:900;">💎 BUY DIAMONDS</button>
           <button class="shop-tab" onclick="resetShopInventory()" style="color:#fb7185;" title="Reset owned upgrades to 0 Diamonds">🔄 RESET PURCHASES</button>
           <button class="btn-close-shop" onclick="closeShopModal()">✕ CLOSE</button>
@@ -4954,21 +5438,12 @@
       </div>
 
       <div class="shop-tabs">
-        <button class="shop-tab active" id="shopTab_tire" onclick="switchShopSlot('tire')">🛞 TIRE UPGRADE</button>
-        <button class="shop-tab" id="shopTab_wpn1" onclick="switchShopSlot('wpn1')">⚔️ WEAPON 1 (MELEE)</button>
-        <button class="shop-tab" id="shopTab_wpn2" onclick="switchShopSlot('wpn2')">🎯 WEAPON 2 (LONG RANGE)</button>
-        <button class="shop-tab" id="shopTab_botAbil1" onclick="switchShopSlot('botAbil1')">⚡ BOT ABILITY 1</button>
-        <button class="shop-tab" id="shopTab_botAbil2" onclick="switchShopSlot('botAbil2')">⚡ BOT ABILITY 2</button>
-        <button class="shop-tab" id="shopTab_wpnAbil" onclick="switchShopSlot('wpnAbil')">🔥 WEAPON ABILITY</button>
-      </div>
-      <div class="rarity-filter-bar" id="shopRarityFilterBar">
-        <span style="font-family:'Orbitron',sans-serif;font-size:0.54rem;font-weight:900;color:#94a3b8;margin-right:4px;">RARITY:</span>
-        <button type="button" class="rarity-filter-pill active" data-rarity="ALL" onclick="setShopRarityFilter('ALL')">ALL RARITIES</button>
-        <button type="button" class="rarity-filter-pill" data-rarity="COMMON" onclick="setShopRarityFilter('COMMON')" style="color:#94a3b8;border-color:rgba(148,163,184,0.45);">○ COMMON</button>
-        <button type="button" class="rarity-filter-pill" data-rarity="UNCOMMON" onclick="setShopRarityFilter('UNCOMMON')" style="color:#34d399;border-color:rgba(52,211,153,0.5);">● UNCOMMON</button>
-        <button type="button" class="rarity-filter-pill" data-rarity="RARE" onclick="setShopRarityFilter('RARE')" style="color:#38bdf8;border-color:rgba(56,189,248,0.55);">▲ RARE</button>
-        <button type="button" class="rarity-filter-pill" data-rarity="EPIC" onclick="setShopRarityFilter('EPIC')" style="color:#c084fc;border-color:rgba(192,132,252,0.6);">◆ EPIC</button>
-        <button type="button" class="rarity-filter-pill" data-rarity="LEGENDARY" onclick="setShopRarityFilter('LEGENDARY')" style="color:#fbbf24;border-color:rgba(251,191,36,0.75);">★ LEGENDARY</button>
+        <button class="shop-tab active" id="shopTab_tire" onclick="switchShopSlot('tire')">🛞 TIRE UPGRADE (5)</button>
+        <button class="shop-tab" id="shopTab_wpn1" onclick="switchShopSlot('wpn1')">⚔️ WEAPON 1: MELEE (5)</button>
+        <button class="shop-tab" id="shopTab_wpn2" onclick="switchShopSlot('wpn2')">🎯 WEAPON 2: RANGE (5)</button>
+        <button class="shop-tab" id="shopTab_botAbil1" onclick="switchShopSlot('botAbil1')">⚡ BOT ABILITY 1 (5)</button>
+        <button class="shop-tab" id="shopTab_botAbil2" onclick="switchShopSlot('botAbil2')">⚡ BOT ABILITY 2 (5)</button>
+        <button class="shop-tab" id="shopTab_wpnAbil" onclick="switchShopSlot('wpnAbil')">🔥 WEAPON ABILITY (5)</button>
       </div>
 
       <div class="shop-workspace">
@@ -5059,8 +5534,162 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
   <script src="auth_hub.js?v=154"></script>
-  <script src="bot_addons_data.js?v=rarity60"></script>
+  <script src="bot_addons_data.js?v=arenas7_v3"></script>
   <script>
+    // =========================================================================
+    // AUTHORITATIVE 7 ARENA MAPS (ARENA 01, 02, 07, 11, 12, 13, 17)
+    // Embedded directly so cached external scripts can never hide the 7 arenas!
+    // =========================================================================
+    window.BOTPIT_MAPS = [
+      {
+        id: "map_01_furnace",
+        num: 1,
+        arenaNum: 1,
+        badge: "🔥 ARENA 01",
+        category: "ORIGINAL ARENA",
+        name: "SHIBUYA FURNACE PIT",
+        shortName: "🔥 SHIBUYA PIT",
+        subtitle: "Center Rip-Saw & 4 Corner Blast Furnaces",
+        hazardDesc: "Classic underground octagon with the emerging Center Rip-Saw and 4 glowing corner blast furnaces. Shove rivals into the center blade or corner grates for massive hazard damage!",
+        conceptArt: "assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg",
+        accent: "#fbbf24",
+        themeColor: "#fbbf24",
+        floorTint: "rgba(0, 0, 0, 0)",
+        gridColor: "rgba(251, 191, 36, 0.10)",
+        borderGlow: "#fbbf24",
+        frictionMult: 1.0,
+        wallBounceMult: 1.0,
+        sawDmgMult: 1.0,
+        hazardType: "furnace"
+      },
+      {
+        id: "arena_02_lava_bridge",
+        num: 2,
+        arenaNum: 2,
+        badge: "🌋 ARENA 02",
+        category: "RING-OUT MAP",
+        name: "OSAKA MOLTEN LAVA BRIDGE",
+        shortName: "🌋 LAVA BRIDGE",
+        subtitle: "RING-OUT: Open Top & Bottom Molten Lava Chasms",
+        hazardDesc: "Wide horizontal riveted dark-steel bridge with NO top or bottom walls—shoving or flipping a rival across the yellow-and-black hazard stripes into the north/south lava rivers is an instant Ring-Out KO!",
+        conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/ringout_01_lava_bridge.jpg",
+        accent: "#f97316",
+        themeColor: "#f97316",
+        floorTint: "rgba(0, 0, 0, 0)",
+        gridColor: "rgba(249, 115, 22, 0.12)",
+        borderGlow: "#f97316",
+        frictionMult: 1.0,
+        wallBounceMult: 1.15,
+        sawDmgMult: 1.0,
+        hazardType: "ringout_top_bottom"
+      },
+      {
+        id: "arena_07_smelter_trenches",
+        num: 7,
+        arenaNum: 7,
+        badge: "🔥 ARENA 07",
+        category: "RING-OUT MAP",
+        name: "KAWASAKI SMELTER SIDE-TRENCHES",
+        shortName: "🔥 SIDE TRENCHES",
+        subtitle: "RING-OUT: Open Left & Right Molten Slag Pouring Trenches",
+        hazardDesc: "Solid armored walls on Top and Bottom, while the entire Left edge and Right edge are open glowing molten slag pouring trenches behind caution lines for head-on Ring-Out shoves!",
+        conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/ringout_06_smelter_side_pits.jpg",
+        accent: "#f59e0b",
+        themeColor: "#f59e0b",
+        floorTint: "rgba(0, 0, 0, 0)",
+        gridColor: "rgba(245, 158, 11, 0.12)",
+        borderGlow: "#f59e0b",
+        frictionMult: 1.0,
+        wallBounceMult: 1.20,
+        sawDmgMult: 1.0,
+        hazardType: "ringout_left_right"
+      },
+      {
+        id: "arena_11_sky_ledge",
+        num: 11,
+        arenaNum: 11,
+        badge: "👑 ARENA 11",
+        category: "RING-OUT MAP",
+        name: "ROPPONGI SKY-PENTHOUSE LEDGE",
+        shortName: "👑 SKY LEDGE",
+        subtitle: "RING-OUT: All 4 Sides Red Laser Rooftop Over 80-Story Drop",
+        hazardDesc: "Luxury dark-obsidian and 24K-gold rooftop platform with glowing crimson laser boundary lines and zero walls on all 4 sides overlooking an 80-story night-city abyss!",
+        conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/ringout_10_sky_tower_ledge.jpg",
+        accent: "#f43f5e",
+        themeColor: "#f43f5e",
+        floorTint: "rgba(0, 0, 0, 0)",
+        gridColor: "rgba(244, 63, 94, 0.12)",
+        borderGlow: "#f43f5e",
+        frictionMult: 1.0,
+        wallBounceMult: 1.25,
+        sawDmgMult: 1.0,
+        hazardType: "ringout_sky_ledge"
+      },
+      {
+        id: "arena_12_scrap_kennel",
+        num: 12,
+        arenaNum: 12,
+        badge: "🧨 ARENA 12",
+        category: "2x MINI-BOT AMBUSH MAP",
+        name: "SHIBUYA SCRAP-HOUND KENNEL",
+        shortName: "🧨 BOMB BUGGIES",
+        subtitle: "AMBUSH: 2x 'TICK-BOOM' Bomb Buggies (220 HP) Attack Once/Round",
+        hazardDesc: "Enclosed junkyard pit with Top-Center & Bottom-Center red warning hatch bays. Once per round, 2 fast Kamikaze Bomb Buggies (220 HP) drive out to chase both players (+80 HP & Nitro Boost on kill)!",
+        conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/minibot_01_scrap_hound_kennel.jpg",
+        accent: "#ef4444",
+        themeColor: "#ef4444",
+        floorTint: "rgba(0, 0, 0, 0)",
+        gridColor: "rgba(239, 68, 68, 0.12)",
+        borderGlow: "#ef4444",
+        frictionMult: 1.0,
+        wallBounceMult: 1.10,
+        sawDmgMult: 1.0,
+        hazardType: "minibot_bomb_buggies"
+      },
+      {
+        id: "arena_13_drone_foundry",
+        num: 13,
+        arenaNum: 13,
+        badge: "🕷️ ARENA 13",
+        category: "2x MINI-BOT AMBUSH MAP",
+        name: "AKIHABARA DRONE-HIVE FOUNDRY",
+        shortName: "🕷️ TESLA SPIDERS",
+        subtitle: "AMBUSH: 2x 'VOLT-LEECH' Tesla Spiders (220 HP) Attack Once/Round",
+        hazardDesc: "Cobalt cyber-foundry with Top-Center & Bottom-Center hexagonal drone bays. Once per round, 2 Volt-Leech Spiders (220 HP) emerge to zap & slow both players (+120 HP Shield Battery on kill)!",
+        conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/minibot_02_drone_hive_foundry.jpg",
+        accent: "#22d3ee",
+        themeColor: "#22d3ee",
+        floorTint: "rgba(0, 0, 0, 0)",
+        gridColor: "rgba(34, 211, 238, 0.12)",
+        borderGlow: "#22d3ee",
+        frictionMult: 1.0,
+        wallBounceMult: 1.10,
+        sawDmgMult: 1.0,
+        hazardType: "minibot_volt_spiders"
+      },
+      {
+        id: "arena_17_cryo_lab",
+        num: 17,
+        arenaNum: 17,
+        badge: "❄️ ARENA 17",
+        category: "2x MINI-BOT AMBUSH MAP",
+        name: "HOKKAIDO CRYO-DRONE LAB",
+        shortName: "❄️ CRYO DRONES",
+        subtitle: "AMBUSH: 2x 'FROST-MITE' Cryo Drones (210 HP) Attack Once/Round",
+        hazardDesc: "Frosted steel cryo-laboratory with Top-Center & Bottom-Center airlock bays. Once per round, 2 Cryo-Sprayer Drones (210 HP) exit the airlocks to chill both fighters (+110 HP Repair on kill)!",
+        conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/minibot_06_cryo_drone_lab.jpg",
+        accent: "#38bdf8",
+        themeColor: "#38bdf8",
+        floorTint: "rgba(0, 0, 0, 0)",
+        gridColor: "rgba(56, 189, 248, 0.12)",
+        borderGlow: "#38bdf8",
+        frictionMult: 1.02,
+        wallBounceMult: 1.10,
+        sawDmgMult: 1.0,
+        hazardType: "minibot_cryo_mites"
+      }
+    ];
+
     // =========================================================================
     // 1. STATE: PILOT LOG-ON, CAMPAIGN vs PVP MODE, OWNED ARMORY & 3D MOUNTS
     // =========================================================================
@@ -5246,12 +5875,26 @@
       } catch (_) {}
     }
 
+    const CORE_5_BY_SLOT = {
+      tire: ["tire_04", "tire_05", "tire_12", "tire_15", "tire_17"],
+      wpn1: ["wpn_01", "wpn_05", "wpn_08", "wpn_10", "wpn_12"],
+      wpn2: ["rng_01", "rng_04", "rng_08", "rng_13", "rng_18"],
+      botAbil1: ["bot_abil_01", "bot_abil_04", "bot_abil_09", "bot_abil_11", "bot_abil_17"],
+      botAbil2: ["bot_abil_01", "bot_abil_04", "bot_abil_09", "bot_abil_11", "bot_abil_17"],
+      wpnAbil: ["wpn_abil_03", "wpn_abil_07", "wpn_abil_11", "wpn_abil_12", "wpn_abil_18"]
+    };
+
     function normalizeLoadout(obj) {
       if (!obj || typeof obj !== "object") return { ...EMPTY_LOADOUT };
       const copy = { ...EMPTY_LOADOUT, ...obj };
       if (copy.wpn2 && String(copy.wpn2).startsWith("wpn_")) {
         const mapOld = { wpn_01: "rng_01", wpn_05: "rng_04", wpn_08: "rng_08", wpn_10: "rng_13", wpn_12: "rng_18" };
         copy.wpn2 = mapOld[copy.wpn2] || "rng_01";
+      }
+      for (const [slotKey, allowed] of Object.entries(CORE_5_BY_SLOT)) {
+        if (copy[slotKey] && !allowed.includes(copy[slotKey])) {
+          copy[slotKey] = allowed[0];
+        }
       }
       return copy;
     }
@@ -6028,6 +6671,7 @@
         rigLevel: pInfo.rigLevel,
         equippedCount: pInfo.equippedCount,
         wager: getPlayerProposedWager(),
+        mapId: state.activeMapId || "map_01_furnace",
         color: "#38bdf8",
         baseStats: { ...BASE_STATS },
         loadout: { ...state.loadout },
@@ -6122,9 +6766,11 @@
       if (livePvp.activeRoomId) return;
       const roomId = "room_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
       const agreedWager = Math.min(Number(hostSpec.wager) || 0, Number(guestSpec.wager) || 0);
+      const chosenMapId = hostSpec.mapId || guestSpec.mapId || state.activeMapId || "map_01_furnace";
       const roomPayload = {
         roomId,
         agreedWager,
+        mapId: chosenMapId,
         hostPeer: hostSpec,
         guestPeer: guestSpec,
         startedAt: Date.now()
@@ -6271,6 +6917,10 @@
       livePvp.agreedWager = roomSpec.agreedWager;
       livePvp.role = (roomSpec.hostPeer.clientId === LIVE_CLIENT_ID) ? "host" : "guest";
       livePvp.lastGuestTick = -1;
+      if (roomSpec.mapId) {
+        state.activeMapId = roomSpec.mapId;
+        localStorage.setItem("rc_botpit_map", roomSpec.mapId);
+      }
 
       const oppPeer = livePvp.role === "host" ? roomSpec.guestPeer : roomSpec.hostPeer;
 
@@ -6391,6 +7041,7 @@
 
       sendRoomPacket({
         type: "host_state",
+        mapId: state.activeMapId || "map_01_furnace",
         ticks: sim.ticks,
         timeLeft: Math.round(sim.timeLeft * 100) / 100,
         currentRound: sim.currentRound || 1,
@@ -6409,6 +7060,19 @@
         } : null,
         hostBot: serializeBot(hostBot),
         guestBot: serializeBot(guestBot),
+        miniBots: Array.isArray(sim.miniBots) ? sim.miniBots.map(mb => ({
+          id: mb.id,
+          name: mb.name,
+          kind: mb.kind,
+          targetTeam: mb.targetTeam,
+          x: Math.round(mb.x),
+          y: Math.round(mb.y),
+          angle: Math.round((mb.angle || 0) * 100) / 100,
+          radius: mb.radius,
+          hp: Math.max(0, Math.round(mb.hp)),
+          maxHp: mb.maxHp,
+          color: mb.color
+        })) : [],
         projectiles: sim.projectiles.slice(0, 12).map(p => ({
           kind: p.kind,
           x: Math.round(p.x),
@@ -6445,6 +7109,9 @@
           return;
         }
         livePvp.lastGuestTick = pkt.ticks || 0;
+        if (pkt.mapId && pkt.mapId !== state.activeMapId) {
+          state.activeMapId = pkt.mapId;
+        }
         sim.ticks = pkt.ticks || sim.ticks;
         sim.timeLeft = typeof pkt.timeLeft === "number" ? pkt.timeLeft : sim.timeLeft;
         sim.currentRound = pkt.currentRound || 1;
@@ -6460,6 +7127,14 @@
         }
         if (pkt.centerSaw && sim.centerSaw) {
           Object.assign(sim.centerSaw, pkt.centerSaw);
+        }
+        if (Array.isArray(pkt.miniBots)) {
+          sim.miniBots = pkt.miniBots.map(mb => ({
+            ...mb,
+            x: 1600 - mb.x,
+            angle: Math.PI - (mb.angle || 0),
+            targetTeam: mb.targetTeam === "player" ? "enemy" : "player"
+          }));
         }
         // Mirror X (1600 - x) on Guest screen so Guest's own bot (sim.bots[0]) is on the left under their HUD bar
         const mirrorBot = (src) => ({
@@ -6761,6 +7436,7 @@
         };
         state.activeOnlineOpponent = state.customFriendChallenger;
         setGameMode("pvp");
+        beginPreBattleWizard("pvp");
       } catch (err) {
         alert("Invalid Rig Battle Code format.");
       }
@@ -6829,18 +7505,18 @@
       if (equippedIds.has("wpn_01")) frontGuardBlock = Math.min(0.72, frontGuardBlock + 0.30); // Wedge strength: +30% front block
       if (equippedIds.has("wpn_05")) frontGuardBlock *= 0.85; // Flipper weakness: -15% front guard while resetting
 
-      let topSpeedPx = 4.0 + speed * 0.075;
-      let accelPx = 0.25 + speed * 0.0058;
+      let topSpeedPx = 5.2 + speed * 0.092;
+      let accelPx = 0.34 + speed * 0.0072;
       if (equippedIds.has("tire_15")) {
         topSpeedPx *= 1.38;
         accelPx *= 1.38;
       }
       if (equippedIds.has("tire_05")) {
-        topSpeedPx *= 0.78; // Tank Tracks weakness: -22% top speed
-        accelPx *= 0.82;
+        topSpeedPx *= 0.80; // Tank Tracks weakness: -20% top speed
+        accelPx *= 0.84;
       }
 
-      let turnRateRad = 0.034 + agility * 0.0014;
+      let turnRateRad = 0.045 + agility * 0.0018;
       if (equippedIds.has("tire_04")) turnRateRad *= 1.45; // Mecanum strength: +45% turn rate
       if (equippedIds.has("tire_05")) turnRateRad *= 0.76; // Tank Tracks weakness: slow turning
 
@@ -7229,6 +7905,34 @@
       syncPreBattleStepUI();
     }
 
+    function openFullScreenMapSelector() {
+      const fsModal = document.getElementById("fullScreenMapModal");
+      if (fsModal) {
+        fsModal.classList.add("active");
+      }
+      renderArenaMapSelector();
+    }
+
+    function closeFullScreenMapSelector(backToWager = false) {
+      const fsModal = document.getElementById("fullScreenMapModal");
+      if (fsModal) {
+        fsModal.classList.remove("active");
+      }
+      if (backToWager) {
+        setPreBattleStep("wager");
+      }
+    }
+
+    function cycleArenaMap(delta) {
+      const maps = window.BOTPIT_MAPS || [];
+      if (!maps.length) return;
+      const curMap = getActiveArenaMap();
+      let idx = maps.findIndex(m => m.id === curMap.id);
+      if (idx < 0) idx = 0;
+      idx = (idx + delta + maps.length) % maps.length;
+      selectArenaMap(maps[idx].id, false);
+    }
+
     function syncPreBattleStepUI() {
       const step = state.preBattleStep || "mode";
       const tagEl = document.getElementById("overlayLevelTag");
@@ -7238,11 +7942,13 @@
       const wagerWrap = document.getElementById("preStepWagerWrap");
       const mapWrap = document.getElementById("preStepMapWrap");
       const qBox = document.getElementById("livePvpQueueBox");
+      const fsModal = document.getElementById("fullScreenMapModal");
 
-      if (choiceRow) choiceRow.style.display = step === "mode" ? "grid" : "none";
+      if (choiceRow) choiceRow.style.display = step === "mode" ? "flex" : "none";
       if (wagerWrap) wagerWrap.style.display = step === "wager" ? "flex" : "none";
       if (mapWrap) mapWrap.style.display = step === "map" ? "flex" : "none";
       if (qBox) qBox.classList.toggle("active", step === "searching");
+      if (fsModal) fsModal.classList.toggle("active", step === "map");
 
       if (step === "mode") {
         if (state.postMatchSummary) {
@@ -7282,7 +7988,7 @@
           bannerEl.style.color = "#38bdf8";
         }
         if (descEl) {
-          descEl.textContent = `🔒 Locked Wager: 💎 ${effWager.toLocaleString()} · Tap a map & launch battle!`;
+          descEl.textContent = `🔒 Locked Wager: 💎 ${effWager.toLocaleString()} · Use ◀ / ▶ to preview all 7 maps & launch battle!`;
         }
         renderArenaMapSelector();
       } else if (step === "searching") {
@@ -7299,6 +8005,16 @@
     }
 
     function confirmPreBattleAndLaunch() {
+      const fsModal = document.getElementById("fullScreenMapModal");
+      if (fsModal) fsModal.classList.remove("active");
+      if (typeof sim !== "undefined" && !sim.running && typeof setupStagingArena === "function") {
+        setupStagingArena();
+      }
+      // If opened directly from the home/mode screen just to pick a map, save selection and return to mode screen
+      if (state.preBattleStep !== "map") {
+        renderArenaMapSelector();
+        return;
+      }
       if (!ensurePilotLoggedIn()) return;
       state.postMatchSummary = null;
       if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
@@ -7315,7 +8031,7 @@
 
     function getActiveArenaMap() {
       const maps = window.BOTPIT_MAPS || [];
-      if (!maps.length) return { id: "map_01_furnace", name: "SHIBUYA FURNACE PIT", badge: "🔥 MAP 01", accent: "#f97316", subtitle: "4 Corner Furnace Vents · Center Saw", hazardType: "furnace", floorTint: "rgba(249,115,22,0.06)", gridColor: "rgba(249,115,22,0.14)", speedMult: 1.0, tractionMult: 1.0 };
+      if (!maps.length) return { id: "map_01_furnace", name: "SHIBUYA FURNACE PIT", badge: "🔥 ARENA 01", accent: "#f97316", subtitle: "4 Corner Furnace Vents · Center Saw", hazardType: "furnace", floorTint: "rgba(249,115,22,0.06)", gridColor: "rgba(249,115,22,0.14)", speedMult: 1.0, tractionMult: 1.0 };
       const savedId = state.activeMapId || localStorage.getItem("rc_botpit_map") || maps[0].id;
       return maps.find(m => m.id === savedId) || maps[0];
     }
@@ -7325,6 +8041,9 @@
       state.activeMapId = mapId;
       localStorage.setItem("rc_botpit_map", mapId);
       renderArenaMapSelector();
+      if (typeof sim !== "undefined" && !sim.running && typeof setupStagingArena === "function") {
+        setupStagingArena();
+      }
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
       if (launchOnSameTap && wasAlreadySelected && state.preBattleStep === "map") {
         confirmPreBattleAndLaunch();
@@ -7336,25 +8055,95 @@
       if (!maps.length) return;
       const activeMap = getActiveArenaMap();
       state.activeMapId = activeMap.id;
-      const chipsEl = document.getElementById("overlayMapChips");
-      if (chipsEl) {
-        chipsEl.innerHTML = maps.map(m => {
+      const activeIdx = Math.max(0, maps.findIndex(m => m.id === activeMap.id));
+      const isPvp = state.gameMode === "pvp";
+      const effWager = typeof getEffectiveWager === "function" ? getEffectiveWager() : 0;
+
+      // 1. Populate Full-Screen Map Selection Modal
+      const fsArt = document.getElementById("fsMapArtImg");
+      if (fsArt && activeMap.conceptArt) {
+        fsArt.src = activeMap.conceptArt;
+        fsArt.alt = `${activeMap.badge} · ${activeMap.name}`;
+      }
+      const fsViewport = document.getElementById("fsMapViewport");
+      if (fsViewport) {
+        fsViewport.style.borderColor = activeMap.accent || "#fbbf24";
+        fsViewport.style.boxShadow = `0 24px 65px rgba(0, 0, 0, 0.95), 0 0 36px ${(activeMap.accent || '#fbbf24')}44`;
+      }
+      const fsCounter = document.getElementById("fsMapCounterPill");
+      if (fsCounter) {
+        fsCounter.textContent = `MAP ${activeIdx + 1} OF ${maps.length} · ${isPvp ? '🌐 LIVE ONLINE PVP' : '🤖 VS. CPU BOT'} (ALL 7 ARENAS AVAILABLE)`;
+      }
+      const fsHazard = document.getElementById("fsMapHazardPill");
+      if (fsHazard) {
+        const hType = activeMap.hazardType || "";
+        let hLabel = "⚙️ CENTER RIP-SAW + 4 CORNER FURNACES";
+        if (hType.startsWith("ringout_")) hLabel = "🚨 INSTANT RING-OUT DROP-OFF HAZARD";
+        else if (hType.startsWith("minibot_")) hLabel = "🤖 2X MINI-BOT AMBUSH (ONCE PER ROUND)";
+        fsHazard.textContent = hLabel;
+        fsHazard.style.borderColor = activeMap.accent || "#fbbf24";
+        fsHazard.style.color = activeMap.accent || "#fde047";
+      }
+      const fsWager = document.getElementById("fsMapWagerPill");
+      if (fsWager) {
+        fsWager.textContent = effWager > 0
+          ? `🔒 LOCKED WAGER: 💎 ${effWager.toLocaleString()}`
+          : `🔒 FREE MATCH (0 💎)`;
+      }
+      const fsTitle = document.getElementById("fsMapTitle");
+      if (fsTitle) {
+        fsTitle.textContent = `${activeMap.badge} · ${activeMap.name}`;
+        fsTitle.style.color = activeMap.accent || "#ffffff";
+      }
+      const fsSub = document.getElementById("fsMapSubtitle");
+      if (fsSub) {
+        fsSub.textContent = activeMap.subtitle || "";
+      }
+      const fsDesc = document.getElementById("fsMapDesc");
+      if (fsDesc) {
+        fsDesc.textContent = activeMap.hazardDesc || activeMap.mechanic || activeMap.subtitle || "";
+      }
+      const fsDots = document.getElementById("fsMapDots");
+      if (fsDots) {
+        fsDots.innerHTML = maps.map(m => {
           const isAct = m.id === activeMap.id;
-          return `
-            <button type="button" class="map-select-chip ${isAct ? 'active' : ''}" style="${isAct ? `border-color:${m.accent};box-shadow:0 0 14px ${m.accent}44;` : ''}" onclick="selectArenaMap('${m.id}', true)">
-              <span class="map-chip-top" style="color:${isAct ? m.accent : '#f8fafc'};">${m.badge} · ${m.name}</span>
-              <span class="map-chip-sub">${m.subtitle}</span>
-            </button>
-          `;
+          return `<button type="button" class="fs-map-dot-chip ${isAct ? 'active' : ''}" style="${isAct ? `border-color:${m.accent};color:#fff;background:${m.accent}33;` : ''}" onclick="selectArenaMap('${m.id}', false)">${m.badge} · ${m.shortName ? m.shortName.replace(/^[^\s]+\s*/, '') : m.name}</button>`;
         }).join("");
+      }
+      const fsConfirm = document.getElementById("fsMapConfirmBtn");
+      if (fsConfirm) {
+        if (state.preBattleStep === "map") {
+          fsConfirm.textContent = `✅ SELECT ${activeMap.badge} & START ${isPvp ? 'PVP' : 'CPU'} BATTLE!`;
+        } else {
+          fsConfirm.textContent = `✅ SELECT ${activeMap.badge} (${activeMap.name})`;
+        }
+      }
+
+      // 2. Populate Inline Map Preview & Home Map Button
+      const inlineArt = document.getElementById("inlineMapArtImg");
+      if (inlineArt && activeMap.conceptArt) {
+        inlineArt.src = activeMap.conceptArt;
+      }
+      const inlineTitle = document.getElementById("inlineMapTitleBadge");
+      if (inlineTitle) {
+        inlineTitle.textContent = `${activeMap.badge} · ${activeMap.name}`;
+        inlineTitle.style.color = activeMap.accent || "#fbbf24";
+      }
+      const inlineDesc = document.getElementById("inlineMapDescTxt");
+      if (inlineDesc) {
+        inlineDesc.textContent = activeMap.hazardDesc || activeMap.subtitle || "";
       }
       const subEl = document.getElementById("activeMapSubtitleTxt");
       if (subEl) {
-        subEl.innerHTML = `<strong style="color:${activeMap.accent};">${activeMap.badge}:</strong> ${activeMap.subtitle}`;
+        subEl.textContent = `MAP ${activeIdx + 1} OF ${maps.length}`;
       }
       const launchBtn = document.getElementById("btnConfirmMapLaunch");
       if (launchBtn) {
-        launchBtn.innerHTML = `⚔️ FIGHT ON ${activeMap.name}!`;
+        launchBtn.innerHTML = `✅ SELECT ${activeMap.badge} &amp; FIGHT!`;
+      }
+      const homeMapBtn = document.getElementById("btnHomeOpenMapSelect");
+      if (homeMapBtn) {
+        homeMapBtn.innerHTML = `🗺️ MAP: <strong>${activeMap.badge} · ${activeMap.name}</strong> (CLICK TO CHANGE — 7 ARENAS)`;
       }
     }
 
@@ -7488,18 +8277,9 @@
         `Purchasing & Attaching 3D Hardware for: ${sd.icon} ${sd.label} — Click 💎 BUY & ATTACH on any module below!`;
 
       let rawItems = window.BOT_ADDONS_CATALOG[sd.cat] || [];
-      if (sd.key === "botAbil1") {
-        rawItems = rawItems.filter(it => !it.slotHint || it.slotHint === "botAbil1");
-      } else if (sd.key === "botAbil2") {
-        rawItems = rawItems.filter(it => !it.slotHint || it.slotHint === "botAbil2");
-      }
-      let items = state.onlyDynamicPicks ? rawItems.filter(it => it.isDynamicPick) : rawItems;
-      if (state.activeRarityFilter && state.activeRarityFilter !== "ALL") {
-        items = items.filter(it => (it.rarity || "COMMON") === state.activeRarityFilter);
-      }
-      // Sort items by Rarity tier (COMMON -> LEGENDARY) then cost
-      const rOrder = { COMMON: 1, UNCOMMON: 2, RARE: 3, EPIC: 4, LEGENDARY: 5 };
-      items = [...items].sort((a, b) => (rOrder[a.rarity] || 1) - (rOrder[b.rarity] || 1) || (a.cost || 0) - (b.cost || 0));
+      const allowed5Ids = FEATURED_POOL_BY_SLOT[slotKey] || [];
+      let items = rawItems.filter(it => allowed5Ids.includes(it.id));
+      items = [...items].sort((a, b) => (a.cost || 0) - (b.cost || 0));
 
       updateShopLiveDeltaUI();
 
@@ -7782,6 +8562,7 @@
       "assets/concept_gallery/addons_80/3d_debris/debris_08.png"
     ];
     DEBRIS_3D_SPRITES.forEach(src => getImg(src));
+    (window.BOTPIT_MAPS || []).forEach(m => { if (m && m.conceptArt) getImg(m.conceptArt); });
 
     function spawnArmorDebris(x, y, color = "#94a3b8", count = 2, burstSpeed = 7.0) {
       // Keep flying debris count modest (1 to 3 pieces per major impact, max 12 on screen)
@@ -7921,6 +8702,316 @@
       }
     }
 
+    function awardMiniBotKillBuff(killerBot, mb) {
+      if (!killerBot || killerBot.hp <= 0) return;
+      spawnArmorDebris(mb.x, mb.y, mb.color, 5, 8.5);
+      emit3DSparks(mb.x, mb.y, mb.color, 28, 9.5);
+      addPulseRing(mb.x, mb.y, 135, mb.color);
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playPartBreak(false);
+
+      if (mb.kind === "bomb") {
+        killerBot.hp = Math.min(killerBot.maxHp, killerBot.hp + 85);
+        killerBot.stamina = killerBot.maxStamina;
+        killerBot.staminaState = "fresh";
+        addFloatText(killerBot.x, killerBot.y - 54, "🧨💥 MINI-BOT KO! +85 HP & NITRO REFILL!", "#00ff88");
+      } else if (mb.kind === "volt") {
+        killerBot.hp = Math.min(killerBot.maxHp, killerBot.hp + 120);
+        killerBot.empStunTimer = 0;
+        addFloatText(killerBot.x, killerBot.y - 54, "🕷️⚡ VOLT-LEECH KO! +120 HP SHIELD BATTERY!", "#38bdf8");
+      } else {
+        killerBot.hp = Math.min(killerBot.maxHp, killerBot.hp + 110);
+        killerBot.stamina = killerBot.maxStamina;
+        killerBot.staminaState = "fresh";
+        killerBot.cryoTimer = 0;
+        addFloatText(killerBot.x, killerBot.y - 54, "❄️💚 FROST-MITE KO! +110 HP & FULL STAMINA!", "#00f5ff");
+      }
+    }
+
+    function stepArenaMapHazardsAndMiniBots(pBot, eBot) {
+      const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+      const hType = activeMap ? activeMap.hazardType : "furnace";
+      const statusEl = document.getElementById("hudSawStatus");
+
+      if (!activeMap || hType === "furnace") {
+        stepCenterPeriodicSaw();
+        return;
+      }
+
+      // Keep Center Saw retracted on non-Furnace maps so each arena's unique hazard shines 1:1
+      if (sim.centerSaw) {
+        sim.centerSaw.state = "off";
+        sim.centerSaw.currentRadius = 0;
+      }
+
+      if (hType === "ringout_top_bottom") {
+        if (statusEl) {
+          statusEl.textContent = "🌋 LAVA BRIDGE: TOP & BOTTOM RING-OUT OPEN!";
+          statusEl.style.color = "#f97316";
+        }
+        if (sim.ticks % 10 === 0) {
+          const rx = 200 + Math.random() * 1200;
+          const ry = Math.random() < 0.5 ? (70 + Math.random() * 75) : (755 + Math.random() * 75);
+          emit3DSparks(rx, ry, "#f97316", 2, 3.2);
+        }
+        return;
+      }
+
+      if (hType === "ringout_left_right") {
+        if (statusEl) {
+          statusEl.textContent = "🔥 SMELTER TRENCHES: LEFT & RIGHT RING-OUT OPEN!";
+          statusEl.style.color = "#fb923c";
+        }
+        if (sim.ticks % 10 === 0) {
+          const rx = Math.random() < 0.5 ? (95 + Math.random() * 95) : (1410 + Math.random() * 95);
+          const ry = 140 + Math.random() * 620;
+          emit3DSparks(rx, ry, "#fb923c", 2, 3.2);
+        }
+        return;
+      }
+
+      if (hType === "ringout_sky_ledge") {
+        if (statusEl) {
+          statusEl.textContent = "👑 SKY-PENTHOUSE LEDGE: 4-SIDED RING-OUT!";
+          statusEl.style.color = "#fbbf24";
+        }
+        return;
+      }
+
+      // ONCE-PER-ROUND 2x MINI-BOT AMBUSH MAPS (Arena 12, Arena 13, Arena 17)
+      if (hType && hType.startsWith("minibot_")) {
+        if (!Array.isArray(sim.miniBots)) sim.miniBots = [];
+        const elapsed = (sim.roundDurationSec || 180.0) - sim.timeLeft;
+
+        if (!sim.miniBotsSpawnedThisRound) {
+          const remain = Math.max(1, Math.ceil(6.0 - elapsed));
+          if (statusEl) {
+            statusEl.textContent = `⚠️ 2x MINI-BOT AMBUSH IN ${remain}s!`;
+            statusEl.style.color = activeMap.accent || "#38bdf8";
+          }
+          if (elapsed >= 6.0) {
+            sim.miniBotsSpawnedThisRound = true;
+            let mbSpec;
+            if (hType === "minibot_bomb_buggies") {
+              mbSpec = {
+                kind: "bomb",
+                name: "🧨 TICK-BOOM",
+                hp: 220,
+                maxHp: 220,
+                color: "#ef4444",
+                speed: 4.25,
+                fuseTimer: 480,
+                cp: computeBotCombatProfile(BASE_STATS, { tire: "tire_15", wpn1: "wpn_01", wpn2: null, botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: "wpn_abil_07" })
+              };
+            } else if (hType === "minibot_volt_spiders") {
+              mbSpec = {
+                kind: "volt",
+                name: "🕷️ VOLT-LEECH",
+                hp: 220,
+                maxHp: 220,
+                color: "#38bdf8",
+                speed: 3.9,
+                atkCd: 40,
+                cp: computeBotCombatProfile(BASE_STATS, { tire: "tire_04", wpn1: "wpn_10", wpn2: null, botAbil1: "bot_abil_11", botAbil2: null, wpnAbil: "wpn_abil_12" })
+              };
+            } else {
+              mbSpec = {
+                kind: "cryo",
+                name: "❄️ FROST-MITE",
+                hp: 210,
+                maxHp: 210,
+                color: "#00f5ff",
+                speed: 3.85,
+                atkCd: 45,
+                cp: computeBotCombatProfile(BASE_STATS, { tire: "tire_04", wpn1: "wpn_05", wpn2: "rng_04", botAbil1: "bot_abil_17", botAbil2: null, wpnAbil: "wpn_abil_11" })
+              };
+            }
+
+            sim.miniBots = [
+              {
+                ...mbSpec,
+                id: "mb_north",
+                x: 800,
+                y: 128,
+                vx: 0,
+                vy: 3.2,
+                angle: Math.PI / 2,
+                radius: 34,
+                targetTeam: "player",
+                hitFlash: 0,
+                hitCd: 0,
+                atkCd: mbSpec.atkCd || 45,
+                fuseTimer: mbSpec.fuseTimer || 0
+              },
+              {
+                ...mbSpec,
+                id: "mb_south",
+                x: 800,
+                y: 772,
+                vx: 0,
+                vy: -3.2,
+                angle: -Math.PI / 2,
+                radius: 34,
+                targetTeam: "enemy",
+                hitFlash: 0,
+                hitCd: 0,
+                atkCd: mbSpec.atkCd || 45,
+                fuseTimer: mbSpec.fuseTimer || 0
+              }
+            ];
+
+            addPulseRing(800, 128, 130, mbSpec.color);
+            addPulseRing(800, 772, 130, mbSpec.color);
+            emit3DSparks(800, 128, mbSpec.color, 24, 8.0);
+            emit3DSparks(800, 772, mbSpec.color, 24, 8.0);
+            if (typeof BotPitAudio !== "undefined") BotPitAudio.playPredatorLock();
+            addFloatText(800, 360, `🚨 NORTH & SOUTH BAYS OPEN — 2x ${mbSpec.name} AMBUSH!`, mbSpec.color);
+          }
+          return;
+        }
+
+        if (statusEl) {
+          if (sim.miniBots.length > 0) {
+            statusEl.textContent = `🚨 MINI-BOT AMBUSH: ${sim.miniBots.length}/2 ACTIVE!`;
+            statusEl.style.color = activeMap.accent || "#ef4444";
+          } else {
+            statusEl.textContent = "✅ MINI-BOT AMBUSH CLEARED THIS ROUND";
+            statusEl.style.color = "#34d399";
+          }
+        }
+
+        for (let i = sim.miniBots.length - 1; i >= 0; i--) {
+          const mb = sim.miniBots[i];
+          if (mb.hp <= 0) {
+            sim.miniBots.splice(i, 1);
+            continue;
+          }
+          if (mb.hitFlash > 0) mb.hitFlash--;
+          if (mb.hitCd > 0) mb.hitCd--;
+          if (mb.atkCd > 0) mb.atkCd--;
+
+          const target = (mb.targetTeam === "player" && pBot && pBot.hp > 0) ? pBot : eBot;
+          if (!target || target.hp <= 0) continue;
+
+          const dx = target.x - mb.x;
+          const dy = target.y - mb.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          const desired = Math.atan2(dy, dx);
+          let dAng = desired - mb.angle;
+          while (dAng > Math.PI) dAng -= Math.PI * 2;
+          while (dAng < -Math.PI) dAng += Math.PI * 2;
+          mb.angle += Math.sign(dAng) * Math.min(Math.abs(dAng), 0.085);
+
+          mb.vx = mb.vx * 0.86 + Math.cos(mb.angle) * (mb.speed * 0.16);
+          mb.vy = mb.vy * 0.86 + Math.sin(mb.angle) * (mb.speed * 0.16);
+          mb.x = Math.max(DOME.x + mb.radius, Math.min(DOME.x + DOME.w - mb.radius, mb.x + mb.vx));
+          mb.y = Math.max(DOME.y + mb.radius, Math.min(DOME.y + DOME.h - mb.radius, mb.y + mb.vy));
+
+          // 1. Bomb Buggy Fuse Countdown & Periodic Sparks
+          if (mb.kind === "bomb") {
+            mb.fuseTimer--;
+            if (sim.ticks % 6 === 0) emit3DSparks(mb.x, mb.y, "#f97316", 2, 3.8);
+            if (mb.fuseTimer <= 0) {
+              // Fuse expired: detonate in place!
+              addPulseRing(mb.x, mb.y, 165, "#ef4444");
+              emit3DSparks(mb.x, mb.y, "#ff8c00", 36, 10.5);
+              spawnFloorMark(mb.x, mb.y, "scorch", 44);
+              if (typeof BotPitAudio !== "undefined") BotPitAudio.playPartBreak(false);
+              for (const b of [pBot, eBot]) {
+                const db = Math.hypot(b.x - mb.x, b.y - mb.y);
+                if (db < 165) {
+                  const bDmg = Math.round(85 * (1 - b.cp.armorReduction * 0.45));
+                  b.hp = Math.max(0, b.hp - bDmg);
+                  b.hitFlash = 8;
+                  b.thermiteTimer = Math.max(b.thermiteTimer, 140);
+                  addFloatText(b.x, b.y - 44, `🧨💥 TICK-BOOM BLAST! -${bDmg}`, "#ef4444");
+                }
+              }
+              sim.miniBots.splice(i, 1);
+              continue;
+            }
+          }
+
+          // 2. Volt-Leech Periodic Tesla Zap at Close Range
+          if (mb.kind === "volt" && dist < 145 && mb.atkCd <= 0) {
+            mb.atkCd = 78;
+            const zDmg = Math.round(28 * (1 - target.cp.armorReduction * 0.4));
+            target.hp = Math.max(0, target.hp - zDmg);
+            target.empStunTimer = Math.max(target.empStunTimer, 28);
+            target.hitFlash = 6;
+            sim.tethers.push({ x1: mb.x, y1: mb.y, x2: target.x, y2: target.y, life: 12 });
+            emit3DSparks(target.x, target.y, "#38bdf8", 16, 6.5);
+            addFloatText(target.x, target.y - 42, `🕷️⚡ VOLT-LEECH ZAP! -${zDmg}`, "#38bdf8");
+          }
+
+          // 3. Frost-Mite Periodic Liquid-Nitrogen Spray at Close Range
+          if (mb.kind === "cryo" && dist < 165 && mb.atkCd <= 0) {
+            mb.atkCd = 84;
+            const cDmg = Math.round(24 * (1 - target.cp.armorReduction * 0.4));
+            target.hp = Math.max(0, target.hp - cDmg);
+            target.cryoTimer = Math.max(target.cryoTimer, 155);
+            target.hitFlash = 6;
+            spawnFloorMark(target.x, target.y, "ice", 38);
+            addPulseRing(mb.x, mb.y, 130, "#00f5ff");
+            emit3DSparks(target.x, target.y, "#00f5ff", 16, 6.5);
+            addFloatText(target.x, target.y - 42, `❄️ FROST-MITE SPRAY! -${cDmg}`, "#00f5ff");
+          }
+
+          // 4. Physical Collision with Main Fighter Bots (Player or Enemy can ram & destroy Mini-Bots!)
+          for (const b of [pBot, eBot]) {
+            if (!b || b.hp <= 0) continue;
+            const cDist = Math.hypot(b.x - mb.x, b.y - mb.y) || 1;
+            const minCD = b.radius + mb.radius;
+            if (cDist < minCD) {
+              const nx = (mb.x - b.x) / cDist;
+              const ny = (mb.y - b.y) / cDist;
+              const overlap = minCD - cDist;
+              mb.x += nx * overlap * 0.75;
+              mb.y += ny * overlap * 0.75;
+              b.x -= nx * overlap * 0.25;
+              b.y -= ny * overlap * 0.25;
+
+              const bSpeed = Math.hypot(b.vx, b.vy);
+              const bRamming = b.abilityState === "charging" || bSpeed > 5.0;
+
+              if (mb.kind === "bomb" && !bRamming) {
+                // Bomb Buggy explodes on contact if the fighter didn't ram-smash it first!
+                const bDmg = Math.round(92 * (1 - b.cp.armorReduction * 0.45));
+                b.hp = Math.max(0, b.hp - bDmg);
+                b.hitFlash = 9;
+                b.vx -= nx * 8.5;
+                b.vy -= ny * 8.5;
+                b.thermiteTimer = Math.max(b.thermiteTimer, 160);
+                sim.shake = Math.max(sim.shake, 14);
+                addPulseRing(mb.x, mb.y, 170, "#ef4444");
+                emit3DSparks(mb.x, mb.y, "#ff8c00", 38, 10.5);
+                spawnFloorMark(mb.x, mb.y, "scorch", 44);
+                if (typeof BotPitAudio !== "undefined") BotPitAudio.playPartBreak(false);
+                addFloatText(b.x, b.y - 48, `🧨💥 KAMIKAZE BUGGY DETONATED! -${bDmg}`, "#ef4444");
+                sim.miniBots.splice(i, 1);
+                break;
+              } else if (mb.hitCd <= 0) {
+                mb.hitCd = 16;
+                const ramDmg = bRamming ? 115 : 68;
+                mb.hp = Math.max(0, mb.hp - ramDmg);
+                mb.hitFlash = 7;
+                mb.vx = nx * (bRamming ? 11.5 : 7.5);
+                mb.vy = ny * (bRamming ? 11.5 : 7.5);
+                emit3DSparks(mb.x, mb.y, "#ffd700", 16, 7.0);
+                if (typeof BotPitAudio !== "undefined") BotPitAudio.playClash(false);
+                if (mb.hp <= 0) {
+                  awardMiniBotKillBuff(b, mb);
+                  sim.miniBots.splice(i, 1);
+                  break;
+                } else {
+                  addFloatText(mb.x, mb.y - 34, `💥 -${ramDmg} HP`, "#ffd700");
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     function createPhysicsBot(cp, team, name, color, x, y, angle, scaleMult = 1.0, initialParts = null) {
       const parts = normalizePartIntegrity(initialParts || (team === "player" ? state.partIntegrity : { tires: 100, armor: 100, weapon: 100, core: 100 }));
       const pMults = computeBotMultipliersFromParts(parts);
@@ -8008,15 +9099,42 @@
       sim.tethers = [];
       sim.projectiles = [];
       sim.beams = [];
+      sim.miniBots = [];
+      sim.miniBotsSpawnedThisRound = false;
       sim.centerSaw = createCenterPeriodicSaw();
       sim.cornerHazards = createCornerHazards();
+
+      const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+      const isSideTrenches = activeMap && activeMap.hazardType === "ringout_left_right";
+      const spawnPX = isSideTrenches ? 415 : 340;
+      const spawnEX = isSideTrenches ? 1185 : 1260;
+
+      const statusEl = document.getElementById("hudSawStatus");
+      if (statusEl && activeMap) {
+        if (activeMap.hazardType === "ringout_top_bottom") {
+          statusEl.textContent = "🌋 LAVA BRIDGE: TOP/BOTTOM RING-OUT!";
+          statusEl.style.color = "#f97316";
+        } else if (activeMap.hazardType === "ringout_left_right") {
+          statusEl.textContent = "🔥 SIDE TRENCHES: LEFT/RIGHT RING-OUT!";
+          statusEl.style.color = "#fb923c";
+        } else if (activeMap.hazardType === "ringout_sky_ledge") {
+          statusEl.textContent = "👑 SKY LEDGE: 4-SIDED RING-OUT!";
+          statusEl.style.color = "#fbbf24";
+        } else if (activeMap.hazardType && activeMap.hazardType.startsWith("minibot_")) {
+          statusEl.textContent = "🚨 2x MINI-BOT AMBUSH: READY";
+          statusEl.style.color = activeMap.accent || "#38bdf8";
+        } else {
+          statusEl.textContent = "CENTER SAW: OFF";
+          statusEl.style.color = "#94a3b8";
+        }
+      }
 
       if (state.gameMode === "cpu") {
         const cpuObj = getActiveSimilarCpu();
         const eStats = computeBotCombatProfile(cpuObj.baseStats, cpuObj.loadout);
 
-        const playerBot = createPhysicsBot(pStats, "player", state.pilotCallsign, "#ffd700", 340, 450, 0, 1.0);
-        const enemyBot  = createPhysicsBot(eStats, "enemy", cpuObj.name, cpuObj.color, 1260, 450, Math.PI, 1.0);
+        const playerBot = createPhysicsBot(pStats, "player", state.pilotCallsign, "#ffd700", spawnPX, 450, 0, 1.0);
+        const enemyBot  = createPhysicsBot(eStats, "enemy", cpuObj.name, cpuObj.color, spawnEX, 450, Math.PI, 1.0);
         sim.bots = [playerBot, enemyBot];
 
         document.getElementById("hudEName").textContent = cpuObj.name;
@@ -8028,8 +9146,8 @@
         const chObj = getActivePvpOpponent();
         const eStats = computeBotCombatProfile(chObj.baseStats, chObj.loadout);
 
-        const playerBot = createPhysicsBot(pStats, "player", state.pilotCallsign, "#ffd700", 340, 450, 0, 1.0);
-        const enemyBot  = createPhysicsBot(eStats, "enemy", chObj.callsign, chObj.color, 1260, 450, Math.PI, 1.0, chObj.partIntegrity || null);
+        const playerBot = createPhysicsBot(pStats, "player", state.pilotCallsign, "#ffd700", spawnPX, 450, 0, 1.0);
+        const enemyBot  = createPhysicsBot(eStats, "enemy", chObj.callsign, chObj.color, spawnEX, 450, Math.PI, 1.0, chObj.partIntegrity || null);
         sim.bots = [playerBot, enemyBot];
 
         document.getElementById("hudEName").textContent = `${chObj.callsign} (🏆${chObj.elo})`;
@@ -8231,14 +9349,48 @@
         return { desiredAngle, throttle: paceSpeed, turnMult: 1.15 };
       }
 
+      const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+      const hType = activeMap ? activeMap.hazardType : "furnace";
+
+      // Ring-Out Ledge Self-Preservation: if AI bot gets dangerously close to an open Ring-Out drop-off while unstunned, brake & steer inward!
+      if (bot.knockStun <= 0 && bot.empStunTimer <= 0) {
+        const predX = bot.x + bot.vx * 8;
+        const predY = bot.y + bot.vy * 8;
+        let nearLedge = false;
+        if (hType === "ringout_top_bottom" && (predY < 245 || predY > 655)) nearLedge = true;
+        else if (hType === "ringout_left_right" && (predX < 310 || predX > 1290)) nearLedge = true;
+        else if (hType === "ringout_sky_ledge" && (predX < 285 || predX > 1315 || predY < 210 || predY > 690)) nearLedge = true;
+
+        if (nearLedge) {
+          if (bot.abilityState === "charging" || bot.abilityState === "windup") {
+            bot.abilityState = "recover";
+            bot.abilityTimer = 18;
+          }
+          const inwardAng = Math.atan2(450 - bot.y, 800 - bot.x);
+          bot.vx += Math.cos(inwardAng) * 0.55;
+          bot.vy += Math.sin(inwardAng) * 0.55;
+          return { desiredAngle: inwardAng, throttle: 1.05, turnMult: 1.65 };
+        }
+      }
+
       if (bot.grappleTimer > 0 && bot.grappleTarget) {
-        const targetX = DOME.slotX;
-        const targetY = cs && cs.state === "active" ? cs.y : 450;
+        let targetX = DOME.slotX;
+        let targetY = cs && cs.state === "active" ? cs.y : 450;
+        if (hType === "ringout_top_bottom") {
+          targetX = bot.x;
+          targetY = bot.y < 450 ? 150 : 750;
+        } else if (hType === "ringout_left_right") {
+          targetX = bot.x < 800 ? 200 : 1400;
+          targetY = bot.y;
+        } else if (hType === "ringout_sky_ledge") {
+          targetX = bot.x < 800 ? 180 : 1420;
+          targetY = bot.y < 450 ? 110 : 790;
+        }
         desiredAngle = Math.atan2(targetY - bot.y, targetX - bot.x);
         return { desiredAngle, throttle: 1.35, turnMult: 1.4 };
       }
 
-      const sawDangerous = cs && (cs.state === "active" || cs.state === "warning");
+      const sawDangerous = (!activeMap || hType === "furnace") && cs && (cs.state === "active" || cs.state === "warning");
 
       if (sawDangerous && bot.knockStun <= 0 && bot.empStunTimer <= 0) {
         const predSawY = cs.y + cs.vy * 14;
@@ -8823,9 +9975,6 @@
       sim.ticks++;
       sim.timeLeft = Math.max(0, sim.timeLeft - 1 / 60);
 
-      stepCenterPeriodicSaw();
-      // Corner 2D grates removed to keep 3D arena clean
-
       const [pBot, eBot] = sim.bots;
       const cs = sim.centerSaw;
       if (!pBot || !eBot) return;
@@ -8843,6 +9992,8 @@
           sim.currentRound = (sim.currentRound || 1) + 1;
           sim.timeLeft = sim.roundDurationSec || 180.0;
           sim.intermissionSummary = null;
+          sim.miniBots = [];
+          sim.miniBotsSpawnedThisRound = false;
           const rdBanner = sim.currentRound === 3 && sim.pRoundsWon === 1 && sim.eRoundsWon === 1
             ? "🔥 FINAL ROUND 3 — SUDDEN DEATH! FIGHT!"
             : `🔔 ROUND ${sim.currentRound} OF 3 — FIGHT!`;
@@ -8854,6 +10005,8 @@
         }
         return;
       }
+
+      stepArenaMapHazardsAndMiniBots(pBot, eBot);
 
       if (pBot.hp <= 0 || eBot.hp <= 0 || sim.timeLeft <= 0) {
         const pPct = pBot.hp / pBot.maxHp;
@@ -8871,7 +10024,8 @@
         sim.pRoundsWon = (sim.pRoundsWon || 0) + (roundWonByPlayer ? 1 : 0);
         sim.eRoundsWon = (sim.eRoundsWon || 0) + (roundWonByPlayer ? 0 : 1);
         if (!Array.isArray(sim.roundResults)) sim.roundResults = [];
-        const winMethod = isKo ? "TKO / KNOCKDOWN (10-8)" : "JUDGES DECISION (10-9)";
+        const ringOutReason = pBot.ringOutKo || eBot.ringOutKo;
+        const winMethod = ringOutReason || (isKo ? "TKO / KNOCKDOWN (10-8)" : "JUDGES DECISION (10-9)");
         sim.roundResults.push({
           round: sim.currentRound || 1,
           winner: roundWonByPlayer ? "player" : "enemy",
@@ -8900,13 +10054,16 @@
           };
 
           // Reset both bots to their starting corners, weld +45% of missing HP (or 65% if TKO'd), and recharge Stamina to 100%!
+          const curMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+          const isSideTrenches = curMap && curMap.hazardType === "ringout_left_right";
           for (const b of [pBot, eBot]) {
             const isP = b.team === "player";
-            b.x = isP ? 340 : 1260;
+            b.x = isSideTrenches ? (isP ? 415 : 1185) : (isP ? 340 : 1260);
             b.y = 450;
             b.vx = 0; b.vy = 0; b.vz = 0; b.z = 0; b.omega = 0;
             b.angle = isP ? 0 : Math.PI;
             b.turretAngle = b.angle;
+            b.ringOutKo = null;
             if (b.hp <= 0) {
               b.hp = Math.round(b.maxHp * 0.65);
             } else {
@@ -8930,6 +10087,8 @@
             b.octagonControl = 0;
           }
           sim.projectiles = [];
+          sim.miniBots = [];
+          sim.miniBotsSpawnedThisRound = false;
           sim.clashLock = null;
           if (sim.centerSaw) {
             sim.centerSaw.state = "off";
@@ -9190,31 +10349,58 @@
           continue;
         }
 
-        const { desiredAngle, throttle, turnMult } = isBotManuallyControlled(bot)
+        const isManual = isBotManuallyControlled(bot);
+        const { desiredAngle, throttle, turnMult } = isManual
           ? evaluateManualBotControl(bot, other)
           : evaluateBotBrain(bot, other);
 
         const empScale = bot.empStunTimer > 0 ? 0.08 : 1.0;
         const cryoScale = bot.cryoTimer > 0 ? 0.65 : 1.0;
         const airControlScale = bot.z > 6 ? 0.35 : 1.0;
-        const staminaScale = bot.staminaState === "gassed" ? 0.55 : (bot.stamina < 30 ? 0.78 : 0.88);
-        const stunScale = (bot.knockStun > 0 ? 0.22 : 1.0) * empScale * cryoScale * airControlScale * staminaScale;
+        const staminaScale = isManual
+          ? (bot.staminaState === "gassed" ? 0.78 : 1.05)
+          : (bot.staminaState === "gassed" ? 0.65 : (bot.stamina < 30 ? 0.85 : 1.0));
+        const knockPenalty = isManual ? (bot.knockStun > 0 ? 0.56 : 1.0) : (bot.knockStun > 0 ? 0.28 : 1.0);
+        const stunScale = knockPenalty * empScale * cryoScale * airControlScale * staminaScale;
 
-        // Apply Rotational Angular Momentum (omega) + counter-steering
+        // Apply Rotational Angular Momentum (omega) + counter-steering stabilization
         bot.angle += bot.omega;
-        bot.omega *= (bot.cp.has("tire_05") ? 0.80 : 0.89);
+        if (isManual && throttle > 0.05) {
+          bot.omega *= 0.58;
+        } else {
+          bot.omega *= (bot.cp.has("tire_05") ? 0.80 : 0.89);
+        }
 
         let diff = desiredAngle - bot.angle;
         while (diff > Math.PI) diff -= Math.PI * 2;
         while (diff < -Math.PI) diff += Math.PI * 2;
         const tireTurnScale = livePartMults ? livePartMults.turnMult : 1.0;
         const tireSpeedScale = livePartMults ? livePartMults.speedMult : 1.0;
-        bot.angle += Math.sign(diff) * Math.min(Math.abs(diff), bot.cp.turnRateRad * turnMult * stunScale * tireTurnScale);
+        const maxTurnStep = bot.cp.turnRateRad * turnMult * stunScale * tireTurnScale;
+        if (isManual && Math.abs(diff) < 0.42) {
+          bot.angle += diff * 0.48;
+        } else {
+          bot.angle += Math.sign(diff) * Math.min(Math.abs(diff), maxTurnStep);
+        }
 
         const accel = bot.cp.accelPx * throttle * stunScale * tireSpeedScale;
-        bot.vx += Math.cos(bot.angle) * accel;
-        bot.vy += Math.sin(bot.angle) * accel;
-        const drag = bot.z > 6 ? 0.95 : (bot.cryoTimer > 0 ? 0.94 : 0.89);
+        if (isManual) {
+          if (throttle > 0.02) {
+            // Blend direct input direction (72%) with chassis nose heading (28%) so manual steering responds on Frame 1 with faster acceleration!
+            const dirX = Math.cos(desiredAngle) * 0.72 + Math.cos(bot.angle) * 0.28;
+            const dirY = Math.sin(desiredAngle) * 0.72 + Math.sin(bot.angle) * 0.28;
+            bot.vx += dirX * accel * 1.24;
+            bot.vy += dirY * accel * 1.24;
+          } else {
+            // Smooth active braking when player releases keys/joystick
+            bot.vx *= 0.84;
+            bot.vy *= 0.84;
+          }
+        } else {
+          bot.vx += Math.cos(bot.angle) * accel * 1.12;
+          bot.vy += Math.sin(bot.angle) * accel * 1.12;
+        }
+        const drag = bot.z > 6 ? 0.95 : (bot.cryoTimer > 0 ? 0.94 : 0.90);
         bot.vx *= drag;
         bot.vy *= drag;
 
@@ -9230,6 +10416,9 @@
         bot.x += bot.vx;
         bot.y += bot.vy;
 
+        const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+        const hType = activeMap ? activeMap.hazardType : "furnace";
+
         const minX = DOME.x + bot.radius;
         const maxX = DOME.x + DOME.w - bot.radius;
         const minY = DOME.y + bot.radius;
@@ -9237,10 +10426,61 @@
 
         let wallTouch = false;
         let impactSpeed = 0;
-        if (bot.x < minX) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vx)); bot.x = minX; bot.vx = Math.abs(bot.vx) * 0.82; wallTouch = true; }
-        if (bot.x > maxX) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vx)); bot.x = maxX; bot.vx = -Math.abs(bot.vx) * 0.82; wallTouch = true; }
-        if (bot.y < minY) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vy)); bot.y = minY; bot.vy = Math.abs(bot.vy) * 0.82; wallTouch = true; }
-        if (bot.y > maxY) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vy)); bot.y = maxY; bot.vy = -Math.abs(bot.vy) * 0.82; wallTouch = true; }
+
+        if (hType === "ringout_top_bottom") {
+          // ARENA 02: Osaka Molten Lava Bridge (Solid Left/Right Bulkheads, Open Top/Bottom Lava River Ring-Out!)
+          if (bot.x < minX) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vx)); bot.x = minX; bot.vx = Math.abs(bot.vx) * 0.82; wallTouch = true; }
+          if (bot.x > maxX) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vx)); bot.x = maxX; bot.vx = -Math.abs(bot.vx) * 0.82; wallTouch = true; }
+          if (bot.y < 185 || bot.y > 715) {
+            bot.hp = 0;
+            bot.ringOutKo = "🌋 LAVA RING-OUT KO (10-8)";
+            sim.shake = 22;
+            sim.slowMoTimer = 40;
+            triggerCameraFocus(bot.x, bot.y, 1.24, 34, 6);
+            addPulseRing(bot.x, bot.y, 210, "#f97316");
+            emit3DSparks(bot.x, bot.y, "#f97316", 45, 11.5);
+            emitSmokePuff(bot.x, bot.y, true, 26);
+            if (typeof BotPitAudio !== "undefined") BotPitAudio.playPartBreak(true);
+            addFloatText(bot.x, Math.max(145, Math.min(755, bot.y)), "🌋🔥 MOLTEN LAVA RING-OUT KO!", "#f97316");
+            continue;
+          }
+        } else if (hType === "ringout_left_right") {
+          // ARENA 07: Kawasaki Smelter Side-Trenches (Solid Top/Bottom Walls, Open Left/Right Molten Slag Trenches!)
+          if (bot.y < minY) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vy)); bot.y = minY; bot.vy = Math.abs(bot.vy) * 0.82; wallTouch = true; }
+          if (bot.y > maxY) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vy)); bot.y = maxY; bot.vy = -Math.abs(bot.vy) * 0.82; wallTouch = true; }
+          if (bot.x < 245 || bot.x > 1355) {
+            bot.hp = 0;
+            bot.ringOutKo = "🔥 TRENCH RING-OUT KO (10-8)";
+            sim.shake = 22;
+            sim.slowMoTimer = 40;
+            triggerCameraFocus(bot.x, bot.y, 1.24, 34, 6);
+            addPulseRing(bot.x, bot.y, 210, "#fb923c");
+            emit3DSparks(bot.x, bot.y, "#fb923c", 45, 11.5);
+            emitSmokePuff(bot.x, bot.y, true, 26);
+            if (typeof BotPitAudio !== "undefined") BotPitAudio.playPartBreak(true);
+            addFloatText(Math.max(265, Math.min(1335, bot.x)), bot.y - 30, "🔥💥 SMELTER TRENCH RING-OUT KO!", "#fb923c");
+            continue;
+          }
+        } else if (hType === "ringout_sky_ledge") {
+          // ARENA 11: Roppongi Sky-Penthouse Ledge (Zero Walls — All 4 Sides Are 80-Story Ring-Out Drop-Offs!)
+          if (bot.x < 220 || bot.x > 1380 || bot.y < 145 || bot.y > 755) {
+            bot.hp = 0;
+            bot.ringOutKo = "👑 SKY-LEDGE RING-OUT KO (10-8)";
+            sim.shake = 22;
+            sim.slowMoTimer = 40;
+            triggerCameraFocus(bot.x, bot.y, 1.24, 34, 6);
+            addPulseRing(bot.x, bot.y, 210, "#fbbf24");
+            emit3DSparks(bot.x, bot.y, "#f43f5e", 45, 11.5);
+            if (typeof BotPitAudio !== "undefined") BotPitAudio.playPartBreak(true);
+            addFloatText(Math.max(255, Math.min(1345, bot.x)), Math.max(165, Math.min(735, bot.y)), "👑🏙️ 80-STORY SKY RING-OUT KO!", "#fbbf24");
+            continue;
+          }
+        } else {
+          if (bot.x < minX) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vx)); bot.x = minX; bot.vx = Math.abs(bot.vx) * 0.82; wallTouch = true; }
+          if (bot.x > maxX) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vx)); bot.x = maxX; bot.vx = -Math.abs(bot.vx) * 0.82; wallTouch = true; }
+          if (bot.y < minY) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vy)); bot.y = minY; bot.vy = Math.abs(bot.vy) * 0.82; wallTouch = true; }
+          if (bot.y > maxY) { impactSpeed = Math.max(impactSpeed, Math.abs(bot.vy)); bot.y = maxY; bot.vy = -Math.abs(bot.vy) * 0.82; wallTouch = true; }
+        }
 
         // High-Velocity Wall-Slam Crushes!
         if (wallTouch && impactSpeed > 6.4 && bot.wallSlamCd <= 0) {
@@ -9270,7 +10510,7 @@
           emit3DSparks(bot.x, bot.y, "#ffd700", 14, 6);
         }
 
-        if (cs && cs.state === "active" && cs.currentRadius > 20) {
+        if ((!activeMap || hType === "furnace") && cs && cs.state === "active" && cs.currentRadius > 20) {
           const ds = Math.hypot(bot.x - cs.x, bot.y - cs.y);
           if (ds < cs.currentRadius + bot.radius) {
             const snx = (bot.x - cs.x) / (ds || 1);
@@ -9404,6 +10644,33 @@
             continue;
           }
         }
+
+        // Check collision with active Ambush Mini-Bots (if any)
+        let hitMiniBot = false;
+        if (Array.isArray(sim.miniBots) && sim.miniBots.length > 0) {
+          for (let mIdx = sim.miniBots.length - 1; mIdx >= 0; mIdx--) {
+            const mb = sim.miniBots[mIdx];
+            if (!mb || mb.hp <= 0) continue;
+            const dMb = Math.hypot(mb.x - prj.x, mb.y - prj.y);
+            if (dMb < mb.radius + prj.radius) {
+              const mbDmg = Math.max(45, Math.round(prj.dmg * 1.35));
+              mb.hp = Math.max(0, mb.hp - mbDmg);
+              mb.hitFlash = 7;
+              emit3DSparks(prj.x, prj.y, mb.color || "#38bdf8", 16, 6.5);
+              const shooterBot = prj.owner === "player" ? pBot : eBot;
+              if (mb.hp <= 0) {
+                awardMiniBotKillBuff(shooterBot, mb);
+                sim.miniBots.splice(mIdx, 1);
+              } else {
+                addFloatText(mb.x, mb.y - 34, `🎯 -${mbDmg} HP`, "#ffd700");
+              }
+              sim.projectiles.splice(i, 1);
+              hitMiniBot = true;
+              break;
+            }
+          }
+        }
+        if (hitMiniBot) continue;
 
         // Check collision with enemy bot (with 1.5x AIR-JUGGLE COMBO support!)
         const targetBot = prj.owner === "player" ? eBot : pBot;
@@ -9758,16 +11025,35 @@
       const midY = (botA.y + botB.y) / 2;
 
       function applyKnockback(attacker, defender, dirX, dirY, spinTorque = 0.22) {
+        const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+        const hType = activeMap ? activeMap.hazardType : "furnace";
         const cs = sim.centerSaw;
-        const sawActive = cs && (cs.state === "active" || cs.state === "warning");
-        const toCenterAng = sawActive
-          ? Math.atan2(cs.y - defender.y, cs.x - defender.x)
-          : Math.atan2(450 - defender.y, 800 - defender.x);
+        const sawActive = (!activeMap || hType === "furnace") && cs && (cs.state === "active" || cs.state === "warning");
 
-        const herdBias = (sawActive ? 0.65 : 0.25) + (attacker.cp.has("wpn_01") ? 0.45 : 0);
+        let hazardTargetX = sawActive ? cs.x : 800;
+        let hazardTargetY = sawActive ? cs.y : 450;
+        if (hType === "ringout_top_bottom") {
+          hazardTargetX = defender.x + dirX * 140;
+          hazardTargetY = defender.y < 450 ? 120 : 780;
+        } else if (hType === "ringout_left_right") {
+          hazardTargetX = defender.x < 800 ? 160 : 1440;
+          hazardTargetY = defender.y + dirY * 140;
+        } else if (hType === "ringout_sky_ledge") {
+          const dLeft = defender.x - 220, dRight = 1380 - defender.x;
+          const dTop = defender.y - 145, dBot = 755 - defender.y;
+          const minD = Math.min(dLeft, dRight, dTop, dBot);
+          if (minD === dLeft) { hazardTargetX = 140; hazardTargetY = defender.y; }
+          else if (minD === dRight) { hazardTargetX = 1460; hazardTargetY = defender.y; }
+          else if (minD === dTop) { hazardTargetX = defender.x; hazardTargetY = 80; }
+          else { hazardTargetX = defender.x; hazardTargetY = 820; }
+        }
+
+        const toHazardAng = Math.atan2(hazardTargetY - defender.y, hazardTargetX - defender.x);
+        const isRingOutMap = hType && hType.startsWith("ringout_");
+        const herdBias = (sawActive || isRingOutMap ? 0.58 : 0.22) + (attacker.cp.has("wpn_01") ? 0.45 : 0);
         const pushAng = Math.atan2(
-          dirY + Math.sin(toCenterAng) * herdBias,
-          dirX + Math.cos(toCenterAng) * herdBias
+          dirY + Math.sin(toHazardAng) * herdBias,
+          dirX + Math.cos(toHazardAng) * herdBias
         );
 
         let kbMult = 1.0;
@@ -10434,7 +11720,9 @@
         ctx.translate((Math.random() - 0.5) * sim.shake, (Math.random() - 0.5) * sim.shake);
       }
 
-      const arenaImg = getImg(ARENA_10_BG_SKIN);
+      const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+      const bgSkinUrl = (activeMap && activeMap.conceptArt) ? activeMap.conceptArt : ARENA_10_BG_SKIN;
+      const arenaImg = getImg(bgSkinUrl);
       if (arenaImg && arenaImg.complete && arenaImg.naturalWidth > 0) {
         ctx.drawImage(arenaImg, 0, 0, canvas.width, canvas.height);
       } else {
@@ -10442,38 +11730,20 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
-      // Custom Map Theme Floor Overlay & Tactical Grid
-      const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
       if (activeMap && activeMap.id !== "map_01_furnace") {
         ctx.save();
-        ctx.fillStyle = activeMap.floorTint || "rgba(56,189,248,0.08)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = activeMap.gridColor || "rgba(56,189,248,0.16)";
-        ctx.lineWidth = 1.5;
-        const step = 110;
-        for (let gx = 110; gx < canvas.width - 80; gx += step) {
-          ctx.beginPath();
-          ctx.moveTo(gx, 60);
-          ctx.lineTo(gx, canvas.height - 60);
-          ctx.stroke();
-        }
-        for (let gy = 90; gy < canvas.height - 60; gy += step) {
-          ctx.beginPath();
-          ctx.moveTo(90, gy);
-          ctx.lineTo(canvas.width - 90, gy);
-          ctx.stroke();
-        }
-        // Map Watermark Badge on Arena Deck
-        ctx.font = "900 18px 'Orbitron', sans-serif";
-        ctx.fillStyle = activeMap.accent + "44";
+        ctx.font = "900 16px 'Orbitron', sans-serif";
+        ctx.fillStyle = (activeMap.accent || "#38bdf8") + "88";
         ctx.textAlign = "center";
-        ctx.fillText(`${activeMap.badge} · ${activeMap.name}`, canvas.width / 2, canvas.height - 26);
+        ctx.fillText(`${activeMap.badge} · ${activeMap.name}`, canvas.width / 2, canvas.height - 20);
         ctx.restore();
       }
 
       drawPersistentFloorMarks();
       drawCornerFurnaceHazards();
-      drawCenterSawHousingAndBlade(sim.centerSaw);
+      if (!activeMap || activeMap.hazardType === "furnace") {
+        drawCenterSawHousingAndBlade(sim.centerSaw);
+      }
       drawFloor3DDebris();
 
       for (const t of sim.tethers) {
@@ -10524,6 +11794,49 @@
         ctx.arc(sm.x, sm.y, sm.r, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
+      }
+
+      // Render 2x Ambush Mini-Bots (Arena 12, Arena 13, Arena 17)
+      if (Array.isArray(sim.miniBots) && sim.miniBots.length > 0) {
+        for (const mb of sim.miniBots) {
+          if (!mb || mb.hp <= 0) continue;
+          ctx.save();
+          ctx.translate(mb.x, mb.y);
+
+          // Ground Drop-Shadow + Pulsing Hazard Ring
+          const mGrad = ctx.createRadialGradient(0, 0, mb.radius * 0.2, 0, 0, mb.radius * 1.45);
+          mGrad.addColorStop(0, "rgba(0, 0, 0, 0.8)");
+          mGrad.addColorStop(0.7, (mb.color || "#ef4444") + "44");
+          mGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+          ctx.fillStyle = mGrad;
+          ctx.beginPath();
+          ctx.arc(0, 0, mb.radius * 1.45, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = mb.color || "#ef4444";
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.arc(0, 0, mb.radius * (1.06 + Math.sin(rTicks * 0.25) * 0.08), 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.save();
+          ctx.rotate(mb.angle);
+          drawBotWithDynamicAttachments(ctx, mb.cp, mb.radius, false, false, mb.hitFlash || 0, 0);
+          ctx.restore();
+
+          // Floating Mini-Bot Name & HP Bar
+          const bw = 64, bh = 6;
+          const pct = Math.max(0, Math.min(1, mb.hp / (mb.maxHp || 220)));
+          ctx.fillStyle = "rgba(9, 6, 18, 0.88)";
+          ctx.fillRect(-bw / 2 - 1, -mb.radius - 20, bw + 2, bh + 2);
+          ctx.fillStyle = mb.color || "#ef4444";
+          ctx.fillRect(-bw / 2, -mb.radius - 19, bw * pct, bh);
+          ctx.font = "800 10px 'Orbitron', sans-serif";
+          ctx.fillStyle = "#f8fafc";
+          ctx.textAlign = "center";
+          ctx.fillText(`${mb.name} (${Math.ceil(mb.hp)})`, 0, -mb.radius - 24);
+          ctx.restore();
+        }
       }
 
       for (const bot of sim.bots) {
@@ -12306,10 +13619,14 @@
       keys: { up: false, down: false, left: false, right: false },
       joyActive: false,
       joyPointerId: null,
+      joyOriginX: null,
+      joyOriginY: null,
       joyX: 0,
       joyY: 0,
       moveX: 0,
       moveY: 0,
+      smoothX: 0,
+      smoothY: 0,
       shootHeld: false,
       shootQueued: false,
       boostQueued: false,
@@ -12323,6 +13640,8 @@
       controlMode: "simulated",
       moveX: 0,
       moveY: 0,
+      smoothX: 0,
+      smoothY: 0,
       shootHeld: false,
       shootQueued: false,
       boostQueued: false,
@@ -12375,18 +13694,24 @@
         if (bot.abilityTimer <= 0) {
           bot.abilityState = "ready";
         }
-        return { desiredAngle: bot.chargeAngle || bot.angle, throttle: 1.65, turnMult: 0.45 };
+        return { desiredAngle: bot.chargeAngle || bot.angle, throttle: 1.85, turnMult: 0.65 };
       }
 
-      const mx = Number(inp.moveX) || 0;
-      const my = Number(inp.moveY) || 0;
+      const rawX = Number(inp.moveX) || 0;
+      const rawY = Number(inp.moveY) || 0;
+      const lerpRate = (Math.hypot(rawX, rawY) > 0.05) ? 0.40 : 0.30;
+      inp.smoothX = (inp.smoothX || 0) + (rawX - (inp.smoothX || 0)) * lerpRate;
+      inp.smoothY = (inp.smoothY || 0) + (rawY - (inp.smoothY || 0)) * lerpRate;
+
+      const mx = inp.smoothX;
+      const my = inp.smoothY;
       const mag = Math.hypot(mx, my);
-      if (mag > 0.08) {
+      if (mag > 0.05) {
         const desiredAngle = Math.atan2(my, mx);
-        const throttle = Math.min(1.0, mag) * 1.15;
-        return { desiredAngle, throttle, turnMult: 1.75 };
+        const throttle = Math.min(1.0, mag) * 1.32;
+        return { desiredAngle, throttle, turnMult: 3.1 };
       }
-      // When thumbstick/keys are released, hold current heading and coast/brake smoothly
+      // When thumbstick/keys are released, hold current heading and brake smoothly
       return { desiredAngle: bot.angle, throttle: 0, turnMult: 1.0 };
     }
 
@@ -12510,11 +13835,37 @@
     }
 
     function initManualControlListeners() {
-      // 1. Desktop Keyboard Listeners (WASD / Arrow Keys + Space/Shift/E/F to Charge or Fire Equipped Long-Range)
+      // 1. Desktop Keyboard Listeners (Full-Screen Map Carousel Navigation + WASD / Arrow Keys + Space/Shift/E/F)
       window.addEventListener("keydown", (ev) => {
-        if (state.controlMode !== "controlled") return;
         const tag = (ev.target && ev.target.tagName) ? ev.target.tagName.toUpperCase() : "";
         if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+        // Allow Left/Right/Enter/Escape inside Full-Screen Map Selector Modal
+        const fsModal = document.getElementById("fullScreenMapModal");
+        if (fsModal && fsModal.classList.contains("active")) {
+          if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") {
+            ev.preventDefault();
+            cycleArenaMap(-1);
+            return;
+          }
+          if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") {
+            ev.preventDefault();
+            cycleArenaMap(1);
+            return;
+          }
+          if (ev.key === "Enter") {
+            ev.preventDefault();
+            confirmPreBattleAndLaunch();
+            return;
+          }
+          if (ev.key === "Escape") {
+            ev.preventDefault();
+            closeFullScreenMapSelector(true);
+            return;
+          }
+        }
+
+        if (state.controlMode !== "controlled") return;
 
         const k = ev.key.toLowerCase();
         let handled = false;
@@ -12567,17 +13918,19 @@
         recomputeManualMoveVector();
       });
 
-      // 2. Virtual 360° Analog Thumbstick (Mobile Touch & Mouse Drag)
+      // 2. Virtual 360° Analog Thumbstick (Mobile Touch & Mouse Drag with Floating Origin & Smooth Response Curve)
       const joyZone = document.getElementById("touchJoystickZone");
       const joyKnob = document.getElementById("touchJoystickKnob");
       if (joyZone && joyKnob) {
         const updateJoystickFromEvent = (ev) => {
           const rect = joyZone.getBoundingClientRect();
-          const cx = rect.left + rect.width / 2;
-          const cy = rect.top + rect.height / 2;
-          const maxR = Math.max(26, Math.min(rect.width, rect.height) * 0.36);
-          const rawDx = ev.clientX - cx;
-          const rawDy = ev.clientY - cy;
+          const baseCx = rect.left + rect.width / 2;
+          const baseCy = rect.top + rect.height / 2;
+          const originX = typeof manualInput.joyOriginX === "number" ? manualInput.joyOriginX : baseCx;
+          const originY = typeof manualInput.joyOriginY === "number" ? manualInput.joyOriginY : baseCy;
+          const maxR = Math.max(30, Math.min(rect.width, rect.height) * 0.38);
+          const rawDx = ev.clientX - originX;
+          const rawDy = ev.clientY - originY;
           // When in portrait-rotated landscape mode (rotate(90deg)), map physical screen deltas to local landscape axes
           const rotated = isMobilePortraitRotatedBattle();
           const dx = rotated ? rawDy : rawDx;
@@ -12588,14 +13941,26 @@
           const kx = Math.cos(ang) * clamped;
           const ky = Math.sin(ang) * clamped;
           joyKnob.style.transform = `translate(${kx.toFixed(1)}px, ${ky.toFixed(1)}px)`;
-          manualInput.joyX = kx / maxR;
-          manualInput.joyY = ky / maxR;
+
+          const norm = clamped / maxR;
+          if (norm < 0.05) {
+            manualInput.joyX = 0;
+            manualInput.joyY = 0;
+          } else {
+            // Smooth progressive response curve for precise fine-aiming + full-speed outer edge
+            const rescaled = (norm - 0.05) / 0.95;
+            const curved = 0.38 * rescaled + 0.62 * rescaled * rescaled;
+            manualInput.joyX = Math.cos(ang) * curved;
+            manualInput.joyY = Math.sin(ang) * curved;
+          }
           recomputeManualMoveVector();
         };
 
         const resetJoystick = () => {
           manualInput.joyActive = false;
           manualInput.joyPointerId = null;
+          manualInput.joyOriginX = null;
+          manualInput.joyOriginY = null;
           manualInput.joyX = 0;
           manualInput.joyY = 0;
           joyKnob.style.transform = "translate(0px, 0px)";
@@ -12603,9 +13968,15 @@
         };
 
         joyZone.addEventListener("pointerdown", (ev) => {
-          if (state.controlMode !== "controlled") return;
+          if (state.controlMode !== "controlled") setControlMode("controlled", true);
           ev.preventDefault();
           ev.stopPropagation();
+          const rect = joyZone.getBoundingClientRect();
+          const baseCx = rect.left + rect.width / 2;
+          const baseCy = rect.top + rect.height / 2;
+          // Clamp floating touch origin near center so initial touch never jerks the bot
+          manualInput.joyOriginX = baseCx + Math.max(-16, Math.min(16, ev.clientX - baseCx));
+          manualInput.joyOriginY = baseCy + Math.max(-16, Math.min(16, ev.clientY - baseCy));
           manualInput.joyActive = true;
           manualInput.joyPointerId = ev.pointerId;
           try { joyZone.setPointerCapture(ev.pointerId); } catch (_) {}

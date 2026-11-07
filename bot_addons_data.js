@@ -1254,8 +1254,7 @@ for (const [catKey, list] of Object.entries(window.BOT_ADDONS_CATALOG)) {
 
 
 // ============================================================================
-// 5-TIER ITEM RARITY SYSTEM + 60 NEW ITEMS (10 PER SLOT ACROSS ALL 6 SLOTS)
-// + 5 NEW ARENA MAP CONCEPTS (6 PLAYABLE MAPS TOTAL)
+// 5-TIER ITEM RARITY METADATA (FOR THE ORIGINAL 5 DYNAMIC ITEMS PER CATEGORY)
 // ============================================================================
 window.RARITY_TIERS = {
   COMMON:    { key: "COMMON",    label: "COMMON",    icon: "○", color: "#94a3b8", bg: "rgba(148, 163, 184, 0.16)", border: "rgba(148, 163, 184, 0.45)", glow: "rgba(148, 163, 184, 0.15)" },
@@ -1264,104 +1263,6 @@ window.RARITY_TIERS = {
   EPIC:      { key: "EPIC",      label: "EPIC",      icon: "◆", color: "#c084fc", bg: "rgba(168, 85, 247, 0.20)",  border: "rgba(192, 132, 252, 0.68)", glow: "rgba(192, 132, 252, 0.30)" },
   LEGENDARY: { key: "LEGENDARY", label: "LEGENDARY", icon: "★", color: "#fbbf24", bg: "rgba(245, 158, 11, 0.22)",  border: "rgba(251, 191, 36, 0.80)",  glow: "rgba(251, 191, 36, 0.38)" }
 };
-
-window.NEW_SLOT_EXPANSION_60 = {
-  // SLOT 1: TIRE UPGRADES (+10 New Items: tire_21 .. tire_30)
-  tires: [
-    { id: "tire_21", code: "TIRE-21", name: "Scrap-Yard Rebar Cage Rollers", rarity: "COMMON", cost: 130, mountRef: "tire_05", thumbRef: "tire_05", dynamicRole: "Rebar Cage Rollers", stats: { hp: 40, power: 8, speed: -4, agility: -4 }, strength: "Welded rebar wheel cages absorb side impacts (+40 HP, +8 PWR).", weakness: "Stiff steel cages reduce suspension compliance (-4 SPD, -4 AGI)." },
-    { id: "tire_22", code: "TIRE-22", name: "Poly-Urethane Warehouse Drift Casters", rarity: "COMMON", cost: 155, mountRef: "tire_12", thumbRef: "tire_12", dynamicRole: "Poly Drift Casters", stats: { agility: 14, speed: 10, hp: -25, power: -6 }, strength: "Swiveling industrial casters allow quick 180° pivot turns (+14 AGI).", weakness: "Light caster brackets take extra knockback on head-on hits (-25 HP)." },
-    { id: "tire_23", code: "TIRE-23", name: "Kevlar-Belted Run-Flat Riot Tires", rarity: "UNCOMMON", cost: 245, mountRef: "tire_04", thumbRef: "tire_04", dynamicRole: "Kevlar Riot Run-Flats", stats: { hp: 60, agility: 10, speed: 6, power: -6 }, strength: "50% Tire Subsystem Wear Resistance + balanced all-around grip.", weakness: "Stiff Kevlar sidewalls slightly reduce raw pushing torque (-6 PWR)." },
-    { id: "tire_24", code: "TIRE-24", name: "Hydraulic Crab-Walk Side-Steppers", rarity: "UNCOMMON", cost: 285, mountRef: "tire_04", thumbRef: "tire_04", dynamicRole: "Crab-Walk Strafe Hubs", stats: { agility: 18, speed: 9, hp: -35, power: -6 }, strength: "Pivots axles 45° for Diagonal Crab-Walking around enemy charges.", weakness: "Exposed steering linkages lower hull integrity (-35 HP)." },
-    { id: "tire_25", code: "TIRE-25", name: "Cryo-Vented Sub-Zero Grip Slicks", rarity: "RARE", cost: 390, mountRef: "tire_12", thumbRef: "tire_12", dynamicRole: "Cryo-Grip Racing Slicks", stats: { speed: 18, agility: 16, hp: -35, power: -8 }, strength: "Immunity to Ice/Cryo floor slip + 22% faster charge acceleration.", weakness: "Soft cryo-rubber wears faster against saw hazards (-35 HP)." },
-    { id: "tire_26", code: "TIRE-26", name: "Twin-Turbine Hover-Skirt Cushions", rarity: "RARE", cost: 430, mountRef: "tire_15", thumbRef: "tire_15", dynamicRole: "Hover-Skirt Air Drive", stats: { speed: 22, agility: 20, hp: -55, power: -12 }, strength: "Glides on an air cushion: +30% speed & ignores floor hazard slowdowns.", weakness: "Near-zero floor friction means heavy tanks can shove you easily (-12 PWR)." },
-    { id: "tire_27", code: "TIRE-27", name: "Gravity-Well Mag-Anchor Treads", rarity: "EPIC", cost: 560, mountRef: "tire_05", thumbRef: "tire_05", dynamicRole: "Mag-Anchor Heavy Treads", stats: { hp: 110, power: 24, speed: -10, agility: -8 }, strength: "-55% Incoming Knockback & immunity to pneumatic flippers!", weakness: "Extreme magnetic drag reduces top speed (-10 SPD) and turning (-8 AGI)." },
-    { id: "tire_28", code: "TIRE-28", name: "Plasma-Spoke Gyro-Blitz Wheels", rarity: "EPIC", cost: 610, mountRef: "tire_17", thumbRef: "tire_17", dynamicRole: "Plasma-Spoke Blitz Hubs", stats: { speed: 24, power: 16, agility: 14, hp: -45 }, strength: "Leaves a superheated plasma rim trail & deals +30 burn damage on sideswipes.", weakness: "High reactor thermal load reduces armor shielding (-45 HP)." },
-    { id: "tire_29", code: "TIRE-29", name: "Chrono-Shift Blink-Drive Rollers", rarity: "LEGENDARY", cost: 840, mountRef: "tire_15", thumbRef: "tire_15", dynamicRole: "Chrono-Blink Drive", stats: { speed: 28, agility: 26, power: 10, hp: -40 }, strength: "Micro-warps during Charge dashes (+40% Charge velocity & instant turn-in).", weakness: "Phase-capacitor housing reduces baseline structural HP (-40 HP)." },
-    { id: "tire_30", code: "TIRE-30", name: "Titan-Behemoth Quad-Goliath Tracks", rarity: "LEGENDARY", cost: 960, mountRef: "tire_05", thumbRef: "tire_05", dynamicRole: "Quad-Goliath Behemoth", stats: { hp: 165, power: 30, agility: 8, speed: -8 }, strength: "+65% Bulldozer Shove Torque, +165 Max HP & crushes floor debris.", weakness: "Colossal tread mass lowers top sprint speed (-8 SPD)." }
-  ],
-
-  // SLOT 2: WEAPON 1 — MELEE / RAM (+10 New Items: wpn_21 .. wpn_30)
-  weapons: [
-    { id: "wpn_21", code: "WPN-21", name: "Sharpened I-Beam Ramming Bumper", rarity: "COMMON", cost: 135, mountRef: "wpn_01", thumbRef: "wpn_01", dynamicRole: "I-Beam Ram Bumper", stats: { power: 12, hp: 45, speed: -4, agility: -4 }, strength: "Solid structural steel beam adds +45 HP & +18% head-on ram damage.", weakness: "Dead weight on the nose slows turn-in slightly (-4 SPD, -4 AGI)." },
-    { id: "wpn_22", code: "WPN-22", name: "Dual Jackhammer Impact Pistons", rarity: "COMMON", cost: 170, mountRef: "wpn_08", thumbRef: "wpn_08", dynamicRole: "Jackhammer Ram Pistons", stats: { power: 16, hp: 20, speed: -6, agility: -4 }, strength: "Rapid-pounding front pistons deal +20 armor-rattling strike damage.", weakness: "Short reach requires direct nose-to-nose contact (-6 SPD)." },
-    { id: "wpn_23", code: "WPN-23", name: "Serrated Gator-Jaw Hydraulic Clamp", rarity: "UNCOMMON", cost: 255, mountRef: "wpn_10", thumbRef: "wpn_10", dynamicRole: "Gator-Jaw Bite Clamp", stats: { power: 19, hp: 35, speed: -8, agility: -6 }, strength: "Bites down for 0.8s on collision and bleeds enemy armor integrity.", weakness: "Heavy jaw actuators reduce top speed (-8 SPD, -6 AGI)." },
-    { id: "wpn_24", code: "WPN-24", name: "Twin Vertical Uppercut Rip-Discs", rarity: "UNCOMMON", cost: 290, mountRef: "wpn_05", thumbRef: "wpn_05", dynamicRole: "Uppercut Twin Rip-Discs", stats: { power: 22, agility: 8, hp: -35, speed: -6 }, strength: "Spins upward at 6,000 RPM to launch enemies and shred front plates.", weakness: "Gyroscopic precession pulls steering during sharp turns (-35 HP)." },
-    { id: "wpn_25", code: "WPN-25", name: "Superheated Plasma Torch Cutter Ram", rarity: "RARE", cost: 400, mountRef: "wpn_08", thumbRef: "wpn_08", dynamicRole: "Plasma Torch Cutter", stats: { power: 28, speed: 6, hp: -40, agility: -8 }, strength: "4,000°C plasma lance ignores 55% of enemy Front Armor!", weakness: "Pressurized plasma manifold reduces hull HP (-40 HP)." },
-    { id: "wpn_26", code: "WPN-26", name: "Thunder-Anvil Seismic Drop-Hammer", rarity: "RARE", cost: 445, mountRef: "wpn_01", thumbRef: "wpn_01", dynamicRole: "Thunder-Anvil Maul", stats: { power: 30, hp: 30, speed: -10, agility: -8 }, strength: "Slams enemy top deck on charge impact, stunning their Core for 0.6s.", weakness: "Slow swing recovery after a missed charge (-10 SPD, -8 AGI)." },
-    { id: "wpn_27", code: "WPN-27", name: "Vortex Cyclone Full-Body Shred-Cage", rarity: "EPIC", cost: 580, mountRef: "wpn_12", thumbRef: "wpn_12", dynamicRole: "Cyclone 360° Shred-Cage", stats: { power: 29, agility: 14, hp: -55, speed: -8 }, strength: "360° spinning titanium cage blocks all Flank/Rear crits & reflects knockback.", weakness: "High rotational power draw reduces hull HP (-55 HP)." },
-    { id: "wpn_28", code: "WPN-28", name: "Mag-Harpoon Jaws of Leviathan", rarity: "EPIC", cost: 630, mountRef: "wpn_10", thumbRef: "wpn_10", dynamicRole: "Leviathan Crusher Jaws", stats: { power: 32, hp: 55, speed: -10, agility: -8 }, strength: "Clamps enemies with 12 tons of force and drags them into stage hazards.", weakness: "Massive front jaw assembly slows acceleration (-10 SPD)." },
-    { id: "wpn_29", code: "WPN-29", name: "Zero-Point Singularity Breacher Drill", rarity: "LEGENDARY", cost: 870, mountRef: "wpn_08", thumbRef: "wpn_08", dynamicRole: "Singularity Breacher Drill", stats: { power: 38, speed: 12, agility: 8, hp: -45 }, strength: "Bores through 70% of enemy Defense Rating & damages internal Core directly!", weakness: "Exotic singularity core reduces outer armor thickness (-45 HP)." },
-    { id: "wpn_30", code: "WPN-30", name: "Shibuya Overlord God-Cleaver Spinner", rarity: "LEGENDARY", cost: 980, mountRef: "wpn_12", thumbRef: "wpn_12", dynamicRole: "Overlord God-Cleaver", stats: { power: 42, agility: 16, hp: -50, speed: -6 }, strength: "10,000-RPM tungsten-gold ring cleaver: +45% Charge Damage & 360° Crit Immunity!", weakness: "Extreme kinetic feedback requires reinforced mounts (-50 HP)." }
-  ],
-
-  // SLOT 3: WEAPON 2 — LONG RANGE (+10 New Items: rng_21 .. rng_30)
-  rangedWeapons: [
-    { id: "rng_21", code: "RNG-21", name: "Pneumatic Rebar Spike-Thrower", rarity: "COMMON", cost: 150, mountRef: "rng_01", thumbRef: "rng_01", dynamicRole: "Rebar Spike Launcher", stats: { power: 14, hp: 15, speed: -6, agility: -4 }, strength: "Fires heavy steel rebar spikes that push enemies back on hit.", weakness: "Air tank reload takes 1.9s between shots (-6 SPD)." },
-    { id: "rng_22", code: "RNG-22", name: "Twin Scrap-Shrapnel Flak Cannon", rarity: "COMMON", cost: 175, mountRef: "rng_08", thumbRef: "rng_08", dynamicRole: "Scrap Flak Cannon", stats: { power: 16, agility: 6, hp: -30, speed: -4 }, strength: "Fires high-velocity shrapnel bursts that shred enemy Tires.", weakness: "Lower damage against thick front wedge plows (-30 HP)." },
-    { id: "rng_23", code: "RNG-23", name: "Cryo-Shard Icicle Gatling Turret", rarity: "UNCOMMON", cost: 265, mountRef: "rng_08", thumbRef: "rng_08", dynamicRole: "Cryo-Shard Gatling", stats: { power: 19, agility: 10, hp: -35, speed: -6 }, strength: "Rapid-fires frozen nitrogen shards that slow enemy speed by 25%.", weakness: "Cryo hopper adds top-deck vulnerability (-35 HP)." },
-    { id: "rng_24", code: "RNG-24", name: "Bunker-Buster Guided Torpedo Rack", rarity: "UNCOMMON", cost: 300, mountRef: "rng_04", thumbRef: "rng_04", dynamicRole: "Guided Torpedo Rack", stats: { power: 23, hp: 20, speed: -10, agility: -6 }, strength: "Launches heavy homing torpedoes with +35% knockback impulse.", weakness: "Heavy torpedo tubes slow chassis acceleration (-10 SPD)." },
-    { id: "rng_25", code: "RNG-25", name: "Tesla-Arc Chain Lightning Cannon", rarity: "RARE", cost: 410, mountRef: "rng_18", thumbRef: "rng_18", dynamicRole: "Tesla Chain Cannon", stats: { power: 26, agility: 12, hp: -45, speed: -6 }, strength: "Projects high-voltage lightning beams that jolt enemy steering & Core.", weakness: "Draws heavy reactor current (-45 Max HP)." },
-    { id: "rng_26", code: "RNG-26", name: "Napalm Hellfire Cluster Howitzer", rarity: "RARE", cost: 455, mountRef: "rng_13", thumbRef: "rng_13", dynamicRole: "Hellfire Napalm Mortar", stats: { power: 29, hp: 25, speed: -10, agility: -8 }, strength: "Lobs incendiary shells over front shields, igniting 3.5s of fire DoT.", weakness: "Arcing shells can be dodged by hyper-fast sprint bots (-10 SPD)." },
-    { id: "rng_27", code: "RNG-27", name: "Hyper-Velocity Tungsten MAC Railgun", rarity: "EPIC", cost: 590, mountRef: "rng_01", thumbRef: "rng_01", dynamicRole: "MAC Orbital Railgun", stats: { power: 34, agility: 10, hp: -50, speed: -8 }, strength: "Mach-7 tungsten slug pierces 65% of armor & slams foes toward the Saw!", weakness: "High-capacitance rail barrel lowers hull HP (-50 HP)." },
-    { id: "rng_28", code: "RNG-28", name: "Diamond-Edge Chakram Ricochet Storm", rarity: "EPIC", cost: 640, mountRef: "rng_08", thumbRef: "rng_08", dynamicRole: "Chakram Ricochet Turret", stats: { power: 31, agility: 16, hp: -40, speed: -6 }, strength: "Fires diamond-edged chakram discs that bounce off walls to hit rear armor.", weakness: "Lighter single-hit knockback than railguns (-40 HP)." },
-    { id: "rng_29", code: "RNG-29", name: "Valhalla Hydra-9 Swarm Missile Pod", rarity: "LEGENDARY", cost: 880, mountRef: "rng_04", thumbRef: "rng_04", dynamicRole: "Hydra-9 Missile Swarm", stats: { power: 38, hp: 35, agility: 8, speed: -10 }, strength: "Unleashes relentless homing micro-missiles that track targets across the pit!", weakness: "Armored missile pod adds top-deck weight (-10 SPD)." },
-    { id: "rng_30", code: "RNG-30", name: "Amaterasu Solar-Core Particle Beam", rarity: "LEGENDARY", cost: 990, mountRef: "rng_18", thumbRef: "rng_18", dynamicRole: "Solar-Core Particle Beam", stats: { power: 42, agility: 14, hp: -50, speed: -6 }, strength: "Instant lock-on solar particle beam melts armor & slows turn rate by 40%!", weakness: "Requires precision cooling vents (-50 Max HP)." }
-  ],
-
-  // SLOT 4 & SLOT 5: BOT ABILITIES (+20 New Items = 10 for Bot Ability 1 + 10 for Bot Ability 2: bot_abil_21 .. bot_abil_40)
-  botAbilities: [
-    // --- 10 New Items tailored for BOT ABILITY 1 (Mobility, Thrusters & Active Defense) ---
-    { id: "bot_abil_21", code: "BOT-ABIL-21", name: "CO2 Emergency Pop-Valve Jets", rarity: "COMMON", cost: 140, mountRef: "bot_abil_01", thumbRef: "bot_abil_01", dynamicRole: "CO2 Sidestep Valve", stats: { speed: 12, agility: 12, hp: -30, power: -6 }, strength: "Quick compressed-CO2 side burst to dodge oncoming charges.", weakness: "Thin CO2 canisters reduce hull armor (-30 HP)." },
-    { id: "bot_abil_22", code: "BOT-ABIL-22", name: "Ablative Ceramic Bumper Plates", rarity: "COMMON", cost: 165, mountRef: "bot_abil_09", thumbRef: "bot_abil_09", dynamicRole: "Ceramic Armor Plates", stats: { hp: 55, power: 6, speed: -6, agility: -6 }, strength: "Reinforces hull with +55 Max HP and reduces collision chip damage.", weakness: "Extra plating weight slows agility (-6 SPD, -6 AGI)." },
-    { id: "bot_abil_23", code: "BOT-ABIL-23", name: "Twin Nitrous Afterburner Pods", rarity: "UNCOMMON", cost: 250, mountRef: "bot_abil_01", thumbRef: "bot_abil_01", dynamicRole: "Nitrous Charge Pods", stats: { speed: 20, power: 10, hp: -40, agility: -4 }, strength: "Injects N2O during Charge attacks for +30% ramming velocity!", weakness: "Volatile nitrous tanks lower structural HP (-40 HP)." },
-    { id: "bot_abil_24", code: "BOT-ABIL-24", name: "Kinetic Bash-Shield Deflector Dome", rarity: "UNCOMMON", cost: 280, mountRef: "bot_abil_04", thumbRef: "bot_abil_04", dynamicRole: "Kinetic Deflector Dome", stats: { hp: 50, power: 12, speed: -8, agility: -6 }, strength: "Pulses a radial kinetic barrier that pushes flankers away.", weakness: "Dome generator adds chassis weight (-8 SPD, -6 AGI)." },
-    { id: "bot_abil_25", code: "BOT-ABIL-25", name: "Vector-Thrust 360° Air-Brake Nozzles", rarity: "RARE", cost: 395, mountRef: "bot_abil_01", thumbRef: "bot_abil_01", dynamicRole: "Vector-Thrust Nozzles", stats: { agility: 22, speed: 18, hp: -40, power: -6 }, strength: "Instant mid-charge direction snaps & 90° saw-evasion jets!", weakness: "Lightened thruster cowling (-40 Max HP)." },
-    { id: "bot_abil_26", code: "BOT-ABIL-26", name: "Auto-Triage Field Repair Drones", rarity: "RARE", cost: 435, mountRef: "bot_abil_09", thumbRef: "bot_abil_09", dynamicRole: "Field Repair Micro-Drones", stats: { hp: 80, agility: 6, power: -10, speed: -6 }, strength: "Continuously welds hull damage (+30 HP/sec) & stabilizes worn parts.", weakness: "Diverts power from offensive weapons (-10 PWR)." },
-    { id: "bot_abil_27", code: "BOT-ABIL-27", name: "Aegis-IX Shockwave Repulsor Matrix", rarity: "EPIC", cost: 575, mountRef: "bot_abil_04", thumbRef: "bot_abil_04", dynamicRole: "Aegis Shockwave Matrix", stats: { hp: 65, power: 20, speed: -8, agility: -6 }, strength: "Blasts nearby enemies with a 360° concussive wave toward the Center Saw!", weakness: "Heavy capacitor bank slows acceleration (-8 SPD)." },
-    { id: "bot_abil_28", code: "BOT-ABIL-28", name: "Hyper-Phase Mirage Afterimage Booster", rarity: "EPIC", cost: 625, mountRef: "bot_abil_01", thumbRef: "bot_abil_01", dynamicRole: "Mirage Phase Thrusters", stats: { speed: 24, agility: 22, hp: -45, power: -6 }, strength: "Leaves holographic afterimages while dodging & boosts Charge speed by 35%.", weakness: "High-output phase coils lower base hull HP (-45 HP)." },
-    { id: "bot_abil_29", code: "BOT-ABIL-29", name: "Phoenix Lazarus Self-Resurrection Core", rarity: "LEGENDARY", cost: 860, mountRef: "bot_abil_09", thumbRef: "bot_abil_09", dynamicRole: "Phoenix Nano-Rebuilder", stats: { hp: 115, power: 12, speed: -6, agility: -6 }, strength: "Rapidly regenerates +36 HP/sec in combat & adds +115 Max HP!", weakness: "Heavy regeneration core slightly slows movement (-6 SPD)." },
-    { id: "bot_abil_30", code: "BOT-ABIL-30", name: "Valkyrie Archangel Omni-Jet Wings", rarity: "LEGENDARY", cost: 950, mountRef: "bot_abil_01", thumbRef: "bot_abil_01", dynamicRole: "Archangel Omni-Jets", stats: { speed: 28, agility: 26, power: 14, hp: -35 }, strength: "Supreme 360° jet mobility: instant sidesteps, +40% Charge speed & saw immunity!", weakness: "Aerospace titanium frame trades -35 Max HP for extreme speed." },
-
-    // --- 10 New Items tailored for BOT ABILITY 2 (Tactical, EMP, Grapple & Field Control) ---
-    { id: "bot_abil_31", code: "BOT-ABIL-31", name: "Static-Burst Chaff Discharger", rarity: "COMMON", cost: 145, mountRef: "bot_abil_11", thumbRef: "bot_abil_11", dynamicRole: "Static Chaff Pod", stats: { agility: 10, power: 8, hp: -30, speed: -4 }, strength: "Jams enemy targeting & briefly slows nearby foes on clash.", weakness: "Exposed chaff tubes reduce armor (-30 HP)." },
-    { id: "bot_abil_32", code: "BOT-ABIL-32", name: "Barbed Tow-Cable Anchor Hook", rarity: "COMMON", cost: 170, mountRef: "bot_abil_17", thumbRef: "bot_abil_17", dynamicRole: "Tow-Cable Anchor", stats: { power: 12, hp: 20, speed: -8, agility: -6 }, strength: "Tethers fleeing opponents and pulls them back toward the center.", weakness: "Heavy steel spool slows turning (-8 SPD, -6 AGI)." },
-    { id: "bot_abil_33", code: "BOT-ABIL-33", name: "Overvolted Stun-Grid Emitter", rarity: "UNCOMMON", cost: 260, mountRef: "bot_abil_11", thumbRef: "bot_abil_11", dynamicRole: "Stun-Grid Emitter", stats: { power: 14, agility: 12, hp: -35, speed: -6 }, strength: "Emits an electric pulse on hit that scrambles enemy steering for 1.2s.", weakness: "Unshielded transformer coils reduce HP (-35 HP)." },
-    { id: "bot_abil_34", code: "BOT-ABIL-34", name: "Heavy Winch Saw-Flinger Reel", rarity: "UNCOMMON", cost: 295, mountRef: "bot_abil_17", thumbRef: "bot_abil_17", dynamicRole: "Saw-Flinger Winch", stats: { power: 18, hp: 30, speed: -8, agility: -8 }, strength: "Yanks enemies across the Center Saw trench with high-torque cable.", weakness: "Winch motor adds front-deck weight (-8 SPD, -8 AGI)." },
-    { id: "bot_abil_35", code: "BOT-ABIL-35", name: "Blackout EMP Super-Capacitor Dome", rarity: "RARE", cost: 415, mountRef: "bot_abil_11", thumbRef: "bot_abil_11", dynamicRole: "Blackout EMP Dome", stats: { power: 18, agility: 16, hp: -40, speed: -6 }, strength: "Paralyzes enemy drive & weapons for 1.6s within 250px!", weakness: "Capacitor discharge reduces hull shielding (-40 HP)." },
-    { id: "bot_abil_36", code: "BOT-ABIL-36", name: "Scorpion-X Titanium Harpoon Winch", rarity: "RARE", cost: 450, mountRef: "bot_abil_17", thumbRef: "bot_abil_17", dynamicRole: "Scorpion-X Harpoon", stats: { power: 22, hp: 40, speed: -8, agility: -8 }, strength: "High-velocity harpoon drags rivals straight through active arena hazards!", weakness: "Heavy harpoon housing slows top speed (-8 SPD)." },
-    { id: "bot_abil_37", code: "BOT-ABIL-37", name: "Graviton Pulse Tractor-Beam Core", rarity: "EPIC", cost: 585, mountRef: "bot_abil_17", thumbRef: "bot_abil_17", dynamicRole: "Graviton Tractor Beam", stats: { power: 26, hp: 45, agility: 10, speed: -8 }, strength: "Locks onto enemies with a gravity tether and slingshots them into the Saw!", weakness: "Graviton emitter draws heavy auxiliary power (-8 SPD)." },
-    { id: "bot_abil_38", code: "BOT-ABIL-38", name: "Thunder-God Mjolnir EMP Nova", rarity: "EPIC", cost: 635, mountRef: "bot_abil_11", thumbRef: "bot_abil_11", dynamicRole: "Mjolnir EMP Nova", stats: { power: 24, agility: 18, hp: -45, speed: -6 }, strength: "Massive 260px EMP lightning nova stuns enemies & drains their Stamina!", weakness: "High-voltage arc coils reduce base hull HP (-45 HP)." },
-    { id: "bot_abil_39", code: "BOT-ABIL-39", name: "Abyssal Kraken Quantum Tether", rarity: "LEGENDARY", cost: 890, mountRef: "bot_abil_17", thumbRef: "bot_abil_17", dynamicRole: "Kraken Quantum Tether", stats: { power: 32, hp: 70, agility: 12, speed: -6 }, strength: "Unbreakable quantum tether yanks enemies into the Saw + +70 Max HP!", weakness: "Heavy quantum anchor slightly reduces top speed (-6 SPD)." },
-    { id: "bot_abil_40", code: "BOT-ABIL-40", name: "Chronos Time-Freeze Stasis Emitter", rarity: "LEGENDARY", cost: 970, mountRef: "bot_abil_11", thumbRef: "bot_abil_11", dynamicRole: "Chronos Stasis Emitter", stats: { power: 28, agility: 24, speed: 12, hp: -45 }, strength: "Freezes enemy steering & weapons in a 1.8s temporal stasis field!", weakness: "Temporal core reduces physical armor thickness (-45 HP)." }
-  ],
-
-  // SLOT 6: WEAPON ABILITY / CORE MOD (+10 New Items: wpn_abil_21 .. wpn_abil_30)
-  weaponAbilities: [
-    { id: "wpn_abil_21", code: "WPN-ABIL-21", name: "Weighted Lead-Core Impact Slug", rarity: "COMMON", cost: 145, mountRef: "wpn_abil_03", thumbRef: "wpn_abil_03", dynamicRole: "Lead-Core Knockback", stats: { power: 16, hp: 15, speed: -6, agility: -6 }, strength: "Adds +25% extra knockback distance to every charge & weapon hit.", weakness: "Dead weight slows acceleration (-6 SPD, -6 AGI)." },
-    { id: "wpn_abil_22", code: "WPN-ABIL-22", name: "Magnesium Spark-Flare Igniter", rarity: "COMMON", cost: 170, mountRef: "wpn_abil_07", thumbRef: "wpn_abil_07", dynamicRole: "Magnesium Burn Igniter", stats: { power: 18, hp: -25, speed: -4, agility: -4 }, strength: "Ignites magnesium sparks on collision for 2.5s of burn damage.", weakness: "Flammable magnesium cells reduce hull HP (-25 HP)." },
-    { id: "wpn_abil_23", code: "WPN-ABIL-23", name: "Freon-12 Coolant Frost Injector", rarity: "UNCOMMON", cost: 265, mountRef: "wpn_abil_11", thumbRef: "wpn_abil_11", dynamicRole: "Freon Frost Injector", stats: { power: 14, agility: 10, hp: -30, speed: -6 }, strength: "Chills enemy motors on hit, slowing their escape speed by 25%.", weakness: "Pressurized coolant lines lower Max HP (-30 HP)." },
-    { id: "wpn_abil_24", code: "WPN-ABIL-24", name: "Serrated Flank-Ripper Calibration", rarity: "UNCOMMON", cost: 295, mountRef: "wpn_abil_12", thumbRef: "wpn_abil_12", dynamicRole: "Flank-Ripper Crit Mod", stats: { power: 22, agility: 12, hp: -40, speed: -4 }, strength: "Boosts Side-Flank Critical Damage to 1.75x and Rear Crits to 2.2x!", weakness: "Lightened weapon framing lowers Max HP (-40 HP)." },
-    { id: "wpn_abil_25", code: "WPN-ABIL-25", name: "Parasitic Leech-Coil Energy Siphon", rarity: "RARE", cost: 420, mountRef: "wpn_abil_18", thumbRef: "wpn_abil_18", dynamicRole: "Leech-Coil HP Siphon", stats: { power: 20, speed: 10, hp: -40, agility: -6 }, strength: "Heals your bot for 35% of all collision & weapon damage dealt!", weakness: "Parasitic coil drains -40 starting Max HP." },
-    { id: "wpn_abil_26", code: "WPN-ABIL-26", name: "Richter-9 Tectonic Shockwave Core", rarity: "RARE", cost: 460, mountRef: "wpn_abil_03", thumbRef: "wpn_abil_03", dynamicRole: "Richter-9 Shock Core", stats: { power: 26, hp: 30, speed: -8, agility: -8 }, strength: "Triggers a seismic shock ring on impact for +45% knockback into the Saw!", weakness: "Heavy seismic hammer slows turn rate (-8 SPD, -8 AGI)." },
-    { id: "wpn_abil_27", code: "WPN-ABIL-27", name: "Hellfire White-Phosphorus Core", rarity: "EPIC", cost: 600, mountRef: "wpn_abil_07", thumbRef: "wpn_abil_07", dynamicRole: "White-Phosphorus Core", stats: { power: 32, agility: 8, hp: -45, speed: -6 }, strength: "Coats enemy bots in inextinguishable 3,000°C fire for 4.5s!", weakness: "Thermal radiation reduces own hull shielding (-45 HP)." },
-    { id: "wpn_abil_28", code: "WPN-ABIL-28", name: "Absolute-Zero Kelvin Shatter Core", rarity: "EPIC", cost: 650, mountRef: "wpn_abil_11", thumbRef: "wpn_abil_11", dynamicRole: "Kelvin Shatter Core", stats: { power: 26, agility: 16, hp: -35, speed: -6 }, strength: "Deep-freezes enemy armor (-40% Speed & +30% Brittle Damage taken)!", weakness: "Cryogenic dewar adds chassis weight (-6 SPD, -35 HP)." },
-    { id: "wpn_abil_29", code: "WPN-ABIL-29", name: "Shinobi 3.0x Shadow-Executioner Core", rarity: "LEGENDARY", cost: 910, mountRef: "wpn_abil_12", thumbRef: "wpn_abil_12", dynamicRole: "Shinobi Executioner Core", stats: { power: 38, agility: 20, speed: 10, hp: -55 }, strength: "Massive 2.65x Rear Backstab & 2.0x Flank Critical Strike Multiplier!", weakness: "Glass-cannon assassin tuning (-55 Max HP)." },
-    { id: "wpn_abil_30", code: "WPN-ABIL-30", name: "Nosferatu Blood-Reactor Overdrive", rarity: "LEGENDARY", cost: 995, mountRef: "wpn_abil_18", thumbRef: "wpn_abil_18", dynamicRole: "Nosferatu Siphon Core", stats: { power: 34, speed: 16, agility: 14, hp: -45 }, strength: "Heals your bot for 45% of all damage dealt + steals enemy Stamina on hit!", weakness: "Requires aggressive combat (-45 starting Max HP)." }
-  ]
-};
-
-for (const [catKey, newItems] of Object.entries(window.NEW_SLOT_EXPANSION_60)) {
-  if (!window.BOT_ADDONS_CATALOG[catKey]) continue;
-  for (const item of newItems) {
-    if (!window.BOT_ADDONS_CATALOG[catKey].some(existing => existing.id === item.id)) {
-      item.isDynamicPick = true;
-      item.img = `assets/concept_gallery/addons_80/transparent_20/${item.thumbRef}.png?v=pbr3`;
-      item.effect = item.strength;
-      item.whatItDoes = item.strength;
-      window.BOT_ADDONS_CATALOG[catKey].push(item);
-    }
-  }
-}
 
 for (const list of Object.values(window.BOT_ADDONS_CATALOG)) {
   for (const item of list) {
@@ -1378,17 +1279,23 @@ for (const list of Object.values(window.BOT_ADDONS_CATALOG)) {
     item.rarityColor = rMeta.color;
     item.rarityLabel = rMeta.label;
     item.rarityIcon  = rMeta.icon;
+    item.cardImg = `assets/concept_gallery/addons_80/unique_cards/${item.id}.jpg`;
   }
 }
 
 window.BOTPIT_MAPS = [
   {
-    id: "map_shibuya",
+    id: "map_01_furnace",
     num: 1,
+    arenaNum: 1,
+    badge: "🔥 ARENA 01",
+    category: "ORIGINAL ARENA",
     name: "SHIBUYA FURNACE PIT",
     shortName: "🔥 SHIBUYA PIT",
-    subtitle: "Center Rip-Saw & Corner Blast Furnaces",
-    hazardDesc: "Classic underground octagon with the emerging Center Rip-Saw and glowing corner blast furnaces.",
+    subtitle: "Center Rip-Saw & 4 Corner Blast Furnaces",
+    hazardDesc: "Classic underground octagon with the emerging Center Rip-Saw and 4 glowing corner blast furnaces.",
+    conceptArt: "assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg",
+    accent: "#fbbf24",
     themeColor: "#fbbf24",
     floorTint: "rgba(0, 0, 0, 0)",
     gridColor: "rgba(251, 191, 36, 0.10)",
@@ -1399,83 +1306,129 @@ window.BOTPIT_MAPS = [
     hazardType: "furnace"
   },
   {
-    id: "map_akihabara",
+    id: "arena_02_lava_bridge",
     num: 2,
-    name: "AKIHABARA TESLA DOME",
-    shortName: "⚡ TESLA DOME",
-    subtitle: "Twin High-Voltage Arc Pylons (+Shock & Slow)",
-    hazardDesc: "Twin Tesla Coils flank the center lane, periodically discharging 50,000V lightning rings that jolt and slow nearby bots.",
-    themeColor: "#38bdf8",
-    floorTint: "rgba(8, 47, 73, 0.36)",
-    gridColor: "rgba(56, 189, 248, 0.16)",
-    borderGlow: "#38bdf8",
-    frictionMult: 1.0,
-    wallBounceMult: 1.05,
-    sawDmgMult: 1.0,
-    hazardType: "tesla_coils"
-  },
-  {
-    id: "map_hokkaido",
-    num: 3,
-    name: "HOKKAIDO CRYO VAULT",
-    shortName: "❄️ CRYO VAULT",
-    subtitle: "Sub-Zero Ice Deck (+28% Drift Slide Velocity)",
-    hazardDesc: "Flash-frozen cryo-steel floor reduces tire friction, turning every Charge into a high-speed powerslide collision!",
-    themeColor: "#22d3ee",
-    floorTint: "rgba(6, 78, 119, 0.42)",
-    gridColor: "rgba(103, 232, 249, 0.20)",
-    borderGlow: "#22d3ee",
-    frictionMult: 1.032,
-    wallBounceMult: 1.15,
-    sawDmgMult: 1.0,
-    hazardType: "cryo_ice"
-  },
-  {
-    id: "map_osaka",
-    num: 4,
-    name: "OSAKA SLAG CRUCIBLE",
-    shortName: "🌋 SLAG CRUCIBLE",
-    subtitle: "Erupting Molten Floor Vents (+Thermal Burn)",
-    hazardDesc: "Industrial steel-foundry crucible with dual molten slag vents that ignite bots shoved across them.",
+    arenaNum: 2,
+    badge: "🌋 ARENA 02",
+    category: "RING-OUT MAP",
+    name: "OSAKA MOLTEN LAVA BRIDGE",
+    shortName: "🌋 LAVA BRIDGE",
+    subtitle: "RING-OUT: Open Top & Bottom Molten Lava Chasms",
+    hazardDesc: "Wide horizontal riveted dark-steel bridge with NO top or bottom walls—shoving or flipping a rival across the yellow-and-black hazard stripes into the north/south lava rivers is an instant Ring-Out KO!",
+    conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/ringout_01_lava_bridge.jpg",
+    accent: "#f97316",
     themeColor: "#f97316",
-    floorTint: "rgba(124, 45, 18, 0.36)",
-    gridColor: "rgba(251, 146, 60, 0.16)",
+    floorTint: "rgba(0, 0, 0, 0)",
+    gridColor: "rgba(249, 115, 22, 0.12)",
     borderGlow: "#f97316",
     frictionMult: 1.0,
-    wallBounceMult: 1.0,
-    sawDmgMult: 1.15,
-    hazardType: "slag_vents"
-  },
-  {
-    id: "map_shinjuku",
-    num: 5,
-    name: "SHINJUKU MAG-LEV YARD",
-    shortName: "🧲 MAG-LEV YARD",
-    subtitle: "Electromagnetic Repulsor Walls (1.45x Ricochet)",
-    hazardDesc: "Cybernetic mag-lev rails line the perimeter walls—slamming an enemy into the wall ricochets them violently back toward the Center Saw!",
-    themeColor: "#c084fc",
-    floorTint: "rgba(59, 7, 100, 0.36)",
-    gridColor: "rgba(192, 132, 252, 0.18)",
-    borderGlow: "#c084fc",
-    frictionMult: 1.01,
-    wallBounceMult: 1.45,
+    wallBounceMult: 1.15,
     sawDmgMult: 1.0,
-    hazardType: "mag_walls"
+    hazardType: "ringout_top_bottom"
   },
   {
-    id: "map_roppongi",
-    num: 6,
-    name: "ROPPONGI SYNDICATE RING",
-    shortName: "👑 VIP ROOFTOP",
-    subtitle: "Hyper-RPM Gold Saw (1.35x Saw Dmg) & Center Boost",
-    hazardDesc: "High-roller obsidian-and-gold rooftop octagon where holding the center boosts Stamina regen and the golden saw spins at lethal RPM.",
+    id: "arena_07_smelter_trenches",
+    num: 7,
+    arenaNum: 7,
+    badge: "🔥 ARENA 07",
+    category: "RING-OUT MAP",
+    name: "KAWASAKI SMELTER SIDE-TRENCHES",
+    shortName: "🔥 SIDE TRENCHES",
+    subtitle: "RING-OUT: Open Left & Right Molten Slag Pouring Trenches",
+    hazardDesc: "Solid armored walls on Top and Bottom, while the entire Left edge and Right edge are open glowing molten slag pouring trenches behind caution lines for head-on Ring-Out shoves!",
+    conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/ringout_06_smelter_side_pits.jpg",
+    accent: "#f59e0b",
+    themeColor: "#f59e0b",
+    floorTint: "rgba(0, 0, 0, 0)",
+    gridColor: "rgba(245, 158, 11, 0.12)",
+    borderGlow: "#f59e0b",
+    frictionMult: 1.0,
+    wallBounceMult: 1.20,
+    sawDmgMult: 1.0,
+    hazardType: "ringout_left_right"
+  },
+  {
+    id: "arena_11_sky_ledge",
+    num: 11,
+    arenaNum: 11,
+    badge: "👑 ARENA 11",
+    category: "RING-OUT MAP",
+    name: "ROPPONGI SKY-PENTHOUSE LEDGE",
+    shortName: "👑 SKY LEDGE",
+    subtitle: "RING-OUT: All 4 Sides Red Laser Rooftop Over 80-Story Drop",
+    hazardDesc: "Luxury dark-obsidian and 24K-gold rooftop platform with glowing crimson laser boundary lines and zero walls on all 4 sides overlooking an 80-story night-city abyss!",
+    conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/ringout_10_sky_tower_ledge.jpg",
+    accent: "#f43f5e",
     themeColor: "#f43f5e",
-    floorTint: "rgba(76, 5, 25, 0.34)",
-    gridColor: "rgba(244, 63, 94, 0.16)",
+    floorTint: "rgba(0, 0, 0, 0)",
+    gridColor: "rgba(244, 63, 94, 0.12)",
     borderGlow: "#f43f5e",
     frictionMult: 1.0,
+    wallBounceMult: 1.25,
+    sawDmgMult: 1.0,
+    hazardType: "ringout_sky_ledge"
+  },
+  {
+    id: "arena_12_scrap_kennel",
+    num: 12,
+    arenaNum: 12,
+    badge: "🧨 ARENA 12",
+    category: "2x MINI-BOT AMBUSH MAP",
+    name: "SHIBUYA SCRAP-HOUND KENNEL",
+    shortName: "🧨 BOMB BUGGIES",
+    subtitle: "AMBUSH: 2x 'TICK-BOOM' Bomb Buggies (220 HP) Attack Once/Round",
+    hazardDesc: "Enclosed junkyard pit with Top-Center & Bottom-Center red warning hatch bays. Once per round, 2 fast Kamikaze Bomb Buggies (220 HP) drive out to chase both players (+80 HP & Nitro Boost on kill)!",
+    conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/minibot_01_scrap_hound_kennel.jpg",
+    accent: "#ef4444",
+    themeColor: "#ef4444",
+    floorTint: "rgba(0, 0, 0, 0)",
+    gridColor: "rgba(239, 68, 68, 0.12)",
+    borderGlow: "#ef4444",
+    frictionMult: 1.0,
     wallBounceMult: 1.10,
-    sawDmgMult: 1.35,
-    hazardType: "vip_overdrive"
+    sawDmgMult: 1.0,
+    hazardType: "minibot_bomb_buggies"
+  },
+  {
+    id: "arena_13_drone_foundry",
+    num: 13,
+    arenaNum: 13,
+    badge: "🕷️ ARENA 13",
+    category: "2x MINI-BOT AMBUSH MAP",
+    name: "AKIHABARA DRONE-HIVE FOUNDRY",
+    shortName: "🕷️ TESLA SPIDERS",
+    subtitle: "AMBUSH: 2x 'VOLT-LEECH' Tesla Spiders (220 HP) Attack Once/Round",
+    hazardDesc: "Cobalt cyber-foundry with Top-Center & Bottom-Center hexagonal drone bays. Once per round, 2 Volt-Leech Spiders (220 HP) emerge to zap & slow both players (+120 HP Shield Battery on kill)!",
+    conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/minibot_02_drone_hive_foundry.jpg",
+    accent: "#22d3ee",
+    themeColor: "#22d3ee",
+    floorTint: "rgba(0, 0, 0, 0)",
+    gridColor: "rgba(34, 211, 238, 0.12)",
+    borderGlow: "#22d3ee",
+    frictionMult: 1.0,
+    wallBounceMult: 1.10,
+    sawDmgMult: 1.0,
+    hazardType: "minibot_volt_spiders"
+  },
+  {
+    id: "arena_17_cryo_lab",
+    num: 17,
+    arenaNum: 17,
+    badge: "❄️ ARENA 17",
+    category: "2x MINI-BOT AMBUSH MAP",
+    name: "HOKKAIDO CRYO-DRONE LAB",
+    shortName: "❄️ CRYO DRONES",
+    subtitle: "AMBUSH: 2x 'FROST-MITE' Cryo Drones (210 HP) Attack Once/Round",
+    hazardDesc: "Frosted steel cryo-laboratory with Top-Center & Bottom-Center airlock bays. Once per round, 2 Cryo-Sprayer Drones (210 HP) exit the airlocks to chill both fighters (+110 HP Repair on kill)!",
+    conceptArt: "assets/concept_gallery/battlebots_topdown_3d/maps_10/minibot_06_cryo_drone_lab.jpg",
+    accent: "#38bdf8",
+    themeColor: "#38bdf8",
+    floorTint: "rgba(0, 0, 0, 0)",
+    gridColor: "rgba(56, 189, 248, 0.12)",
+    borderGlow: "#38bdf8",
+    frictionMult: 1.02,
+    wallBounceMult: 1.10,
+    sawDmgMult: 1.0,
+    hazardType: "minibot_cryo_mites"
   }
 ];
