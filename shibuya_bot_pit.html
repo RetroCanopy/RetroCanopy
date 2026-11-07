@@ -5831,9 +5831,13 @@
       font-weight: 900 !important;
       cursor: pointer;
     }
-    .friends-top-btn:hover {
+    .friends-top-btn:hover,
+    .friends-top-btn.active,
+    #modeBtnFriends.active {
+      background: linear-gradient(180deg, rgba(251, 191, 36, 0.34) 0%, rgba(14, 165, 233, 0.36) 100%) !important;
       border-color: #fbbf24 !important;
-      box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
+      color: #fde047 !important;
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.45) !important;
     }
     .friends-online-dot-pill {
       background: rgba(16, 185, 129, 0.18);
@@ -5881,7 +5885,7 @@
       border: 1.5px solid rgba(148, 163, 184, 0.26);
       color: #94a3b8;
       border-radius: 9px;
-      padding: 7px 8px;
+      padding: 8px 8px;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.56rem;
       font-weight: 900;
@@ -5893,11 +5897,15 @@
       gap: 5px;
       transition: all 0.14s ease;
     }
+    .pit-comms-tab-btn:hover {
+      border-color: rgba(56, 189, 248, 0.65);
+      color: #e2e8f0;
+    }
     .pit-comms-tab-btn.active {
-      background: linear-gradient(180deg, rgba(14, 165, 233, 0.30) 0%, rgba(15, 23, 42, 0.96) 100%);
-      border-color: #38bdf8;
-      color: #ffffff;
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.32);
+      background: linear-gradient(180deg, rgba(251, 191, 36, 0.30) 0%, rgba(14, 165, 233, 0.34) 100%) !important;
+      border: 2px solid #fbbf24 !important;
+      color: #fde047 !important;
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.42), inset 0 0 10px rgba(56, 189, 248, 0.25) !important;
     }
     .comms-tab-panel {
       display: flex;
@@ -5907,7 +5915,8 @@
       height: 100%;
       overflow: hidden;
     }
-    .comms-tab-panel.comms-panel-hidden {
+    .comms-tab-panel.comms-panel-hidden,
+    #pitBroadcastDeck #pitChatBroadcastCard .comms-tab-panel.comms-panel-hidden {
       display: none !important;
     }
     @media (max-width: 960px) {
@@ -5930,8 +5939,102 @@
       height: 100%;
       overflow: hidden;
     }
-    .friends-subview.hidden {
+    .friends-subview.hidden,
+    .friends-subview.subview-hidden {
       display: none !important;
+    }
+    .friends-empty-state {
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px dashed rgba(56, 189, 248, 0.38);
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+      color: #cbd5e1;
+      font-size: 0.76rem;
+      line-height: 1.45;
+      margin: 6px 0;
+    }
+    .friend-row-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+      cursor: pointer;
+    }
+    .friend-info-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+    .friend-callsign-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .friend-status-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.46rem;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .friend-status-label.online {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(52, 211, 153, 0.55);
+      color: #34d399;
+    }
+    .friend-status-label.offline {
+      background: rgba(71, 85, 105, 0.25);
+      border: 1px solid rgba(100, 116, 139, 0.4);
+      color: #94a3b8;
+    }
+    .f-act-btn {
+      background: rgba(14, 165, 233, 0.22);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      color: #f0f9ff;
+      border-radius: 7px;
+      padding: 5px 9px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.50rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.14s ease;
+    }
+    .f-act-btn:hover {
+      border-color: #fbbf24;
+      color: #fde047;
+    }
+    .f-act-btn.chat-btn {
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.34) 0%, rgba(3, 105, 161, 0.44) 100%);
+      border-color: #38bdf8;
+    }
+    .f-act-btn.add-btn,
+    .f-act-btn.accept-btn {
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.34) 0%, rgba(5, 150, 105, 0.48) 100%);
+      border-color: #34d399;
+      color: #ecfdf5;
+    }
+    .f-act-btn.decline-btn {
+      background: rgba(244, 63, 94, 0.18);
+      border-color: rgba(251, 113, 133, 0.45);
+      color: #fda4af;
+    }
+    .friend-unread-pill {
+      background: #f43f5e;
+      color: #fff;
+      border-radius: 999px;
+      padding: 1px 5px;
+      font-size: 0.46rem;
+      font-weight: 900;
     }
     .friend-add-form {
       display: flex;
@@ -6291,7 +6394,7 @@
       <button class="mode-btn" style="background:linear-gradient(180deg,#fbbf24 0%,#b45309 100%);color:#09060d;border-color:#fde047;font-weight:900;" onclick="openSkillTreeModal()" title="Open Shibuya Syndicate Skill Tree (5 Tabs · 135 Upgrades)">
         🌳 SKILL TREE
       </button>
-      <button class="mode-btn" onclick="openFriendsCommsTab()" title="Open Friends List, Online Status &amp; Private 1-on-1 Chats">
+      <button class="mode-btn" id="modeBtnFriends" onclick="openFriendsCommsTab()" title="Open Friends List, Online Status &amp; Private 1-on-1 Chats">
         👥 FRIENDS &amp; CHATS
       </button>
       <button class="top-nav-pill logout-btn" id="btnLogoutPilot" onclick="logoutPilotAccount()" title="Log Out or Switch Pilot Account">
@@ -17670,17 +17773,42 @@
 
     function switchPitCommsTab(tab) {
       socialState.activeCommsTab = tab === "friends" ? "friends" : "public";
-      const tabPub = document.getElementById("commsTabPublicBtn");
-      const tabFri = document.getElementById("commsTabFriendsBtn");
+      const isFriends = socialState.activeCommsTab === "friends";
+
+      const tabPub = document.getElementById("commsTabBtnPublic");
+      const tabFri = document.getElementById("commsTabBtnFriends");
       const panPub = document.getElementById("publicPitChatPanel");
       const panFri = document.getElementById("friendsAndDmPanel");
+      const cardEl = document.getElementById("pitChatBroadcastCard");
+      const chevEl = document.getElementById("chev_pitChatBroadcastCard");
+      const hdrTitleEl = document.getElementById("pitCommsCardHeaderTitle");
+      const topNavFriBtn = document.getElementById("topFriendsNavBtn");
+      const modeFriBtn = document.getElementById("modeBtnFriends");
 
-      if (tabPub) tabPub.classList.toggle("active", socialState.activeCommsTab === "public");
-      if (tabFri) tabFri.classList.toggle("active", socialState.activeCommsTab === "friends");
-      if (panPub) panPub.classList.toggle("comms-panel-hidden", socialState.activeCommsTab !== "public");
-      if (panFri) panFri.classList.toggle("comms-panel-hidden", socialState.activeCommsTab !== "friends");
+      // Expand the chat/friends card if collapsed on mobile
+      if (cardEl && !cardEl.classList.contains("tab-expanded")) {
+        cardEl.classList.add("tab-expanded");
+        if (chevEl) chevEl.textContent = "▴ HIDE";
+      }
 
-      if (socialState.activeCommsTab === "friends") {
+      // Highlight the active tab button & top nav buttons
+      if (tabPub) tabPub.classList.toggle("active", !isFriends);
+      if (tabFri) tabFri.classList.toggle("active", isFriends);
+      if (topNavFriBtn) topNavFriBtn.classList.toggle("active", isFriends);
+      if (modeFriBtn) modeFriBtn.classList.toggle("active", isFriends);
+
+      // Update header title so it's unmistakably clear which tab is active
+      if (hdrTitleEl) {
+        hdrTitleEl.innerHTML = isFriends
+          ? `<span style="color:#fde047;">👥 FRIENDS LIST &amp; PRIVATE DMS</span>`
+          : `💬 SHIBUYA PIT PUBLIC CHAT`;
+      }
+
+      // Show the selected tab panel and hide the other
+      if (panPub) panPub.classList.toggle("comms-panel-hidden", isFriends);
+      if (panFri) panFri.classList.toggle("comms-panel-hidden", !isFriends);
+
+      if (isFriends) {
         syncSocialDataFromCloud(false);
         renderFriendsAndSocialUI();
         if (socialState.activeChatFriendKey) {
@@ -17691,15 +17819,15 @@
     }
 
     function openFriendsCommsTab(friendKeyToOpen = null, friendCallsign = null) {
-      if (typeof isMobileViewport === "function" && isMobileViewport()) {
-        document.body.classList.remove("mob-play-active");
-        if (typeof switchMobileView === "function") {
-          switchMobileView("chat");
+      // If in full-screen mobile battle mode, open the chat overlay so Friends & DMs is visible
+      if (document.body.classList.contains("mobile-play-active") && window.innerWidth <= 960) {
+        if (typeof toggleMobileChatOverlay === "function") {
+          toggleMobileChatOverlay(true);
         }
       }
       switchPitCommsTab("friends");
       const deckEl = document.getElementById("pitChatBroadcastCard");
-      if (deckEl && (!isMobileViewport || !isMobileViewport())) {
+      if (deckEl && !document.body.classList.contains("mobile-play-active")) {
         deckEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
       if (friendKeyToOpen) {
@@ -17708,10 +17836,16 @@
     }
 
     function switchFriendsSubTab(subTab) {
-      socialState.activeFriendsSubTab = subTab || "friends";
-      ["Friends", "Requests", "Discover"].forEach(k => {
-        const btn = document.getElementById("fSubTab" + k);
-        if (btn) btn.classList.toggle("active", socialState.activeFriendsSubTab === k.toLowerCase());
+      const norm = (subTab === "list" || subTab === "friends") ? "list" : (subTab === "requests" ? "requests" : "discover");
+      socialState.activeFriendsSubTab = norm;
+      const mapIds = {
+        list: "fSubBtn_list",
+        requests: "fSubBtn_requests",
+        discover: "fSubBtn_discover"
+      };
+      Object.keys(mapIds).forEach(k => {
+        const btn = document.getElementById(mapIds[k]);
+        if (btn) btn.classList.toggle("active", norm === k);
       });
       renderFriendsAndSocialUI();
     }
@@ -18035,7 +18169,7 @@
 
     async function sendFriendRequestFromInput() {
       if (!ensurePilotLoggedIn()) return;
-      const inputEl = document.getElementById("friendSearchInput");
+      const inputEl = document.getElementById("addFriendCallsignInput") || document.getElementById("friendSearchInput");
       if (!inputEl) return;
       const rawTarget = (inputEl.value || "").trim().replace(/^@+/, "");
       if (!rawTarget) {
@@ -18196,14 +18330,20 @@
 
       const dirView = document.getElementById("friendsDirectorySubView");
       const dmView = document.getElementById("privateDmThreadSubView");
-      if (dirView) dirView.classList.add("subview-hidden");
-      if (dmView) dmView.classList.remove("subview-hidden");
+      if (dirView) {
+        dirView.classList.add("hidden");
+        dirView.classList.add("subview-hidden");
+      }
+      if (dmView) {
+        dmView.classList.remove("hidden");
+        dmView.classList.remove("subview-hidden");
+      }
 
       markFriendThreadRead(fKey);
       renderActivePrivateDmThread();
       syncSocialDataFromCloud(false);
 
-      const inp = document.getElementById("privateDmInput");
+      const inp = document.getElementById("dmMessageInput") || document.getElementById("privateDmInput");
       if (inp) setTimeout(() => inp.focus(), 60);
     }
 
@@ -18212,8 +18352,14 @@
       socialState.activeChatFriendCallsign = null;
       const dirView = document.getElementById("friendsDirectorySubView");
       const dmView = document.getElementById("privateDmThreadSubView");
-      if (dmView) dmView.classList.add("subview-hidden");
-      if (dirView) dirView.classList.remove("subview-hidden");
+      if (dmView) {
+        dmView.classList.add("hidden");
+        dmView.classList.add("subview-hidden");
+      }
+      if (dirView) {
+        dirView.classList.remove("hidden");
+        dirView.classList.remove("subview-hidden");
+      }
       renderFriendsAndSocialUI();
     }
 
@@ -18245,9 +18391,9 @@
       const fCall = socialState.activeChatFriendCallsign || ("@" + fKey.toUpperCase());
       const statusInfo = getPilotOnlineInfo(fKey);
 
-      const nameEl = document.getElementById("dmPartnerCallsign");
+      const nameEl = document.getElementById("dmHeaderCallsign") || document.getElementById("dmPartnerCallsign");
       const dotEl = document.getElementById("dmPartnerStatusDot");
-      const subEl = document.getElementById("dmPartnerStatusSub");
+      const subEl = document.getElementById("dmHeaderStatusTxt") || document.getElementById("dmPartnerStatusSub");
       if (nameEl) nameEl.textContent = fCall;
       if (dotEl) {
         dotEl.className = "friend-status-dot " + (statusInfo.isOnline ? "online" : "offline");
@@ -18259,7 +18405,7 @@
         subEl.style.color = statusInfo.isOnline ? "#34d399" : "#94a3b8";
       }
 
-      const feedEl = document.getElementById("privateDmFeed");
+      const feedEl = document.getElementById("dmMessagesFeed") || document.getElementById("privateDmFeed");
       if (!feedEl) return;
 
       const tKey = makePairKey(myKey, fKey);
@@ -18296,7 +18442,7 @@
 
     async function sendPrivateDmFromInput() {
       if (!ensurePilotLoggedIn()) return;
-      const inp = document.getElementById("privateDmInput");
+      const inp = document.getElementById("dmMessageInput") || document.getElementById("privateDmInput");
       if (!inp) return;
       const text = (inp.value || "").trim();
       if (!text) return;
@@ -18384,32 +18530,42 @@
       // Update Top Header Bar Badges
       const topOnlineEl = document.getElementById("topFriendsOnlineBadge");
       const topUnreadEl = document.getElementById("topFriendsUnreadBadge");
-      if (topOnlineEl) topOnlineEl.textContent = `${onlineFriendsCount} ONLINE`;
+      if (topOnlineEl) topOnlineEl.textContent = `🟢 ${onlineFriendsCount}`;
       if (topUnreadEl) {
         topUnreadEl.textContent = String(totalAlerts);
-        topUnreadEl.classList.toggle("has-unread", totalAlerts > 0);
+        topUnreadEl.classList.toggle("hidden", totalAlerts <= 0);
+      }
+
+      // Update Card Header & Comms Tab Bar Badges
+      const hdrUnreadEl = document.getElementById("headerFriendsUnreadBadge");
+      if (hdrUnreadEl) {
+        hdrUnreadEl.textContent = `${totalAlerts} NEW`;
+        hdrUnreadEl.classList.toggle("hidden", totalAlerts <= 0);
+      }
+      const commsOnlineEl = document.getElementById("commsTabOnlineBadge");
+      if (commsOnlineEl) commsOnlineEl.textContent = `🟢 ${onlineFriendsCount}`;
+      const commsUnreadEl = document.getElementById("commsTabUnreadBadge") || document.getElementById("commsTabFriendsBadge");
+      if (commsUnreadEl) {
+        commsUnreadEl.textContent = String(totalAlerts);
+        commsUnreadEl.classList.toggle("hidden", totalAlerts <= 0);
+        commsUnreadEl.classList.toggle("show", totalAlerts > 0);
       }
 
       // Update Garage Sidebar Button Badges
       const garOnlineEl = document.getElementById("garageFriendsOnlineBadge");
       const garUnreadEl = document.getElementById("garageFriendsUnreadBadge");
-      if (garOnlineEl) garOnlineEl.textContent = `${onlineFriendsCount} ONLINE`;
+      if (garOnlineEl) garOnlineEl.textContent = `🟢 ${onlineFriendsCount} ONLINE`;
       if (garUnreadEl) {
         garUnreadEl.textContent = `${totalAlerts} NEW`;
+        garUnreadEl.classList.toggle("hidden", totalAlerts <= 0);
         garUnreadEl.style.display = totalAlerts > 0 ? "inline-flex" : "none";
-      }
-
-      // Update Comms Tab Bar Badge
-      const commsBadgeEl = document.getElementById("commsTabFriendsBadge");
-      if (commsBadgeEl) {
-        commsBadgeEl.textContent = String(totalAlerts);
-        commsBadgeEl.classList.toggle("show", totalAlerts > 0);
       }
 
       // Update Mobile Corner & Bottom Nav Badges
       const mobCornerEl = document.getElementById("mobCornerUnreadBadge");
       if (mobCornerEl) {
         mobCornerEl.textContent = String(totalAlerts);
+        mobCornerEl.classList.toggle("hidden", totalAlerts <= 0);
         mobCornerEl.style.display = totalAlerts > 0 ? "inline-flex" : "none";
       }
       const mobNavChatBtn = document.getElementById("mobNavChat");
@@ -18422,17 +18578,16 @@
       const acceptedCount = myKey
         ? socialState.friendships.filter(f => f.status === "accepted" && (normalizeAuthKey(f.requester_key) === myKey || normalizeAuthKey(f.addressee_key) === myKey)).length
         : 0;
-      const fSubFriends = document.getElementById("fSubTabFriends");
-      const fSubReqs = document.getElementById("fSubTabRequests");
-      if (fSubFriends) fSubFriends.textContent = `👥 MY FRIENDS (${acceptedCount})`;
-      if (fSubReqs) {
-        fSubReqs.textContent = pendingRequests > 0 ? `📩 REQUESTS (${pendingRequests}!)` : `📩 REQUESTS (0)`;
-        fSubReqs.style.color = pendingRequests > 0 ? "#fb7185" : "";
-      }
+      const fSubCountList = document.getElementById("fSubCount_list");
+      const fSubCountReqs = document.getElementById("fSubCount_requests");
+      const fSubBtnReqs = document.getElementById("fSubBtn_requests");
+      if (fSubCountList) fSubCountList.textContent = `(${acceptedCount})`;
+      if (fSubCountReqs) fSubCountReqs.textContent = pendingRequests > 0 ? `(${pendingRequests}!)` : `(0)`;
+      if (fSubBtnReqs) fSubBtnReqs.style.color = pendingRequests > 0 ? "#fb7185" : "";
     }
 
     function renderFriendsAndSocialUI() {
-      const container = document.getElementById("friendsListScrollArea");
+      const container = document.getElementById("friendsListBody") || document.getElementById("friendsListScrollArea");
       if (!container) return;
 
       const myKey = normalizeAuthKey(state.loggedInUserKey || "");
@@ -18442,15 +18597,16 @@
             🔑 <strong>SIGN IN TO USE FRIENDS &amp; PRIVATE CHATS</strong><br>
             Log in or create a Pilot Callsign to add friends, see when friends are Online or Offline, and keep private logged chat histories!
             <div style="margin-top:8px;">
-              <button type="button" class="f-act-btn chat-btn" onclick="openAuthModal('login')">🔑 LOGIN / REGISTER</button>
+              <button type="button" class="f-act-btn chat-btn" onclick="openPilotAuthGateModal()">🔑 LOGIN / REGISTER</button>
             </div>
           </div>`;
         return;
       }
 
-      const sub = socialState.activeFriendsSubTab || "friends";
+      const rawSub = socialState.activeFriendsSubTab || "list";
+      const sub = (rawSub === "friends" || rawSub === "list") ? "list" : rawSub;
 
-      if (sub === "friends") {
+      if (sub === "list") {
         const myAccepted = socialState.friendships.filter(
           f => f.status === "accepted" && (normalizeAuthKey(f.requester_key) === myKey || normalizeAuthKey(f.addressee_key) === myKey)
         );
