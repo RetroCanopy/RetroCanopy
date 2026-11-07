@@ -3742,6 +3742,134 @@
     .wager-pot-summary {
       display: none !important;
     }
+
+    /* 6. 5-Tier Item Rarity Badges, Borders & Shop Filter Bar */
+    .rarity-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: rgba(8, 12, 22, 0.92);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .rarity-filter-bar::-webkit-scrollbar { display: none; }
+    .rarity-filter-pill {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: #cbd5e1;
+      border-radius: 999px;
+      padding: 4px 11px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.14s ease;
+    }
+    .rarity-filter-pill.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.32), rgba(14, 165, 233, 0.18));
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+    }
+    .shop-rarity-badge {
+      position: absolute;
+      bottom: 7px;
+      left: 7px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.50rem;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      z-index: 4;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .slot-rarity-pill {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.42rem;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 999px;
+      letter-spacing: 0.4px;
+      margin-top: 2px;
+      display: inline-block;
+    }
+
+    /* 7. Arena Map Selector Strip inside Pre-Fight Card */
+    .arena-map-selector {
+      width: 100%;
+      background: rgba(11, 16, 29, 0.78);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 7px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .arena-map-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 900;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+    }
+    .arena-map-pills-row {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .arena-map-pills-row::-webkit-scrollbar { display: none; }
+    .map-select-chip {
+      background: rgba(15, 23, 42, 0.90);
+      border: 1px solid rgba(148, 163, 184, 0.30);
+      color: #cbd5e1;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.14s ease;
+    }
+    .map-select-chip.active {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.28), rgba(217, 119, 6, 0.20));
+      border-color: #fbbf24;
+      color: #fde047;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.30);
+    }
+
+    /* 8. Polished Mobile Garage & Battle UI Refinements */
+    @media (max-width: 960px) {
+      .player-sidebar {
+        background: linear-gradient(165deg, rgba(17, 24, 39, 0.95) 0%, rgba(8, 11, 20, 0.98) 100%) !important;
+        border: 1px solid rgba(56, 189, 248, 0.24) !important;
+        border-radius: 20px !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.78) !important;
+      }
+      .tech-slot {
+        border-radius: 14px !important;
+        background: linear-gradient(180deg, rgba(22, 30, 46, 0.92) 0%, rgba(10, 14, 24, 0.96) 100%) !important;
+        transition: transform 0.14s ease, border-color 0.14s ease !important;
+      }
+      .tech-slot:active {
+        transform: scale(0.96) !important;
+      }
+      .btn-arena-battle {
+        border-radius: 13px !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65) !important;
+      }
+    }
     .pit-broadcast-deck {
       max-height: 185px !important;
       gap: 12px !important;
@@ -4479,6 +4607,15 @@
               </div>
             </div>
 
+            <!-- 🗺️ 6-MAP ARENA SELECTOR STRIP -->
+            <div class="arena-map-selector">
+              <div class="arena-map-title-row">
+                <span>🗺️ BATTLE ARENA MAP</span>
+                <span id="activeMapSubtitleTxt" style="color:#fbbf24;">Center Rip-Saw &amp; Corner Furnaces</span>
+              </div>
+              <div class="arena-map-pills-row" id="overlayMapChips"></div>
+            </div>
+
             <!-- 🎰 SIMPLE, FUN DIAMOND BET BAR -->
             <div class="wager-panel">
               <div class="wager-title-row">
@@ -4647,6 +4784,15 @@
         <button class="shop-tab" id="shopTab_botAbil2" onclick="switchShopSlot('botAbil2')">⚡ BOT ABILITY 2</button>
         <button class="shop-tab" id="shopTab_wpnAbil" onclick="switchShopSlot('wpnAbil')">🔥 WEAPON ABILITY</button>
       </div>
+      <div class="rarity-filter-bar" id="shopRarityFilterBar">
+        <span style="font-family:'Orbitron',sans-serif;font-size:0.54rem;font-weight:900;color:#94a3b8;margin-right:4px;">RARITY:</span>
+        <button type="button" class="rarity-filter-pill active" data-rarity="ALL" onclick="setShopRarityFilter('ALL')">ALL RARITIES</button>
+        <button type="button" class="rarity-filter-pill" data-rarity="COMMON" onclick="setShopRarityFilter('COMMON')" style="color:#94a3b8;border-color:rgba(148,163,184,0.45);">○ COMMON</button>
+        <button type="button" class="rarity-filter-pill" data-rarity="UNCOMMON" onclick="setShopRarityFilter('UNCOMMON')" style="color:#34d399;border-color:rgba(52,211,153,0.5);">● UNCOMMON</button>
+        <button type="button" class="rarity-filter-pill" data-rarity="RARE" onclick="setShopRarityFilter('RARE')" style="color:#38bdf8;border-color:rgba(56,189,248,0.55);">▲ RARE</button>
+        <button type="button" class="rarity-filter-pill" data-rarity="EPIC" onclick="setShopRarityFilter('EPIC')" style="color:#c084fc;border-color:rgba(192,132,252,0.6);">◆ EPIC</button>
+        <button type="button" class="rarity-filter-pill" data-rarity="LEGENDARY" onclick="setShopRarityFilter('LEGENDARY')" style="color:#fbbf24;border-color:rgba(251,191,36,0.75);">★ LEGENDARY</button>
+      </div>
 
       <div class="shop-workspace">
         <!-- Left 3D Live Rig Inspection Pedestal & Telemetry Delta Bars -->
@@ -4736,7 +4882,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
   <script src="auth_hub.js?v=154"></script>
-  <script src="bot_addons_data.js"></script>
+  <script src="bot_addons_data.js?v=rarity60"></script>
   <script>
     // =========================================================================
     // 1. STATE: PILOT LOG-ON, CAMPAIGN vs PVP MODE, OWNED ARMORY & 3D MOUNTS
@@ -5515,6 +5661,9 @@
 
     function getTransparentSlotThumb(item) {
       if (!item) return "";
+      if (item.thumbRef) {
+        return `assets/concept_gallery/addons_80/transparent_20/${item.thumbRef}.png?v=pbr3`;
+      }
       if (item.isDynamicPick) {
         return `assets/concept_gallery/addons_80/transparent_20/${item.id}.png?v=pbr3`;
       }
@@ -6722,17 +6871,24 @@
 
         if (item) {
           cardEl.classList.add("equipped");
+          const rCol = item.rarityColor || "#34d399";
+          cardEl.style.borderColor = rCol + "88";
+          cardEl.style.boxShadow = `0 4px 12px ${rCol}26, inset 0 1px 0 rgba(255,255,255,0.08)`;
           const thumbSrc = getTransparentSlotThumb(item);
           thumbEl.innerHTML = `<img src="${thumbSrc}" alt="${item.name}" />`;
-          nameEl.textContent = item.dynamicRole || item.name;
+          const rIcon = item.rarityIcon || "●";
+          nameEl.innerHTML = `<span style="color:${rCol};font-weight:900;">${rIcon}</span> ${item.dynamicRole || item.name}`;
           nameEl.style.color = "#f8fafc";
         } else {
           cardEl.classList.remove("equipped");
+          cardEl.style.borderColor = "";
+          cardEl.style.boxShadow = "";
           thumbEl.innerHTML = sd.icon;
           nameEl.textContent = "TAP TO ADD";
           nameEl.style.color = "#64748b";
         }
       }
+      renderArenaMapSelector();
 
       const pTier = getPlayerRigTierInfo();
       const rigTagEl = document.getElementById("botRigSubTag");
@@ -6827,6 +6983,49 @@
       document.getElementById("shopModalBackdrop").classList.add("hidden");
     }
 
+    function setShopRarityFilter(rarityKey) {
+      state.activeRarityFilter = rarityKey || "ALL";
+      const bar = document.getElementById("shopRarityFilterBar");
+      if (bar) {
+        bar.querySelectorAll(".rarity-filter-pill").forEach(btn => {
+          btn.classList.toggle("active", btn.getAttribute("data-rarity") === state.activeRarityFilter);
+        });
+      }
+      switchShopSlot(state.activeShopSlot);
+    }
+
+    function getActiveArenaMap() {
+      const maps = window.BOTPIT_MAPS || [];
+      if (!maps.length) return { id: "map_01_furnace", name: "SHIBUYA FURNACE PIT", badge: "🔥 MAP 01", accent: "#f97316", subtitle: "4 Corner Furnace Vents · Center Saw", hazardType: "furnace", floorTint: "rgba(249,115,22,0.06)", gridColor: "rgba(249,115,22,0.14)", speedMult: 1.0, tractionMult: 1.0 };
+      const savedId = state.activeMapId || localStorage.getItem("rc_botpit_map") || maps[0].id;
+      return maps.find(m => m.id === savedId) || maps[0];
+    }
+
+    function selectArenaMap(mapId) {
+      state.activeMapId = mapId;
+      localStorage.setItem("rc_botpit_map", mapId);
+      renderArenaMapSelector();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+    }
+
+    function renderArenaMapSelector() {
+      const maps = window.BOTPIT_MAPS || [];
+      if (!maps.length) return;
+      const activeMap = getActiveArenaMap();
+      state.activeMapId = activeMap.id;
+      const chipsEl = document.getElementById("overlayMapChips");
+      if (chipsEl) {
+        chipsEl.innerHTML = maps.map(m => {
+          const isAct = m.id === activeMap.id;
+          return `<button type="button" class="map-select-chip ${isAct ? 'active' : ''}" style="${isAct ? `border-color:${m.accent};color:${m.accent};box-shadow:0 0 12px ${m.accent}44;` : ''}" onclick="selectArenaMap('${m.id}')">${m.badge} · ${m.name}</button>`;
+        }).join("");
+      }
+      const subEl = document.getElementById("activeMapSubtitleTxt");
+      if (subEl) {
+        subEl.innerHTML = `<strong style="color:${activeMap.accent};">${activeMap.name}:</strong> ${activeMap.subtitle}`;
+      }
+    }
+
     function toggleDynamicFilter() {
       state.onlyDynamicPicks = !state.onlyDynamicPicks;
       const btn = document.getElementById("toggleDynamicBtn");
@@ -6835,7 +7034,7 @@
         btn.textContent = "⭐ 5 DYNAMIC PICKS";
       } else {
         btn.classList.remove("active");
-        btn.textContent = "📦 ALL 20 PER TYPE";
+        btn.textContent = "📦 ALL 30 PER SLOT (180 TOTAL)";
       }
       switchShopSlot(state.activeShopSlot);
     }
@@ -6956,8 +7155,19 @@
       document.getElementById("shopSlotSub").textContent =
         `Purchasing & Attaching 3D Hardware for: ${sd.icon} ${sd.label} — Click 💎 BUY & ATTACH on any module below!`;
 
-      const rawItems = window.BOT_ADDONS_CATALOG[sd.cat] || [];
-      const items = state.onlyDynamicPicks ? rawItems.filter(it => it.isDynamicPick) : rawItems;
+      let rawItems = window.BOT_ADDONS_CATALOG[sd.cat] || [];
+      if (sd.key === "botAbil1") {
+        rawItems = rawItems.filter(it => !it.slotHint || it.slotHint === "botAbil1");
+      } else if (sd.key === "botAbil2") {
+        rawItems = rawItems.filter(it => !it.slotHint || it.slotHint === "botAbil2");
+      }
+      let items = state.onlyDynamicPicks ? rawItems.filter(it => it.isDynamicPick) : rawItems;
+      if (state.activeRarityFilter && state.activeRarityFilter !== "ALL") {
+        items = items.filter(it => (it.rarity || "COMMON") === state.activeRarityFilter);
+      }
+      // Sort items by Rarity tier (COMMON -> LEGENDARY) then cost
+      const rOrder = { COMMON: 1, UNCOMMON: 2, RARE: 3, EPIC: 4, LEGENDARY: 5 };
+      items = [...items].sort((a, b) => (rOrder[a.rarity] || 1) - (rOrder[b.rarity] || 1) || (a.cost || 0) - (b.cost || 0));
 
       updateShopLiveDeltaUI();
 
@@ -7049,17 +7259,20 @@
           }
         }
 
+        const rTier = item.rarity || "COMMON";
+        const rCol = item.rarityColor || "#94a3b8";
+        const rIcon = item.rarityIcon || "⚪";
         return `
-          <div class="shop-item-card ${attachedSlotKey ? 'equipped' : ''}">
+          <div class="shop-item-card rarity-${rTier} ${attachedSlotKey ? 'equipped' : ''}">
             <div>
               <div class="shop-item-art">
-                <div class="shop-item-pedestal-dish"></div>
+                <div class="shop-item-pedestal-dish" style="background:radial-gradient(ellipse at center, ${rCol}40 0%, rgba(15, 23, 42, 0.9) 70%);border-color:${rCol}66;"></div>
                 <img src="${artSrc}" alt="${item.name}" loading="lazy" />
-                ${item.isDynamicPick ? `<div class="shop-badge-top-left">⭐ ${item.dynamicRole}</div>` : ''}
+                <div class="shop-rarity-badge ${rTier}">${rIcon} ${rTier}</div>
                 ${rightBadge}
               </div>
               <div class="shop-item-info">
-                <h4>${item.dynamicRole || item.name}</h4>
+                <h4 style="color:${rCol};">${item.dynamicRole || item.name}</h4>
                 <div class="shop-stat-chips">${formatStatChips(item.stats)}</div>
                 <div class="shop-pros-cons">
                   <div class="pro-line"><span class="pro-tag">✅ STRENGTH:</span> ${item.strength || item.effect}</div>
@@ -9476,6 +9689,8 @@
     function resolveMountKey(id) {
       if (!id) return null;
       if (MOUNT_3D_SPRITES[id]) return id;
+      const item = findAddonById(id);
+      if (item && item.mountRef && MOUNT_3D_SPRITES[item.mountRef]) return item.mountRef;
       return TIRE_FALLBACK_MOUNT[id] || WPN_FALLBACK_MOUNT[id] || RANGED_FALLBACK_MOUNT[id] || BOT_ABIL_FALLBACK_MOUNT[id] || WPN_ABIL_FALLBACK_MOUNT[id] || null;
     }
 
@@ -9741,7 +9956,23 @@
     }
 
     function drawCornerFurnaceHazards() {
-      // No fake 2D circles or grate bars drawn over the 3D arena background!
+      const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+      if (!activeMap || activeMap.id === "map_01_furnace" || !sim.furnaces) return;
+      for (const f of sim.furnaces) {
+        ctx.save();
+        ctx.translate(f.x, f.y);
+        const pulse = 0.72 + Math.sin(rTicks * 0.14) * 0.28;
+        const grad = ctx.createRadialGradient(0, 0, 6, 0, 0, f.r * (f.erupting ? 1.38 : 1.05));
+        grad.addColorStop(0, activeMap.accent + (f.erupting ? "cc" : "66"));
+        grad.addColorStop(0.55, activeMap.accent + (f.erupting ? "55" : "22"));
+        grad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = grad;
+        ctx.globalAlpha = pulse;
+        ctx.beginPath();
+        ctx.arc(0, 0, f.r * (f.erupting ? 1.38 : 1.05), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
     }
 
     function drawPersistentFloorMarks() {
@@ -9867,6 +10098,35 @@
       } else {
         ctx.fillStyle = "#08060e";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Custom Map Theme Floor Overlay & Tactical Grid
+      const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+      if (activeMap && activeMap.id !== "map_01_furnace") {
+        ctx.save();
+        ctx.fillStyle = activeMap.floorTint || "rgba(56,189,248,0.08)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = activeMap.gridColor || "rgba(56,189,248,0.16)";
+        ctx.lineWidth = 1.5;
+        const step = 110;
+        for (let gx = 110; gx < canvas.width - 80; gx += step) {
+          ctx.beginPath();
+          ctx.moveTo(gx, 60);
+          ctx.lineTo(gx, canvas.height - 60);
+          ctx.stroke();
+        }
+        for (let gy = 90; gy < canvas.height - 60; gy += step) {
+          ctx.beginPath();
+          ctx.moveTo(90, gy);
+          ctx.lineTo(canvas.width - 90, gy);
+          ctx.stroke();
+        }
+        // Map Watermark Badge on Arena Deck
+        ctx.font = "900 18px 'Orbitron', sans-serif";
+        ctx.fillStyle = activeMap.accent + "44";
+        ctx.textAlign = "center";
+        ctx.fillText(`${activeMap.badge} · ${activeMap.name}`, canvas.width / 2, canvas.height - 26);
+        ctx.restore();
       }
 
       drawPersistentFloorMarks();
@@ -10994,7 +11254,7 @@
     // =========================================================================
 
     // =========================================================================
-    // PROCEDURAL WEBAUDIO ARENA SOUND & COMBAT SFX ENGINE (ZERO EXTERNAL FILES)
+    // PROCEDURAL WEBAUDIO HEAVY METALLIC CRASH & COMBAT SFX ENGINE
     // =========================================================================
     const BotPitAudio = {
       ctx: null,
@@ -11039,8 +11299,19 @@
         this.syncButton();
         if (!this.muted) {
           this.init();
-          this.playCashChime();
+          this.playClash(false);
         }
+      },
+
+      // Helper: create wave-shaped distortion curve for gritty metallic crunch
+      _makeCrunchCurve(amount = 45) {
+        const n = 2048;
+        const curve = new Float32Array(n);
+        for (let i = 0; i < n; i++) {
+          const x = (i * 2) / n - 1;
+          curve[i] = ((3 + amount) * x * 20 * (Math.PI / 180)) / (Math.PI + amount * Math.abs(x));
+        }
+        return curve;
       },
 
       playBell(strikes = 1) {
@@ -11048,18 +11319,20 @@
         const ctx = this.init();
         if (!ctx) return;
         for (let s = 0; s < strikes; s++) {
-          const t0 = ctx.currentTime + s * 0.22;
-          [784, 1176, 1568, 2093].forEach((freq, idx) => {
+          const t0 = ctx.currentTime + s * 0.24;
+          // Heavy Industrial Steel Gong / Cage Slam Bell
+          [220, 440, 685, 1120, 1640].forEach((freq, idx) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            osc.type = idx % 2 === 0 ? "sine" : "triangle";
+            osc.type = idx % 2 === 0 ? "triangle" : "sawtooth";
             osc.frequency.setValueAtTime(freq, t0);
-            gain.gain.setValueAtTime(0.16 / (idx + 1), t0);
-            gain.gain.exponentialRampToValueAtTime(0.0008, t0 + 0.85);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.96, t0 + 0.75);
+            gain.gain.setValueAtTime(0.18 / (idx + 1), t0);
+            gain.gain.exponentialRampToValueAtTime(0.0008, t0 + 0.78);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(t0);
-            osc.stop(t0 + 0.88);
+            osc.stop(t0 + 0.8);
           });
         }
       },
@@ -11067,67 +11340,118 @@
       playClash(heavy = false) {
         if (this.muted) return;
         const nowMs = performance.now();
-        if (nowMs - this.lastClashMs < 75) return;
+        if (nowMs - this.lastClashMs < 70) return;
         this.lastClashMs = nowMs;
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
+        const dur = heavy ? 0.42 : 0.26;
+        const pitchJit = 0.88 + Math.random() * 0.24;
 
-        // Low-end sub impact punch
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(heavy ? 135 : 165, t0);
-        osc.frequency.exponentialRampToValueAtTime(36, t0 + (heavy ? 0.26 : 0.16));
-        gain.gain.setValueAtTime(heavy ? 0.34 : 0.22, t0);
-        gain.gain.exponentialRampToValueAtTime(0.001, t0 + (heavy ? 0.28 : 0.18));
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(t0);
-        osc.stop(t0 + (heavy ? 0.30 : 0.20));
+        // 1. Sub-Bass Kinetic Wrecking Slam (Chest Thud)
+        const subOsc = ctx.createOscillator();
+        const subGain = ctx.createGain();
+        subOsc.type = "sine";
+        subOsc.frequency.setValueAtTime((heavy ? 115 : 140) * pitchJit, t0);
+        subOsc.frequency.exponentialRampToValueAtTime(26, t0 + dur * 0.85);
+        subGain.gain.setValueAtTime(heavy ? 0.55 : 0.36, t0);
+        subGain.gain.exponentialRampToValueAtTime(0.001, t0 + dur * 0.9);
+        subOsc.connect(subGain);
+        subGain.connect(ctx.destination);
+        subOsc.start(t0);
+        subOsc.stop(t0 + dur);
 
-        // Metallic crunch burst
-        const bufLen = Math.floor(ctx.sampleRate * (heavy ? 0.16 : 0.09));
+        // 2. Broadband Crashing Sheet-Metal Crunch & Shrapnel Burst
+        const bufLen = Math.floor(ctx.sampleRate * dur);
         const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
         const data = buf.getChannelData(0);
         for (let i = 0; i < bufLen; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.35));
+          const tNorm = i / bufLen;
+          // Double-impact envelope: initial slam + secondary buckling crunch
+          const env = Math.exp(-tNorm * 6.5) + (heavy ? 0.45 * Math.exp(-Math.pow((tNorm - 0.18) * 14, 2)) : 0);
+          // Granular crackle modulation for tearing metal texture
+          const grit = (i % 19 < 7) ? 1.35 : 0.75;
+          data[i] = (Math.random() * 2 - 1) * env * grit;
         }
         const noise = ctx.createBufferSource();
         noise.buffer = buf;
-        const filter = ctx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.frequency.setValueAtTime(heavy ? 1150 : 1650, t0);
-        filter.Q.setValueAtTime(2.4, t0);
+
+        const bpFilter = ctx.createBiquadFilter();
+        bpFilter.type = "bandpass";
+        bpFilter.frequency.setValueAtTime((heavy ? 920 : 1280) * pitchJit, t0);
+        bpFilter.frequency.exponentialRampToValueAtTime(380, t0 + dur);
+        bpFilter.Q.setValueAtTime(1.4, t0);
+
+        const shaper = ctx.createWaveShaper();
+        shaper.curve = this._makeCrunchCurve(heavy ? 65 : 38);
+
         const nGain = ctx.createGain();
-        nGain.gain.setValueAtTime(heavy ? 0.26 : 0.16, t0);
-        nGain.gain.exponentialRampToValueAtTime(0.001, t0 + (heavy ? 0.16 : 0.09));
-        noise.connect(filter);
-        filter.connect(nGain);
+        nGain.gain.setValueAtTime(heavy ? 0.44 : 0.28, t0);
+        nGain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+
+        noise.connect(bpFilter);
+        bpFilter.connect(shaper);
+        shaper.connect(nGain);
         nGain.connect(ctx.destination);
         noise.start(t0);
+
+        // 3. Inharmonic Steel Chassis Ring / Clanging Armor Plate Resonators
+        const clangFreqs = heavy ? [318, 587, 1045, 1790] : [412, 765, 1340];
+        clangFreqs.forEach((baseF, idx) => {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = idx % 2 === 0 ? "sawtooth" : "square";
+          const f = baseF * pitchJit;
+          osc.frequency.setValueAtTime(f, t0);
+          // Slight downward pitch bend as steel plate warps on impact
+          osc.frequency.exponentialRampToValueAtTime(f * 0.74, t0 + dur * 0.65);
+          g.gain.setValueAtTime((heavy ? 0.14 : 0.09) / (idx + 1), t0);
+          g.gain.exponentialRampToValueAtTime(0.0008, t0 + dur * (0.55 + idx * 0.1));
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + dur);
+        });
       },
 
       playSawBuzz() {
         if (this.muted) return;
         const nowMs = performance.now();
-        if (nowMs - this.lastSawMs < 120) return;
+        if (nowMs - this.lastSawMs < 115) return;
         this.lastSawMs = nowMs;
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        const osc = ctx.createOscillator();
+        const dur = 0.28;
+
+        // High-RPM Carbide Saw Grinding Against Armor (FM Screech + Spark Noise)
+        const bufLen = Math.floor(ctx.sampleRate * dur);
+        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) {
+          const phase = i / ctx.sampleRate;
+          const sawWave = ((phase * 340) % 1) * 2 - 1;
+          const sparkNoise = (Math.random() * 2 - 1) * 0.75;
+          data[i] = (sawWave * 0.55 + sparkNoise * 0.45) * Math.exp(-i / (bufLen * 0.45));
+        }
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(1850, t0);
+        filter.frequency.linearRampToValueAtTime(2650, t0 + 0.09);
+        filter.frequency.linearRampToValueAtTime(1100, t0 + dur);
+        filter.Q.setValueAtTime(2.8, t0);
+
         const gain = ctx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(290, t0);
-        osc.frequency.linearRampToValueAtTime(460, t0 + 0.08);
-        osc.frequency.linearRampToValueAtTime(240, t0 + 0.22);
-        gain.gain.setValueAtTime(0.18, t0);
-        gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.24);
-        osc.connect(gain);
+        gain.gain.setValueAtTime(0.28, t0);
+        gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+
+        src.connect(filter);
+        filter.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(t0);
-        osc.stop(t0 + 0.25);
+        src.start(t0);
       },
 
       playPartBreak(isCrippled = false) {
@@ -11135,18 +11459,24 @@
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        const freqs = isCrippled ? [620, 310, 580, 260] : [520, 340];
-        freqs.forEach((f, idx) => {
+        const dur = isCrippled ? 0.55 : 0.36;
+
+        // Explosive Armor Shatter + Cascading Shrapnel Clatter
+        this.playClash(true);
+        const hits = isCrippled ? [0.06, 0.14, 0.24, 0.35] : [0.07, 0.17];
+        hits.forEach((delay, idx) => {
           const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "square";
-          osc.frequency.setValueAtTime(f, t0 + idx * 0.07);
-          gain.gain.setValueAtTime(0.13, t0 + idx * 0.07);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + (idx + 1) * 0.07);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(t0 + idx * 0.07);
-          osc.stop(t0 + (idx + 1) * 0.075);
+          const g = ctx.createGain();
+          osc.type = "sawtooth";
+          const f = (920 - idx * 165) * (0.9 + Math.random() * 0.2);
+          osc.frequency.setValueAtTime(f, t0 + delay);
+          osc.frequency.exponentialRampToValueAtTime(140, t0 + delay + 0.11);
+          g.gain.setValueAtTime(0.18 / (idx + 1), t0 + delay);
+          g.gain.exponentialRampToValueAtTime(0.001, t0 + delay + 0.12);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(t0 + delay);
+          osc.stop(t0 + delay + 0.13);
         });
       },
 
@@ -11155,18 +11485,18 @@
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        [880, 1174, 1568].forEach((f, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(f, t0 + idx * 0.045);
-          gain.gain.setValueAtTime(0.09, t0 + idx * 0.045);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.045 + 0.09);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(t0 + idx * 0.045);
-          osc.stop(t0 + idx * 0.045 + 0.095);
-        });
+        // Hydraulic Turbo-Spool & Mechanical Latch Lock
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(140, t0);
+        osc.frequency.exponentialRampToValueAtTime(520, t0 + 0.16);
+        gain.gain.setValueAtTime(0.14, t0);
+        gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.18);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t0);
+        osc.stop(t0 + 0.19);
       },
 
       playWeaponFire(kind = "rail") {
@@ -11174,31 +11504,27 @@
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        if (kind === "rail") {
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(1400, t0);
-          osc.frequency.exponentialRampToValueAtTime(180, t0 + 0.16);
-          gain.gain.setValueAtTime(0.16, t0);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.17);
-        } else if (kind === "mortar") {
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(220, t0);
-          osc.frequency.exponentialRampToValueAtTime(55, t0 + 0.24);
-          gain.gain.setValueAtTime(0.22, t0);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.25);
-        } else {
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(680, t0);
-          osc.frequency.exponentialRampToValueAtTime(220, t0 + 0.12);
-          gain.gain.setValueAtTime(0.12, t0);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.13);
+        // Mechanical Cannon Punch + Muzzle Blast Noise
+        const dur = kind === "mortar" ? 0.30 : 0.19;
+        const bufLen = Math.floor(ctx.sampleRate * dur);
+        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.28));
         }
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(t0);
-        osc.stop(t0 + 0.26);
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(kind === "rail" ? 2400 : 950, t0);
+        filter.frequency.exponentialRampToValueAtTime(160, t0 + dur);
+        const nGain = ctx.createGain();
+        nGain.gain.setValueAtTime(0.28, t0);
+        nGain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+        noise.connect(filter);
+        filter.connect(nGain);
+        nGain.connect(ctx.destination);
+        noise.start(t0);
       },
 
       playWrenchHeal() {
@@ -11206,17 +11532,19 @@
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        [523, 659, 784, 1046].forEach((f, idx) => {
+        // Pneumatic Impact Wrench Ratchet Drill Sound
+        [0, 0.055, 0.11, 0.165].forEach((offset, idx) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(f, t0 + idx * 0.055);
-          gain.gain.setValueAtTime(0.14, t0 + idx * 0.055);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.055 + 0.12);
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(320 + idx * 85, t0 + offset);
+          osc.frequency.exponentialRampToValueAtTime(180, t0 + offset + 0.045);
+          gain.gain.setValueAtTime(0.16, t0 + offset);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + offset + 0.05);
           osc.connect(gain);
           gain.connect(ctx.destination);
-          osc.start(t0 + idx * 0.055);
-          osc.stop(t0 + idx * 0.055 + 0.13);
+          osc.start(t0 + offset);
+          osc.stop(t0 + offset + 0.052);
         });
       },
 
@@ -11225,17 +11553,18 @@
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        [987.77, 1318.51].forEach((f, idx) => {
+        // Crisp Metallic Vault Lock / Coin Clink
+        [880, 1320].forEach((f, idx) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(f, t0 + idx * 0.075);
-          gain.gain.setValueAtTime(0.14, t0 + idx * 0.075);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.075 + 0.22);
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(f, t0 + idx * 0.065);
+          gain.gain.setValueAtTime(0.15, t0 + idx * 0.065);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.065 + 0.18);
           osc.connect(gain);
           gain.connect(ctx.destination);
-          osc.start(t0 + idx * 0.075);
-          osc.stop(t0 + idx * 0.075 + 0.24);
+          osc.start(t0 + idx * 0.065);
+          osc.stop(t0 + idx * 0.065 + 0.20);
         });
       },
 
@@ -11244,18 +11573,20 @@
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        const notes = won ? [523.25, 659.25, 783.99, 1046.5] : [392.0, 349.23, 311.13, 261.63];
+        // Heavy Arena Pyrotechnic Boom + Industrial Horn Chord
+        this.playClash(true);
+        const notes = won ? [220, 277.18, 329.63, 440] : [196, 174.61, 155.56, 130.81];
         notes.forEach((f, idx) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          osc.type = won ? "triangle" : "sawtooth";
-          osc.frequency.setValueAtTime(f, t0 + idx * 0.11);
-          gain.gain.setValueAtTime(0.16, t0 + idx * 0.11);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.11 + 0.32);
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(f, t0 + idx * 0.10);
+          gain.gain.setValueAtTime(0.14, t0 + idx * 0.10);
+          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.10 + 0.38);
           osc.connect(gain);
           gain.connect(ctx.destination);
-          osc.start(t0 + idx * 0.11);
-          osc.stop(t0 + idx * 0.11 + 0.34);
+          osc.start(t0 + idx * 0.10);
+          osc.stop(t0 + idx * 0.10 + 0.40);
         });
       }
     };
