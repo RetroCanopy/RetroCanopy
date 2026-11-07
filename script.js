@@ -3645,6 +3645,13 @@ function initGamerIntro() {
                 introVideoEl.classList.add('video-fade-out');
             } catch (_) {}
         }
+        const introBgVideoEl = document.getElementById('rc-cinema-intro-bg-video');
+        if (introBgVideoEl) {
+            try {
+                introBgVideoEl.pause();
+                introBgVideoEl.classList.add('video-fade-out');
+            } catch (_) {}
+        }
         if (prebuiltIntroAudio) {
             try {
                 prebuiltIntroAudio.pause();
@@ -4190,49 +4197,35 @@ function initGamerIntro() {
         }
     }
 
-    function scheduleIntroTransition(holdMs = 9800) {
+    function scheduleIntroTransition(holdMs = 10000) {
         if (introTransitionScheduled || sequenceComplete) return;
         introTransitionScheduled = true;
         if (introTransitionTimer) clearTimeout(introTransitionTimer);
         if (introCraneTimer) clearTimeout(introCraneTimer);
+
+        const introVideoEl = document.getElementById('rc-cinema-intro-video');
+        if (introVideoEl && !introVideoEl._endedBound) {
+            introVideoEl._endedBound = true;
+            introVideoEl.addEventListener('ended', () => {
+                if (!sequenceComplete) {
+                    skipEntireIntro();
+                }
+            });
+        }
+
         introTransitionTimer = setTimeout(() => {
             if (sequenceComplete) return;
-            // Keep the title screen at the exact same full size on the exact same pure black background,
-            // and simply fade it straight to black without shrinking or bringing the diorama background in!
-            if (document.body) {
-                document.body.classList.remove('intro-awaiting-audio');
-                document.body.classList.add('holo-pitch-black', 'holo-journey-active');
-            }
-            if (heroContainer) {
-                heroContainer.classList.add('title-fade-to-black');
-            }
-            const introVideoEl = document.getElementById('rc-cinema-intro-video');
-            if (introVideoEl) {
-                introVideoEl.classList.add('video-fade-out');
-            }
+            const fgVid = document.getElementById('rc-cinema-intro-video');
+            if (fgVid) fgVid.classList.add('video-fade-out');
+            const bgVid = document.getElementById('rc-cinema-intro-bg-video');
+            if (bgVid) bgVid.classList.add('video-fade-out');
             fadeIntroAudio();
 
-            // Once faded to pure black, launch Synth's cutscene and silently prepare the top logo position while hidden
+            // Transition directly to the main stage (no old hologram butler intro!)
             introCraneTimer = setTimeout(() => {
                 if (sequenceComplete) return;
-                if (document.body) {
-                    document.body.classList.remove('cinema-intro-active');
-                }
-                const introVideoEndEl = document.getElementById('rc-cinema-intro-video');
-                if (introVideoEndEl) {
-                    try { introVideoEndEl.pause(); } catch (_) {}
-                }
-                if (heroContainer) {
-                    heroContainer.classList.add('no-transition');
-                    heroContainer.classList.remove('cinematic-center', 'title-fade-to-black');
-                    shiftLogoOutOfWay();
-                    requestAnimationFrame(() => {
-                        if (heroContainer) heroContainer.classList.remove('no-transition');
-                    });
-                }
-                triggerOSabotageEffect(false);
-                startHoloButlerJourney();
-            }, 1500);
+                skipEntireIntro();
+            }, 850);
         }, holdMs);
     }
 
@@ -4344,13 +4337,21 @@ function initGamerIntro() {
                 if (a.linkSlot) a.linkSlot.classList.remove('revealed');
             });
 
-            // Restart CSS Title Screen animations & Intro Video from 0.0s
+            // Restart Intro Video from 0.0s
             const introVideoReplayEl = document.getElementById('rc-cinema-intro-video');
             if (introVideoReplayEl) {
                 try {
                     introVideoReplayEl.classList.remove('video-fade-out');
                     introVideoReplayEl.currentTime = 0;
                     introVideoReplayEl.play().catch(() => {});
+                } catch (_) {}
+            }
+            const introBgVideoReplayEl = document.getElementById('rc-cinema-intro-bg-video');
+            if (introBgVideoReplayEl) {
+                try {
+                    introBgVideoReplayEl.classList.remove('video-fade-out');
+                    introBgVideoReplayEl.currentTime = 0;
+                    introBgVideoReplayEl.play().catch(() => {});
                 } catch (_) {}
             }
             if (document.body) {

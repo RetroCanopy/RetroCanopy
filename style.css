@@ -102,6 +102,15 @@ body.subpage-open .kh-music-widget .kh-track-menu {
     pointer-events: none;
     z-index: 3;
     overflow: hidden;
+    background: transparent;
+    transition: background 0.9s ease;
+}
+
+body.cinema-intro-active .cinema-intro-fx {
+    background:
+        radial-gradient(ellipse 90% 36% at 50% 34%, rgba(255, 128, 40, 0.26) 0%, rgba(255, 45, 149, 0.22) 45%, transparent 78%),
+        radial-gradient(ellipse 95% 42% at 50% 68%, rgba(0, 212, 255, 0.18) 0%, rgba(76, 22, 130, 0.28) 52%, transparent 82%),
+        #000000;
 }
 
 .rc-cinema-intro-video {
@@ -116,7 +125,7 @@ body.subpage-open .kh-music-widget .kh-track-menu {
     z-index: 4;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 1.35s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: opacity;
 }
 
@@ -124,7 +133,25 @@ body.cinema-intro-active .rc-cinema-intro-video:not(.video-fade-out) {
     opacity: 1;
 }
 
-body.cinema-intro-active .hero-container.cinematic-center {
+/* Mobile & Portrait screens: fill screen width with the CRT TV & full RETROCANOPY logo (zero cropping of TV/logo) blended into ambient arcade backdrop */
+@media (max-width: 900px), (max-aspect-ratio: 4/3) {
+    .rc-cinema-intro-video {
+        inset: auto;
+        top: 50%;
+        left: 50%;
+        width: 156vw;
+        max-width: none;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        transform: translate(-50%, -50%);
+        object-fit: cover;
+        background: transparent;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.65) 5%, #000000 12%, #000000 88%, rgba(0,0,0,0.65) 95%, transparent 100%);
+        mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.65) 5%, #000000 12%, #000000 88%, rgba(0,0,0,0.65) 95%, transparent 100%);
+    }
+}
+
+body.cinema-intro-active .hero-container {
     opacity: 0 !important;
     pointer-events: none !important;
 }
