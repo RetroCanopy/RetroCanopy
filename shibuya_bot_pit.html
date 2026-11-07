@@ -6438,7 +6438,7 @@
             <span id="stHeaderSub">SHIBUYA SYNDICATE · CLICK ANY MEDALLION BELOW TO VIEW ITS PICTURE &amp; COMBAT EFFECT</span>
           </div>
           <div class="st-top-currencies">
-            <div class="st-curr-pill" id="stXpReadout" style="border-color:rgba(56,189,248,0.55);color:#38bdf8;">⚡ XP: 0</div>
+            <div class="st-curr-pill" id="stXpReadout" style="border-color:rgba(56,189,248,0.55);color:#38bdf8;" title="Earn XP in battles to Level Up your bot and earn bonus Diamonds!">⚡ BOT LVL 1 · 0 / 240 XP</div>
             <div class="st-curr-pill" id="stDiamondReadout">💎 DIAMONDS: 0</div>
             <button type="button" class="btn-close-shop" onclick="closeSkillTreeModal()">✕ CLOSE</button>
           </div>
@@ -6498,11 +6498,8 @@
         </div>
         <div class="st-insp-stats-box" id="stInspStatsBox"></div>
         <div class="st-insp-actions">
-          <button type="button" class="btn-st-upgrade" id="btnStUpgradeXp" onclick="upgradeSelectedSkillNode('xp')">
-            ⚡ UPGRADE SKILL (100 XP)
-          </button>
           <button type="button" class="btn-st-upgrade diamond-mode" id="btnStUpgradeDiamond" onclick="upgradeSelectedSkillNode('scrap')">
-            💎 UPGRADE SKILL (100 💎)
+            💎 UPGRADE WITH DIAMONDS (100 💎)
           </button>
         </div>
       </div>
@@ -6993,12 +6990,12 @@
 
     function getXpNeededForNextBotLevel(lvl) {
       const l = Math.max(1, Number(lvl) || 1);
-      return Math.round(200 * Math.pow(1.22, l - 1));
+      return Math.round(240 * Math.pow(1.25, l - 1));
     }
 
     function getDiamondRewardForLevelUp(newLvl) {
       const l = Math.max(2, Number(newLvl) || 2);
-      return 150 + l * 50; // LVL 2: +250 💎, LVL 3: +300 💎, LVL 4: +350 💎, etc.
+      return 50 + (l - 1) * 15; // LVL 2: +65 💎, LVL 3: +80 💎, LVL 4: +95 💎, etc.
     }
 
     function computeBotLevelProgressFromTotalXp(totalXpRaw) {
@@ -7033,15 +7030,21 @@
       const stBonuses = typeof computeSkillTreeBonuses === "function" ? computeSkillTreeBonuses() : {};
       const xpMult = 1 + (stBonuses.xpPct || 0) / 100;
       const wealthMult = 1 + (stBonuses.wealthPct || 0) / 100;
-      const winFactor = won ? 1.0 : 0.35;
+      const xpWinFactor = won ? 1.0 : 0.30;
+      // 20% Diamond payout if the battle is lost; 100% of reduced baseDiamonds if won
+      const diamondWinFactor = won ? 1.0 : 0.20;
       const gritAdd = (won && gritBonus) ? Math.round(baseXp * 0.15) : 0;
 
-      const xpAdded = Math.max(15, Math.round((baseXp * winFactor + gritAdd) * xpMult));
-      const matchDiamondsAdded = Math.max(10, Math.round((baseDiamonds * winFactor) * wealthMult));
+      const xpAdded = baseXp > 0
+        ? Math.max(won ? 15 : 8, Math.round((baseXp * xpWinFactor + gritAdd) * xpMult))
+        : 0;
+      const matchDiamondsAdded = baseDiamonds > 0
+        ? Math.max(won ? 4 : 1, Math.round((baseDiamonds * diamondWinFactor) * wealthMult))
+        : 0;
 
       const beforeProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned || 0);
-      state.cpuXp = Math.max(0, (Number(state.cpuXp) || 0) + xpAdded);
       state.totalXpEarned = Math.max(0, (Number(state.totalXpEarned) || 0) + xpAdded);
+      state.cpuXp = state.totalXpEarned;
       const afterProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned);
 
       let levelUpDiamonds = 0;
@@ -7849,33 +7852,33 @@
         level: 1,
         code: "QUEST 1",
         name: "SCRAP-SCOUT MK-I",
-        title: "LVL.1 Scrapyard Rookie",
+        title: "LVL.1 Scrapyard Enforcer",
         badge: "⚔️ Q1 · LVL 1",
         color: "#38bdf8",
         mapId: "map_01_furnace",
-        xpReward: 120,
-        diamondReward: 150,
-        replayXp: 65,
-        replayDiamonds: 55,
-        baseStats: { power: 36, speed: 38, agility: 38, hp: 850 },
-        loadout: { tire: null, wpn1: null, wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null },
-        desc: "Beat the Level 1 Scrapyard Scout to earn your first XP toward Bot Level 2 and Diamonds for upgrades!"
+        xpReward: 85,
+        diamondReward: 25,
+        replayXp: 40,
+        replayDiamonds: 12,
+        baseStats: { power: 52, speed: 52, agility: 52, hp: 1300 },
+        loadout: { tire: "tire_15", wpn1: null, wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null },
+        desc: "Fast Sprint-Wheel Enforcer (1,300 HP). Earn XP to Level Up for Diamonds and upgrade your bot!"
       },
       {
         level: 2,
         code: "QUEST 2",
         name: "HACHIKO DRIFTER",
-        title: "LVL.2 Street Drifter",
+        title: "LVL.2 Street Wedge Drifter",
         badge: "⚔️ Q2 · LVL 2",
         color: "#34d399",
         mapId: "map_01_furnace",
-        xpReward: 150,
-        diamondReward: 185,
-        replayXp: 80,
-        replayDiamonds: 70,
-        baseStats: { power: 40, speed: 44, agility: 45, hp: 980 },
-        loadout: { tire: "tire_12", wpn1: null, wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null },
-        desc: "Equipped with J-Turn Drift Slicks. Watch out for its flank spin-outs!"
+        xpReward: 105,
+        diamondReward: 30,
+        replayXp: 50,
+        replayDiamonds: 15,
+        baseStats: { power: 58, speed: 58, agility: 60, hp: 1480 },
+        loadout: { tire: "tire_12", wpn1: "wpn_01", wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null },
+        desc: "Equipped with J-Turn Drift Slicks & Bulldozer Wedge (1,480 HP). Upgrade your skills to match its power!"
       },
       {
         level: 3,
@@ -7885,13 +7888,13 @@
         badge: "⚔️ Q3 · LVL 3",
         color: "#fbbf24",
         mapId: "map_02_lava_bridge",
-        xpReward: 185,
-        diamondReward: 225,
-        replayXp: 95,
-        replayDiamonds: 85,
-        baseStats: { power: 45, speed: 42, agility: 42, hp: 1120 },
-        loadout: { tire: "tire_05", wpn1: "wpn_01", wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null },
-        desc: "Heavy Bulldozer Wedge on the Osaka Lava Bridge. Avoid getting shoved toward the top/bottom lava!"
+        xpReward: 125,
+        diamondReward: 35,
+        replayXp: 60,
+        replayDiamonds: 18,
+        baseStats: { power: 66, speed: 58, agility: 58, hp: 1680 },
+        loadout: { tire: "tire_05", wpn1: "wpn_01", wpn2: null, botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null },
+        desc: "Armored Tank-Track Bulldozer (1,680 HP) on the Osaka Lava Bridge. Upgrade your Power & Hull to resist lava shoves!"
       },
       {
         level: 4,
@@ -7901,13 +7904,13 @@
         badge: "⚔️ Q4 · LVL 4",
         color: "#06b6d4",
         mapId: "map_13_tesla_spiders",
-        xpReward: 225,
-        diamondReward: 270,
-        replayXp: 115,
-        replayDiamonds: 105,
-        baseStats: { power: 49, speed: 46, agility: 48, hp: 1240 },
-        loadout: { tire: "tire_04", wpn1: null, wpn2: "rng_01", botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null },
-        desc: "Strafing Mecanum chassis armed with a dorsal Gauss Railgun Sniper in the Shinjuku Tesla Pit."
+        xpReward: 150,
+        diamondReward: 45,
+        replayXp: 75,
+        replayDiamonds: 22,
+        baseStats: { power: 74, speed: 64, agility: 66, hp: 1880 },
+        loadout: { tire: "tire_04", wpn1: "wpn_08", wpn2: "rng_01", botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null },
+        desc: "4-Slot Mecanum Auger & Gauss Railgun Sniper (1,880 HP) in the Shinjuku Tesla Pit."
       },
       {
         level: 5,
@@ -7919,18 +7922,18 @@
         mapId: "map_12_bomb_buggies",
         isQuantityChallenge: true,
         enemyCount: 3,
-        xpReward: 380,
-        diamondReward: 460,
-        replayXp: 190,
-        replayDiamonds: 185,
-        baseStats: { power: 40, speed: 48, agility: 48, hp: 590 },
+        xpReward: 220,
+        diamondReward: 75,
+        replayXp: 110,
+        replayDiamonds: 35,
+        baseStats: { power: 62, speed: 62, agility: 64, hp: 920 },
         loadout: { tire: "tire_15", wpn1: "tire_17", wpn2: null, botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null },
         swarmRoster: [
           { name: "🐺 PACK-ALPHA", color: "#f97316", yOffset: -155, loadout: { tire: "tire_15", wpn1: "wpn_01", wpn2: null, botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null } },
-          { name: "🐺 PACK-BETA",  color: "#fbbf24", yOffset: 0,    loadout: { tire: "tire_17", wpn1: "wpn_05", wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null } },
-          { name: "🐺 PACK-GAMMA", color: "#fb7185", yOffset: 155,  loadout: { tire: "tire_12", wpn1: "wpn_08", wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null } }
+          { name: "🐺 PACK-BETA",  color: "#fbbf24", yOffset: 0,    loadout: { tire: "tire_17", wpn1: "wpn_05", wpn2: null, botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null } },
+          { name: "🐺 PACK-GAMMA", color: "#fb7185", yOffset: 155,  loadout: { tire: "tire_12", wpn1: "wpn_08", wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: "wpn_abil_07" } }
         ],
-        desc: "🔥 EVERY 5TH QUEST QUANTITY CHALLENGE! Survive and destroy all 3 Syndicate Pack Hounds attacking you simultaneously!"
+        desc: "🔥 EVERY 5TH QUEST QUANTITY CHALLENGE! Survive and destroy all 3 Syndicate Pack Hounds (2,760 Total HP) attacking you at once!"
       },
       {
         level: 6,
@@ -7940,13 +7943,13 @@
         badge: "⚔️ Q6 · LVL 6",
         color: "#00f5ff",
         mapId: "map_17_cryo_drones",
-        xpReward: 290,
-        diamondReward: 340,
-        replayXp: 150,
-        replayDiamonds: 135,
-        baseStats: { power: 54, speed: 52, agility: 54, hp: 1380 },
-        loadout: { tire: "tire_12", wpn1: "wpn_05", wpn2: null, botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: "wpn_abil_11" },
-        desc: "Chills your chassis with Cryo-Frost and launches you skyward with its Pneumatic Flipper!"
+        xpReward: 180,
+        diamondReward: 55,
+        replayXp: 90,
+        replayDiamonds: 28,
+        baseStats: { power: 82, speed: 70, agility: 72, hp: 2120 },
+        loadout: { tire: "tire_12", wpn1: "wpn_05", wpn2: "rng_04", botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: "wpn_abil_11" },
+        desc: "5-Slot Cryo-Flipper & Homing Missile Juggler (2,120 HP). Chills your chassis and launches you skyward!"
       },
       {
         level: 7,
@@ -7956,13 +7959,13 @@
         badge: "⚔️ Q7 · LVL 7",
         color: "#fb923c",
         mapId: "map_07_side_trenches",
-        xpReward: 340,
-        diamondReward: 400,
-        replayXp: 175,
-        replayDiamonds: 160,
-        baseStats: { power: 60, speed: 54, agility: 54, hp: 1520 },
+        xpReward: 210,
+        diamondReward: 65,
+        replayXp: 105,
+        replayDiamonds: 32,
+        baseStats: { power: 90, speed: 74, agility: 74, hp: 2360 },
         loadout: { tire: "tire_05", wpn1: "wpn_10", wpn2: "rng_08", botAbil1: "bot_abil_17", botAbil2: null, wpnAbil: "wpn_abil_07" },
-        desc: "Grapples with a Hydraulic Claw and drags opponents toward the Kawasaki molten side trenches!"
+        desc: "Grapples with a Hydraulic Claw (2,360 HP) and drags opponents toward the Kawasaki molten side trenches!"
       },
       {
         level: 8,
@@ -7972,13 +7975,13 @@
         badge: "⚔️ Q8 · LVL 8",
         color: "#ec4899",
         mapId: "map_01_furnace",
-        xpReward: 400,
-        diamondReward: 470,
-        replayXp: 205,
-        replayDiamonds: 190,
-        baseStats: { power: 65, speed: 58, agility: 58, hp: 1680 },
-        loadout: { tire: "tire_17", wpn1: "wpn_12", wpn2: "rng_04", botAbil1: "bot_abil_04", botAbil2: null, wpnAbil: "wpn_abil_18" },
-        desc: "360° Ring Spinner with Vampiric Siphon that heals on every melee clash!"
+        xpReward: 245,
+        diamondReward: 75,
+        replayXp: 120,
+        replayDiamonds: 38,
+        baseStats: { power: 98, speed: 80, agility: 80, hp: 2620 },
+        loadout: { tire: "tire_17", wpn1: "wpn_12", wpn2: "rng_04", botAbil1: "bot_abil_04", botAbil2: "bot_abil_09", wpnAbil: "wpn_abil_18" },
+        desc: "6-Slot 360° Ring Spinner with Nano-Weld & Vampiric Siphon (2,620 HP) that heals on every melee clash!"
       },
       {
         level: 9,
@@ -7988,13 +7991,13 @@
         badge: "⚔️ Q9 · LVL 9",
         color: "#eab308",
         mapId: "map_11_sky_ledge",
-        xpReward: 470,
-        diamondReward: 560,
-        replayXp: 240,
-        replayDiamonds: 225,
-        baseStats: { power: 70, speed: 62, agility: 64, hp: 1850 },
+        xpReward: 285,
+        diamondReward: 90,
+        replayXp: 140,
+        replayDiamonds: 45,
+        baseStats: { power: 108, speed: 86, agility: 88, hp: 2900 },
         loadout: { tire: "tire_04", wpn1: "wpn_08", wpn2: "rng_13", botAbil1: "bot_abil_11", botAbil2: "bot_abil_09", wpnAbil: "wpn_abil_03" },
-        desc: "Elite 5-Slot Royal Guard on the 80-story Roppongi Sky Ledge. Watch all 4 laser ring-out edges!"
+        desc: "Elite 6-Slot Royal Guard (2,900 HP) on the 80-story Roppongi Sky Ledge. Watch all 4 laser ring-out edges!"
       },
       {
         level: 10,
@@ -8006,11 +8009,11 @@
         mapId: "map_01_furnace",
         isBossBattle: true,
         scaleMult: 1.42,
-        xpReward: 850,
-        diamondReward: 1000,
-        replayXp: 420,
-        replayDiamonds: 400,
-        baseStats: { power: 78, speed: 64, agility: 64, hp: 2500 },
+        xpReward: 420,
+        diamondReward: 150,
+        replayXp: 210,
+        replayDiamonds: 75,
+        baseStats: { power: 122, speed: 90, agility: 90, hp: 3600 },
         loadout: {
           tire: "tire_17",
           wpn1: "wpn_12",
@@ -8019,7 +8022,7 @@
           botAbil2: "bot_abil_11",
           wpnAbil: "wpn_abil_03"
         },
-        desc: "👑💀 EVERY 10TH LEVEL BOSS BATTLE! Giant 1.42x Dreadnought Boss with 2,500 HP, 6/6 Maxed Weapons, and Phase 2 Overdrive at 50% HP!"
+        desc: "👑💀 EVERY 10TH LEVEL BOSS BATTLE! Giant 1.42x Dreadnought Boss with 3,600 HP, 6/6 Maxed Weapons, and Phase 2 Overdrive at 55% HP!"
       }
     ];
 
@@ -8031,7 +8034,7 @@
         found.packSpecs = found.swarmRoster.map(sr => ({
           ...sr,
           baseStats: { ...found.baseStats },
-          scaleMult: 0.88
+          scaleMult: 0.90
         }));
       }
       return found;
@@ -8068,7 +8071,7 @@
       const loadout = buildRandomLoadoutWithSlotCount(oppSlots);
 
       const oppElo = Math.max(850, state.elo + Math.floor((Math.random() - 0.45) * 180));
-      const bounty = 260 + oppSlots * 45;
+      const bounty = 40 + oppSlots * 8;
       const wagerPool = oppSlots >= 4 ? [250, 500, 1000, 1000, 2000] : [100, 250, 500, 500, 1000];
       const oppWager = wagerPool[Math.floor(Math.random() * wagerPool.length)];
 
@@ -8113,7 +8116,8 @@
       }
 
       const cpuLvl = pInfo.rigLevel;
-      const reward = 220 + cpuSlotCount * 45;
+      const reward = 25 + cpuSlotCount * 6;
+      const xpReward = 95 + cpuSlotCount * 15;
       const cpuWagerPool = cpuSlotCount >= 4 ? [250, 500, 1000, 1500] : [100, 250, 500, 1000];
       const cpuWager = cpuWagerPool[Math.floor(Math.random() * cpuWagerPool.length)];
       const cpuBaseStats = {
@@ -8130,6 +8134,7 @@
         title: `Matched AI (${Object.values(loadout).filter(Boolean).length}/6 Upgrades)`,
         color: arch.color,
         reward,
+        xpReward,
         wager: cpuWager,
         baseStats: cpuBaseStats,
         loadout,
@@ -8734,10 +8739,11 @@
       const chObj = getActivePvpOpponent();
       const staked = sim.escrowWager || 0;
       sim.escrowWager = 0;
+      const basePvpDiamonds = Number(chObj.bounty) || 45;
 
       if (guestWon) {
         const totalWon = staked * 2;
-        const rewardRes = awardBattleXpAndDiamonds({ baseXp: 160, baseDiamonds: 120, won: true, gritBonus: sim.startedInjuredGrit });
+        const rewardRes = awardBattleXpAndDiamonds({ baseXp: 130, baseDiamonds: basePvpDiamonds, won: true, gritBonus: sim.startedInjuredGrit });
         state.scrap += totalWon;
         state.elo += 28;
         state.pvpWins++;
@@ -8751,7 +8757,7 @@
           desc: `+${rewardRes.xpAdded} ⚡ XP · +${(rewardRes.totalDiamondsAdded + totalWon).toLocaleString()} 💎 · +1 🎟️ Ticket${lvlUpNote}`
         };
       } else {
-        const rewardRes = awardBattleXpAndDiamonds({ baseXp: 50, baseDiamonds: 25, won: false, gritBonus: false });
+        const rewardRes = awardBattleXpAndDiamonds({ baseXp: 130, baseDiamonds: basePvpDiamonds, won: false, gritBonus: false });
         state.elo = Math.max(800, state.elo - 16);
         state.pvpLosses++;
         persistWalletAndRig();
@@ -8760,7 +8766,7 @@
           tag: "🌐 LIVE ONLINE PVP RESULT",
           banner: `💥 DEFEATED BY ${chObj.callsign}`,
           color: "#ff2a55",
-          desc: `+${rewardRes.xpAdded} ⚡ XP · +${rewardRes.totalDiamondsAdded} 💎${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''}${lvlUpNote}`
+          desc: `+${rewardRes.xpAdded} ⚡ XP · +${rewardRes.totalDiamondsAdded} 💎 (20% Loss Payout)${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''}${lvlUpNote}`
         };
       }
 
@@ -9680,15 +9686,14 @@
         inspStats.innerHTML = cardsHtml.join("");
       }
 
-      if (btnXp && btnDm) {
+      if (btnXp) btnXp.style.display = "none";
+      if (btnDm) {
+        btnDm.style.display = "block";
         if (curRank >= 5) {
-          btnXp.textContent = "★ MAX RANK (5/5) UNLOCKED";
-          btnXp.disabled = true;
-          btnDm.style.display = "none";
+          btnDm.textContent = "★ MAX RANK (5/5) UNLOCKED";
+          btnDm.disabled = true;
         } else {
-          btnXp.disabled = false;
-          btnDm.style.display = "block";
-          btnXp.textContent = `⚡ UPGRADE WITH XP (${nextCost} XP)`;
+          btnDm.disabled = false;
           btnDm.textContent = `💎 UPGRADE WITH DIAMONDS (${nextCost} 💎)`;
         }
       }
@@ -9753,9 +9758,10 @@
       const subEl = document.getElementById("stHeaderSub");
       const xpEl = document.getElementById("stXpReadout");
       const dmEl = document.getElementById("stDiamondReadout");
+      const lvlProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned);
       if (titleEl) titleEl.textContent = activeTab.title;
       if (subEl) subEl.textContent = activeTab.subtitle;
-      if (xpEl) xpEl.textContent = `⚡ XP: ${(state.cpuXp || 0).toLocaleString()}`;
+      if (xpEl) xpEl.textContent = `⚡ LVL ${lvlProg.level} · ${lvlProg.xpIntoLevel.toLocaleString()}/${lvlProg.xpNeeded.toLocaleString()} XP (NEXT LVL: +💎${lvlProg.nextLvlDiamonds})`;
       if (dmEl) dmEl.textContent = `💎 DIAMONDS: ${(state.scrap || 0).toLocaleString()}`;
 
       const colsWrap = document.getElementById("stColumnsWrap");
@@ -9859,7 +9865,7 @@
     }
     requestAnimationFrame(stepSkillTreeDemoCanvas);
 
-    function upgradeSelectedSkillNode(currencyType) {
+    function upgradeSelectedSkillNode() {
       if (!ensurePilotLoggedIn()) return;
       const selInfo = findSkillNodeById(state.selectedSkillId);
       if (!selInfo) return;
@@ -9868,19 +9874,11 @@
       if (curRank >= 5) return;
       const cost = Math.round(nd.cost * (1 + curRank * 0.35));
 
-      if (currencyType === "xp") {
-        if ((state.cpuXp || 0) < cost) {
-          alert(`Not enough XP! You need ${cost} XP (Current: ${state.cpuXp || 0} XP). Battle CPU bots or use 💎 Diamonds!`);
-          return;
-        }
-        state.cpuXp = Math.max(0, (state.cpuXp || 0) - cost);
-      } else {
-        if ((state.scrap || 0) < cost) {
-          alert(`Not enough 💎 Diamonds! You need ${cost} 💎 (Current: ${state.scrap || 0} 💎).`);
-          return;
-        }
-        state.scrap = Math.max(0, (state.scrap || 0) - cost);
+      if ((state.scrap || 0) < cost) {
+        alert(`Not enough 💎 Diamonds! You need ${cost} 💎 (Current: ${state.scrap || 0} 💎).\n\nEarn XP in Quests, CPU, or PvP battles to Level Up your bot for bonus Diamonds, or win battles to earn Diamonds!`);
+        return;
       }
+      state.scrap = Math.max(0, (state.scrap || 0) - cost);
 
       if (!state.skillRanks || typeof state.skillRanks !== "object") state.skillRanks = {};
       state.skillRanks[nd.id] = curRank + 1;
@@ -11571,7 +11569,7 @@
         code: "🧬 SYNAPSE EXP MOLECULE",
         color: "#a855f7",
         img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_02_exp_synapse.jpg",
-        desc: "+125 Bonus XP & Instant Cooldown Reset!"
+        desc: "+45 Bonus XP & Instant Cooldown Reset!"
       },
       {
         id: "mol_03_power",
@@ -11598,7 +11596,7 @@
         code: "💎 DIAMOND WEALTH MOLECULE",
         color: "#fbbf24",
         img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_05_wealth_diamond.jpg",
-        desc: "+100 💎 Instant Vault Bonus + +80 HP!"
+        desc: "+15 💎 Instant Vault Bonus + +80 HP!"
       },
       {
         id: "mol_06_agility",
@@ -11643,7 +11641,7 @@
         code: "👑 GOLDEN FORTUNE MOLECULE",
         color: "#ffd700",
         img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_10_jackpot_fortune.jpg",
-        desc: "+150 💎 Jackpot + +150 XP + +150 HP + 2.5x Strike!"
+        desc: "+25 💎 Jackpot + +50 XP + +150 HP + 2.5x Strike!"
       }
     ];
 
@@ -11775,10 +11773,10 @@
               b.rangedCd = 0;
               b.stamina = b.maxStamina;
               if (b.team === "player") {
-                awardBattleXpAndDiamonds({ baseXp: 125, baseDiamonds: 0, won: true, gritBonus: false });
+                awardBattleXpAndDiamonds({ baseXp: 45, baseDiamonds: 0, won: true, gritBonus: false });
                 updatePlayerUI();
               }
-              addFloatText(b.x, b.y - 58, "🧬⚡ SYNAPSE MOLECULE! +125 XP & ALL COOLDOWNS RESET!", "#a855f7");
+              addFloatText(b.x, b.y - 58, "🧬⚡ SYNAPSE MOLECULE! +45 XP & ALL COOLDOWNS RESET!", "#a855f7");
             } else if (dr.id === "mol_03_power") {
               b.megaStrikeCharges = (b.megaStrikeCharges || 0) + 1;
               b.megaStrikeMult = 2.5;
@@ -11794,10 +11792,10 @@
             } else if (dr.id === "mol_05_wealth") {
               b.hp = Math.min(b.maxHp, b.hp + 80);
               if (b.team === "player") {
-                state.scrap += 100;
+                state.scrap += 15;
                 persistWalletAndRig();
                 updatePlayerUI();
-                addFloatText(b.x, b.y - 58, "💎💰 WEALTH MOLECULE! +100 💎 DIAMONDS & +80 HP!", "#fbbf24");
+                addFloatText(b.x, b.y - 58, "💎💰 WEALTH MOLECULE! +15 💎 DIAMONDS & +80 HP!", "#fbbf24");
               } else {
                 b.megaStrikeCharges = (b.megaStrikeCharges || 0) + 1;
                 b.megaStrikeMult = 2.0;
@@ -11825,9 +11823,9 @@
               b.megaStrikeCharges = (b.megaStrikeCharges || 0) + 1;
               b.megaStrikeMult = 2.5;
               if (b.team === "player") {
-                awardBattleXpAndDiamonds({ baseXp: 150, baseDiamonds: 150, won: true, gritBonus: false });
+                awardBattleXpAndDiamonds({ baseXp: 50, baseDiamonds: 25, won: true, gritBonus: false });
                 updatePlayerUI();
-                addFloatText(b.x, b.y - 58, "👑💎 GOLDEN FORTUNE! +150 💎, +150 XP, +150 HP & 2.5x HIT!", "#ffd700");
+                addFloatText(b.x, b.y - 58, "👑💎 GOLDEN FORTUNE! +25 💎, +50 XP, +150 HP & 2.5x HIT!", "#ffd700");
               } else {
                 b.shieldHp = 150;
                 addFloatText(b.x, b.y - 58, "👑⚡ GOLDEN FORTUNE! +150 HP, +150 SHIELD & 2.5x HIT!", "#ffd700");
@@ -12340,7 +12338,7 @@
         const hasJets = bot.cp.has("bot_abil_01");
         const hasDrift = bot.cp.has("tire_12");
         const hasSprint = bot.cp.has("tire_15");
-        const isCpuEnemy = bot.team === "enemy" && !sim.isLiveMultiplayer;
+        const isCpuEnemy = state.gameMode === "cpu" && bot.team === "enemy" && !sim.isLiveMultiplayer;
 
         if (bot.stamina >= (isCpuEnemy ? 28 : 18)) {
           drainBotStamina(bot, 14);
@@ -12441,12 +12439,13 @@
       while (aimDiff < -Math.PI) aimDiff += Math.PI * 2;
 
       // Trigger charge attacks faster and from wider angles when pressing an injured opponent!
-      const isCpuBot = bot.team === "enemy" && !sim.isLiveMultiplayer;
-      const minStamForCharge = isCpuBot ? 48 : (bot.activePredatorTactic ? 22 : 36);
-      const aimConeForCharge = isCpuBot ? 0.34 : (bot.activePredatorTactic ? 0.62 : 0.42);
+      const isCpuBot = state.gameMode === "cpu" && bot.team === "enemy" && !sim.isLiveMultiplayer;
+      const isQuestEnemy = state.gameMode === "quests" && bot.team === "enemy";
+      const minStamForCharge = isCpuBot ? 48 : (isQuestEnemy ? 28 : (bot.activePredatorTactic ? 22 : 36));
+      const aimConeForCharge = isCpuBot ? 0.34 : (isQuestEnemy ? 0.50 : (bot.activePredatorTactic ? 0.62 : 0.42));
       if (bot.abilityCd <= 0 && bot.stamina >= minStamForCharge && dist > 105 && dist < 430 && Math.abs(aimDiff) < aimConeForCharge) {
         bot.abilityState = "windup";
-        bot.abilityTimer = isCpuBot ? 18 : (bot.activePredatorTactic ? 9 : 13);
+        bot.abilityTimer = isCpuBot ? 18 : (isQuestEnemy ? 11 : (bot.activePredatorTactic ? 9 : 13));
       }
 
       if (sawDangerous && Math.hypot(other.x - cs.x, other.y - cs.y) < 340 && dist > 160) {
@@ -12483,6 +12482,10 @@
       if (isCpuBot) {
         throttle *= 0.84;
         turnMult *= 0.78;
+      } else if (isQuestEnemy) {
+        const qScale = 1 + Math.min(0.22, Math.max(0, (state.currentLevel - 1) * 0.022));
+        throttle *= qScale;
+        turnMult *= qScale;
       }
 
       return { desiredAngle, throttle, turnMult };
@@ -13143,9 +13146,12 @@
 
         if (state.gameMode === "quests") {
           const qSpec = getActiveQuestSpec();
+          const alreadyCleared = Array.isArray(state.clearedLevels) && state.clearedLevels.includes(qSpec.level);
+          const baseQuestXp = alreadyCleared ? (qSpec.replayXp || Math.round(qSpec.xpReward * 0.45)) : qSpec.xpReward;
+          const baseQuestDiamonds = alreadyCleared ? (qSpec.replayDiamonds || Math.round(qSpec.diamondReward * 0.40)) : qSpec.diamondReward;
           const rewardRes = awardBattleXpAndDiamonds({
-            baseXp: qSpec.xpReward,
-            baseDiamonds: qSpec.diamondReward,
+            baseXp: baseQuestXp,
+            baseDiamonds: baseQuestDiamonds,
             won,
             gritBonus: Boolean(won && sim.startedInjuredGrit)
           });
@@ -13178,13 +13184,13 @@
               tag: `⚔️ ${qSpec.tag} RESULT`,
               banner: `💥 DEFEATED ON QUEST ${qSpec.level}`,
               color: "#ff2a55",
-              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${rewardRes.totalDiamondsAdded.toLocaleString()} Diamonds${lvlUpNotice} · Upgrade & Retry!`
+              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${rewardRes.totalDiamondsAdded.toLocaleString()} Diamonds (20% Loss Payout)${lvlUpNotice} · Upgrade & Retry!`
             };
           }
         } else if (state.gameMode === "cpu") {
           const cpuObj = getActiveSimilarCpu();
-          const baseCpuXp = Number(cpuObj.reward) || 140;
-          const baseCpuDiamonds = Math.round(baseCpuXp * 0.65);
+          const baseCpuXp = Number(cpuObj.xpReward) || 110;
+          const baseCpuDiamonds = Number(cpuObj.reward) || 30;
           const rewardRes = awardBattleXpAndDiamonds({
             baseXp: baseCpuXp,
             baseDiamonds: baseCpuDiamonds,
@@ -13212,7 +13218,7 @@
               tag: "🤖 CPU BATTLE RESULT",
               banner: "💥 DEFEATED",
               color: "#ff2a55",
-              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${rewardRes.totalDiamondsAdded.toLocaleString()} Diamonds${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''}${lvlUpNotice}`
+              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${rewardRes.totalDiamondsAdded.toLocaleString()} Diamonds (20% Loss Payout)${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''}${lvlUpNotice}`
             };
           }
           state.activeSimilarCpu = generateSimilarLevelCpuBot();
@@ -13247,8 +13253,8 @@
           // Live Online PvP Outcome — Awards XP, Diamonds, +1 Golden Ticket on win, and 2x Lowest Matched Wager!
           const chObj = getActivePvpOpponent();
           const rewardRes = awardBattleXpAndDiamonds({
-            baseXp: 210,
-            baseDiamonds: Number(chObj.bounty) || 160,
+            baseXp: 130,
+            baseDiamonds: Number(chObj.bounty) || 45,
             won,
             gritBonus: Boolean(won && sim.startedInjuredGrit)
           });
@@ -14157,9 +14163,10 @@
       while (bAim > Math.PI) bAim -= Math.PI * 2;
       while (bAim < -Math.PI) bAim += Math.PI * 2;
 
-      const isCpuBattle = !sim.isLiveMultiplayer;
-      const aFacing = Math.abs(aAim) < (isCpuBattle ? 1.22 : 0.90);
-      const bFacing = Math.abs(bAim) < (isCpuBattle ? 0.70 : 0.90);
+      const isCpuBattle = state.gameMode === "cpu" && !sim.isLiveMultiplayer;
+      const isQuestBattle = state.gameMode === "quests" && !sim.isLiveMultiplayer;
+      const aFacing = Math.abs(aAim) < (isCpuBattle ? 1.22 : 0.92);
+      const bFacing = Math.abs(bAim) < (isCpuBattle ? 0.70 : (isQuestBattle ? 1.02 : 0.90));
 
       const aVelToward = Math.max(0, botA.vx * nx + botA.vy * ny);
       const bVelToward = Math.max(0, botB.vx * (-nx) + botB.vy * (-ny));
@@ -14227,6 +14234,8 @@
         let m = 1.0;
         if (isCpuBattle) {
           m *= attacker.team === "player" ? 1.24 : 0.82;
+        } else if (isQuestBattle && attacker.team === "enemy") {
+          m *= 1.08 + Math.max(0, (state.currentLevel - 1) * 0.048);
         }
         if (attacker.redlineActive) m *= 1.35;
         if (sim.suddenOverchargeActive) m *= 1.50;
