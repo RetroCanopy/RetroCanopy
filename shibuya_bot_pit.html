@@ -2551,6 +2551,426 @@
       margin-bottom: 1px;
     }
 
+    /* =========================================================================
+       CONCEPT 1 ("SHIBUYA SYNDICATE") RAGNAROK-STYLE 3-COLUMN SKILL TREE MODAL
+       ========================================================================= */
+    .skilltree-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9500;
+      background: rgba(6, 4, 10, 0.92);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+    .skilltree-modal-backdrop.hidden {
+      display: none !important;
+    }
+    .skilltree-window {
+      width: min(1480px, 98vw);
+      height: min(880px, 94vh);
+      background:
+        radial-gradient(circle at 38% 42%, rgba(220, 38, 38, 0.10), transparent 60%),
+        radial-gradient(circle at 68% 18%, rgba(245, 158, 11, 0.08), transparent 55%),
+        linear-gradient(165deg, #161219 0%, #0e0b12 52%, #130e14 100%);
+      border: 2px solid rgba(245, 158, 11, 0.55);
+      border-radius: 16px;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.95), inset 0 0 40px rgba(0, 0, 0, 0.85);
+      display: grid;
+      grid-template-columns: 78px 1fr 410px;
+      overflow: hidden;
+      color: #f8fafc;
+    }
+    .st-left-rail {
+      background: linear-gradient(180deg, #0b090e 0%, #07050a 100%);
+      border-right: 1px solid rgba(245, 158, 11, 0.28);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 6px;
+      gap: 12px;
+    }
+    .st-rail-crest {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      border: 2px solid #f59e0b;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.25), #09060d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.45rem;
+      margin-bottom: 10px;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+    }
+    .st-rail-tab {
+      width: 62px;
+      padding: 10px 4px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(148, 163, 184, 0.25);
+      background: rgba(18, 15, 24, 0.85);
+      color: #94a3b8;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.16s ease;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .st-rail-tab:hover {
+      border-color: rgba(251, 191, 36, 0.65);
+      color: #fde047;
+      transform: translateY(-1px);
+    }
+    .st-rail-tab.active {
+      background: linear-gradient(180deg, #fef3c7 0%, #f59e0b 100%);
+      color: #09060d;
+      border-color: #fde047;
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.65);
+      font-weight: 900;
+    }
+    .st-rail-tab .ico {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .st-rail-tab .lbl {
+      font-size: 0.48rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+    .st-rail-tab .cnt {
+      font-size: 0.44rem;
+      opacity: 0.85;
+    }
+    .st-center-canvas {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(239, 68, 68, 0.08), transparent 65%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 2px, transparent 2px, transparent 10px);
+    }
+    .st-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 22px 10px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.24);
+      background: rgba(9, 7, 13, 0.72);
+    }
+    .st-top-title-group h2 {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.22rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #fef3c7;
+      text-shadow: 0 0 14px rgba(245, 158, 11, 0.45);
+    }
+    .st-top-title-group span {
+      font-size: 0.68rem;
+      color: #fca5a5;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 0.8px;
+    }
+    .st-top-currencies {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .st-curr-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(15, 12, 20, 0.92);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      font-size: 0.78rem;
+      font-weight: 900;
+      color: #fde047;
+    }
+    .st-columns-wrap {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding: 12px 18px 18px;
+      overflow-y: auto;
+    }
+    .st-branch-col {
+      background: rgba(12, 9, 16, 0.58);
+      border: 1px solid rgba(245, 158, 11, 0.20);
+      border-radius: 12px;
+      padding: 10px 10px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .st-col-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 1.8px;
+      color: #fde68a;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.32);
+      width: 100%;
+      text-align: center;
+    }
+    .st-tier-rows {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      position: relative;
+    }
+    .st-tier-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      width: 100%;
+      position: relative;
+    }
+    .st-tier-row::before {
+      content: "";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 12px;
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.75), rgba(239, 68, 68, 0.65));
+      z-index: 0;
+    }
+    .st-tier-row:first-child::before {
+      display: none;
+    }
+    .st-tier-row.dual::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 26%;
+      right: 26%;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.25), rgba(245, 158, 11, 0.75), rgba(245, 158, 11, 0.25));
+      z-index: 0;
+    }
+    .st-medallion-node {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #271c24 0%, #0d090f 85%);
+      border: 2.5px solid #b45309;
+      box-shadow: 0 0 14px rgba(220, 38, 38, 0.38), inset 0 0 10px rgba(245, 158, 11, 0.25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .st-medallion-node:hover {
+      transform: scale(1.08);
+      border-color: #fde047;
+      box-shadow: 0 0 22px rgba(245, 158, 11, 0.75), 0 0 30px rgba(239, 68, 68, 0.45);
+    }
+    .st-medallion-node.unlocked {
+      border-color: #fbbf24;
+      background: radial-gradient(circle at 35% 30%, #451a1c 0%, #170d12 85%);
+      box-shadow: 0 0 18px rgba(239, 68, 68, 0.65), inset 0 0 12px rgba(251, 191, 36, 0.45);
+    }
+    .st-medallion-node.maxed {
+      border-color: #fef08a;
+      background: radial-gradient(circle at 35% 30%, #7c2d12 0%, #27110b 85%);
+      box-shadow: 0 0 24px rgba(251, 191, 36, 0.9), 0 0 36px rgba(239, 68, 68, 0.75);
+    }
+    .st-medallion-node.selected::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid rgba(254, 240, 138, 0.92);
+      box-shadow: 0 0 16px rgba(254, 240, 138, 0.85);
+      animation: stReticlePulse 1.6s infinite ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes stReticlePulse {
+      0%, 100% { transform: scale(1); opacity: 0.95; }
+      50% { transform: scale(1.08); opacity: 0.55; }
+    }
+    .st-medallion-node .m-ico {
+      font-size: 1.32rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.85));
+    }
+    .st-medallion-node .m-rank {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.48rem;
+      font-weight: 900;
+      color: #fde047;
+      margin-top: 2px;
+    }
+    .st-medallion-node .m-lbl {
+      position: absolute;
+      bottom: -15px;
+      white-space: nowrap;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.45rem;
+      font-weight: 800;
+      color: #cbd5e1;
+      background: rgba(9, 6, 14, 0.88);
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      pointer-events: none;
+    }
+    .st-right-inspector {
+      background: linear-gradient(180deg, #0d0a11 0%, #07050a 100%);
+      border-left: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+    .st-insp-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 1.4px;
+      color: #fef3c7;
+      text-align: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.30);
+    }
+    .st-insp-preview-box {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1.5px solid rgba(245, 158, 11, 0.55);
+      position: relative;
+      background: #050408;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+    }
+    .st-insp-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .st-insp-preview-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      right: 8px;
+      background: rgba(9, 6, 14, 0.88);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 900;
+      color: #fde047;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .st-insp-tier-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #fbbf24;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .st-insp-sub-hint {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      text-align: center;
+      font-style: italic;
+    }
+    .st-insp-desc {
+      font-size: 0.84rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+      background: rgba(18, 14, 24, 0.75);
+      border: 1px solid rgba(245, 158, 11, 0.22);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .st-insp-stats-box {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      color: #fde047;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .st-insp-actions {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .btn-st-upgrade {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 900;
+      cursor: pointer;
+      border: 1.5px solid #fde047;
+      background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+      color: #09060d;
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
+      transition: transform 0.14s ease, filter 0.14s ease;
+    }
+    .btn-st-upgrade:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+    .btn-st-upgrade.diamond-mode {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      border-color: #7dd3fc;
+      color: #041019;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.38);
+    }
+    @media (max-width: 1080px) {
+      .skilltree-window {
+        grid-template-columns: 62px 1fr;
+        grid-template-rows: 1fr auto;
+      }
+      .st-right-inspector {
+        grid-column: 1 / -1;
+        border-left: none;
+        border-top: 1px solid rgba(245, 158, 11, 0.35);
+        max-height: 42vh;
+      }
+    }
+
 
     /* =========================================================================
        LIVE SPECTATOR BANNER & SHIBUYA PIT BROADCAST DECK (SPECTATE + LIVE CHAT)
@@ -4895,6 +5315,9 @@
       <button class="mode-btn" style="border-color:rgba(251,191,36,0.65);color:#fde047;" onclick="openFullScreenMapSelector()" title="Open Full-Screen Map Selector (7 Arenas)">
         🗺️ MAPS (7)
       </button>
+      <button class="mode-btn" style="background:linear-gradient(180deg,#fbbf24 0%,#b45309 100%);color:#09060d;border-color:#fde047;font-weight:900;" onclick="openSkillTreeModal()" title="Open Shibuya Syndicate Skill Tree (5 Tabs · 135 Upgrades)">
+        🌳 SKILL TREE
+      </button>
       <button class="mode-btn" onclick="challengeFriendRigCode()" title="Battle a friend's Rig Code or copy yours">
         🤝 FRIEND CODE
       </button>
@@ -5027,10 +5450,13 @@
         </div>
       </div>
 
-      <!-- BIG CLEAN SHOP BUTTON -->
+      <!-- BIG CLEAN SHOP & SKILL TREE BUTTONS -->
       <div class="sidebar-actions">
         <button class="btn-shop" onclick="openShopModal('tire')">
           🛒 UPGRADE SHOP (5 PER SLOT)
+        </button>
+        <button class="btn-shop" style="background:linear-gradient(180deg,#f59e0b 0%,#991b1b 100%);color:#fef3c7;border-color:#fde047;" onclick="openSkillTreeModal()">
+          🌳 BOT SKILL TREE (5 TABS · 135 NODES)
         </button>
         <button class="btn-battle" id="sideBattleBtn" onclick="beginPreBattleWizard(state.gameMode || 'pvp')">BATTLE</button>
       </div>
@@ -5410,6 +5836,10 @@
       <span>🛒</span>
       <span>3D SHOP</span>
     </button>
+    <button class="mob-nav-btn" id="mobNavSkills" onclick="openSkillTreeModal()">
+      <span>🌳</span>
+      <span>SKILLS</span>
+    </button>
     <button class="mob-nav-btn" id="mobNavPvp" onclick="mobileNavJump('pvp')">
       <span>🌐</span>
       <span>LIVE PVP</span>
@@ -5419,6 +5849,60 @@
       <span>SIMILAR CPU</span>
     </button>
   </nav>
+
+  <!-- CONCEPT 1 ("SHIBUYA SYNDICATE") 5-TAB x 27-NODE (135 UPGRADES) SKILL TREE MODAL -->
+  <div class="skilltree-modal-backdrop hidden" id="skillTreeModalBackdrop">
+    <div class="skilltree-window">
+      <!-- Left Vertical Category Sidebar Rail (5 Tabs) -->
+      <div class="st-left-rail" id="stLeftRail"></div>
+
+      <!-- Center 3-Column Branching Medallion Node Tree (27 Nodes per Tab) -->
+      <div class="st-center-canvas">
+        <div class="st-top-bar">
+          <div class="st-top-title-group">
+            <h2 id="stHeaderTitle">BOT COMBAT SKILLS</h2>
+            <span id="stHeaderSub">SHIBUYA SYNDICATE · 27 BRANCHING MEDALLION UPGRADES IN THIS TAB (135 TOTAL)</span>
+          </div>
+          <div class="st-top-currencies">
+            <div class="st-curr-pill" id="stXpReadout" style="border-color:rgba(56,189,248,0.55);color:#38bdf8;">⚡ XP: 0</div>
+            <div class="st-curr-pill" id="stDiamondReadout">💎 DIAMONDS: 0</div>
+            <button type="button" class="btn-close-shop" onclick="closeSkillTreeModal()">✕ CLOSE</button>
+          </div>
+        </div>
+
+        <div class="st-columns-wrap" id="stColumnsWrap"></div>
+      </div>
+
+      <!-- Right Combat Preview & Mastery Inspector Panel -->
+      <div class="st-right-inspector">
+        <div class="st-insp-title" id="stInspTitle">MAGNETIC WINCH PULL</div>
+        <div class="st-insp-preview-box">
+          <img id="stInspPreviewImg" src="assets/concept_gallery/battlebots_topdown_3d/01_arena_battle_wide.jpg" alt="Skill Action Preview" />
+          <div class="st-insp-preview-badge">
+            <span id="stInspBranchTag">TECHNIQUE · TIER 1</span>
+            <span id="stInspRankBadge" style="color:#00ff88;">RANK 0 / 5</span>
+          </div>
+        </div>
+        <div class="st-insp-tier-row">
+          <span id="stInspTierName">BRONZE TIER</span>
+          <span id="stInspUsageText">USED: 17/20</span>
+        </div>
+        <div class="st-insp-sub-hint">Use in combat or upgrade with XP / 💎 Diamonds to increase tier &amp; permanent bot stats.</div>
+        <div class="st-insp-desc" id="stInspDesc">
+          Select any medallion node in the 3 columns to inspect its combat effect and permanent stat bonuses.
+        </div>
+        <div class="st-insp-stats-box" id="stInspStatsBox"></div>
+        <div class="st-insp-actions">
+          <button type="button" class="btn-st-upgrade" id="btnStUpgradeXp" onclick="upgradeSelectedSkillNode('xp')">
+            ⚡ UPGRADE SKILL (100 XP)
+          </button>
+          <button type="button" class="btn-st-upgrade diamond-mode" id="btnStUpgradeDiamond" onclick="upgradeSelectedSkillNode('scrap')">
+            💎 UPGRADE SKILL (100 💎)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- REIMAGINED 3D MECH ARMORY SHOP MODAL -->
   <div class="shop-modal-backdrop hidden" id="shopModalBackdrop">
@@ -5921,6 +6405,7 @@
         pvpLosses: 0,
         wagerAmount: 0,
         clearedLevels: [],
+        skillRanks: {},
         updatedAt: Date.now()
       };
     }
@@ -5947,6 +6432,9 @@
       customFriendChallenger: null,
       clearedLevels: [],
       ownedIds: [],
+      skillRanks: {},
+      activeSkillTab: "combat",
+      selectedSkillId: "combat_c0_n0",
       activeShopSlot: "tire",
       previewAddonId: null,
       onlyDynamicPicks: true,
@@ -5984,6 +6472,7 @@
         pvpLosses: Math.max(0, Number(state.pvpLosses) || 0),
         wagerAmount: Math.max(0, Number(state.wagerAmount) || 0),
         clearedLevels: Array.isArray(state.clearedLevels) ? [...state.clearedLevels] : [],
+        skillRanks: (state.skillRanks && typeof state.skillRanks === "object") ? { ...state.skillRanks } : {},
         updatedAt: Date.now()
       };
 
@@ -6081,6 +6570,7 @@
       state.pvpLosses = typeof bp.pvpLosses === "number" && !Number.isNaN(bp.pvpLosses) ? bp.pvpLosses : 0;
       state.wagerAmount = isLegacyUnmigrated ? 0 : (typeof bp.wagerAmount === "number" && !Number.isNaN(bp.wagerAmount) ? Math.min(bp.wagerAmount, state.scrap) : 0);
       state.clearedLevels = Array.isArray(bp.clearedLevels) ? [...bp.clearedLevels] : [];
+      state.skillRanks = (bp.skillRanks && typeof bp.skillRanks === "object") ? { ...bp.skillRanks } : {};
       state.isAllInWager = false;
 
       localStorage.setItem(BOTPIT_ACTIVE_USER_KEY, state.loggedInUserKey);
@@ -6630,28 +7120,39 @@
       const pool = cpuArchetypes.filter(a => a.name !== prevName);
       const arch = pool[Math.floor(Math.random() * pool.length)] || cpuArchetypes[0];
 
-      // Match the player's exact upgrade count (or +1 if player has 0 upgrades so it's a fun fight)
+      // Fairly match or slightly under-level the CPU's upgrade count so the player always has a fair, winnable fight!
       const cpuSlotCount = pInfo.equippedCount === 0
-        ? (Math.random() < 0.5 ? 0 : 1)
-        : Math.max(1, Math.min(6, pInfo.equippedCount + (Math.random() < 0.35 ? 1 : 0)));
+        ? 0
+        : Math.max(0, Math.min(6, pInfo.equippedCount - (Math.random() < 0.45 ? 1 : 0)));
 
       const loadout = buildRandomLoadoutWithSlotCount(cpuSlotCount);
+      // Never give the CPU a long-range turret (wpn2) unless the player also has a long-range turret equipped!
+      if (!state.loadout.wpn2 && loadout.wpn2) {
+        loadout.wpn2 = null;
+      }
+
       const cpuLvl = pInfo.rigLevel;
-      const reward = 200 + cpuSlotCount * 40;
+      const reward = 220 + cpuSlotCount * 45;
       const cpuWagerPool = cpuSlotCount >= 4 ? [250, 500, 1000, 1500] : [100, 250, 500, 1000];
       const cpuWager = cpuWagerPool[Math.floor(Math.random() * cpuWagerPool.length)];
+      const cpuBaseStats = {
+        power: Math.round(38 + pInfo.equippedCount * 1.8),
+        speed: Math.round(40 + pInfo.equippedCount * 1.6),
+        agility: Math.round(40 + pInfo.equippedCount * 1.6),
+        hp: Math.round(960 + pInfo.equippedCount * 38)
+      };
 
       return {
         id: "cpu_" + Date.now(),
         level: cpuLvl,
         name: `LVL.${cpuLvl} ${arch.name}`,
-        title: `Similar-Level AI (${cpuSlotCount}/6 Upgrades)`,
+        title: `Matched AI (${Object.values(loadout).filter(Boolean).length}/6 Upgrades)`,
         color: arch.color,
         reward,
         wager: cpuWager,
-        baseStats: { power: 50, speed: 50, agility: 50, hp: 1250 },
+        baseStats: cpuBaseStats,
         loadout,
-        desc: `🤖 Matched to your Rig Level (LVL.${cpuLvl} · ${cpuSlotCount}/6 Upgrades) — ${arch.role}.`
+        desc: `🤖 Balanced to your Rig Level (LVL.${cpuLvl} · ${Object.values(loadout).filter(Boolean).length}/6 Upgrades) — ${arch.role}.`
       };
     }
 
@@ -7497,11 +7998,508 @@
       if (!sim.running) setupStagingArena();
     }
 
-    function computeBotCombatProfile(baseStats, loadoutObj) {
-      let power = baseStats.power;
-      let speed = baseStats.speed;
-      let agility = baseStats.agility;
-      let bonusHp = 0;
+    // =========================================================================
+    // CONCEPT 1 ("SHIBUYA SYNDICATE") 5-TAB x 27-NODE (135 UPGRADES) SKILL TREE
+    // =========================================================================
+    const SKILL_TREE_TABS = [
+      {
+        id: "combat",
+        icon: "⚔️",
+        shortLabel: "COMBAT",
+        title: "BOT COMBAT SKILLS",
+        subtitle: "SHIBUYA SYNDICATE · 27 COMBAT MEDALLION UPGRADES (TECHNIQUE · RANGED · MELEE)",
+        previewImg: "assets/concept_gallery/battlebots_topdown_3d/01_arena_battle_wide.jpg",
+        columns: [
+          {
+            title: "TECHNIQUE",
+            nodes: [
+              { id: "combat_c0_n0", row: 0, icon: "🪝", name: "MAGNETIC WINCH PULL", short: "WINCH PULL", cost: 100, stats: { agility: 3, power: 2 }, desc: "Fires a high-tension magnetic winch cable to <strong style='color:#fde047;'>yank grounded enemies forward</strong> toward arena saws or Ring-Out ledges." },
+              { id: "combat_c0_n1", row: 1, icon: "🏎️", name: "J-TURN DRIFT PIVOT", short: "J-TURN", cost: 110, stats: { agility: 4, speed: 2 }, desc: "Executes a sharp <strong style='color:#fde047;'>180° J-Turn Drift</strong> around charging opponents to line up Rear Backstab strikes." },
+              { id: "combat_c0_n2", row: 1, icon: "⚡", name: "THRUSTER SIDESTEP", short: "SIDESTEP", cost: 110, stats: { speed: 3, agility: 3 }, desc: "Fires lateral micro-thrusters to <strong style='color:#fde047;'>evade enemy charges</strong> while leaving an electric afterimage." },
+              { id: "combat_c0_n3", row: 2, icon: "🧲", name: "LEDGE ANCHOR GYRO", short: "LEDGE GYRO", cost: 125, stats: { agility: 4, hp: 35 }, desc: "Engages emergency reverse-gyros near Ring-Out edges to <strong style='color:#fde047;'>resist knockback by +20%</strong>." },
+              { id: "combat_c0_n4", row: 2, icon: "🎯", name: "BLINDSPOT LOCK-ON", short: "REAR LOCK", cost: 125, stats: { agility: 4, power: 3 }, desc: "Widens your rear-backstab critical hit cone and boosts <strong style='color:#fde047;'>Flank & Rear damage by +12%</strong>." },
+              { id: "combat_c0_n5", row: 3, icon: "🌀", name: "COUNTER-SPIN STABILIZER", short: "STABILIZER", cost: 140, stats: { agility: 5, hp: 40 }, desc: "Dampens rotational spin-out torque after heavy collisions so your bot <strong style='color:#fde047;'>recovers 35% faster</strong>." },
+              { id: "combat_c0_n6", row: 3, icon: "🔋", name: "TACTICAL PACE BREATHER", short: "PACE REGEN", cost: 140, stats: { speed: 3, agility: 4 }, desc: "Accelerates <strong style='color:#fde047;'>Stamina recovery by +25%</strong> while circling outside melee clinch range." },
+              { id: "combat_c0_n7", row: 4, icon: "🦈", name: "PREDATOR BLOOD-SENSE", short: "PREDATOR", cost: 160, stats: { power: 4, agility: 4 }, desc: "Detects damaged enemy subsystems and grants <strong style='color:#fde047;'>+18% pursuit speed & charge rate</strong> against injured bots." },
+              { id: "combat_c0_n8", row: 5, icon: "👑", name: "HYPERION APEX CLINCH", short: "APEX CLINCH", cost: 200, stats: { power: 6, agility: 6, hp: 60 }, desc: "Ultimate Technique Capstone: Dominates Power-Struggle lockups and <strong style='color:#fde047;'>slams enemies into arena hazards</strong>." }
+            ]
+          },
+          {
+            title: "RANGED",
+            nodes: [
+              { id: "combat_c1_n0", row: 0, icon: "🎯", name: "GAUSS RAIL VELOCITY", short: "RAIL VELOCITY", cost: 100, stats: { power: 4, agility: 2 }, desc: "Overclocks dorsal railgun coils for <strong style='color:#fde047;'>+25% projectile speed</strong> and deeper armor penetration." },
+              { id: "combat_c1_n1", row: 1, icon: "🚀", name: "SWARM POD SALVO", short: "MISSILE POD", cost: 110, stats: { power: 4, speed: 2 }, desc: "Improves homing micro-missile tracking turn-rate and <strong style='color:#fde047;'>blast splash radius</strong>." },
+              { id: "combat_c1_n2", row: 1, icon: "⚙️", name: "RICOCHET SAW-DISC", short: "RICOCHET", cost: 110, stats: { power: 3, agility: 3 }, desc: "Hardens rotary saw-discs so wall ricochets retain <strong style='color:#fde047;'>100% kinetic shred damage</strong>." },
+              { id: "combat_c1_n3", row: 2, icon: "☄️", name: "PLASMA SIEGE MORTAR", short: "MORTAR ARC", cost: 125, stats: { power: 5, hp: 30 }, desc: "Superheats mortar shells to leave a <strong style='color:#fde047;'>molten thermite scorch zone</strong> on impact." },
+              { id: "combat_c1_n4", row: 2, icon: "⚡", name: "RAPID TURRET SERVO", short: "TURRET SERVO", cost: 125, stats: { agility: 5, speed: 2 }, desc: "Increases 360° dorsal turret rotation speed by <strong style='color:#fde047;'>+40% for instant target lock</strong>." },
+              { id: "combat_c1_n5", row: 3, icon: "❄️", name: "CRYO-RAIL AIR JUGGLE", short: "AIR JUGGLE", cost: 140, stats: { power: 5, agility: 4 }, desc: "Sniping an airborne/flipped enemy deals <strong style='color:#fde047;'>1.5x to 1.85x Air-Juggle Combo Damage</strong>." },
+              { id: "combat_c1_n6", row: 3, icon: "🔋", name: "ORDNANCE COOLANT", short: "COOLANT", cost: 140, stats: { agility: 4, hp: 45 }, desc: "Reduces all Long-Range Weapon 2 firing cooldowns by <strong style='color:#fde047;'>-18%</strong>." },
+              { id: "combat_c1_n7", row: 4, icon: "💥", name: "SUBSYSTEM SNIPER", short: "PART SNIPE", cost: 160, stats: { power: 6, agility: 3 }, desc: "Ranged hits deal <strong style='color:#fde047;'>+30% bonus breakdown damage</strong> to enemy Tires and Core." },
+              { id: "combat_c1_n8", row: 5, icon: "☢️", name: "OMEGA ORBITAL BARRAGE", short: "OMEGA BARRAGE", cost: 200, stats: { power: 8, agility: 5, hp: 50 }, desc: "Ultimate Ranged Capstone: Supercharges all ranged projectiles with <strong style='color:#fde047;'>high-impact knockback & crit power</strong>." }
+            ]
+          },
+          {
+            title: "MELEE",
+            nodes: [
+              { id: "combat_c2_n0", row: 0, icon: "🚜", name: "BULLDOZER WEDGE RAM", short: "WEDGE RAM", cost: 100, stats: { power: 4, hp: 35 }, desc: "Reinforces front plow geometry to <strong style='color:#fde047;'>shove enemies toward saws & Ring-Out ledges</strong>." },
+              { id: "combat_c2_n1", row: 1, icon: "🚀", name: "PNEUMATIC FLIP LAUNCH", short: "FLIP LAUNCH", cost: 110, stats: { power: 5, agility: 2 }, desc: "Boosts hydraulic flipper pressure to <strong style='color:#fde047;'>launch enemy bots airborne</strong> and stun them on landing." },
+              { id: "combat_c2_n2", row: 1, icon: "🌀", name: "360° RING SPINNER", short: "RING SPINNER", cost: 110, stats: { power: 4, speed: 3 }, desc: "Maintains high-RPM kinetic ring momentum for <strong style='color:#fde047;'>360° sonic ricochet deflections</strong>." },
+              { id: "combat_c2_n3", row: 2, icon: "🔩", name: "TUNGSTEN AUGER BITE", short: "AUGER DRILL", cost: 125, stats: { power: 5, agility: 3 }, desc: "Diamond-tipped drill bit <strong style='color:#fde047;'>ignores 50% of enemy front armor mitigation</strong>." },
+              { id: "combat_c2_n4", row: 2, icon: "🧱", name: "WALL-SLAM CRUSHER", short: "WALL CRUSH", cost: 125, stats: { power: 5, hp: 40 }, desc: "Slamming an enemy into arena bulkheads deals <strong style='color:#fde047;'>+35% bonus Wall-Slam Crush damage</strong>." },
+              { id: "combat_c2_n5", row: 3, icon: "⚔️", name: "CLASH TUG-OF-WAR", short: "CLASH DRIVE", cost: 140, stats: { power: 6, hp: 40 }, desc: "Increases wheel-drive shove ratio during <strong style='color:#fde047;'>head-on Power Struggle lockups</strong>." },
+              { id: "combat_c2_n6", row: 3, icon: "🔥", name: "THERMITE SHEAR BLADE", short: "THERMITE", cost: 140, stats: { power: 6, speed: 2 }, desc: "Melee collisions ignite molten thermite on the enemy hull for <strong style='color:#fde047;'>continuous burn damage</strong>." },
+              { id: "combat_c2_n7", row: 4, icon: "💚", name: "VAMPIRIC MELEE SIPHON", short: "LIFE SIPHON", cost: 160, stats: { power: 5, hp: 65 }, desc: "Heavy melee strikes <strong style='color:#fde047;'>weld hull HP back onto your bot</strong> on every solid impact." },
+              { id: "combat_c2_n8", row: 5, icon: "💀", name: "SHIBUYA EXECUTIONER", short: "EXECUTIONER", cost: 200, stats: { power: 9, speed: 4, hp: 70 }, desc: "Ultimate Melee Capstone: Unlocks devastating <strong style='color:#fde047;'>knockout impulse & armor-shredding crits</strong>." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "speed",
+        icon: "⚡",
+        shortLabel: "SPEED",
+        title: "TACHYON SPEED & AGILITY",
+        subtitle: "MOLECULAR MOBILITY · 27 SPEED, DRIFT & STAMINA UPGRADES",
+        previewImg: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_01_speed_tachyon.jpg",
+        columns: [
+          {
+            title: "TACHYON DRIVE",
+            nodes: [
+              { id: "speed_c0_n0", row: 0, icon: "⚡", name: "TACHYON INJECTOR I", short: "TACHYON I", cost: 100, stats: { speed: 5, agility: 2 }, desc: "Infuses drive motors with Kinetic Tachyon Molecules for <strong style='color:#fde047;'>+5 Base Speed</strong>." },
+              { id: "speed_c0_n1", row: 1, icon: "🛞", name: "SPRINT COMPOUND TIRES", short: "SPRINT TIRES", cost: 110, stats: { speed: 5, agility: 3 }, desc: "High-grip vulcanized tread increases <strong style='color:#fde047;'>launch acceleration off the line</strong>." },
+              { id: "speed_c0_n2", row: 1, icon: "💨", name: "SLIPSTREAM AERO HULL", short: "AERO HULL", cost: 110, stats: { speed: 6, hp: 25 }, desc: "Reduces chassis drag so your bot maintains <strong style='color:#fde047;'>higher top-end ramming velocity</strong>." },
+              { id: "speed_c0_n3", row: 2, icon: "⚡", name: "OVERCLOCKED ROTORS", short: "ROTOR BOOST", cost: 125, stats: { speed: 6, power: 2 }, desc: "Converts forward speed directly into <strong style='color:#fde047;'>bonus kinetic collision damage</strong>." },
+              { id: "speed_c0_n4", row: 2, icon: "🚀", name: "RAMMING LUNGE BOOST", short: "LUNGE BOOST", cost: 125, stats: { speed: 6, agility: 3 }, desc: "Extends manual & AI <strong style='color:#fde047;'>Charge Attack lunge distance by +20%</strong>." },
+              { id: "speed_c0_n5", row: 3, icon: "❄️", name: "CRYO-SLICK TRACTION", short: "CRYO GRIP", cost: 140, stats: { speed: 5, agility: 5 }, desc: "Thermal tire heaters reduce <strong style='color:#fde047;'>Cryo-Freeze slow penalties by 50%</strong>." },
+              { id: "speed_c0_n6", row: 3, icon: "🌩️", name: "LIGHTNING PURSUIT", short: "PURSUIT", cost: 140, stats: { speed: 7, agility: 3 }, desc: "Grants a burst of speed when chasing <strong style='color:#fde047;'>retreating or gassed opponents</strong>." },
+              { id: "speed_c0_n7", row: 4, icon: "🧬", name: "TACHYON MOLECULE SYNC", short: "TACHYON SYNC", cost: 160, stats: { speed: 8, agility: 4 }, desc: "Increases the duration of arena <strong style='color:#fde047;'>Speed Molecule Drops from 8s to 12s</strong>." },
+              { id: "speed_c0_n8", row: 5, icon: "👑", name: "MACH-5 HYPERDRIVE", short: "HYPERDRIVE", cost: 200, stats: { speed: 12, agility: 6, hp: 50 }, desc: "Ultimate Speed Capstone: Maximum <strong style='color:#fde047;'>top-speed, charge velocity & afterimage mobility</strong>." }
+            ]
+          },
+          {
+            title: "GYRO AGILITY",
+            nodes: [
+              { id: "speed_c1_n0", row: 0, icon: "🌀", name: "GYRO-VECTOR CORE I", short: "GYRO CORE I", cost: 100, stats: { agility: 5, speed: 2 }, desc: "Precision triple-axis gyroscope boosts <strong style='color:#fde047;'>rotational turn speed by +5 Agility</strong>." },
+              { id: "speed_c1_n1", row: 1, icon: "🛞", name: "OMNI-MECANUM ROLLERS", short: "OMNI ROLLERS", cost: 110, stats: { agility: 6, speed: 2 }, desc: "Allows instant lateral strafing around <strong style='color:#fde047;'>center saws and incoming missiles</strong>." },
+              { id: "speed_c1_n2", row: 1, icon: "🏎️", name: "APEX CORNER DRIFT", short: "APEX DRIFT", cost: 110, stats: { agility: 6, power: 2 }, desc: "Tightens turning radius during high-speed <strong style='color:#fde047;'>flanking maneuvers</strong>." },
+              { id: "speed_c1_n3", row: 2, icon: "🎯", name: "WHIPLASH SNAP-TURN", short: "SNAP TURN", cost: 125, stats: { agility: 7, speed: 2 }, desc: "Lets your bot whip its front weapon around <strong style='color:#fde047;'>35% faster when ambushed from behind</strong>." },
+              { id: "speed_c1_n4", row: 2, icon: "🛡️", name: "AIRBORNE GYRO LEVELER", short: "AIR LEVELER", cost: 125, stats: { agility: 6, hp: 35 }, desc: "Stabilizes your chassis when flipped airborne so you <strong style='color:#fde047;'>land flat on all 4 wheels</strong>." },
+              { id: "speed_c1_n5", row: 3, icon: "⚡", name: "ZERO-LATENCY SERVOS", short: "FAST SERVOS", cost: 140, stats: { agility: 7, speed: 3 }, desc: "Improves manual WASD/Joystick & AI <strong style='color:#fde047;'>steering responsiveness</strong>." },
+              { id: "speed_c1_n6", row: 3, icon: "🧨", name: "SWARM DODGE REFLEX", short: "SWARM DODGE", cost: 140, stats: { agility: 7, hp: 35 }, desc: "Automatically micro-jukes incoming <strong style='color:#fde047;'>Bomb Buggies and Volt Spiders</strong>." },
+              { id: "speed_c1_n7", row: 4, icon: "🧬", name: "GYRO MOLECULE RESONANCE", short: "GYRO SYNC", cost: 160, stats: { agility: 8, speed: 4 }, desc: "Amplifies turn rate and flank criticals whenever <strong style='color:#fde047;'>Gyro Agility Molecules</strong> are collected." },
+              { id: "speed_c1_n8", row: 5, icon: "👑", name: "PHANTOM MIRAGE STEP", short: "PHANTOM STEP", cost: 200, stats: { agility: 12, speed: 6, power: 4 }, desc: "Ultimate Agility Capstone: Unmatched <strong style='color:#fde047;'>360° handling, dodge cooldowns & backstab angles</strong>." }
+            ]
+          },
+          {
+            title: "REACTOR STAMINA",
+            nodes: [
+              { id: "speed_c2_n0", row: 0, icon: "🔋", name: "ZERO-POINT CAPACITOR", short: "CAPACITOR", cost: 100, stats: { speed: 3, agility: 3, hp: 25 }, desc: "Reduces Stamina burned during <strong style='color:#fde047;'>Charge Attacks and Dodges by -12%</strong>." },
+              { id: "speed_c2_n1", row: 1, icon: "⚡", name: "REGENERATIVE BRAKING", short: "REGEN BRAKE", cost: 110, stats: { speed: 4, agility: 4 }, desc: "Recovers bonus Stamina whenever your bot <strong style='color:#fde047;'>drifts or decelerates</strong>." },
+              { id: "speed_c2_n2", row: 1, icon: "🔄", name: "SECOND-WIND VENTING", short: "SECOND WIND", cost: 110, stats: { agility: 4, hp: 35 }, desc: "Recovers from the <strong style='color:#fde047;'>GASSED state 40% faster</strong>." },
+              { id: "speed_c2_n3", row: 2, icon: "🛡️", name: "FARADAY EMP SHIELDING", short: "EMP SHIELD", cost: 125, stats: { agility: 4, hp: 40 }, desc: "Shortens <strong style='color:#fde047;'>EMP Stun duration by 45%</strong> and protects reactor output." },
+              { id: "speed_c2_n4", row: 2, icon: "🔥", name: "FLURRY COMBO RESERVES", short: "COMBO STAM", cost: 125, stats: { power: 4, speed: 4 }, desc: "Allows an extra melee exchange in each flurry before <strong style='color:#fde047;'>Tactical Pacing</strong> triggers." },
+              { id: "speed_c2_n5", row: 3, icon: "⚡", name: "CORNER PIT SUPERCHARGE", short: "PIT CHARGE", cost: 140, stats: { speed: 5, hp: 45 }, desc: "Starts every round with a <strong style='color:#fde047;'>3-second opening speed surge</strong>." },
+              { id: "speed_c2_n6", row: 3, icon: "🧬", name: "REACTOR MOLECULE CORE", short: "REACTOR CORE", cost: 140, stats: { speed: 5, agility: 5 }, desc: "Zero-Point Reactor Molecules grant <strong style='color:#fde047;'>+50 Shield HP in addition to full Stamina</strong>." },
+              { id: "speed_c2_n7", row: 4, icon: "🚨", name: "REDLINE NITRO INJECTION", short: "REDLINE NITRO", cost: 160, stats: { speed: 7, power: 5 }, desc: "When Redline Overdrive (<25% HP) triggers, gain <strong style='color:#fde047;'>infinite Stamina for 6 seconds</strong>." },
+              { id: "speed_c2_n8", row: 5, icon: "👑", name: "PERPETUAL FUSION ENGINE", short: "FUSION ENGINE", cost: 200, stats: { speed: 9, agility: 8, hp: 65 }, desc: "Ultimate Stamina Capstone: Near-endless <strong style='color:#fde047;'>reactor endurance & rapid cooldown cycling</strong>." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "power",
+        icon: "🔥",
+        shortLabel: "POWER",
+        title: "CRIMSON PLASMA POWER",
+        subtitle: "OFFENSIVE OVERDRIVE · 27 STRIKE DAMAGE, KNOCKBACK & CRIT UPGRADES",
+        previewImg: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_03_power_plasma.jpg",
+        columns: [
+          {
+            title: "PLASMA STRIKE",
+            nodes: [
+              { id: "power_c0_n0", row: 0, icon: "🔥", name: "CRIMSON PLASMA CORE I", short: "PLASMA I", cost: 100, stats: { power: 6 }, desc: "Supercharges weapon actuators with Crimson Plasma Molecules for <strong style='color:#fde047;'>+6 Base Power</strong>." },
+              { id: "power_c0_n1", row: 1, icon: "⚔️", name: "HEAVY IMPACT MASS", short: "IMPACT MASS", cost: 110, stats: { power: 6, hp: 25 }, desc: "Adds high-density tungsten counterweights to <strong style='color:#fde047;'>increase all collision damage</strong>." },
+              { id: "power_c0_n2", row: 1, icon: "💥", name: "ARMOR-PIERCING TEETH", short: "AP TEETH", cost: 110, stats: { power: 6, agility: 2 }, desc: "Shreds through heavy enemy plating, reducing their <strong style='color:#fde047;'>effective armor block</strong>." },
+              { id: "power_c0_n3", row: 2, icon: "⚡", name: "CHARGE MOMENTUM SURGE", short: "CHARGE SURGE", cost: 125, stats: { power: 7, speed: 2 }, desc: "Increases Charge Attack damage multiplier from <strong style='color:#fde047;'>1.35x to 1.50x</strong>." },
+              { id: "power_c0_n4", row: 2, icon: "🛠️", name: "SUBSYSTEM SHREDDER", short: "PART SHRED", cost: 125, stats: { power: 7, agility: 2 }, desc: "Your strikes deal <strong style='color:#fde047;'>+25% more wear to enemy Tires, Weapons & Armor</strong>." },
+              { id: "power_c0_n5", row: 3, icon: "🔥", name: "THERMAL MELTDOWN", short: "MELTDOWN", cost: 140, stats: { power: 8, hp: 30 }, desc: "Sustained attacks superheat the enemy chassis, increasing <strong style='color:#fde047;'>all incoming damage by +12%</strong>." },
+              { id: "power_c0_n6", row: 3, icon: "🎯", name: "HYBRID ORDNANCE SYNC", short: "HYBRID SYNC", cost: 140, stats: { power: 8, agility: 3 }, desc: "Landing a ranged shot buffs your next melee strike by <strong style='color:#fde047;'>+20% damage</strong>." },
+              { id: "power_c0_n7", row: 4, icon: "🧬", name: "PLASMA MOLECULE SURGE", short: "PLASMA SURGE", cost: 160, stats: { power: 9, hp: 40 }, desc: "Boosts mid-round <strong style='color:#fde047;'>Plasma Power Molecule Mega-Strikes to 2.8x</strong>." },
+              { id: "power_c0_n8", row: 5, icon: "👑", name: "SUPERNOVA ANNIHILATOR", short: "ANNIHILATOR", cost: 200, stats: { power: 14, speed: 4, hp: 60 }, desc: "Ultimate Strike Capstone: Maximum <strong style='color:#fde047;'>raw melee & ranged destructive output</strong>." }
+            ]
+          },
+          {
+            title: "RING-OUT IMPULSE",
+            nodes: [
+              { id: "power_c1_n0", row: 0, icon: "🌋", name: "SEISMIC SHOVE PISTONS", short: "SHOVE PISTON", cost: 100, stats: { power: 5, hp: 30 }, desc: "Increases knockback push force by <strong style='color:#fde047;'>+15% on all Ring-Out & Saw maps</strong>." },
+              { id: "power_c1_n1", row: 1, icon: "🚜", name: "LAVA BRIDGE HERDER", short: "LAVA HERDER", cost: 110, stats: { power: 6, agility: 2 }, desc: "Angles knockback vectors toward <strong style='color:#fde047;'>open lava chasms, side trenches & floor saws</strong>." },
+              { id: "power_c1_n2", row: 1, icon: "🧱", name: "BULKHEAD RICOCHET", short: "WALL SLAM", cost: 110, stats: { power: 6, hp: 30 }, desc: "Increases wall-collision stun duration so pinned enemies <strong style='color:#fde047;'>cannot escape the corner</strong>." },
+              { id: "power_c1_n3", row: 2, icon: "🧲", name: "REPULSOR SHOCKWAVE", short: "REPULSOR", cost: 125, stats: { power: 7, agility: 3 }, desc: "Emits a kinetic shockwave on heavy hits that <strong style='color:#fde047;'>blasts enemies toward the ledge</strong>." },
+              { id: "power_c1_n4", row: 2, icon: "⚙️", name: "SAW-BLADE SLAMMER", short: "SAW SLAM", cost: 125, stats: { power: 7, speed: 2 }, desc: "Enemies shoved into the Shibuya Center Saw take <strong style='color:#fde047;'>+30% bonus shred damage</strong>." },
+              { id: "power_c1_n5", row: 3, icon: "🧨", name: "MINI-BOT BULLDOZER", short: "SWARM CRUSH", cost: 140, stats: { power: 8, hp: 35 }, desc: "Deals <strong style='color:#fde047;'>+50% bonus damage to Ambush Mini-Bots</strong> (Bomb Buggies, Spiders & Cryo Drones)." },
+              { id: "power_c1_n6", row: 3, icon: "👑", name: "SKY-LEDGE CATAPULT", short: "CATAPULT", cost: 140, stats: { power: 8, agility: 3 }, desc: "Enhances upward flip & horizontal knockback on <strong style='color:#fde047;'>Arena 11 Sky-Penthouse Ledge</strong>." },
+              { id: "power_c1_n7", row: 4, icon: "⏱️", name: "OVERCHARGE PULSE AMP", short: "PULSE AMP", cost: 160, stats: { power: 9, speed: 3 }, desc: "During the Final 30s Sudden Overcharge, your knockback increases by an extra <strong style='color:#fde047;'>+25%</strong>." },
+              { id: "power_c1_n8", row: 5, icon: "👑", name: "TITAN RING-OUT KING", short: "RING-OUT KING", cost: 200, stats: { power: 13, agility: 5, hp: 70 }, desc: "Ultimate Impulse Capstone: Unstoppable <strong style='color:#fde047;'>shove dominance & instant Ring-Out KOs</strong>." }
+            ]
+          },
+          {
+            title: "NOVA & REDLINE CRIT",
+            nodes: [
+              { id: "power_c2_n0", row: 0, icon: "☢️", name: "NOVA CRIT IGNITER", short: "NOVA CRIT", cost: 100, stats: { power: 5, agility: 3 }, desc: "Infuses Nova Overdrive Molecules to boost <strong style='color:#fde047;'>Flank & Rear critical multipliers</strong>." },
+              { id: "power_c2_n1", row: 1, icon: "🚨", name: "REDLINE FURY (<25% HP)", short: "REDLINE FURY", cost: 110, stats: { power: 6, speed: 3 }, desc: "Boosts Redline Overdrive comeback damage from <strong style='color:#fde047;'>+35% to +48%</strong>." },
+              { id: "power_c2_n2", row: 1, icon: "⚡", name: "BACKSTAB EXECUTION", short: "BACKSTAB", cost: 110, stats: { power: 6, agility: 3 }, desc: "Rear blindspot strikes deal massive <strong style='color:#fde047;'>Core subsystem shock damage</strong>." },
+              { id: "power_c2_n3", row: 2, icon: "⏱️", name: "SUDDEN OVERCHARGE AMP", short: "FINAL 30s AMP", cost: 125, stats: { power: 7, speed: 3 }, desc: "Grants <strong style='color:#fde047;'>+20% extra attack power</strong> during the Final 30-Second Sudden Overcharge." },
+              { id: "power_c2_n4", row: 2, icon: "💥", name: "CONCUSSIVE KNOCK-STUN", short: "KNOCK STUN", cost: 125, stats: { power: 7, agility: 3 }, desc: "Critical hits inflict <strong style='color:#fde047;'>+25% longer stun frames</strong> on the enemy bot." },
+              { id: "power_c2_n5", row: 3, icon: "🔥", name: "SHATTERED ARMOR PUNISH", short: "ARMOR PUNISH", cost: 140, stats: { power: 8, agility: 3 }, desc: "Deals <strong style='color:#fde047;'>+30% bonus damage</strong> once an enemy's Armor integrity drops below 50%." },
+              { id: "power_c2_n6", row: 3, icon: "🧬", name: "NOVA MOLECULE OVERLOAD", short: "NOVA 3.5x", cost: 140, stats: { power: 8, hp: 35 }, desc: "Upgrades mid-round <strong style='color:#fde047;'>Nova Overdrive Molecule crits from 3.0x to 3.5x</strong>." },
+              { id: "power_c2_n7", row: 4, icon: "🦈", name: "CLUTCH ROUND FINISHER", short: "FINISHER", cost: 160, stats: { power: 10, agility: 4 }, desc: "In Round 3 Sudden Death, your bot gains <strong style='color:#fde047;'>permanent +15% Strike Power</strong>." },
+              { id: "power_c2_n8", row: 5, icon: "👑", name: "GOD OF THE BOT PIT", short: "PIT GOD", cost: 200, stats: { power: 15, speed: 5, agility: 5 }, desc: "Ultimate Crit Capstone: Devastating <strong style='color:#fde047;'>Redline comeback power & knockout crits</strong>." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "health",
+        icon: "🛡️",
+        shortLabel: "HEALTH",
+        title: "NANITE HULL & AEGIS SHIELD",
+        subtitle: "BIO-TITANIUM DEFENSE · 27 HULL HP, ENERGY BARRIER & SUBSYSTEM UPGRADES",
+        previewImg: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_04_health_nanite.jpg",
+        columns: [
+          {
+            title: "TITANIUM HULL",
+            nodes: [
+              { id: "health_c0_n0", row: 0, icon: "💚", name: "BIO-TITANIUM BULKHEAD I", short: "BULKHEAD I", cost: 100, stats: { hp: 70 }, desc: "Reinforces internal frame with Bio-Titanium Nanites for <strong style='color:#fde047;'>+70 Max Hull HP</strong>." },
+              { id: "health_c0_n1", row: 1, icon: "🛡️", name: "SLOPED GLACIS PLATING", short: "GLACIS PLATE", cost: 110, stats: { hp: 80, power: 2 }, desc: "Deflects head-on impacts and increases <strong style='color:#fde047;'>Front Guard block efficiency</strong>." },
+              { id: "health_c0_n2", row: 1, icon: "🧱", name: "SHOCK-ABSORBING CHASSIS", short: "SHOCK FRAME", cost: 110, stats: { hp: 85, agility: 2 }, desc: "Reduces damage taken from <strong style='color:#fde047;'>Wall-Slam Crushes and Floor Saws by -25%</strong>." },
+              { id: "health_c0_n3", row: 2, icon: "🔥", name: "ABLATIVE HEAT COATING", short: "HEAT COAT", cost: 125, stats: { hp: 95, speed: 2 }, desc: "Protects against <strong style='color:#fde047;'>Corner Blast Furnaces and Molten Thermite burn</strong>." },
+              { id: "health_c0_n4", row: 2, icon: "⚙️", name: "REAR BULKHEAD GUARD", short: "REAR GUARD", cost: 125, stats: { hp: 95, agility: 3 }, desc: "Reinforces rear exhaust armor to reduce <strong style='color:#fde047;'>Enemy Backstab damage by -20%</strong>." },
+              { id: "health_c0_n5", row: 3, icon: "💚", name: "CORNER PIT WELDING CREW", short: "PIT WELDERS", cost: 140, stats: { hp: 110, power: 2 }, desc: "Restores an extra <strong style='color:#fde047;'>+15% missing HP during between-round intermissions</strong>." },
+              { id: "health_c0_n6", row: 3, icon: "🧬", name: "NANITE MOLECULE AMP", short: "NANITE AMP", cost: 140, stats: { hp: 115, agility: 2 }, desc: "Increases mid-round <strong style='color:#fde047;'>Nanite Health Molecule healing from +220 to +300 HP</strong>." },
+              { id: "health_c0_n7", row: 4, icon: "🚨", name: "LAST-STAND SURVIVOR", short: "LAST STAND", cost: 160, stats: { hp: 135, power: 4 }, desc: "Reduces all incoming damage by <strong style='color:#fde047;'>-25% while in Redline Overdrive (<25% HP)</strong>." },
+              { id: "health_c0_n8", row: 5, icon: "👑", name: "IMMORTAL DREADNOUGHT", short: "DREADNOUGHT", cost: 200, stats: { hp: 200, power: 5, agility: 4 }, desc: "Ultimate Hull Capstone: Colossal <strong style='color:#fde047;'>Max Hull HP & fortress-grade damage reduction</strong>." }
+            ]
+          },
+          {
+            title: "AEGIS BARRIER",
+            nodes: [
+              { id: "health_c1_n0", row: 0, icon: "🛡️", name: "AEGIS GRAVITON EMITTER", short: "AEGIS EMITTER", cost: 100, stats: { hp: 60, shield: 30 }, desc: "Starts every round with a regenerating <strong style='color:#fde047;'>+30 HP Cobalt Aegis Energy Barrier</strong>." },
+              { id: "health_c1_n1", row: 1, icon: "✨", name: "HEXAGONAL DOME MATRIX", short: "HEX DOME", cost: 110, stats: { hp: 65, shield: 35 }, desc: "Expands Aegis Energy Barrier capacity by an additional <strong style='color:#fde047;'>+35 Shield HP</strong>." },
+              { id: "health_c1_n2", row: 1, icon: "🎯", name: "BALLISTIC DEFLECTOR", short: "DEFLECTOR", cost: 110, stats: { hp: 70, agility: 3 }, desc: "Energy shield absorbs <strong style='color:#fde047;'>25% more damage from Ranged Railguns & Missiles</strong>." },
+              { id: "health_c1_n3", row: 2, icon: "⚡", name: "SHIELD CAPACITOR REBOOT", short: "SHIELD REBOOT", cost: 125, stats: { hp: 80, shield: 40 }, desc: "Recharges your <strong style='color:#fde047;'>Aegis Energy Barrier between every round</strong>." },
+              { id: "health_c1_n4", row: 2, icon: "💥", name: "GRAVITON BACKLASH", short: "BACKLASH", cost: 125, stats: { hp: 75, power: 4 }, desc: "When your Aegis Shield breaks, it emits a <strong style='color:#fde047;'>repulsor shockwave that pushes enemies back</strong>." },
+              { id: "health_c1_n5", row: 3, icon: "🕷️", name: "TESLA & CRYO INSULATOR", short: "INSULATOR", cost: 140, stats: { hp: 90, shield: 40 }, desc: "While your Aegis Shield is active, you are <strong style='color:#fde047;'>immune to Mini-Bot slow & zap debuffs</strong>." },
+              { id: "health_c1_n6", row: 3, icon: "🧬", name: "AEGIS MOLECULE OVERLOAD", short: "AEGIS SYNC", cost: 140, stats: { hp: 95, shield: 45 }, desc: "Mid-round <strong style='color:#fde047;'>Aegis Shield Molecules grant +280 Shield HP</strong> instead of 200." },
+              { id: "health_c1_n7", row: 4, icon: "🔋", name: "EMERGENCY REDLINE SHIELD", short: "REDLINE SHIELD", cost: 160, stats: { hp: 110, shield: 55 }, desc: "Dropping below 25% HP instantly deploys a <strong style='color:#fde047;'>120 HP Emergency Aegis Barrier</strong>." },
+              { id: "health_c1_n8", row: 5, icon: "👑", name: "CELESTIAL FORCE-FIELD", short: "FORCE-FIELD", cost: 200, stats: { hp: 160, shield: 90, power: 4 }, desc: "Ultimate Shield Capstone: Massive <strong style='color:#fde047;'>round-start Aegis Barrier & kinetic absorption</strong>." }
+            ]
+          },
+          {
+            title: "SUBSYSTEM INTEGRITY",
+            nodes: [
+              { id: "health_c2_n0", row: 0, icon: "🛞", name: "KEVLAR TIRE BELTS", short: "KEVLAR TIRES", cost: 100, stats: { hp: 55, speed: 3 }, desc: "Reduces real-time <strong style='color:#fde047;'>Tire subsystem wear by -20%</strong> during flank collisions." },
+              { id: "health_c2_n1", row: 1, icon: "⚙️", name: "TITANIUM WEAPON SHAFT", short: "WEAPON SHAFT", cost: 110, stats: { hp: 65, power: 3 }, desc: "Prevents weapon jamming and reduces <strong style='color:#fde047;'>Weapon subsystem wear by -20%</strong>." },
+              { id: "health_c2_n2", row: 1, icon: "🛡️", name: "COMPOSITE ARMOR WEAVE", short: "ARMOR WEAVE", cost: 110, stats: { hp: 75, agility: 2 }, desc: "Hardens outer plates so <strong style='color:#fde047;'>Armor integrity degrades 20% slower</strong>." },
+              { id: "health_c2_n3", row: 2, icon: "⚡", name: "SURGE-PROTECTED CORE", short: "CORE GUARD", cost: 125, stats: { hp: 80, agility: 3 }, desc: "Shields the central reactor from <strong style='color:#fde047;'>Rear Backstab Core shorts</strong>." },
+              { id: "health_c2_n4", row: 2, icon: "🔧", name: "SELF-HEALING NANITES", short: "AUTO-WELD", cost: 125, stats: { hp: 90, speed: 2 }, desc: "Automatically repairs <strong style='color:#fde047;'>+10% Part Integrity across all 4 subsystems</strong> after every match." },
+              { id: "health_c2_n5", row: 3, icon: "💰", name: "PIT CREW DISCOUNT", short: "PIT DISCOUNT", cost: 140, stats: { hp: 95, power: 3 }, desc: "Reduces Garage Pit Overhaul repair costs and <strong style='color:#fde047;'>boosts injured-bot performance</strong>." },
+              { id: "health_c2_n6", row: 3, icon: "🦿", name: "UNDERDOG GRIT ENGINE", short: "GRIT ENGINE", cost: 140, stats: { hp: 100, power: 4 }, desc: "Fighting with worn parts grants <strong style='color:#fde047;'>+25% Grit XP & +10% bonus damage</strong>." },
+              { id: "health_c2_n7", row: 4, icon: "🧬", name: "FULL-SPECTRUM NANITES", short: "FULL NANITES", cost: 160, stats: { hp: 120, agility: 4 }, desc: "Mid-round Nanite Molecules restore <strong style='color:#fde047;'>+45% Integrity to all 4 Subsystems</strong>." },
+              { id: "health_c2_n8", row: 5, icon: "👑", name: "UNBREAKABLE UNIT-17", short: "UNBREAKABLE", cost: 200, stats: { hp: 180, power: 6, speed: 5 }, desc: "Ultimate Subsystem Capstone: Near-indestructible <strong style='color:#fde047;'>Tires, Armor, Weapon & Core</strong>." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "wealth",
+        icon: "💎",
+        shortLabel: "WEALTH",
+        title: "SYNDICATE WEALTH & EXP",
+        subtitle: "DIAMOND ALCHEMY & NEURAL SYNAPSE · 27 VAULT PAYOUT, EXP & LUCK UPGRADES",
+        previewImg: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_05_wealth_diamond.jpg",
+        columns: [
+          {
+            title: "DIAMOND ALCHEMY",
+            nodes: [
+              { id: "wealth_c0_n0", row: 0, icon: "💎", name: "DIAMOND SYNTHESIS I", short: "DIAMOND +8%", cost: 100, stats: { wealthPct: 8, hp: 30 }, desc: "Increases all <strong style='color:#fde047;'>💎 Diamond match rewards by +8% per rank</strong>." },
+              { id: "wealth_c0_n1", row: 1, icon: "💰", name: "SPONSORSHIP PAYOUT", short: "SPONSOR PAY", cost: 110, stats: { wealthPct: 10, power: 2 }, desc: "Shibuya Syndicate sponsors award <strong style='color:#fde047;'>+10% bonus 💎 Diamonds on every win</strong>." },
+              { id: "wealth_c0_n2", row: 1, icon: "🎰", name: "HIGH-ROLLER POT BONUS", short: "POT BONUS", cost: 110, stats: { wealthPct: 10, speed: 2 }, desc: "Winning wagered matches yields <strong style='color:#fde047;'>+10% extra Syndicate House Bonus 💎</strong>." },
+              { id: "wealth_c0_n3", row: 2, icon: "🧨", name: "MINI-BOT BOUNTY HUNTER", short: "SWARM BOUNTY", cost: 125, stats: { wealthPct: 12, power: 3 }, desc: "Destroying Ambush Mini-Bots awards <strong style='color:#fde047;'>instant bonus 💎 Diamonds</strong>." },
+              { id: "wealth_c0_n4", row: 2, icon: "🌋", name: "RING-OUT SHOWMAN BONUS", short: "KO BONUS", cost: 125, stats: { wealthPct: 12, agility: 3 }, desc: "Scoring a Ring-Out or TKO victory grants <strong style='color:#fde047;'>+12% Crowd Hype 💎 Diamonds</strong>." },
+              { id: "wealth_c0_n5", row: 3, icon: "🛠️", name: "ARMORY VIP REBATE", short: "VIP REBATE", cost: 140, stats: { wealthPct: 14, hp: 45 }, desc: "Increases your <strong style='color:#fde047;'>Diamond Vault multiplier & trade-in value</strong>." },
+              { id: "wealth_c0_n6", row: 3, icon: "🧬", name: "WEALTH MOLECULE MINT", short: "WEALTH MINT", cost: 140, stats: { wealthPct: 15, power: 3 }, desc: "Increases mid-round <strong style='color:#fde047;'>Diamond Wealth Molecule drops from +100 to +160 💎</strong>." },
+              { id: "wealth_c0_n7", row: 4, icon: "🏆", name: "CHAMPIONSHIP PURSE", short: "CHAMP PURSE", cost: 160, stats: { wealthPct: 18, hp: 55 }, desc: "2-0 sweeps and Round 3 Sudden Death wins pay <strong style='color:#fde047;'>+18% bonus 💎 Diamonds</strong>." },
+              { id: "wealth_c0_n8", row: 5, icon: "👑", name: "ZAIBATSU TRILLIONAIRE", short: "ZAIBATSU", cost: 200, stats: { wealthPct: 25, power: 5, hp: 70 }, desc: "Ultimate Wealth Capstone: Massive <strong style='color:#fde047;'>+25% 💎 Diamond multiplier on every battle</strong>." }
+            ]
+          },
+          {
+            title: "EXP SYNAPSE",
+            nodes: [
+              { id: "wealth_c1_n0", row: 0, icon: "🧬", name: "NEURAL SYNAPSE I", short: "EXP +10%", cost: 100, stats: { xpPct: 10, agility: 2 }, desc: "Accelerates combat telemetry learning for <strong style='color:#fde047;'>+10% Match EXP (and 1 XP = 1 💎 CPU payout)</strong>." },
+              { id: "wealth_c1_n1", row: 1, icon: "⚡", name: "COMBAT TELEMETRY UPLOAD", short: "TELEMETRY", cost: 110, stats: { xpPct: 12, speed: 2 }, desc: "Earns <strong style='color:#fde047;'>+12% bonus EXP</strong> from every CPU and PvP battle." },
+              { id: "wealth_c1_n2", row: 1, icon: "🎯", name: "PRECISION STRIKE STUDY", short: "STRIKE EXP", cost: 110, stats: { xpPct: 12, power: 2 }, desc: "Landing Flank & Rear Backstabs increases <strong style='color:#fde047;'>post-match EXP yield</strong>." },
+              { id: "wealth_c1_n3", row: 2, icon: "🔄", name: "SYNAPTIC COOLDOWN LINK", short: "SYNAPSE CD", cost: 125, stats: { xpPct: 14, agility: 4 }, desc: "Neural Synapse link reduces <strong style='color:#fde047;'>all ability cooldowns by -10%</strong>." },
+              { id: "wealth_c1_n4", row: 2, icon: "🦿", name: "VETERAN GRIT SCHOLAR", short: "GRIT EXP", cost: 125, stats: { xpPct: 14, hp: 40 }, desc: "Doubles the <strong style='color:#fde047;'>Underdog Grit XP bonus</strong> when winning with worn parts." },
+              { id: "wealth_c1_n5", row: 3, icon: "🤖", name: "AI TACTICAL CORTEX", short: "AI CORTEX", cost: 140, stats: { xpPct: 16, agility: 4 }, desc: "Improves your bot's autonomous <strong style='color:#fde047;'>Simulated Mode fight IQ & EXP gain</strong>." },
+              { id: "wealth_c1_n6", row: 3, icon: "🧬", name: "SYNAPSE MOLECULE BOOST", short: "SYNAPSE +200", cost: 140, stats: { xpPct: 16, speed: 3 }, desc: "Mid-round <strong style='color:#fde047;'>Synapse EXP Molecules grant +200 XP</strong> instead of +125 XP." },
+              { id: "wealth_c1_n7", row: 4, icon: "🔥", name: "MASTERY TIER ACCELERATOR", short: "MASTERY 2x", cost: 160, stats: { xpPct: 20, power: 4 }, desc: "Skills level up from <strong style='color:#fde047;'>Bronze to Silver & Gold twice as fast</strong> in combat." },
+              { id: "wealth_c1_n8", row: 5, icon: "👑", name: "OMNISCIENT MECH MIND", short: "OMNISCIENT", cost: 200, stats: { xpPct: 30, agility: 6, speed: 5 }, desc: "Ultimate EXP Capstone: Huge <strong style='color:#fde047;'>+30% EXP & 💎 conversion from every CPU fight</strong>." }
+            ]
+          },
+          {
+            title: "MOLECULE & JACKPOT LUCK",
+            nodes: [
+              { id: "wealth_c2_n0", row: 0, icon: "🍀", name: "SUPPLY BEACON SCANNER", short: "DROP SCAN", cost: 100, stats: { wealthPct: 6, xpPct: 6, speed: 2 }, desc: "Tunes arena radar to detect <strong style='color:#fde047;'>Random Mid-Round Molecule Drops</strong>." },
+              { id: "wealth_c2_n1", row: 1, icon: "🧲", name: "MAGNETIC PICKUP RADIUS", short: "MAGNET PICKUP", cost: 110, stats: { agility: 4, hp: 35 }, desc: "Increases your bot's <strong style='color:#fde047;'>Molecule collection radius by +35%</strong>." },
+              { id: "wealth_c2_n2", row: 1, icon: "📦", name: "FAST-DROP BEACON", short: "FAST BEACON", cost: 110, stats: { speed: 4, xpPct: 8 }, desc: "Grants a <strong style='color:#fde047;'>speed burst whenever a Molecule Drop beacon appears</strong>." },
+              { id: "wealth_c2_n3", row: 2, icon: "💎", name: "FORTUNE CRATE ALCHEMY", short: "CRATE LUCK", cost: 125, stats: { wealthPct: 10, xpPct: 10 }, desc: "Every Molecule collected in the arena also grants <strong style='color:#fde047;'>+25 bonus 💎 Diamonds</strong>." },
+              { id: "wealth_c2_n4", row: 2, icon: "💚", name: "MOLECULAR OVER-HEAL", short: "OVER-HEAL", cost: 125, stats: { hp: 75, shield: 25 }, desc: "Collecting any Molecule in combat also welds <strong style='color:#fde047;'>+60 Hull HP</strong>." },
+              { id: "wealth_c2_n5", row: 3, icon: "⚡", name: "MOLECULAR SURGE EXTENSION", short: "BUFF +35%", cost: 140, stats: { power: 4, speed: 4 }, desc: "Extends all temporary <strong style='color:#fde047;'>Molecule speed & shield buffs by +35%</strong>." },
+              { id: "wealth_c2_n6", row: 3, icon: "👑", name: "GOLDEN FORTUNE MAGNET", short: "JACKPOT LUCK", cost: 140, stats: { wealthPct: 14, xpPct: 14 }, desc: "Doubles the chance of spawning the <strong style='color:#fde047;'>#10 Golden Fortune Jackpot Molecule</strong>." },
+              { id: "wealth_c2_n7", row: 4, icon: "🎰", name: "TRIPLE-POT MULTIPLIER", short: "JACKPOT POT", cost: 160, stats: { wealthPct: 18, power: 5 }, desc: "Golden Fortune Molecules grant <strong style='color:#fde047;'>+250 💎 Diamonds & +250 XP</strong>." },
+              { id: "wealth_c2_n8", row: 5, icon: "👑", name: "EMPEROR OF ROPPONGI", short: "EMPEROR", cost: 200, stats: { wealthPct: 22, xpPct: 22, power: 6, hp: 80 }, desc: "Ultimate Fortune Capstone: Supreme <strong style='color:#fde047;'>All-Stats Omni-Boost, Wealth & Jackpot Luck</strong>." }
+            ]
+          }
+        ]
+      }
+    ];
+
+    function getSkillNodeRank(nodeId) {
+      if (!state.skillRanks || typeof state.skillRanks !== "object") return 0;
+      return Math.max(0, Math.min(5, Number(state.skillRanks[nodeId]) || 0));
+    }
+
+    function computeSkillTreeBonuses() {
+      const totals = { power: 0, speed: 0, agility: 0, hp: 0, shield: 0, wealthPct: 0, xpPct: 0, totalRanks: 0 };
+      if (!state.skillRanks || typeof state.skillRanks !== "object") return totals;
+      for (const tab of SKILL_TREE_TABS) {
+        for (const col of tab.columns) {
+          for (const node of col.nodes) {
+            const r = getSkillNodeRank(node.id);
+            if (r > 0 && node.stats) {
+              totals.totalRanks += r;
+              totals.power += (node.stats.power || 0) * r;
+              totals.speed += (node.stats.speed || 0) * r;
+              totals.agility += (node.stats.agility || 0) * r;
+              totals.hp += (node.stats.hp || 0) * r;
+              totals.shield += (node.stats.shield || 0) * r;
+              totals.wealthPct += (node.stats.wealthPct || 0) * r;
+              totals.xpPct += (node.stats.xpPct || 0) * r;
+            }
+          }
+        }
+      }
+      return totals;
+    }
+
+    function findSkillNodeById(nodeId) {
+      for (const tab of SKILL_TREE_TABS) {
+        for (const col of tab.columns) {
+          for (const node of col.nodes) {
+            if (node.id === nodeId) return { tab, col, node };
+          }
+        }
+      }
+      return null;
+    }
+
+    function openSkillTreeModal(tabId) {
+      if (!ensurePilotLoggedIn()) return;
+      if (tabId) state.activeSkillTab = tabId;
+      if (!state.activeSkillTab) state.activeSkillTab = "combat";
+      const tabObj = SKILL_TREE_TABS.find(t => t.id === state.activeSkillTab) || SKILL_TREE_TABS[0];
+      const found = findSkillNodeById(state.selectedSkillId);
+      if (!found || found.tab.id !== tabObj.id) {
+        state.selectedSkillId = tabObj.columns[0].nodes[0].id;
+      }
+      renderSkillTreeUI();
+      const modal = document.getElementById("skillTreeModalBackdrop");
+      if (modal) modal.classList.remove("hidden");
+    }
+
+    function closeSkillTreeModal() {
+      const modal = document.getElementById("skillTreeModalBackdrop");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function selectSkillTreeTab(tabId) {
+      state.activeSkillTab = tabId;
+      const tabObj = SKILL_TREE_TABS.find(t => t.id === tabId) || SKILL_TREE_TABS[0];
+      state.selectedSkillId = tabObj.columns[0].nodes[0].id;
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      renderSkillTreeUI();
+    }
+
+    function selectSkillNode(nodeId) {
+      state.selectedSkillId = nodeId;
+      renderSkillTreeUI();
+    }
+
+    function renderSkillTreeUI() {
+      const activeTab = SKILL_TREE_TABS.find(t => t.id === state.activeSkillTab) || SKILL_TREE_TABS[0];
+      const railEl = document.getElementById("stLeftRail");
+      if (railEl) {
+        let railHtml = `<div class="st-rail-crest" title="Shibuya Syndicate Skill Tree">⚙️</div>`;
+        for (const t of SKILL_TREE_TABS) {
+          let tabPts = 0;
+          for (const c of t.columns) {
+            for (const n of c.nodes) tabPts += getSkillNodeRank(n.id);
+          }
+          const isAct = t.id === activeTab.id;
+          railHtml += `
+            <button type="button" class="st-rail-tab ${isAct ? 'active' : ''}" onclick="selectSkillTreeTab('${t.id}')">
+              <span class="ico">${t.icon}</span>
+              <span class="lbl">${t.shortLabel}</span>
+              <span class="cnt">${tabPts}/135</span>
+            </button>
+          `;
+        }
+        railEl.innerHTML = railHtml;
+      }
+
+      const titleEl = document.getElementById("stHeaderTitle");
+      const subEl = document.getElementById("stHeaderSub");
+      const xpEl = document.getElementById("stXpReadout");
+      const dmEl = document.getElementById("stDiamondReadout");
+      if (titleEl) titleEl.textContent = activeTab.title;
+      if (subEl) subEl.textContent = activeTab.subtitle;
+      if (xpEl) xpEl.textContent = `⚡ XP: ${(state.cpuXp || 0).toLocaleString()}`;
+      if (dmEl) dmEl.textContent = `💎 DIAMONDS: ${(state.scrap || 0).toLocaleString()}`;
+
+      const colsWrap = document.getElementById("stColumnsWrap");
+      if (colsWrap) {
+        colsWrap.innerHTML = activeTab.columns.map(col => {
+          const rowsMap = new Map();
+          for (const nd of col.nodes) {
+            if (!rowsMap.has(nd.row)) rowsMap.set(nd.row, []);
+            rowsMap.get(nd.row).push(nd);
+          }
+          const rowsHtml = Array.from(rowsMap.entries()).map(([rIdx, rNodes]) => {
+            const dualCls = rNodes.length > 1 ? "dual" : "";
+            const nodesHtml = rNodes.map(nd => {
+              const r = getSkillNodeRank(nd.id);
+              const cls = [
+                "st-medallion-node",
+                r > 0 ? "unlocked" : "",
+                r >= 5 ? "maxed" : "",
+                state.selectedSkillId === nd.id ? "selected" : ""
+              ].filter(Boolean).join(" ");
+              return `
+                <div class="${cls}" onclick="selectSkillNode('${nd.id}')" title="${nd.name} (Rank ${r}/5)">
+                  <span class="m-ico">${nd.icon}</span>
+                  <span class="m-rank">${r}/5</span>
+                  <span class="m-lbl">${nd.short}</span>
+                </div>
+              `;
+            }).join("");
+            return `<div class="st-tier-row ${dualCls}">${nodesHtml}</div>`;
+          }).join("");
+
+          return `
+            <div class="st-branch-col">
+              <div class="st-col-header">${col.title}</div>
+              <div class="st-tier-rows">${rowsHtml}</div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      // Populate Right Inspector Panel
+      const selInfo = findSkillNodeById(state.selectedSkillId) || { tab: activeTab, col: activeTab.columns[0], node: activeTab.columns[0].nodes[0] };
+      const nd = selInfo.node;
+      const curRank = getSkillNodeRank(nd.id);
+      const nextCost = Math.round(nd.cost * (1 + curRank * 0.35));
+
+      const inspTitle = document.getElementById("stInspTitle");
+      const inspImg = document.getElementById("stInspPreviewImg");
+      const inspBranch = document.getElementById("stInspBranchTag");
+      const inspRank = document.getElementById("stInspRankBadge");
+      const inspTier = document.getElementById("stInspTierName");
+      const inspUsed = document.getElementById("stInspUsageText");
+      const inspDesc = document.getElementById("stInspDesc");
+      const inspStats = document.getElementById("stInspStatsBox");
+      const btnXp = document.getElementById("btnStUpgradeXp");
+      const btnDm = document.getElementById("btnStUpgradeDiamond");
+
+      if (inspTitle) inspTitle.textContent = `${nd.icon} ${nd.name}`;
+      if (inspImg) inspImg.src = selInfo.tab.previewImg;
+      if (inspBranch) inspBranch.textContent = `${selInfo.col.title} · TIER ${nd.row + 1}`;
+      if (inspRank) {
+        inspRank.textContent = curRank >= 5 ? "★ MAX RANK 5 / 5" : `RANK ${curRank} / 5`;
+        inspRank.style.color = curRank >= 5 ? "#fde047" : (curRank > 0 ? "#00ff88" : "#94a3b8");
+      }
+      const tierLabels = ["LOCKED (TIER 0)", "BRONZE TIER (1/5)", "SILVER TIER (2/5)", "GOLD TIER (3/5)", "PLATINUM TIER (4/5)", "MASTER SYNDICATE (5/5)"];
+      if (inspTier) inspTier.textContent = tierLabels[curRank] || "BRONZE TIER";
+      const usedVal = Math.min(20, curRank * 4 + ((state.pvpWins || 0) + Math.floor((state.cpuXp || 0) / 180)) % 20);
+      if (inspUsed) inspUsed.textContent = `USED: ${usedVal}/20`;
+      if (inspDesc) inspDesc.innerHTML = nd.desc;
+
+      if (inspStats) {
+        const stLines = [];
+        if (nd.stats.power) stLines.push(`💥 +${nd.stats.power} POWER per rank (Current: +${nd.stats.power * curRank})`);
+        if (nd.stats.speed) stLines.push(`⚡ +${nd.stats.speed} SPEED per rank (Current: +${nd.stats.speed * curRank})`);
+        if (nd.stats.agility) stLines.push(`🎯 +${nd.stats.agility} AGILITY per rank (Current: +${nd.stats.agility * curRank})`);
+        if (nd.stats.hp) stLines.push(`❤️ +${nd.stats.hp} MAX HP per rank (Current: +${nd.stats.hp * curRank})`);
+        if (nd.stats.shield) stLines.push(`🛡️ +${nd.stats.shield} AEGIS SHIELD HP per rank (Current: +${nd.stats.shield * curRank})`);
+        if (nd.stats.wealthPct) stLines.push(`💎 +${nd.stats.wealthPct}% DIAMOND PAYOUT per rank (Current: +${nd.stats.wealthPct * curRank}%)`);
+        if (nd.stats.xpPct) stLines.push(`🧬 +${nd.stats.xpPct}% MATCH EXP per rank (Current: +${nd.stats.xpPct * curRank}%)`);
+        const allTotals = computeSkillTreeBonuses();
+        stLines.push(`<div style="margin-top:4px;padding-top:4px;border-top:1px solid rgba(245,158,11,0.3);color:#34d399;">🌳 TOTAL TREE BONUS (${allTotals.totalRanks} RANKS): +${allTotals.hp} HP · +${allTotals.power} PWR · +${allTotals.speed} SPD · +${allTotals.agility} AGI</div>`);
+        inspStats.innerHTML = stLines.map(l => `<div>${l}</div>`).join("");
+      }
+
+      if (btnXp && btnDm) {
+        if (curRank >= 5) {
+          btnXp.textContent = "★ MAX RANK (5/5) UNLOCKED";
+          btnXp.disabled = true;
+          btnDm.style.display = "none";
+        } else {
+          btnXp.disabled = false;
+          btnDm.style.display = "block";
+          btnXp.textContent = `⚡ UPGRADE WITH XP (${nextCost} XP)`;
+          btnDm.textContent = `💎 UPGRADE WITH DIAMONDS (${nextCost} 💎)`;
+        }
+      }
+    }
+
+    function upgradeSelectedSkillNode(currencyType) {
+      if (!ensurePilotLoggedIn()) return;
+      const selInfo = findSkillNodeById(state.selectedSkillId);
+      if (!selInfo) return;
+      const nd = selInfo.node;
+      const curRank = getSkillNodeRank(nd.id);
+      if (curRank >= 5) return;
+      const cost = Math.round(nd.cost * (1 + curRank * 0.35));
+
+      if (currencyType === "xp") {
+        if ((state.cpuXp || 0) < cost) {
+          alert(`Not enough XP! You need ${cost} XP (Current: ${state.cpuXp || 0} XP). Battle CPU bots or use 💎 Diamonds!`);
+          return;
+        }
+        state.cpuXp = Math.max(0, (state.cpuXp || 0) - cost);
+      } else {
+        if ((state.scrap || 0) < cost) {
+          alert(`Not enough 💎 Diamonds! You need ${cost} 💎 (Current: ${state.scrap || 0} 💎).`);
+          return;
+        }
+        state.scrap = Math.max(0, (state.scrap || 0) - cost);
+      }
+
+      if (!state.skillRanks || typeof state.skillRanks !== "object") state.skillRanks = {};
+      state.skillRanks[nd.id] = curRank + 1;
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      persistWalletAndRig();
+      updatePlayerUI();
+      renderSkillTreeUI();
+      if (!sim.running) setupStagingArena();
+    }
+
+    function computeBotCombatProfile(baseStats, loadoutObj, isPlayerBot = false) {
+      const skBonuses = isPlayerBot ? computeSkillTreeBonuses() : { power: 0, speed: 0, agility: 0, hp: 0, shield: 0 };
+      let power = baseStats.power + (skBonuses.power || 0);
+      let speed = baseStats.speed + (skBonuses.speed || 0);
+      let agility = baseStats.agility + (skBonuses.agility || 0);
+      let bonusHp = skBonuses.hp || 0;
 
       const equippedItems = [];
       const equippedIds = new Set();
@@ -7718,7 +8716,7 @@
     }
 
     function updatePlayerUI() {
-      const p = computeBotCombatProfile(BASE_STATS, state.loadout);
+      const p = computeBotCombatProfile(BASE_STATS, state.loadout, true);
 
       document.getElementById("pilotCallsignDisplay").textContent = state.pilotCallsign;
       document.getElementById("pilotEloDisplay").textContent = `🏆 ${state.elo.toLocaleString()}`;
@@ -8239,11 +9237,11 @@
 
     function updateShopLiveDeltaUI() {
       const slotKey = state.activeShopSlot;
-      const curProf = computeBotCombatProfile(BASE_STATS, state.loadout);
+      const curProf = computeBotCombatProfile(BASE_STATS, state.loadout, true);
       const testLoadout = state.previewAddonId
         ? { ...state.loadout, [slotKey]: state.previewAddonId }
         : { ...state.loadout };
-      const nextProf = computeBotCombatProfile(BASE_STATS, testLoadout);
+      const nextProf = computeBotCombatProfile(BASE_STATS, testLoadout, true);
       const activeItem = findAddonById(state.previewAddonId || state.loadout[slotKey]);
 
       const titleEl = document.getElementById("shopPreviewItemTitle");
@@ -9409,12 +10407,12 @@
         speedBuffTimer: 0,
         megaStrikeCharges: 0,
         megaStrikeMult: 1.0,
-        shieldHp: 0
+        shieldHp: team === "player" ? (computeSkillTreeBonuses().shield || 0) : 0
       };
     }
 
     function setupStagingArena() {
-      const pStats = computeBotCombatProfile(BASE_STATS, state.loadout);
+      const pStats = computeBotCombatProfile(BASE_STATS, state.loadout, true);
       document.getElementById("hudPName").textContent = state.pilotCallsign;
 
       sim.running = false;
@@ -9486,10 +10484,10 @@
 
       if (state.gameMode === "cpu") {
         const cpuObj = getActiveSimilarCpu();
-        const eStats = computeBotCombatProfile(cpuObj.baseStats, cpuObj.loadout);
+        const eStats = computeBotCombatProfile(cpuObj.baseStats, cpuObj.loadout, false);
 
         const playerBot = createPhysicsBot(pStats, "player", state.pilotCallsign, "#ffd700", spawnPX, 450, 0, 1.0);
-        const enemyBot  = createPhysicsBot(eStats, "enemy", cpuObj.name, cpuObj.color, spawnEX, 450, Math.PI, 1.0);
+        const enemyBot  = createPhysicsBot(eStats, "enemy", cpuObj.name, cpuObj.color, spawnEX, 450, Math.PI, 1.0, state.partIntegrity);
         sim.bots = [playerBot, enemyBot];
 
         document.getElementById("hudEName").textContent = cpuObj.name;
@@ -9815,14 +10813,15 @@
         const hasJets = bot.cp.has("bot_abil_01");
         const hasDrift = bot.cp.has("tire_12");
         const hasSprint = bot.cp.has("tire_15");
+        const isCpuEnemy = bot.team === "enemy" && !sim.isLiveMultiplayer;
 
-        if (bot.stamina >= 18) {
+        if (bot.stamina >= (isCpuEnemy ? 28 : 18)) {
           drainBotStamina(bot, 14);
           bot.dodgeTimer = hasDrift ? 21 : 17;
         } else {
           return { desiredAngle: toOther, throttle: 0.55, turnMult: 1.0 };
         }
-        bot.dodgeCd = Math.round((hasJets ? 50 : 72) * (hasSprint ? 0.75 : 1.0));
+        bot.dodgeCd = Math.round((hasJets ? 50 : 72) * (hasSprint ? 0.75 : 1.0) * (isCpuEnemy ? 1.65 : 1.0));
 
         const perp1 = other.angle + Math.PI / 2;
         const perp2 = other.angle - Math.PI / 2;
@@ -9915,11 +10914,12 @@
       while (aimDiff < -Math.PI) aimDiff += Math.PI * 2;
 
       // Trigger charge attacks faster and from wider angles when pressing an injured opponent!
-      const minStamForCharge = bot.activePredatorTactic ? 22 : 36;
-      const aimConeForCharge = bot.activePredatorTactic ? 0.62 : 0.42;
+      const isCpuBot = bot.team === "enemy" && !sim.isLiveMultiplayer;
+      const minStamForCharge = isCpuBot ? 48 : (bot.activePredatorTactic ? 22 : 36);
+      const aimConeForCharge = isCpuBot ? 0.34 : (bot.activePredatorTactic ? 0.62 : 0.42);
       if (bot.abilityCd <= 0 && bot.stamina >= minStamForCharge && dist > 105 && dist < 430 && Math.abs(aimDiff) < aimConeForCharge) {
         bot.abilityState = "windup";
-        bot.abilityTimer = bot.activePredatorTactic ? 9 : 13;
+        bot.abilityTimer = isCpuBot ? 18 : (bot.activePredatorTactic ? 9 : 13);
       }
 
       if (sawDangerous && Math.hypot(other.x - cs.x, other.y - cs.y) < 340 && dist > 160) {
@@ -9951,6 +10951,11 @@
       } else {
         desiredAngle = toOther;
         throttle = 0.84;
+      }
+
+      if (isCpuBot) {
+        throttle *= 0.84;
+        turnMult *= 0.78;
       }
 
       return { desiredAngle, throttle, turnMult };
@@ -10515,7 +11520,7 @@
             b.redlineActive = false;
             b.speedBuffTimer = 0;
             b.megaStrikeCharges = 0;
-            b.shieldHp = 0;
+            b.shieldHp = isP ? (computeSkillTreeBonuses().shield || 0) : 0;
           }
           sim.projectiles = [];
           sim.miniBots = [];
@@ -10573,10 +11578,13 @@
 
         if (state.gameMode === "cpu") {
           const cpuObj = getActiveSimilarCpu();
+          const stBonuses = computeSkillTreeBonuses();
+          const xpMult = 1 + (stBonuses.xpPct || 0) / 100;
+          const wealthMult = 1 + (stBonuses.wealthPct || 0) / 100;
           const baseCpuXp = won ? (Number(cpuObj.reward) || 200) : Math.max(60, Math.round((Number(cpuObj.reward) || 200) * 0.35));
           const gritBonusXp = (won && sim.startedInjuredGrit) ? Math.round(baseCpuXp * 0.15) : 0;
-          const xpEarned = baseCpuXp + gritBonusXp;
-          const diamondsFromXp = xpEarned; // 1 XP = 1 💎 Diamond from CPU Bot Training!
+          const xpEarned = Math.round((baseCpuXp + gritBonusXp) * xpMult);
+          const diamondsFromXp = Math.round(xpEarned * wealthMult);
           state.cpuXp = (state.cpuXp || 0) + xpEarned;
 
           if (won) {
@@ -11472,8 +12480,9 @@
       while (bAim > Math.PI) bAim -= Math.PI * 2;
       while (bAim < -Math.PI) bAim += Math.PI * 2;
 
-      const aFacing = Math.abs(aAim) < 0.90;
-      const bFacing = Math.abs(bAim) < 0.90;
+      const isCpuBattle = !sim.isLiveMultiplayer;
+      const aFacing = Math.abs(aAim) < (isCpuBattle ? 1.22 : 0.90);
+      const bFacing = Math.abs(bAim) < (isCpuBattle ? 0.70 : 0.90);
 
       const aVelToward = Math.max(0, botA.vx * nx + botA.vy * ny);
       const bVelToward = Math.max(0, botB.vx * (-nx) + botB.vy * (-ny));
@@ -11513,6 +12522,7 @@
         );
 
         let kbMult = 1.0;
+        if (isCpuBattle && attacker.team === "player") kbMult *= 1.22;
         if (attacker.cp.has("wpn_05")) kbMult *= 1.45;
         if (attacker.cp.has("wpn_abil_03")) {
           kbMult *= 1.40;
@@ -11538,6 +12548,9 @@
 
       function computeSuspenseAndMoleculeMult(attacker) {
         let m = 1.0;
+        if (isCpuBattle) {
+          m *= attacker.team === "player" ? 1.24 : 0.82;
+        }
         if (attacker.redlineActive) m *= 1.35;
         if (sim.suddenOverchargeActive) m *= 1.50;
         if (attacker.megaStrikeCharges && attacker.megaStrikeCharges > 0) {
@@ -11562,8 +12575,8 @@
         return dmg;
       }
 
-      if (aFacing && Math.abs(bAim) >= 0.85) {
-        const isRear = Math.abs(bAim) > 1.95;
+      if (aFacing && Math.abs(bAim) >= (isCpuBattle ? 0.70 : 0.85)) {
+        const isRear = Math.abs(bAim) > (isCpuBattle ? 1.70 : 1.95);
         const hasRing = botB.cp.has("wpn_12");
         const zoneMult = hasRing ? 1.0 : (isRear ? botA.cp.rearMult : botA.cp.flankMult);
         const velMult = 1 + Math.min(0.75, (aVelToward / 6.5) * 0.65);
@@ -11603,7 +12616,7 @@
         return;
       }
 
-      if (bFacing && Math.abs(aAim) >= 0.85) {
+      if (bFacing && Math.abs(aAim) >= (isCpuBattle ? 1.35 : 0.85)) {
         const isRear = Math.abs(aAim) > 1.95;
         const hasRing = botA.cp.has("wpn_12");
         const zoneMult = hasRing ? 1.0 : (isRear ? botB.cp.rearMult : botB.cp.flankMult);
@@ -11668,7 +12681,7 @@
             y: midY,
             botA,
             botB,
-            advantage: (botA.cp.shoveRatio - botB.cp.shoveRatio) * 0.25
+            advantage: (botA.cp.shoveRatio - botB.cp.shoveRatio) * 0.25 + (isCpuBattle ? 0.35 : 0)
           };
           if (botA.abilityState === "charging") { botA.abilityState = "ready"; botA.abilityCd = 65; }
           if (botB.abilityState === "charging") { botB.abilityState = "ready"; botB.abilityCd = 65; }
