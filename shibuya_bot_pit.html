@@ -3731,13 +3731,71 @@
     }
 
     /* =========================================================================
-       MOBILE TWO-STAGE SCREEN FLOW (<= 900px):
+       MOBILE TWO-STAGE SCREEN FLOW & FULL-SCREEN LANDSCAPE BATTLE MODE:
        1) INITIAL OPEN (`body:not(.mobile-play-active)`):
           Show EVERYTHING except the Play Screen (`#battleCanvas`, `.arena-hud`, `#manualControlHud` hidden).
-       2) ONCE PLAYING (`body.mobile-play-active`):
-          Play Screen (`.arena-wrapper`) fills the screen + compact Small Chat Area at the bottom!
+       2) ONCE IN A BATTLE (`body.mobile-play-active`):
+          - Full-screen 16:9 Landscape Arena so maps match desktop identically and fit edge-to-edge.
+          - Transparent see-through on-screen thumbstick & Charge/Shoot controls.
+          - Corner Chat Icon (`#btnMobileChatToggle`) opens Live Chat on the LEFT side as a translucent overlay!
        ========================================================================= */
-    @media (max-width: 900px) {
+    .mobile-battle-corner-bar {
+      display: none;
+    }
+    .btn-close-mobile-chat {
+      display: none;
+      background: rgba(244, 63, 94, 0.22);
+      border: 1px solid rgba(251, 113, 133, 0.55);
+      color: #fda4af;
+      border-radius: 6px;
+      padding: 2px 7px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    /* Transparent On-Screen Controls on Mobile / Touch */
+    @media (max-width: 960px), (pointer: coarse) {
+      .touch-joystick-base {
+        background: rgba(15, 23, 42, 0.14) !important;
+        border: 1.5px solid rgba(52, 211, 153, 0.42) !important;
+        box-shadow: inset 0 0 10px rgba(52, 211, 153, 0.08) !important;
+        backdrop-filter: none !important;
+      }
+      .joy-dir-arrow {
+        color: rgba(167, 243, 208, 0.48) !important;
+      }
+      .touch-joystick-knob {
+        background: rgba(16, 185, 129, 0.22) !important;
+        border: 1.5px solid rgba(167, 243, 208, 0.65) !important;
+        color: rgba(236, 253, 245, 0.88) !important;
+        box-shadow: 0 0 8px rgba(52, 211, 153, 0.18) !important;
+      }
+      .btn-manual-action.boost-btn {
+        background: rgba(14, 165, 233, 0.16) !important;
+        border: 1.5px solid rgba(125, 211, 252, 0.58) !important;
+        color: rgba(224, 242, 254, 0.92) !important;
+        box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.12) !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85) !important;
+      }
+      .btn-manual-action.shoot-btn {
+        background: rgba(249, 115, 22, 0.16) !important;
+        border: 1.5px solid rgba(253, 224, 71, 0.58) !important;
+        color: rgba(254, 240, 138, 0.92) !important;
+        box-shadow: inset 0 0 10px rgba(249, 115, 22, 0.12) !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85) !important;
+      }
+      .btn-manual-action:active,
+      .btn-manual-action.pressed {
+        background: rgba(56, 189, 248, 0.34) !important;
+      }
+      .btn-manual-cd-bar {
+        background: rgba(6, 9, 17, 0.38) !important;
+      }
+    }
+
+    @media (max-width: 960px), (max-height: 540px) and (pointer: coarse) {
       body {
         padding: 8px 10px 24px !important;
       }
@@ -3745,7 +3803,8 @@
       body:not(.mobile-play-active) #battleCanvas,
       body:not(.mobile-play-active) .arena-hud,
       body:not(.mobile-play-active) #manualControlHud,
-      body:not(.mobile-play-active) #spectatorTopBanner {
+      body:not(.mobile-play-active) #spectatorTopBanner,
+      body:not(.mobile-play-active) #mobileBattleCornerBar {
         display: none !important;
       }
       body:not(.mobile-play-active) .arena-wrapper {
@@ -3770,13 +3829,15 @@
         width: 100% !important;
       }
 
-      /* STATE 2: Active Play Mode on Mobile — Play Screen Fills Screen + Small Chat Area */
+      /* STATE 2: Active Battle Mode on Mobile — Full-Screen 16:9 Landscape + Corner Chat Left Overlay */
       body.mobile-play-active {
         padding: 0 !important;
         margin: 0 !important;
+        width: 100dvw !important;
         height: 100dvh !important;
         max-height: 100dvh !important;
         overflow: hidden !important;
+        background: #05070e !important;
       }
       body.mobile-play-active .top-pilot-bar,
       body.mobile-play-active #rigSection,
@@ -3786,96 +3847,162 @@
         display: none !important;
       }
       body.mobile-play-active .page-layout {
-        max-width: 100% !important;
-        width: 100% !important;
-        height: 100dvh !important;
         margin: 0 !important;
         padding: 0 !important;
         gap: 0 !important;
         display: flex !important;
         flex-direction: column !important;
         overflow: hidden !important;
+        background: #05070e !important;
       }
       body.mobile-play-active #arenaSection {
         width: 100% !important;
-        height: 100dvh !important;
+        height: 100% !important;
+        flex: 1 1 auto !important;
         margin: 0 !important;
         padding: 0 !important;
         gap: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+        position: relative !important;
         overflow: hidden !important;
       }
       body.mobile-play-active .arena-wrapper {
         flex: 1 1 auto !important;
-        min-height: 0 !important;
-        height: auto !important;
         width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
         border-radius: 0 !important;
         border: none !important;
-        border-bottom: 2px solid rgba(56, 189, 248, 0.45) !important;
         position: relative !important;
         display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
         background: radial-gradient(circle at 50% 50%, #101626 0%, #05070e 100%) !important;
-      }
-      body.mobile-play-active .arena-hud {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-        padding: 8px 8px 4px !important;
-        width: 100% !important;
-        flex-shrink: 0 !important;
       }
       body.mobile-play-active #battleCanvas {
         display: block !important;
         width: 100% !important;
-        height: auto !important;
+        height: 100% !important;
+        max-width: 100% !important;
         max-height: 100% !important;
         aspect-ratio: 16 / 9 !important;
         object-fit: contain !important;
-        flex: 1 1 auto !important;
-        min-height: 0 !important;
       }
-      body.mobile-play-active #manualControlHud {
-        position: relative !important;
-        left: auto !important;
-        right: auto !important;
-        bottom: auto !important;
-        padding: 6px 14px 10px !important;
-        width: 100% !important;
-        flex-shrink: 0 !important;
-      }
-      body.mobile-play-active #pitBroadcastDeck {
-        flex: 0 0 132px !important;
-        height: 132px !important;
-        max-height: 132px !important;
-        width: 100% !important;
-        margin: 0 !important;
+      body.mobile-play-active .arena-hud {
+        position: absolute !important;
+        top: 6px !important;
+        left: 10px !important;
+        right: 10px !important;
         padding: 0 !important;
+        width: auto !important;
+        z-index: 35 !important;
+        pointer-events: none !important;
+      }
+      body.mobile-play-active .fighter-bar-card {
+        padding: 4px 8px !important;
+        background: rgba(7, 10, 18, 0.56) !important;
+        border-color: rgba(255, 255, 255, 0.14) !important;
+        backdrop-filter: blur(4px) !important;
+      }
+      body.mobile-play-active .center-clock {
+        padding: 3px 8px !important;
+        min-width: 78px !important;
+        background: rgba(7, 10, 18, 0.56) !important;
+      }
+      /* Corner Icon Cluster (Top-Left below Player HP Bar) */
+      body.mobile-play-active .mobile-battle-corner-bar {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 6px;
+        position: absolute;
+        top: 46px;
+        left: 10px;
+        z-index: 70;
+      }
+      .btn-mobile-corner-icon {
+        background: rgba(10, 15, 28, 0.45);
+        border: 1.5px solid rgba(56, 189, 248, 0.48);
+        color: rgba(226, 232, 240, 0.94);
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.52rem;
+        font-weight: 900;
+        letter-spacing: 0.4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        transition: all 0.14s ease;
+      }
+      .btn-mobile-corner-icon.chat-btn.active,
+      body.mobile-play-active.mobile-chat-open #btnMobileChatToggle {
+        background: rgba(14, 165, 233, 0.36);
+        border-color: #38bdf8;
+        color: #ffffff;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+      }
+      .btn-mobile-corner-icon.garage-btn {
+        border-color: rgba(251, 191, 36, 0.50);
+        color: #fde047;
+      }
+
+      /* Transparent Floating On-Screen Controls at Bottom Corners of Landscape Arena */
+      body.mobile-play-active #manualControlHud {
+        position: absolute !important;
+        left: 14px !important;
+        right: 14px !important;
+        bottom: 10px !important;
+        padding: 0 !important;
+        width: auto !important;
+        z-index: 45 !important;
+        pointer-events: none !important;
+      }
+
+      /* Left-Side Chat Overlay (Hidden by default in battle; toggled by Corner Chat Icon) */
+      body.mobile-play-active:not(.mobile-chat-open) #pitBroadcastDeck {
+        display: none !important;
+      }
+      body.mobile-play-active.mobile-chat-open #pitBroadcastDeck {
         display: flex !important;
         flex-direction: column !important;
+        position: absolute !important;
+        top: 78px !important;
+        left: 10px !important;
+        bottom: 10px !important;
+        width: min(300px, 46%) !important;
+        height: auto !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: 80 !important;
       }
       body.mobile-play-active #pitChatBroadcastCard {
         flex: 1 1 auto !important;
         height: 100% !important;
         min-height: 0 !important;
         max-height: none !important;
-        border-radius: 0 !important;
-        border: none !important;
-        background: #070b14 !important;
+        border-radius: 14px !important;
+        border: 1.5px solid rgba(56, 189, 248, 0.48) !important;
+        background: rgba(7, 11, 20, 0.80) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.85) !important;
       }
       body.mobile-play-active #pitChatBroadcastCard .broadcast-card-header {
-        padding: 4px 10px !important;
+        padding: 6px 10px !important;
         font-size: 0.56rem !important;
       }
-      body.mobile-play-active #pitChatOnlineBadge {
+      body.mobile-play-active #pitChatOnlineBadge,
+      body.mobile-play-active .mob-play-header-actions {
         display: none !important;
       }
-      body.mobile-play-active .mob-play-header-actions {
-        display: inline-flex !important;
+      body.mobile-play-active .btn-close-mobile-chat {
+        display: inline-block !important;
       }
       body.mobile-play-active .btn-mobile-return-garage {
         display: block !important;
@@ -3883,16 +4010,16 @@
       body.mobile-play-active #pitChatFeed {
         flex: 1 1 auto !important;
         min-height: 0 !important;
-        padding: 4px 10px !important;
-        gap: 3px !important;
+        padding: 6px 10px !important;
+        gap: 4px !important;
         font-size: 0.66rem !important;
       }
       body.mobile-play-active .pit-chat-msg {
-        padding: 2px 6px !important;
+        padding: 3px 7px !important;
         font-size: 0.64rem !important;
       }
       body.mobile-play-active .pit-chat-footer {
-        padding: 4px 8px !important;
+        padding: 6px 8px !important;
         gap: 0 !important;
       }
       body.mobile-play-active .chat-input {
@@ -3903,9 +4030,49 @@
         padding: 5px 11px !important;
         font-size: 0.56rem !important;
       }
+      body.mobile-play-active #battleOverlay {
+        position: absolute !important;
+        inset: 0 !important;
+        z-index: 85 !important;
+        overflow-y: auto !important;
+        padding: 10px !important;
+      }
+      body.mobile-play-active .arcade-match-card {
+        max-width: 480px !important;
+        padding: 12px 16px !important;
+        gap: 7px !important;
+      }
     }
 
-    @media (max-width: 640px) {
+    /* Portrait Phone in Active Battle -> Auto-Rotate 90deg Clockwise into Full-Screen Landscape */
+    @media (max-width: 960px) and (orientation: portrait) {
+      body.mobile-play-active .page-layout {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        width: 100dvh !important;
+        height: 100dvw !important;
+        max-width: none !important;
+        transform: translate(-50%, -50%) rotate(90deg) !important;
+        transform-origin: center center !important;
+        z-index: 9000 !important;
+      }
+    }
+
+    /* Native Landscape Phone in Active Battle -> Fill Full Landscape Viewport Directly */
+    @media (max-width: 960px) and (orientation: landscape), (max-height: 540px) and (orientation: landscape) {
+      body.mobile-play-active .page-layout {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100dvw !important;
+        height: 100dvh !important;
+        max-width: none !important;
+        transform: none !important;
+        z-index: 9000 !important;
+      }
+    }
+
+    @media (max-width: 960px), (max-height: 540px) and (pointer: coarse) {
       .control-mode-toggle {
         width: 100%;
         justify-content: space-between;
@@ -3917,18 +4084,13 @@
         padding: 6px 8px !important;
         font-size: 0.58rem !important;
       }
-      .manual-control-hud {
-        left: 8px;
-        right: 8px;
-        bottom: 8px;
-      }
       .touch-joystick-zone {
-        width: 92px;
-        height: 92px;
+        width: 96px;
+        height: 96px;
       }
       .touch-joystick-base {
-        width: 84px;
-        height: 84px;
+        width: 88px;
+        height: 88px;
       }
       .touch-joystick-knob {
         width: 36px;
@@ -3939,11 +4101,11 @@
         display: none;
       }
       .manual-action-cluster {
-        gap: 7px;
+        gap: 8px;
       }
       .btn-manual-action.boost-btn {
-        width: 74px;
-        height: 74px;
+        width: 76px;
+        height: 76px;
       }
       .btn-manual-action.shoot-btn {
         width: 72px;
@@ -4221,6 +4383,19 @@
           </div>
         </div>
 
+        <!-- 📱 MOBILE LANDSCAPE BATTLE CORNER ICON BAR (CHAT LEFT OVERLAY TOGGLE + CTRL/GARAGE) -->
+        <div class="mobile-battle-corner-bar" id="mobileBattleCornerBar">
+          <button type="button" class="btn-mobile-corner-icon chat-btn" id="btnMobileChatToggle" onclick="toggleMobileChatOverlay()" title="Toggle Left-Side Live Chat Overlay">
+            💬 CHAT
+          </button>
+          <button type="button" class="btn-mobile-corner-icon" id="mobCornerCtrlBtn" onclick="setControlMode(state.controlMode === 'controlled' ? 'simulated' : 'controlled')" title="Switch Controlled vs. AI Simulated Mode">
+            🎮 CTRL
+          </button>
+          <button type="button" class="btn-mobile-corner-icon garage-btn" onclick="exitMobilePlayMode()" title="Return to Bot Garage &amp; Upgrade Shop">
+            🔧 GARAGE
+          </button>
+        </div>
+
         <!-- 🎮 ON-SCREEN MANUAL BOT CONTROL & SHOOTING HUD (DESKTOP + MOBILE TOUCH) -->
         <div class="manual-control-hud" id="manualControlHud">
           <div class="touch-joystick-zone" id="touchJoystickZone" title="Drag to Steer &amp; Drive Your Bot">
@@ -4357,6 +4532,7 @@
               <button type="button" class="mob-play-header-btn" id="mobPlayCtrlToggleBtn" onclick="setControlMode(state.controlMode === 'controlled' ? 'simulated' : 'controlled')">🎮 CTRL</button>
               <button type="button" class="mob-play-header-btn garage" onclick="exitMobilePlayMode()">🔧 GARAGE</button>
             </div>
+            <button type="button" class="btn-close-mobile-chat" onclick="toggleMobileChatOverlay(false)" title="Close Chat Overlay">✕</button>
             <span class="broadcast-count-pill chat-online" id="pitChatOnlineBadge">🟢 PIT ONLINE</span>
           </div>
           <div class="pit-chat-messages" id="pitChatFeed">
@@ -6110,8 +6286,37 @@
       setupStagingArena();
     }
 
+    function isMobilePortraitRotatedBattle() {
+      return (
+        document.body.classList.contains("mobile-play-active") &&
+        window.innerHeight > window.innerWidth &&
+        window.innerWidth <= 960
+      );
+    }
+
+    function toggleMobileChatOverlay(forceState) {
+      const next = typeof forceState === "boolean"
+        ? forceState
+        : !document.body.classList.contains("mobile-chat-open");
+      document.body.classList.toggle("mobile-chat-open", next);
+      const btn = document.getElementById("btnMobileChatToggle");
+      if (btn) btn.classList.toggle("active", next);
+      if (next) {
+        const feed = document.getElementById("pitChatFeed");
+        if (feed) feed.scrollTop = feed.scrollHeight;
+      }
+    }
+
     function enterMobilePlayMode() {
       document.body.classList.add("mobile-play-active");
+      document.body.classList.remove("mobile-chat-open");
+      const chatBtn = document.getElementById("btnMobileChatToggle");
+      if (chatBtn) chatBtn.classList.remove("active");
+      try {
+        if (screen.orientation && typeof screen.orientation.lock === "function") {
+          screen.orientation.lock("landscape").catch(() => {});
+        }
+      } catch (_) {}
       try {
         window.scrollTo({ top: 0, behavior: "instant" });
       } catch (_) {
@@ -6122,6 +6327,14 @@
 
     function exitMobilePlayMode() {
       document.body.classList.remove("mobile-play-active");
+      document.body.classList.remove("mobile-chat-open");
+      const chatBtn = document.getElementById("btnMobileChatToggle");
+      if (chatBtn) chatBtn.classList.remove("active");
+      try {
+        if (screen.orientation && typeof screen.orientation.unlock === "function") {
+          screen.orientation.unlock();
+        }
+      } catch (_) {}
       if (sim.liveRole === "spectator" || sim.liveRole === "spectator_ai") {
         leaveSpectatorMode();
         return;
@@ -11502,11 +11715,13 @@
       if (btnSim) btnSim.classList.toggle("active", !isCtrl);
       if (btnCtrl) btnCtrl.classList.toggle("active", isCtrl);
 
-      const mobToggle = document.getElementById("mobPlayCtrlToggleBtn");
-      if (mobToggle) {
-        mobToggle.textContent = isCtrl ? "🎮 CTRL" : "🤖 SIM";
-        mobToggle.style.borderColor = isCtrl ? "rgba(52, 211, 153, 0.75)" : "rgba(56, 189, 248, 0.5)";
-        mobToggle.style.color = isCtrl ? "#34d399" : "#e2e8f0";
+      for (const btnId of ["mobPlayCtrlToggleBtn", "mobCornerCtrlBtn"]) {
+        const mobToggle = document.getElementById(btnId);
+        if (mobToggle) {
+          mobToggle.textContent = isCtrl ? "🎮 CTRL" : "🤖 SIM";
+          mobToggle.style.borderColor = isCtrl ? "rgba(52, 211, 153, 0.75)" : "rgba(56, 189, 248, 0.5)";
+          mobToggle.style.color = isCtrl ? "#34d399" : "#e2e8f0";
+        }
       }
 
       const hud = document.getElementById("manualControlHud");
@@ -11661,9 +11876,13 @@
           const rect = joyZone.getBoundingClientRect();
           const cx = rect.left + rect.width / 2;
           const cy = rect.top + rect.height / 2;
-          const maxR = Math.max(26, rect.width * 0.36);
-          const dx = ev.clientX - cx;
-          const dy = ev.clientY - cy;
+          const maxR = Math.max(26, Math.min(rect.width, rect.height) * 0.36);
+          const rawDx = ev.clientX - cx;
+          const rawDy = ev.clientY - cy;
+          // When in portrait-rotated landscape mode (rotate(90deg)), map physical screen deltas to local landscape axes
+          const rotated = isMobilePortraitRotatedBattle();
+          const dx = rotated ? rawDy : rawDx;
+          const dy = rotated ? -rawDx : rawDy;
           const dist = Math.hypot(dx, dy);
           const clamped = Math.min(dist, maxR);
           const ang = Math.atan2(dy, dx);
@@ -11748,8 +11967,13 @@
         const updateCanvasWorldAim = (ev) => {
           const rect = canvas.getBoundingClientRect();
           if (!rect.width || !rect.height) return;
-          const sx = (ev.clientX - rect.left) / rect.width;
-          const sy = (ev.clientY - rect.top) / rect.height;
+          const rotated = isMobilePortraitRotatedBattle();
+          const sx = rotated
+            ? (ev.clientY - rect.top) / rect.height
+            : (ev.clientX - rect.left) / rect.width;
+          const sy = rotated
+            ? 1 - ((ev.clientX - rect.left) / rect.width)
+            : (ev.clientY - rect.top) / rect.height;
           manualInput.aimWorldX = Math.max(DOME.x, Math.min(DOME.x + DOME.w, sx * 1600));
           manualInput.aimWorldY = Math.max(DOME.y, Math.min(DOME.y + DOME.h, sy * 900));
           manualInput.aimActive = true;
