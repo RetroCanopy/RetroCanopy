@@ -1578,7 +1578,7 @@ function initGamerIntro() {
             }
         } else {
             try {
-                prebuiltIntroAudio = new Audio('assets/intro_theme.wav?v=36');
+                prebuiltIntroAudio = new Audio('assets/intro_theme.wav?v=101');
                 prebuiltIntroAudio.muted = Boolean(cameFromInternalPage || window.__rcSkipIntroOnLoad);
                 prebuiltIntroAudio.volume = (cameFromInternalPage || window.__rcSkipIntroOnLoad) ? 0 : 0.88;
                 prebuiltIntroAudio.preload = (cameFromInternalPage || window.__rcSkipIntroOnLoad) ? 'none' : 'auto';
@@ -3638,6 +3638,13 @@ function initGamerIntro() {
         jamesHasExited = true;
         isTransitioningExit = false;
 
+        const introVideoEl = document.getElementById('rc-cinema-intro-video');
+        if (introVideoEl) {
+            try {
+                introVideoEl.pause();
+                introVideoEl.classList.add('video-fade-out');
+            } catch (_) {}
+        }
         if (prebuiltIntroAudio) {
             try {
                 prebuiltIntroAudio.pause();
@@ -4199,6 +4206,10 @@ function initGamerIntro() {
             if (heroContainer) {
                 heroContainer.classList.add('title-fade-to-black');
             }
+            const introVideoEl = document.getElementById('rc-cinema-intro-video');
+            if (introVideoEl) {
+                introVideoEl.classList.add('video-fade-out');
+            }
             fadeIntroAudio();
 
             // Once faded to pure black, launch Synth's cutscene and silently prepare the top logo position while hidden
@@ -4206,6 +4217,10 @@ function initGamerIntro() {
                 if (sequenceComplete) return;
                 if (document.body) {
                     document.body.classList.remove('cinema-intro-active');
+                }
+                const introVideoEndEl = document.getElementById('rc-cinema-intro-video');
+                if (introVideoEndEl) {
+                    try { introVideoEndEl.pause(); } catch (_) {}
                 }
                 if (heroContainer) {
                     heroContainer.classList.add('no-transition');
@@ -4222,7 +4237,7 @@ function initGamerIntro() {
     }
 
     // Schedule the title screen progression immediately — no click required
-    scheduleIntroTransition(9800);
+    scheduleIntroTransition(10000);
 
     function playIntroAudio() {
         playCinemaStudioLogoSwell();
@@ -4231,7 +4246,7 @@ function initGamerIntro() {
     function playCinemaStudioLogoSwell() {
         if (sequenceComplete || state !== 'LOGO_ZOOM_OUT') return;
 
-        // Play the single pre-rendered Title Screen audio track (assets/intro_theme.wav?v=36) —
+        // Play the single pre-rendered Title Screen audio track (assets/intro_theme.wav?v=101) —
         // do NOT layer a second Web Audio synth copy on top so the logo audio never plays twice!
         tryStartIntroHtmlAudio(false);
     }
@@ -4329,7 +4344,15 @@ function initGamerIntro() {
                 if (a.linkSlot) a.linkSlot.classList.remove('revealed');
             });
 
-            // Restart CSS Title Screen animations from 0.0s
+            // Restart CSS Title Screen animations & Intro Video from 0.0s
+            const introVideoReplayEl = document.getElementById('rc-cinema-intro-video');
+            if (introVideoReplayEl) {
+                try {
+                    introVideoReplayEl.classList.remove('video-fade-out');
+                    introVideoReplayEl.currentTime = 0;
+                    introVideoReplayEl.play().catch(() => {});
+                } catch (_) {}
+            }
             if (document.body) {
                 document.body.classList.remove('intro-awaiting-audio', 'syn-in-background', 'holo-pitch-black', 'holo-journey-active', 'diorama-reveal-active', 'coming-soon-finale-active');
                 document.body.classList.add('cinema-intro-active');
@@ -4348,7 +4371,7 @@ function initGamerIntro() {
                     prebuiltIntroAudio._playingSynFallback = false;
                     prebuiltIntroAudio._playingLofiFallback = false;
                     if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('intro_theme.wav') === -1) {
-                        prebuiltIntroAudio.src = 'assets/intro_theme.wav?v=36';
+                        prebuiltIntroAudio.src = 'assets/intro_theme.wav?v=101';
                     }
                     prebuiltIntroAudio.loop = false;
                     prebuiltIntroAudio.muted = false;
@@ -4368,7 +4391,7 @@ function initGamerIntro() {
             if (ctx && ctx.state === 'suspended') {
                 ctx.resume().catch(() => {});
             }
-            scheduleIntroTransition(9800);
+            scheduleIntroTransition(10000);
             tryStartIntroHtmlAudio(true);
         } catch (err) {
             console.error('Replay intro error:', err);

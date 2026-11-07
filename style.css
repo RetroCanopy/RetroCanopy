@@ -104,6 +104,31 @@ body.subpage-open .kh-music-widget .kh-track-menu {
     overflow: hidden;
 }
 
+.rc-cinema-intro-video {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    object-fit: cover;
+    object-position: center center;
+    background: #000000;
+    z-index: 4;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.35s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity;
+}
+
+body.cinema-intro-active .rc-cinema-intro-video:not(.video-fade-out) {
+    opacity: 1;
+}
+
+body.cinema-intro-active .hero-container.cinematic-center {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
 .cinema-letterbox {
     position: fixed;
     left: 0;

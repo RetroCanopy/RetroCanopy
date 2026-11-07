@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetroCanopy × Nerdy Misfits — 1080p Live Cinematic Intro Screening Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #ffd447;
+      --cyan: #00f0ff;
+      --pink: #ff2a85;
+      --green: #00ff9d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 0%, #160926 0%, #05050d 60%, #010104 100%);
+      color: #f6f4ee;
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 28px 60px;
+    }
+    header {
+      width: 100%;
+      max-width: 1460px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 18px;
+      border-bottom: 1.5px solid rgba(255, 212, 71, 0.45);
+      margin-bottom: 24px;
+    }
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.05rem, 1.8vw, 1.45rem);
+      font-weight: 900;
+      color: #fff6d6;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 16px rgba(255, 42, 133, 0.7), 0 0 28px rgba(0, 240, 255, 0.45);
+    }
+    .sub {
+      font-size: 0.86rem;
+      color: var(--cyan);
+      margin-top: 4px;
+    }
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 11px 20px;
+      border-radius: 999px;
+      border: 1.5px solid var(--gold);
+      background: linear-gradient(135deg, var(--pink) 0%, var(--gold) 52%, var(--cyan) 100%);
+      color: #06040d;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 0 22px rgba(255, 212, 71, 0.55);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 32px rgba(0, 240, 255, 0.85);
+    }
+    .btn.secondary {
+      background: rgba(12, 14, 30, 0.9);
+      color: #fff;
+      border-color: var(--cyan);
+      box-shadow: none;
+    }
+    .screen-wrap {
+      width: 100%;
+      max-width: 1380px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 212, 71, 0.65);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.95), 0 0 48px rgba(255, 42, 133, 0.28);
+      background: #000;
+      position: relative;
+    }
+    video {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+    .beats-grid {
+      width: 100%;
+      max-width: 1380px;
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .beat-card {
+      background: rgba(12, 14, 30, 0.88);
+      border: 1px solid rgba(0, 240, 255, 0.32);
+      border-top: 3px solid var(--gold);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .beat-time {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      color: var(--gold);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+    .beat-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.86rem;
+      color: #fff;
+      margin-top: 4px;
+      font-weight: 700;
+    }
+    .beat-desc {
+      font-size: 0.8rem;
+      color: #c6d4e8;
+      margin-top: 6px;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="title">RETROCANOPY × NERDY MISFITS — LIVE CINEMATIC INTRO (1080P)</div>
+      <div class="sub">35mm Anamorphic Rack-Focus • Vintage Brass Arcade Token Drop • Staggered Neon Sanctuary Reveal • Full Spatial Audio</div>
+    </div>
+    <div class="controls">
+      <button class="btn" onclick="playWithSound()">▶ PLAY WITH FULL SOUND</button>
+      <a class="btn secondary" href="assets/retrocanopy_cinematic_intro_1080p.mp4" download>⬇ DOWNLOAD 1080P MP4</a>
+      <a class="btn secondary" href="index.html">🏠 MAIN SITE</a>
+    </div>
+  </header>
+
+  <div class="screen-wrap">
+    <video id="intro-vid" src="assets/retrocanopy_cinematic_intro_1080p.mp4?v=1" controls playsinline preload="auto"></video>
+  </div>
+
+  <div class="beats-grid">
+    <div class="beat-card">
+      <div class="beat-time">0:00 – 0:02.6</div>
+      <div class="beat-name">1. Sterile Room &amp; Door Open</div>
+      <div class="beat-desc">Starts in silence focused on the minimalist white coffee table. Off-screen, the front door unlatches and footsteps enter.</div>
+    </div>
+    <div class="beat-card">
+      <div class="beat-time">0:02.6 – 0:05.2</div>
+      <div class="beat-name">2. Brass Token Key Drop</div>
+      <div class="beat-desc">Keys with a vintage brushed-brass RetroCanopy tree arcade token drop into frame; camera executes a razor-sharp macro rack-focus.</div>
+    </div>
+    <div class="beat-card">
+      <div class="beat-time">0:05.2 – 0:08.6</div>
+      <div class="beat-name">3. Rack-Focus Walk to Threshold</div>
+      <div class="beat-desc">Camera rack-focuses to the man in the RetroCanopy &amp; Nerdy Misfits jacket walking toward the pitch-black doorway.</div>
+    </div>
+    <div class="beat-card">
+      <div class="beat-time">0:08.6 – 0:12.2</div>
+      <div class="beat-name">4. Switch Flip &amp; Staggered Neon</div>
+      <div class="beat-desc">He flips the wall switch: first magenta neon &amp; cyan CRTs flicker on, then warm 24K golden 1984 marquees ignite as he steps in.</div>
+    </div>
+    <div class="beat-card">
+      <div class="beat-time">0:12.2 – 0:16.0</div>
+      <div class="beat-name">5. Slow Logo Reveal</div>
+      <div class="beat-desc">Camera pushes in as the neon sanctuary blurs into creamy bokeh and the RetroCanopy logo slowly fades in over the 1984 synth swell.</div>
+    </div>
+  </div>
+
+  <script>
+    function playWithSound() {
+      const v = document.getElementById('intro-vid');
+      v.muted = false;
+      v.volume = 1.0;
+      v.currentTime = 0;
+      v.play();
+    }
+  </script>
+</body>
+</html>
