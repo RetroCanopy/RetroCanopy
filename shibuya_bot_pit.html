@@ -3706,11 +3706,38 @@
       min-width: 110px !important;
     }
 
-    /* 5. Clean Pre-Fight Match Card & Bottom Broadcast Deck */
+    /* 5. Clean Pre-Fight / End-of-Round Match Card & Bottom Broadcast Deck */
     .arcade-match-card {
-      max-width: 520px !important;
-      padding: 18px 20px !important;
-      gap: 10px !important;
+      max-width: 430px !important;
+      padding: 16px 20px !important;
+      gap: 9px !important;
+      border-radius: 18px !important;
+      background: rgba(8, 12, 22, 0.90) !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85) !important;
+    }
+    .overlay-banner {
+      font-size: 1.28rem !important;
+      letter-spacing: 1.4px !important;
+      line-height: 1.15 !important;
+    }
+    .overlay-enemy-desc {
+      font-size: 0.78rem !important;
+      padding: 4px 10px !important;
+      background: rgba(15, 23, 42, 0.55) !important;
+      border-radius: 8px !important;
+    }
+    /* Streamline Post-Round Injury Box to a clean 1-line Repair Bar */
+    #overlayInjuryBox .pit-cond-header,
+    #overlayInjuryBox #overlayPartsGrid {
+      display: none !important;
+    }
+    #overlayInjuryBox {
+      padding: 6px 10px !important;
+      border-radius: 10px !important;
+      background: rgba(15, 23, 42, 0.72) !important;
     }
     .wager-pot-summary {
       display: none !important;
@@ -3878,6 +3905,9 @@
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        padding-left: max(54px, calc(env(safe-area-inset-top, 0px) + 44px)) !important;
+        padding-right: max(16px, env(safe-area-inset-bottom, 12px)) !important;
+        box-sizing: border-box !important;
         overflow: hidden !important;
         background: radial-gradient(circle at 50% 50%, #101626 0%, #05070e 100%) !important;
       }
@@ -3893,8 +3923,8 @@
       body.mobile-play-active .arena-hud {
         position: absolute !important;
         top: 6px !important;
-        left: 10px !important;
-        right: 10px !important;
+        left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px)) !important;
+        right: 20px !important;
         padding: 0 !important;
         width: auto !important;
         z-index: 35 !important;
@@ -3911,14 +3941,14 @@
         min-width: 78px !important;
         background: rgba(7, 10, 18, 0.56) !important;
       }
-      /* Corner Icon Cluster (Top-Left below Player HP Bar) */
+      /* Corner Icon Cluster (Shifted Right of Phone Notch/Header below Player HP Bar) */
       body.mobile-play-active .mobile-battle-corner-bar {
         display: inline-flex !important;
         align-items: center;
         gap: 6px;
         position: absolute;
         top: 46px;
-        left: 10px;
+        left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px));
         z-index: 70;
       }
       .btn-mobile-corner-icon {
@@ -3951,19 +3981,19 @@
         color: #fde047;
       }
 
-      /* Transparent Floating On-Screen Controls at Bottom Corners of Landscape Arena */
+      /* Transparent Floating On-Screen Controls Shifted Right of Phone Notch */
       body.mobile-play-active #manualControlHud {
         position: absolute !important;
-        left: 14px !important;
-        right: 14px !important;
-        bottom: 10px !important;
+        left: max(72px, calc(env(safe-area-inset-top, 0px) + 60px)) !important;
+        right: 22px !important;
+        bottom: 12px !important;
         padding: 0 !important;
         width: auto !important;
         z-index: 45 !important;
         pointer-events: none !important;
       }
 
-      /* Left-Side Chat Overlay (Hidden by default in battle; toggled by Corner Chat Icon) */
+      /* Chat Overlay (Shifted Right of Phone Notch; toggled by Corner Chat Icon) */
       body.mobile-play-active:not(.mobile-chat-open) #pitBroadcastDeck {
         display: none !important;
       }
@@ -3972,9 +4002,9 @@
         flex-direction: column !important;
         position: absolute !important;
         top: 78px !important;
-        left: 10px !important;
-        bottom: 10px !important;
-        width: min(300px, 46%) !important;
+        left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px)) !important;
+        bottom: 12px !important;
+        width: min(300px, 44%) !important;
         height: auto !important;
         max-height: none !important;
         margin: 0 !important;
@@ -6199,22 +6229,16 @@
         state.pvpWins++;
         awardPvpVictoryTicket();
         persistWalletAndRig();
-        banner.textContent = staked > 0
-          ? `🏆 LIVE PVP WIN! +1 🎟️ TICKET & +${totalWon.toLocaleString()} 💎 POT (+28 🏆)`
-          : `🏆 LIVE PVP WIN VS. ${chObj.callsign}! +1 🎟️ TICKET (+28 🏆)`;
+        banner.textContent = `🏆 VICTORY VS. ${chObj.callsign}`;
         banner.style.color = "#00ff88";
-        desc.textContent = `🎟️ You earned +1 Golden Ticket for the Ticket Counter (Total: ${state.tickets} 🎟️)${staked > 0 ? ' + swept the 💎 ' + totalWon.toLocaleString() + ' wager pot!' : '!'}`;
+        desc.textContent = `+1 🎟️ Golden Ticket${totalWon > 0 ? ' · +' + totalWon.toLocaleString() + ' 💎 Pot' : ''} · +28 🏆 ELO`;
       } else {
         state.elo = Math.max(800, state.elo - 16);
         state.pvpLosses++;
         persistWalletAndRig();
-        banner.textContent = staked > 0
-          ? `💥 DEFEATED BY LIVE PLAYER ${chObj.callsign} (-${staked.toLocaleString()} 💎)`
-          : `💥 DEFEATED BY LIVE PLAYER ${chObj.callsign} (-16 🏆)`;
+        banner.textContent = `💥 DEFEATED BY ${chObj.callsign}`;
         banner.style.color = "#ff2a55";
-        desc.textContent = staked > 0
-          ? `${chObj.callsign} won the live 💎 ${(staked * 2).toLocaleString()} Winner-Takes-All pot — fight CPU bots for XP/Diamonds or buy Diamonds!`
-          : `Live match completed — fight CPU bots to earn XP & Diamonds or rematch below!`;
+        desc.textContent = `${staked > 0 ? '-' + staked.toLocaleString() + ' 💎 Wager · ' : ''}-16 🏆 ELO`;
       }
 
       if (livePvp.activeRoomId) {
@@ -8421,25 +8445,17 @@
             const totalDiamondsAdded = diamondsFromXp + totalWagerWon;
             state.scrap += totalDiamondsAdded;
             persistWalletAndRig();
-            banner.textContent = staked > 0
-              ? `🏆 CPU DEFEATED! +${xpEarned} ⚡ XP ➔ +${totalDiamondsAdded.toLocaleString()} 💎 DIAMONDS!`
-              : `🏆 CPU DEFEATED! +${xpEarned} ⚡ XP ➔ +${diamondsFromXp.toLocaleString()} 💎 DIAMONDS!`;
+            banner.textContent = `🏆 VICTORY!`;
             banner.style.color = "#00ff88";
-            desc.textContent = staked > 0
-              ? `Earned +${xpEarned} Combat XP (+${diamondsFromXp} 💎) + swept the 💎 ${totalWagerWon.toLocaleString()} wager pot!`
-              : `Fighting CPU bots grants Combat XP that converts into Diamonds (+${xpEarned} ⚡ XP = +${diamondsFromXp} 💎)!`;
+            desc.textContent = `+${totalDiamondsAdded.toLocaleString()} 💎 Diamonds Earned (+${xpEarned} ⚡ XP)`;
           } else {
             state.scrap += diamondsFromXp;
             persistWalletAndRig();
-            if (staked > 0) {
-              banner.textContent = `💥 DEFEATED BY CPU (-${staked} 💎 WAGER · +${xpEarned} ⚡ XP = +${diamondsFromXp} 💎)`;
-              banner.style.color = "#ff2a55";
-              desc.textContent = `Lost 💎 ${staked.toLocaleString()} wager, but earned +${xpEarned} Combat XP (+${diamondsFromXp} 💎 Diamonds) for battling the CPU!`;
-            } else {
-              banner.textContent = `💥 DEFEATED BY ${cpuObj.name} (+${xpEarned} ⚡ XP ➔ +${diamondsFromXp} 💎)`;
-              banner.style.color = "#ff2a55";
-              desc.textContent = `Even in defeat, battling CPU bots earned you +${xpEarned} Combat XP (+${diamondsFromXp} 💎 Diamonds)!`;
-            }
+            banner.textContent = `💥 DEFEATED`;
+            banner.style.color = "#ff2a55";
+            desc.textContent = staked > 0
+              ? `+${diamondsFromXp.toLocaleString()} 💎 XP Bonus · -${staked.toLocaleString()} 💎 Wager`
+              : `+${diamondsFromXp.toLocaleString()} 💎 Consolation Diamonds (+${xpEarned} ⚡ XP)`;
           }
           state.activeSimilarCpu = generateSimilarLevelCpuBot();
           if (livePvp.activeRoomId) {
@@ -8481,24 +8497,16 @@
             persistWalletAndRig();
             localStorage.setItem("unit17_elo", String(state.elo));
             localStorage.setItem("unit17_pvp_wins", String(state.pvpWins));
-            banner.textContent = staked > 0
-              ? `🏆 PVP WIN! +1 🎟️ TICKET & +${totalWon.toLocaleString()} 💎 POT (+28 🏆)`
-              : `🏆 PVP VICTORY VS. ${chObj.callsign}! +1 🎟️ TICKET (+28 🏆)`;
+            banner.textContent = `🏆 VICTORY VS. ${chObj.callsign}`;
             banner.style.color = "#38bdf8";
-            desc.textContent = `🎟️ Earned +1 Golden Ticket for the Ticket Counter (Total: ${state.tickets} 🎟️)${staked > 0 ? ' + swept the 💎 ' + totalWon.toLocaleString() + ' pot!' : '!'}`;
+            desc.textContent = `+1 🎟️ Golden Ticket${totalWon > 0 ? ' · +' + totalWon.toLocaleString() + ' 💎 Pot' : ''} · +28 🏆 ELO`;
           } else {
             state.elo = Math.max(800, state.elo - 16);
             state.pvpLosses++;
             persistWalletAndRig();
-            if (staked > 0) {
-              banner.textContent = `💥 DEFEATED BY ${chObj.callsign} (-${staked.toLocaleString()} 💎)`;
-              banner.style.color = "#ff2a55";
-              desc.textContent = `${chObj.callsign} took the 💎 ${(staked * 2).toLocaleString()} Winner-Takes-All pot — fight CPU bots for XP/Diamonds or buy Diamonds!`;
-            } else {
-              banner.textContent = `💥 DEFEATED BY ${chObj.callsign} (-16 🏆)`;
-              banner.style.color = "#ff2a55";
-              desc.textContent = `Fight CPU bots to earn XP & Diamonds or upgrade your bot in the Shop!`;
-            }
+            banner.textContent = `💥 DEFEATED BY ${chObj.callsign}`;
+            banner.style.color = "#ff2a55";
+            desc.textContent = `${staked > 0 ? '-' + staked.toLocaleString() + ' 💎 Wager · ' : ''}-16 🏆 ELO`;
           }
           if (!state.customFriendChallenger) {
             state.activeOnlineOpponent = generateRandomOnlinePlayer();
@@ -10170,39 +10178,59 @@
         ctx.restore();
       }
 
-      // Render UFC Between-Rounds Corner Pit-Stop Scorecard Banner!
+      // Render Clean, Modern Between-Rounds Scorecard Banner!
       if (sim.intermissionTimer > 0 && sim.intermissionSummary) {
         const sum = sim.intermissionSummary;
         const secLeft = Math.ceil(sim.intermissionTimer / 60);
+        const isPlayerWin = sum.winnerTeam === "player";
+        const accentColor = isPlayerWin ? "#34d399" : "#fb7185";
+        const bw = 460;
+        const bh = 132;
+        const bx = 800 - bw / 2;
+        const by = 374;
+
         ctx.save();
-        ctx.fillStyle = "rgba(7, 10, 18, 0.88)";
-        ctx.strokeStyle = "#fbbf24";
-        ctx.lineWidth = 3;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = "rgba(8, 12, 22, 0.88)";
+        ctx.strokeStyle = accentColor;
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.roundRect(450, 295, 700, 250, 18);
+        ctx.roundRect(bx, by, bw, bh, 16);
         ctx.fill();
+        ctx.shadowBlur = 0;
         ctx.stroke();
 
+        // Top pill label
         ctx.textAlign = "center";
-        ctx.font = "900 16px Orbitron, sans-serif";
-        ctx.fillStyle = "#fbbf24";
-        ctx.fillText(`🥊 END OF ROUND ${sum.round} OF 3 — ${sum.method}`, 800, 340);
+        ctx.font = "900 11px Orbitron, sans-serif";
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText(`ROUND ${sum.round} COMPLETE`, 800, by + 28);
 
-        ctx.font = "900 26px Orbitron, sans-serif";
-        ctx.fillStyle = sum.winnerTeam === "player" ? "#00ff88" : "#ff2a55";
-        ctx.fillText(`🏆 ROUND ${sum.round} WINNER: ${sum.winnerName}`, 800, 382);
+        // Winner Headline
+        ctx.font = "900 22px Orbitron, sans-serif";
+        ctx.fillStyle = accentColor;
+        const cleanWinner = String(sum.winnerName || "BOT").slice(0, 18).toUpperCase();
+        ctx.fillText(`${cleanWinner} WINS ROUND ${sum.round}`, 800, by + 62);
 
-        ctx.font = "800 16px Orbitron, sans-serif";
+        // Series Score & Next Round Countdown
+        ctx.font = "800 13px Orbitron, sans-serif";
         ctx.fillStyle = "#f8fafc";
-        ctx.fillText(`SERIES SCORE: ${sum.pRounds} - ${sum.eRounds} (BEST OF 3) · ROUND DMG: ${sum.pDmg} vs ${sum.eDmg}`, 800, 422);
+        ctx.fillText(`SERIES  ${sum.pRounds} — ${sum.eRounds}   ·   NEXT ROUND IN ${secLeft}s`, 800, by + 95);
 
-        ctx.font = "700 14px Rajdhani, sans-serif";
-        ctx.fillStyle = "#38bdf8";
-        ctx.fillText("🔧 CORNER CREW: Welding +45% Missing Armor & Recharging Reactor Stamina to 100%!", 800, 462);
-
-        ctx.font = "900 18px Orbitron, sans-serif";
-        ctx.fillStyle = "#fde047";
-        ctx.fillText(`🔔 NEXT ROUND STARTS IN ${secLeft}s...`, 800, 508);
+        // Smooth Countdown Progress Bar at bottom inside edge
+        const progPct = Math.max(0, Math.min(1, (sim.intermissionTimer || 0) / 270));
+        const barW = bw - 48;
+        const barX = 800 - barW / 2;
+        const barY = by + bh - 16;
+        ctx.fillStyle = "rgba(255, 255, 255, 0.10)";
+        ctx.beginPath();
+        ctx.roundRect(barX, barY, barW, 5, 3);
+        ctx.fill();
+        ctx.fillStyle = accentColor;
+        ctx.beginPath();
+        ctx.roundRect(barX, barY, Math.max(6, barW * progPct), 5, 3);
+        ctx.fill();
         ctx.restore();
       }
 
@@ -11505,18 +11533,16 @@
           oBox.classList.toggle("crippled-danger", anyCrippled);
           oGrid.innerHTML = cardsHtml;
           if (oPen) {
-            oPen.textContent = penalties.length > 0
-              ? `⚡ Playing Injured: ${penalties.join(" · ")} (or Heal parts above)`
-              : `⚡ Bot has minor wear (${avg}% integrity) — Heal above or Fight Injured for free!`;
+            oPen.textContent = `⚠️ Bot Integrity: ${avg}%`;
           }
           if (oHealBtn) {
-            oHealBtn.textContent = `🛠️ HEAL ALL (${healAllCost} 💎)`;
+            oHealBtn.textContent = `🛠️ REPAIR (${healAllCost} 💎)`;
           }
           if (oRematchBtn) {
-            oRematchBtn.textContent = avg < 85 ? `⚔️ FIGHT INJURED (${avg}% INTEGRITY · FREE)` : `⚔️ FIGHT NOW`;
+            oRematchBtn.textContent = `⚔️ FIGHT NOW`;
           }
           if (oCpuBtn) {
-            oCpuBtn.textContent = avg < 85 ? `🤖 FIGHT CPU INJURED (+15% GRIT XP)` : `🤖 VS. CPU BOT`;
+            oCpuBtn.textContent = `🤖 VS. CPU BOT`;
           }
         } else {
           oBox.style.display = "none";
