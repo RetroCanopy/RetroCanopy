@@ -2768,65 +2768,68 @@
       z-index: 0;
     }
     .st-medallion-node {
-      width: 66px;
-      height: 66px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #271c24 0%, #0d090f 85%);
-      border: 2.5px solid #b45309;
-      box-shadow: 0 0 14px rgba(220, 38, 38, 0.38), inset 0 0 10px rgba(245, 158, 11, 0.25);
+      background: radial-gradient(circle at 35% 30%, #3b2614 0%, #0d090f 88%);
+      border: 2.5px solid #d97706;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.88), 0 0 14px rgba(245, 158, 11, 0.35), inset 0 0 8px rgba(251, 191, 36, 0.35);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
       cursor: pointer;
       position: relative;
       z-index: 2;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
     }
     .st-medallion-node .m-thumb-wrap {
       position: absolute;
-      inset: 2px;
+      inset: 0px;
       border-radius: 50%;
       overflow: hidden;
-      z-index: 0;
+      z-index: 1;
       background: #09060d;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.75);
     }
     .st-medallion-node .m-thumb {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.78;
-      filter: contrast(1.12) saturate(1.18);
-      transition: opacity 0.15s ease, transform 0.15s ease;
+      opacity: 0.96;
+      filter: contrast(1.08) saturate(1.14);
+      transition: opacity 0.16s ease, transform 0.16s ease, filter 0.16s ease;
     }
     .st-medallion-node:hover .m-thumb,
-    .st-medallion-node.selected .m-thumb {
+    .st-medallion-node.selected .m-thumb,
+    .st-medallion-node.unlocked .m-thumb {
       opacity: 1;
-      transform: scale(1.08);
+      transform: scale(1.06);
+      filter: contrast(1.14) saturate(1.22) brightness(1.06);
     }
     .st-medallion-node:hover {
-      transform: scale(1.08);
+      transform: scale(1.10) translateY(-2px);
       border-color: #fde047;
-      box-shadow: 0 0 22px rgba(245, 158, 11, 0.75), 0 0 30px rgba(239, 68, 68, 0.45);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.92), 0 0 22px rgba(245, 158, 11, 0.85), 0 0 32px rgba(239, 68, 68, 0.45);
     }
     .st-medallion-node.unlocked {
       border-color: #fbbf24;
       background: radial-gradient(circle at 35% 30%, #451a1c 0%, #170d12 85%);
-      box-shadow: 0 0 18px rgba(239, 68, 68, 0.65), inset 0 0 12px rgba(251, 191, 36, 0.45);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.72), inset 0 0 12px rgba(251, 191, 36, 0.45);
     }
     .st-medallion-node.maxed {
       border-color: #fef08a;
       background: radial-gradient(circle at 35% 30%, #7c2d12 0%, #27110b 85%);
-      box-shadow: 0 0 24px rgba(251, 191, 36, 0.9), 0 0 36px rgba(239, 68, 68, 0.75);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.95), 0 0 26px rgba(251, 191, 36, 0.95), 0 0 38px rgba(239, 68, 68, 0.78);
     }
     .st-medallion-node.selected {
       border-color: #fef08a;
-      box-shadow: 0 0 26px rgba(254, 240, 138, 0.95), 0 0 36px rgba(239, 68, 68, 0.75);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.95), 0 0 28px rgba(254, 240, 138, 0.98), 0 0 38px rgba(239, 68, 68, 0.75);
     }
     .st-medallion-node.selected::before {
       content: "";
       position: absolute;
-      inset: -8px;
+      inset: -7px;
       border-radius: 50%;
       border: 2.5px solid rgba(254, 240, 138, 0.96);
       box-shadow: 0 0 18px rgba(254, 240, 138, 0.9);
@@ -2838,32 +2841,35 @@
       50% { transform: scale(1.08); opacity: 0.55; }
     }
     .st-medallion-node .m-ico {
-      position: relative;
-      z-index: 2;
-      font-size: 1.15rem;
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      z-index: 3;
+      font-size: 0.64rem;
       line-height: 1;
-      background: rgba(9, 6, 14, 0.74);
+      background: rgba(9, 6, 14, 0.92);
       border-radius: 50%;
-      width: 26px;
-      height: 26px;
+      width: 19px;
+      height: 19px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(251, 191, 36, 0.55);
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.95));
+      border: 1.5px solid rgba(251, 191, 36, 0.78);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.95);
     }
     .st-medallion-node .m-rank {
       position: relative;
-      z-index: 2;
+      z-index: 3;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.46rem;
+      font-size: 0.43rem;
       font-weight: 900;
       color: #fde047;
-      background: rgba(9, 6, 14, 0.88);
-      padding: 1px 5px;
+      background: rgba(9, 6, 14, 0.90);
+      padding: 0px 5px;
       border-radius: 999px;
-      margin-top: 2px;
-      border: 1px solid rgba(245, 158, 11, 0.45);
+      margin-bottom: 1px;
+      border: 1px solid rgba(245, 158, 11, 0.65);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
     }
     .st-medallion-node .m-lbl {
       position: absolute;
@@ -2885,18 +2891,18 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 10px 18px;
+      padding: 9px 18px;
       background: linear-gradient(90deg, rgba(24, 15, 28, 0.96) 0%, rgba(45, 18, 24, 0.92) 50%, rgba(18, 13, 24, 0.96) 100%);
       border-bottom: 1.5px solid rgba(245, 158, 11, 0.48);
       flex-shrink: 0;
     }
     .st-quick-thumb {
-      width: 112px;
-      height: 64px;
-      border-radius: 8px;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
       object-fit: cover;
-      border: 1.5px solid #fbbf24;
-      box-shadow: 0 0 14px rgba(245, 158, 11, 0.45);
+      border: 2.5px solid #fbbf24;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.9), 0 0 18px rgba(245, 158, 11, 0.65);
       flex-shrink: 0;
       background: #09060d;
     }
@@ -2976,13 +2982,28 @@
       background: #050408;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), 0 0 18px rgba(245, 158, 11, 0.25);
     }
-    .st-insp-preview-box img {
+    .st-insp-preview-box img#stInspPreviewImg {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      opacity: 0.95;
-      filter: contrast(1.08) saturate(1.15);
+      opacity: 0.42;
+      filter: contrast(1.08) saturate(1.15) blur(1.5px);
+    }
+    .st-insp-token-coin {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 126px !important;
+      height: 126px !important;
+      border-radius: 50%;
+      object-fit: cover;
+      z-index: 3;
+      border: 2.5px solid #fde047;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.95), 0 0 24px rgba(251, 191, 36, 0.78);
+      background: #09060d;
+      pointer-events: none;
     }
     .st-insp-preview-box canvas {
       position: absolute;
@@ -6016,7 +6037,7 @@
 
         <!-- Instant Selected Skill Picture + Explanation Banner right above the 3 columns -->
         <div class="st-quick-explain-bar" id="stQuickExplainBar">
-          <img class="st-quick-thumb" id="stQuickThumbImg" src="assets/concept_gallery/addons_80/unique_cards/bot_abil_04.jpg" alt="" onerror="this.src='assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg'" />
+          <img class="st-quick-thumb" id="stQuickThumbImg" src="assets/concept_gallery/battlebots_topdown_3d/skill_tokens/combat_c0_n0.jpg?v=arcade2" alt="" onerror="this.src='assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg'" />
           <div class="st-quick-info">
             <div class="st-quick-top-row">
               <span class="st-quick-name" id="stQuickName">🪝 MAGNETIC WINCH PULL</span>
@@ -6036,6 +6057,7 @@
         <div class="st-insp-title" id="stInspTitle">🪝 MAGNETIC WINCH PULL</div>
         <div class="st-insp-preview-box">
           <img id="stInspPreviewImg" src="assets/concept_gallery/addons_80/unique_cards/bot_abil_04.jpg" alt="" onerror="this.src='assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg'" />
+          <img class="st-insp-token-coin" id="stInspTokenCoinImg" src="assets/concept_gallery/battlebots_topdown_3d/skill_tokens/combat_c0_n0.jpg?v=arcade2" alt="" onerror="this.src='assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg'" />
           <canvas id="stSkillDemoCanvas" width="380" height="205"></canvas>
           <div class="st-insp-preview-badge">
             <span id="stInspBranchTag">TECHNIQUE · TIER 1</span>
@@ -8467,30 +8489,33 @@
       const nIdx = m ? Number(m[3]) : 0; // 0..8
       const pad2 = (num) => String(num).padStart(2, "0");
 
-      let img = SKILL_CUSTOM_IMAGE_OVERRIDES[node.id] || "";
-      if (!img) {
+      const tokenImg = `assets/concept_gallery/battlebots_topdown_3d/skill_tokens/${node.id || "combat_c0_n0"}.jpg?v=arcade2`;
+
+      let cardImg = SKILL_CUSTOM_IMAGE_OVERRIDES[node.id] || "";
+      if (!cardImg) {
         if (tabKey === "combat") {
-          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(1 + nIdx)}.jpg`;
-          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/rng_${pad2(1 + nIdx)}.jpg`;
-          else img = `assets/concept_gallery/addons_80/unique_cards/wpn_${pad2(1 + nIdx)}.jpg`;
+          if (cIdx === 0) cardImg = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(1 + nIdx)}.jpg`;
+          else if (cIdx === 1) cardImg = `assets/concept_gallery/addons_80/unique_cards/rng_${pad2(1 + nIdx)}.jpg`;
+          else cardImg = `assets/concept_gallery/addons_80/unique_cards/wpn_${pad2(1 + nIdx)}.jpg`;
         } else if (tabKey === "speed") {
-          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/tire_${pad2(1 + nIdx)}.jpg`;
-          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/tire_${pad2(11 + nIdx)}.jpg`;
-          else img = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(10 + nIdx)}.jpg`;
+          if (cIdx === 0) cardImg = `assets/concept_gallery/addons_80/unique_cards/tire_${pad2(1 + nIdx)}.jpg`;
+          else if (cIdx === 1) cardImg = `assets/concept_gallery/addons_80/unique_cards/tire_${pad2(11 + nIdx)}.jpg`;
+          else cardImg = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(10 + nIdx)}.jpg`;
         } else if (tabKey === "power") {
-          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/wpn_${pad2(10 + nIdx)}.jpg`;
-          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/wpn_${pad2(21 + nIdx)}.jpg`;
-          else img = `assets/concept_gallery/addons_80/unique_cards/wpn_abil_${pad2(1 + nIdx)}.jpg`;
+          if (cIdx === 0) cardImg = `assets/concept_gallery/addons_80/unique_cards/wpn_${pad2(10 + nIdx)}.jpg`;
+          else if (cIdx === 1) cardImg = `assets/concept_gallery/addons_80/unique_cards/wpn_${pad2(21 + nIdx)}.jpg`;
+          else cardImg = `assets/concept_gallery/addons_80/unique_cards/wpn_abil_${pad2(1 + nIdx)}.jpg`;
         } else if (tabKey === "health") {
-          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(21 + nIdx)}.jpg`;
-          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(31 + nIdx)}.jpg`;
-          else img = `assets/concept_gallery/addons_80/unique_cards/tire_${pad2(21 + nIdx)}.jpg`;
+          if (cIdx === 0) cardImg = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(21 + nIdx)}.jpg`;
+          else if (cIdx === 1) cardImg = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(31 + nIdx)}.jpg`;
+          else cardImg = `assets/concept_gallery/addons_80/unique_cards/tire_${pad2(21 + nIdx)}.jpg`;
         } else {
-          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/wpn_abil_${pad2(11 + nIdx)}.jpg`;
-          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/wpn_abil_${pad2(21 + nIdx)}.jpg`;
-          else img = "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_10_jackpot_fortune.jpg";
+          if (cIdx === 0) cardImg = `assets/concept_gallery/addons_80/unique_cards/wpn_abil_${pad2(11 + nIdx)}.jpg`;
+          else if (cIdx === 1) cardImg = `assets/concept_gallery/addons_80/unique_cards/wpn_abil_${pad2(21 + nIdx)}.jpg`;
+          else cardImg = "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_10_jackpot_fortune.jpg";
         }
       }
+      const img = tokenImg;
 
       let triggerTag = "🛡️ ALWAYS ACTIVE IN BATTLE";
       let howItWorks = "";
@@ -8519,7 +8544,7 @@
         howItWorks = `<strong>HOW IT WORKS:</strong> Multiplies the 💎 Diamonds and ⚡ XP you earn after every battle AND amplifies mid-round Upgrade Molecule supply drops inside the arena!`;
       }
 
-      return { img, triggerTag, howItWorks, tabKey, cIdx, nIdx };
+      return { img, tokenImg, cardImg, triggerTag, howItWorks, tabKey, cIdx, nIdx };
     }
 
     function computeSkillTreeBonuses() {
@@ -8625,7 +8650,7 @@
       const qStats = document.getElementById("stQuickStatsLine");
       if (qThumb) {
         qThumb.style.display = "block";
-        qThumb.src = vSpec.img;
+        qThumb.src = vSpec.tokenImg || vSpec.img;
       }
       if (qName) qName.textContent = `${nd.icon} ${nd.name}`;
       if (qBranch) qBranch.textContent = `${selInfo.col.title} · TIER ${nd.row + 1} · RANK ${curRank}/5`;
@@ -8637,6 +8662,7 @@
       const inspEl = document.getElementById("stRightInspector");
       const inspTitle = document.getElementById("stInspTitle");
       const inspImg = document.getElementById("stInspPreviewImg");
+      const inspTokenCoin = document.getElementById("stInspTokenCoinImg");
       const inspBranch = document.getElementById("stInspBranchTag");
       const inspRank = document.getElementById("stInspRankBadge");
       const inspTier = document.getElementById("stInspTierName");
@@ -8651,7 +8677,11 @@
       if (inspTitle) inspTitle.textContent = `${nd.icon} ${nd.name}`;
       if (inspImg) {
         inspImg.style.display = "block";
-        inspImg.src = vSpec.img;
+        inspImg.src = vSpec.cardImg || vSpec.img;
+      }
+      if (inspTokenCoin) {
+        inspTokenCoin.style.display = "block";
+        inspTokenCoin.src = vSpec.tokenImg || vSpec.img;
       }
       if (inspBranch) inspBranch.textContent = `${selInfo.col.title} · TIER ${nd.row + 1}`;
       if (inspRank) {
