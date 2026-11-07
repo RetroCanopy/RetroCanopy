@@ -3038,13 +3038,14 @@
 
       /* Mobile Arena & HUD */
       .arena-wrapper {
-        min-height: 300px;
+        min-height: 0;
         border-radius: 16px !important;
       }
       #battleCanvas {
         width: 100%;
-        height: 300px;
-        object-fit: cover;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        object-fit: contain;
       }
       .arena-hud {
         top: 6px !important;
@@ -3814,12 +3815,38 @@
         border: none !important;
         border-bottom: 2px solid rgba(56, 189, 248, 0.45) !important;
         position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        background: radial-gradient(circle at 50% 50%, #101626 0%, #05070e 100%) !important;
+      }
+      body.mobile-play-active .arena-hud {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        padding: 8px 8px 4px !important;
+        width: 100% !important;
+        flex-shrink: 0 !important;
       }
       body.mobile-play-active #battleCanvas {
         display: block !important;
         width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
+        height: auto !important;
+        max-height: 100% !important;
+        aspect-ratio: 16 / 9 !important;
+        object-fit: contain !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+      }
+      body.mobile-play-active #manualControlHud {
+        position: relative !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        padding: 6px 14px 10px !important;
+        width: 100% !important;
+        flex-shrink: 0 !important;
       }
       body.mobile-play-active #pitBroadcastDeck {
         flex: 0 0 132px !important;
