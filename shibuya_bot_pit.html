@@ -5366,7 +5366,7 @@
           <span class="lbl">PREV</span>
         </button>
 
-        <div class="fs-map-viewport" id="fsMapViewport">
+        <div class="fs-map-viewport" id="fsMapViewport" onclick="confirmPreBattleAndLaunch()" style="cursor:pointer;" title="Click to Select Arena &amp; Start Battle!">
           <img id="fsMapArtImg" src="assets/concept_gallery/battlebots_topdown_3d/01_arena_battle_wide.jpg" alt="Selected Arena Map Preview" />
           <div class="fs-map-viewport-top-overlays">
             <span class="fs-map-counter-pill" id="fsMapCounterPill">ARENA 1 OF 7 · PVP &amp; CPU READY</span>
@@ -6826,7 +6826,11 @@
       livePvp.announceIntervalId = setInterval(() => {
         if (!livePvp.searching || livePvp.activeRoomId) return;
         const elapsedSec = Math.floor((Date.now() - livePvp.searchStartMs) / 1000);
-        const remainSec = Math.max(0, 12 - elapsedSec);
+        const remainSec = Math.max(0, 3 - elapsedSec);
+        if (elapsedSec >= 3) {
+          fallbackToCloudPilotPvp();
+          return;
+        }
         if (statusTxt) {
           statusTxt.textContent = `📡 SEARCHING LIVE ARENA QUEUE... (${remainSec}s)`;
         }
@@ -7906,6 +7910,9 @@
     }
 
     function openFullScreenMapSelector() {
+      state.preBattleStep = "map";
+      const overlay = document.getElementById("battleOverlay");
+      if (overlay) overlay.classList.remove("hidden");
       const fsModal = document.getElementById("fullScreenMapModal");
       if (fsModal) {
         fsModal.classList.add("active");
@@ -8007,13 +8014,9 @@
     function confirmPreBattleAndLaunch() {
       const fsModal = document.getElementById("fullScreenMapModal");
       if (fsModal) fsModal.classList.remove("active");
+      renderArenaMapSelector();
       if (typeof sim !== "undefined" && !sim.running && typeof setupStagingArena === "function") {
         setupStagingArena();
-      }
-      // If opened directly from the home/mode screen just to pick a map, save selection and return to mode screen
-      if (state.preBattleStep !== "map") {
-        renderArenaMapSelector();
-        return;
       }
       if (!ensurePilotLoggedIn()) return;
       state.postMatchSummary = null;
@@ -8107,16 +8110,12 @@
       if (fsDots) {
         fsDots.innerHTML = maps.map(m => {
           const isAct = m.id === activeMap.id;
-          return `<button type="button" class="fs-map-dot-chip ${isAct ? 'active' : ''}" style="${isAct ? `border-color:${m.accent};color:#fff;background:${m.accent}33;` : ''}" onclick="selectArenaMap('${m.id}', false)">${m.badge} · ${m.shortName ? m.shortName.replace(/^[^\s]+\s*/, '') : m.name}</button>`;
+          return `<button type="button" class="fs-map-dot-chip ${isAct ? 'active' : ''}" style="${isAct ? `border-color:${m.accent};color:#fff;background:${m.accent}33;` : ''}" onclick="selectArenaMap('${m.id}', true)">${m.badge} · ${m.shortName ? m.shortName.replace(/^[^\s]+\s*/, '') : m.name}</button>`;
         }).join("");
       }
       const fsConfirm = document.getElementById("fsMapConfirmBtn");
       if (fsConfirm) {
-        if (state.preBattleStep === "map") {
-          fsConfirm.textContent = `✅ SELECT ${activeMap.badge} & START ${isPvp ? 'PVP' : 'CPU'} BATTLE!`;
-        } else {
-          fsConfirm.textContent = `✅ SELECT ${activeMap.badge} (${activeMap.name})`;
-        }
+        fsConfirm.textContent = `✅ SELECT ${activeMap.badge} & START ${isPvp ? 'PVP' : 'CPU'} BATTLE!`;
       }
 
       // 2. Populate Inline Map Preview & Home Map Button
@@ -8532,11 +8531,12 @@
       ];
     }
 
-    function triggerCameraFocus(x, y, zoom = 1.15, holdTicks = 24, hitStopTicks = 4) {
-      sim.camTargetX = Math.max(520, Math.min(1080, x));
-      sim.camTargetY = Math.max(300, Math.min(600, y));
-      sim.camTargetZoom = Math.max(sim.camTargetZoom, zoom);
-      sim.camHoldTimer = Math.max(sim.camHoldTimer, holdTicks);
+    function triggerCameraFocus(x, y, zoom = 1.0, holdTicks = 12, hitStopTicks = 4) {
+      // Lock camera centered on the 1600x900 arena so the map never shifts off-screen or distorts
+      sim.camTargetX = 800;
+      sim.camTargetY = 450;
+      sim.camTargetZoom = 1.0;
+      sim.camHoldTimer = 0;
       if (hitStopTicks > 0) {
         sim.hitStop = Math.max(sim.hitStop, hitStopTicks);
       }
@@ -9948,17 +9948,14 @@
         return;
       }
 
-      // Smooth Dynamic Camera Interpolation
-      if (sim.camHoldTimer > 0) {
-        sim.camHoldTimer--;
-      } else {
-        sim.camTargetZoom = 1.0;
-        sim.camTargetX = 800;
-        sim.camTargetY = 450;
-      }
-      sim.camZoom += (sim.camTargetZoom - sim.camZoom) * 0.14;
-      sim.camX += (sim.camTargetX - sim.camX) * 0.14;
-      sim.camY += (sim.camTargetY - sim.camY) * 0.14;
+      // Keep camera locked at 1600x900 center (800, 450) with 1.0 zoom so the map never shifts or distorts
+      sim.camHoldTimer = 0;
+      sim.camTargetZoom = 1.0;
+      sim.camTargetX = 800;
+      sim.camTargetY = 450;
+      sim.camZoom = 1.0;
+      sim.camX = 800;
+      sim.camY = 450;
 
       // Hit-Stop Freeze Frame (pauses physics for 3-5 frames on massive impacts!)
       if (sim.hitStop > 0) {
@@ -11707,27 +11704,24 @@
 
       renderLeftPedestalPreview();
 
-      ctx.save();
-      // Dynamic Camera Zoom & Impact Pan + Screen Shake
-      const zoom = sim.camZoom || 1.0;
-      const cx = sim.camX || 800;
-      const cy = sim.camY || 450;
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.scale(zoom, zoom);
-      ctx.translate(-cx, -cy);
+      // Always reset transform and clear the entire 1600x900 canvas to prevent edge smearing/distortion
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#08060e";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      if (sim.shake > 0.4) {
-        ctx.translate((Math.random() - 0.5) * sim.shake, (Math.random() - 0.5) * sim.shake);
-      }
+      ctx.save();
 
       const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
       const bgSkinUrl = (activeMap && activeMap.conceptArt) ? activeMap.conceptArt : ARENA_10_BG_SKIN;
       const arenaImg = getImg(bgSkinUrl);
       if (arenaImg && arenaImg.complete && arenaImg.naturalWidth > 0) {
         ctx.drawImage(arenaImg, 0, 0, canvas.width, canvas.height);
-      } else {
-        ctx.fillStyle = "#08060e";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      if (sim.shake > 0.4) {
+        const clampedShake = Math.min(4.0, sim.shake * 0.35);
+        ctx.translate((Math.random() - 0.5) * clampedShake, (Math.random() - 0.5) * clampedShake);
       }
 
       if (activeMap && activeMap.id !== "map_01_furnace") {
