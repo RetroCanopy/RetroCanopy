@@ -3542,19 +3542,19 @@
       filter: brightness(1.18);
     }
     .btn-manual-action.boost-btn {
-      width: 68px;
-      height: 68px;
+      width: 84px;
+      height: 84px;
       background: radial-gradient(circle at 35% 28%, #7dd3fc 0%, #0284c7 65%, #0369a1 100%);
       border: 2.5px solid #bae6fd;
       color: #041019;
       box-shadow:
         inset 0 2px 3px rgba(255, 255, 255, 0.6),
         0 6px 18px rgba(0, 0, 0, 0.85),
-        0 0 16px rgba(56, 189, 248, 0.45);
+        0 0 18px rgba(56, 189, 248, 0.55);
     }
     .btn-manual-action.shoot-btn {
-      width: 88px;
-      height: 88px;
+      width: 82px;
+      height: 82px;
       background: radial-gradient(circle at 35% 28%, #fde047 0%, #f97316 60%, #e11d48 100%);
       border: 2.5px solid #fef08a;
       color: #090612;
@@ -3569,10 +3569,10 @@
       z-index: 2;
     }
     .btn-manual-action.boost-btn .act-icon {
-      font-size: 0.95rem;
+      font-size: 1.12rem;
     }
     .btn-manual-action .act-lbl {
-      font-size: 0.56rem;
+      font-size: 0.54rem;
       letter-spacing: 0.5px;
       margin-top: 2px;
       z-index: 2;
@@ -3597,6 +3597,285 @@
       pointer-events: none;
       z-index: 1;
       transition: height 0.06s linear;
+    }
+
+    /* Mobile Play Mode Helper Buttons (Hidden on Desktop) */
+    .mob-play-header-actions {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .mob-play-header-btn {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      color: #e2e8f0;
+      border-radius: 7px;
+      padding: 3px 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.50rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .mob-play-header-btn.garage {
+      background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+      border-color: #fde047;
+      color: #090612;
+    }
+    .btn-mobile-return-garage {
+      display: none;
+      width: 100%;
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border: 1.5px solid rgba(251, 191, 36, 0.55);
+      color: #fde047;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 900;
+      padding: 9px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      letter-spacing: 0.6px;
+    }
+
+    /* =========================================================================
+       CLEAN, UNCLUTTERED UI OVERHAUL (DESKTOP & MOBILE APP)
+       Eliminates duplicate toolbars, noisy HUD sub-rows, and crowded pill walls
+       ========================================================================= */
+    /* 1. Streamline Top Pilot Bar (from 18 pills down to 6 clean essentials) */
+    .top-pilot-bar a[href="index.html"],
+    #pilotRecordDisplay,
+    #pilotXpDisplay,
+    #cloudSyncBadge,
+    .top-pilot-bar button[onclick="openBuyDiamondsModal()"],
+    .top-pilot-bar .mode-switcher {
+      display: none !important;
+    }
+    .top-pilot-bar {
+      padding: 8px 14px !important;
+      margin-bottom: 12px !important;
+      gap: 10px !important;
+    }
+    .pilot-id-cluster {
+      gap: 8px !important;
+    }
+
+    /* 2. Streamline Left Bot Garage Card (focus on 3D Bot + 6 Upgrade Slots + Shop) */
+    .preset-strip,
+    #garageQuickSellStrip,
+    #sideBattleBtn {
+      display: none !important;
+    }
+    .player-sidebar {
+      gap: 12px !important;
+      padding: 16px !important;
+    }
+    .base-stats-bar {
+      padding: 8px !important;
+      gap: 6px !important;
+    }
+    .stat-bonus {
+      display: none !important;
+    }
+
+    /* 3. Remove Redundant Map/Matchmaking Header Bar above the Arena */
+    .map-level-bar {
+      display: none !important;
+    }
+
+    /* 4. Sleek, Uncluttered In-Game Arena HUD Fighter Bars */
+    .hud-parts-row,
+    .hud-modules-row,
+    .stamina-row,
+    .center-clock .tag {
+      display: none !important;
+    }
+    .fighter-bar-card {
+      padding: 7px 12px !important;
+      border-radius: 11px !important;
+    }
+    .hp-track {
+      height: 10px !important;
+      margin-top: 4px !important;
+    }
+    .stamina-track {
+      height: 4px !important;
+      margin-top: 4px !important;
+    }
+    .center-clock {
+      padding: 5px 12px !important;
+      min-width: 110px !important;
+    }
+
+    /* 5. Clean Pre-Fight Match Card & Bottom Broadcast Deck */
+    .arcade-match-card {
+      max-width: 520px !important;
+      padding: 18px 20px !important;
+      gap: 10px !important;
+    }
+    .wager-pot-summary {
+      display: none !important;
+    }
+    .pit-broadcast-deck {
+      max-height: 185px !important;
+      gap: 12px !important;
+    }
+    .broadcast-card {
+      min-height: 165px !important;
+      max-height: 185px !important;
+    }
+    .chat-emote-strip {
+      display: none !important;
+    }
+    .mobile-bottom-nav {
+      display: none !important;
+    }
+
+    /* =========================================================================
+       MOBILE TWO-STAGE SCREEN FLOW (<= 900px):
+       1) INITIAL OPEN (`body:not(.mobile-play-active)`):
+          Show EVERYTHING except the Play Screen (`#battleCanvas`, `.arena-hud`, `#manualControlHud` hidden).
+       2) ONCE PLAYING (`body.mobile-play-active`):
+          Play Screen (`.arena-wrapper`) fills the screen + compact Small Chat Area at the bottom!
+       ========================================================================= */
+    @media (max-width: 900px) {
+      body {
+        padding: 8px 10px 24px !important;
+      }
+      /* STATE 1: Initial Open on Mobile — Hide Play Screen Canvas/HUD, Keep Garage, Wager Card & Lobby */
+      body:not(.mobile-play-active) #battleCanvas,
+      body:not(.mobile-play-active) .arena-hud,
+      body:not(.mobile-play-active) #manualControlHud,
+      body:not(.mobile-play-active) #spectatorTopBanner {
+        display: none !important;
+      }
+      body:not(.mobile-play-active) .arena-wrapper {
+        min-height: 0 !important;
+        height: auto !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+      body:not(.mobile-play-active) #battleOverlay {
+        position: static !important;
+        inset: auto !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        padding: 0 !important;
+        display: flex !important;
+      }
+      body:not(.mobile-play-active) .arcade-match-card {
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+
+      /* STATE 2: Active Play Mode on Mobile — Play Screen Fills Screen + Small Chat Area */
+      body.mobile-play-active {
+        padding: 0 !important;
+        margin: 0 !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        overflow: hidden !important;
+      }
+      body.mobile-play-active .top-pilot-bar,
+      body.mobile-play-active #rigSection,
+      body.mobile-play-active .map-level-bar,
+      body.mobile-play-active .mobile-bottom-nav,
+      body.mobile-play-active #liveFightsBroadcastCard {
+        display: none !important;
+      }
+      body.mobile-play-active .page-layout {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+      }
+      body.mobile-play-active #arenaSection {
+        width: 100% !important;
+        height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+      }
+      body.mobile-play-active .arena-wrapper {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        height: auto !important;
+        width: 100% !important;
+        border-radius: 0 !important;
+        border: none !important;
+        border-bottom: 2px solid rgba(56, 189, 248, 0.45) !important;
+        position: relative !important;
+      }
+      body.mobile-play-active #battleCanvas {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+      }
+      body.mobile-play-active #pitBroadcastDeck {
+        flex: 0 0 132px !important;
+        height: 132px !important;
+        max-height: 132px !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      body.mobile-play-active #pitChatBroadcastCard {
+        flex: 1 1 auto !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        border-radius: 0 !important;
+        border: none !important;
+        background: #070b14 !important;
+      }
+      body.mobile-play-active #pitChatBroadcastCard .broadcast-card-header {
+        padding: 4px 10px !important;
+        font-size: 0.56rem !important;
+      }
+      body.mobile-play-active #pitChatOnlineBadge {
+        display: none !important;
+      }
+      body.mobile-play-active .mob-play-header-actions {
+        display: inline-flex !important;
+      }
+      body.mobile-play-active .btn-mobile-return-garage {
+        display: block !important;
+      }
+      body.mobile-play-active #pitChatFeed {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        padding: 4px 10px !important;
+        gap: 3px !important;
+        font-size: 0.66rem !important;
+      }
+      body.mobile-play-active .pit-chat-msg {
+        padding: 2px 6px !important;
+        font-size: 0.64rem !important;
+      }
+      body.mobile-play-active .pit-chat-footer {
+        padding: 4px 8px !important;
+        gap: 0 !important;
+      }
+      body.mobile-play-active .chat-input {
+        padding: 5px 9px !important;
+        font-size: 0.72rem !important;
+      }
+      body.mobile-play-active .btn-chat-send {
+        padding: 5px 11px !important;
+        font-size: 0.56rem !important;
+      }
     }
 
     @media (max-width: 640px) {
@@ -3636,31 +3915,21 @@
         gap: 7px;
       }
       .btn-manual-action.boost-btn {
-        width: 56px;
-        height: 56px;
+        width: 74px;
+        height: 74px;
       }
       .btn-manual-action.shoot-btn {
         width: 72px;
         height: 72px;
       }
       .btn-manual-action .act-icon {
-        font-size: 0.96rem;
+        font-size: 1.02rem;
       }
       .btn-manual-action .act-lbl {
-        font-size: 0.48rem;
+        font-size: 0.50rem;
       }
       .btn-manual-action .act-sub {
         font-size: 0.36rem;
-      }
-      .hud-parts-row {
-        gap: 2px !important;
-        margin-top: 2px !important;
-      }
-      .hud-part-pill {
-        padding: 1px 2px !important;
-        font-size: 0.34rem !important;
-        border-radius: 3px !important;
-        letter-spacing: 0 !important;
       }
     }
 
@@ -3938,21 +4207,21 @@
           </div>
 
           <div class="manual-ctrl-hint-pill" id="manualCtrlHintPill">
-            🎮 CONTROLLED MODE: WASD / ARROWS DRIVE · SPACE / CLICK SHOOT · SHIFT RAM BOOST
+            🎮 CONTROLLED MODE: WASD / ARROWS STEER · SPACE / CLICK / SHIFT TO CHARGE &amp; HIT ENEMY BOT
           </div>
 
           <div class="manual-action-cluster">
-            <button type="button" class="btn-manual-action boost-btn" id="btnManualBoost" title="Ram / Boost Dash (Shift or E)">
+            <button type="button" class="btn-manual-action boost-btn" id="btnManualBoost" title="Charge / Ram Enemy Bot (Space, Shift, E, or Tap)">
               <div class="btn-manual-cd-bar" id="manualBoostCdBar"></div>
               <span class="act-icon">⚡</span>
-              <span class="act-lbl">RAM</span>
-              <span class="act-sub" id="manualBoostSubTxt">READY</span>
+              <span class="act-lbl">CHARGE</span>
+              <span class="act-sub" id="manualBoostSubTxt">HIT BOT</span>
             </button>
-            <button type="button" class="btn-manual-action shoot-btn" id="btnManualShoot" title="Fire Weapon / Twin Plasma Blaster (Space, F, or Tap/Hold)">
+            <button type="button" class="btn-manual-action shoot-btn" id="btnManualShoot" style="display:none;" title="Fire Equipped Long-Range Weapon (Space or F)">
               <div class="btn-manual-cd-bar" id="manualShootCdBar"></div>
               <span class="act-icon">🔥</span>
               <span class="act-lbl">SHOOT</span>
-              <span class="act-sub" id="manualShootSubTxt">PLASMA</span>
+              <span class="act-sub" id="manualShootSubTxt">WEAPON</span>
             </button>
           </div>
         </div>
@@ -4019,6 +4288,9 @@
             <button class="btn-arena-battle" id="overlayRematchBtn" style="display:none;" onclick="triggerBattle()">
               ⚔️ FIGHT NOW
             </button>
+            <button type="button" class="btn-mobile-return-garage" onclick="exitMobilePlayMode()">
+              🔧 BACK TO GARAGE &amp; UPGRADE SHOP
+            </button>
           </div>
         </div>
 
@@ -4034,7 +4306,7 @@
       <!-- BOTTOM BROADCAST DECK: LIVE FIGHTS SPECTATOR QUEUE + SHIBUYA PIT LIVE CHAT -->
       <section class="pit-broadcast-deck" id="pitBroadcastDeck">
         <!-- LEFT CARD: LIVE FIGHTS HAPPENING NOW -->
-        <div class="broadcast-card">
+        <div class="broadcast-card" id="liveFightsBroadcastCard">
           <div class="broadcast-card-header">
             <div class="broadcast-header-left">
               <span class="spec-live-dot"></span>
@@ -4048,11 +4320,15 @@
         </div>
 
         <!-- RIGHT CARD: SHIBUYA PIT LIVE CHAT -->
-        <div class="broadcast-card">
+        <div class="broadcast-card" id="pitChatBroadcastCard">
           <div class="broadcast-card-header">
             <div class="broadcast-header-left">
               <span class="pilot-status-dot"></span>
               <span>💬 SHIBUYA PIT LIVE CHAT</span>
+            </div>
+            <div class="mob-play-header-actions">
+              <button type="button" class="mob-play-header-btn" id="mobPlayCtrlToggleBtn" onclick="setControlMode(state.controlMode === 'controlled' ? 'simulated' : 'controlled')">🎮 CTRL</button>
+              <button type="button" class="mob-play-header-btn garage" onclick="exitMobilePlayMode()">🔧 GARAGE</button>
             </div>
             <span class="broadcast-count-pill chat-online" id="pitChatOnlineBadge">🟢 PIT ONLINE</span>
           </div>
@@ -5368,6 +5644,9 @@
       const choiceRow = document.getElementById("overlayChoiceRow");
       if (qBox) qBox.classList.remove("active");
       if (choiceRow) choiceRow.style.display = "grid";
+      if (!sim.running && typeof exitMobilePlayMode === "function") {
+        exitMobilePlayMode();
+      }
     }
 
     function fallbackToCloudPilotPvp() {
@@ -5500,6 +5779,7 @@
 
       sim.startedInjuredGrit = qualifiesForUnderdogGritBonus(state.partIntegrity);
       sim.running = true;
+      if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
       BotPitAudio.playBell(2);
       document.getElementById("battleOverlay").classList.add("hidden");
       if (isPlayerBotInjured()) {
@@ -5803,12 +6083,40 @@
       setupStagingArena();
     }
 
+    function enterMobilePlayMode() {
+      document.body.classList.add("mobile-play-active");
+      try {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      } catch (_) {
+        window.scrollTo(0, 0);
+      }
+      if (typeof syncControlModeUI === "function") syncControlModeUI();
+    }
+
+    function exitMobilePlayMode() {
+      document.body.classList.remove("mobile-play-active");
+      if (sim.liveRole === "spectator" || sim.liveRole === "spectator_ai") {
+        leaveSpectatorMode();
+        return;
+      }
+      if (sim.running && !sim.isLiveMultiplayer) {
+        sim.running = false;
+        setupStagingArena();
+      }
+      try {
+        document.getElementById("rigSection").scrollIntoView({ behavior: "smooth" });
+      } catch (_) {}
+    }
+
     function mobileNavJump(target) {
       for (const id of ["mobNavRig", "mobNavShop", "mobNavCampaign", "mobNavPvp"]) {
         const el = document.getElementById(id);
         if (el) el.classList.remove("active");
       }
       if (target === "rig") {
+        if (document.body.classList.contains("mobile-play-active")) {
+          exitMobilePlayMode();
+        }
         document.getElementById("mobNavRig").classList.add("active");
         document.getElementById("rigSection").scrollIntoView({ behavior: "smooth" });
       } else if (target === "cpu" || target === "campaign") {
@@ -6943,6 +7251,7 @@
         updatePlayerUI();
       }
       sim.running = true;
+      if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
       document.getElementById("battleOverlay").classList.add("hidden");
       if (stake > 0) {
         const potTotal = stake * 2;
@@ -7332,37 +7641,50 @@
       while (tDiff < -Math.PI) tDiff += Math.PI * 2;
       bot.turretAngle += tDiff * (isManualBot ? 0.32 : 0.18);
 
-      // Manual Ram / Boost Dash Lunge (Shift / E / Mobile ⚡ RAM Button)
+      // Manual Charge / Ram Attack Lunge (Space / Click / Shift / E / Mobile ⚡ CHARGE Button)
       if (isManualBot && manualInp && manualInp.boostQueued) {
         manualInp.boostQueued = false;
-        if (bot.empStunTimer <= 0 && bot.dodgeCd <= 0 && bot.stamina >= 12) {
+        if (bot.empStunTimer <= 0 && bot.dodgeCd <= 0 && bot.stamina >= 8) {
           const inputMag = Math.hypot(manualInp.moveX || 0, manualInp.moveY || 0);
-          const ramAng = inputMag > 0.12
-            ? Math.atan2(manualInp.moveY, manualInp.moveX)
-            : (Math.hypot(other.x - bot.x, other.y - bot.y) > 1 ? Math.atan2(other.y - bot.y, other.x - bot.x) : bot.angle);
+          const toEnemyAng = Math.hypot(other.x - bot.x, other.y - bot.y) > 1
+            ? Math.atan2(other.y - bot.y, other.x - bot.x)
+            : bot.angle;
+          let ramAng = toEnemyAng;
+          if (inputMag > 0.14) {
+            const steerAng = Math.atan2(manualInp.moveY, manualInp.moveX);
+            let diff = toEnemyAng - steerAng;
+            while (diff > Math.PI) diff -= Math.PI * 2;
+            while (diff < -Math.PI) diff += Math.PI * 2;
+            // Subtle target-assist toward enemy bot if steering roughly toward them
+            ramAng = Math.abs(diff) < 0.65 ? steerAng + diff * 0.45 : steerAng;
+          }
           bot.angle = ramAng;
           bot.chargeAngle = ramAng;
           bot.abilityState = "charging";
-          bot.abilityTimer = 24;
-          bot.dodgeTimer = 16;
+          bot.abilityTimer = 26;
+          bot.dodgeTimer = 18;
           bot.dodgeAngle = ramAng;
-          bot.dodgeCd = 58;
-          bot.vx += Math.cos(ramAng) * 13.5;
-          bot.vy += Math.sin(ramAng) * 13.5;
-          drainBotStamina(bot, 11);
-          emit3DSparks(bot.x - Math.cos(ramAng) * 34, bot.y - Math.sin(ramAng) * 34, "#38bdf8", 16, 7.5);
-          addPulseRing(bot.x, bot.y, 105, "#38bdf8");
+          bot.dodgeCd = 36;
+          bot.vx += Math.cos(ramAng) * 14.8;
+          bot.vy += Math.sin(ramAng) * 14.8;
+          drainBotStamina(bot, 8);
+          emit3DSparks(bot.x - Math.cos(ramAng) * 34, bot.y - Math.sin(ramAng) * 34, "#38bdf8", 18, 8.0);
+          addPulseRing(bot.x, bot.y, 115, "#38bdf8");
           BotPitAudio.playSawBuzz();
-          addFloatText(bot.x, bot.y - 54, "⚡🚀 NITRO RAM BOOST!", "#38bdf8");
+          addFloatText(bot.x, bot.y - 54, "⚡💥 CHARGE ATTACK!", "#38bdf8");
         }
       }
 
-      // Long-Range Weapon 2 & Built-In Twin Plasma Blaster Firing Logic (Autonomous in SIMULATED, Player-Triggered in CONTROLLED)
+      // Long-Range Weapon 2 Firing Logic — ONLY fires if a Long-Range Weapon (wpn2) is actually equipped!
+      // Starting off (no wpn2 equipped), Controlled bots NEVER shoot anything — they only CHARGE to hit the other bot!
       const wpn2Id = bot.cp.loadout && bot.cp.loadout.wpn2;
       const rngKey = resolveMountKey(wpn2Id);
-      const wantShoot = isManualBot
-        ? Boolean(manualInp && (manualInp.shootHeld || manualInp.shootQueued))
-        : Boolean(rngKey && rngKey.startsWith("rng_") && dist > 110);
+      const hasRangedEquipped = Boolean(rngKey && rngKey.startsWith("rng_"));
+      const wantShoot = hasRangedEquipped && (
+        isManualBot
+          ? Boolean(manualInp && (manualInp.shootHeld || manualInp.shootQueued))
+          : Boolean(dist > 110)
+      );
 
       if (wantShoot && bot.empStunTimer <= 0 && bot.rangedCd <= 0) {
         if (manualInp) manualInp.shootQueued = false;
@@ -7463,30 +7785,6 @@
           bot.beamTimer = 38;
           BotPitAudio.playWeaponFire("laser");
           addFloatText(bot.x, bot.y - 54, "⚡ LASER OBLITERATOR!", "#ec4899");
-        } else if (isManualBot) {
-          // Built-in Twin Plasma Pulse Blaster (so every Controlled bot can always shoot!)
-          bot.maxRangedCd = 24;
-          bot.rangedCd = 24;
-          drainBotStamina(bot, 2.2);
-          sim.projectiles.push({
-            kind: "pulse",
-            owner: bot.team,
-            attacker: bot,
-            x: muzzleX, y: muzzleY,
-            vx: Math.cos(bot.turretAngle) * 19.5,
-            vy: Math.sin(bot.turretAngle) * 19.5,
-            angle: bot.turretAngle,
-            radius: 13,
-            dmg: 15,
-            life: 68,
-            bouncesLeft: 0
-          });
-          emit3DSparks(muzzleX, muzzleY, "#34d399", 10, 6.2);
-          BotPitAudio.playWeaponFire("rail");
-          if (!bot.lastPulseTextTick || sim.ticks - bot.lastPulseTextTick > 40) {
-            bot.lastPulseTextTick = sim.ticks;
-            addFloatText(bot.x, bot.y - 52, "🔫 PLASMA PULSE!", "#34d399");
-          }
         }
       }
 
@@ -8787,7 +9085,8 @@
           addFloatText(midX, midY - 48, "🌀⚡ SONIC SPINNER RICOCHET!", "#00f5ff");
           return;
         }
-        if (!sim.clashLock) {
+        const manualChargingHit = (isBotManuallyControlled(botA) && botA.abilityState === "charging") || (isBotManuallyControlled(botB) && botB.abilityState === "charging");
+        if (!sim.clashLock && !manualChargingHit) {
           sim.clashLock = {
             timer: 26,
             maxTimer: 26,
@@ -8806,8 +9105,10 @@
         }
       }
 
-      const aForce = botA.cp.baseStrikeDmg * (1 + aVelToward * 0.08) * (botA.abilityState === "charging" ? 1.55 : 1.0);
-      const bForce = botB.cp.baseStrikeDmg * (1 + bVelToward * 0.08) * (botB.abilityState === "charging" ? 1.55 : 1.0);
+      const aWasCharging = botA.abilityState === "charging";
+      const bWasCharging = botB.abilityState === "charging";
+      const aForce = botA.cp.baseStrikeDmg * (1 + aVelToward * 0.08) * (aWasCharging ? 1.65 : 1.0);
+      const bForce = botB.cp.baseStrikeDmg * (1 + bVelToward * 0.08) * (bWasCharging ? 1.65 : 1.0);
 
       const bGuard = botA.cp.has("wpn_08") ? botB.cp.frontGuardBlock * 0.5 : botB.cp.frontGuardBlock;
       const aGuard = botB.cp.has("wpn_08") ? botA.cp.frontGuardBlock * 0.5 : botA.cp.frontGuardBlock;
@@ -9886,6 +10187,7 @@
       sim.isLiveMultiplayer = true;
       sim.liveRole = "spectator";
       sim.running = true;
+      if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
 
       // Build the two bots matching the beacon's exact 6-slot loadouts
       const p1Prof = computeBotCombatProfile(beacon.p1BaseStats || BASE_STATS, normalizeLoadout(beacon.p1Loadout));
@@ -9975,6 +10277,7 @@
       if (watchEl) watchEl.textContent = `👁️ LIVE MAIN EVENT`;
 
       sim.running = true;
+      if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
       syncHudReadout();
       renderLiveFightsList();
     }
@@ -9992,6 +10295,7 @@
       sim.liveRole = null;
       sim.running = false;
       cleanupLiveRoomChannels();
+      document.body.classList.remove("mobile-play-active");
 
       const bannerEl = document.getElementById("spectatorTopBanner");
       if (bannerEl) bannerEl.classList.remove("active");
@@ -10898,6 +11202,7 @@
       const gHealBtn = document.getElementById("btnGarageHealAll");
 
       if (gBox && gGrid) {
+        gBox.style.display = healAllCost > 0 ? "flex" : "none";
         gBox.classList.toggle("injured-warning", anyDamaged && !anyCrippled);
         gBox.classList.toggle("crippled-danger", anyCrippled);
         gGrid.innerHTML = cardsHtml;
@@ -11146,6 +11451,12 @@
       return { desiredAngle: bot.angle, throttle: 0, turnMult: 1.0 };
     }
 
+    function hasEquippedRangedWeapon(loadoutObj = state.loadout) {
+      const wpn2Id = loadoutObj && loadoutObj.wpn2;
+      const rngKey = resolveMountKey(wpn2Id);
+      return Boolean(rngKey && rngKey.startsWith("rng_"));
+    }
+
     function getEquippedShootWeaponShortLabel() {
       const wpn2Id = state.loadout && state.loadout.wpn2;
       const rngKey = resolveMountKey(wpn2Id);
@@ -11154,7 +11465,7 @@
       if (rngKey === "rng_08") return "SAW-DISC";
       if (rngKey === "rng_13") return "MORTAR";
       if (rngKey === "rng_18") return "LASER";
-      return "PLASMA";
+      return "NONE";
     }
 
     function syncControlModeUI() {
@@ -11164,10 +11475,30 @@
       if (btnSim) btnSim.classList.toggle("active", !isCtrl);
       if (btnCtrl) btnCtrl.classList.toggle("active", isCtrl);
 
+      const mobToggle = document.getElementById("mobPlayCtrlToggleBtn");
+      if (mobToggle) {
+        mobToggle.textContent = isCtrl ? "🎮 CTRL" : "🤖 SIM";
+        mobToggle.style.borderColor = isCtrl ? "rgba(52, 211, 153, 0.75)" : "rgba(56, 189, 248, 0.5)";
+        mobToggle.style.color = isCtrl ? "#34d399" : "#e2e8f0";
+      }
+
       const hud = document.getElementById("manualControlHud");
       if (hud) {
         const showHud = isCtrl && sim.liveRole !== "spectator" && sim.liveRole !== "spectator_ai";
         hud.classList.toggle("active", showHud);
+      }
+
+      const hasRanged = hasEquippedRangedWeapon();
+      const shootBtn = document.getElementById("btnManualShoot");
+      if (shootBtn) {
+        shootBtn.style.display = hasRanged ? "flex" : "none";
+      }
+
+      const hintPill = document.getElementById("manualCtrlHintPill");
+      if (hintPill) {
+        hintPill.textContent = hasRanged
+          ? "🎮 CONTROLLED MODE: WASD / ARROWS STEER · SHIFT CHARGE · SPACE / CLICK FIRE LONG-RANGE"
+          : "🎮 CONTROLLED MODE: WASD / ARROWS STEER · SPACE / CLICK / SHIFT TO CHARGE & HIT ENEMY BOT";
       }
 
       const shootSub = document.getElementById("manualShootSubTxt");
@@ -11202,7 +11533,7 @@
           addFloatText(
             pBot.x,
             pBot.y - 62,
-            nextMode === "controlled" ? "🎮 MANUAL CONTROL + SHOOTING ACTIVE!" : "🤖 AI AUTOPILOT SIMULATION ACTIVE!",
+            nextMode === "controlled" ? "🎮 MANUAL CONTROL: CHARGE TO HIT ENEMY BOT!" : "🤖 AI AUTOPILOT SIMULATION ACTIVE!",
             nextMode === "controlled" ? "#34d399" : "#38bdf8"
           );
         }
@@ -11219,24 +11550,26 @@
       const boostCdBar = document.getElementById("manualBoostCdBar");
       const boostSub = document.getElementById("manualBoostSubTxt");
 
-      const maxRcd = Math.max(1, pBot.maxRangedCd || 30);
-      const curRcd = Math.max(0, pBot.rangedCd || 0);
-      const rPct = Math.min(100, Math.round((curRcd / maxRcd) * 100));
-      if (shootCdBar) shootCdBar.style.height = `${rPct}%`;
-      if (shootSub) {
-        shootSub.textContent = curRcd > 0 ? `RELOAD` : getEquippedShootWeaponShortLabel();
+      if (hasEquippedRangedWeapon()) {
+        const maxRcd = Math.max(1, pBot.maxRangedCd || 30);
+        const curRcd = Math.max(0, pBot.rangedCd || 0);
+        const rPct = Math.min(100, Math.round((curRcd / maxRcd) * 100));
+        if (shootCdBar) shootCdBar.style.height = `${rPct}%`;
+        if (shootSub) {
+          shootSub.textContent = curRcd > 0 ? `RELOAD` : getEquippedShootWeaponShortLabel();
+        }
       }
 
       const curDcd = Math.max(0, pBot.dodgeCd || 0);
-      const dPct = Math.min(100, Math.round((curDcd / 58) * 100));
+      const dPct = Math.min(100, Math.round((curDcd / 36) * 100));
       if (boostCdBar) boostCdBar.style.height = `${dPct}%`;
       if (boostSub) {
-        boostSub.textContent = curDcd > 0 ? `${Math.ceil(curDcd / 60)}s` : "READY";
+        boostSub.textContent = curDcd > 0 ? `${Math.ceil(curDcd / 60)}s` : "HIT BOT";
       }
     }
 
     function initManualControlListeners() {
-      // 1. Desktop Keyboard Listeners (WASD / Arrow Keys + Space/F to Shoot + Shift/E to Ram Boost)
+      // 1. Desktop Keyboard Listeners (WASD / Arrow Keys + Space/Shift/E/F to Charge or Fire Equipped Long-Range)
       window.addEventListener("keydown", (ev) => {
         if (state.controlMode !== "controlled") return;
         const tag = (ev.target && ev.target.tagName) ? ev.target.tagName.toUpperCase() : "";
@@ -11249,10 +11582,20 @@
         else if (k === "a" || ev.key === "ArrowLeft") { manualInput.keys.left = true; handled = true; }
         else if (k === "d" || ev.key === "ArrowRight") { manualInput.keys.right = true; handled = true; }
         else if (ev.key === " " || k === "f") {
-          manualInput.shootHeld = true;
-          manualInput.shootQueued = true;
-          const sBtn = document.getElementById("btnManualShoot");
-          if (sBtn) sBtn.classList.add("pressed");
+          if (hasEquippedRangedWeapon()) {
+            manualInput.shootHeld = true;
+            manualInput.shootQueued = true;
+            const sBtn = document.getElementById("btnManualShoot");
+            if (sBtn) sBtn.classList.add("pressed");
+          } else {
+            // Starting off (no ranged weapon equipped): Space / F triggers CHARGE to hit the other bot!
+            manualInput.boostQueued = true;
+            const bBtn = document.getElementById("btnManualBoost");
+            if (bBtn) {
+              bBtn.classList.add("pressed");
+              setTimeout(() => bBtn.classList.remove("pressed"), 140);
+            }
+          }
           handled = true;
         } else if (ev.key === "Shift" || k === "e") {
           manualInput.boostQueued = true;
@@ -11336,13 +11679,17 @@
         });
       }
 
-      // 3. On-Screen Mobile/Desktop 🔥 SHOOT & ⚡ RAM Action Buttons
+      // 3. On-Screen Mobile/Desktop ⚡ CHARGE & 🔥 SHOOT Action Buttons
       const btnShoot = document.getElementById("btnManualShoot");
       if (btnShoot) {
         btnShoot.addEventListener("pointerdown", (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
           if (state.controlMode !== "controlled") setControlMode("controlled", true);
+          if (!hasEquippedRangedWeapon()) {
+            manualInput.boostQueued = true;
+            return;
+          }
           manualInput.shootHeld = true;
           manualInput.shootQueued = true;
           btnShoot.classList.add("pressed");
@@ -11369,7 +11716,7 @@
         });
       }
 
-      // 4. Arena Canvas Pointer Aim & Click-to-Shoot on Desktop
+      // 4. Arena Canvas Pointer Aim & Click-to-Charge (or Fire Equipped Long-Range) on Desktop
       if (canvas) {
         const updateCanvasWorldAim = (ev) => {
           const rect = canvas.getBoundingClientRect();
@@ -11392,8 +11739,12 @@
           if (state.controlMode !== "controlled" || !sim.running) return;
           if (ev.pointerType === "mouse") {
             updateCanvasWorldAim(ev);
-            manualInput.shootHeld = true;
-            manualInput.shootQueued = true;
+            if (hasEquippedRangedWeapon()) {
+              manualInput.shootHeld = true;
+              manualInput.shootQueued = true;
+            } else {
+              manualInput.boostQueued = true;
+            }
           }
         });
         window.addEventListener("pointerup", (ev) => {
