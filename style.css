@@ -7019,3 +7019,10 @@ body.rc-logged-in-home .hero-container.shifted-up {
     50% { opacity: 0.90; }
     100% { transform: translate3d(0, -44px, 0); opacity: 0.42; }
 }
+
+#tap-for-audio-prompt, .tap-for-audio-prompt {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
