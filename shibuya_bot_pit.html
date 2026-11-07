@@ -3410,7 +3410,7 @@
       z-index: 19;
       display: none;
       align-items: flex-end;
-      justify-content: space-between;
+      justify-content: center;
       pointer-events: none;
       user-select: none;
       -webkit-user-select: none;
@@ -3419,14 +3419,14 @@
       display: flex;
     }
 
-    /* Left Virtual 360° Analog Thumbstick */
+    /* Left Virtual 360° Analog Thumbstick (Mobile / Touch Only) */
     .touch-joystick-zone {
       width: 118px;
       height: 118px;
       position: relative;
       pointer-events: auto;
       touch-action: none;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       cursor: grab;
@@ -3498,13 +3498,26 @@
       margin-bottom: 4px;
     }
 
-    /* Right Arcade Action Buttons (RAM / BOOST + SHOOT) */
+    /* Right Arcade Action Buttons (RAM / BOOST + SHOOT — Mobile / Touch Only) */
     .manual-action-cluster {
-      display: flex;
+      display: none;
       align-items: flex-end;
       gap: 10px;
       pointer-events: auto;
       touch-action: none;
+    }
+
+    @media (max-width: 900px), (pointer: coarse) {
+      .manual-control-hud {
+        justify-content: space-between;
+      }
+      .touch-joystick-zone,
+      .manual-action-cluster {
+        display: flex;
+      }
+      .manual-ctrl-hint-pill {
+        display: none;
+      }
     }
     .btn-manual-action {
       border: none;
