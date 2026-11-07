@@ -3339,6 +3339,318 @@
       color: #fff;
     }
 
+    /* =========================================================================
+       SIMULATED vs. CONTROLLED MODE TOP TOGGLE & MOBILE/DESKTOP ARCADE CONTROLS
+       ========================================================================= */
+    .control-mode-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(6, 9, 17, 0.94);
+      border: 1.5px solid rgba(56, 189, 248, 0.50);
+      border-radius: 12px;
+      padding: 4px 6px;
+      box-shadow:
+        inset 0 2px 5px rgba(0, 0, 0, 0.85),
+        0 0 16px rgba(56, 189, 248, 0.15);
+    }
+    .ctrl-toggle-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 900;
+      color: #94a3b8;
+      letter-spacing: 0.6px;
+      padding: 0 5px;
+      white-space: nowrap;
+    }
+    .ctrl-mode-btn {
+      border: 1px solid transparent;
+      background: rgba(15, 23, 42, 0.75);
+      color: #94a3b8;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 900;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .ctrl-mode-btn:hover {
+      color: #f8fafc;
+      background: rgba(30, 41, 59, 0.9);
+    }
+    .ctrl-mode-btn.sim-mode.active {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      color: #041019;
+      border-color: #bae6fd;
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.55),
+        0 0 14px rgba(56, 189, 248, 0.45);
+    }
+    .ctrl-mode-btn.manual-mode.active {
+      background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+      color: #04130b;
+      border-color: #a7f3d0;
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.6),
+        0 0 16px rgba(52, 211, 153, 0.55);
+    }
+
+    /* On-Screen Manual Arcade Controls HUD (inside .arena-wrapper) */
+    .manual-control-hud {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 12px;
+      z-index: 19;
+      display: none;
+      align-items: flex-end;
+      justify-content: space-between;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .manual-control-hud.active {
+      display: flex;
+    }
+
+    /* Left Virtual 360° Analog Thumbstick */
+    .touch-joystick-zone {
+      width: 118px;
+      height: 118px;
+      position: relative;
+      pointer-events: auto;
+      touch-action: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+    }
+    .touch-joystick-zone:active {
+      cursor: grabbing;
+    }
+    .touch-joystick-base {
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15, 23, 42, 0.80) 0%, rgba(6, 9, 17, 0.92) 100%);
+      border: 2px solid rgba(52, 211, 153, 0.60);
+      box-shadow:
+        inset 0 0 16px rgba(52, 211, 153, 0.22),
+        0 8px 24px rgba(0, 0, 0, 0.85);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .joy-dir-arrow {
+      position: absolute;
+      font-size: 0.55rem;
+      color: rgba(148, 163, 184, 0.72);
+      font-weight: 900;
+      pointer-events: none;
+    }
+    .joy-dir-arrow.up { top: 5px; left: 50%; transform: translateX(-50%); }
+    .joy-dir-arrow.down { bottom: 5px; left: 50%; transform: translateX(-50%); }
+    .joy-dir-arrow.left { left: 6px; top: 50%; transform: translateY(-50%); }
+    .joy-dir-arrow.right { right: 6px; top: 50%; transform: translateY(-50%); }
+    .touch-joystick-knob {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #6ee7b7 0%, #10b981 55%, #047857 100%);
+      border: 2px solid #d1fae5;
+      box-shadow:
+        inset 0 2px 3px rgba(255, 255, 255, 0.65),
+        0 4px 14px rgba(0, 0, 0, 0.9),
+        0 0 14px rgba(52, 211, 153, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.44rem;
+      font-weight: 900;
+      color: #04130b;
+      letter-spacing: 0.3px;
+      pointer-events: none;
+      transition: transform 0.04s linear;
+    }
+
+    /* Center Controls Hint Pill */
+    .manual-ctrl-hint-pill {
+      background: rgba(7, 10, 18, 0.86);
+      border: 1px solid rgba(52, 211, 153, 0.48);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 800;
+      color: #a7f3d0;
+      letter-spacing: 0.5px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85);
+      pointer-events: none;
+      margin-bottom: 4px;
+    }
+
+    /* Right Arcade Action Buttons (RAM / BOOST + SHOOT) */
+    .manual-action-cluster {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      pointer-events: auto;
+      touch-action: none;
+    }
+    .btn-manual-action {
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      position: relative;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform 0.08s ease, filter 0.1s ease;
+    }
+    .btn-manual-action:active,
+    .btn-manual-action.pressed {
+      transform: scale(0.92);
+      filter: brightness(1.18);
+    }
+    .btn-manual-action.boost-btn {
+      width: 68px;
+      height: 68px;
+      background: radial-gradient(circle at 35% 28%, #7dd3fc 0%, #0284c7 65%, #0369a1 100%);
+      border: 2.5px solid #bae6fd;
+      color: #041019;
+      box-shadow:
+        inset 0 2px 3px rgba(255, 255, 255, 0.6),
+        0 6px 18px rgba(0, 0, 0, 0.85),
+        0 0 16px rgba(56, 189, 248, 0.45);
+    }
+    .btn-manual-action.shoot-btn {
+      width: 88px;
+      height: 88px;
+      background: radial-gradient(circle at 35% 28%, #fde047 0%, #f97316 60%, #e11d48 100%);
+      border: 2.5px solid #fef08a;
+      color: #090612;
+      box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.65),
+        0 8px 22px rgba(0, 0, 0, 0.9),
+        0 0 22px rgba(249, 115, 22, 0.55);
+    }
+    .btn-manual-action .act-icon {
+      font-size: 1.15rem;
+      line-height: 1;
+      z-index: 2;
+    }
+    .btn-manual-action.boost-btn .act-icon {
+      font-size: 0.95rem;
+    }
+    .btn-manual-action .act-lbl {
+      font-size: 0.56rem;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+      z-index: 2;
+    }
+    .btn-manual-action .act-sub {
+      font-size: 0.42rem;
+      font-weight: 800;
+      opacity: 0.92;
+      z-index: 2;
+      max-width: 76px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .btn-manual-cd-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 0%;
+      background: rgba(6, 9, 17, 0.68);
+      pointer-events: none;
+      z-index: 1;
+      transition: height 0.06s linear;
+    }
+
+    @media (max-width: 640px) {
+      .control-mode-toggle {
+        width: 100%;
+        justify-content: space-between;
+        padding: 4px 6px !important;
+      }
+      .ctrl-mode-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 6px 8px !important;
+        font-size: 0.58rem !important;
+      }
+      .manual-control-hud {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+      }
+      .touch-joystick-zone {
+        width: 92px;
+        height: 92px;
+      }
+      .touch-joystick-base {
+        width: 84px;
+        height: 84px;
+      }
+      .touch-joystick-knob {
+        width: 36px;
+        height: 36px;
+        font-size: 0.38rem;
+      }
+      .manual-ctrl-hint-pill {
+        display: none;
+      }
+      .manual-action-cluster {
+        gap: 7px;
+      }
+      .btn-manual-action.boost-btn {
+        width: 56px;
+        height: 56px;
+      }
+      .btn-manual-action.shoot-btn {
+        width: 72px;
+        height: 72px;
+      }
+      .btn-manual-action .act-icon {
+        font-size: 0.96rem;
+      }
+      .btn-manual-action .act-lbl {
+        font-size: 0.48rem;
+      }
+      .btn-manual-action .act-sub {
+        font-size: 0.36rem;
+      }
+      .hud-parts-row {
+        gap: 2px !important;
+        margin-top: 2px !important;
+      }
+      .hud-part-pill {
+        padding: 1px 2px !important;
+        font-size: 0.34rem !important;
+        border-radius: 3px !important;
+        letter-spacing: 0 !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -3362,6 +3674,17 @@
       <button type="button" class="top-nav-pill" style="background:linear-gradient(180deg,#38bdf8 0%,#0284c7 100%);color:#041019;border-color:#7dd3fc;font-weight:900;" onclick="openBuyDiamondsModal()" title="Purchase Diamonds in-game">💎 BUY DIAMONDS</button>
       <button type="button" class="top-nav-pill" id="btnSoundToggle" onclick="BotPitAudio.toggleMute()" style="border-color:rgba(52,211,153,0.5);color:#34d399;font-weight:900;" title="Toggle Arena Combat Sound & Audio FX">🔊 SOUND: ON</button>
       <div class="cloud-save-pill" id="cloudSyncBadge">☁️ SAVED</div>
+    </div>
+
+    <!-- 🤖 SIMULATED vs. 🎮 CONTROLLED TOP TOGGLE -->
+    <div class="control-mode-toggle" id="controlModeToggle" title="Switch between Autonomous AI Simulated Combat and Manual Bot Control + Shooting">
+      <span class="ctrl-toggle-label">BOT CONTROL:</span>
+      <button type="button" class="ctrl-mode-btn sim-mode active" id="btnCtrlSimulated" onclick="setControlMode('simulated')">
+        🤖 SIMULATED
+      </button>
+      <button type="button" class="ctrl-mode-btn manual-mode" id="btnCtrlControlled" onclick="setControlMode('controlled')">
+        🎮 CONTROLLED
+      </button>
     </div>
 
     <div class="mode-switcher">
@@ -3586,6 +3909,38 @@
             <div class="stamina-track"><div class="stamina-fill" id="hudEStamBar"></div></div>
             <div class="hud-parts-row" id="hudEParts"></div>
             <div class="hud-modules-row" id="hudEMods"></div>
+          </div>
+        </div>
+
+        <!-- 🎮 ON-SCREEN MANUAL BOT CONTROL & SHOOTING HUD (DESKTOP + MOBILE TOUCH) -->
+        <div class="manual-control-hud" id="manualControlHud">
+          <div class="touch-joystick-zone" id="touchJoystickZone" title="Drag to Steer &amp; Drive Your Bot">
+            <div class="touch-joystick-base" id="touchJoystickBase">
+              <span class="joy-dir-arrow up">▲</span>
+              <span class="joy-dir-arrow down">▼</span>
+              <span class="joy-dir-arrow left">◄</span>
+              <span class="joy-dir-arrow right">►</span>
+              <div class="touch-joystick-knob" id="touchJoystickKnob">STEER</div>
+            </div>
+          </div>
+
+          <div class="manual-ctrl-hint-pill" id="manualCtrlHintPill">
+            🎮 CONTROLLED MODE: WASD / ARROWS DRIVE · SPACE / CLICK SHOOT · SHIFT RAM BOOST
+          </div>
+
+          <div class="manual-action-cluster">
+            <button type="button" class="btn-manual-action boost-btn" id="btnManualBoost" title="Ram / Boost Dash (Shift or E)">
+              <div class="btn-manual-cd-bar" id="manualBoostCdBar"></div>
+              <span class="act-icon">⚡</span>
+              <span class="act-lbl">RAM</span>
+              <span class="act-sub" id="manualBoostSubTxt">READY</span>
+            </button>
+            <button type="button" class="btn-manual-action shoot-btn" id="btnManualShoot" title="Fire Weapon / Twin Plasma Blaster (Space, F, or Tap/Hold)">
+              <div class="btn-manual-cd-bar" id="manualShootCdBar"></div>
+              <span class="act-icon">🔥</span>
+              <span class="act-lbl">SHOOT</span>
+              <span class="act-sub" id="manualShootSubTxt">PLASMA</span>
+            </button>
           </div>
         </div>
 
@@ -4107,6 +4462,7 @@
       activeShopSlot: "tire",
       previewAddonId: null,
       onlyDynamicPicks: true,
+      controlMode: (localStorage.getItem("rc_botpit_control_mode_v1") === "controlled" ? "controlled" : "simulated"),
       loadout: { ...EMPTY_LOADOUT }
     };
 
@@ -5176,6 +5532,9 @@
         empStunTimer: b.empStunTimer || 0,
         beamTimer: b.beamTimer || 0,
         armorStage: b.armorStage,
+        rangedCd: Math.round(b.rangedCd || 0),
+        maxRangedCd: Math.round(b.maxRangedCd || 30),
+        dodgeCd: Math.round(b.dodgeCd || 0),
         stamina: Math.round(b.stamina ?? 100),
         staminaState: b.staminaState || "fresh",
         pacingTimer: b.pacingTimer || 0
@@ -5222,13 +5581,16 @@
       if (!pkt || !pkt.type) return;
 
       if (pkt.type === "guest_input" && sim.liveRole === "host") {
-        if (pkt.keys) {
-          remoteGuestKeys.up = Boolean(pkt.keys.up);
-          remoteGuestKeys.down = Boolean(pkt.keys.down);
-          remoteGuestKeys.left = Boolean(pkt.keys.left);
-          remoteGuestKeys.right = Boolean(pkt.keys.right);
-          remoteGuestKeys.dash = Boolean(pkt.keys.dash);
-        }
+        remoteGuestInput.controlMode = pkt.controlMode === "controlled" ? "controlled" : "simulated";
+        remoteGuestInput.moveX = Number(pkt.moveX) || 0;
+        remoteGuestInput.moveY = Number(pkt.moveY) || 0;
+        remoteGuestInput.shootHeld = Boolean(pkt.shootHeld);
+        if (pkt.shootQueued) remoteGuestInput.shootQueued = true;
+        if (pkt.boostQueued) remoteGuestInput.boostQueued = true;
+        remoteGuestInput.aimActive = Boolean(pkt.aimActive);
+        if (typeof pkt.aimWorldX === "number") remoteGuestInput.aimWorldX = pkt.aimWorldX;
+        if (typeof pkt.aimWorldY === "number") remoteGuestInput.aimWorldY = pkt.aimWorldY;
+        remoteGuestInput.lastPacketMs = Date.now();
       } else if (pkt.type === "host_state" && sim.liveRole === "guest" && sim.running) {
         if (typeof pkt.ticks === "number" && pkt.ticks <= (livePvp.lastGuestTick || -1)) {
           return;
@@ -5836,6 +6198,7 @@
         if (eModsEl) eModsEl.innerHTML = formatHudModuleChips(eProf);
       }
       syncWagerUI();
+      if (typeof syncControlModeUI === "function") syncControlModeUI();
     }
 
     function selectLevel(lvl) {
@@ -6460,7 +6823,7 @@
         empStunTimer: 0,
         ringAngle: 0,
         turretAngle: angle,
-        rangedCd: 45,
+        rangedCd: team === "player" ? 0 : 40,
         beamTimer: 0,
         z: 0,
         vz: 0,
@@ -6938,24 +7301,66 @@
       if (bot.rangedCd > 0) bot.rangedCd--;
       if (bot.beamTimer > 0) bot.beamTimer--;
 
-      // Smoothly rotate dorsal Long-Range Turret (wpn2) toward enemy bot
-      const toEnemyAng = Math.atan2(other.y - bot.y, other.x - bot.x);
+      const isManualBot = isBotManuallyControlled(bot);
+      const manualInp = isManualBot ? getManualInputForBot(bot) : null;
+
+      // Rotate dorsal Long-Range Turret (wpn2 / built-in Plasma Blaster) toward aim point or enemy bot
+      let targetTurretAng = Math.atan2(other.y - bot.y, other.x - bot.x);
+      if (isManualBot && manualInp && manualInp.aimActive && typeof manualInp.aimWorldX === "number" && typeof manualInp.aimWorldY === "number") {
+        const adx = manualInp.aimWorldX - bot.x;
+        const ady = manualInp.aimWorldY - bot.y;
+        if (Math.hypot(adx, ady) > 18) {
+          targetTurretAng = Math.atan2(ady, adx);
+        }
+      }
       if (typeof bot.turretAngle !== "number") bot.turretAngle = bot.angle;
-      let tDiff = toEnemyAng - bot.turretAngle;
+      let tDiff = targetTurretAng - bot.turretAngle;
       while (tDiff > Math.PI) tDiff -= Math.PI * 2;
       while (tDiff < -Math.PI) tDiff += Math.PI * 2;
-      bot.turretAngle += tDiff * 0.18;
+      bot.turretAngle += tDiff * (isManualBot ? 0.32 : 0.18);
 
-      // Autonomous Long-Range Weapon 2 Firing Logic
+      // Manual Ram / Boost Dash Lunge (Shift / E / Mobile ⚡ RAM Button)
+      if (isManualBot && manualInp && manualInp.boostQueued) {
+        manualInp.boostQueued = false;
+        if (bot.empStunTimer <= 0 && bot.dodgeCd <= 0 && bot.stamina >= 12) {
+          const inputMag = Math.hypot(manualInp.moveX || 0, manualInp.moveY || 0);
+          const ramAng = inputMag > 0.12
+            ? Math.atan2(manualInp.moveY, manualInp.moveX)
+            : (Math.hypot(other.x - bot.x, other.y - bot.y) > 1 ? Math.atan2(other.y - bot.y, other.x - bot.x) : bot.angle);
+          bot.angle = ramAng;
+          bot.chargeAngle = ramAng;
+          bot.abilityState = "charging";
+          bot.abilityTimer = 24;
+          bot.dodgeTimer = 16;
+          bot.dodgeAngle = ramAng;
+          bot.dodgeCd = 58;
+          bot.vx += Math.cos(ramAng) * 13.5;
+          bot.vy += Math.sin(ramAng) * 13.5;
+          drainBotStamina(bot, 11);
+          emit3DSparks(bot.x - Math.cos(ramAng) * 34, bot.y - Math.sin(ramAng) * 34, "#38bdf8", 16, 7.5);
+          addPulseRing(bot.x, bot.y, 105, "#38bdf8");
+          BotPitAudio.playSawBuzz();
+          addFloatText(bot.x, bot.y - 54, "⚡🚀 NITRO RAM BOOST!", "#38bdf8");
+        }
+      }
+
+      // Long-Range Weapon 2 & Built-In Twin Plasma Blaster Firing Logic (Autonomous in SIMULATED, Player-Triggered in CONTROLLED)
       const wpn2Id = bot.cp.loadout && bot.cp.loadout.wpn2;
       const rngKey = resolveMountKey(wpn2Id);
-      if (rngKey && rngKey.startsWith("rng_") && bot.empStunTimer <= 0 && bot.rangedCd <= 0 && dist > 110) {
-        const muzzleX = bot.x + Math.cos(bot.turretAngle) * (bot.radius * 0.55);
-        const muzzleY = bot.y + Math.sin(bot.turretAngle) * (bot.radius * 0.55);
+      const wantShoot = isManualBot
+        ? Boolean(manualInp && (manualInp.shootHeld || manualInp.shootQueued))
+        : Boolean(rngKey && rngKey.startsWith("rng_") && dist > 110);
+
+      if (wantShoot && bot.empStunTimer <= 0 && bot.rangedCd <= 0) {
+        if (manualInp) manualInp.shootQueued = false;
+        const cdScale = isManualBot ? 0.72 : 1.0;
+        const muzzleX = bot.x + Math.cos(bot.turretAngle) * (bot.radius * 0.58);
+        const muzzleY = bot.y + Math.sin(bot.turretAngle) * (bot.radius * 0.58);
 
         if (rngKey === "rng_01") {
           // Twin-Barrel Gauss Railgun Sniper: Hyper-velocity AP rail-slug!
-          bot.rangedCd = 145; drainBotStamina(bot, 7);
+          bot.maxRangedCd = Math.round(145 * cdScale);
+          bot.rangedCd = bot.maxRangedCd; drainBotStamina(bot, 6);
           sim.projectiles.push({
             kind: "rail",
             owner: bot.team,
@@ -6974,7 +7379,8 @@
           addFloatText(bot.x, bot.y - 54, "🎯 RAILGUN SNIPE!", "#38bdf8");
         } else if (rngKey === "rng_04") {
           // Quad-Pod Homing Micro-Missile Swarm: 3 homing missiles!
-          bot.rangedCd = 175; drainBotStamina(bot, 8);
+          bot.maxRangedCd = Math.round(175 * cdScale);
+          bot.rangedCd = bot.maxRangedCd; drainBotStamina(bot, 7);
           for (const spread of [-0.32, 0, 0.32]) {
             const ang = bot.turretAngle + spread;
             sim.projectiles.push({
@@ -6993,10 +7399,12 @@
             });
           }
           emit3DSparks(muzzleX, muzzleY, "#fb923c", 16, 6.5);
+          BotPitAudio.playWeaponFire("missile");
           addFloatText(bot.x, bot.y - 54, "🚀 MISSILE SWARM!", "#fb923c");
         } else if (rngKey === "rng_08") {
           // Heavy Rotary Vulcan Saw-Disc Launcher: Ricocheting buzzsaw disc!
-          bot.rangedCd = 95; drainBotStamina(bot, 5);
+          bot.maxRangedCd = Math.round(95 * cdScale);
+          bot.rangedCd = bot.maxRangedCd; drainBotStamina(bot, 4.5);
           sim.projectiles.push({
             kind: "sawdisc",
             owner: bot.team,
@@ -7012,10 +7420,12 @@
             bouncesLeft: 2
           });
           emit3DSparks(muzzleX, muzzleY, "#fbbf24", 10, 5.5);
+          BotPitAudio.playWeaponFire("sawdisc");
           addFloatText(bot.x, bot.y - 54, "⚙️ SAW-DISC LAUNCH!", "#fbbf24");
         } else if (rngKey === "rng_13") {
           // High-Voltage Plasma Siege Mortar: Arcing molten plasma bomb!
-          bot.rangedCd = 185; drainBotStamina(bot, 9);
+          bot.maxRangedCd = Math.round(185 * cdScale);
+          bot.rangedCd = bot.maxRangedCd; drainBotStamina(bot, 8);
           sim.projectiles.push({
             kind: "mortar",
             owner: bot.team,
@@ -7031,12 +7441,39 @@
             bouncesLeft: 0
           });
           emit3DSparks(muzzleX, muzzleY, "#ff8c00", 18, 7.0);
+          BotPitAudio.playWeaponFire("mortar");
           addFloatText(bot.x, bot.y - 54, "☄️ PLASMA MORTAR!", "#ff8c00");
         } else if (rngKey === "rng_18") {
           // Continuous-Beam Tesla Arc & Laser Obliterator: Lock-on beam!
-          bot.rangedCd = 195; drainBotStamina(bot, 9);
+          bot.maxRangedCd = Math.round(195 * cdScale);
+          bot.rangedCd = bot.maxRangedCd; drainBotStamina(bot, 8);
           bot.beamTimer = 38;
+          BotPitAudio.playWeaponFire("laser");
           addFloatText(bot.x, bot.y - 54, "⚡ LASER OBLITERATOR!", "#ec4899");
+        } else if (isManualBot) {
+          // Built-in Twin Plasma Pulse Blaster (so every Controlled bot can always shoot!)
+          bot.maxRangedCd = 24;
+          bot.rangedCd = 24;
+          drainBotStamina(bot, 2.2);
+          sim.projectiles.push({
+            kind: "pulse",
+            owner: bot.team,
+            attacker: bot,
+            x: muzzleX, y: muzzleY,
+            vx: Math.cos(bot.turretAngle) * 19.5,
+            vy: Math.sin(bot.turretAngle) * 19.5,
+            angle: bot.turretAngle,
+            radius: 13,
+            dmg: 15,
+            life: 68,
+            bouncesLeft: 0
+          });
+          emit3DSparks(muzzleX, muzzleY, "#34d399", 10, 6.2);
+          BotPitAudio.playWeaponFire("rail");
+          if (!bot.lastPulseTextTick || sim.ticks - bot.lastPulseTextTick > 40) {
+            bot.lastPulseTextTick = sim.ticks;
+            addFloatText(bot.x, bot.y - 52, "🔫 PLASMA PULSE!", "#34d399");
+          }
         }
       }
 
@@ -7639,7 +8076,9 @@
           continue;
         }
 
-        const { desiredAngle, throttle, turnMult } = evaluateBotBrain(bot, other);
+        const { desiredAngle, throttle, turnMult } = isBotManuallyControlled(bot)
+          ? evaluateManualBotControl(bot, other)
+          : evaluateBotBrain(bot, other);
 
         const empScale = bot.empStunTimer > 0 ? 0.08 : 1.0;
         const cryoScale = bot.cryoTimer > 0 ? 0.65 : 1.0;
@@ -7898,6 +8337,10 @@
             } else if (prj.kind === "sawdisc") {
               emit3DSparks(prj.x, prj.y, "#fbbf24", 18, 7.5);
               if (!isAirJuggle) addFloatText(targetBot.x, targetBot.y - 44, `⚙️ SAW DISC! -${finalDmg}`, "#fbbf24");
+            } else if (prj.kind === "pulse") {
+              addPulseRing(prj.x, prj.y, 75, "#34d399");
+              emit3DSparks(prj.x, prj.y, "#34d399", 14, 6.5);
+              if (!isAirJuggle) addFloatText(targetBot.x, targetBot.y - 44, `🔫💥 PLASMA HIT! -${finalDmg}`, "#34d399");
             } else {
               addPulseRing(prj.x, prj.y, 85, "#fb923c");
               emit3DSparks(prj.x, prj.y, "#fb923c", 18, 7.0);
@@ -9065,8 +9508,58 @@
           ctx.beginPath();
           ctx.arc(0, 0, 22, 0, Math.PI * 2);
           ctx.fill();
+        } else if (prj.kind === "pulse") {
+          ctx.rotate(prj.angle);
+          ctx.fillStyle = "rgba(52, 211, 153, 0.38)";
+          ctx.beginPath();
+          ctx.roundRect(-24, -10, 44, 20, 10);
+          ctx.fill();
+          ctx.fillStyle = "#fde047";
+          ctx.beginPath();
+          ctx.roundRect(-14, -6, 28, 4, 2);
+          ctx.roundRect(-14, 2, 28, 4, 2);
+          ctx.fill();
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(10, 0, 4, 0, Math.PI * 2);
+          ctx.fill();
         }
         ctx.restore();
+      }
+
+      // Render Target Lock / Aim Reticle when in 🎮 CONTROLLED Mode
+      if (state.controlMode === "controlled" && sim.bots.length >= 2 && sim.liveRole !== "spectator" && sim.liveRole !== "spectator_ai") {
+        const myBot = sim.bots[0];
+        const enemyBot = sim.bots[1];
+        if (myBot && myBot.hp > 0 && enemyBot && enemyBot.hp > 0) {
+          const aimX = (manualInput.aimActive && typeof manualInput.aimWorldX === "number") ? manualInput.aimWorldX : enemyBot.x;
+          const aimY = (manualInput.aimActive && typeof manualInput.aimWorldY === "number") ? manualInput.aimWorldY : enemyBot.y;
+          ctx.save();
+          ctx.strokeStyle = "rgba(52, 211, 153, 0.32)";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([8, 8]);
+          ctx.beginPath();
+          ctx.moveTo(myBot.x, myBot.y);
+          ctx.lineTo(aimX, aimY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.translate(aimX, aimY);
+          ctx.rotate(rTicks * 0.04);
+          ctx.strokeStyle = "#34d399";
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.arc(0, 0, 26, 0, Math.PI * 2);
+          ctx.stroke();
+          for (let a = 0; a < 4; a++) {
+            const ang = (a * Math.PI) / 2;
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(ang) * 18, Math.sin(ang) * 18);
+            ctx.lineTo(Math.cos(ang) * 32, Math.sin(ang) * 32);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
       }
 
       for (const s of sim.sparks) {
@@ -10549,9 +11042,384 @@
       setInterval(renderLiveFightsList, 2000);
     }
 
+    // =========================================================================
+    // 🎮 SIMULATED vs. CONTROLLED MODE ENGINE (DESKTOP WASD/MOUSE + MOBILE TOUCH)
+    // =========================================================================
+    const manualInput = {
+      keys: { up: false, down: false, left: false, right: false },
+      joyActive: false,
+      joyPointerId: null,
+      joyX: 0,
+      joyY: 0,
+      moveX: 0,
+      moveY: 0,
+      shootHeld: false,
+      shootQueued: false,
+      boostQueued: false,
+      aimActive: false,
+      aimWorldX: 800,
+      aimWorldY: 450,
+      lastPointerAimMs: 0
+    };
+
+    const remoteGuestInput = {
+      controlMode: "simulated",
+      moveX: 0,
+      moveY: 0,
+      shootHeld: false,
+      shootQueued: false,
+      boostQueued: false,
+      aimActive: false,
+      aimWorldX: 800,
+      aimWorldY: 450,
+      lastPacketMs: 0
+    };
+
+    function recomputeManualMoveVector() {
+      if (manualInput.joyActive) {
+        manualInput.moveX = manualInput.joyX;
+        manualInput.moveY = manualInput.joyY;
+        return;
+      }
+      let kx = (manualInput.keys.right ? 1 : 0) - (manualInput.keys.left ? 1 : 0);
+      let ky = (manualInput.keys.down ? 1 : 0) - (manualInput.keys.up ? 1 : 0);
+      const mag = Math.hypot(kx, ky);
+      if (mag > 1) {
+        kx /= mag;
+        ky /= mag;
+      }
+      manualInput.moveX = kx;
+      manualInput.moveY = ky;
+    }
+
+    function isBotManuallyControlled(bot) {
+      if (!bot) return false;
+      if (sim.liveRole === "spectator" || sim.liveRole === "spectator_ai") return false;
+      if (bot.team === "player") {
+        return state.controlMode === "controlled";
+      }
+      if (bot.team === "enemy" && sim.isLiveMultiplayer && sim.liveRole === "host") {
+        return remoteGuestInput.controlMode === "controlled" && (Date.now() - remoteGuestInput.lastPacketMs < 4000);
+      }
+      return false;
+    }
+
+    function getManualInputForBot(bot) {
+      if (!bot) return null;
+      if (bot.team === "player") return manualInput;
+      if (bot.team === "enemy" && sim.isLiveMultiplayer && sim.liveRole === "host") return remoteGuestInput;
+      return null;
+    }
+
+    function evaluateManualBotControl(bot, other) {
+      const inp = getManualInputForBot(bot) || manualInput;
+      if (bot.abilityState === "charging") {
+        bot.abilityTimer--;
+        if (bot.abilityTimer <= 0) {
+          bot.abilityState = "ready";
+        }
+        return { desiredAngle: bot.chargeAngle || bot.angle, throttle: 1.65, turnMult: 0.45 };
+      }
+
+      const mx = Number(inp.moveX) || 0;
+      const my = Number(inp.moveY) || 0;
+      const mag = Math.hypot(mx, my);
+      if (mag > 0.08) {
+        const desiredAngle = Math.atan2(my, mx);
+        const throttle = Math.min(1.0, mag) * 1.15;
+        return { desiredAngle, throttle, turnMult: 1.75 };
+      }
+      // When thumbstick/keys are released, hold current heading and coast/brake smoothly
+      return { desiredAngle: bot.angle, throttle: 0, turnMult: 1.0 };
+    }
+
+    function getEquippedShootWeaponShortLabel() {
+      const wpn2Id = state.loadout && state.loadout.wpn2;
+      const rngKey = resolveMountKey(wpn2Id);
+      if (rngKey === "rng_01") return "RAILGUN";
+      if (rngKey === "rng_04") return "MISSILES";
+      if (rngKey === "rng_08") return "SAW-DISC";
+      if (rngKey === "rng_13") return "MORTAR";
+      if (rngKey === "rng_18") return "LASER";
+      return "PLASMA";
+    }
+
+    function syncControlModeUI() {
+      const isCtrl = state.controlMode === "controlled";
+      const btnSim = document.getElementById("btnCtrlSimulated");
+      const btnCtrl = document.getElementById("btnCtrlControlled");
+      if (btnSim) btnSim.classList.toggle("active", !isCtrl);
+      if (btnCtrl) btnCtrl.classList.toggle("active", isCtrl);
+
+      const hud = document.getElementById("manualControlHud");
+      if (hud) {
+        const showHud = isCtrl && sim.liveRole !== "spectator" && sim.liveRole !== "spectator_ai";
+        hud.classList.toggle("active", showHud);
+      }
+
+      const shootSub = document.getElementById("manualShootSubTxt");
+      if (shootSub) {
+        shootSub.textContent = getEquippedShootWeaponShortLabel();
+      }
+    }
+
+    function setControlMode(mode, silent = false) {
+      const nextMode = mode === "controlled" ? "controlled" : "simulated";
+      state.controlMode = nextMode;
+      try {
+        localStorage.setItem("rc_botpit_control_mode_v1", nextMode);
+      } catch (_) {}
+      if (nextMode !== "controlled") {
+        manualInput.keys.up = false;
+        manualInput.keys.down = false;
+        manualInput.keys.left = false;
+        manualInput.keys.right = false;
+        manualInput.joyActive = false;
+        manualInput.moveX = 0;
+        manualInput.moveY = 0;
+        manualInput.shootHeld = false;
+        manualInput.shootQueued = false;
+        manualInput.boostQueued = false;
+      }
+      syncControlModeUI();
+      if (!silent) {
+        BotPitAudio.playCashChime();
+        const pBot = sim.bots && sim.bots[0];
+        if (pBot) {
+          addFloatText(
+            pBot.x,
+            pBot.y - 62,
+            nextMode === "controlled" ? "🎮 MANUAL CONTROL + SHOOTING ACTIVE!" : "🤖 AI AUTOPILOT SIMULATION ACTIVE!",
+            nextMode === "controlled" ? "#34d399" : "#38bdf8"
+          );
+        }
+      }
+    }
+
+    function updateManualControlHudTelemetry() {
+      if (state.controlMode !== "controlled") return;
+      const pBot = sim.bots && sim.bots[0];
+      if (!pBot) return;
+
+      const shootCdBar = document.getElementById("manualShootCdBar");
+      const shootSub = document.getElementById("manualShootSubTxt");
+      const boostCdBar = document.getElementById("manualBoostCdBar");
+      const boostSub = document.getElementById("manualBoostSubTxt");
+
+      const maxRcd = Math.max(1, pBot.maxRangedCd || 30);
+      const curRcd = Math.max(0, pBot.rangedCd || 0);
+      const rPct = Math.min(100, Math.round((curRcd / maxRcd) * 100));
+      if (shootCdBar) shootCdBar.style.height = `${rPct}%`;
+      if (shootSub) {
+        shootSub.textContent = curRcd > 0 ? `RELOAD` : getEquippedShootWeaponShortLabel();
+      }
+
+      const curDcd = Math.max(0, pBot.dodgeCd || 0);
+      const dPct = Math.min(100, Math.round((curDcd / 58) * 100));
+      if (boostCdBar) boostCdBar.style.height = `${dPct}%`;
+      if (boostSub) {
+        boostSub.textContent = curDcd > 0 ? `${Math.ceil(curDcd / 60)}s` : "READY";
+      }
+    }
+
+    function initManualControlListeners() {
+      // 1. Desktop Keyboard Listeners (WASD / Arrow Keys + Space/F to Shoot + Shift/E to Ram Boost)
+      window.addEventListener("keydown", (ev) => {
+        if (state.controlMode !== "controlled") return;
+        const tag = (ev.target && ev.target.tagName) ? ev.target.tagName.toUpperCase() : "";
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+        const k = ev.key.toLowerCase();
+        let handled = false;
+        if (k === "w" || ev.key === "ArrowUp") { manualInput.keys.up = true; handled = true; }
+        else if (k === "s" || ev.key === "ArrowDown") { manualInput.keys.down = true; handled = true; }
+        else if (k === "a" || ev.key === "ArrowLeft") { manualInput.keys.left = true; handled = true; }
+        else if (k === "d" || ev.key === "ArrowRight") { manualInput.keys.right = true; handled = true; }
+        else if (ev.key === " " || k === "f") {
+          manualInput.shootHeld = true;
+          manualInput.shootQueued = true;
+          const sBtn = document.getElementById("btnManualShoot");
+          if (sBtn) sBtn.classList.add("pressed");
+          handled = true;
+        } else if (ev.key === "Shift" || k === "e") {
+          manualInput.boostQueued = true;
+          const bBtn = document.getElementById("btnManualBoost");
+          if (bBtn) {
+            bBtn.classList.add("pressed");
+            setTimeout(() => bBtn.classList.remove("pressed"), 140);
+          }
+          handled = true;
+        }
+        if (handled) {
+          recomputeManualMoveVector();
+          if (ev.key === " " || ev.key.startsWith("Arrow")) ev.preventDefault();
+        }
+      });
+
+      window.addEventListener("keyup", (ev) => {
+        const k = ev.key.toLowerCase();
+        if (k === "w" || ev.key === "ArrowUp") manualInput.keys.up = false;
+        else if (k === "s" || ev.key === "ArrowDown") manualInput.keys.down = false;
+        else if (k === "a" || ev.key === "ArrowLeft") manualInput.keys.left = false;
+        else if (k === "d" || ev.key === "ArrowRight") manualInput.keys.right = false;
+        else if (ev.key === " " || k === "f") {
+          manualInput.shootHeld = false;
+          const sBtn = document.getElementById("btnManualShoot");
+          if (sBtn) sBtn.classList.remove("pressed");
+        }
+        recomputeManualMoveVector();
+      });
+
+      // 2. Virtual 360° Analog Thumbstick (Mobile Touch & Mouse Drag)
+      const joyZone = document.getElementById("touchJoystickZone");
+      const joyKnob = document.getElementById("touchJoystickKnob");
+      if (joyZone && joyKnob) {
+        const updateJoystickFromEvent = (ev) => {
+          const rect = joyZone.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const maxR = Math.max(26, rect.width * 0.36);
+          const dx = ev.clientX - cx;
+          const dy = ev.clientY - cy;
+          const dist = Math.hypot(dx, dy);
+          const clamped = Math.min(dist, maxR);
+          const ang = Math.atan2(dy, dx);
+          const kx = Math.cos(ang) * clamped;
+          const ky = Math.sin(ang) * clamped;
+          joyKnob.style.transform = `translate(${kx.toFixed(1)}px, ${ky.toFixed(1)}px)`;
+          manualInput.joyX = kx / maxR;
+          manualInput.joyY = ky / maxR;
+          recomputeManualMoveVector();
+        };
+
+        const resetJoystick = () => {
+          manualInput.joyActive = false;
+          manualInput.joyPointerId = null;
+          manualInput.joyX = 0;
+          manualInput.joyY = 0;
+          joyKnob.style.transform = "translate(0px, 0px)";
+          recomputeManualMoveVector();
+        };
+
+        joyZone.addEventListener("pointerdown", (ev) => {
+          if (state.controlMode !== "controlled") return;
+          ev.preventDefault();
+          ev.stopPropagation();
+          manualInput.joyActive = true;
+          manualInput.joyPointerId = ev.pointerId;
+          try { joyZone.setPointerCapture(ev.pointerId); } catch (_) {}
+          updateJoystickFromEvent(ev);
+        });
+        joyZone.addEventListener("pointermove", (ev) => {
+          if (!manualInput.joyActive || ev.pointerId !== manualInput.joyPointerId) return;
+          ev.preventDefault();
+          updateJoystickFromEvent(ev);
+        });
+        joyZone.addEventListener("pointerup", (ev) => {
+          if (ev.pointerId === manualInput.joyPointerId) resetJoystick();
+        });
+        joyZone.addEventListener("pointercancel", (ev) => {
+          if (ev.pointerId === manualInput.joyPointerId) resetJoystick();
+        });
+      }
+
+      // 3. On-Screen Mobile/Desktop 🔥 SHOOT & ⚡ RAM Action Buttons
+      const btnShoot = document.getElementById("btnManualShoot");
+      if (btnShoot) {
+        btnShoot.addEventListener("pointerdown", (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          if (state.controlMode !== "controlled") setControlMode("controlled", true);
+          manualInput.shootHeld = true;
+          manualInput.shootQueued = true;
+          btnShoot.classList.add("pressed");
+          try { btnShoot.setPointerCapture(ev.pointerId); } catch (_) {}
+        });
+        const releaseShoot = () => {
+          manualInput.shootHeld = false;
+          btnShoot.classList.remove("pressed");
+        };
+        btnShoot.addEventListener("pointerup", releaseShoot);
+        btnShoot.addEventListener("pointercancel", releaseShoot);
+        btnShoot.addEventListener("lostpointercapture", releaseShoot);
+      }
+
+      const btnBoost = document.getElementById("btnManualBoost");
+      if (btnBoost) {
+        btnBoost.addEventListener("pointerdown", (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          if (state.controlMode !== "controlled") setControlMode("controlled", true);
+          manualInput.boostQueued = true;
+          btnBoost.classList.add("pressed");
+          setTimeout(() => btnBoost.classList.remove("pressed"), 150);
+        });
+      }
+
+      // 4. Arena Canvas Pointer Aim & Click-to-Shoot on Desktop
+      if (canvas) {
+        const updateCanvasWorldAim = (ev) => {
+          const rect = canvas.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+          const sx = (ev.clientX - rect.left) / rect.width;
+          const sy = (ev.clientY - rect.top) / rect.height;
+          manualInput.aimWorldX = Math.max(DOME.x, Math.min(DOME.x + DOME.w, sx * 1600));
+          manualInput.aimWorldY = Math.max(DOME.y, Math.min(DOME.y + DOME.h, sy * 900));
+          manualInput.aimActive = true;
+          manualInput.lastPointerAimMs = Date.now();
+        };
+
+        canvas.addEventListener("pointermove", (ev) => {
+          if (state.controlMode !== "controlled") return;
+          if (ev.pointerType === "mouse") {
+            updateCanvasWorldAim(ev);
+          }
+        });
+        canvas.addEventListener("pointerdown", (ev) => {
+          if (state.controlMode !== "controlled" || !sim.running) return;
+          if (ev.pointerType === "mouse") {
+            updateCanvasWorldAim(ev);
+            manualInput.shootHeld = true;
+            manualInput.shootQueued = true;
+          }
+        });
+        window.addEventListener("pointerup", (ev) => {
+          if (ev.pointerType === "mouse") {
+            manualInput.shootHeld = false;
+          }
+        });
+      }
+
+      // 5. 30Hz Live PvP Guest Input Transmitter + HUD Cooldown Refresh
+      setInterval(() => {
+        if (manualInput.aimActive && Date.now() - manualInput.lastPointerAimMs > 2800) {
+          manualInput.aimActive = false;
+        }
+        updateManualControlHudTelemetry();
+        if (sim.running && sim.isLiveMultiplayer && sim.liveRole === "guest" && livePvp.activeRoomId) {
+          sendRoomPacket({
+            type: "guest_input",
+            controlMode: state.controlMode,
+            moveX: -manualInput.moveX, // Mirror X back to Host arena coordinates
+            moveY: manualInput.moveY,
+            shootHeld: manualInput.shootHeld,
+            shootQueued: manualInput.shootQueued,
+            boostQueued: manualInput.boostQueued,
+            aimActive: manualInput.aimActive,
+            aimWorldX: manualInput.aimActive ? (1600 - manualInput.aimWorldX) : null,
+            aimWorldY: manualInput.aimActive ? manualInput.aimWorldY : null
+          }, true);
+          manualInput.shootQueued = false;
+          manualInput.boostQueued = false;
+        }
+      }, 33);
+    }
+
     updatePlayerUI();
     setupStagingArena();
     restorePilotSessionOnBoot();
+    initManualControlListeners();
+    syncControlModeUI();
     renderTopDown3D();
     bootPitSpectatorAndChat();
 
