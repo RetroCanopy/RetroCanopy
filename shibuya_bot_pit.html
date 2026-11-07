@@ -6096,6 +6096,24 @@
 
     function ensurePilotLoggedIn() {
       if (state.loggedInUserKey) return true;
+      if (typeof restorePilotSessionOnBoot === "function") {
+        restorePilotSessionOnBoot();
+        if (state.loggedInUserKey) return true;
+      }
+      // If any saved pilot account exists on this device, auto-login the first one so battle launch never stalls
+      const bpMap = getBotPitAccountsMap();
+      const siteMap = getSiteAccountsMap();
+      const firstKey = Object.keys(bpMap)[0] || Object.keys(siteMap)[0];
+      if (firstKey) {
+        const rec = bpMap[firstKey] || siteMap[firstKey];
+        if (rec) {
+          applyAccountProgressToState(firstKey, rec);
+          closePilotAuthGateModal();
+          return true;
+        }
+      }
+      const fsModal = document.getElementById("fullScreenMapModal");
+      if (fsModal) fsModal.classList.remove("active");
       openPilotAuthGateModal();
       return false;
     }
@@ -6976,8 +6994,11 @@
     function startLiveSynchronizedBattle(roomSpec) {
       sim.isLiveMultiplayer = true;
       sim.liveRole = livePvp.role;
+      state.preBattleStep = "mode";
 
       setupStagingArena();
+      const fsModal = document.getElementById("fullScreenMapModal");
+      if (fsModal) fsModal.classList.remove("active");
 
       const stake = roomSpec.agreedWager;
       sim.escrowWager = stake;
@@ -7935,6 +7956,8 @@
       }
       if (backToWager) {
         setPreBattleStep("wager");
+      } else if (state.preBattleStep === "map") {
+        state.preBattleStep = "mode";
       }
     }
 
@@ -7963,7 +7986,7 @@
       if (wagerWrap) wagerWrap.style.display = step === "wager" ? "flex" : "none";
       if (mapWrap) mapWrap.style.display = step === "map" ? "flex" : "none";
       if (qBox) qBox.classList.toggle("active", step === "searching");
-      if (fsModal) fsModal.classList.toggle("active", step === "map");
+      if (fsModal) fsModal.classList.toggle("active", step === "map" && !(typeof sim !== "undefined" && sim.running));
 
       if (step === "mode") {
         if (state.postMatchSummary) {
@@ -8020,21 +8043,16 @@
     }
 
     function confirmPreBattleAndLaunch() {
+      // Reset preBattleStep BEFORE setupStagingArena() so syncPreBattleStepUI() never re-opens #fullScreenMapModal!
+      state.preBattleStep = "mode";
       const fsModal = document.getElementById("fullScreenMapModal");
       if (fsModal) fsModal.classList.remove("active");
       renderArenaMapSelector();
-      if (typeof sim !== "undefined" && !sim.running && typeof setupStagingArena === "function") {
-        setupStagingArena();
-      }
       if (!ensurePilotLoggedIn()) return;
       state.postMatchSummary = null;
       if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
       const overlay = document.getElementById("battleOverlay");
       if (overlay) overlay.classList.add("hidden");
-      const arenaEl = document.getElementById("battleCanvas") || document.getElementById("arenaSection");
-      if (arenaEl && typeof arenaEl.scrollIntoView === "function") {
-        try { arenaEl.scrollIntoView({ behavior: "instant", block: "center" }); } catch (_) {}
-      }
 
       if (state.gameMode === "cpu" || state.customFriendChallenger) {
         triggerBattle();
@@ -8053,6 +8071,13 @@
           state.activeOnlineOpponent = generateRandomOnlinePlayer();
         }
         triggerBattle();
+      }
+
+      if (fsModal) fsModal.classList.remove("active");
+      if (overlay) overlay.classList.add("hidden");
+      const arenaEl = document.getElementById("battleCanvas") || document.getElementById("arenaSection");
+      if (arenaEl && typeof arenaEl.scrollIntoView === "function") {
+        try { arenaEl.scrollIntoView({ behavior: "instant", block: "center" }); } catch (_) {}
       }
     }
 
@@ -9199,7 +9224,10 @@
       if (sim.liveRole === "spectator") {
         leaveSpectatorMode();
       }
+      state.preBattleStep = "mode";
       setupStagingArena();
+      const fsModal = document.getElementById("fullScreenMapModal");
+      if (fsModal) fsModal.classList.remove("active");
       const stake = getEffectiveWager(); // Lowest wager between the 2 players!
       sim.escrowWager = stake;
       if (stake > 0) {
