@@ -2890,9 +2890,9 @@
     .st-quick-explain-bar {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 9px 18px;
-      background: linear-gradient(90deg, rgba(24, 15, 28, 0.96) 0%, rgba(45, 18, 24, 0.92) 50%, rgba(18, 13, 24, 0.96) 100%);
+      gap: 16px;
+      padding: 11px 20px;
+      background: linear-gradient(90deg, rgba(19, 14, 28, 0.98) 0%, rgba(38, 18, 26, 0.95) 50%, rgba(16, 12, 24, 0.98) 100%);
       border-bottom: 1.5px solid rgba(245, 158, 11, 0.48);
       flex-shrink: 0;
     }
@@ -2911,48 +2911,67 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 5px;
     }
     .st-quick-top-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
     .st-quick-name {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.86rem;
+      font-size: 0.96rem;
       font-weight: 900;
       color: #fef08a;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.9px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     }
     .st-quick-tag {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.56rem;
+      font-size: 0.60rem;
       font-weight: 800;
-      padding: 2px 7px;
+      padding: 3px 9px;
       border-radius: 999px;
       background: rgba(245, 158, 11, 0.18);
       border: 1px solid rgba(245, 158, 11, 0.55);
       color: #fde047;
     }
     .st-quick-desc {
-      font-size: 0.78rem;
-      color: #f1f5f9;
-      line-height: 1.35;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #f8fafc;
+      line-height: 1.38;
+      letter-spacing: 0.2px;
     }
     .st-quick-how {
-      font-size: 0.68rem;
-      color: #38bdf8;
-      font-weight: 700;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 2px;
+    }
+    .st-stat-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      color: #fef08a;
+      letter-spacing: 0.4px;
     }
     .st-right-inspector {
-      background: linear-gradient(180deg, #0d0a11 0%, #07050a 100%);
-      border-left: 1px solid rgba(245, 158, 11, 0.35);
-      padding: 14px 16px;
+      background: linear-gradient(180deg, #100c18 0%, #08060c 100%);
+      border-left: 1.5px solid rgba(245, 158, 11, 0.38);
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       overflow-y: auto;
       transition: box-shadow 0.25s ease;
     }
@@ -2961,25 +2980,26 @@
     }
     .st-insp-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.0rem;
+      font-size: 1.06rem;
       font-weight: 900;
-      letter-spacing: 1.2px;
-      color: #fef3c7;
+      letter-spacing: 1px;
+      color: #fef08a;
       text-align: center;
-      padding-bottom: 6px;
-      border-bottom: 1px solid rgba(245, 158, 11, 0.30);
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.32);
       flex-shrink: 0;
+      text-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
     }
     .st-insp-preview-box {
       width: 100%;
-      height: 205px;
-      min-height: 205px;
+      height: 190px;
+      min-height: 190px;
       flex-shrink: 0;
-      border-radius: 10px;
+      border-radius: 12px;
       overflow: hidden;
       border: 2px solid rgba(245, 158, 11, 0.68);
       position: relative;
-      background: #050408;
+      background: radial-gradient(circle at 50% 50%, #1e152a 0%, #07050a 100%);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), 0 0 18px rgba(245, 158, 11, 0.25);
     }
     .st-insp-preview-box img#stInspPreviewImg {
@@ -2987,16 +3007,16 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      opacity: 0.42;
-      filter: contrast(1.08) saturate(1.15) blur(1.5px);
+      opacity: 0.32;
+      filter: contrast(1.08) saturate(1.15) blur(2px);
     }
     .st-insp-token-coin {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 126px !important;
-      height: 126px !important;
+      width: 124px !important;
+      height: 124px !important;
       border-radius: 50%;
       object-fit: cover;
       z-index: 3;
@@ -3018,13 +3038,13 @@
       bottom: 7px;
       left: 7px;
       right: 7px;
-      z-index: 3;
-      background: rgba(9, 6, 14, 0.90);
+      z-index: 4;
+      background: rgba(9, 6, 14, 0.92);
       border: 1px solid rgba(245, 158, 11, 0.55);
-      border-radius: 6px;
-      padding: 4px 8px;
+      border-radius: 7px;
+      padding: 5px 10px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.56rem;
+      font-size: 0.62rem;
       font-weight: 900;
       color: #fde047;
       display: flex;
@@ -3036,61 +3056,128 @@
       justify-content: space-between;
       align-items: center;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.68rem;
+      font-size: 0.74rem;
       font-weight: 900;
       color: #fbbf24;
-      padding: 4px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      padding: 6px 10px;
+      background: rgba(245, 158, 11, 0.10);
+      border: 1px solid rgba(245, 158, 11, 0.32);
+      border-radius: 8px;
       flex-shrink: 0;
     }
     .st-insp-explain-card {
-      background: rgba(22, 16, 30, 0.92);
+      background: linear-gradient(180deg, rgba(26, 20, 38, 0.95) 0%, rgba(15, 12, 24, 0.95) 100%);
       border: 1.5px solid rgba(245, 158, 11, 0.45);
-      border-radius: 10px;
-      padding: 10px 12px;
+      border-radius: 12px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 8px;
       flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
     }
     .st-explain-heading {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.64rem;
+      font-size: 0.68rem;
       font-weight: 900;
-      letter-spacing: 1px;
-      color: #fbbf24;
+      letter-spacing: 0.8px;
+      color: #fde047;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(245, 158, 11, 0.22);
-      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+      padding-bottom: 6px;
     }
     .st-insp-desc {
-      font-size: 0.82rem;
-      line-height: 1.45;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.5;
       color: #f8fafc;
+      letter-spacing: 0.2px;
     }
     .st-insp-how-box {
-      font-size: 0.73rem;
-      line-height: 1.38;
-      color: #bae6fd;
-      background: rgba(14, 165, 233, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 7px;
-      padding: 7px 9px;
+      display: none;
     }
     .st-insp-stats-box {
-      background: rgba(245, 158, 11, 0.08);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      border-radius: 10px;
-      padding: 9px 11px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.64rem;
-      color: #fde047;
+      background: rgba(15, 12, 24, 0.92);
+      border: 1.5px solid rgba(245, 158, 11, 0.38);
+      border-radius: 12px;
+      padding: 12px 13px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
       flex-shrink: 0;
+    }
+    .st-stat-row-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-left: 3.5px solid #fbbf24;
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .st-stat-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .st-stat-row-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #f8fafc;
+      letter-spacing: 0.5px;
+    }
+    .st-stat-row-per {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #fde047;
+      background: rgba(245, 158, 11, 0.16);
+      padding: 1px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.45);
+    }
+    .st-stat-row-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.80rem;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+    .st-stat-pips {
+      display: inline-flex;
+      gap: 4px;
+    }
+    .st-stat-pip {
+      width: 14px;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(148, 163, 184, 0.22);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+    .st-stat-pip.filled {
+      background: linear-gradient(90deg, #fbbf24, #00ff88);
+      border-color: #fde047;
+      box-shadow: 0 0 6px rgba(0, 255, 136, 0.55);
+    }
+    .st-tree-totals-card {
+      margin-top: 2px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.10);
+      border: 1px solid rgba(52, 211, 153, 0.38);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #6ee7b7;
+      line-height: 1.4;
     }
     .st-insp-actions {
       margin-top: auto;
@@ -6035,17 +6122,17 @@
           </div>
         </div>
 
-        <!-- Instant Selected Skill Picture + Explanation Banner right above the 3 columns -->
+        <!-- Instant Selected Skill Picture + Stat Boost Banner right above the 3 columns -->
         <div class="st-quick-explain-bar" id="stQuickExplainBar">
           <img class="st-quick-thumb" id="stQuickThumbImg" src="assets/concept_gallery/battlebots_topdown_3d/skill_tokens/combat_c0_n0.jpg?v=arcade2" alt="" onerror="this.src='assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg'" />
           <div class="st-quick-info">
             <div class="st-quick-top-row">
               <span class="st-quick-name" id="stQuickName">🪝 MAGNETIC WINCH PULL</span>
               <span class="st-quick-tag" id="stQuickBranchTag">TECHNIQUE · TIER 1 · RANK 0/5</span>
-              <span class="st-quick-tag" id="stQuickTriggerTag" style="border-color:rgba(56,189,248,0.55);color:#7dd3fc;background:rgba(14,165,233,0.18);">🕹️ ACTIVE ON CLASH / WINCH</span>
+              <span class="st-quick-tag" id="stQuickTriggerTag" style="border-color:rgba(16,185,129,0.55);color:#6ee7b7;background:rgba(16,185,129,0.16);">🪙 PASSIVE STAT TOKEN</span>
             </div>
-            <div class="st-quick-desc" id="stQuickDesc">Fires a high-tension magnetic winch cable to yank grounded enemies forward toward arena saws or Ring-Out ledges.</div>
-            <div class="st-quick-how" id="stQuickStatsLine">📊 PER RANK: +3 AGILITY · +2 POWER</div>
+            <div class="st-quick-desc" id="stQuickDesc">Permanently increases your BattleBot's Critical Chance, Agility, and Attack Power.</div>
+            <div class="st-quick-how" id="stQuickStatsLine"></div>
           </div>
         </div>
 
@@ -6066,19 +6153,17 @@
         </div>
         <div class="st-insp-tier-row">
           <span id="stInspTierName">BRONZE TIER</span>
-          <span id="stInspUsageText">USED: 17/20</span>
+          <span id="stInspUsageText" style="color:#fde047;">🪙 ○ ○ ○ ○ ○</span>
         </div>
         <div class="st-insp-explain-card">
           <div class="st-explain-heading">
-            <span>📖 WHAT THIS SKILL DOES</span>
-            <span id="stInspTriggerBadge" style="color:#38bdf8;">🕹️ COMBAT MECHANIC</span>
+            <span>🪙 TOKEN EFFECT</span>
+            <span id="stInspTriggerBadge" style="color:#34d399;">PASSIVE STAT BOOST</span>
           </div>
           <div class="st-insp-desc" id="stInspDesc">
-            Select any medallion node in the 3 columns to inspect its combat effect and permanent stat bonuses.
+            Select any Arcade Token to view the permanent stats it adds to your BattleBot.
           </div>
-          <div class="st-insp-how-box" id="stInspHowBox">
-            <strong>HOW IT WORKS IN BATTLE:</strong> Automatically active on your BattleBot in both Player vs. CPU and Live Online PvP matches.
-          </div>
+          <div class="st-insp-how-box" id="stInspHowBox"></div>
         </div>
         <div class="st-insp-stats-box" id="stInspStatsBox"></div>
         <div class="st-insp-actions">
@@ -8258,7 +8343,7 @@
               { id: "speed_c0_n1", row: 1, icon: "🛞", name: "SPRINT COMPOUND TIRES", short: "SPRINT TIRES", cost: 110, stats: { speed: 5, agility: 3 }, desc: "High-grip vulcanized tread increases <strong style='color:#fde047;'>launch acceleration off the line</strong>." },
               { id: "speed_c0_n2", row: 1, icon: "💨", name: "SLIPSTREAM AERO HULL", short: "AERO HULL", cost: 110, stats: { speed: 6, hp: 25 }, desc: "Reduces chassis drag so your bot maintains <strong style='color:#fde047;'>higher top-end ramming velocity</strong>." },
               { id: "speed_c0_n3", row: 2, icon: "⚡", name: "OVERCLOCKED ROTORS", short: "ROTOR BOOST", cost: 125, stats: { speed: 6, power: 2 }, desc: "Converts forward speed directly into <strong style='color:#fde047;'>bonus kinetic collision damage</strong>." },
-              { id: "speed_c0_n4", row: 2, icon: "🚀", name: "RAMMING LUNGE BOOST", short: "LUNGE BOOST", cost: 125, stats: { speed: 6, agility: 3 }, desc: "Extends manual & AI <strong style='color:#fde047;'>Charge Attack lunge distance by +20%</strong>." },
+              { id: "speed_c0_n4", row: 2, icon: "🚀", name: "RAMMING LUNGE BOOST", short: "LUNGE BOOST", cost: 125, stats: { speed: 6, agility: 3 }, desc: "Permanently increases forward <strong style='color:#fde047;'>launch velocity and high-speed collision momentum by +20%</strong>." },
               { id: "speed_c0_n5", row: 3, icon: "❄️", name: "CRYO-SLICK TRACTION", short: "CRYO GRIP", cost: 140, stats: { speed: 5, agility: 5 }, desc: "Thermal tire heaters reduce <strong style='color:#fde047;'>Cryo-Freeze slow penalties by 50%</strong>." },
               { id: "speed_c0_n6", row: 3, icon: "🌩️", name: "LIGHTNING PURSUIT", short: "PURSUIT", cost: 140, stats: { speed: 7, agility: 3 }, desc: "Grants a burst of speed when chasing <strong style='color:#fde047;'>retreating or gassed opponents</strong>." },
               { id: "speed_c0_n7", row: 4, icon: "🧬", name: "TACHYON MOLECULE SYNC", short: "TACHYON SYNC", cost: 160, stats: { speed: 8, agility: 4 }, desc: "Increases the duration of arena <strong style='color:#fde047;'>Speed Molecule Drops from 8s to 12s</strong>." },
@@ -8273,7 +8358,7 @@
               { id: "speed_c1_n2", row: 1, icon: "🏎️", name: "APEX CORNER DRIFT", short: "APEX DRIFT", cost: 110, stats: { agility: 6, power: 2 }, desc: "Tightens turning radius during high-speed <strong style='color:#fde047;'>flanking maneuvers</strong>." },
               { id: "speed_c1_n3", row: 2, icon: "🎯", name: "WHIPLASH SNAP-TURN", short: "SNAP TURN", cost: 125, stats: { agility: 7, speed: 2 }, desc: "Lets your bot whip its front weapon around <strong style='color:#fde047;'>35% faster when ambushed from behind</strong>." },
               { id: "speed_c1_n4", row: 2, icon: "🛡️", name: "AIRBORNE GYRO LEVELER", short: "AIR LEVELER", cost: 125, stats: { agility: 6, hp: 35 }, desc: "Stabilizes your chassis when flipped airborne so you <strong style='color:#fde047;'>land flat on all 4 wheels</strong>." },
-              { id: "speed_c1_n5", row: 3, icon: "⚡", name: "ZERO-LATENCY SERVOS", short: "FAST SERVOS", cost: 140, stats: { agility: 7, speed: 3 }, desc: "Improves manual WASD/Joystick & AI <strong style='color:#fde047;'>steering responsiveness</strong>." },
+              { id: "speed_c1_n5", row: 3, icon: "⚡", name: "ZERO-LATENCY SERVOS", short: "FAST SERVOS", cost: 140, stats: { agility: 7, speed: 3 }, desc: "Permanently increases <strong style='color:#fde047;'>rotational turn speed and evasion responsiveness</strong>." },
               { id: "speed_c1_n6", row: 3, icon: "🧨", name: "SWARM DODGE REFLEX", short: "SWARM DODGE", cost: 140, stats: { agility: 7, hp: 35 }, desc: "Automatically micro-jukes incoming <strong style='color:#fde047;'>Bomb Buggies and Volt Spiders</strong>." },
               { id: "speed_c1_n7", row: 4, icon: "🧬", name: "GYRO MOLECULE RESONANCE", short: "GYRO SYNC", cost: 160, stats: { agility: 8, speed: 4 }, desc: "Amplifies turn rate and flank criticals whenever <strong style='color:#fde047;'>Gyro Agility Molecules</strong> are collected." },
               { id: "speed_c1_n8", row: 5, icon: "👑", name: "PHANTOM MIRAGE STEP", short: "PHANTOM STEP", cost: 200, stats: { agility: 12, speed: 6, power: 4 }, desc: "Ultimate Agility Capstone: Unmatched <strong style='color:#fde047;'>360° handling, dodge cooldowns & backstab angles</strong>." }
@@ -8482,6 +8567,73 @@
       wealth_c2_n8: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_10_jackpot_fortune.jpg"
     };
 
+    function getEnrichedTokenStats(node, tabKey, cIdx, nIdx) {
+      const base = node && node.stats ? node.stats : {};
+      const tierBonus = Math.floor(nIdx / 3); // 0, 1, or 2
+      const out = {
+        power: base.power || 0,
+        speed: base.speed || 0,
+        agility: base.agility || 0,
+        hp: base.hp || 0,
+        shield: base.shield || 0,
+        critPct: base.critPct || 0,
+        critDmgPct: base.critDmgPct || 0,
+        armorPenPct: base.armorPenPct || 0,
+        knockbackPct: base.knockbackPct || 0,
+        dmgRedPct: base.dmgRedPct || 0,
+        staminaPct: base.staminaPct || 0,
+        wealthPct: base.wealthPct || 0,
+        xpPct: base.xpPct || 0,
+        luckPct: base.luckPct || 0
+      };
+
+      // Assign signature passive percentage skills based on the token's branch
+      if (tabKey === "combat") {
+        if (cIdx === 0) out.critPct = Math.max(out.critPct, 2 + tierBonus);
+        else if (cIdx === 1) {
+          out.armorPenPct = Math.max(out.armorPenPct, 3 + tierBonus);
+          out.critPct = Math.max(out.critPct, 2);
+        } else {
+          out.knockbackPct = Math.max(out.knockbackPct, 4 + tierBonus);
+        }
+      } else if (tabKey === "speed") {
+        if (cIdx === 0) out.staminaPct = Math.max(out.staminaPct, 3 + tierBonus);
+        else if (cIdx === 1) out.critPct = Math.max(out.critPct, 2 + tierBonus);
+        else out.staminaPct = Math.max(out.staminaPct, 5 + tierBonus * 2);
+      } else if (tabKey === "power") {
+        if (cIdx === 0) out.armorPenPct = Math.max(out.armorPenPct, 3 + tierBonus);
+        else if (cIdx === 1) out.knockbackPct = Math.max(out.knockbackPct, 5 + tierBonus * 2);
+        else {
+          out.critPct = Math.max(out.critPct, 3 + tierBonus);
+          out.critDmgPct = Math.max(out.critDmgPct, 6 + tierBonus * 2);
+        }
+      } else if (tabKey === "health") {
+        if (cIdx === 0) out.dmgRedPct = Math.max(out.dmgRedPct, 2 + tierBonus);
+        else if (cIdx === 1) out.dmgRedPct = Math.max(out.dmgRedPct, 2 + tierBonus);
+        else out.dmgRedPct = Math.max(out.dmgRedPct, 3 + tierBonus);
+      } else {
+        if (cIdx === 2) out.luckPct = Math.max(out.luckPct, 5 + tierBonus * 2);
+      }
+      return out;
+    }
+
+    const TOKEN_STAT_META = [
+      { key: "power",        icon: "💥", label: "ATTACK POWER",      short: "POWER",       unit: "",    color: "#f97316" },
+      { key: "critPct",      icon: "🎯", label: "CRITICAL CHANCE",   short: "CRIT CHANCE", unit: "%",   color: "#fbbf24" },
+      { key: "critDmgPct",   icon: "☢️", label: "CRITICAL DAMAGE",   short: "CRIT DMG",    unit: "%",   color: "#f43f5e" },
+      { key: "speed",        icon: "⚡", label: "TOP SPEED",         short: "SPEED",       unit: "",    color: "#38bdf8" },
+      { key: "agility",      icon: "🌀", label: "TURN AGILITY",      short: "AGILITY",     unit: "",    color: "#a855f7" },
+      { key: "armorPenPct",  icon: "🔩", label: "ARMOR PENETRATION", short: "ARMOR PEN",   unit: "%",   color: "#f59e0b" },
+      { key: "knockbackPct", icon: "🌋", label: "KNOCKBACK FORCE",   short: "KNOCKBACK",   unit: "%",   color: "#fb923c" },
+      { key: "hp",           icon: "❤️", label: "MAX HULL HP",       short: "MAX HP",      unit: " HP", color: "#10b981" },
+      { key: "shield",       icon: "🛡️", label: "AEGIS SHIELD",      short: "SHIELD",      unit: " HP", color: "#3b82f6" },
+      { key: "dmgRedPct",    icon: "🧱", label: "DAMAGE REDUCTION",  short: "DEFENSE",     unit: "%",   color: "#14b8a6" },
+      { key: "staminaPct",   icon: "🔋", label: "STAMINA RECOVERY",  short: "STAMINA",     unit: "%",   color: "#22d3ee" },
+      { key: "wealthPct",    icon: "💎", label: "DIAMOND PAYOUT",    short: "DIAMONDS",    unit: "%",   color: "#7dd3fc" },
+      { key: "xpPct",        icon: "🧬", label: "MATCH EXP BONUS",   short: "EXP",         unit: "%",   color: "#c084fc" },
+      { key: "luckPct",      icon: "🍀", label: "JACKPOT DROP LUCK", short: "LUCK",        unit: "%",   color: "#fde047" }
+    ];
+
     function getSkillVisualSpec(node, col, tab) {
       const m = /^([a-z]+)_c(\d+)_n(\d+)$/.exec(node.id || "");
       const tabKey = m ? m[1] : (tab ? tab.id : "combat");
@@ -8516,53 +8668,45 @@
         }
       }
       const img = tokenImg;
+      const enrichedStats = getEnrichedTokenStats(node, tabKey, cIdx, nIdx);
 
-      let triggerTag = "🛡️ ALWAYS ACTIVE IN BATTLE";
-      let howItWorks = "";
-      if (tabKey === "combat" && cIdx === 0) {
-        triggerTag = "🕹️ ACTIVE ON CHARGE / MANEUVER";
-        howItWorks = `<strong>HOW IT WORKS:</strong> Enhances your bot's tactical steering, Charge/Dodge maneuvers (<code>SHIFT / SPACE</code>), and clinch control during every round. Upgrading increases permanent Agility, Speed, and Hull stability.`;
-      } else if (tabKey === "combat" && cIdx === 1) {
-        triggerTag = "🎯 ACTIVE ON LONG-RANGE FIRE";
-        howItWorks = `<strong>HOW IT WORKS:</strong> Supercharges your dorsal Long-Range Turret (<code>SPACE / CLICK</code> when a Ranged Weapon 2 is equipped) and increases overall ranged tracking, fire rate, and impact damage.`;
-      } else if (tabKey === "combat" && cIdx === 2) {
-        triggerTag = "⚔️ ACTIVE ON MELEE CLASH & RAM";
-        howItWorks = `<strong>HOW IT WORKS:</strong> Boosts front-weapon collisions, ramming knockback, and Power-Struggle lockup drive whenever your BattleBot clashes with an opponent.`;
-      } else if (tabKey === "speed") {
-        triggerTag = "⚡ PERMANENT MOBILITY & STAMINA";
-        howItWorks = `<strong>HOW IT WORKS:</strong> Directly increases your bot's top driving speed, 360° turn rate, and reactor Stamina recovery from the moment the 10-second pre-fight countdown ends.`;
-      } else if (tabKey === "power") {
-        triggerTag = "🔥 PERMANENT STRIKE & KNOCKBACK";
-        howItWorks = `<strong>HOW IT WORKS:</strong> Multiplies your melee & ranged attack power, Ring-Out shove force, and Redline Overdrive (<25% HP) / Final 30s Sudden Overcharge critical damage.`;
-      } else if (tabKey === "health") {
-        triggerTag = cIdx === 1 ? "🛡️ ROUND-START AEGIS BARRIER" : "💚 PERMANENT HULL & PART ARMOR";
-        howItWorks = cIdx === 1
-          ? `<strong>HOW IT WORKS:</strong> Deploys a glowing Cobalt Aegis Energy Shield at the start of every round that absorbs enemy hits before your Hull HP takes damage!`
-          : `<strong>HOW IT WORKS:</strong> Permanently reinforces your BattleBot's Max Hull HP and protects your 4 Subsystems (Tires, Armor, Weapon, Core) against wear and tear.`;
-      } else {
-        triggerTag = "💎 MATCH PAYOUT & MOLECULE BONUS";
-        howItWorks = `<strong>HOW IT WORKS:</strong> Multiplies the 💎 Diamonds and ⚡ XP you earn after every battle AND amplifies mid-round Upgrade Molecule supply drops inside the arena!`;
+      // Build a crystal-clear, control-free passive stat summary sentence
+      const activeStatPhrases = [];
+      for (const meta of TOKEN_STAT_META) {
+        const val = enrichedStats[meta.key];
+        if (val > 0) {
+          activeStatPhrases.push(`<strong style="color:${meta.color};">+${val}${meta.unit} ${meta.label}</strong>`);
+        }
       }
+      const cleanStatSentence = activeStatPhrases.length > 0
+        ? `Permanently increases ${activeStatPhrases.join(", ")} per rank.`
+        : "Permanently increases your BattleBot's combat stats per rank.";
 
-      return { img, tokenImg, cardImg, triggerTag, howItWorks, tabKey, cIdx, nIdx };
+      const triggerTag = "🪙 PASSIVE STAT BOOST";
+      const howItWorks = "";
+
+      return { img, tokenImg, cardImg, triggerTag, howItWorks, cleanStatSentence, enrichedStats, tabKey, cIdx, nIdx };
     }
 
     function computeSkillTreeBonuses() {
-      const totals = { power: 0, speed: 0, agility: 0, hp: 0, shield: 0, wealthPct: 0, xpPct: 0, totalRanks: 0 };
+      const totals = {
+        power: 0, speed: 0, agility: 0, hp: 0, shield: 0,
+        critPct: 0, critDmgPct: 0, armorPenPct: 0, knockbackPct: 0, dmgRedPct: 0, staminaPct: 0,
+        wealthPct: 0, xpPct: 0, luckPct: 0, totalRanks: 0
+      };
       if (!state.skillRanks || typeof state.skillRanks !== "object") return totals;
       for (const tab of SKILL_TREE_TABS) {
-        for (const col of tab.columns) {
-          for (const node of col.nodes) {
+        for (let cIdx = 0; cIdx < tab.columns.length; cIdx++) {
+          const col = tab.columns[cIdx];
+          for (let nIdx = 0; nIdx < col.nodes.length; nIdx++) {
+            const node = col.nodes[nIdx];
             const r = getSkillNodeRank(node.id);
-            if (r > 0 && node.stats) {
+            if (r > 0) {
+              const st = getEnrichedTokenStats(node, tab.id, cIdx, nIdx);
               totals.totalRanks += r;
-              totals.power += (node.stats.power || 0) * r;
-              totals.speed += (node.stats.speed || 0) * r;
-              totals.agility += (node.stats.agility || 0) * r;
-              totals.hp += (node.stats.hp || 0) * r;
-              totals.shield += (node.stats.shield || 0) * r;
-              totals.wealthPct += (node.stats.wealthPct || 0) * r;
-              totals.xpPct += (node.stats.xpPct || 0) * r;
+              for (const k of Object.keys(st)) {
+                totals[k] = (totals[k] || 0) + (st[k] || 0) * r;
+              }
             }
           }
         }
@@ -8621,16 +8765,17 @@
       updateSelectedSkillInspectorUI(true);
     }
 
-    function formatSkillPerRankLine(stats, curRank = 0) {
-      const parts = [];
-      if (stats.power) parts.push(`💥 +${stats.power} PWR/rk (Now: +${stats.power * curRank})`);
-      if (stats.speed) parts.push(`⚡ +${stats.speed} SPD/rk (Now: +${stats.speed * curRank})`);
-      if (stats.agility) parts.push(`🎯 +${stats.agility} AGI/rk (Now: +${stats.agility * curRank})`);
-      if (stats.hp) parts.push(`❤️ +${stats.hp} HP/rk (Now: +${stats.hp * curRank})`);
-      if (stats.shield) parts.push(`🛡️ +${stats.shield} SHIELD/rk (Now: +${stats.shield * curRank})`);
-      if (stats.wealthPct) parts.push(`💎 +${stats.wealthPct}% DIAMONDS/rk (Now: +${stats.wealthPct * curRank}%)`);
-      if (stats.xpPct) parts.push(`🧬 +${stats.xpPct}% EXP/rk (Now: +${stats.xpPct * curRank}%)`);
-      return parts.join(" · ");
+    function formatSkillPerRankChips(enrichedStats, curRank = 0) {
+      const chips = [];
+      for (const meta of TOKEN_STAT_META) {
+        const val = enrichedStats[meta.key];
+        if (val > 0) {
+          chips.push(
+            `<span class="st-stat-chip" style="border-color:${meta.color}88;color:${meta.color};">${meta.icon} +${val}${meta.unit} ${meta.short}/RK <strong style="color:#00ff88;margin-left:3px;">(NOW: +${val * curRank}${meta.unit})</strong></span>`
+          );
+        }
+      }
+      return chips.join("");
     }
 
     function updateSelectedSkillInspectorUI(flashHighlight = false) {
@@ -8640,6 +8785,7 @@
       const curRank = getSkillNodeRank(nd.id);
       const nextCost = Math.round(nd.cost * (1 + curRank * 0.35));
       const vSpec = getSkillVisualSpec(nd, selInfo.col, selInfo.tab);
+      const stObj = vSpec.enrichedStats;
 
       // 1. Update Top Quick-Explain Bar (above the 3 columns)
       const qThumb = document.getElementById("stQuickThumbImg");
@@ -8654,9 +8800,9 @@
       }
       if (qName) qName.textContent = `${nd.icon} ${nd.name}`;
       if (qBranch) qBranch.textContent = `${selInfo.col.title} · TIER ${nd.row + 1} · RANK ${curRank}/5`;
-      if (qTrig) qTrig.textContent = vSpec.triggerTag;
-      if (qDesc) qDesc.innerHTML = nd.desc;
-      if (qStats) qStats.textContent = `📊 BONUS: ${formatSkillPerRankLine(nd.stats, curRank)}`;
+      if (qTrig) qTrig.textContent = "🪙 PASSIVE STAT TOKEN";
+      if (qDesc) qDesc.innerHTML = vSpec.cleanStatSentence;
+      if (qStats) qStats.innerHTML = formatSkillPerRankChips(stObj, curRank);
 
       // 2. Update Right Inspector Panel
       const inspEl = document.getElementById("stRightInspector");
@@ -8688,27 +8834,47 @@
         inspRank.textContent = curRank >= 5 ? "★ MAX RANK 5 / 5" : `RANK ${curRank} / 5`;
         inspRank.style.color = curRank >= 5 ? "#fde047" : (curRank > 0 ? "#00ff88" : "#94a3b8");
       }
-      const tierLabels = ["LOCKED (RANK 0/5)", "BRONZE TIER (1/5)", "SILVER TIER (2/5)", "GOLD TIER (3/5)", "PLATINUM TIER (4/5)", "MASTER SYNDICATE (5/5)"];
-      if (inspTier) inspTier.textContent = tierLabels[curRank] || "BRONZE TIER";
-      const usedVal = Math.min(20, curRank * 4 + ((state.pvpWins || 0) + Math.floor((state.cpuXp || 0) / 180)) % 20);
-      if (inspUsed) inspUsed.textContent = `USED: ${usedVal}/20`;
-      if (inspTrigBadge) inspTrigBadge.textContent = vSpec.triggerTag;
-      if (inspDesc) inspDesc.innerHTML = nd.desc;
-      if (inspHow) inspHow.innerHTML = vSpec.howItWorks;
+      const tierLabels = ["LOCKED TOKEN (0/5)", "BRONZE TOKEN (1/5)", "SILVER TOKEN (2/5)", "GOLD TOKEN (3/5)", "PLATINUM TOKEN (4/5)", "MASTER TOKEN (5/5)"];
+      if (inspTier) inspTier.textContent = tierLabels[curRank] || "LOCKED TOKEN (0/5)";
+      if (inspUsed) {
+        const coinPips = [1, 2, 3, 4, 5].map(i => i <= curRank ? "🪙" : "○").join(" ");
+        inspUsed.textContent = coinPips;
+      }
+      if (inspTrigBadge) inspTrigBadge.textContent = "PASSIVE STAT BOOST";
+      if (inspDesc) inspDesc.innerHTML = vSpec.cleanStatSentence;
+      if (inspHow) inspHow.innerHTML = "";
 
       if (inspStats) {
         const nextR = Math.min(5, curRank + 1);
-        const stLines = [];
-        if (nd.stats.power) stLines.push(`💥 <strong>+${nd.stats.power} POWER</strong> per rank (Now: <strong>+${nd.stats.power * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.power * nextR}</strong>)`);
-        if (nd.stats.speed) stLines.push(`⚡ <strong>+${nd.stats.speed} SPEED</strong> per rank (Now: <strong>+${nd.stats.speed * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.speed * nextR}</strong>)`);
-        if (nd.stats.agility) stLines.push(`🎯 <strong>+${nd.stats.agility} AGILITY</strong> per rank (Now: <strong>+${nd.stats.agility * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.agility * nextR}</strong>)`);
-        if (nd.stats.hp) stLines.push(`❤️ <strong>+${nd.stats.hp} MAX HP</strong> per rank (Now: <strong>+${nd.stats.hp * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.hp * nextR}</strong>)`);
-        if (nd.stats.shield) stLines.push(`🛡️ <strong>+${nd.stats.shield} AEGIS SHIELD</strong> per rank (Now: <strong>+${nd.stats.shield * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.shield * nextR}</strong>)`);
-        if (nd.stats.wealthPct) stLines.push(`💎 <strong>+${nd.stats.wealthPct}% DIAMOND PAYOUT</strong> per rank (Now: <strong>+${nd.stats.wealthPct * curRank}%</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.wealthPct * nextR}%</strong>)`);
-        if (nd.stats.xpPct) stLines.push(`🧬 <strong>+${nd.stats.xpPct}% MATCH EXP</strong> per rank (Now: <strong>+${nd.stats.xpPct * curRank}%</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.xpPct * nextR}%</strong>)`);
+        const cardsHtml = [];
+        for (const meta of TOKEN_STAT_META) {
+          const val = stObj[meta.key];
+          if (!val || val <= 0) continue;
+          const nowVal = val * curRank;
+          const nextVal = val * nextR;
+          const pipsHtml = [1, 2, 3, 4, 5].map(i => `<span class="st-stat-pip ${i <= curRank ? 'filled' : ''}"></span>`).join("");
+          cardsHtml.push(`
+            <div class="st-stat-row-card" style="border-left-color:${meta.color};">
+              <div class="st-stat-row-top">
+                <span class="st-stat-row-label" style="color:${meta.color};">${meta.icon} ${meta.label}</span>
+                <span class="st-stat-row-per">+${val}${meta.unit} / rank</span>
+              </div>
+              <div class="st-stat-row-bottom">
+                <span>NOW: <strong style="color:#f8fafc;">+${nowVal}${meta.unit}</strong> &rarr; NEXT: <strong style="color:#00ff88;">+${nextVal}${meta.unit}</strong></span>
+                <span class="st-stat-pips">${pipsHtml}</span>
+              </div>
+            </div>
+          `);
+        }
+
         const allTotals = computeSkillTreeBonuses();
-        stLines.push(`<div style="margin-top:4px;padding-top:4px;border-top:1px solid rgba(245,158,11,0.3);color:#34d399;">🌳 TOTAL ACTIVE TREE BONUS (${allTotals.totalRanks} RANKS): +${allTotals.hp} HP · +${allTotals.power} PWR · +${allTotals.speed} SPD · +${allTotals.agility} AGI</div>`);
-        inspStats.innerHTML = stLines.map(l => `<div>${l}</div>`).join("");
+        cardsHtml.push(`
+          <div class="st-tree-totals-card">
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;color:#fde047;margin-bottom:3px;">🌳 TOTAL ACTIVE TOKEN BONUSES (${allTotals.totalRanks} RANKS)</div>
+            <div>💥 +${allTotals.power} PWR · 🎯 +${allTotals.critPct}% CRIT · ⚡ +${allTotals.speed} SPD · 🌀 +${allTotals.agility} AGI · ❤️ +${allTotals.hp} HP · 🛡️ +${allTotals.shield} SHD</div>
+          </div>
+        `);
+        inspStats.innerHTML = cardsHtml.join("");
       }
 
       if (btnXp && btnDm) {
@@ -8927,11 +9093,18 @@
       const effAttack = Math.round(power * 1.15 + speed * 0.35 + agility * 0.25);
       // Scaled for 3x3:00 Championship Rounds so bots trade tactical combinations over full rounds
       let baseStrikeDmg = Math.round((18 + effAttack * 0.32) * 0.31);
+      if (skBonuses.armorPenPct > 0 || skBonuses.critPct > 0) {
+        const passiveDmgBoost = 1 + (skBonuses.armorPenPct || 0) * 0.004 + (skBonuses.critPct || 0) * 0.0035;
+        baseStrikeDmg = Math.round(baseStrikeDmg * passiveDmgBoost);
+      }
       if (equippedIds.has("wpn_10")) baseStrikeDmg = Math.round(baseStrikeDmg * 0.85); // Grappler Claw weakness: -15% raw hit damage
       if (equippedIds.has("wpn_abil_12")) baseStrikeDmg = Math.round(baseStrikeDmg * 0.88); // Executioner weakness: -12% front clash damage
 
       const effDefense = Math.round(power * 0.90 + agility * 0.50 + speed * 0.30);
       let armorReduction = effDefense / (effDefense + 260);
+      if (skBonuses.dmgRedPct > 0) {
+        armorReduction = Math.min(0.75, armorReduction + (skBonuses.dmgRedPct || 0) * 0.0035);
+      }
       if (equippedIds.has("tire_04")) armorReduction *= 0.85; // Mecanum weakness: delicate bearings take +15% collision damage
 
       let frontGuardBlock = Math.min(0.48, 0.16 + power * 0.0022 + agility * 0.0012);
@@ -8954,15 +9127,16 @@
       if (equippedIds.has("tire_05")) turnRateRad *= 0.76; // Tank Tracks weakness: slow turning
 
       const sawDetectRadius = Math.round(155 + agility * 1.25);
-      let shoveRatio = 0.70 + power * 0.0085;
+      let shoveRatio = (0.70 + power * 0.0085) * (1 + (skBonuses.knockbackPct || 0) * 0.005);
       if (equippedIds.has("tire_05")) shoveRatio *= 1.65; // Tank Tracks strength: +65% shove force
       if (equippedIds.has("tire_04")) shoveRatio *= 0.80; // Mecanum weakness: -20% shove force
       if (equippedIds.has("tire_12")) shoveRatio *= 0.76; // Drift Tires weakness: -24% shove resistance
       if (equippedIds.has("tire_15")) shoveRatio *= 0.75; // Sprint Wheels weakness: -25% shove resistance
       if (equippedIds.has("wpn_08"))  shoveRatio *= 0.72; // Auger Drill weakness: narrow bit has low push force
 
-      let flankMult = 1.40 + (agility - 50) * 0.0045;
-      let rearMult = 1.85 + (agility - 50) * 0.0065;
+      const critMultBoost = ((skBonuses.critPct || 0) * 0.004) + ((skBonuses.critDmgPct || 0) * 0.005);
+      let flankMult = 1.40 + (agility - 50) * 0.0045 + critMultBoost;
+      let rearMult = 1.85 + (agility - 50) * 0.0065 + critMultBoost * 1.25;
       if (equippedIds.has("wpn_01")) {
         flankMult *= 0.85; // Heavy Wedge weakness: -15% flank/rear crit
         rearMult *= 0.85;
