@@ -3210,16 +3210,226 @@
       color: #041019;
       box-shadow: 0 0 18px rgba(56, 189, 248, 0.38);
     }
-    @media (max-width: 860px) {
-      .skilltree-window {
-        grid-template-columns: 58px 1fr;
-        grid-template-rows: 1fr auto;
+    .st-mobile-nav-bar {
+      display: none;
+    }
+    @media (max-width: 960px) {
+      .skilltree-modal-backdrop {
+        padding: 0 !important;
       }
+      .skilltree-window {
+        width: 100vw !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        border: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+      }
+      .st-left-rail {
+        display: none !important;
+      }
+      .st-center-canvas {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .st-top-bar {
+        padding: 7px 10px !important;
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+      }
+      .st-top-title-group h2 {
+        font-size: 0.82rem !important;
+        letter-spacing: 0.8px !important;
+      }
+      .st-top-title-group span {
+        display: none !important;
+      }
+      .st-top-currencies {
+        gap: 6px !important;
+      }
+      .st-curr-pill {
+        padding: 4px 7px !important;
+        font-size: 0.62rem !important;
+      }
+      .st-top-currencies .btn-close-shop {
+        padding: 4px 9px !important;
+        font-size: 0.64rem !important;
+      }
+      .st-mobile-nav-bar {
+        display: flex !important;
+        flex-direction: column;
+        gap: 5px;
+        padding: 6px 8px;
+        background: rgba(11, 8, 18, 0.96);
+        border-bottom: 1px solid rgba(245, 158, 11, 0.35);
+        flex-shrink: 0;
+      }
+      .st-mob-cat-row {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+      }
+      .st-mob-cat-btn {
+        padding: 5px 2px;
+        border-radius: 7px;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: rgba(20, 16, 30, 0.9);
+        color: #cbd5e1;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.52rem;
+        font-weight: 800;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        cursor: pointer;
+      }
+      .st-mob-cat-btn .ico {
+        font-size: 0.92rem;
+        line-height: 1;
+      }
+      .st-mob-cat-btn.active {
+        background: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
+        color: #09060d;
+        border-color: #fde047;
+        font-weight: 900;
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.55);
+      }
+      .st-mob-branch-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+      }
+      .st-mob-branch-btn {
+        padding: 5px 4px;
+        border-radius: 6px;
+        border: 1px solid rgba(245, 158, 11, 0.32);
+        background: rgba(28, 18, 28, 0.85);
+        color: #fde68a;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.54rem;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+      }
+      .st-mob-branch-btn.active {
+        background: rgba(245, 158, 11, 0.26);
+        border-color: #fde047;
+        color: #ffffff;
+        box-shadow: inset 0 0 8px rgba(251, 191, 36, 0.45);
+      }
+      .st-quick-explain-bar {
+        display: none !important;
+      }
+      .st-columns-wrap {
+        grid-template-columns: 1fr !important;
+        padding: 10px 12px 22px !important;
+        gap: 12px !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+      }
+      .st-branch-col {
+        display: none !important;
+        padding: 10px 8px 20px !important;
+      }
+      .st-branch-col.mob-active-col {
+        display: flex !important;
+      }
+      .st-col-header {
+        font-size: 0.74rem !important;
+        margin-bottom: 8px !important;
+      }
+      .st-tier-rows {
+        gap: 16px !important;
+      }
+      .st-tier-row {
+        gap: 38px !important;
+      }
+      .st-medallion-node {
+        width: 64px !important;
+        height: 64px !important;
+      }
+      .st-medallion-node .m-lbl {
+        font-size: 0.44rem !important;
+        bottom: -15px !important;
+      }
+      /* Compact Mobile Bottom Token Inspector Dock */
       .st-right-inspector {
-        grid-column: 1 / -1;
-        border-left: none;
-        border-top: 1px solid rgba(245, 158, 11, 0.35);
-        max-height: 44vh;
+        flex: 0 0 auto !important;
+        max-height: none !important;
+        border-left: none !important;
+        border-top: 2px solid rgba(245, 158, 11, 0.55) !important;
+        padding: 8px 10px 10px !important;
+        gap: 6px !important;
+        background: linear-gradient(180deg, #161022 0%, #09060e 100%) !important;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.9) !important;
+      }
+      .st-insp-title,
+      .st-insp-tier-row {
+        display: none !important;
+      }
+      .st-insp-preview-box {
+        display: none !important;
+      }
+      .st-insp-explain-card {
+        padding: 7px 9px !important;
+        gap: 4px !important;
+        border-radius: 8px !important;
+      }
+      .st-explain-heading {
+        font-size: 0.62rem !important;
+        padding-bottom: 3px !important;
+      }
+      .st-insp-desc {
+        font-size: 0.76rem !important;
+        line-height: 1.32 !important;
+      }
+      .st-insp-stats-box {
+        padding: 6px 8px !important;
+        gap: 5px !important;
+        border-radius: 8px !important;
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)) !important;
+      }
+      .st-stat-row-card {
+        padding: 5px 7px !important;
+        gap: 2px !important;
+      }
+      .st-stat-row-label {
+        font-size: 0.58rem !important;
+      }
+      .st-stat-row-per {
+        font-size: 0.60rem !important;
+        padding: 0px 5px !important;
+      }
+      .st-stat-row-bottom {
+        font-size: 0.66rem !important;
+      }
+      .st-stat-pip {
+        width: 9px !important;
+        height: 4px !important;
+      }
+      .st-tree-totals-card {
+        display: none !important;
+      }
+      .st-insp-actions {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+        margin-top: 0 !important;
+      }
+      .btn-st-upgrade {
+        padding: 8px 6px !important;
+        font-size: 0.60rem !important;
+        border-radius: 8px !important;
       }
     }
 
@@ -6122,6 +6332,12 @@
           </div>
         </div>
 
+        <!-- Mobile 5-Category + 3-Branch Navigation Bar (visible on <=960px) -->
+        <div class="st-mobile-nav-bar" id="stMobileNavBar">
+          <div class="st-mob-cat-row" id="stMobCatRow"></div>
+          <div class="st-mob-branch-row" id="stMobBranchRow"></div>
+        </div>
+
         <!-- Instant Selected Skill Picture + Stat Boost Banner right above the 3 columns -->
         <div class="st-quick-explain-bar" id="stQuickExplainBar">
           <img class="st-quick-thumb" id="stQuickThumbImg" src="assets/concept_gallery/battlebots_topdown_3d/skill_tokens/combat_c0_n0.jpg?v=arcade2" alt="" onerror="this.src='assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg'" />
@@ -6157,7 +6373,10 @@
         </div>
         <div class="st-insp-explain-card">
           <div class="st-explain-heading">
-            <span>🪙 TOKEN EFFECT</span>
+            <span style="display:inline-flex;align-items:center;gap:7px;">
+              <img id="stInspMiniCoinImg" src="assets/concept_gallery/battlebots_topdown_3d/skill_tokens/combat_c0_n0.jpg?v=arcade2" alt="" style="width:28px;height:28px;border-radius:50%;border:1.5px solid #fde047;object-fit:cover;flex-shrink:0;" />
+              <span id="stInspMiniTitle">🪙 TOKEN EFFECT</span>
+            </span>
             <span id="stInspTriggerBadge" style="color:#34d399;">PASSIVE STAT BOOST</span>
           </div>
           <div class="st-insp-desc" id="stInspDesc">
@@ -8746,14 +8965,31 @@
 
     function selectSkillTreeTab(tabId) {
       state.activeSkillTab = tabId;
+      state.activeSkillColIdx = 0;
       const tabObj = SKILL_TREE_TABS.find(t => t.id === tabId) || SKILL_TREE_TABS[0];
       state.selectedSkillId = tabObj.columns[0].nodes[0].id;
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
       renderSkillTreeUI(true);
     }
 
+    function selectSkillBranchCol(colIdx) {
+      const activeTab = SKILL_TREE_TABS.find(t => t.id === state.activeSkillTab) || SKILL_TREE_TABS[0];
+      const safeIdx = Math.max(0, Math.min(activeTab.columns.length - 1, Number(colIdx) || 0));
+      state.activeSkillColIdx = safeIdx;
+      const colObj = activeTab.columns[safeIdx];
+      if (colObj && colObj.nodes && colObj.nodes.length > 0) {
+        // Select first node in this branch if current selection is not in this branch
+        const inBranch = colObj.nodes.some(n => n.id === state.selectedSkillId);
+        if (!inBranch) state.selectedSkillId = colObj.nodes[0].id;
+      }
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      renderSkillTreeUI(true);
+    }
+
     function selectSkillNode(nodeId) {
       state.selectedSkillId = nodeId;
+      const m = /^([a-z]+)_c(\d+)_n(\d+)$/.exec(nodeId || "");
+      if (m) state.activeSkillColIdx = Number(m[2]) || 0;
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
       // Update selected class in-place so #stColumnsWrap scroll position never resets!
       const colsWrap = document.getElementById("stColumnsWrap");
@@ -8821,6 +9057,10 @@
       const btnDm = document.getElementById("btnStUpgradeDiamond");
 
       if (inspTitle) inspTitle.textContent = `${nd.icon} ${nd.name}`;
+      const inspMiniCoin = document.getElementById("stInspMiniCoinImg");
+      const inspMiniTitle = document.getElementById("stInspMiniTitle");
+      if (inspMiniCoin) inspMiniCoin.src = vSpec.tokenImg || vSpec.img;
+      if (inspMiniTitle) inspMiniTitle.textContent = `${nd.icon} ${nd.name}`;
       if (inspImg) {
         inspImg.style.display = "block";
         inspImg.src = vSpec.cardImg || vSpec.img;
@@ -8836,11 +9076,11 @@
       }
       const tierLabels = ["LOCKED TOKEN (0/5)", "BRONZE TOKEN (1/5)", "SILVER TOKEN (2/5)", "GOLD TOKEN (3/5)", "PLATINUM TOKEN (4/5)", "MASTER TOKEN (5/5)"];
       if (inspTier) inspTier.textContent = tierLabels[curRank] || "LOCKED TOKEN (0/5)";
+      const coinPips = [1, 2, 3, 4, 5].map(i => i <= curRank ? "🪙" : "○").join(" ");
       if (inspUsed) {
-        const coinPips = [1, 2, 3, 4, 5].map(i => i <= curRank ? "🪙" : "○").join(" ");
         inspUsed.textContent = coinPips;
       }
-      if (inspTrigBadge) inspTrigBadge.textContent = "PASSIVE STAT BOOST";
+      if (inspTrigBadge) inspTrigBadge.textContent = `RANK ${curRank}/5 · ${coinPips}`;
       if (inspDesc) inspDesc.innerHTML = vSpec.cleanStatSentence;
       if (inspHow) inspHow.innerHTML = "";
 
@@ -8900,9 +9140,16 @@
 
     function renderSkillTreeUI(rebuildColumns = true) {
       const activeTab = SKILL_TREE_TABS.find(t => t.id === state.activeSkillTab) || SKILL_TREE_TABS[0];
+      if (typeof state.activeSkillColIdx !== "number" || state.activeSkillColIdx < 0 || state.activeSkillColIdx >= activeTab.columns.length) {
+        const m = /^([a-z]+)_c(\d+)_n(\d+)$/.exec(state.selectedSkillId || "");
+        state.activeSkillColIdx = m ? (Number(m[2]) || 0) : 0;
+      }
       const railEl = document.getElementById("stLeftRail");
-      if (railEl) {
+      const mobCatEl = document.getElementById("stMobCatRow");
+      const mobBranchEl = document.getElementById("stMobBranchRow");
+      if (railEl || mobCatEl) {
         let railHtml = `<div class="st-rail-crest" title="Shibuya Syndicate Skill Tree">⚙️</div>`;
+        let mobCatHtml = "";
         for (const t of SKILL_TREE_TABS) {
           let tabPts = 0;
           for (const c of t.columns) {
@@ -8916,8 +9163,27 @@
               <span class="cnt">${tabPts}/135</span>
             </button>
           `;
+          mobCatHtml += `
+            <button type="button" class="st-mob-cat-btn ${isAct ? 'active' : ''}" onclick="selectSkillTreeTab('${t.id}')">
+              <span class="ico">${t.icon}</span>
+              <span>${t.shortLabel}</span>
+            </button>
+          `;
         }
-        railEl.innerHTML = railHtml;
+        if (railEl) railEl.innerHTML = railHtml;
+        if (mobCatEl) mobCatEl.innerHTML = mobCatHtml;
+      }
+      if (mobBranchEl) {
+        mobBranchEl.innerHTML = activeTab.columns.map((col, cIdx) => {
+          let colPts = 0;
+          for (const n of col.nodes) colPts += getSkillNodeRank(n.id);
+          const isColAct = cIdx === state.activeSkillColIdx;
+          return `
+            <button type="button" class="st-mob-branch-btn ${isColAct ? 'active' : ''}" onclick="selectSkillBranchCol(${cIdx})">
+              ${col.title} (${colPts}/45)
+            </button>
+          `;
+        }).join("");
       }
 
       const titleEl = document.getElementById("stHeaderTitle");
@@ -8932,7 +9198,7 @@
       const colsWrap = document.getElementById("stColumnsWrap");
       if (colsWrap && rebuildColumns) {
         const prevScroll = colsWrap.scrollTop;
-        colsWrap.innerHTML = activeTab.columns.map(col => {
+        colsWrap.innerHTML = activeTab.columns.map((col, colIdx) => {
           const rowsMap = new Map();
           for (const nd of col.nodes) {
             if (!rowsMap.has(nd.row)) rowsMap.set(nd.row, []);
@@ -8962,7 +9228,7 @@
           }).join("");
 
           return `
-            <div class="st-branch-col">
+            <div class="st-branch-col ${colIdx === state.activeSkillColIdx ? 'mob-active-col' : ''}">
               <div class="st-col-header">${col.title}</div>
               <div class="st-tier-rows">${rowsHtml}</div>
             </div>
