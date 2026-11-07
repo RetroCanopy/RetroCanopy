@@ -663,6 +663,93 @@
 
     .lvl-btn.cleared {
       color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.45);
+    }
+
+    .lvl-btn.quest-qty {
+      border: 1px solid rgba(249, 115, 22, 0.65);
+      color: #fdba74;
+      background: linear-gradient(180deg, rgba(154, 52, 18, 0.55) 0%, rgba(20, 23, 32, 0.95) 100%);
+    }
+    .lvl-btn.quest-qty.active {
+      background: linear-gradient(180deg, #f97316 0%, #c2410c 100%);
+      color: #090612;
+      box-shadow: 0 0 14px rgba(249, 115, 22, 0.55);
+    }
+
+    .lvl-btn.quest-boss {
+      border: 1px solid rgba(244, 63, 94, 0.75);
+      color: #fda4af;
+      background: linear-gradient(180deg, rgba(159, 18, 57, 0.65) 0%, rgba(20, 23, 32, 0.95) 100%);
+    }
+    .lvl-btn.quest-boss.active {
+      background: linear-gradient(180deg, #f43f5e 0%, #9f1239 100%);
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(244, 63, 94, 0.65);
+    }
+
+    .map-pill.quest-mode {
+      background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
+      color: #090612;
+    }
+
+    .bot-lvl-xp-card {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(9, 13, 24, 0.96) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 11px;
+      padding: 8px 10px;
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+    .bot-lvl-xp-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .bot-lvl-badge-main {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      font-weight: 900;
+      color: #fde047;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .bot-lvl-xp-nums {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+    .bot-lvl-xp-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(2, 6, 23, 0.9);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .bot-lvl-xp-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8 0%, #fbbf24 100%);
+      border-radius: 999px;
+      transition: width 0.35s ease;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
+    }
+    .bot-lvl-xp-sub {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.62rem;
+      color: #94a3b8;
+      font-weight: 600;
     }
 
     .enemy-intel-strip {
@@ -5768,7 +5855,10 @@
     </div>
 
     <div class="mode-switcher">
-      <button class="mode-btn pvp active" id="modeBtnPvp" onclick="matchRandomOnlinePlayer(false)">
+      <button class="mode-btn active" id="modeBtnQuests" style="border-color:rgba(251,191,36,0.75);color:#fde047;" onclick="startQuestCampaignMode(false)">
+        ⚔️ QUESTS (1-10)
+      </button>
+      <button class="mode-btn pvp" id="modeBtnPvp" onclick="matchRandomOnlinePlayer(false)">
         🌐 ONLINE PVP
       </button>
       <button class="mode-btn campaign" id="modeBtnCampaign" onclick="matchSimilarLevelCpu(false)">
@@ -5806,6 +5896,20 @@
       </div>
 
       <div class="home-tab-body" id="body_rigSection">
+        <div class="bot-lvl-xp-card" id="botLevelXpCard">
+          <div class="bot-lvl-xp-top">
+            <span class="bot-lvl-badge-main" id="botLvlMainBadge">🤖 BOT LVL 1 · ROOKIE CHASSIS</span>
+            <span class="bot-lvl-xp-nums" id="botLvlXpProgressTxt">⚡ 0 / 200 XP TO LVL 2</span>
+          </div>
+          <div class="bot-lvl-xp-track">
+            <div class="bot-lvl-xp-fill" id="botLvlXpFill" style="width:0%;"></div>
+          </div>
+          <div class="bot-lvl-xp-sub">
+            <span id="botLvlNextRewardTxt" style="color:#34d399;font-weight:800;">🎁 NEXT LVL BONUS: +250 💎 DIAMONDS</span>
+            <span id="botQuestProgressBadge" style="color:#fde047;font-weight:800;">⚔️ QUESTS: 0/10</span>
+          </div>
+        </div>
+
         <div class="base-stats-bar" style="margin-top: 4px;">
           <div class="stat-cell">
             <span class="stat-label">❤️ HP</span>
@@ -5939,15 +6043,16 @@
           <span id="enemyIntelStats" style="color:#fbbf24;font-family:'Orbitron',sans-serif;font-size:0.70rem;">1250 HP · 50 PWR · 50 SPD · 50 AGI</span>
         </div>
 
-        <!-- LIVE ONLINE PVP & SIMILAR-LVL CPU MATCHMAKING TOOLS -->
+        <!-- QUESTS 1-10, LIVE ONLINE PVP & SIMILAR-LVL CPU MATCHMAKING TOOLS -->
         <div class="pvp-tools-row visible" id="pvpToolsRow">
           <div style="display:flex;gap:6px;flex-wrap:wrap;" id="matchmakingActionBtns">
-            <button class="btn-pvp-tool primary" onclick="beginPreBattleWizard('pvp')">🌐 FIND LIVE ONLINE PLAYER</button>
-            <button class="btn-pvp-tool" style="background:linear-gradient(180deg,#34d399 0%,#059669 100%);color:#04130e;" onclick="beginPreBattleWizard('cpu')">🤖 GENERATE SIMILAR-LVL CPU</button>
+            <button class="btn-pvp-tool" style="background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;font-weight:900;border-color:#fde047;" onclick="startQuestCampaignMode(false)">⚔️ QUESTS 1–10 (CAMPAIGN)</button>
+            <button class="btn-pvp-tool" style="background:linear-gradient(180deg,#34d399 0%,#059669 100%);color:#04130e;" onclick="beginPreBattleWizard('cpu')">🤖 VS. SIMILAR-LVL CPU</button>
+            <button class="btn-pvp-tool primary" onclick="beginPreBattleWizard('pvp')">🌐 LIVE ONLINE PVP</button>
             <button class="btn-pvp-tool" onclick="copyMyRigCode()">🔗 COPY MY RIG CODE</button>
             <button class="btn-pvp-tool" onclick="challengeFriendRigCode()">⚔️ ENTER FRIEND RIG CODE</button>
           </div>
-          <span id="matchmakingSubHint" style="font-size:0.74rem;color:#94a3b8;">Choose 🌐 Live Online PvP (Random Player) or 🤖 Battle a CPU matched to your current Rig Level!</span>
+          <span id="matchmakingSubHint" style="font-size:0.74rem;color:#94a3b8;">Beat ⚔️ Quests 1–10 (Q5 Swarm · Q10 Boss), 🤖 CPU Bots, or 🌐 Online PvP to earn XP, level up your bot &amp; earn 💎 Diamonds!</span>
         </div>
       </div>
 
@@ -6070,14 +6175,17 @@
               </div>
             </div>
 
-            <!-- STEP 1: CHOOSE PVP, CPU, OR FULL-SCREEN MAP SELECTION -->
+            <!-- STEP 1: CHOOSE QUESTS 1-10, PVP, CPU, OR FULL-SCREEN MAP SELECTION -->
             <div id="overlayChoiceRow" style="display:flex;flex-direction:column;gap:8px;width:100%;">
+              <button class="btn-arena-battle" id="btnStartQuestBattle" style="width:100%;background:linear-gradient(180deg,#fbbf24 0%,#b45309 100%);color:#090612;border:2px solid #fde047;box-shadow:0 8px 24px rgba(245,158,11,0.45);" onclick="beginPreBattleWizard('quests')">
+                ⚔️ PLAY QUEST 1 (LVL.1 CAMPAIGN · +XP &amp; 💎)
+              </button>
               <div class="overlay-choice-row" style="width:100%;">
-                <button class="btn-arena-battle pvp-live" id="btnStartLivePvp" onclick="beginPreBattleWizard('pvp')">
-                  🌐 LIVE ONLINE PVP
-                </button>
                 <button class="btn-arena-battle cpu-sim" id="btnStartCpuSim" onclick="beginPreBattleWizard('cpu')">
                   🤖 VS. CPU BOT
+                </button>
+                <button class="btn-arena-battle pvp-live" id="btnStartLivePvp" onclick="beginPreBattleWizard('pvp')">
+                  🌐 LIVE ONLINE PVP
                 </button>
               </div>
               <button type="button" class="btn-pre-step-next" id="btnHomeOpenMapSelect" style="width:100%;padding:11px 16px;font-size:0.74rem;background:linear-gradient(180deg,rgba(251,191,36,0.24) 0%,rgba(217,119,6,0.32) 100%);border:1.5px solid #fbbf24;color:#fde047;" onclick="openFullScreenMapSelector()">
@@ -6292,7 +6400,11 @@
   <nav class="mobile-bottom-nav">
     <button class="mob-nav-btn active" id="mobNavRig" onclick="mobileNavJump('rig')">
       <span>🔧</span>
-      <span>MY 6-SLOT RIG</span>
+      <span>GARAGE</span>
+    </button>
+    <button class="mob-nav-btn" id="mobNavQuests" onclick="mobileNavJump('quests')">
+      <span>⚔️</span>
+      <span>QUESTS 1-10</span>
     </button>
     <button class="mob-nav-btn" id="mobNavShop" onclick="openShopModal('tire')">
       <span>🛒</span>
@@ -6308,7 +6420,7 @@
     </button>
     <button class="mob-nav-btn" id="mobNavCampaign" onclick="mobileNavJump('cpu')">
       <span>🤖</span>
-      <span>SIMILAR CPU</span>
+      <span>VS. CPU</span>
     </button>
   </nav>
 
@@ -6877,6 +6989,76 @@
     }
 
     const ECONOMY_V2_MIGRATION_KEY = "rc_botpit_zero_diamond_econ_v2";
+    const SEASON_RESET_V3_KEY = "rc_botpit_season_reset_v3";
+
+    function getXpNeededForNextBotLevel(lvl) {
+      const l = Math.max(1, Number(lvl) || 1);
+      return Math.round(200 * Math.pow(1.22, l - 1));
+    }
+
+    function getDiamondRewardForLevelUp(newLvl) {
+      const l = Math.max(2, Number(newLvl) || 2);
+      return 150 + l * 50; // LVL 2: +250 💎, LVL 3: +300 💎, LVL 4: +350 💎, etc.
+    }
+
+    function computeBotLevelProgressFromTotalXp(totalXpRaw) {
+      let rem = Math.max(0, Math.floor(Number(totalXpRaw) || 0));
+      let lvl = 1;
+      while (lvl < 99) {
+        const needed = getXpNeededForNextBotLevel(lvl);
+        if (rem >= needed) {
+          rem -= needed;
+          lvl++;
+        } else {
+          break;
+        }
+      }
+      const neededForNext = getXpNeededForNextBotLevel(lvl);
+      const pct = Math.min(100, Math.max(0, Math.round((rem / Math.max(1, neededForNext)) * 100)));
+      return {
+        botLevel: lvl,
+        xpIntoLevel: rem,
+        xpNeededForNext: neededForNext,
+        pct,
+        nextLvlDiamonds: getDiamondRewardForLevelUp(lvl + 1)
+      };
+    }
+
+    function awardBattleXpAndDiamonds({ baseXp = 0, baseDiamonds = 0, won = false, gritBonus = false }) {
+      const stBonuses = typeof computeSkillTreeBonuses === "function" ? computeSkillTreeBonuses() : {};
+      const xpMult = 1 + (stBonuses.xpPct || 0) / 100;
+      const wealthMult = 1 + (stBonuses.wealthPct || 0) / 100;
+      const gritAdd = (won && gritBonus) ? Math.round(baseXp * 0.15) : 0;
+
+      const xpAdded = Math.max(0, Math.round((baseXp + gritAdd) * xpMult));
+      const matchDiamondsAdded = Math.max(0, Math.round(baseDiamonds * wealthMult));
+
+      const beforeProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned || 0);
+      state.cpuXp = Math.max(0, (Number(state.cpuXp) || 0) + xpAdded);
+      state.totalXpEarned = Math.max(0, (Number(state.totalXpEarned) || 0) + xpAdded);
+      const afterProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned);
+
+      let levelUpDiamonds = 0;
+      if (afterProg.botLevel > beforeProg.botLevel) {
+        for (let l = beforeProg.botLevel + 1; l <= afterProg.botLevel; l++) {
+          levelUpDiamonds += getDiamondRewardForLevelUp(l);
+        }
+        // Full complimentary hull repair when your bot levels up!
+        state.partIntegrity = { tires: 100, armor: 100, weapon: 100, core: 100 };
+      }
+      state.botLevel = afterProg.botLevel;
+      state.scrap = Math.max(0, (Number(state.scrap) || 0) + matchDiamondsAdded + levelUpDiamonds);
+
+      return {
+        xpAdded,
+        matchDiamondsAdded,
+        levelUpDiamonds,
+        totalDiamondsAdded: matchDiamondsAdded + levelUpDiamonds,
+        oldLevel: beforeProg.botLevel,
+        newLevel: afterProg.botLevel,
+        leveledUp: afterProg.botLevel > beforeProg.botLevel
+      };
+    }
 
     function createDefaultAccountProgress(username, email, password) {
       const cleanName = String(username || "PILOT").trim().replace(/^@/, "");
@@ -6886,11 +7068,14 @@
         email: String(email || `${cleanName.toLowerCase()}@retrocanopy.com`).trim().toLowerCase(),
         password: String(password || ""),
         pilotCallsign: "@" + cleanName.toUpperCase().slice(0, 16),
+        botLevel: 1,
+        totalXpEarned: 0,
         scrap: 0,
         cpuXp: 0,
         tickets: 0,
         partIntegrity: { tires: 100, armor: 100, weapon: 100, core: 100 },
         econV2: true,
+        seasonResetV3: true,
         ownedIds: [],
         loadout: { ...EMPTY_LOADOUT },
         elo: 1000,
@@ -6903,11 +7088,73 @@
       };
     }
 
+    function enforceSeasonResetV3() {
+      try {
+        const bpMap = getBotPitAccountsMap();
+        let bpChanged = false;
+        for (const k of Object.keys(bpMap)) {
+          const rec = bpMap[k];
+          if (rec && !rec.seasonResetV3) {
+            rec.botLevel = 1;
+            rec.totalXpEarned = 0;
+            rec.scrap = 0;
+            rec.cpuXp = 0;
+            rec.tickets = 0;
+            rec.ownedIds = [];
+            rec.loadout = { ...EMPTY_LOADOUT };
+            rec.skillRanks = {};
+            rec.clearedLevels = [];
+            rec.wagerAmount = 0;
+            rec.partIntegrity = { tires: 100, armor: 100, weapon: 100, core: 100 };
+            rec.seasonResetV3 = true;
+            bpChanged = true;
+          }
+        }
+        if (bpChanged) saveBotPitAccountsMap(bpMap);
+
+        const siteMap = getSiteAccountsMap();
+        let siteChanged = false;
+        for (const k of Object.keys(siteMap)) {
+          const sRec = siteMap[k];
+          if (!sRec) continue;
+          const bp = sRec.botPitData;
+          if (!bp || !bp.seasonResetV3) {
+            sRec.tickets = 0;
+            sRec.xp = 0;
+            if (bp && typeof bp === "object") {
+              bp.botLevel = 1;
+              bp.totalXpEarned = 0;
+              bp.scrap = 0;
+              bp.cpuXp = 0;
+              bp.tickets = 0;
+              bp.ownedIds = [];
+              bp.loadout = { ...EMPTY_LOADOUT };
+              bp.skillRanks = {};
+              bp.clearedLevels = [];
+              bp.wagerAmount = 0;
+              bp.partIntegrity = { tires: 100, armor: 100, weapon: 100, core: 100 };
+              bp.seasonResetV3 = true;
+            }
+            siteChanged = true;
+          }
+        }
+        if (siteChanged) saveSiteAccountsMap(siteMap);
+
+        if (localStorage.getItem(SEASON_RESET_V3_KEY) !== "1") {
+          localStorage.setItem("rc_canopy_xp", "0");
+          localStorage.setItem(SEASON_RESET_V3_KEY, "1");
+        }
+      } catch (_) {}
+    }
+    enforceSeasonResetV3();
+
     const state = {
       loggedInUserKey: null,
       loggedInUsername: "",
       loggedInEmail: "",
       pilotCallsign: "🔒 LOGIN REQUIRED",
+      botLevel: 1,
+      totalXpEarned: 0,
       elo: 1000,
       pvpWins: 0,
       pvpLosses: 0,
@@ -6917,7 +7164,7 @@
       partIntegrity: { tires: 100, armor: 100, weapon: 100, core: 100 },
       wagerAmount: 0,
       isAllInWager: false,
-      gameMode: "pvp", // "pvp" (Live Online Random Player) | "cpu" (Similar-Level CPU Bot)
+      gameMode: "quests", // "quests" (Quests 1-10 Campaign) | "pvp" (Live Online Random Player) | "cpu" (Similar-Level CPU Bot)
       currentLevel: 1,
       currentPvpId: "pvp_01",
       activeOnlineOpponent: null,
@@ -6947,17 +7194,22 @@
     function persistWalletAndRig() {
       if (!state.loggedInUserKey) return;
       const uKey = state.loggedInUserKey;
+      const lvlProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned || 0);
+      state.botLevel = lvlProg.botLevel;
 
       const progressSnapshot = {
         usernameKey: uKey,
         username: state.loggedInUsername || uKey,
         email: state.loggedInEmail || `${uKey}@retrocanopy.com`,
         pilotCallsign: state.pilotCallsign,
+        botLevel: lvlProg.botLevel,
+        totalXpEarned: Math.max(0, Number(state.totalXpEarned) || 0),
         scrap: Math.max(0, Number(state.scrap) || 0),
         cpuXp: Math.max(0, Number(state.cpuXp) || 0),
         tickets: Math.max(0, Number(state.tickets) || 0),
         partIntegrity: normalizePartIntegrity(state.partIntegrity),
         econV2: true,
+        seasonResetV3: true,
         ownedIds: Array.isArray(state.ownedIds) ? [...state.ownedIds] : [],
         loadout: normalizeLoadout(state.loadout),
         elo: Math.max(100, Number(state.elo) || 1000),
@@ -7041,30 +7293,43 @@
     function applyAccountProgressToState(uKey, record) {
       const cleanName = String(record.username || uKey).trim().replace(/^@/, "");
       const bp = record.botPitData || record;
-      // Migrate legacy accounts that had the old 3,500 starter grant & 0 owned upgrades to the new 0-Diamond economy
-      const isLegacyUnmigrated = !bp.econV2 && bp.scrap === 3500 && (!bp.ownedIds || bp.ownedIds.length === 0);
+      // Enforce Season Reset V3: if this account has not been reset to Level 1 / 0 Diamonds / 0 XP yet, reset it now!
+      const needsSeasonResetV3 = !bp.seasonResetV3;
       state.loggedInUserKey = uKey.toLowerCase();
       state.loggedInUsername = cleanName;
       state.loggedInEmail = String(record.email || bp.email || `${uKey}@retrocanopy.com`);
       state.pilotCallsign = bp.pilotCallsign || ("@" + cleanName.toUpperCase().slice(0, 16));
-      state.scrap = isLegacyUnmigrated ? 0 : (typeof bp.scrap === "number" && !Number.isNaN(bp.scrap) ? bp.scrap : 0);
-      state.cpuXp = typeof bp.cpuXp === "number" && !Number.isNaN(bp.cpuXp) ? bp.cpuXp : 0;
-      const globalTickets = Math.floor((parseInt(localStorage.getItem("rc_canopy_xp") || "0", 10) || 0) / 10);
-      state.tickets = Math.max(
-        typeof bp.tickets === "number" && !Number.isNaN(bp.tickets) ? bp.tickets : 0,
-        typeof record.tickets === "number" ? record.tickets : 0,
-        globalTickets
-      );
-      state.partIntegrity = normalizePartIntegrity(bp.partIntegrity);
-      state.ownedIds = Array.isArray(bp.ownedIds) ? [...bp.ownedIds] : [];
-      state.loadout = normalizeLoadout(bp.loadout);
-      state.elo = typeof bp.elo === "number" && !Number.isNaN(bp.elo) ? bp.elo : 1000;
-      state.pvpWins = typeof bp.pvpWins === "number" && !Number.isNaN(bp.pvpWins) ? bp.pvpWins : 0;
-      state.pvpLosses = typeof bp.pvpLosses === "number" && !Number.isNaN(bp.pvpLosses) ? bp.pvpLosses : 0;
-      state.wagerAmount = isLegacyUnmigrated ? 0 : (typeof bp.wagerAmount === "number" && !Number.isNaN(bp.wagerAmount) ? Math.min(bp.wagerAmount, state.scrap) : 0);
-      state.clearedLevels = Array.isArray(bp.clearedLevels) ? [...bp.clearedLevels] : [];
-      state.skillRanks = (bp.skillRanks && typeof bp.skillRanks === "object") ? { ...bp.skillRanks } : {};
+      state.scrap = needsSeasonResetV3 ? 0 : (typeof bp.scrap === "number" && !Number.isNaN(bp.scrap) ? bp.scrap : 0);
+      state.cpuXp = needsSeasonResetV3 ? 0 : (typeof bp.cpuXp === "number" && !Number.isNaN(bp.cpuXp) ? bp.cpuXp : 0);
+      state.totalXpEarned = needsSeasonResetV3
+        ? 0
+        : (typeof bp.totalXpEarned === "number" && !Number.isNaN(bp.totalXpEarned) ? bp.totalXpEarned : state.cpuXp);
+      const lvlProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned);
+      state.botLevel = lvlProg.botLevel;
+      state.tickets = needsSeasonResetV3
+        ? 0
+        : (typeof bp.tickets === "number" && !Number.isNaN(bp.tickets) ? bp.tickets : 0);
+      state.partIntegrity = needsSeasonResetV3
+        ? { tires: 100, armor: 100, weapon: 100, core: 100 }
+        : normalizePartIntegrity(bp.partIntegrity);
+      state.ownedIds = needsSeasonResetV3 ? [] : (Array.isArray(bp.ownedIds) ? [...bp.ownedIds] : []);
+      state.loadout = needsSeasonResetV3 ? { ...EMPTY_LOADOUT } : normalizeLoadout(bp.loadout);
+      state.elo = needsSeasonResetV3 ? 1000 : (typeof bp.elo === "number" && !Number.isNaN(bp.elo) ? bp.elo : 1000);
+      state.pvpWins = needsSeasonResetV3 ? 0 : (typeof bp.pvpWins === "number" && !Number.isNaN(bp.pvpWins) ? bp.pvpWins : 0);
+      state.pvpLosses = needsSeasonResetV3 ? 0 : (typeof bp.pvpLosses === "number" && !Number.isNaN(bp.pvpLosses) ? bp.pvpLosses : 0);
+      state.wagerAmount = needsSeasonResetV3 ? 0 : (typeof bp.wagerAmount === "number" && !Number.isNaN(bp.wagerAmount) ? Math.min(bp.wagerAmount, state.scrap) : 0);
+      state.clearedLevels = needsSeasonResetV3 ? [] : (Array.isArray(bp.clearedLevels) ? [...bp.clearedLevels] : []);
+      state.skillRanks = needsSeasonResetV3 ? {} : ((bp.skillRanks && typeof bp.skillRanks === "object") ? { ...bp.skillRanks } : {});
       state.isAllInWager = false;
+      // Set currentLevel to the next uncleared Quest (1..10)
+      let nextQuest = 1;
+      for (let q = 1; q <= 10; q++) {
+        if (!state.clearedLevels.includes(q)) {
+          nextQuest = q;
+          break;
+        }
+      }
+      state.currentLevel = nextQuest;
 
       localStorage.setItem(BOTPIT_ACTIVE_USER_KEY, state.loggedInUserKey);
       localStorage.setItem(SITE_CURRENT_USER_KEY, state.loggedInUserKey);
@@ -7532,21 +7797,216 @@
     function getPlayerRigTierInfo() {
       const slotKeys = ["tire", "wpn1", "wpn2", "botAbil1", "botAbil2", "wpnAbil"];
       const equippedCount = slotKeys.filter(k => Boolean(state.loadout[k])).length;
-      const rigLevel = Math.max(1, equippedCount + 1); // LVL 1 (0 mods) up to LVL 7 (all 6 mods)
+      const lvlProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned || 0);
+      const rigLevel = Math.max(1, lvlProg.botLevel || state.botLevel || 1);
       const tierNames = [
-        "STOCK ROOKIE RIG",
+        "ROOKIE CHASSIS",
         "STREET TUNED RIG",
         "COMBAT SPEC RIG",
         "HEAVY ASSAULT RIG",
         "PRO ARENA RIG",
         "ELITE CHAMPION RIG",
-        "MAXED 6-SLOT APEX RIG"
+        "APEX SYNDICATE RIG",
+        "OVERLORD TITAN RIG",
+        "MYTHIC CYBER RIG",
+        "SHIBUYA GRANDMASTER"
       ];
       return {
         equippedCount,
         rigLevel,
-        tierTitle: tierNames[Math.min(equippedCount, tierNames.length - 1)]
+        xpIntoLevel: lvlProg.xpIntoLevel,
+        xpNeededForNext: lvlProg.xpNeededForNext,
+        xpPct: lvlProg.pct,
+        nextLvlDiamonds: lvlProg.nextLvlDiamonds,
+        tierTitle: tierNames[Math.min(rigLevel - 1, tierNames.length - 1)]
       };
+    }
+
+    // =========================================================================
+    // QUESTS 1–10 CAMPAIGN (EVERY 5TH = ENEMY QUANTITY CHALLENGE · EVERY 10TH = BOSS BATTLE)
+    // =========================================================================
+    const QUEST_CAMPAIGN_LEVELS = [
+      {
+        level: 1,
+        code: "QUEST 1",
+        name: "SCRAP-SCOUT MK-I",
+        title: "LVL.1 Scrapyard Rookie",
+        badge: "⚔️ Q1 · LVL 1",
+        color: "#38bdf8",
+        mapId: "map_01_furnace",
+        xpReward: 120,
+        diamondReward: 150,
+        replayXp: 65,
+        replayDiamonds: 55,
+        baseStats: { power: 36, speed: 38, agility: 38, hp: 850 },
+        loadout: { tire: null, wpn1: null, wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null },
+        desc: "Beat the Level 1 Scrapyard Scout to earn your first XP toward Bot Level 2 and Diamonds for upgrades!"
+      },
+      {
+        level: 2,
+        code: "QUEST 2",
+        name: "HACHIKO DRIFTER",
+        title: "LVL.2 Street Drifter",
+        badge: "⚔️ Q2 · LVL 2",
+        color: "#34d399",
+        mapId: "map_01_furnace",
+        xpReward: 150,
+        diamondReward: 185,
+        replayXp: 80,
+        replayDiamonds: 70,
+        baseStats: { power: 40, speed: 44, agility: 45, hp: 980 },
+        loadout: { tire: "tire_12", wpn1: null, wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null },
+        desc: "Equipped with J-Turn Drift Slicks. Watch out for its flank spin-outs!"
+      },
+      {
+        level: 3,
+        code: "QUEST 3",
+        name: "IRON BULLDOZER",
+        title: "LVL.3 Saw-Herder Bruiser",
+        badge: "⚔️ Q3 · LVL 3",
+        color: "#fbbf24",
+        mapId: "map_02_lava_bridge",
+        xpReward: 185,
+        diamondReward: 225,
+        replayXp: 95,
+        replayDiamonds: 85,
+        baseStats: { power: 45, speed: 42, agility: 42, hp: 1120 },
+        loadout: { tire: "tire_05", wpn1: "wpn_01", wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null },
+        desc: "Heavy Bulldozer Wedge on the Osaka Lava Bridge. Avoid getting shoved toward the top/bottom lava!"
+      },
+      {
+        level: 4,
+        code: "QUEST 4",
+        name: "AKIHABARA SNIPER",
+        title: "LVL.4 Gauss Rail Stalker",
+        badge: "⚔️ Q4 · LVL 4",
+        color: "#06b6d4",
+        mapId: "map_13_tesla_spiders",
+        xpReward: 225,
+        diamondReward: 270,
+        replayXp: 115,
+        replayDiamonds: 105,
+        baseStats: { power: 49, speed: 46, agility: 48, hp: 1240 },
+        loadout: { tire: "tire_04", wpn1: null, wpn2: "rng_01", botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null },
+        desc: "Strafing Mecanum chassis armed with a dorsal Gauss Railgun Sniper in the Shinjuku Tesla Pit."
+      },
+      {
+        level: 5,
+        code: "QUEST 5 · SWARM",
+        name: "SHIBUYA PACK SWARM (3x BOTS)",
+        title: "🔥 QUANTITY CHALLENGE · 1 VS. 3 ENEMY BOTS",
+        badge: "🔥🐺 Q5 · 3-BOT SWARM",
+        color: "#f97316",
+        mapId: "map_12_bomb_buggies",
+        isQuantityChallenge: true,
+        enemyCount: 3,
+        xpReward: 380,
+        diamondReward: 460,
+        replayXp: 190,
+        replayDiamonds: 185,
+        baseStats: { power: 40, speed: 48, agility: 48, hp: 590 },
+        loadout: { tire: "tire_15", wpn1: "tire_17", wpn2: null, botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null },
+        swarmRoster: [
+          { name: "🐺 PACK-ALPHA", color: "#f97316", yOffset: -155, loadout: { tire: "tire_15", wpn1: "wpn_01", wpn2: null, botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null } },
+          { name: "🐺 PACK-BETA",  color: "#fbbf24", yOffset: 0,    loadout: { tire: "tire_17", wpn1: "wpn_05", wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null } },
+          { name: "🐺 PACK-GAMMA", color: "#fb7185", yOffset: 155,  loadout: { tire: "tire_12", wpn1: "wpn_08", wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null } }
+        ],
+        desc: "🔥 EVERY 5TH QUEST QUANTITY CHALLENGE! Survive and destroy all 3 Syndicate Pack Hounds attacking you simultaneously!"
+      },
+      {
+        level: 6,
+        code: "QUEST 6",
+        name: "FROST VALKYRIE",
+        title: "LVL.6 Cryo-Flipper Juggler",
+        badge: "⚔️ Q6 · LVL 6",
+        color: "#00f5ff",
+        mapId: "map_17_cryo_drones",
+        xpReward: 290,
+        diamondReward: 340,
+        replayXp: 150,
+        replayDiamonds: 135,
+        baseStats: { power: 54, speed: 52, agility: 54, hp: 1380 },
+        loadout: { tire: "tire_12", wpn1: "wpn_05", wpn2: null, botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: "wpn_abil_11" },
+        desc: "Chills your chassis with Cryo-Frost and launches you skyward with its Pneumatic Flipper!"
+      },
+      {
+        level: 7,
+        code: "QUEST 7",
+        name: "KAWASAKI CRUSHER",
+        title: "LVL.7 Smelter Executioner",
+        badge: "⚔️ Q7 · LVL 7",
+        color: "#fb923c",
+        mapId: "map_07_side_trenches",
+        xpReward: 340,
+        diamondReward: 400,
+        replayXp: 175,
+        replayDiamonds: 160,
+        baseStats: { power: 60, speed: 54, agility: 54, hp: 1520 },
+        loadout: { tire: "tire_05", wpn1: "wpn_10", wpn2: "rng_08", botAbil1: "bot_abil_17", botAbil2: null, wpnAbil: "wpn_abil_07" },
+        desc: "Grapples with a Hydraulic Claw and drags opponents toward the Kawasaki molten side trenches!"
+      },
+      {
+        level: 8,
+        code: "QUEST 8",
+        name: "CRIMSON RONIN",
+        title: "LVL.8 Vampiric Ring-Shredder",
+        badge: "⚔️ Q8 · LVL 8",
+        color: "#ec4899",
+        mapId: "map_01_furnace",
+        xpReward: 400,
+        diamondReward: 470,
+        replayXp: 205,
+        replayDiamonds: 190,
+        baseStats: { power: 65, speed: 58, agility: 58, hp: 1680 },
+        loadout: { tire: "tire_17", wpn1: "wpn_12", wpn2: "rng_04", botAbil1: "bot_abil_04", botAbil2: null, wpnAbil: "wpn_abil_18" },
+        desc: "360° Ring Spinner with Vampiric Siphon that heals on every melee clash!"
+      },
+      {
+        level: 9,
+        code: "QUEST 9",
+        name: "ROPPONGI SENTINEL",
+        title: "LVL.9 Penthouse Royal Guard",
+        badge: "⚔️ Q9 · LVL 9",
+        color: "#eab308",
+        mapId: "map_11_sky_ledge",
+        xpReward: 470,
+        diamondReward: 560,
+        replayXp: 240,
+        replayDiamonds: 225,
+        baseStats: { power: 70, speed: 62, agility: 64, hp: 1850 },
+        loadout: { tire: "tire_04", wpn1: "wpn_08", wpn2: "rng_13", botAbil1: "bot_abil_11", botAbil2: "bot_abil_09", wpnAbil: "wpn_abil_03" },
+        desc: "Elite 5-Slot Royal Guard on the 80-story Roppongi Sky Ledge. Watch all 4 laser ring-out edges!"
+      },
+      {
+        level: 10,
+        code: "QUEST 10 · BOSS",
+        name: "EMPEROR KAGUYA OMEGA",
+        title: "👑💀 LVL.10 MEGA BOSS DREADNOUGHT",
+        badge: "👑💀 Q10 · BOSS BATTLE",
+        color: "#f43f5e",
+        mapId: "map_01_furnace",
+        isBossBattle: true,
+        scaleMult: 1.42,
+        xpReward: 850,
+        diamondReward: 1000,
+        replayXp: 420,
+        replayDiamonds: 400,
+        baseStats: { power: 78, speed: 64, agility: 64, hp: 2500 },
+        loadout: {
+          tire: "tire_17",
+          wpn1: "wpn_12",
+          wpn2: "rng_18",
+          botAbil1: "bot_abil_04",
+          botAbil2: "bot_abil_11",
+          wpnAbil: "wpn_abil_03"
+        },
+        desc: "👑💀 EVERY 10TH LEVEL BOSS BATTLE! Giant 1.42x Dreadnought Boss with 2,500 HP, 6/6 Maxed Weapons, and Phase 2 Overdrive at 50% HP!"
+      }
+    ];
+
+    function getActiveQuestSpec(lvlNum) {
+      const target = Math.max(1, Math.min(10, Number(lvlNum || state.currentLevel) || 1));
+      return QUEST_CAMPAIGN_LEVELS.find(q => q.level === target) || QUEST_CAMPAIGN_LEVELS[0];
     }
 
     function buildRandomLoadoutWithSlotCount(targetCount) {
@@ -8249,26 +8709,30 @@
 
       if (guestWon) {
         const totalWon = staked * 2;
+        const rewardRes = awardBattleXpAndDiamonds({ baseXp: 160, baseDiamonds: 120, won: true, gritBonus: sim.startedInjuredGrit });
         state.scrap += totalWon;
         state.elo += 28;
         state.pvpWins++;
         awardPvpVictoryTicket();
         persistWalletAndRig();
+        const lvlUpNote = rewardRes.leveledUp ? ` · 🎉 LVL UP TO LVL.${rewardRes.newLevel} (+${rewardRes.levelUpDiamonds} 💎)!` : "";
         state.postMatchSummary = {
           tag: "🌐 LIVE ONLINE PVP RESULT",
           banner: `🏆 VICTORY VS. ${chObj.callsign}`,
           color: "#00ff88",
-          desc: `+1 🎟️ Golden Ticket${totalWon > 0 ? ' · +' + totalWon.toLocaleString() + ' 💎 Pot' : ''} · +28 🏆 ELO`
+          desc: `+${rewardRes.xpAdded} ⚡ XP · +${(rewardRes.totalDiamondsAdded + totalWon).toLocaleString()} 💎 · +1 🎟️ Ticket${lvlUpNote}`
         };
       } else {
+        const rewardRes = awardBattleXpAndDiamonds({ baseXp: 50, baseDiamonds: 25, won: false, gritBonus: false });
         state.elo = Math.max(800, state.elo - 16);
         state.pvpLosses++;
         persistWalletAndRig();
+        const lvlUpNote = rewardRes.leveledUp ? ` · 🎉 LVL UP TO LVL.${rewardRes.newLevel} (+${rewardRes.levelUpDiamonds} 💎)!` : "";
         state.postMatchSummary = {
           tag: "🌐 LIVE ONLINE PVP RESULT",
           banner: `💥 DEFEATED BY ${chObj.callsign}`,
           color: "#ff2a55",
-          desc: `${staked > 0 ? '-' + staked.toLocaleString() + ' 💎 Wager · ' : ''}-16 🏆 ELO`
+          desc: `+${rewardRes.xpAdded} ⚡ XP · +${rewardRes.totalDiamondsAdded} 💎${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''}${lvlUpNote}`
         };
       }
 
@@ -8283,6 +8747,41 @@
       renderLiveFightsList();
       setPreBattleStep("mode");
       overlay.classList.remove("hidden");
+    }
+
+    function startQuestCampaignMode(startImmediately = false) {
+      if (!ensurePilotLoggedIn()) return;
+      state.gameMode = "quests";
+      if (!state.currentLevel || state.currentLevel < 1 || state.currentLevel > 10) {
+        state.currentLevel = 1;
+      }
+      const qSpec = getActiveQuestSpec(state.currentLevel);
+      if (qSpec && qSpec.mapId) {
+        state.activeMapId = qSpec.mapId;
+      }
+      syncModeButtonsUI();
+      updatePlayerUI();
+      setupStagingArena();
+      if (startImmediately) {
+        triggerBattle();
+      }
+    }
+
+    function selectQuestLevel(lvl, startImmediately = false) {
+      if (!ensurePilotLoggedIn()) return;
+      state.gameMode = "quests";
+      state.currentLevel = Math.max(1, Math.min(10, Number(lvl) || 1));
+      const qSpec = getActiveQuestSpec(state.currentLevel);
+      if (qSpec && qSpec.mapId) {
+        state.activeMapId = qSpec.mapId;
+      }
+      syncModeButtonsUI();
+      updatePlayerUI();
+      setupStagingArena();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      if (startImmediately) {
+        triggerBattle();
+      }
     }
 
     function matchRandomOnlinePlayer(startImmediately = false) {
@@ -8316,21 +8815,36 @@
 
     function syncModeButtonsUI() {
       const isPvp = state.gameMode === "pvp";
-      document.getElementById("modeBtnPvp").classList.toggle("active", isPvp);
-      document.getElementById("modeBtnCampaign").classList.toggle("active", !isPvp);
+      const isCpu = state.gameMode === "cpu";
+      const isQuests = state.gameMode === "quests";
+      const btnQuests = document.getElementById("modeBtnQuests");
+      const btnPvp = document.getElementById("modeBtnPvp");
+      const btnCpu = document.getElementById("modeBtnCampaign");
+      if (btnQuests) btnQuests.classList.toggle("active", isQuests);
+      if (btnPvp) btnPvp.classList.toggle("active", isPvp);
+      if (btnCpu) btnCpu.classList.toggle("active", isCpu);
 
       const badge = document.getElementById("stageModeBadge");
-      if (isPvp) {
-        badge.textContent = "🌐 LIVE ONLINE PVP";
-        badge.classList.add("pvp-mode");
-      } else {
-        badge.textContent = "🤖 SIMILAR-LVL CPU";
-        badge.classList.remove("pvp-mode");
+      if (badge) {
+        badge.classList.remove("pvp-mode", "quest-mode");
+        if (isQuests) {
+          badge.textContent = "⚔️ QUESTS 1–10";
+          badge.classList.add("quest-mode");
+        } else if (isPvp) {
+          badge.textContent = "🌐 LIVE ONLINE PVP";
+          badge.classList.add("pvp-mode");
+        } else {
+          badge.textContent = "🤖 SIMILAR-LVL CPU";
+        }
       }
     }
 
     function setGameMode(mode) {
-      if (mode === "pvp") {
+      if (mode === "quests") {
+        state.gameMode = "quests";
+        const qSpec = getActiveQuestSpec(state.currentLevel);
+        if (qSpec && qSpec.mapId) state.activeMapId = qSpec.mapId;
+      } else if (mode === "pvp") {
         if (!state.activeOnlineOpponent) state.activeOnlineOpponent = generateRandomOnlinePlayer();
         state.gameMode = "pvp";
       } else {
@@ -8407,7 +8921,7 @@
     }
 
     function mobileNavJump(target) {
-      for (const id of ["mobNavRig", "mobNavShop", "mobNavCampaign", "mobNavPvp"]) {
+      for (const id of ["mobNavRig", "mobNavQuests", "mobNavShop", "mobNavCampaign", "mobNavPvp"]) {
         const el = document.getElementById(id);
         if (el) el.classList.remove("active");
       }
@@ -8415,14 +8929,22 @@
         if (document.body.classList.contains("mobile-play-active")) {
           exitMobilePlayMode();
         }
-        document.getElementById("mobNavRig").classList.add("active");
+        const el = document.getElementById("mobNavRig");
+        if (el) el.classList.add("active");
         document.getElementById("rigSection").scrollIntoView({ behavior: "smooth" });
+      } else if (target === "quests") {
+        const el = document.getElementById("mobNavQuests");
+        if (el) el.classList.add("active");
+        setGameMode("quests");
+        document.getElementById("arenaSection").scrollIntoView({ behavior: "smooth" });
       } else if (target === "cpu" || target === "campaign") {
-        document.getElementById("mobNavCampaign").classList.add("active");
+        const el = document.getElementById("mobNavCampaign");
+        if (el) el.classList.add("active");
         setGameMode("cpu");
         document.getElementById("arenaSection").scrollIntoView({ behavior: "smooth" });
       } else if (target === "pvp") {
-        document.getElementById("mobNavPvp").classList.add("active");
+        const el = document.getElementById("mobNavPvp");
+        if (el) el.classList.add("active");
         setGameMode("pvp");
         document.getElementById("arenaSection").scrollIntoView({ behavior: "smooth" });
       }
@@ -8478,7 +9000,20 @@
       if (presetKey === "clear") {
         state.loadout = { tire: null, wpn1: null, wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null };
       } else if (DYNAMIC_PRESETS[presetKey]) {
-        state.loadout = { ...DYNAMIC_PRESETS[presetKey] };
+        const preset = DYNAMIC_PRESETS[presetKey];
+        const nextLoadout = { ...EMPTY_LOADOUT };
+        let missingCount = 0;
+        for (const [k, itemId] of Object.entries(preset)) {
+          if (itemId && state.ownedIds.includes(itemId)) {
+            nextLoadout[k] = itemId;
+          } else if (itemId) {
+            missingCount++;
+          }
+        }
+        state.loadout = nextLoadout;
+        if (missingCount > 0 && typeof showShopToast === "function") {
+          showShopToast(`🔒 Win Quests, CPU, or PvP to earn XP & 💎 Diamonds to buy the remaining ${missingCount} preset tool(s)!`, "#fbbf24");
+        }
       }
       if (state.gameMode === "cpu") {
         state.activeSimilarCpu = generateSimilarLevelCpuBot();
@@ -9330,10 +9865,13 @@
 
     function computeBotCombatProfile(baseStats, loadoutObj, isPlayerBot = false) {
       const skBonuses = isPlayerBot ? computeSkillTreeBonuses() : { power: 0, speed: 0, agility: 0, hp: 0, shield: 0 };
-      let power = baseStats.power + (skBonuses.power || 0);
-      let speed = baseStats.speed + (skBonuses.speed || 0);
-      let agility = baseStats.agility + (skBonuses.agility || 0);
-      let bonusHp = skBonuses.hp || 0;
+      const lvlProg = isPlayerBot ? computeBotLevelProgressFromTotalXp(state.totalXpEarned) : { level: 1 };
+      const lvlBonusStat = Math.max(0, (lvlProg.level - 1) * 2);
+      const lvlBonusHp = Math.max(0, (lvlProg.level - 1) * 30);
+      let power = baseStats.power + (skBonuses.power || 0) + lvlBonusStat;
+      let speed = baseStats.speed + (skBonuses.speed || 0) + lvlBonusStat;
+      let agility = baseStats.agility + (skBonuses.agility || 0) + lvlBonusStat;
+      let bonusHp = (skBonuses.hp || 0) + lvlBonusHp;
 
       const equippedItems = [];
       const equippedIds = new Set();
@@ -9461,6 +9999,7 @@
     }
 
     function getCurrentOpponentWager() {
+      if (state.gameMode === "quests") return 0;
       if (state.gameMode === "cpu") {
         const cpuObj = getActiveSimilarCpu();
         return cpuObj && typeof cpuObj.wager === "number" ? cpuObj.wager : 500;
@@ -9472,10 +10011,15 @@
 
     // Lowest wager between the 2 players is the locked wager for the match!
     function getEffectiveWager() {
+      if (state.gameMode === "quests") return 0;
       return Math.min(getPlayerProposedWager(), getCurrentOpponentWager());
     }
 
     function getCurrentBaseMatchReward() {
+      if (state.gameMode === "quests") {
+        const qSpec = getActiveQuestSpec();
+        return qSpec ? qSpec.diamondReward : 100;
+      }
       if (state.gameMode === "cpu") {
         const cpuObj = getActiveSimilarCpu();
         return cpuObj ? cpuObj.reward : 220;
@@ -9628,8 +10172,71 @@
         rigTagEl.textContent = `LVL ${pTier.rigLevel} · ${pTier.equippedCount}/6`;
       }
 
+      // Sync Bot Level & XP Progression Bar + Next Level Diamond Reward
+      const lvlProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned);
+      const lvlMainEl = document.getElementById("botLvlMainBadge");
+      if (lvlMainEl) lvlMainEl.textContent = `⚡ BOT LVL ${lvlProg.level}`;
+      const lvlTxtEl = document.getElementById("botLvlXpProgressTxt");
+      if (lvlTxtEl) lvlTxtEl.textContent = `${lvlProg.xpIntoLevel.toLocaleString()} / ${lvlProg.xpNeeded.toLocaleString()} XP`;
+      const lvlFillEl = document.getElementById("botLvlXpFill");
+      if (lvlFillEl) lvlFillEl.style.width = `${Math.max(2, lvlProg.progressPct)}%`;
+      const lvlRewardEl = document.getElementById("botLvlNextRewardTxt");
+      if (lvlRewardEl) {
+        lvlRewardEl.textContent = `NEXT LVL ${lvlProg.level + 1}: +💎 ${lvlProg.nextLevelDiamondReward.toLocaleString()} DIAMONDS + STAT BOOST`;
+      }
+      const questProgEl = document.getElementById("botQuestProgressBadge");
+      const clearedSet = new Set(Array.isArray(state.clearedLevels) ? state.clearedLevels : []);
+      if (questProgEl) {
+        questProgEl.textContent = `QUESTS: ${clearedSet.size}/10 CLEARED`;
+      }
+      const startQuestBtnEl = document.getElementById("btnStartQuestBattle");
+      if (startQuestBtnEl) {
+        const curQ = getActiveQuestSpec();
+        const qSuffix = curQ.isBossBattle ? "👑 BOSS" : (curQ.isQuantityChallenge ? "🐝 3-BOT SWARM" : curQ.name);
+        startQuestBtnEl.innerHTML = `⚔️ PLAY QUEST ${curQ.level}: ${qSuffix} <span style="font-size:0.62rem;opacity:0.9;margin-left:4px;">(+⚡${curQ.xpReward} XP · +💎${curQ.diamondReward})</span>`;
+      }
+
       const lvlBar = document.getElementById("levelSelectorBar");
-      if (state.gameMode === "cpu") {
+      if (state.gameMode === "quests") {
+        const curQ = getActiveQuestSpec();
+        const eProf = computeBotCombatProfile(curQ.baseStats, curQ.loadout);
+        const pillsHtml = QUEST_CAMPAIGN_LEVELS.map(q => {
+          const isCleared = clearedSet.has(q.level);
+          const isCur = q.level === curQ.level;
+          let extraCls = "";
+          if (q.isQuantityChallenge) extraCls += " quest-qty";
+          if (q.isBossBattle) extraCls += " quest-boss";
+          if (isCleared) extraCls += " cleared";
+          if (isCur) extraCls += " active";
+          const icon = q.isBossBattle ? "👑 " : (q.isQuantityChallenge ? "🐝 " : (isCleared ? "✓ " : ""));
+          const label = q.isBossBattle ? `Q${q.level} BOSS` : (q.isQuantityChallenge ? `Q${q.level} (1v3)` : `Q${q.level}`);
+          return `<button class="lvl-btn${extraCls}" onclick="selectQuestLevel(${q.level}, false)" title="${q.tag}: ${q.name} (+${q.xpReward} XP, +${q.diamondReward} Diamonds)">${icon}${label}</button>`;
+        }).join("");
+
+        const challengeTag = curQ.isBossBattle
+          ? `<span style="color:#f43f5e;font-weight:900;">👑 BOSS BATTLE</span>`
+          : (curQ.isQuantityChallenge
+              ? `<span style="color:#fb923c;font-weight:900;">🐝 QUANTITY CHALLENGE (1 vs 3 PACK BOTS)</span>`
+              : `<span style="color:#fbbf24;font-weight:900;">⚔️ QUEST ${curQ.level} OF 10</span>`);
+
+        lvlBar.innerHTML = `
+          <span class="matchmaking-status-pill" style="color:#fde68a;border-color:rgba(245,158,11,0.5);">
+            ${challengeTag} · ${curQ.name} · REWARD: ⚡ +${curQ.xpReward} XP & 💎 +${curQ.diamondReward}
+          </span>
+          ${pillsHtml}
+          <button class="lvl-btn active" style="background:linear-gradient(135deg,#f59e0b,#ea580c);color:#060913;font-weight:900;" onclick="beginPreBattleWizard('quests')">🚀 FIGHT QUEST ${curQ.level} NOW</button>
+        `;
+
+        const qtyCountLabel = curQ.isQuantityChallenge ? `3x PACK BOTS (${curQ.enemyCount * curQ.baseStats.hp} TOTAL HP)` : `${eProf.maxHp} HP`;
+        document.getElementById("enemyIntelName").textContent = `Q${curQ.level}: ${curQ.name} (${curQ.title})`;
+        document.getElementById("enemyIntelStats").textContent =
+          `${qtyCountLabel} · ⚡${eProf.power} · 💨${eProf.speed} · 🎯${eProf.agility} · ⚡+${curQ.xpReward} XP · 💎+${curQ.diamondReward}`;
+
+        const pModsEl = document.getElementById("hudPMods");
+        const eModsEl = document.getElementById("hudEMods");
+        if (pModsEl) pModsEl.innerHTML = formatHudModuleChips(p);
+        if (eModsEl) eModsEl.innerHTML = formatHudModuleChips(eProf);
+      } else if (state.gameMode === "cpu") {
         const cpuObj = getActiveSimilarCpu();
         const eProf = computeBotCombatProfile(cpuObj.baseStats, cpuObj.loadout);
 
@@ -9638,7 +10245,8 @@
             🤖 SIMILAR-LVL AI MATCH · YOUR RIG LVL.${pTier.rigLevel} (${pTier.equippedCount}/6 SLOTS) ↔ CPU LVL.${cpuObj.level} (${eProf.equippedItems.length}/6 SLOTS)
           </span>
           <button class="lvl-btn active" onclick="matchSimilarLevelCpu(false)">🔄 ROLL NEW SIMILAR-LVL CPU</button>
-          <button class="lvl-btn" onclick="matchRandomOnlinePlayer(false)">🌐 SWITCH TO LIVE ONLINE PVP</button>
+          <button class="lvl-btn" onclick="startQuestCampaignMode(false)">⚔️ QUESTS 1–10</button>
+          <button class="lvl-btn" onclick="matchRandomOnlinePlayer(false)">🌐 LIVE PVP</button>
         `;
 
         document.getElementById("enemyIntelName").textContent = `${cpuObj.name} (${cpuObj.title})`;
@@ -9658,7 +10266,8 @@
             📡 LIVE ONLINE QUEUE · MATCHED WITH ${chObj.callsign} (🏆 ${chObj.elo} ELO · ${eProf.equippedItems.length}/6 UPGRADES)
           </span>
           <button class="lvl-btn active pvp-challenger" onclick="matchRandomOnlinePlayer(false)">🎲 NEW RANDOM ONLINE PLAYER</button>
-          <button class="lvl-btn" onclick="matchSimilarLevelCpu(false)">🤖 SWITCH TO SIMILAR-LVL CPU</button>
+          <button class="lvl-btn" onclick="startQuestCampaignMode(false)">⚔️ QUESTS 1–10</button>
+          <button class="lvl-btn" onclick="matchSimilarLevelCpu(false)">🤖 SIMILAR-LVL CPU</button>
         `;
 
         document.getElementById("enemyIntelName").textContent = `${chObj.callsign} · ${chObj.rankTitle}`;
@@ -9748,6 +10357,19 @@
     function beginPreBattleWizard(mode) {
       if (!ensurePilotLoggedIn()) return;
       state.postMatchSummary = null;
+      if (mode === "quests") {
+        state.gameMode = "quests";
+        const curQ = getActiveQuestSpec();
+        if (curQ && curQ.mapId) {
+          state.selectedMapId = curQ.mapId;
+        }
+        syncModeButtonsUI();
+        updatePlayerUI();
+        setupStagingArena();
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+        confirmPreBattleAndLaunch();
+        return;
+      }
       state.gameMode = mode === "cpu" ? "cpu" : "pvp";
       if (state.gameMode === "pvp" && !state.customFriendChallenger) {
         state.activeOnlineOpponent = generateRandomOnlinePlayer();
@@ -9894,7 +10516,7 @@
       const overlay = document.getElementById("battleOverlay");
       if (overlay) overlay.classList.add("hidden");
 
-      if (state.gameMode === "cpu" || state.customFriendChallenger) {
+      if (state.gameMode === "quests" || state.gameMode === "cpu" || state.customFriendChallenger) {
         triggerBattle();
       } else {
         // Check if a live human peer is actively waiting right now; otherwise snap straight into the live fight!
@@ -11125,7 +11747,7 @@
               b.rangedCd = 0;
               b.stamina = b.maxStamina;
               if (b.team === "player") {
-                state.cpuXp = (state.cpuXp || 0) + 125;
+                awardBattleXpAndDiamonds({ baseXp: 125, baseDiamonds: 0, won: true, gritBonus: false });
                 updatePlayerUI();
               }
               addFloatText(b.x, b.y - 58, "🧬⚡ SYNAPSE MOLECULE! +125 XP & ALL COOLDOWNS RESET!", "#a855f7");
@@ -11175,9 +11797,7 @@
               b.megaStrikeCharges = (b.megaStrikeCharges || 0) + 1;
               b.megaStrikeMult = 2.5;
               if (b.team === "player") {
-                state.scrap += 150;
-                state.cpuXp = (state.cpuXp || 0) + 150;
-                persistWalletAndRig();
+                awardBattleXpAndDiamonds({ baseXp: 150, baseDiamonds: 150, won: true, gritBonus: false });
                 updatePlayerUI();
                 addFloatText(b.x, b.y - 58, "👑💎 GOLDEN FORTUNE! +150 💎, +150 XP, +150 HP & 2.5x HIT!", "#ffd700");
               } else {
@@ -11324,7 +11944,44 @@
         }
       }
 
-      if (state.gameMode === "cpu") {
+      if (state.gameMode === "quests") {
+        const qSpec = getActiveQuestSpec();
+        sim.roundDurationSec = 120.0;
+        sim.timeLeft = 120.0;
+        sim.maxRounds = 1;
+
+        const playerBot = createPhysicsBot(pStats, "player", state.pilotCallsign, "#ffd700", spawnPX, 450, 0, 1.0);
+
+        if (qSpec.isQuantityChallenge && Array.isArray(qSpec.packSpecs)) {
+          const packBots = qSpec.packSpecs.map((pk, idx) => {
+            const pkStats = computeBotCombatProfile(pk.baseStats, pk.loadout, false);
+            const ey = idx === 0 ? 275 : (idx === 1 ? 450 : 625);
+            const ex = idx === 1 ? spawnEX + 48 : spawnEX - 36;
+            const b = createPhysicsBot(pkStats, "enemy", pk.name, pk.color, ex, ey, Math.PI, pk.scaleMult || 0.88, { tires: 100, armor: 100, weapon: 100, core: 100 });
+            b.isPackBot = true;
+            b.packIdx = idx;
+            return b;
+          });
+          sim.bots = [playerBot, ...packBots];
+          document.getElementById("hudEName").textContent = `${qSpec.name} (3 BOTS)`;
+        } else {
+          const eStats = computeBotCombatProfile(qSpec.baseStats, qSpec.loadout, false);
+          const enemyBot = createPhysicsBot(eStats, "enemy", qSpec.name, qSpec.color, spawnEX, 450, Math.PI, qSpec.scaleMult || 1.0, { tires: 100, armor: 100, weapon: 100, core: 100 });
+          if (qSpec.isBossBattle) {
+            enemyBot.isBossBot = true;
+            enemyBot.bossPhase2Triggered = false;
+            enemyBot.shieldHp = 250;
+          }
+          sim.bots = [playerBot, enemyBot];
+          document.getElementById("hudEName").textContent = qSpec.isBossBattle ? `👑 ${qSpec.name}` : qSpec.name;
+        }
+
+        const badgePrefix = qSpec.isBossBattle ? "👑 BOSS BATTLE" : (qSpec.isQuantityChallenge ? "🐝 QUANTITY CHALLENGE (1 vs 3)" : `⚔️ ${qSpec.tag}`);
+        document.getElementById("overlayLevelTag").textContent = `${badgePrefix} · ${qSpec.title.toUpperCase()}`;
+        document.getElementById("overlayBannerText").textContent = `${state.pilotCallsign} ⚡ ${qSpec.name}`;
+        document.getElementById("overlayBannerText").style.color = qSpec.color || "#f59e0b";
+        document.getElementById("overlayEnemyDesc").textContent = `${qSpec.desc} · Reward: ⚡ +${qSpec.xpReward} XP & 💎 +${qSpec.diamondReward} Diamonds`;
+      } else if (state.gameMode === "cpu") {
         const cpuObj = getActiveSimilarCpu();
         const eStats = computeBotCombatProfile(cpuObj.baseStats, cpuObj.loadout, false);
 
@@ -12212,7 +12869,10 @@
 
       sim.ticks++;
 
-      const [pBot, eBot] = sim.bots;
+      const pBot = sim.bots[0];
+      const enemyBots = sim.bots.slice(1);
+      const livingEnemies = enemyBots.filter(b => b && b.hp > 0);
+      const eBot = livingEnemies[0] || enemyBots[0];
       const cs = sim.centerSaw;
       if (!pBot || !eBot) return;
 
@@ -12224,8 +12884,9 @@
           sim.lastCountdownSec = secRem;
           if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
         }
-        pBot.vx = 0; pBot.vy = 0;
-        eBot.vx = 0; eBot.vy = 0;
+        for (const b of sim.bots) {
+          if (b) { b.vx = 0; b.vy = 0; }
+        }
         for (let i = sim.sparks.length - 1; i >= 0; i--) {
           const s = sim.sparks[i];
           s.x += s.vx; s.y += s.vy; s.life--;
@@ -12238,7 +12899,15 @@
         }
         if (sim.preFightCountdownTicks <= 0) {
           if (typeof BotPitAudio !== "undefined") BotPitAudio.playBell(2);
-          addFloatText(800, 360, "🔔 ROUND 1 OF 3 — FIGHT!", "#00ff88");
+          if (state.gameMode === "quests") {
+            const curQ = getActiveQuestSpec();
+            const qBanner = curQ.isBossBattle
+              ? `👑 BOSS BATTLE: ${curQ.name} — FIGHT!`
+              : (curQ.isQuantityChallenge ? `🐝 QUANTITY CHALLENGE (1 vs 3): ${curQ.name} — FIGHT!` : `⚔️ QUEST ${curQ.level}: ${curQ.name} — FIGHT!`);
+            addFloatText(800, 360, qBanner, curQ.color || "#fbbf24");
+          } else {
+            addFloatText(800, 360, "🔔 ROUND 1 OF 3 — FIGHT!", "#00ff88");
+          }
         }
         syncHudReadout();
         if (livePvp.activeRoomId && sim.liveRole !== "guest" && sim.liveRole !== "spectator" && sim.ticks % 2 === 0) {
@@ -12279,37 +12948,64 @@
         return;
       }
 
+      // Check Quest 10 Boss Phase 2 Enrage at 52% HP!
+      if (eBot && eBot.isBossBot && !eBot.bossPhase2Triggered && eBot.hp > 0 && eBot.hp <= eBot.maxHp * 0.52) {
+        eBot.bossPhase2Triggered = true;
+        eBot.shieldHp = (eBot.shieldHp || 0) + 250;
+        eBot.redlineActive = true;
+        eBot.stamina = eBot.maxStamina;
+        eBot.speedBuffTimer = 360;
+        sim.shake = Math.max(sim.shake, 20);
+        addPulseRing(eBot.x, eBot.y, 320, "#f43f5e");
+        emit3DSparks(eBot.x, eBot.y, "#ffd700", 42, 11.5);
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playPredatorLock();
+        addFloatText(eBot.x, eBot.y - 72, "👑🔥 BOSS PHASE 2 ENRAGE! +250 AEGIS SHIELD & ROYAL DRONES!", "#f43f5e");
+        for (const sy of [235, 665]) {
+          const mCp = computeBotCombatProfile({ hp: 200, power: 40, speed: 68, agility: 72 }, { tire: "tire_12", wpn1: "wpn_12" }, false);
+          const mb = createPhysicsBot(mCp, "hazard", "👑 ROYAL DRONE", "#f43f5e", 800, sy, Math.PI, 0.56);
+          mb.hp = 180; mb.maxHp = 180; mb.kind = "volt"; mb.speed = 6.2; mb.atkCd = 45; mb.hitCd = 0; mb.fuseTimer = 9999; mb.targetTeam = "player";
+          sim.miniBots.push(mb);
+        }
+      }
+
       stepArenaMapHazardsAndMiniBots(pBot, eBot);
       stepRandomArenaDropsAndOvercharge(pBot, eBot);
 
-      if (pBot.hp <= 0 || eBot.hp <= 0 || sim.timeLeft <= 0) {
+      const totalEnemyHp = enemyBots.reduce((acc, b) => acc + Math.max(0, b ? b.hp : 0), 0);
+      const totalEnemyMaxHp = Math.max(1, enemyBots.reduce((acc, b) => acc + Math.max(1, b ? b.maxHp : 1), 0));
+      const totalEnemyDmgDealt = enemyBots.reduce((acc, b) => acc + (b ? (b.roundDmgDealt || 0) : 0), 0);
+      const totalEnemyOctControl = enemyBots.reduce((acc, b) => acc + (b ? (b.octagonControl || 0) : 0), 0);
+
+      if (pBot.hp <= 0 || totalEnemyHp <= 0 || sim.timeLeft <= 0) {
         const pPct = pBot.hp / pBot.maxHp;
-        const ePct = eBot.hp / eBot.maxHp;
-        const isKo = pBot.hp <= 0 || eBot.hp <= 0;
+        const ePct = totalEnemyHp / totalEnemyMaxHp;
+        const isKo = pBot.hp <= 0 || totalEnemyHp <= 0;
 
         // Judges' 10-Point Must Scoring for the Round (Damage Dealt + Remaining HP% + Octagon Control)
         const pScoreMetric = (pBot.roundDmgDealt || 0) * 1.0 + (pPct * 350) + (pBot.octagonControl || 0) * 0.08;
-        const eScoreMetric = (eBot.roundDmgDealt || 0) * 1.0 + (ePct * 350) + (eBot.octagonControl || 0) * 0.08;
+        const eScoreMetric = totalEnemyDmgDealt * 1.0 + (ePct * 350) + (totalEnemyOctControl / Math.max(1, enemyBots.length)) * 0.08;
 
         const roundWonByPlayer = isKo
-          ? (pBot.hp > 0 && eBot.hp <= 0)
+          ? (pBot.hp > 0 && totalEnemyHp <= 0)
           : (pScoreMetric >= eScoreMetric);
 
         sim.pRoundsWon = (sim.pRoundsWon || 0) + (roundWonByPlayer ? 1 : 0);
         sim.eRoundsWon = (sim.eRoundsWon || 0) + (roundWonByPlayer ? 0 : 1);
         if (!Array.isArray(sim.roundResults)) sim.roundResults = [];
-        const ringOutReason = pBot.ringOutKo || eBot.ringOutKo;
+        const ringOutReason = pBot.ringOutKo || (enemyBots.find(b => b && b.ringOutKo) || {}).ringOutKo;
         const winMethod = ringOutReason || (isKo ? "TKO / KNOCKDOWN (10-8)" : "JUDGES DECISION (10-9)");
         sim.roundResults.push({
           round: sim.currentRound || 1,
           winner: roundWonByPlayer ? "player" : "enemy",
           method: winMethod,
           pDmg: Math.round(pBot.roundDmgDealt || 0),
-          eDmg: Math.round(eBot.roundDmgDealt || 0)
+          eDmg: Math.round(totalEnemyDmgDealt)
         });
 
-        // Check if more rounds are needed (Best of 3: first to 2 round wins!)
-        const matchDecided = sim.pRoundsWon >= 2 || sim.eRoundsWon >= 2 || (sim.currentRound || 1) >= 3;
+        // Check if more rounds are needed (Quests = 1 round; CPU & PvP = Best of 3!)
+        const maxRds = sim.maxRounds || (state.gameMode === "quests" ? 1 : 3);
+        const winsNeeded = maxRds === 1 ? 1 : 2;
+        const matchDecided = sim.pRoundsWon >= winsNeeded || sim.eRoundsWon >= winsNeeded || (sim.currentRound || 1) >= maxRds;
 
         if (!matchDecided) {
           // Enter 4.5-second UFC Corner Pit-Stop Intermission before the next round!
@@ -12324,13 +13020,14 @@
             pRounds: sim.pRoundsWon,
             eRounds: sim.eRoundsWon,
             pDmg: Math.round(pBot.roundDmgDealt || 0),
-            eDmg: Math.round(eBot.roundDmgDealt || 0)
+            eDmg: Math.round(totalEnemyDmgDealt)
           };
 
           // Reset both bots to their starting corners, weld +45% of missing HP (or 65% if TKO'd), and recharge Stamina to 100%!
           const curMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
           const isSideTrenches = curMap && curMap.hazardType === "ringout_left_right";
-          for (const b of [pBot, eBot]) {
+          for (const b of sim.bots) {
+            if (!b) continue;
             const isP = b.team === "player";
             b.x = isSideTrenches ? (isP ? 415 : 1185) : (isP ? 340 : 1260);
             b.y = 450;
@@ -12380,7 +13077,7 @@
           return;
         }
 
-        // Match is decided (Best of 3 winner)!
+        // Match is decided!
         const won = sim.pRoundsWon > sim.eRoundsWon;
         BotPitAudio.playVictoryFanfare(won);
 
@@ -12407,8 +13104,6 @@
           renderLiveFightsList();
         }
         const overlay = document.getElementById("battleOverlay");
-        const banner = document.getElementById("overlayBannerText");
-        const desc = document.getElementById("overlayEnemyDesc");
 
         const staked = sim.escrowWager || 0;
         sim.escrowWager = 0;
@@ -12418,38 +13113,78 @@
           state.partIntegrity = normalizePartIntegrity(pBot.parts);
         }
 
-        if (state.gameMode === "cpu") {
+        if (state.gameMode === "quests") {
+          const qSpec = getActiveQuestSpec();
+          const rewardRes = awardBattleXpAndDiamonds({
+            baseXp: qSpec.xpReward,
+            baseDiamonds: qSpec.diamondReward,
+            won,
+            gritBonus: Boolean(won && sim.startedInjuredGrit)
+          });
+
+          const lvlUpNotice = rewardRes.levelsGained > 0
+            ? ` · 🎉 LEVEL UP TO BOT LVL ${rewardRes.newLevel} (+💎 ${rewardRes.levelUpDiamonds} BONUS)!`
+            : "";
+
+          if (won) {
+            const cSet = new Set(Array.isArray(state.clearedLevels) ? state.clearedLevels : []);
+            cSet.add(qSpec.level);
+            state.clearedLevels = Array.from(cSet).sort((a, b) => a - b);
+            const nextQuestLvl = qSpec.level < 10 ? qSpec.level + 1 : 10;
+            state.currentLevel = nextQuestLvl;
+            persistWalletAndRig();
+
+            const clearHeadline = qSpec.isBossBattle
+              ? `👑 BOSS DEFEATED! QUEST 10 CLEARED!`
+              : (qSpec.isQuantityChallenge ? `🐝 3-BOT SWARM CRUSHED! QUEST ${qSpec.level} CLEARED!` : `🏆 QUEST ${qSpec.level} CLEARED!`);
+
+            state.postMatchSummary = {
+              tag: `⚔️ ${qSpec.tag} COMPLETE`,
+              banner: clearHeadline,
+              color: "#00ff88",
+              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${rewardRes.totalDiamondsAdded.toLocaleString()} Diamonds${lvlUpNotice}`
+            };
+          } else {
+            persistWalletAndRig();
+            state.postMatchSummary = {
+              tag: `⚔️ ${qSpec.tag} RESULT`,
+              banner: `💥 DEFEATED ON QUEST ${qSpec.level}`,
+              color: "#ff2a55",
+              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${rewardRes.totalDiamondsAdded.toLocaleString()} Diamonds${lvlUpNotice} · Upgrade & Retry!`
+            };
+          }
+        } else if (state.gameMode === "cpu") {
           const cpuObj = getActiveSimilarCpu();
-          const stBonuses = computeSkillTreeBonuses();
-          const xpMult = 1 + (stBonuses.xpPct || 0) / 100;
-          const wealthMult = 1 + (stBonuses.wealthPct || 0) / 100;
-          const baseCpuXp = won ? (Number(cpuObj.reward) || 200) : Math.max(60, Math.round((Number(cpuObj.reward) || 200) * 0.35));
-          const gritBonusXp = (won && sim.startedInjuredGrit) ? Math.round(baseCpuXp * 0.15) : 0;
-          const xpEarned = Math.round((baseCpuXp + gritBonusXp) * xpMult);
-          const diamondsFromXp = Math.round(xpEarned * wealthMult);
-          state.cpuXp = (state.cpuXp || 0) + xpEarned;
+          const baseCpuXp = Number(cpuObj.reward) || 140;
+          const baseCpuDiamonds = Math.round(baseCpuXp * 0.65);
+          const rewardRes = awardBattleXpAndDiamonds({
+            baseXp: baseCpuXp,
+            baseDiamonds: baseCpuDiamonds,
+            won,
+            gritBonus: Boolean(won && sim.startedInjuredGrit)
+          });
+          const lvlUpNotice = rewardRes.levelsGained > 0
+            ? ` · 🎉 BOT LVL ${rewardRes.newLevel} (+💎 ${rewardRes.levelUpDiamonds})!`
+            : "";
 
           if (won) {
             const totalWagerWon = staked * 2;
-            const totalDiamondsAdded = diamondsFromXp + totalWagerWon;
-            state.scrap += totalDiamondsAdded;
+            if (totalWagerWon > 0) state.scrap += totalWagerWon;
+            const totalDiamonds = rewardRes.totalDiamondsAdded + totalWagerWon;
             persistWalletAndRig();
             state.postMatchSummary = {
-              tag: "🤖 CPU TRAINING RESULT",
+              tag: "🤖 CPU BATTLE RESULT",
               banner: "🏆 VICTORY!",
               color: "#00ff88",
-              desc: `+${totalDiamondsAdded.toLocaleString()} 💎 Diamonds Earned (+${xpEarned} ⚡ XP)`
+              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${totalDiamonds.toLocaleString()} Diamonds${lvlUpNotice}`
             };
           } else {
-            state.scrap += diamondsFromXp;
             persistWalletAndRig();
             state.postMatchSummary = {
-              tag: "🤖 CPU TRAINING RESULT",
+              tag: "🤖 CPU BATTLE RESULT",
               banner: "💥 DEFEATED",
               color: "#ff2a55",
-              desc: staked > 0
-                ? `+${diamondsFromXp.toLocaleString()} 💎 XP Bonus · -${staked.toLocaleString()} 💎 Wager`
-                : `+${diamondsFromXp.toLocaleString()} 💎 Consolation Diamonds (+${xpEarned} ⚡ XP)`
+              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${rewardRes.totalDiamondsAdded.toLocaleString()} Diamonds${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''}${lvlUpNotice}`
             };
           }
           state.activeSimilarCpu = generateSimilarLevelCpuBot();
@@ -12481,8 +13216,18 @@
             sim.liveRole = null;
             cleanupLiveRoomChannels();
           }
-          // Live Online PvP Outcome — Winner earns +1 Golden Ticket (🎟️) for the Ticket Counter + 2x Lowest Matched Wager!
+          // Live Online PvP Outcome — Awards XP, Diamonds, +1 Golden Ticket on win, and 2x Lowest Matched Wager!
           const chObj = getActivePvpOpponent();
+          const rewardRes = awardBattleXpAndDiamonds({
+            baseXp: 210,
+            baseDiamonds: Number(chObj.bounty) || 160,
+            won,
+            gritBonus: Boolean(won && sim.startedInjuredGrit)
+          });
+          const lvlUpNotice = rewardRes.levelsGained > 0
+            ? ` · 🎉 BOT LVL ${rewardRes.newLevel} (+💎 ${rewardRes.levelUpDiamonds})!`
+            : "";
+
           if (won) {
             const totalWon = staked * 2;
             state.scrap += totalWon;
@@ -12492,11 +13237,12 @@
             persistWalletAndRig();
             localStorage.setItem("unit17_elo", String(state.elo));
             localStorage.setItem("unit17_pvp_wins", String(state.pvpWins));
+            const totalDiamonds = rewardRes.totalDiamondsAdded + totalWon;
             state.postMatchSummary = {
               tag: "🌐 LIVE ONLINE PVP RESULT",
               banner: `🏆 VICTORY VS. ${chObj.callsign}`,
               color: "#38bdf8",
-              desc: `+1 🎟️ Golden Ticket${totalWon > 0 ? ' · +' + totalWon.toLocaleString() + ' 💎 Pot' : ''} · +28 🏆 ELO`
+              desc: `+⚡ ${rewardRes.xpEarned} XP · +💎 ${totalDiamonds.toLocaleString()} · +1 🎟️ Ticket · +28 🏆 ELO${lvlUpNotice}`
             };
           } else {
             state.elo = Math.max(800, state.elo - 16);
@@ -12506,7 +13252,7 @@
               tag: "🌐 LIVE ONLINE PVP RESULT",
               banner: `💥 DEFEATED BY ${chObj.callsign}`,
               color: "#ff2a55",
-              desc: `${staked > 0 ? '-' + staked.toLocaleString() + ' 💎 Wager · ' : ''}-16 🏆 ELO`
+              desc: `+⚡ ${rewardRes.xpEarned} XP · +💎 ${rewardRes.totalDiamondsAdded}${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''} · -16 🏆 ELO${lvlUpNotice}`
             };
           }
           if (!state.customFriendChallenger) {
@@ -12581,6 +13327,7 @@
       }
 
       for (const bot of sim.bots) {
+        if (!bot || bot.hp <= 0) continue;
         const livePartMults = computeBotMultipliersFromParts(bot.parts);
         const cdStep = livePartMults.cooldownRateMult;
         if (bot.clashCd > 0) bot.clashCd--;
@@ -12615,7 +13362,16 @@
 
         checkBotArmorThresholdsAndDamageFX(bot);
 
-        const other = bot.team === "player" ? eBot : pBot;
+        let other = pBot;
+        if (bot.team === "player") {
+          let bestE = eBot;
+          let bestD = Infinity;
+          for (const eb of livingEnemies) {
+            const d = Math.hypot(eb.x - bot.x, eb.y - bot.y);
+            if (d < bestD) { bestD = d; bestE = eb; }
+          }
+          other = bestE || eBot;
+        }
         stepBotDynamicModules(bot, other);
         stepBotStaminaAndPacing(bot, other);
 
@@ -12847,25 +13603,56 @@
         }
       }
 
-      const dx = eBot.x - pBot.x;
-      const dy = eBot.y - pBot.y;
-      const dist = Math.hypot(dx, dy) || 1;
-      const minDist = pBot.radius + eBot.radius;
+      // Enemy-vs-Enemy Pack Separation (keeps Quest 5's 3 Pack Bots spread out so they surround you!)
+      if (livingEnemies.length > 1) {
+        for (let a = 0; a < livingEnemies.length; a++) {
+          for (let b = a + 1; b < livingEnemies.length; b++) {
+            const ea = livingEnemies[a];
+            const eb = livingEnemies[b];
+            const edx = eb.x - ea.x;
+            const edy = eb.y - ea.y;
+            const edist = Math.hypot(edx, edy) || 1;
+            const emin = ea.radius + eb.radius + 10;
+            if (edist < emin) {
+              const enx = edx / edist;
+              const eny = edy / edist;
+              const eov = (emin - edist) * 0.5;
+              ea.x -= enx * eov;
+              ea.y -= eny * eov;
+              eb.x += enx * eov;
+              eb.y += eny * eov;
+              ea.vx -= enx * 1.1;
+              ea.vy -= eny * 1.1;
+              eb.vx += enx * 1.1;
+              eb.vy += eny * 1.1;
+            }
+          }
+        }
+      }
 
-      if (dist < minDist && pBot.clashCd <= 0 && eBot.clashCd <= 0) {
-        const nx = dx / dist;
-        const ny = dy / dist;
-        const overlap = minDist - dist;
-        pBot.x -= nx * overlap * 0.5;
-        pBot.y -= ny * overlap * 0.5;
-        eBot.x += nx * overlap * 0.5;
-        eBot.y += ny * overlap * 0.5;
+      // Check Player-vs-Enemy Clashes across ALL living enemy bots (1v1 or 1v3 Pack Swarm!)
+      for (const eb of livingEnemies) {
+        const dx = eb.x - pBot.x;
+        const dy = eb.y - pBot.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const minDist = pBot.radius + eb.radius;
 
-        pBot.clashCd = 20;
-        eBot.clashCd = 20;
+        if (dist < minDist) {
+          const nx = dx / dist;
+          const ny = dy / dist;
+          const overlap = minDist - dist;
+          pBot.x -= nx * overlap * 0.5;
+          pBot.y -= ny * overlap * 0.5;
+          eb.x += nx * overlap * 0.5;
+          eb.y += ny * overlap * 0.5;
 
-        BotPitAudio.playClash(false);
-        resolveBotClash(pBot, eBot, nx, ny);
+          if (pBot.clashCd <= 0 && eb.clashCd <= 0) {
+            pBot.clashCd = livingEnemies.length > 1 ? 12 : 20;
+            eb.clashCd = 20;
+            BotPitAudio.playClash(false);
+            resolveBotClash(pBot, eb, nx, ny);
+          }
+        }
       }
 
       for (let i = sim.projectiles.length - 1; i >= 0; i--) {
@@ -12963,8 +13750,9 @@
         }
         if (hitMiniBot) continue;
 
-        // Check collision with enemy bot (with 1.5x AIR-JUGGLE COMBO support!)
-        const targetBot = prj.owner === "player" ? eBot : pBot;
+        // Check collision with opponent bot(s) (with 1.5x AIR-JUGGLE COMBO support!)
+        const candidateTargets = prj.owner === "player" ? livingEnemies : [pBot];
+        const targetBot = candidateTargets.find(tb => tb && tb.hp > 0 && Math.hypot(tb.x - prj.x, tb.y - prj.y) < tb.radius + prj.radius);
         if (targetBot && targetBot.hp > 0) {
           const dHit = Math.hypot(targetBot.x - prj.x, targetBot.y - prj.y);
           if (dHit < targetBot.radius + prj.radius) {
@@ -13174,12 +13962,23 @@
     }
 
     function syncHudReadout() {
-      const [pBot, eBot] = sim.bots;
+      const pBot = sim.bots[0];
+      const enemyBots = sim.bots.slice(1);
+      const livingEnemies = enemyBots.filter(b => b && b.hp > 0);
+      const eBot = livingEnemies[0] || enemyBots[0];
       if (!pBot || !eBot) return;
+
+      const totalEnemyHp = enemyBots.reduce((acc, b) => acc + Math.max(0, b ? b.hp : 0), 0);
+      const totalEnemyMaxHp = Math.max(1, enemyBots.reduce((acc, b) => acc + Math.max(1, b ? b.maxHp : 1), 0));
+
       document.getElementById("hudPHp").textContent = `${Math.ceil(pBot.hp)} / ${pBot.maxHp} HP`;
       document.getElementById("hudPBar").style.width = `${(pBot.hp / pBot.maxHp) * 100}%`;
-      document.getElementById("hudEHp").textContent = `${Math.ceil(eBot.hp)} / ${eBot.maxHp} HP`;
-      document.getElementById("hudEBar").style.width = `${(eBot.hp / eBot.maxHp) * 100}%`;
+      if (enemyBots.length > 1) {
+        document.getElementById("hudEHp").textContent = `🐝 ${livingEnemies.length}/${enemyBots.length} BOTS · ${Math.ceil(totalEnemyHp)} / ${totalEnemyMaxHp} HP`;
+      } else {
+        document.getElementById("hudEHp").textContent = `${Math.ceil(totalEnemyHp)} / ${totalEnemyMaxHp} HP`;
+      }
+      document.getElementById("hudEBar").style.width = `${(totalEnemyHp / totalEnemyMaxHp) * 100}%`;
 
       // Update Stamina Bars & States
       const pStamPct = Math.max(0, Math.min(100, Math.round(pBot.stamina ?? 100)));
@@ -13217,7 +14016,7 @@
         eStamTxt.style.color = eHud.col;
       }
 
-      // Update Round Title, Pips, and 1:30 (90s) M:SS Clock
+      // Update Round Title, Pips, and M:SS Clock
       const rdTitle = document.getElementById("hudRoundTitle");
       if (rdTitle) {
         const cRd = sim.currentRound || 1;
@@ -13225,6 +14024,9 @@
           rdTitle.textContent = `⏱️ FIGHT STARTS IN ${Math.ceil(sim.preFightCountdownTicks / 60)}s`;
         } else if (sim.intermissionTimer > 0) {
           rdTitle.textContent = `🔧 CORNER PIT-STOP (${Math.ceil(sim.intermissionTimer / 60)}s)`;
+        } else if (state.gameMode === "quests") {
+          const curQ = getActiveQuestSpec();
+          rdTitle.textContent = curQ.isBossBattle ? `👑 QUEST 10 BOSS` : (curQ.isQuantityChallenge ? `🐝 QUEST ${curQ.level} (1 vs 3)` : `⚔️ QUEST ${curQ.level} OF 10`);
         } else {
           rdTitle.textContent = cRd === 3 && sim.pRoundsWon === 1 && sim.eRoundsWon === 1 ? "🔥 FINAL ROUND 3" : `🥊 ROUND ${cRd} OF 3`;
         }
@@ -13233,8 +14035,13 @@
 
       const pScoreEl = document.getElementById("hudPRoundScore");
       const eScoreEl = document.getElementById("hudERoundScore");
-      if (pScoreEl) pScoreEl.textContent = `ROUNDS: ${sim.pRoundsWon || 0}/2`;
-      if (eScoreEl) eScoreEl.textContent = `ROUNDS: ${sim.eRoundsWon || 0}/2`;
+      if (state.gameMode === "quests") {
+        if (pScoreEl) pScoreEl.textContent = `BOT LVL ${state.botLevel || 1}`;
+        if (eScoreEl) eScoreEl.textContent = enemyBots.length > 1 ? `PACK: ${livingEnemies.length}/3` : `QUEST ${state.currentLevel}/10`;
+      } else {
+        if (pScoreEl) pScoreEl.textContent = `ROUNDS: ${sim.pRoundsWon || 0}/2`;
+        if (eScoreEl) eScoreEl.textContent = `ROUNDS: ${sim.eRoundsWon || 0}/2`;
+      }
 
       const pPipsEl = document.getElementById("hudPRoundPips");
       const ePipsEl = document.getElementById("hudERoundPips");
@@ -14281,6 +15088,29 @@
         ctx.fill();
         ctx.restore();
 
+        // Pulsing Crimson & Gold Boss Aura Ring under Quest 10 Mega Boss!
+        if (bot.isBossBot) {
+          ctx.save();
+          const bPulse = 1.18 + Math.sin(rTicks * 0.16) * 0.08;
+          const bGrad = ctx.createRadialGradient(0, 0, bot.radius * 0.5, 0, 0, bot.radius * 1.45);
+          bGrad.addColorStop(0, "rgba(244, 63, 94, 0.32)");
+          bGrad.addColorStop(0.7, "rgba(251, 191, 36, 0.22)");
+          bGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+          ctx.fillStyle = bGrad;
+          ctx.beginPath();
+          ctx.arc(0, 0, bot.radius * 1.45, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = bot.bossPhase2Triggered ? "#f43f5e" : "#ffd700";
+          ctx.lineWidth = 3.5;
+          ctx.setLineDash([12, 8]);
+          ctx.rotate(rTicks * 0.03);
+          ctx.beginPath();
+          ctx.arc(0, 0, bot.radius * bPulse, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+
         // Subtle, grounded 3D hop when flipped (max ~9% scale lift, max 11px vertical pop)
         ctx.save();
         ctx.translate(0, -zHeight * 0.45);
@@ -14297,6 +15127,27 @@
           (typeof bot.turretAngle === "number" ? bot.turretAngle - bot.angle : 0)
         );
         ctx.restore();
+
+        // Overhead Name & HP Bar for Quest 5 Pack Swarm Bots or Quest 10 Boss Bot
+        if (bot.isPackBot || bot.isBossBot) {
+          ctx.save();
+          const bw = bot.isBossBot ? 124 : 76;
+          const bh = bot.isBossBot ? 8 : 6;
+          const by = -bot.radius - (bot.isBossBot ? 28 : 22);
+          const pct = Math.max(0, Math.min(1, bot.hp / Math.max(1, bot.maxHp)));
+          ctx.fillStyle = "rgba(6, 9, 19, 0.90)";
+          ctx.fillRect(-bw / 2 - 2, by - 2, bw + 4, bh + 4);
+          ctx.fillStyle = bot.color || "#fb923c";
+          ctx.fillRect(-bw / 2, by, bw * pct, bh);
+          ctx.font = bot.isBossBot ? "900 11px 'Orbitron', sans-serif" : "800 9.5px 'Orbitron', sans-serif";
+          ctx.fillStyle = bot.isBossBot ? "#fde047" : "#f8fafc";
+          ctx.textAlign = "center";
+          const labelTxt = bot.isBossBot
+            ? `👑 ${bot.name} (${Math.ceil(bot.hp)})`
+            : `${bot.name} (${Math.ceil(bot.hp)})`;
+          ctx.fillText(labelTxt, 0, by - 6);
+          ctx.restore();
+        }
 
         // Visual Status Effects for Redline Overdrive (<25% HP), Aegis Shield, Cryo-Freeze & EMP Stun
         if (bot.redlineActive) {
@@ -16599,6 +17450,7 @@
       }, 33);
     }
 
+    syncModeButtonsUI();
     updatePlayerUI();
     setupStagingArena();
     restorePilotSessionOnBoot();
