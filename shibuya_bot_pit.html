@@ -3800,16 +3800,71 @@
       display: inline-block;
     }
 
-    /* 7. Arena Map Selector Strip inside Pre-Fight Card */
-    .arena-map-selector {
+    /* 7. 3-Step Pre-Battle Wizard (Mode -> Wager -> Map) & 6-Map Visual Grid */
+    .pre-step-box {
       width: 100%;
-      background: rgba(11, 16, 29, 0.78);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 12px;
-      padding: 7px 10px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 10px;
+    }
+    .pre-step-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+    }
+    .btn-pre-step-back {
+      background: rgba(15, 23, 42, 0.90);
+      border: 1.5px solid rgba(148, 163, 184, 0.40);
+      color: #cbd5e1;
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+    .btn-pre-step-back:hover {
+      border-color: #38bdf8;
+      color: #ffffff;
+    }
+    .btn-pre-step-next {
+      flex: 1;
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      border: 1.5px solid #7dd3fc;
+      color: #041019;
+      border-radius: 12px;
+      padding: 11px 18px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.35);
+      transition: all 0.14s ease;
+    }
+    .btn-pre-step-next.launch {
+      background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+      border-color: #6ee7b7;
+      color: #03150e;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+    }
+    .btn-pre-step-next:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+    .arena-map-selector {
+      width: 100%;
+      background: rgba(11, 16, 29, 0.82);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     .arena-map-title-row {
       display: flex;
@@ -3820,42 +3875,145 @@
       font-weight: 900;
       color: #94a3b8;
       letter-spacing: 0.5px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
-    .arena-map-pills-row {
-      display: flex;
-      gap: 5px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 2px;
+    .arena-map-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px;
+      width: 100%;
     }
-    .arena-map-pills-row::-webkit-scrollbar { display: none; }
     .map-select-chip {
-      background: rgba(15, 23, 42, 0.90);
-      border: 1px solid rgba(148, 163, 184, 0.30);
+      background: rgba(15, 23, 42, 0.92);
+      border: 1.5px solid rgba(148, 163, 184, 0.30);
       color: #cbd5e1;
-      border-radius: 8px;
-      padding: 5px 9px;
+      border-radius: 10px;
+      padding: 8px 10px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.54rem;
+      font-size: 0.56rem;
       font-weight: 900;
       cursor: pointer;
-      white-space: nowrap;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
       transition: all 0.14s ease;
     }
+    .map-select-chip .map-chip-top {
+      font-size: 0.58rem;
+      font-weight: 900;
+      color: #f8fafc;
+    }
+    .map-select-chip .map-chip-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #94a3b8;
+      line-height: 1.2;
+    }
     .map-select-chip.active {
-      background: linear-gradient(135deg, rgba(251, 191, 36, 0.28), rgba(217, 119, 6, 0.20));
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.24), rgba(15, 23, 42, 0.95));
       border-color: #fbbf24;
       color: #fde047;
-      box-shadow: 0 0 10px rgba(251, 191, 36, 0.30);
+      box-shadow: 0 0 14px rgba(251, 191, 36, 0.30);
     }
 
-    /* 8. Polished Mobile Garage & Battle UI Refinements */
+    /* 8. Centered Full-Screen Game Layout & Expandable Home Screen Tabs */
+    .page-layout {
+      max-width: 1240px !important;
+      margin: 0 auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+    }
+    body:not(.mobile-play-active) #arenaSection,
+    body:not(.mobile-play-active) #pitBroadcastDeck {
+      display: contents !important;
+    }
+    body:not(.mobile-play-active) .arena-wrapper {
+      order: 1 !important;
+      width: 100% !important;
+      margin: 0 auto !important;
+    }
+    body:not(.mobile-play-active) #rigSection {
+      order: 2 !important;
+      width: 100% !important;
+    }
+    body:not(.mobile-play-active) #liveFightsBroadcastCard {
+      order: 3 !important;
+      width: 100% !important;
+    }
+    body:not(.mobile-play-active) #pitChatBroadcastCard {
+      order: 4 !important;
+      width: 100% !important;
+    }
+
+    /* Expandable Tab Trigger Headers & Collapsible Bodies */
+    .expandable-tab-trigger {
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background 0.14s ease;
+    }
+    .home-tab-chevron {
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #7dd3fc;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.50rem;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+    }
+    .home-tab-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    body:not(.mobile-play-active) #rigSection:not(.tab-expanded) #body_rigSection {
+      display: none !important;
+    }
+    body:not(.mobile-play-active) #rigSection:not(.tab-expanded) .sidebar-top-row {
+      padding-bottom: 0 !important;
+      border-bottom: none !important;
+      box-shadow: none !important;
+    }
+    body:not(.mobile-play-active) #liveFightsBroadcastCard:not(.tab-expanded),
+    body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) {
+      min-height: 0 !important;
+      max-height: none !important;
+    }
+    body:not(.mobile-play-active) #liveFightsBroadcastCard:not(.tab-expanded) #liveFightsList,
+    body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) #pitChatFeed,
+    body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) .pit-chat-footer {
+      display: none !important;
+    }
+    body:not(.mobile-play-active) #liveFightsBroadcastCard:not(.tab-expanded) .broadcast-card-header,
+    body:not(.mobile-play-active) #pitChatBroadcastCard:not(.tab-expanded) .broadcast-card-header {
+      border-bottom: none !important;
+    }
+    body:not(.mobile-play-active) #liveFightsBroadcastCard.tab-expanded,
+    body:not(.mobile-play-active) #pitChatBroadcastCard.tab-expanded {
+      min-height: 220px !important;
+      max-height: 320px !important;
+    }
+
     @media (max-width: 960px) {
       .player-sidebar {
         background: linear-gradient(165deg, rgba(17, 24, 39, 0.95) 0%, rgba(8, 11, 20, 0.98) 100%) !important;
         border: 1px solid rgba(56, 189, 248, 0.24) !important;
-        border-radius: 20px !important;
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.78) !important;
+        border-radius: 16px !important;
+        padding: 12px 14px !important;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.72) !important;
+      }
+      .broadcast-card {
+        border-radius: 16px !important;
+        border: 1px solid rgba(56, 189, 248, 0.22) !important;
       }
       .tech-slot {
         border-radius: 14px !important;
@@ -3869,14 +4027,9 @@
         border-radius: 13px !important;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65) !important;
       }
-    }
-    .pit-broadcast-deck {
-      max-height: 185px !important;
-      gap: 12px !important;
-    }
-    .broadcast-card {
-      min-height: 165px !important;
-      max-height: 185px !important;
+      .arena-map-grid {
+        grid-template-columns: 1fr !important;
+      }
     }
     .chat-emote-strip {
       display: none !important;
@@ -3886,13 +4039,13 @@
     }
 
     /* =========================================================================
-       MOBILE TWO-STAGE SCREEN FLOW & FULL-SCREEN LANDSCAPE BATTLE MODE:
+       CENTERED FULL-SCREEN BATTLE MODE (DESKTOP & MOBILE):
        1) INITIAL OPEN (`body:not(.mobile-play-active)`):
-          Show EVERYTHING except the Play Screen (`#battleCanvas`, `.arena-hud`, `#manualControlHud` hidden).
-       2) ONCE IN A BATTLE (`body.mobile-play-active`):
-          - Full-screen 16:9 Landscape Arena so maps match desktop identically and fit edge-to-edge.
-          - Transparent see-through on-screen thumbstick & Charge/Shoot controls.
-          - Corner Chat Icon (`#btnMobileChatToggle`) opens Live Chat on the LEFT side as a translucent overlay!
+          - Clean 3-step Pre-Battle Card (`PvP / CPU` -> `Select Wager` -> `Select Map`)
+          - Expandable Tabs below for `My Bot Garage`, `Live Fights`, and `Pit Live Chat`.
+       2) ONCE IN A BATTLE (`body.mobile-play-active` on Desktop AND Mobile):
+          - 100% Centered Full-Screen 16:9 Arena (`padding: 0`, `margin: auto`).
+          - Corner Chat Icon (`#btnMobileChatToggle`) opens Live Chat on the left as a translucent overlay!
        ========================================================================= */
     .mobile-battle-corner-bar {
       display: none;
@@ -3908,6 +4061,166 @@
       font-size: 0.54rem;
       font-weight: 900;
       cursor: pointer;
+    }
+
+    /* Full-Screen Centered Battle Arena Rules (Applies to BOTH Desktop & Mobile when `body.mobile-play-active` is set) */
+    body.mobile-play-active {
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100dvw !important;
+      height: 100dvh !important;
+      max-height: 100dvh !important;
+      overflow: hidden !important;
+      background: #05070e !important;
+    }
+    body.mobile-play-active .top-pilot-bar,
+    body.mobile-play-active #rigSection,
+    body.mobile-play-active .map-level-bar,
+    body.mobile-play-active .mobile-bottom-nav,
+    body.mobile-play-active #liveFightsBroadcastCard {
+      display: none !important;
+    }
+    body.mobile-play-active .page-layout {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100dvw !important;
+      height: 100dvh !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      gap: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+      background: #05070e !important;
+      z-index: 9000 !important;
+    }
+    body.mobile-play-active #arenaSection {
+      width: 100% !important;
+      height: 100% !important;
+      flex: 1 1 auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      gap: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      position: relative !important;
+      overflow: hidden !important;
+    }
+    body.mobile-play-active .arena-wrapper {
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      border-radius: 0 !important;
+      border: none !important;
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      margin: 0 auto !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      background: radial-gradient(circle at 50% 50%, #101626 0%, #05070e 100%) !important;
+    }
+    body.mobile-play-active #battleCanvas {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      margin: auto !important;
+      aspect-ratio: 16 / 9 !important;
+      object-fit: contain !important;
+    }
+    body.mobile-play-active .mobile-battle-corner-bar {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 6px;
+      position: absolute;
+      top: 56px;
+      left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px));
+      z-index: 70;
+    }
+    .btn-mobile-corner-icon {
+      background: rgba(10, 15, 28, 0.55);
+      border: 1.5px solid rgba(56, 189, 248, 0.48);
+      color: rgba(226, 232, 240, 0.94);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: all 0.14s ease;
+    }
+    .btn-mobile-corner-icon.chat-btn.active,
+    body.mobile-play-active.mobile-chat-open #btnMobileChatToggle {
+      background: rgba(14, 165, 233, 0.36);
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+    }
+    .btn-mobile-corner-icon.garage-btn {
+      border-color: rgba(251, 191, 36, 0.50);
+      color: #fde047;
+    }
+    body.mobile-play-active:not(.mobile-chat-open) #pitBroadcastDeck {
+      display: none !important;
+    }
+    body.mobile-play-active.mobile-chat-open #pitBroadcastDeck {
+      display: flex !important;
+      flex-direction: column !important;
+      position: absolute !important;
+      top: 86px !important;
+      left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px)) !important;
+      bottom: 14px !important;
+      width: min(320px, 44%) !important;
+      height: auto !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      z-index: 80 !important;
+    }
+    body.mobile-play-active #pitChatBroadcastCard {
+      flex: 1 1 auto !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      border-radius: 14px !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.48) !important;
+      background: rgba(7, 11, 20, 0.82) !important;
+      backdrop-filter: blur(8px) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.85) !important;
+    }
+    body.mobile-play-active .home-chat-badge-group,
+    body.mobile-play-active .mob-play-header-actions {
+      display: none !important;
+    }
+    body.mobile-play-active .btn-close-mobile-chat {
+      display: inline-block !important;
+    }
+    body.mobile-play-active .btn-mobile-return-garage {
+      display: block !important;
+    }
+    body.mobile-play-active #battleOverlay {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 85 !important;
+      overflow-y: auto !important;
+      padding: 12px !important;
     }
 
     /* Transparent On-Screen Controls on Mobile / Touch */
@@ -3954,7 +4267,7 @@
       body {
         padding: 8px 10px 24px !important;
       }
-      /* STATE 1: Initial Open on Mobile — Hide Play Screen Canvas/HUD, Keep Garage, Wager Card & Lobby */
+      /* STATE 1: Initial Open on Mobile — Hide Play Screen Canvas/HUD, Keep Pre-Battle Card & Expandable Tabs */
       body:not(.mobile-play-active) #battleCanvas,
       body:not(.mobile-play-active) .arena-hud,
       body:not(.mobile-play-active) #manualControlHud,
@@ -3984,70 +4297,7 @@
         width: 100% !important;
       }
 
-      /* STATE 2: Active Battle Mode on Mobile — Full-Screen 16:9 Landscape + Corner Chat Left Overlay */
-      body.mobile-play-active {
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100dvw !important;
-        height: 100dvh !important;
-        max-height: 100dvh !important;
-        overflow: hidden !important;
-        background: #05070e !important;
-      }
-      body.mobile-play-active .top-pilot-bar,
-      body.mobile-play-active #rigSection,
-      body.mobile-play-active .map-level-bar,
-      body.mobile-play-active .mobile-bottom-nav,
-      body.mobile-play-active #liveFightsBroadcastCard {
-        display: none !important;
-      }
-      body.mobile-play-active .page-layout {
-        margin: 0 !important;
-        padding: 0 !important;
-        gap: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        overflow: hidden !important;
-        background: #05070e !important;
-      }
-      body.mobile-play-active #arenaSection {
-        width: 100% !important;
-        height: 100% !important;
-        flex: 1 1 auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        gap: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        position: relative !important;
-        overflow: hidden !important;
-      }
-      body.mobile-play-active .arena-wrapper {
-        flex: 1 1 auto !important;
-        width: 100% !important;
-        height: 100% !important;
-        min-height: 0 !important;
-        border-radius: 0 !important;
-        border: none !important;
-        position: relative !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding-left: max(54px, calc(env(safe-area-inset-top, 0px) + 44px)) !important;
-        padding-right: max(16px, env(safe-area-inset-bottom, 12px)) !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-        background: radial-gradient(circle at 50% 50%, #101626 0%, #05070e 100%) !important;
-      }
-      body.mobile-play-active #battleCanvas {
-        display: block !important;
-        width: 100% !important;
-        height: 100% !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-        aspect-ratio: 16 / 9 !important;
-        object-fit: contain !important;
-      }
+      /* STATE 2: Active Battle Mode on Mobile — Centered Full-Screen 16:9 Landscape + Safe-Area Overlays */
       body.mobile-play-active .arena-hud {
         position: absolute !important;
         top: 6px !important;
@@ -4069,47 +4319,10 @@
         min-width: 78px !important;
         background: rgba(7, 10, 18, 0.56) !important;
       }
-      /* Corner Icon Cluster (Shifted Right of Phone Notch/Header below Player HP Bar) */
       body.mobile-play-active .mobile-battle-corner-bar {
-        display: inline-flex !important;
-        align-items: center;
-        gap: 6px;
-        position: absolute;
-        top: 46px;
-        left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px));
-        z-index: 70;
+        top: 46px !important;
+        left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px)) !important;
       }
-      .btn-mobile-corner-icon {
-        background: rgba(10, 15, 28, 0.45);
-        border: 1.5px solid rgba(56, 189, 248, 0.48);
-        color: rgba(226, 232, 240, 0.94);
-        border-radius: 999px;
-        padding: 4px 10px;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 0.52rem;
-        font-weight: 900;
-        letter-spacing: 0.4px;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        cursor: pointer;
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        transition: all 0.14s ease;
-      }
-      .btn-mobile-corner-icon.chat-btn.active,
-      body.mobile-play-active.mobile-chat-open #btnMobileChatToggle {
-        background: rgba(14, 165, 233, 0.36);
-        border-color: #38bdf8;
-        color: #ffffff;
-        box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
-      }
-      .btn-mobile-corner-icon.garage-btn {
-        border-color: rgba(251, 191, 36, 0.50);
-        color: #fde047;
-      }
-
-      /* Transparent Floating On-Screen Controls Shifted Right of Phone Notch */
       body.mobile-play-active #manualControlHud {
         position: absolute !important;
         left: max(72px, calc(env(safe-area-inset-top, 0px) + 60px)) !important;
@@ -4120,50 +4333,9 @@
         z-index: 45 !important;
         pointer-events: none !important;
       }
-
-      /* Chat Overlay (Shifted Right of Phone Notch; toggled by Corner Chat Icon) */
-      body.mobile-play-active:not(.mobile-chat-open) #pitBroadcastDeck {
-        display: none !important;
-      }
-      body.mobile-play-active.mobile-chat-open #pitBroadcastDeck {
-        display: flex !important;
-        flex-direction: column !important;
-        position: absolute !important;
-        top: 78px !important;
-        left: max(68px, calc(env(safe-area-inset-top, 0px) + 56px)) !important;
-        bottom: 12px !important;
-        width: min(300px, 44%) !important;
-        height: auto !important;
-        max-height: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        z-index: 80 !important;
-      }
-      body.mobile-play-active #pitChatBroadcastCard {
-        flex: 1 1 auto !important;
-        height: 100% !important;
-        min-height: 0 !important;
-        max-height: none !important;
-        border-radius: 14px !important;
-        border: 1.5px solid rgba(56, 189, 248, 0.48) !important;
-        background: rgba(7, 11, 20, 0.80) !important;
-        backdrop-filter: blur(8px) !important;
-        -webkit-backdrop-filter: blur(8px) !important;
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.85) !important;
-      }
       body.mobile-play-active #pitChatBroadcastCard .broadcast-card-header {
         padding: 6px 10px !important;
         font-size: 0.56rem !important;
-      }
-      body.mobile-play-active #pitChatOnlineBadge,
-      body.mobile-play-active .mob-play-header-actions {
-        display: none !important;
-      }
-      body.mobile-play-active .btn-close-mobile-chat {
-        display: inline-block !important;
-      }
-      body.mobile-play-active .btn-mobile-return-garage {
-        display: block !important;
       }
       body.mobile-play-active #pitChatFeed {
         flex: 1 1 auto !important;
@@ -4188,13 +4360,6 @@
         padding: 5px 11px !important;
         font-size: 0.56rem !important;
       }
-      body.mobile-play-active #battleOverlay {
-        position: absolute !important;
-        inset: 0 !important;
-        z-index: 85 !important;
-        overflow-y: auto !important;
-        padding: 10px !important;
-      }
       body.mobile-play-active .arcade-match-card {
         max-width: 480px !important;
         padding: 12px 16px !important;
@@ -4208,24 +4373,13 @@
         position: fixed !important;
         top: 50% !important;
         left: 50% !important;
+        right: auto !important;
+        bottom: auto !important;
         width: 100dvh !important;
         height: 100dvw !important;
         max-width: none !important;
         transform: translate(-50%, -50%) rotate(90deg) !important;
         transform-origin: center center !important;
-        z-index: 9000 !important;
-      }
-    }
-
-    /* Native Landscape Phone in Active Battle -> Fill Full Landscape Viewport Directly */
-    @media (max-width: 960px) and (orientation: landscape), (max-height: 540px) and (orientation: landscape) {
-      body.mobile-play-active .page-layout {
-        position: fixed !important;
-        inset: 0 !important;
-        width: 100dvw !important;
-        height: 100dvh !important;
-        max-width: none !important;
-        transform: none !important;
         z-index: 9000 !important;
       }
     }
@@ -4334,19 +4488,22 @@
 
   <div class="page-layout">
 
-    <!-- LEFT PANEL: 3D HANGAR CHASSIS, BASE STATS, 6 BEVELED PODS & 3D SHOP BUTTON -->
+    <!-- EXPANDABLE TAB 1: 3D HANGAR CHASSIS, BASE STATS, 6 BEVELED PODS & 3D SHOP BUTTON -->
     <aside class="player-sidebar" id="rigSection">
-      <div>
-        <div class="sidebar-top-row">
-          <div class="bot-id-group">
-            <div class="sub">TAP ANY SLOT TO UPGRADE</div>
-            <div class="name">🤖 MY BOT GARAGE</div>
-          </div>
+      <div class="sidebar-top-row expandable-tab-trigger" onclick="toggleHomeTab('rigSection')" title="Tap to Expand or Collapse Bot Garage">
+        <div class="bot-id-group">
+          <div class="sub">TAP TO EXPAND / UPGRADE 6 SLOTS</div>
+          <div class="name">🤖 MY BOT GARAGE &amp; UPGRADES</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
           <div class="rig-lvl-pill" id="botRigSubTag">LVL 1</div>
           <div class="scrap-pill" id="scrapReadout">💎 0</div>
+          <span class="home-tab-chevron" id="chev_rigSection">▾ EXPAND</span>
         </div>
+      </div>
 
-        <div class="base-stats-bar" style="margin-top: 10px;">
+      <div class="home-tab-body" id="body_rigSection">
+        <div class="base-stats-bar" style="margin-top: 4px;">
           <div class="stat-cell">
             <span class="stat-label">❤️ HP</span>
             <span class="stat-value hp" id="baseHpVal">1250</span>
@@ -4368,7 +4525,6 @@
             <span class="stat-bonus" id="bonusAgiVal"></span>
           </div>
         </div>
-      </div>
 
       <!-- 3D TURNTABLE & 6 CLEAN SLOTS -->
       <div class="bot-tech-rig">
@@ -4456,9 +4612,10 @@
       <!-- BIG CLEAN SHOP BUTTON -->
       <div class="sidebar-actions">
         <button class="btn-shop" onclick="openShopModal('tire')">
-          🛒 UPGRADE SHOP
+          🛒 UPGRADE SHOP (180 ITEMS)
         </button>
-        <button class="btn-battle" id="sideBattleBtn" onclick="triggerBattle()">BATTLE</button>
+        <button class="btn-battle" id="sideBattleBtn" onclick="beginPreBattleWizard(state.gameMode || 'pvp')">BATTLE</button>
+      </div>
       </div>
     </aside>
 
@@ -4588,10 +4745,10 @@
 
         <div class="arena-start-overlay" id="battleOverlay">
           <div class="arcade-match-card">
-            <div class="overlay-level-tag" id="overlayLevelTag">🌐 ONLINE PVP</div>
-            <div class="overlay-banner" id="overlayBannerText">READY TO RUMBLE!</div>
+            <div class="overlay-level-tag" id="overlayLevelTag">⚔️ SHIBUYA BOT PIT</div>
+            <div class="overlay-banner" id="overlayBannerText">CHOOSE BATTLE MODE</div>
             <div class="overlay-enemy-desc" id="overlayEnemyDesc">
-              Pick your Diamond Bet and jump into a battle!
+              Select Online PvP or CPU Bot to begin!
             </div>
 
             <!-- 🔧 PRE-FIGHT / POST-BATTLE INJURY & PIT REPAIR BAR (OPTION A: FIGHT INJURED OR HEAL) -->
@@ -4607,35 +4764,57 @@
               </div>
             </div>
 
-            <!-- 🗺️ 6-MAP ARENA SELECTOR STRIP -->
-            <div class="arena-map-selector">
-              <div class="arena-map-title-row">
-                <span>🗺️ BATTLE ARENA MAP</span>
-                <span id="activeMapSubtitleTxt" style="color:#fbbf24;">Center Rip-Saw &amp; Corner Furnaces</span>
-              </div>
-              <div class="arena-map-pills-row" id="overlayMapChips"></div>
+            <!-- STEP 1: CHOOSE PVP OR CPU BUTTONS -->
+            <div class="overlay-choice-row" id="overlayChoiceRow">
+              <button class="btn-arena-battle pvp-live" id="btnStartLivePvp" onclick="beginPreBattleWizard('pvp')">
+                🌐 LIVE ONLINE PVP
+              </button>
+              <button class="btn-arena-battle cpu-sim" id="btnStartCpuSim" onclick="beginPreBattleWizard('cpu')">
+                🤖 VS. CPU BOT
+              </button>
             </div>
 
-            <!-- 🎰 SIMPLE, FUN DIAMOND BET BAR -->
-            <div class="wager-panel">
-              <div class="wager-title-row">
-                <span>🎰 LOWEST WAGER = MATCH WAGER (WINNER TAKES ALL!)</span>
-                <span id="wagerVaultReadout" style="color:#38bdf8;">💎 3,500</span>
+            <!-- STEP 2: SELECT YOUR WAGER -->
+            <div class="pre-step-box" id="preStepWagerWrap" style="display:none;">
+              <div class="wager-panel">
+                <div class="wager-title-row">
+                  <span>🎰 TAP YOUR DIAMOND WAGER</span>
+                  <span id="wagerVaultReadout" style="color:#38bdf8;">💎 3,500</span>
+                </div>
+                <div class="wager-chips-row" id="overlayWagerChips">
+                  <button class="wager-chip" data-wager="0" onclick="selectWagerAndAdvance(0)">FREE</button>
+                  <button class="wager-chip" data-wager="100" onclick="selectWagerAndAdvance(100)">💎 100</button>
+                  <button class="wager-chip active" data-wager="250" onclick="selectWagerAndAdvance(250)">💎 250</button>
+                  <button class="wager-chip" data-wager="500" onclick="selectWagerAndAdvance(500)">💎 500</button>
+                  <button class="wager-chip" data-wager="1000" onclick="selectWagerAndAdvance(1000)">💎 1,000</button>
+                  <button class="wager-chip all-in" data-wager="allin" onclick="selectAllInAndAdvance()">🔥 ALL-IN</button>
+                </div>
+                <div class="wager-pot-summary" id="wagerPotSummary" style="display:block !important;">
+                  🏆 WIN POT: +500 💎
+                </div>
               </div>
-              <div class="wager-chips-row" id="overlayWagerChips">
-                <button class="wager-chip" data-wager="0" onclick="setWagerAmount(0)">FREE</button>
-                <button class="wager-chip" data-wager="100" onclick="setWagerAmount(100)">💎 100</button>
-                <button class="wager-chip active" data-wager="250" onclick="setWagerAmount(250)">💎 250</button>
-                <button class="wager-chip" data-wager="500" onclick="setWagerAmount(500)">💎 500</button>
-                <button class="wager-chip" data-wager="1000" onclick="setWagerAmount(1000)">💎 1,000</button>
-                <button class="wager-chip all-in" data-wager="allin" onclick="setWagerAllIn()">🔥 ALL-IN</button>
-              </div>
-              <div class="wager-pot-summary" id="wagerPotSummary">
-                🏆 WIN POT: +805 💎
+              <div class="pre-step-nav-row">
+                <button type="button" class="btn-pre-step-back" onclick="setPreBattleStep('mode')">← BACK</button>
+                <button type="button" class="btn-pre-step-next" onclick="setPreBattleStep('map')">NEXT: SELECT MAP ➔</button>
               </div>
             </div>
 
-            <!-- LIVE REAL-TIME PVP MATCHMAKING RADAR -->
+            <!-- STEP 3: SELECT YOUR ARENA MAP -->
+            <div class="pre-step-box" id="preStepMapWrap" style="display:none;">
+              <div class="arena-map-selector">
+                <div class="arena-map-title-row">
+                  <span>🗺️ TAP AN ARENA MAP</span>
+                  <span id="activeMapSubtitleTxt" style="color:#fbbf24;">Center Rip-Saw &amp; Corner Furnaces</span>
+                </div>
+                <div class="arena-map-grid" id="overlayMapChips"></div>
+              </div>
+              <div class="pre-step-nav-row">
+                <button type="button" class="btn-pre-step-back" onclick="setPreBattleStep('wager')">← WAGER</button>
+                <button type="button" class="btn-pre-step-next launch" id="btnConfirmMapLaunch" onclick="confirmPreBattleAndLaunch()">⚔️ START BATTLE!</button>
+              </div>
+            </div>
+
+            <!-- STEP 4: LIVE REAL-TIME PVP MATCHMAKING RADAR -->
             <div class="live-queue-box" id="livePvpQueueBox">
               <div class="live-radar-spinner"></div>
               <div class="live-queue-status" id="liveQueueStatusTxt">📡 SEARCHING FOR LIVE ONLINE PLAYER...</div>
@@ -4646,19 +4825,11 @@
               </div>
             </div>
 
-            <div class="overlay-choice-row" id="overlayChoiceRow">
-              <button class="btn-arena-battle pvp-live" id="btnStartLivePvp" onclick="startLivePvpMatchmaking()">
-                🌐 LIVE ONLINE PVP
-              </button>
-              <button class="btn-arena-battle cpu-sim" id="btnStartCpuSim" onclick="matchSimilarLevelCpu(true)">
-                🤖 VS. CPU BOT
-              </button>
-            </div>
             <button class="btn-arena-battle" id="overlayRematchBtn" style="display:none;" onclick="triggerBattle()">
               ⚔️ FIGHT NOW
             </button>
             <button type="button" class="btn-mobile-return-garage" onclick="exitMobilePlayMode()">
-              🔧 BACK TO GARAGE &amp; UPGRADE SHOP
+              🔧 BACK TO HOME &amp; GARAGE
             </button>
           </div>
         </div>
@@ -4674,33 +4845,39 @@
 
       <!-- BOTTOM BROADCAST DECK: LIVE FIGHTS SPECTATOR QUEUE + SHIBUYA PIT LIVE CHAT -->
       <section class="pit-broadcast-deck" id="pitBroadcastDeck">
-        <!-- LEFT CARD: LIVE FIGHTS HAPPENING NOW -->
+        <!-- EXPANDABLE TAB 2: LIVE FIGHTS HAPPENING NOW -->
         <div class="broadcast-card" id="liveFightsBroadcastCard">
-          <div class="broadcast-card-header">
+          <div class="broadcast-card-header expandable-tab-trigger" onclick="toggleHomeTab('liveFightsBroadcastCard')" title="Tap to Expand or Collapse Live Fights">
             <div class="broadcast-header-left">
               <span class="spec-live-dot"></span>
               <span>🔴 LIVE FIGHTS HAPPENING NOW</span>
             </div>
-            <span class="broadcast-count-pill" id="liveFightsCountBadge">0 LIVE</span>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="broadcast-count-pill" id="liveFightsCountBadge">0 LIVE</span>
+              <span class="home-tab-chevron" id="chev_liveFightsBroadcastCard">▾ EXPAND</span>
+            </div>
           </div>
           <div class="live-fights-list" id="liveFightsList">
             <!-- Populated dynamically by renderLiveFightsList() -->
           </div>
         </div>
 
-        <!-- RIGHT CARD: SHIBUYA PIT LIVE CHAT -->
+        <!-- EXPANDABLE TAB 3: SHIBUYA PIT LIVE CHAT -->
         <div class="broadcast-card" id="pitChatBroadcastCard">
-          <div class="broadcast-card-header">
+          <div class="broadcast-card-header expandable-tab-trigger" onclick="if(!document.body.classList.contains('mobile-play-active')) toggleHomeTab('pitChatBroadcastCard')" title="Tap to Expand or Collapse Live Chat">
             <div class="broadcast-header-left">
               <span class="pilot-status-dot"></span>
               <span>💬 SHIBUYA PIT LIVE CHAT</span>
             </div>
             <div class="mob-play-header-actions">
-              <button type="button" class="mob-play-header-btn" id="mobPlayCtrlToggleBtn" onclick="setControlMode(state.controlMode === 'controlled' ? 'simulated' : 'controlled')">🎮 CTRL</button>
-              <button type="button" class="mob-play-header-btn garage" onclick="exitMobilePlayMode()">🔧 GARAGE</button>
+              <button type="button" class="mob-play-header-btn" id="mobPlayCtrlToggleBtn" onclick="event.stopPropagation(); setControlMode(state.controlMode === 'controlled' ? 'simulated' : 'controlled')">🎮 CTRL</button>
+              <button type="button" class="mob-play-header-btn garage" onclick="event.stopPropagation(); exitMobilePlayMode()">🔧 GARAGE</button>
             </div>
-            <button type="button" class="btn-close-mobile-chat" onclick="toggleMobileChatOverlay(false)" title="Close Chat Overlay">✕</button>
-            <span class="broadcast-count-pill chat-online" id="pitChatOnlineBadge">🟢 PIT ONLINE</span>
+            <button type="button" class="btn-close-mobile-chat" onclick="event.stopPropagation(); toggleMobileChatOverlay(false)" title="Close Chat Overlay">✕</button>
+            <div style="display:flex;align-items:center;gap:6px;" class="home-chat-badge-group">
+              <span class="broadcast-count-pill chat-online" id="pitChatOnlineBadge">🟢 PIT ONLINE</span>
+              <span class="home-tab-chevron" id="chev_pitChatBroadcastCard">▾ EXPAND</span>
+            </div>
           </div>
           <div class="pit-chat-messages" id="pitChatFeed">
             <!-- Populated dynamically by appendPitChatMessage() -->
@@ -5971,18 +6148,17 @@
       if (sim.running) return;
 
       state.gameMode = "pvp";
+      state.postMatchSummary = null;
       syncModeButtonsUI();
 
       livePvp.searching = true;
       livePvp.activeRoomId = null;
       livePvp.searchStartMs = Date.now();
 
-      const qBox = document.getElementById("livePvpQueueBox");
-      const choiceRow = document.getElementById("overlayChoiceRow");
+      if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
+      setPreBattleStep("searching");
       const statusTxt = document.getElementById("liveQueueStatusTxt");
       const subTxt = document.getElementById("liveQueueSubTxt");
-      if (qBox) qBox.classList.add("active");
-      if (choiceRow) choiceRow.style.display = "none";
       document.getElementById("battleOverlay").classList.remove("hidden");
 
       initLiveLobbyChannels();
@@ -6009,30 +6185,28 @@
           statusTxt.textContent = `📡 SEARCHING LIVE ARENA QUEUE... (${remainSec}s)`;
         }
         if (subTxt) {
-          subTxt.innerHTML = `Your Wager: <strong style="color:#38bdf8;">💎 ${getPlayerProposedWager().toLocaleString()}</strong> · Waiting for another real player online...`;
+          const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+          subTxt.innerHTML = `Map: <strong style="color:#fbbf24;">${activeMap ? activeMap.name : 'SHIBUYA PIT'}</strong> · Wager: <strong style="color:#38bdf8;">💎 ${getPlayerProposedWager().toLocaleString()}</strong>`;
         }
         sendLobbySignal({ type: "queue_announce", peer: getMyPeerSpec() });
       }, 450);
     }
 
-    function cancelLivePvpSearch() {
+    function cancelLivePvpSearch(keepPlayMode = false) {
       livePvp.searching = false;
       if (livePvp.announceIntervalId) {
         clearInterval(livePvp.announceIntervalId);
         livePvp.announceIntervalId = null;
       }
       sendLobbySignal({ type: "queue_leave", clientId: LIVE_CLIENT_ID });
-      const qBox = document.getElementById("livePvpQueueBox");
-      const choiceRow = document.getElementById("overlayChoiceRow");
-      if (qBox) qBox.classList.remove("active");
-      if (choiceRow) choiceRow.style.display = "grid";
-      if (!sim.running && typeof exitMobilePlayMode === "function") {
+      setPreBattleStep("mode");
+      if (!keepPlayMode && !sim.running && typeof exitMobilePlayMode === "function") {
         exitMobilePlayMode();
       }
     }
 
     function fallbackToCloudPilotPvp() {
-      cancelLivePvpSearch();
+      cancelLivePvpSearch(true);
       sim.isLiveMultiplayer = false;
       sim.liveRole = null;
       matchRandomOnlinePlayer(true);
@@ -6378,16 +6552,22 @@
         state.pvpWins++;
         awardPvpVictoryTicket();
         persistWalletAndRig();
-        banner.textContent = `🏆 VICTORY VS. ${chObj.callsign}`;
-        banner.style.color = "#00ff88";
-        desc.textContent = `+1 🎟️ Golden Ticket${totalWon > 0 ? ' · +' + totalWon.toLocaleString() + ' 💎 Pot' : ''} · +28 🏆 ELO`;
+        state.postMatchSummary = {
+          tag: "🌐 LIVE ONLINE PVP RESULT",
+          banner: `🏆 VICTORY VS. ${chObj.callsign}`,
+          color: "#00ff88",
+          desc: `+1 🎟️ Golden Ticket${totalWon > 0 ? ' · +' + totalWon.toLocaleString() + ' 💎 Pot' : ''} · +28 🏆 ELO`
+        };
       } else {
         state.elo = Math.max(800, state.elo - 16);
         state.pvpLosses++;
         persistWalletAndRig();
-        banner.textContent = `💥 DEFEATED BY ${chObj.callsign}`;
-        banner.style.color = "#ff2a55";
-        desc.textContent = `${staked > 0 ? '-' + staked.toLocaleString() + ' 💎 Wager · ' : ''}-16 🏆 ELO`;
+        state.postMatchSummary = {
+          tag: "🌐 LIVE ONLINE PVP RESULT",
+          banner: `💥 DEFEATED BY ${chObj.callsign}`,
+          color: "#ff2a55",
+          desc: `${staked > 0 ? '-' + staked.toLocaleString() + ' 💎 Wager · ' : ''}-16 🏆 ELO`
+        };
       }
 
       if (livePvp.activeRoomId) {
@@ -6399,6 +6579,7 @@
       updatePlayerUI();
       syncHudReadout();
       renderLiveFightsList();
+      setPreBattleStep("mode");
       overlay.classList.remove("hidden");
     }
 
@@ -6516,8 +6697,10 @@
         sim.running = false;
         setupStagingArena();
       }
+      state.postMatchSummary = null;
+      if (typeof setPreBattleStep === "function") setPreBattleStep("mode");
       try {
-        document.getElementById("rigSection").scrollIntoView({ behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } catch (_) {}
     }
 
@@ -6994,6 +7177,142 @@
       switchShopSlot(state.activeShopSlot);
     }
 
+    function toggleHomeTab(cardId) {
+      const el = document.getElementById(cardId);
+      if (!el) return;
+      const isExpanded = el.classList.toggle("tab-expanded");
+      const chev = document.getElementById("chev_" + cardId);
+      if (chev) {
+        chev.textContent = isExpanded ? "▴ HIDE" : "▾ EXPAND";
+      }
+      if (isExpanded) {
+        if (cardId === "pitChatBroadcastCard") {
+          const feed = document.getElementById("pitChatFeed");
+          if (feed) feed.scrollTop = feed.scrollHeight;
+        }
+        try {
+          el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } catch (_) {}
+      }
+    }
+
+    function beginPreBattleWizard(mode) {
+      if (!ensurePilotLoggedIn()) return;
+      state.postMatchSummary = null;
+      state.gameMode = mode === "cpu" ? "cpu" : "pvp";
+      if (state.gameMode === "pvp" && !state.customFriendChallenger) {
+        state.activeOnlineOpponent = generateRandomOnlinePlayer();
+      } else if (state.gameMode === "cpu") {
+        state.activeSimilarCpu = generateSimilarLevelCpuBot();
+      }
+      syncModeButtonsUI();
+      updatePlayerUI();
+      setupStagingArena();
+      setPreBattleStep("wager");
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+    }
+
+    function selectWagerAndAdvance(amt) {
+      setWagerAmount(amt);
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      setPreBattleStep("map");
+    }
+
+    function selectAllInAndAdvance() {
+      setWagerAllIn();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      setPreBattleStep("map");
+    }
+
+    function setPreBattleStep(step) {
+      state.preBattleStep = step || "mode";
+      syncPreBattleStepUI();
+    }
+
+    function syncPreBattleStepUI() {
+      const step = state.preBattleStep || "mode";
+      const tagEl = document.getElementById("overlayLevelTag");
+      const bannerEl = document.getElementById("overlayBannerText");
+      const descEl = document.getElementById("overlayEnemyDesc");
+      const choiceRow = document.getElementById("overlayChoiceRow");
+      const wagerWrap = document.getElementById("preStepWagerWrap");
+      const mapWrap = document.getElementById("preStepMapWrap");
+      const qBox = document.getElementById("livePvpQueueBox");
+
+      if (choiceRow) choiceRow.style.display = step === "mode" ? "grid" : "none";
+      if (wagerWrap) wagerWrap.style.display = step === "wager" ? "flex" : "none";
+      if (mapWrap) mapWrap.style.display = step === "map" ? "flex" : "none";
+      if (qBox) qBox.classList.toggle("active", step === "searching");
+
+      if (step === "mode") {
+        if (state.postMatchSummary) {
+          if (tagEl) tagEl.textContent = state.postMatchSummary.tag || "🏆 MATCH COMPLETE";
+          if (bannerEl) {
+            bannerEl.textContent = state.postMatchSummary.banner;
+            bannerEl.style.color = state.postMatchSummary.color || "#00ff88";
+          }
+          if (descEl) descEl.textContent = state.postMatchSummary.desc || "";
+        } else {
+          if (tagEl) tagEl.textContent = "⚔️ SHIBUYA BOT PIT";
+          if (bannerEl) {
+            bannerEl.textContent = "CHOOSE BATTLE MODE";
+            bannerEl.style.color = "#f8fafc";
+          }
+          if (descEl) descEl.textContent = "Select Online PvP or CPU Bot to choose your wager & arena map";
+        }
+      } else if (step === "wager") {
+        const isPvp = state.gameMode === "pvp";
+        const oppWager = getCurrentOpponentWager();
+        if (tagEl) tagEl.textContent = `STEP 1 OF 2 · ${isPvp ? '🌐 LIVE ONLINE PVP' : '🤖 VS. CPU BOT'}`;
+        if (bannerEl) {
+          bannerEl.textContent = "SELECT YOUR WAGER";
+          bannerEl.style.color = "#fbbf24";
+        }
+        if (descEl) {
+          descEl.textContent = isPvp
+            ? `Opponent Wager: 💎 ${oppWager.toLocaleString()} · Tap a wager below to continue`
+            : `CPU Wager: 💎 ${oppWager.toLocaleString()} (+Guaranteed XP) · Tap a wager below to continue`;
+        }
+        syncWagerUI();
+      } else if (step === "map") {
+        const effWager = getEffectiveWager();
+        if (tagEl) tagEl.textContent = "STEP 2 OF 2 · 🗺️ ARENA SELECTION";
+        if (bannerEl) {
+          bannerEl.textContent = "SELECT YOUR MAP";
+          bannerEl.style.color = "#38bdf8";
+        }
+        if (descEl) {
+          descEl.textContent = `🔒 Locked Wager: 💎 ${effWager.toLocaleString()} · Tap a map & launch battle!`;
+        }
+        renderArenaMapSelector();
+      } else if (step === "searching") {
+        const activeMap = getActiveArenaMap();
+        if (tagEl) tagEl.textContent = "🌐 LIVE ONLINE PVP QUEUE";
+        if (bannerEl) {
+          bannerEl.textContent = "FINDING OPPONENT...";
+          bannerEl.style.color = "#38bdf8";
+        }
+        if (descEl) {
+          descEl.textContent = `${activeMap.badge} · ${activeMap.name} · Wager: 💎 ${getPlayerProposedWager().toLocaleString()}`;
+        }
+      }
+    }
+
+    function confirmPreBattleAndLaunch() {
+      if (!ensurePilotLoggedIn()) return;
+      state.postMatchSummary = null;
+      if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
+      if (state.gameMode === "cpu") {
+        triggerBattle();
+      } else {
+        if (state.customFriendChallenger) {
+          triggerBattle();
+        } else {
+          startLivePvpMatchmaking();
+        }
+      }
+    }
+
     function getActiveArenaMap() {
       const maps = window.BOTPIT_MAPS || [];
       if (!maps.length) return { id: "map_01_furnace", name: "SHIBUYA FURNACE PIT", badge: "🔥 MAP 01", accent: "#f97316", subtitle: "4 Corner Furnace Vents · Center Saw", hazardType: "furnace", floorTint: "rgba(249,115,22,0.06)", gridColor: "rgba(249,115,22,0.14)", speedMult: 1.0, tractionMult: 1.0 };
@@ -7001,11 +7320,15 @@
       return maps.find(m => m.id === savedId) || maps[0];
     }
 
-    function selectArenaMap(mapId) {
+    function selectArenaMap(mapId, launchOnSameTap = false) {
+      const wasAlreadySelected = state.activeMapId === mapId;
       state.activeMapId = mapId;
       localStorage.setItem("rc_botpit_map", mapId);
       renderArenaMapSelector();
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      if (launchOnSameTap && wasAlreadySelected && state.preBattleStep === "map") {
+        confirmPreBattleAndLaunch();
+      }
     }
 
     function renderArenaMapSelector() {
@@ -7017,12 +7340,21 @@
       if (chipsEl) {
         chipsEl.innerHTML = maps.map(m => {
           const isAct = m.id === activeMap.id;
-          return `<button type="button" class="map-select-chip ${isAct ? 'active' : ''}" style="${isAct ? `border-color:${m.accent};color:${m.accent};box-shadow:0 0 12px ${m.accent}44;` : ''}" onclick="selectArenaMap('${m.id}')">${m.badge} · ${m.name}</button>`;
+          return `
+            <button type="button" class="map-select-chip ${isAct ? 'active' : ''}" style="${isAct ? `border-color:${m.accent};box-shadow:0 0 14px ${m.accent}44;` : ''}" onclick="selectArenaMap('${m.id}', true)">
+              <span class="map-chip-top" style="color:${isAct ? m.accent : '#f8fafc'};">${m.badge} · ${m.name}</span>
+              <span class="map-chip-sub">${m.subtitle}</span>
+            </button>
+          `;
         }).join("");
       }
       const subEl = document.getElementById("activeMapSubtitleTxt");
       if (subEl) {
-        subEl.innerHTML = `<strong style="color:${activeMap.accent};">${activeMap.name}:</strong> ${activeMap.subtitle}`;
+        subEl.innerHTML = `<strong style="color:${activeMap.accent};">${activeMap.badge}:</strong> ${activeMap.subtitle}`;
+      }
+      const launchBtn = document.getElementById("btnConfirmMapLaunch");
+      if (launchBtn) {
+        launchBtn.innerHTML = `⚔️ FIGHT ON ${activeMap.name}!`;
       }
     }
 
@@ -7708,6 +8040,7 @@
       }
 
       document.getElementById("battleOverlay").classList.remove("hidden");
+      if (typeof syncPreBattleStepUI === "function") syncPreBattleStepUI();
       syncHudReadout();
       if (sim.isLiveMultiplayer && sim.liveRole === "host" && sim.ticks % 2 === 0) {
         broadcastHostArenaState();
@@ -8658,17 +8991,23 @@
             const totalDiamondsAdded = diamondsFromXp + totalWagerWon;
             state.scrap += totalDiamondsAdded;
             persistWalletAndRig();
-            banner.textContent = `🏆 VICTORY!`;
-            banner.style.color = "#00ff88";
-            desc.textContent = `+${totalDiamondsAdded.toLocaleString()} 💎 Diamonds Earned (+${xpEarned} ⚡ XP)`;
+            state.postMatchSummary = {
+              tag: "🤖 CPU TRAINING RESULT",
+              banner: "🏆 VICTORY!",
+              color: "#00ff88",
+              desc: `+${totalDiamondsAdded.toLocaleString()} 💎 Diamonds Earned (+${xpEarned} ⚡ XP)`
+            };
           } else {
             state.scrap += diamondsFromXp;
             persistWalletAndRig();
-            banner.textContent = `💥 DEFEATED`;
-            banner.style.color = "#ff2a55";
-            desc.textContent = staked > 0
-              ? `+${diamondsFromXp.toLocaleString()} 💎 XP Bonus · -${staked.toLocaleString()} 💎 Wager`
-              : `+${diamondsFromXp.toLocaleString()} 💎 Consolation Diamonds (+${xpEarned} ⚡ XP)`;
+            state.postMatchSummary = {
+              tag: "🤖 CPU TRAINING RESULT",
+              banner: "💥 DEFEATED",
+              color: "#ff2a55",
+              desc: staked > 0
+                ? `+${diamondsFromXp.toLocaleString()} 💎 XP Bonus · -${staked.toLocaleString()} 💎 Wager`
+                : `+${diamondsFromXp.toLocaleString()} 💎 Consolation Diamonds (+${xpEarned} ⚡ XP)`
+            };
           }
           state.activeSimilarCpu = generateSimilarLevelCpuBot();
           if (livePvp.activeRoomId) {
@@ -8710,27 +9049,30 @@
             persistWalletAndRig();
             localStorage.setItem("unit17_elo", String(state.elo));
             localStorage.setItem("unit17_pvp_wins", String(state.pvpWins));
-            banner.textContent = `🏆 VICTORY VS. ${chObj.callsign}`;
-            banner.style.color = "#38bdf8";
-            desc.textContent = `+1 🎟️ Golden Ticket${totalWon > 0 ? ' · +' + totalWon.toLocaleString() + ' 💎 Pot' : ''} · +28 🏆 ELO`;
+            state.postMatchSummary = {
+              tag: "🌐 LIVE ONLINE PVP RESULT",
+              banner: `🏆 VICTORY VS. ${chObj.callsign}`,
+              color: "#38bdf8",
+              desc: `+1 🎟️ Golden Ticket${totalWon > 0 ? ' · +' + totalWon.toLocaleString() + ' 💎 Pot' : ''} · +28 🏆 ELO`
+            };
           } else {
             state.elo = Math.max(800, state.elo - 16);
             state.pvpLosses++;
             persistWalletAndRig();
-            banner.textContent = `💥 DEFEATED BY ${chObj.callsign}`;
-            banner.style.color = "#ff2a55";
-            desc.textContent = `${staked > 0 ? '-' + staked.toLocaleString() + ' 💎 Wager · ' : ''}-16 🏆 ELO`;
+            state.postMatchSummary = {
+              tag: "🌐 LIVE ONLINE PVP RESULT",
+              banner: `💥 DEFEATED BY ${chObj.callsign}`,
+              color: "#ff2a55",
+              desc: `${staked > 0 ? '-' + staked.toLocaleString() + ' 💎 Wager · ' : ''}-16 🏆 ELO`
+            };
           }
           if (!state.customFriendChallenger) {
             state.activeOnlineOpponent = generateRandomOnlinePlayer();
           }
         }
 
-        const qBoxEnd = document.getElementById("livePvpQueueBox");
-        const choiceRowEnd = document.getElementById("overlayChoiceRow");
-        if (qBoxEnd) qBoxEnd.classList.remove("active");
-        if (choiceRowEnd) choiceRowEnd.style.display = "grid";
         updatePlayerUI();
+        setPreBattleStep("mode");
         overlay.classList.remove("hidden");
         return;
       }
