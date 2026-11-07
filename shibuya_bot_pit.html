@@ -2768,8 +2768,8 @@
       z-index: 0;
     }
     .st-medallion-node {
-      width: 62px;
-      height: 62px;
+      width: 66px;
+      height: 66px;
       border-radius: 50%;
       background: radial-gradient(circle at 35% 30%, #271c24 0%, #0d090f 85%);
       border: 2.5px solid #b45309;
@@ -2782,6 +2782,27 @@
       position: relative;
       z-index: 2;
       transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .st-medallion-node .m-thumb-wrap {
+      position: absolute;
+      inset: 2px;
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 0;
+      background: #09060d;
+    }
+    .st-medallion-node .m-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.78;
+      filter: contrast(1.12) saturate(1.18);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .st-medallion-node:hover .m-thumb,
+    .st-medallion-node.selected .m-thumb {
+      opacity: 1;
+      transform: scale(1.08);
     }
     .st-medallion-node:hover {
       transform: scale(1.08);
@@ -2798,14 +2819,18 @@
       background: radial-gradient(circle at 35% 30%, #7c2d12 0%, #27110b 85%);
       box-shadow: 0 0 24px rgba(251, 191, 36, 0.9), 0 0 36px rgba(239, 68, 68, 0.75);
     }
+    .st-medallion-node.selected {
+      border-color: #fef08a;
+      box-shadow: 0 0 26px rgba(254, 240, 138, 0.95), 0 0 36px rgba(239, 68, 68, 0.75);
+    }
     .st-medallion-node.selected::before {
       content: "";
       position: absolute;
       inset: -8px;
       border-radius: 50%;
-      border: 2px solid rgba(254, 240, 138, 0.92);
-      box-shadow: 0 0 16px rgba(254, 240, 138, 0.85);
-      animation: stReticlePulse 1.6s infinite ease-in-out;
+      border: 2.5px solid rgba(254, 240, 138, 0.96);
+      box-shadow: 0 0 18px rgba(254, 240, 138, 0.9);
+      animation: stReticlePulse 1.5s infinite ease-in-out;
       pointer-events: none;
     }
     @keyframes stReticlePulse {
@@ -2813,75 +2838,170 @@
       50% { transform: scale(1.08); opacity: 0.55; }
     }
     .st-medallion-node .m-ico {
-      font-size: 1.32rem;
+      position: relative;
+      z-index: 2;
+      font-size: 1.15rem;
       line-height: 1;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.85));
+      background: rgba(9, 6, 14, 0.74);
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.95));
     }
     .st-medallion-node .m-rank {
+      position: relative;
+      z-index: 2;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.48rem;
+      font-size: 0.46rem;
       font-weight: 900;
       color: #fde047;
+      background: rgba(9, 6, 14, 0.88);
+      padding: 1px 5px;
+      border-radius: 999px;
       margin-top: 2px;
+      border: 1px solid rgba(245, 158, 11, 0.45);
     }
     .st-medallion-node .m-lbl {
       position: absolute;
-      bottom: -15px;
+      bottom: -16px;
+      z-index: 3;
       white-space: nowrap;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.45rem;
       font-weight: 800;
-      color: #cbd5e1;
-      background: rgba(9, 6, 14, 0.88);
-      padding: 1px 5px;
+      color: #fef3c7;
+      background: rgba(9, 6, 14, 0.94);
+      padding: 1px 6px;
       border-radius: 4px;
-      border: 1px solid rgba(245, 158, 11, 0.28);
+      border: 1px solid rgba(245, 158, 11, 0.42);
       pointer-events: none;
+    }
+    /* Quick Selected Skill Picture + Explanation Bar at Top of Center Tree */
+    .st-quick-explain-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 18px;
+      background: linear-gradient(90deg, rgba(24, 15, 28, 0.96) 0%, rgba(45, 18, 24, 0.92) 50%, rgba(18, 13, 24, 0.96) 100%);
+      border-bottom: 1.5px solid rgba(245, 158, 11, 0.48);
+      flex-shrink: 0;
+    }
+    .st-quick-thumb {
+      width: 112px;
+      height: 64px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1.5px solid #fbbf24;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.45);
+      flex-shrink: 0;
+      background: #09060d;
+    }
+    .st-quick-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .st-quick-top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .st-quick-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 900;
+      color: #fef08a;
+      letter-spacing: 0.8px;
+    }
+    .st-quick-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(245, 158, 11, 0.55);
+      color: #fde047;
+    }
+    .st-quick-desc {
+      font-size: 0.78rem;
+      color: #f1f5f9;
+      line-height: 1.35;
+    }
+    .st-quick-how {
+      font-size: 0.68rem;
+      color: #38bdf8;
+      font-weight: 700;
     }
     .st-right-inspector {
       background: linear-gradient(180deg, #0d0a11 0%, #07050a 100%);
       border-left: 1px solid rgba(245, 158, 11, 0.35);
-      padding: 18px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       overflow-y: auto;
+      transition: box-shadow 0.25s ease;
+    }
+    .st-right-inspector.flash-highlight {
+      box-shadow: inset 0 0 36px rgba(251, 191, 36, 0.38);
     }
     .st-insp-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.05rem;
+      font-size: 1.0rem;
       font-weight: 900;
-      letter-spacing: 1.4px;
+      letter-spacing: 1.2px;
       color: #fef3c7;
       text-align: center;
-      padding-bottom: 8px;
+      padding-bottom: 6px;
       border-bottom: 1px solid rgba(245, 158, 11, 0.30);
+      flex-shrink: 0;
     }
     .st-insp-preview-box {
       width: 100%;
-      aspect-ratio: 16 / 9;
+      height: 205px;
+      min-height: 205px;
+      flex-shrink: 0;
       border-radius: 10px;
       overflow: hidden;
-      border: 1.5px solid rgba(245, 158, 11, 0.55);
+      border: 2px solid rgba(245, 158, 11, 0.68);
       position: relative;
       background: #050408;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), 0 0 18px rgba(245, 158, 11, 0.25);
     }
     .st-insp-preview-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      opacity: 0.52;
+      filter: contrast(1.1) saturate(1.2);
+    }
+    .st-insp-preview-box canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
     }
     .st-insp-preview-badge {
       position: absolute;
-      bottom: 8px;
-      left: 8px;
-      right: 8px;
-      background: rgba(9, 6, 14, 0.88);
-      border: 1px solid rgba(245, 158, 11, 0.45);
+      bottom: 7px;
+      left: 7px;
+      right: 7px;
+      z-index: 3;
+      background: rgba(9, 6, 14, 0.90);
+      border: 1px solid rgba(245, 158, 11, 0.55);
       border-radius: 6px;
-      padding: 5px 8px;
+      padding: 4px 8px;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.56rem;
       font-weight: 900;
@@ -2895,51 +3015,75 @@
       justify-content: space-between;
       align-items: center;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 900;
       color: #fbbf24;
-      padding: 6px 0;
+      padding: 4px 0;
       border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      flex-shrink: 0;
     }
-    .st-insp-sub-hint {
-      font-size: 0.68rem;
-      color: #94a3b8;
-      text-align: center;
-      font-style: italic;
+    .st-insp-explain-card {
+      background: rgba(22, 16, 30, 0.92);
+      border: 1.5px solid rgba(245, 158, 11, 0.45);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+    .st-explain-heading {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.22);
+      padding-bottom: 4px;
     }
     .st-insp-desc {
-      font-size: 0.84rem;
-      line-height: 1.5;
-      color: #e2e8f0;
-      background: rgba(18, 14, 24, 0.75);
-      border: 1px solid rgba(245, 158, 11, 0.22);
-      border-radius: 10px;
-      padding: 12px;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: #f8fafc;
+    }
+    .st-insp-how-box {
+      font-size: 0.73rem;
+      line-height: 1.38;
+      color: #bae6fd;
+      background: rgba(14, 165, 233, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 7px;
+      padding: 7px 9px;
     }
     .st-insp-stats-box {
       background: rgba(245, 158, 11, 0.08);
       border: 1px solid rgba(245, 158, 11, 0.35);
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 9px 11px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.68rem;
+      font-size: 0.64rem;
       color: #fde047;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
+      flex-shrink: 0;
     }
     .st-insp-actions {
       margin-top: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
+      flex-shrink: 0;
     }
     .btn-st-upgrade {
       width: 100%;
-      padding: 12px 14px;
+      padding: 11px 14px;
       border-radius: 10px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 900;
       cursor: pointer;
       border: 1.5px solid #fde047;
@@ -2958,16 +3102,16 @@
       color: #041019;
       box-shadow: 0 0 18px rgba(56, 189, 248, 0.38);
     }
-    @media (max-width: 1080px) {
+    @media (max-width: 860px) {
       .skilltree-window {
-        grid-template-columns: 62px 1fr;
+        grid-template-columns: 58px 1fr;
         grid-template-rows: 1fr auto;
       }
       .st-right-inspector {
         grid-column: 1 / -1;
         border-left: none;
         border-top: 1px solid rgba(245, 158, 11, 0.35);
-        max-height: 42vh;
+        max-height: 44vh;
       }
     }
 
@@ -5861,7 +6005,7 @@
         <div class="st-top-bar">
           <div class="st-top-title-group">
             <h2 id="stHeaderTitle">BOT COMBAT SKILLS</h2>
-            <span id="stHeaderSub">SHIBUYA SYNDICATE · 27 BRANCHING MEDALLION UPGRADES IN THIS TAB (135 TOTAL)</span>
+            <span id="stHeaderSub">SHIBUYA SYNDICATE · CLICK ANY MEDALLION BELOW TO VIEW ITS PICTURE &amp; COMBAT EFFECT</span>
           </div>
           <div class="st-top-currencies">
             <div class="st-curr-pill" id="stXpReadout" style="border-color:rgba(56,189,248,0.55);color:#38bdf8;">⚡ XP: 0</div>
@@ -5870,14 +6014,29 @@
           </div>
         </div>
 
+        <!-- Instant Selected Skill Picture + Explanation Banner right above the 3 columns -->
+        <div class="st-quick-explain-bar" id="stQuickExplainBar">
+          <img class="st-quick-thumb" id="stQuickThumbImg" src="assets/concept_gallery/addons_80/unique_cards/bot_abil_04.jpg" alt="Selected Skill Preview" />
+          <div class="st-quick-info">
+            <div class="st-quick-top-row">
+              <span class="st-quick-name" id="stQuickName">🪝 MAGNETIC WINCH PULL</span>
+              <span class="st-quick-tag" id="stQuickBranchTag">TECHNIQUE · TIER 1 · RANK 0/5</span>
+              <span class="st-quick-tag" id="stQuickTriggerTag" style="border-color:rgba(56,189,248,0.55);color:#7dd3fc;background:rgba(14,165,233,0.18);">🕹️ ACTIVE ON CLASH / WINCH</span>
+            </div>
+            <div class="st-quick-desc" id="stQuickDesc">Fires a high-tension magnetic winch cable to yank grounded enemies forward toward arena saws or Ring-Out ledges.</div>
+            <div class="st-quick-how" id="stQuickStatsLine">📊 PER RANK: +3 AGILITY · +2 POWER</div>
+          </div>
+        </div>
+
         <div class="st-columns-wrap" id="stColumnsWrap"></div>
       </div>
 
       <!-- Right Combat Preview & Mastery Inspector Panel -->
-      <div class="st-right-inspector">
-        <div class="st-insp-title" id="stInspTitle">MAGNETIC WINCH PULL</div>
+      <div class="st-right-inspector" id="stRightInspector">
+        <div class="st-insp-title" id="stInspTitle">🪝 MAGNETIC WINCH PULL</div>
         <div class="st-insp-preview-box">
-          <img id="stInspPreviewImg" src="assets/concept_gallery/battlebots_topdown_3d/01_arena_battle_wide.jpg" alt="Skill Action Preview" />
+          <img id="stInspPreviewImg" src="assets/concept_gallery/addons_80/unique_cards/bot_abil_04.jpg" alt="Skill Action Preview" />
+          <canvas id="stSkillDemoCanvas" width="380" height="205"></canvas>
           <div class="st-insp-preview-badge">
             <span id="stInspBranchTag">TECHNIQUE · TIER 1</span>
             <span id="stInspRankBadge" style="color:#00ff88;">RANK 0 / 5</span>
@@ -5887,9 +6046,17 @@
           <span id="stInspTierName">BRONZE TIER</span>
           <span id="stInspUsageText">USED: 17/20</span>
         </div>
-        <div class="st-insp-sub-hint">Use in combat or upgrade with XP / 💎 Diamonds to increase tier &amp; permanent bot stats.</div>
-        <div class="st-insp-desc" id="stInspDesc">
-          Select any medallion node in the 3 columns to inspect its combat effect and permanent stat bonuses.
+        <div class="st-insp-explain-card">
+          <div class="st-explain-heading">
+            <span>📖 WHAT THIS SKILL DOES</span>
+            <span id="stInspTriggerBadge" style="color:#38bdf8;">🕹️ COMBAT MECHANIC</span>
+          </div>
+          <div class="st-insp-desc" id="stInspDesc">
+            Select any medallion node in the 3 columns to inspect its combat effect and permanent stat bonuses.
+          </div>
+          <div class="st-insp-how-box" id="stInspHowBox">
+            <strong>HOW IT WORKS IN BATTLE:</strong> Automatically active on your BattleBot in both Player vs. CPU and Live Online PvP matches.
+          </div>
         </div>
         <div class="st-insp-stats-box" id="stInspStatsBox"></div>
         <div class="st-insp-actions">
@@ -8008,7 +8175,7 @@
         shortLabel: "COMBAT",
         title: "BOT COMBAT SKILLS",
         subtitle: "SHIBUYA SYNDICATE · 27 COMBAT MEDALLION UPGRADES (TECHNIQUE · RANGED · MELEE)",
-        previewImg: "assets/concept_gallery/battlebots_topdown_3d/01_arena_battle_wide.jpg",
+        previewImg: "assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg",
         columns: [
           {
             title: "TECHNIQUE",
@@ -8269,6 +8436,92 @@
       return Math.max(0, Math.min(5, Number(state.skillRanks[nodeId]) || 0));
     }
 
+    // Deterministic unique high-res picture + combat activation guide for all 135 Skill Nodes!
+    const SKILL_CUSTOM_IMAGE_OVERRIDES = {
+      combat_c0_n0: "assets/concept_gallery/addons_80/unique_cards/bot_abil_04.jpg",
+      combat_c0_n1: "assets/concept_gallery/addons_80/unique_cards/tire_12.jpg",
+      combat_c0_n2: "assets/concept_gallery/addons_80/unique_cards/bot_abil_01.jpg",
+      combat_c1_n0: "assets/concept_gallery/addons_80/unique_cards/rng_01.jpg",
+      combat_c1_n1: "assets/concept_gallery/addons_80/unique_cards/rng_04.jpg",
+      combat_c1_n2: "assets/concept_gallery/addons_80/unique_cards/rng_13.jpg",
+      combat_c1_n3: "assets/concept_gallery/addons_80/unique_cards/rng_18.jpg",
+      combat_c2_n0: "assets/concept_gallery/addons_80/unique_cards/wpn_01.jpg",
+      combat_c2_n1: "assets/concept_gallery/addons_80/unique_cards/wpn_05.jpg",
+      combat_c2_n2: "assets/concept_gallery/addons_80/unique_cards/wpn_12.jpg",
+      combat_c2_n3: "assets/concept_gallery/addons_80/unique_cards/wpn_08.jpg",
+      wealth_c2_n0: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_01_speed_tachyon.jpg",
+      wealth_c2_n1: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_02_exp_synapse.jpg",
+      wealth_c2_n2: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_03_power_plasma.jpg",
+      wealth_c2_n3: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_05_wealth_diamond.jpg",
+      wealth_c2_n4: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_04_health_nanite.jpg",
+      wealth_c2_n5: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_07_shield_aegis.jpg",
+      wealth_c2_n6: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_10_jackpot_fortune.jpg",
+      wealth_c2_n7: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_09_crit_nova.jpg",
+      wealth_c2_n8: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_10_jackpot_fortune.jpg"
+    };
+
+    function getSkillVisualSpec(node, col, tab) {
+      const m = /^([a-z]+)_c(\d+)_n(\d+)$/.exec(node.id || "");
+      const tabKey = m ? m[1] : (tab ? tab.id : "combat");
+      const cIdx = m ? Number(m[2]) : 0;
+      const nIdx = m ? Number(m[3]) : 0; // 0..8
+      const pad2 = (num) => String(num).padStart(2, "0");
+
+      let img = SKILL_CUSTOM_IMAGE_OVERRIDES[node.id] || "";
+      if (!img) {
+        if (tabKey === "combat") {
+          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(1 + nIdx)}.jpg`;
+          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/rng_${pad2(1 + nIdx)}.jpg`;
+          else img = `assets/concept_gallery/addons_80/unique_cards/wpn_${pad2(1 + nIdx)}.jpg`;
+        } else if (tabKey === "speed") {
+          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/tire_${pad2(1 + nIdx)}.jpg`;
+          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/tire_${pad2(11 + nIdx)}.jpg`;
+          else img = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(10 + nIdx)}.jpg`;
+        } else if (tabKey === "power") {
+          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/wpn_${pad2(10 + nIdx)}.jpg`;
+          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/wpn_${pad2(21 + nIdx)}.jpg`;
+          else img = `assets/concept_gallery/addons_80/unique_cards/wpn_abil_${pad2(1 + nIdx)}.jpg`;
+        } else if (tabKey === "health") {
+          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(21 + nIdx)}.jpg`;
+          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/bot_abil_${pad2(31 + nIdx)}.jpg`;
+          else img = `assets/concept_gallery/addons_80/unique_cards/tire_${pad2(21 + nIdx)}.jpg`;
+        } else {
+          if (cIdx === 0) img = `assets/concept_gallery/addons_80/unique_cards/wpn_abil_${pad2(11 + nIdx)}.jpg`;
+          else if (cIdx === 1) img = `assets/concept_gallery/addons_80/unique_cards/wpn_abil_${pad2(21 + nIdx)}.jpg`;
+          else img = "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_10_jackpot_fortune.jpg";
+        }
+      }
+
+      let triggerTag = "🛡️ ALWAYS ACTIVE IN BATTLE";
+      let howItWorks = "";
+      if (tabKey === "combat" && cIdx === 0) {
+        triggerTag = "🕹️ ACTIVE ON CHARGE / MANEUVER";
+        howItWorks = `<strong>HOW IT WORKS:</strong> Enhances your bot's tactical steering, Charge/Dodge maneuvers (<code>SHIFT / SPACE</code>), and clinch control during every round. Upgrading increases permanent Agility, Speed, and Hull stability.`;
+      } else if (tabKey === "combat" && cIdx === 1) {
+        triggerTag = "🎯 ACTIVE ON LONG-RANGE FIRE";
+        howItWorks = `<strong>HOW IT WORKS:</strong> Supercharges your dorsal Long-Range Turret (<code>SPACE / CLICK</code> when a Ranged Weapon 2 is equipped) and increases overall ranged tracking, fire rate, and impact damage.`;
+      } else if (tabKey === "combat" && cIdx === 2) {
+        triggerTag = "⚔️ ACTIVE ON MELEE CLASH & RAM";
+        howItWorks = `<strong>HOW IT WORKS:</strong> Boosts front-weapon collisions, ramming knockback, and Power-Struggle lockup drive whenever your BattleBot clashes with an opponent.`;
+      } else if (tabKey === "speed") {
+        triggerTag = "⚡ PERMANENT MOBILITY & STAMINA";
+        howItWorks = `<strong>HOW IT WORKS:</strong> Directly increases your bot's top driving speed, 360° turn rate, and reactor Stamina recovery from the moment the 10-second pre-fight countdown ends.`;
+      } else if (tabKey === "power") {
+        triggerTag = "🔥 PERMANENT STRIKE & KNOCKBACK";
+        howItWorks = `<strong>HOW IT WORKS:</strong> Multiplies your melee & ranged attack power, Ring-Out shove force, and Redline Overdrive (<25% HP) / Final 30s Sudden Overcharge critical damage.`;
+      } else if (tabKey === "health") {
+        triggerTag = cIdx === 1 ? "🛡️ ROUND-START AEGIS BARRIER" : "💚 PERMANENT HULL & PART ARMOR";
+        howItWorks = cIdx === 1
+          ? `<strong>HOW IT WORKS:</strong> Deploys a glowing Cobalt Aegis Energy Shield at the start of every round that absorbs enemy hits before your Hull HP takes damage!`
+          : `<strong>HOW IT WORKS:</strong> Permanently reinforces your BattleBot's Max Hull HP and protects your 4 Subsystems (Tires, Armor, Weapon, Core) against wear and tear.`;
+      } else {
+        triggerTag = "💎 MATCH PAYOUT & MOLECULE BONUS";
+        howItWorks = `<strong>HOW IT WORKS:</strong> Multiplies the 💎 Diamonds and ⚡ XP you earn after every battle AND amplifies mid-round Upgrade Molecule supply drops inside the arena!`;
+      }
+
+      return { img, triggerTag, howItWorks, tabKey, cIdx, nIdx };
+    }
+
     function computeSkillTreeBonuses() {
       const totals = { power: 0, speed: 0, agility: 0, hp: 0, shield: 0, wealthPct: 0, xpPct: 0, totalRanks: 0 };
       if (!state.skillRanks || typeof state.skillRanks !== "object") return totals;
@@ -8312,7 +8565,7 @@
       if (!found || found.tab.id !== tabObj.id) {
         state.selectedSkillId = tabObj.columns[0].nodes[0].id;
       }
-      renderSkillTreeUI();
+      renderSkillTreeUI(true);
       const modal = document.getElementById("skillTreeModalBackdrop");
       if (modal) modal.classList.remove("hidden");
     }
@@ -8327,15 +8580,123 @@
       const tabObj = SKILL_TREE_TABS.find(t => t.id === tabId) || SKILL_TREE_TABS[0];
       state.selectedSkillId = tabObj.columns[0].nodes[0].id;
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
-      renderSkillTreeUI();
+      renderSkillTreeUI(true);
     }
 
     function selectSkillNode(nodeId) {
       state.selectedSkillId = nodeId;
-      renderSkillTreeUI();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      // Update selected class in-place so #stColumnsWrap scroll position never resets!
+      const colsWrap = document.getElementById("stColumnsWrap");
+      if (colsWrap) {
+        colsWrap.querySelectorAll(".st-medallion-node").forEach(el => {
+          el.classList.toggle("selected", el.getAttribute("data-node-id") === nodeId);
+        });
+      }
+      updateSelectedSkillInspectorUI(true);
     }
 
-    function renderSkillTreeUI() {
+    function formatSkillPerRankLine(stats, curRank = 0) {
+      const parts = [];
+      if (stats.power) parts.push(`💥 +${stats.power} PWR/rk (Now: +${stats.power * curRank})`);
+      if (stats.speed) parts.push(`⚡ +${stats.speed} SPD/rk (Now: +${stats.speed * curRank})`);
+      if (stats.agility) parts.push(`🎯 +${stats.agility} AGI/rk (Now: +${stats.agility * curRank})`);
+      if (stats.hp) parts.push(`❤️ +${stats.hp} HP/rk (Now: +${stats.hp * curRank})`);
+      if (stats.shield) parts.push(`🛡️ +${stats.shield} SHIELD/rk (Now: +${stats.shield * curRank})`);
+      if (stats.wealthPct) parts.push(`💎 +${stats.wealthPct}% DIAMONDS/rk (Now: +${stats.wealthPct * curRank}%)`);
+      if (stats.xpPct) parts.push(`🧬 +${stats.xpPct}% EXP/rk (Now: +${stats.xpPct * curRank}%)`);
+      return parts.join(" · ");
+    }
+
+    function updateSelectedSkillInspectorUI(flashHighlight = false) {
+      const activeTab = SKILL_TREE_TABS.find(t => t.id === state.activeSkillTab) || SKILL_TREE_TABS[0];
+      const selInfo = findSkillNodeById(state.selectedSkillId) || { tab: activeTab, col: activeTab.columns[0], node: activeTab.columns[0].nodes[0] };
+      const nd = selInfo.node;
+      const curRank = getSkillNodeRank(nd.id);
+      const nextCost = Math.round(nd.cost * (1 + curRank * 0.35));
+      const vSpec = getSkillVisualSpec(nd, selInfo.col, selInfo.tab);
+
+      // 1. Update Top Quick-Explain Bar (above the 3 columns)
+      const qThumb = document.getElementById("stQuickThumbImg");
+      const qName = document.getElementById("stQuickName");
+      const qBranch = document.getElementById("stQuickBranchTag");
+      const qTrig = document.getElementById("stQuickTriggerTag");
+      const qDesc = document.getElementById("stQuickDesc");
+      const qStats = document.getElementById("stQuickStatsLine");
+      if (qThumb) qThumb.src = vSpec.img;
+      if (qName) qName.textContent = `${nd.icon} ${nd.name}`;
+      if (qBranch) qBranch.textContent = `${selInfo.col.title} · TIER ${nd.row + 1} · RANK ${curRank}/5`;
+      if (qTrig) qTrig.textContent = vSpec.triggerTag;
+      if (qDesc) qDesc.innerHTML = nd.desc;
+      if (qStats) qStats.textContent = `📊 BONUS: ${formatSkillPerRankLine(nd.stats, curRank)}`;
+
+      // 2. Update Right Inspector Panel
+      const inspEl = document.getElementById("stRightInspector");
+      const inspTitle = document.getElementById("stInspTitle");
+      const inspImg = document.getElementById("stInspPreviewImg");
+      const inspBranch = document.getElementById("stInspBranchTag");
+      const inspRank = document.getElementById("stInspRankBadge");
+      const inspTier = document.getElementById("stInspTierName");
+      const inspUsed = document.getElementById("stInspUsageText");
+      const inspTrigBadge = document.getElementById("stInspTriggerBadge");
+      const inspDesc = document.getElementById("stInspDesc");
+      const inspHow = document.getElementById("stInspHowBox");
+      const inspStats = document.getElementById("stInspStatsBox");
+      const btnXp = document.getElementById("btnStUpgradeXp");
+      const btnDm = document.getElementById("btnStUpgradeDiamond");
+
+      if (inspTitle) inspTitle.textContent = `${nd.icon} ${nd.name}`;
+      if (inspImg) inspImg.src = vSpec.img;
+      if (inspBranch) inspBranch.textContent = `${selInfo.col.title} · TIER ${nd.row + 1}`;
+      if (inspRank) {
+        inspRank.textContent = curRank >= 5 ? "★ MAX RANK 5 / 5" : `RANK ${curRank} / 5`;
+        inspRank.style.color = curRank >= 5 ? "#fde047" : (curRank > 0 ? "#00ff88" : "#94a3b8");
+      }
+      const tierLabels = ["LOCKED (RANK 0/5)", "BRONZE TIER (1/5)", "SILVER TIER (2/5)", "GOLD TIER (3/5)", "PLATINUM TIER (4/5)", "MASTER SYNDICATE (5/5)"];
+      if (inspTier) inspTier.textContent = tierLabels[curRank] || "BRONZE TIER";
+      const usedVal = Math.min(20, curRank * 4 + ((state.pvpWins || 0) + Math.floor((state.cpuXp || 0) / 180)) % 20);
+      if (inspUsed) inspUsed.textContent = `USED: ${usedVal}/20`;
+      if (inspTrigBadge) inspTrigBadge.textContent = vSpec.triggerTag;
+      if (inspDesc) inspDesc.innerHTML = nd.desc;
+      if (inspHow) inspHow.innerHTML = vSpec.howItWorks;
+
+      if (inspStats) {
+        const nextR = Math.min(5, curRank + 1);
+        const stLines = [];
+        if (nd.stats.power) stLines.push(`💥 <strong>+${nd.stats.power} POWER</strong> per rank (Now: <strong>+${nd.stats.power * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.power * nextR}</strong>)`);
+        if (nd.stats.speed) stLines.push(`⚡ <strong>+${nd.stats.speed} SPEED</strong> per rank (Now: <strong>+${nd.stats.speed * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.speed * nextR}</strong>)`);
+        if (nd.stats.agility) stLines.push(`🎯 <strong>+${nd.stats.agility} AGILITY</strong> per rank (Now: <strong>+${nd.stats.agility * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.agility * nextR}</strong>)`);
+        if (nd.stats.hp) stLines.push(`❤️ <strong>+${nd.stats.hp} MAX HP</strong> per rank (Now: <strong>+${nd.stats.hp * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.hp * nextR}</strong>)`);
+        if (nd.stats.shield) stLines.push(`🛡️ <strong>+${nd.stats.shield} AEGIS SHIELD</strong> per rank (Now: <strong>+${nd.stats.shield * curRank}</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.shield * nextR}</strong>)`);
+        if (nd.stats.wealthPct) stLines.push(`💎 <strong>+${nd.stats.wealthPct}% DIAMOND PAYOUT</strong> per rank (Now: <strong>+${nd.stats.wealthPct * curRank}%</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.wealthPct * nextR}%</strong>)`);
+        if (nd.stats.xpPct) stLines.push(`🧬 <strong>+${nd.stats.xpPct}% MATCH EXP</strong> per rank (Now: <strong>+${nd.stats.xpPct * curRank}%</strong> ➔ Next: <strong style="color:#00ff88;">+${nd.stats.xpPct * nextR}%</strong>)`);
+        const allTotals = computeSkillTreeBonuses();
+        stLines.push(`<div style="margin-top:4px;padding-top:4px;border-top:1px solid rgba(245,158,11,0.3);color:#34d399;">🌳 TOTAL ACTIVE TREE BONUS (${allTotals.totalRanks} RANKS): +${allTotals.hp} HP · +${allTotals.power} PWR · +${allTotals.speed} SPD · +${allTotals.agility} AGI</div>`);
+        inspStats.innerHTML = stLines.map(l => `<div>${l}</div>`).join("");
+      }
+
+      if (btnXp && btnDm) {
+        if (curRank >= 5) {
+          btnXp.textContent = "★ MAX RANK (5/5) UNLOCKED";
+          btnXp.disabled = true;
+          btnDm.style.display = "none";
+        } else {
+          btnXp.disabled = false;
+          btnDm.style.display = "block";
+          btnXp.textContent = `⚡ UPGRADE WITH XP (${nextCost} XP)`;
+          btnDm.textContent = `💎 UPGRADE WITH DIAMONDS (${nextCost} 💎)`;
+        }
+      }
+
+      if (flashHighlight && inspEl) {
+        inspEl.classList.remove("flash-highlight");
+        void inspEl.offsetWidth;
+        inspEl.classList.add("flash-highlight");
+        setTimeout(() => inspEl.classList.remove("flash-highlight"), 450);
+      }
+    }
+
+    function renderSkillTreeUI(rebuildColumns = true) {
       const activeTab = SKILL_TREE_TABS.find(t => t.id === state.activeSkillTab) || SKILL_TREE_TABS[0];
       const railEl = document.getElementById("stLeftRail");
       if (railEl) {
@@ -8367,7 +8728,8 @@
       if (dmEl) dmEl.textContent = `💎 DIAMONDS: ${(state.scrap || 0).toLocaleString()}`;
 
       const colsWrap = document.getElementById("stColumnsWrap");
-      if (colsWrap) {
+      if (colsWrap && rebuildColumns) {
+        const prevScroll = colsWrap.scrollTop;
         colsWrap.innerHTML = activeTab.columns.map(col => {
           const rowsMap = new Map();
           for (const nd of col.nodes) {
@@ -8378,6 +8740,7 @@
             const dualCls = rNodes.length > 1 ? "dual" : "";
             const nodesHtml = rNodes.map(nd => {
               const r = getSkillNodeRank(nd.id);
+              const vSpec = getSkillVisualSpec(nd, col, activeTab);
               const cls = [
                 "st-medallion-node",
                 r > 0 ? "unlocked" : "",
@@ -8385,7 +8748,8 @@
                 state.selectedSkillId === nd.id ? "selected" : ""
               ].filter(Boolean).join(" ");
               return `
-                <div class="${cls}" onclick="selectSkillNode('${nd.id}')" title="${nd.name} (Rank ${r}/5)">
+                <div class="${cls}" data-node-id="${nd.id}" onclick="selectSkillNode('${nd.id}')" title="${nd.name} — Click to view picture & combat effect">
+                  <div class="m-thumb-wrap"><img class="m-thumb" src="${vSpec.img}" alt="${nd.name}" loading="lazy" /></div>
                   <span class="m-ico">${nd.icon}</span>
                   <span class="m-rank">${r}/5</span>
                   <span class="m-lbl">${nd.short}</span>
@@ -8402,65 +8766,138 @@
             </div>
           `;
         }).join("");
+        colsWrap.scrollTop = prevScroll;
       }
 
-      // Populate Right Inspector Panel
-      const selInfo = findSkillNodeById(state.selectedSkillId) || { tab: activeTab, col: activeTab.columns[0], node: activeTab.columns[0].nodes[0] };
+      updateSelectedSkillInspectorUI(false);
+    }
+
+    // Live 60FPS Skill Action Demonstration Renderer inside the Right Inspector 16:9 Preview Box!
+    let stDemoTicks = 0;
+    function stepSkillTreeDemoCanvas() {
+      requestAnimationFrame(stepSkillTreeDemoCanvas);
+      const modal = document.getElementById("skillTreeModalBackdrop");
+      if (!modal || modal.classList.contains("hidden")) return;
+      const cv = document.getElementById("stSkillDemoCanvas");
+      if (!cv) return;
+      const dCtx = cv.getContext("2d");
+      if (!dCtx) return;
+
+      stDemoTicks++;
+      const w = cv.width;
+      const h = cv.height;
+      dCtx.clearRect(0, 0, w, h);
+
+      // Subtle tactical vignette & grid over the skill artwork
+      const vig = dCtx.createLinearGradient(0, 0, 0, h);
+      vig.addColorStop(0, "rgba(8, 6, 14, 0.35)");
+      vig.addColorStop(0.5, "rgba(8, 6, 14, 0.15)");
+      vig.addColorStop(1, "rgba(8, 6, 14, 0.72)");
+      dCtx.fillStyle = vig;
+      dCtx.fillRect(0, 0, w, h);
+
+      const selInfo = findSkillNodeById(state.selectedSkillId);
+      if (!selInfo) return;
       const nd = selInfo.node;
-      const curRank = getSkillNodeRank(nd.id);
-      const nextCost = Math.round(nd.cost * (1 + curRank * 0.35));
+      const vSpec = getSkillVisualSpec(nd, selInfo.col, selInfo.tab);
+      const t = (stDemoTicks % 120) / 120; // 2-second loop
 
-      const inspTitle = document.getElementById("stInspTitle");
-      const inspImg = document.getElementById("stInspPreviewImg");
-      const inspBranch = document.getElementById("stInspBranchTag");
-      const inspRank = document.getElementById("stInspRankBadge");
-      const inspTier = document.getElementById("stInspTierName");
-      const inspUsed = document.getElementById("stInspUsageText");
-      const inspDesc = document.getElementById("stInspDesc");
-      const inspStats = document.getElementById("stInspStatsBox");
-      const btnXp = document.getElementById("btnStUpgradeXp");
-      const btnDm = document.getElementById("btnStUpgradeDiamond");
+      dCtx.save();
+      // Draw Simulated Player BattleBot (left) & Target Enemy Bot (right) demonstrating the selected skill!
+      const pX = 95 + (vSpec.tabKey === "speed" ? Math.sin(t * Math.PI * 2) * 35 : (vSpec.cIdx === 2 && vSpec.tabKey === "combat" ? Math.sin(t * Math.PI) * 55 : 0));
+      const pY = 102 + (vSpec.tabKey === "speed" && vSpec.cIdx === 1 ? Math.cos(t * Math.PI * 2) * 24 : 0);
+      const eX = 278 - (nd.id === "combat_c0_n0" ? t * 68 : 0) + (vSpec.tabKey === "power" && t > 0.45 ? (t - 0.45) * 75 : 0);
+      const eY = 102;
 
-      if (inspTitle) inspTitle.textContent = `${nd.icon} ${nd.name}`;
-      if (inspImg) inspImg.src = selInfo.tab.previewImg;
-      if (inspBranch) inspBranch.textContent = `${selInfo.col.title} · TIER ${nd.row + 1}`;
-      if (inspRank) {
-        inspRank.textContent = curRank >= 5 ? "★ MAX RANK 5 / 5" : `RANK ${curRank} / 5`;
-        inspRank.style.color = curRank >= 5 ? "#fde047" : (curRank > 0 ? "#00ff88" : "#94a3b8");
-      }
-      const tierLabels = ["LOCKED (TIER 0)", "BRONZE TIER (1/5)", "SILVER TIER (2/5)", "GOLD TIER (3/5)", "PLATINUM TIER (4/5)", "MASTER SYNDICATE (5/5)"];
-      if (inspTier) inspTier.textContent = tierLabels[curRank] || "BRONZE TIER";
-      const usedVal = Math.min(20, curRank * 4 + ((state.pvpWins || 0) + Math.floor((state.cpuXp || 0) / 180)) % 20);
-      if (inspUsed) inspUsed.textContent = `USED: ${usedVal}/20`;
-      if (inspDesc) inspDesc.innerHTML = nd.desc;
-
-      if (inspStats) {
-        const stLines = [];
-        if (nd.stats.power) stLines.push(`💥 +${nd.stats.power} POWER per rank (Current: +${nd.stats.power * curRank})`);
-        if (nd.stats.speed) stLines.push(`⚡ +${nd.stats.speed} SPEED per rank (Current: +${nd.stats.speed * curRank})`);
-        if (nd.stats.agility) stLines.push(`🎯 +${nd.stats.agility} AGILITY per rank (Current: +${nd.stats.agility * curRank})`);
-        if (nd.stats.hp) stLines.push(`❤️ +${nd.stats.hp} MAX HP per rank (Current: +${nd.stats.hp * curRank})`);
-        if (nd.stats.shield) stLines.push(`🛡️ +${nd.stats.shield} AEGIS SHIELD HP per rank (Current: +${nd.stats.shield * curRank})`);
-        if (nd.stats.wealthPct) stLines.push(`💎 +${nd.stats.wealthPct}% DIAMOND PAYOUT per rank (Current: +${nd.stats.wealthPct * curRank}%)`);
-        if (nd.stats.xpPct) stLines.push(`🧬 +${nd.stats.xpPct}% MATCH EXP per rank (Current: +${nd.stats.xpPct * curRank}%)`);
-        const allTotals = computeSkillTreeBonuses();
-        stLines.push(`<div style="margin-top:4px;padding-top:4px;border-top:1px solid rgba(245,158,11,0.3);color:#34d399;">🌳 TOTAL TREE BONUS (${allTotals.totalRanks} RANKS): +${allTotals.hp} HP · +${allTotals.power} PWR · +${allTotals.speed} SPD · +${allTotals.agility} AGI</div>`);
-        inspStats.innerHTML = stLines.map(l => `<div>${l}</div>`).join("");
-      }
-
-      if (btnXp && btnDm) {
-        if (curRank >= 5) {
-          btnXp.textContent = "★ MAX RANK (5/5) UNLOCKED";
-          btnXp.disabled = true;
-          btnDm.style.display = "none";
-        } else {
-          btnXp.disabled = false;
-          btnDm.style.display = "block";
-          btnXp.textContent = `⚡ UPGRADE WITH XP (${nextCost} XP)`;
-          btnDm.textContent = `💎 UPGRADE WITH DIAMONDS (${nextCost} 💎)`;
+      // Skill-specific animated visual effect
+      if (vSpec.tabKey === "combat" && vSpec.cIdx === 0) {
+        // Technique: Winch cable / J-turn drift / Gyro aura
+        dCtx.strokeStyle = "#fde047";
+        dCtx.lineWidth = 3;
+        dCtx.setLineDash([6, 4]);
+        dCtx.beginPath();
+        dCtx.moveTo(pX + 22, pY);
+        dCtx.lineTo(eX - 22, eY);
+        dCtx.stroke();
+        dCtx.setLineDash([]);
+      } else if (vSpec.tabKey === "combat" && vSpec.cIdx === 1) {
+        // Ranged: High-velocity projectile / rail beam
+        const projX = pX + 24 + t * (eX - pX - 36);
+        dCtx.strokeStyle = "#38bdf8";
+        dCtx.lineWidth = 4;
+        dCtx.beginPath();
+        dCtx.moveTo(pX + 20, pY);
+        dCtx.lineTo(projX, pY);
+        dCtx.stroke();
+        dCtx.fillStyle = "#fef08a";
+        dCtx.beginPath();
+        dCtx.arc(projX, pY, 6, 0, Math.PI * 2);
+        dCtx.fill();
+      } else if (vSpec.tabKey === "health") {
+        // Health / Aegis Shield Hex Dome around Player Bot
+        const pulseR = 34 + Math.sin(stDemoTicks * 0.12) * 4;
+        dCtx.strokeStyle = vSpec.cIdx === 1 ? "#38bdf8" : "#34d399";
+        dCtx.lineWidth = 3;
+        dCtx.beginPath();
+        dCtx.arc(pX, pY, pulseR, 0, Math.PI * 2);
+        dCtx.stroke();
+      } else if (vSpec.tabKey === "power") {
+        // Power / Redline Crimson Shockwave
+        const shockR = 18 + t * 54;
+        dCtx.strokeStyle = `rgba(251, 113, 133, ${1 - t})`;
+        dCtx.lineWidth = 3.5;
+        dCtx.beginPath();
+        dCtx.arc((pX + eX) / 2, pY, shockR, 0, Math.PI * 2);
+        dCtx.stroke();
+      } else if (vSpec.tabKey === "wealth") {
+        // Wealth / EXP orbiting golden diamonds
+        for (let i = 0; i < 4; i++) {
+          const ang = stDemoTicks * 0.06 + (i * Math.PI) / 2;
+          const ox = pX + Math.cos(ang) * 38;
+          const oy = pY + Math.sin(ang) * 26;
+          dCtx.fillStyle = "#fde047";
+          dCtx.beginPath();
+          dCtx.arc(ox, oy, 4.5, 0, Math.PI * 2);
+          dCtx.fill();
         }
       }
+
+      // Draw Player Bot Token
+      dCtx.fillStyle = "rgba(15, 23, 42, 0.9)";
+      dCtx.strokeStyle = "#fde047";
+      dCtx.lineWidth = 2.5;
+      dCtx.beginPath();
+      dCtx.arc(pX, pY, 22, 0, Math.PI * 2);
+      dCtx.fill();
+      dCtx.stroke();
+      dCtx.font = "18px sans-serif";
+      dCtx.textAlign = "center";
+      dCtx.textBaseline = "middle";
+      dCtx.fillText(nd.icon || "🤖", pX, pY);
+
+      // Draw Target Bot Token
+      dCtx.fillStyle = "rgba(30, 14, 24, 0.9)";
+      dCtx.strokeStyle = "#fb7185";
+      dCtx.lineWidth = 2.2;
+      dCtx.beginPath();
+      dCtx.arc(eX, eY, 20, 0, Math.PI * 2);
+      dCtx.fill();
+      dCtx.stroke();
+      dCtx.fillText("🤖", eX, eY);
+
+      // Top live simulation banner inside preview box
+      dCtx.fillStyle = "rgba(9, 6, 14, 0.86)";
+      dCtx.fillRect(8, 8, w - 16, 24);
+      dCtx.strokeStyle = "rgba(245, 158, 11, 0.55)";
+      dCtx.lineWidth = 1;
+      dCtx.strokeRect(8, 8, w - 16, 24);
+      dCtx.fillStyle = "#fef08a";
+      dCtx.font = "900 10px Orbitron, sans-serif";
+      dCtx.textAlign = "left";
+      dCtx.fillText(`▶ LIVE PREVIEW: ${nd.name}`, 15, 21);
+      dCtx.restore();
     }
+    requestAnimationFrame(stepSkillTreeDemoCanvas);
 
     function upgradeSelectedSkillNode(currencyType) {
       if (!ensurePilotLoggedIn()) return;
@@ -8490,7 +8927,7 @@
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
       persistWalletAndRig();
       updatePlayerUI();
-      renderSkillTreeUI();
+      renderSkillTreeUI(true);
       if (!sim.running) setupStagingArena();
     }
 
