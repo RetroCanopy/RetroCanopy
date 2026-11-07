@@ -2981,8 +2981,8 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      opacity: 0.52;
-      filter: contrast(1.1) saturate(1.2);
+      opacity: 0.95;
+      filter: contrast(1.08) saturate(1.15);
     }
     .st-insp-preview-box canvas {
       position: absolute;
@@ -6016,7 +6016,7 @@
 
         <!-- Instant Selected Skill Picture + Explanation Banner right above the 3 columns -->
         <div class="st-quick-explain-bar" id="stQuickExplainBar">
-          <img class="st-quick-thumb" id="stQuickThumbImg" src="assets/concept_gallery/addons_80/unique_cards/bot_abil_04.jpg" alt="Selected Skill Preview" />
+          <img class="st-quick-thumb" id="stQuickThumbImg" src="assets/concept_gallery/addons_80/unique_cards/bot_abil_04.jpg" alt="" onerror="this.src='assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg'" />
           <div class="st-quick-info">
             <div class="st-quick-top-row">
               <span class="st-quick-name" id="stQuickName">🪝 MAGNETIC WINCH PULL</span>
@@ -6035,7 +6035,7 @@
       <div class="st-right-inspector" id="stRightInspector">
         <div class="st-insp-title" id="stInspTitle">🪝 MAGNETIC WINCH PULL</div>
         <div class="st-insp-preview-box">
-          <img id="stInspPreviewImg" src="assets/concept_gallery/addons_80/unique_cards/bot_abil_04.jpg" alt="Skill Action Preview" />
+          <img id="stInspPreviewImg" src="assets/concept_gallery/addons_80/unique_cards/bot_abil_04.jpg" alt="" onerror="this.src='assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg'" />
           <canvas id="stSkillDemoCanvas" width="380" height="205"></canvas>
           <div class="st-insp-preview-badge">
             <span id="stInspBranchTag">TECHNIQUE · TIER 1</span>
@@ -8623,7 +8623,10 @@
       const qTrig = document.getElementById("stQuickTriggerTag");
       const qDesc = document.getElementById("stQuickDesc");
       const qStats = document.getElementById("stQuickStatsLine");
-      if (qThumb) qThumb.src = vSpec.img;
+      if (qThumb) {
+        qThumb.style.display = "block";
+        qThumb.src = vSpec.img;
+      }
       if (qName) qName.textContent = `${nd.icon} ${nd.name}`;
       if (qBranch) qBranch.textContent = `${selInfo.col.title} · TIER ${nd.row + 1} · RANK ${curRank}/5`;
       if (qTrig) qTrig.textContent = vSpec.triggerTag;
@@ -8646,7 +8649,10 @@
       const btnDm = document.getElementById("btnStUpgradeDiamond");
 
       if (inspTitle) inspTitle.textContent = `${nd.icon} ${nd.name}`;
-      if (inspImg) inspImg.src = vSpec.img;
+      if (inspImg) {
+        inspImg.style.display = "block";
+        inspImg.src = vSpec.img;
+      }
       if (inspBranch) inspBranch.textContent = `${selInfo.col.title} · TIER ${nd.row + 1}`;
       if (inspRank) {
         inspRank.textContent = curRank >= 5 ? "★ MAX RANK 5 / 5" : `RANK ${curRank} / 5`;
@@ -8749,7 +8755,7 @@
               ].filter(Boolean).join(" ");
               return `
                 <div class="${cls}" data-node-id="${nd.id}" onclick="selectSkillNode('${nd.id}')" title="${nd.name} — Click to view picture & combat effect">
-                  <div class="m-thumb-wrap"><img class="m-thumb" src="${vSpec.img}" alt="${nd.name}" loading="lazy" /></div>
+                  <div class="m-thumb-wrap"><img class="m-thumb" src="${vSpec.img}" alt="" loading="lazy" onerror="this.style.display='none'" /></div>
                   <span class="m-ico">${nd.icon}</span>
                   <span class="m-rank">${r}/5</span>
                   <span class="m-lbl">${nd.short}</span>
@@ -8772,7 +8778,7 @@
       updateSelectedSkillInspectorUI(false);
     }
 
-    // Live 60FPS Skill Action Demonstration Renderer inside the Right Inspector 16:9 Preview Box!
+    // Live 60FPS Skill Action HUD Overlay inside the Right Inspector 16:9 Preview Box!
     let stDemoTicks = 0;
     function stepSkillTreeDemoCanvas() {
       requestAnimationFrame(stepSkillTreeDemoCanvas);
@@ -8788,10 +8794,11 @@
       const h = cv.height;
       dCtx.clearRect(0, 0, w, h);
 
-      // Subtle tactical vignette & grid over the skill artwork
+      // Subtle top & bottom gradient so the high-res 3D Skill Card Artwork shines clearly in the center!
       const vig = dCtx.createLinearGradient(0, 0, 0, h);
-      vig.addColorStop(0, "rgba(8, 6, 14, 0.35)");
-      vig.addColorStop(0.5, "rgba(8, 6, 14, 0.15)");
+      vig.addColorStop(0, "rgba(8, 6, 14, 0.55)");
+      vig.addColorStop(0.22, "rgba(8, 6, 14, 0.0)");
+      vig.addColorStop(0.75, "rgba(8, 6, 14, 0.0)");
       vig.addColorStop(1, "rgba(8, 6, 14, 0.72)");
       dCtx.fillStyle = vig;
       dCtx.fillRect(0, 0, w, h);
@@ -8799,102 +8806,30 @@
       const selInfo = findSkillNodeById(state.selectedSkillId);
       if (!selInfo) return;
       const nd = selInfo.node;
-      const vSpec = getSkillVisualSpec(nd, selInfo.col, selInfo.tab);
-      const t = (stDemoTicks % 120) / 120; // 2-second loop
 
       dCtx.save();
-      // Draw Simulated Player BattleBot (left) & Target Enemy Bot (right) demonstrating the selected skill!
-      const pX = 95 + (vSpec.tabKey === "speed" ? Math.sin(t * Math.PI * 2) * 35 : (vSpec.cIdx === 2 && vSpec.tabKey === "combat" ? Math.sin(t * Math.PI) * 55 : 0));
-      const pY = 102 + (vSpec.tabKey === "speed" && vSpec.cIdx === 1 ? Math.cos(t * Math.PI * 2) * 24 : 0);
-      const eX = 278 - (nd.id === "combat_c0_n0" ? t * 68 : 0) + (vSpec.tabKey === "power" && t > 0.45 ? (t - 0.45) * 75 : 0);
-      const eY = 102;
-
-      // Skill-specific animated visual effect
-      if (vSpec.tabKey === "combat" && vSpec.cIdx === 0) {
-        // Technique: Winch cable / J-turn drift / Gyro aura
-        dCtx.strokeStyle = "#fde047";
-        dCtx.lineWidth = 3;
-        dCtx.setLineDash([6, 4]);
-        dCtx.beginPath();
-        dCtx.moveTo(pX + 22, pY);
-        dCtx.lineTo(eX - 22, eY);
-        dCtx.stroke();
-        dCtx.setLineDash([]);
-      } else if (vSpec.tabKey === "combat" && vSpec.cIdx === 1) {
-        // Ranged: High-velocity projectile / rail beam
-        const projX = pX + 24 + t * (eX - pX - 36);
-        dCtx.strokeStyle = "#38bdf8";
-        dCtx.lineWidth = 4;
-        dCtx.beginPath();
-        dCtx.moveTo(pX + 20, pY);
-        dCtx.lineTo(projX, pY);
-        dCtx.stroke();
-        dCtx.fillStyle = "#fef08a";
-        dCtx.beginPath();
-        dCtx.arc(projX, pY, 6, 0, Math.PI * 2);
-        dCtx.fill();
-      } else if (vSpec.tabKey === "health") {
-        // Health / Aegis Shield Hex Dome around Player Bot
-        const pulseR = 34 + Math.sin(stDemoTicks * 0.12) * 4;
-        dCtx.strokeStyle = vSpec.cIdx === 1 ? "#38bdf8" : "#34d399";
-        dCtx.lineWidth = 3;
-        dCtx.beginPath();
-        dCtx.arc(pX, pY, pulseR, 0, Math.PI * 2);
-        dCtx.stroke();
-      } else if (vSpec.tabKey === "power") {
-        // Power / Redline Crimson Shockwave
-        const shockR = 18 + t * 54;
-        dCtx.strokeStyle = `rgba(251, 113, 133, ${1 - t})`;
-        dCtx.lineWidth = 3.5;
-        dCtx.beginPath();
-        dCtx.arc((pX + eX) / 2, pY, shockR, 0, Math.PI * 2);
-        dCtx.stroke();
-      } else if (vSpec.tabKey === "wealth") {
-        // Wealth / EXP orbiting golden diamonds
-        for (let i = 0; i < 4; i++) {
-          const ang = stDemoTicks * 0.06 + (i * Math.PI) / 2;
-          const ox = pX + Math.cos(ang) * 38;
-          const oy = pY + Math.sin(ang) * 26;
-          dCtx.fillStyle = "#fde047";
-          dCtx.beginPath();
-          dCtx.arc(ox, oy, 4.5, 0, Math.PI * 2);
-          dCtx.fill();
-        }
-      }
-
-      // Draw Player Bot Token
-      dCtx.fillStyle = "rgba(15, 23, 42, 0.9)";
-      dCtx.strokeStyle = "#fde047";
-      dCtx.lineWidth = 2.5;
+      // Animated golden scanline / corner targeting brackets over the 3D Skill Artwork
+      const pulse = 0.65 + Math.sin(stDemoTicks * 0.1) * 0.35;
+      dCtx.strokeStyle = `rgba(251, 191, 36, ${0.75 * pulse})`;
+      dCtx.lineWidth = 2;
+      const bLen = 16;
+      // Top-left & Top-right brackets
       dCtx.beginPath();
-      dCtx.arc(pX, pY, 22, 0, Math.PI * 2);
-      dCtx.fill();
+      dCtx.moveTo(10, 38 + bLen); dCtx.lineTo(10, 38); dCtx.lineTo(10 + bLen, 38);
+      dCtx.moveTo(w - 10 - bLen, 38); dCtx.lineTo(w - 10, 38); dCtx.lineTo(w - 10, 38 + bLen);
       dCtx.stroke();
-      dCtx.font = "18px sans-serif";
-      dCtx.textAlign = "center";
-      dCtx.textBaseline = "middle";
-      dCtx.fillText(nd.icon || "🤖", pX, pY);
 
-      // Draw Target Bot Token
-      dCtx.fillStyle = "rgba(30, 14, 24, 0.9)";
-      dCtx.strokeStyle = "#fb7185";
-      dCtx.lineWidth = 2.2;
-      dCtx.beginPath();
-      dCtx.arc(eX, eY, 20, 0, Math.PI * 2);
-      dCtx.fill();
-      dCtx.stroke();
-      dCtx.fillText("🤖", eX, eY);
-
-      // Top live simulation banner inside preview box
-      dCtx.fillStyle = "rgba(9, 6, 14, 0.86)";
-      dCtx.fillRect(8, 8, w - 16, 24);
-      dCtx.strokeStyle = "rgba(245, 158, 11, 0.55)";
+      // Top live skill title pill inside preview box
+      dCtx.fillStyle = "rgba(9, 6, 14, 0.88)";
+      dCtx.fillRect(8, 8, w - 16, 23);
+      dCtx.strokeStyle = "rgba(245, 158, 11, 0.65)";
       dCtx.lineWidth = 1;
-      dCtx.strokeRect(8, 8, w - 16, 24);
+      dCtx.strokeRect(8, 8, w - 16, 23);
       dCtx.fillStyle = "#fef08a";
       dCtx.font = "900 10px Orbitron, sans-serif";
       dCtx.textAlign = "left";
-      dCtx.fillText(`▶ LIVE PREVIEW: ${nd.name}`, 15, 21);
+      dCtx.textBaseline = "middle";
+      dCtx.fillText(`${nd.icon || "⚡"} ${nd.name}`, 15, 20);
       dCtx.restore();
     }
     requestAnimationFrame(stepSkillTreeDemoCanvas);
