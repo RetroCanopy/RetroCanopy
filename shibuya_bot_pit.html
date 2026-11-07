@@ -9064,6 +9064,299 @@
       }
     }
 
+    const RANDOM_ARENA_MOLECULE_DROPS = [
+      {
+        id: "mol_01_speed",
+        icon: "⚡",
+        shortLabel: "TACHYON SPEED",
+        code: "⚡ TACHYON SPEED MOLECULE",
+        color: "#00f5ff",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_01_speed_tachyon.jpg",
+        desc: "+35% Speed & Turn Surge (8s) + 100% Stamina!"
+      },
+      {
+        id: "mol_02_exp",
+        icon: "🧬",
+        shortLabel: "SYNAPSE EXP",
+        code: "🧬 SYNAPSE EXP MOLECULE",
+        color: "#a855f7",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_02_exp_synapse.jpg",
+        desc: "+125 Bonus XP & Instant Cooldown Reset!"
+      },
+      {
+        id: "mol_03_power",
+        icon: "🔥",
+        shortLabel: "PLASMA POWER",
+        code: "🔥 PLASMA POWER MOLECULE",
+        color: "#ef4444",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_03_power_plasma.jpg",
+        desc: "2.5x MEGA-STRIKE on Next Hit + +40% Shove!"
+      },
+      {
+        id: "mol_04_health",
+        icon: "💚",
+        shortLabel: "NANITE HEALTH",
+        code: "💚 NANITE HEALTH MOLECULE",
+        color: "#10b981",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_04_health_nanite.jpg",
+        desc: "+220 HP Instant Hull Weld & Subsystem Repair!"
+      },
+      {
+        id: "mol_05_wealth",
+        icon: "💎",
+        shortLabel: "DIAMOND WEALTH",
+        code: "💎 DIAMOND WEALTH MOLECULE",
+        color: "#fbbf24",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_05_wealth_diamond.jpg",
+        desc: "+100 💎 Instant Vault Bonus + +80 HP!"
+      },
+      {
+        id: "mol_06_agility",
+        icon: "🌀",
+        shortLabel: "GYRO AGILITY",
+        code: "🌀 GYRO-VECTOR AGILITY MOLECULE",
+        color: "#ec4899",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_06_agility_gyro.jpg",
+        desc: "+45% Turn Rate, J-Turn Drift & Instant Dodge Reset!"
+      },
+      {
+        id: "mol_07_shield",
+        icon: "🛡️",
+        shortLabel: "AEGIS SHIELD",
+        code: "🛡️ AEGIS SHIELD MOLECULE",
+        color: "#3b82f6",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_07_shield_aegis.jpg",
+        desc: "200 HP Aegis Energy Barrier Shield!"
+      },
+      {
+        id: "mol_08_stamina",
+        icon: "🔋",
+        shortLabel: "ZERO-PT REACTOR",
+        code: "🔋 ZERO-POINT REACTOR MOLECULE",
+        color: "#84cc16",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_08_stamina_reactor.jpg",
+        desc: "100% Stamina Overcharge + 8s Turbo Surge!"
+      },
+      {
+        id: "mol_09_nova",
+        icon: "☢️",
+        shortLabel: "NOVA CRIT 3.0x",
+        code: "☢️ NOVA OVERDRIVE MOLECULE",
+        color: "#ff5500",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_09_crit_nova.jpg",
+        desc: "3.0x NOVA CRIT + Shockwave Blast!"
+      },
+      {
+        id: "mol_10_jackpot",
+        icon: "👑",
+        shortLabel: "GOLDEN JACKPOT",
+        code: "👑 GOLDEN FORTUNE MOLECULE",
+        color: "#ffd700",
+        img: "assets/concept_gallery/battlebots_topdown_3d/molecules_10/molecule_10_jackpot_fortune.jpg",
+        desc: "+150 💎 Jackpot + +150 XP + +150 HP + 2.5x Strike!"
+      }
+    ];
+
+    function buildRandomRoundDropSchedule() {
+      // 2 random drop timestamps during a 90s round: first between 68s..48s left, second between 40s..16s left
+      return [
+        Math.round(48 + Math.random() * 20),
+        Math.round(16 + Math.random() * 24)
+      ];
+    }
+
+    function pickRandomHighRiskDropPoint() {
+      const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+      const hType = activeMap ? activeMap.hazardType : "furnace";
+      const spots = [
+        { x: 800 + (Math.random() - 0.5) * 180, y: 450 + (Math.random() - 0.5) * 260 },
+        { x: 580 + Math.random() * 440, y: 260 + Math.random() * 380 }
+      ];
+      if (hType === "ringout_top_bottom") {
+        spots.push({ x: 640 + Math.random() * 320, y: Math.random() < 0.5 ? 245 : 655 });
+      } else if (hType === "ringout_left_right") {
+        spots.push({ x: Math.random() < 0.5 ? 340 : 1260, y: 310 + Math.random() * 280 });
+      }
+      return spots[Math.floor(Math.random() * spots.length)];
+    }
+
+    function stepRandomArenaDropsAndOvercharge(pBot, eBot) {
+      if (!pBot || !eBot) return;
+      const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
+      const hType = activeMap ? activeMap.hazardType : "furnace";
+
+      // 1. MECHANIC #3: FINAL 30-SECOND "SUDDEN OVERCHARGE" ALARM (AT 0:30 LEFT)
+      if (sim.timeLeft <= 30.0 && !sim.suddenOverchargeActive) {
+        sim.suddenOverchargeActive = true;
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playBell(1);
+        sim.shake = Math.max(sim.shake, 14);
+        addPulseRing(800, 450, 420, "#ff2a55");
+        addFloatText(800, 310, "🚨⏱️ FINAL 30s — SUDDEN OVERCHARGE! 1.5x DAMAGE & MAX HAZARDS!", "#ff2a55");
+
+        // On Furnace/Saw map (Arena 01), force Center Saw permanently active & faster!
+        if ((!activeMap || hType === "furnace") && sim.centerSaw) {
+          sim.centerSaw.state = "active";
+          sim.centerSaw.passesLeft = 99;
+          sim.centerSaw.vy = (sim.centerSaw.dir || 1) * 7.2;
+        }
+        // On Mini-Bot maps (Arena 12, 13, 17), trigger a 2nd Frenzy Wave if mini-bots were cleared!
+        if (hType && hType.startsWith("minibot_") && (!sim.miniBots || sim.miniBots.length === 0)) {
+          sim.miniBotsSpawnedThisRound = false;
+        }
+      }
+
+      // During Final 30s on Ring-Out maps (Arena 02, 07, 11), emit periodic Magnetic Repulsor Pulses every 6.5 seconds!
+      if (sim.suddenOverchargeActive && hType && hType.startsWith("ringout_") && sim.ticks % 390 === 0) {
+        addPulseRing(800, 450, 380, "#f43f5e");
+        emit3DSparks(800, 450, "#f43f5e", 24, 9.0);
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playSawBuzz();
+        addFloatText(800, 420, "🧲💥 OVERCHARGE REPULSOR PULSE — WATCH THE LEDGE!", "#f43f5e");
+        for (const b of [pBot, eBot]) {
+          if (!b || b.hp <= 0) continue;
+          const outAng = Math.atan2(b.y - 450, b.x - 800);
+          b.vx += Math.cos(outAng) * 6.8;
+          b.vy += Math.sin(outAng) * 6.8;
+        }
+      }
+
+      // 2. MECHANIC #4 (RANDOMLY): RANDOM MID-ROUND UPGRADE MOLECULE / OVERCHARGE CRATE DROPS
+      if (!Array.isArray(sim.scheduledDropSecs)) {
+        sim.scheduledDropSecs = buildRandomRoundDropSchedule();
+      }
+      if (!Array.isArray(sim.arenaDrops)) {
+        sim.arenaDrops = [];
+      }
+
+      for (let sIdx = sim.scheduledDropSecs.length - 1; sIdx >= 0; sIdx--) {
+        const triggerSec = sim.scheduledDropSecs[sIdx];
+        if (sim.timeLeft <= triggerSec && sim.arenaDrops.length < 2) {
+          sim.scheduledDropSecs.splice(sIdx, 1);
+          const pt = pickRandomHighRiskDropPoint();
+          const mol = RANDOM_ARENA_MOLECULE_DROPS[Math.floor(Math.random() * RANDOM_ARENA_MOLECULE_DROPS.length)];
+          sim.arenaDrops.push({
+            ...mol,
+            uid: "drop_" + sim.ticks + "_" + Math.random().toString(36).slice(2, 6),
+            x: Math.round(pt.x),
+            y: Math.round(pt.y),
+            radius: 40,
+            beaconTicks: 150, // 2.5s incoming landing beacon before active pickup
+            lifeTicks: 900    // Stays on floor for 15s once landed
+          });
+          addPulseRing(pt.x, pt.y, 150, mol.color);
+          if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+          addFloatText(pt.x, pt.y - 48, `📦 INCOMING RANDOM DROP: ${mol.code}!`, mol.color);
+        }
+      }
+
+      for (let i = sim.arenaDrops.length - 1; i >= 0; i--) {
+        const dr = sim.arenaDrops[i];
+        if (dr.beaconTicks > 0) {
+          dr.beaconTicks--;
+          if (dr.beaconTicks === 0) {
+            addPulseRing(dr.x, dr.y, 165, dr.color);
+            emit3DSparks(dr.x, dr.y, dr.color, 22, 8.0);
+            addFloatText(dr.x, dr.y - 44, `${dr.code} LANDED! GRAB IT!`, dr.color);
+          }
+          continue;
+        }
+        dr.lifeTicks--;
+        if (dr.lifeTicks <= 0) {
+          sim.arenaDrops.splice(i, 1);
+          continue;
+        }
+
+        // Check if either bot collects the active Upgrade Molecule / Crate!
+        for (const b of [pBot, eBot]) {
+          if (!b || b.hp <= 0) continue;
+          const d = Math.hypot(b.x - dr.x, b.y - dr.y);
+          if (d < b.radius + dr.radius) {
+            if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+            addPulseRing(dr.x, dr.y, 180, dr.color);
+            emit3DSparks(dr.x, dr.y, dr.color, 28, 9.0);
+
+            if (dr.id === "mol_01_speed") {
+              b.speedBuffTimer = 480; // 8 seconds of +35% Turbo Speed & Turn
+              b.stamina = b.maxStamina;
+              b.staminaState = "fresh";
+              addFloatText(b.x, b.y - 58, "⚡💨 TACHYON SPEED SURGE! +35% SPD & FULL STAMINA!", "#00f5ff");
+            } else if (dr.id === "mol_02_exp") {
+              b.abilityCd = 0;
+              b.dodgeCd = 0;
+              b.rangedCd = 0;
+              b.stamina = b.maxStamina;
+              if (b.team === "player") {
+                state.cpuXp = (state.cpuXp || 0) + 125;
+                updatePlayerUI();
+              }
+              addFloatText(b.x, b.y - 58, "🧬⚡ SYNAPSE MOLECULE! +125 XP & ALL COOLDOWNS RESET!", "#a855f7");
+            } else if (dr.id === "mol_03_power") {
+              b.megaStrikeCharges = (b.megaStrikeCharges || 0) + 1;
+              b.megaStrikeMult = 2.5;
+              addFloatText(b.x, b.y - 58, "🔥💥 PLASMA POWER! NEXT HIT DEALS 2.5x MEGA-DAMAGE!", "#ef4444");
+            } else if (dr.id === "mol_04_health") {
+              b.hp = Math.min(b.maxHp, b.hp + 220);
+              if (b.parts) {
+                for (const k of ["tires", "armor", "weapon", "core"]) {
+                  b.parts[k] = Math.min(100, (b.parts[k] || 100) + 25);
+                }
+              }
+              addFloatText(b.x, b.y - 58, "💚🔧 NANITE MOLECULE! +220 HP & +25% PART REPAIR!", "#10b981");
+            } else if (dr.id === "mol_05_wealth") {
+              b.hp = Math.min(b.maxHp, b.hp + 80);
+              if (b.team === "player") {
+                state.scrap += 100;
+                persistWalletAndRig();
+                updatePlayerUI();
+                addFloatText(b.x, b.y - 58, "💎💰 WEALTH MOLECULE! +100 💎 DIAMONDS & +80 HP!", "#fbbf24");
+              } else {
+                b.megaStrikeCharges = (b.megaStrikeCharges || 0) + 1;
+                b.megaStrikeMult = 2.0;
+                addFloatText(b.x, b.y - 58, "💎⚡ WEALTH OVERCHARGE! +80 HP & 2x STRIKE!", "#fbbf24");
+              }
+            } else if (dr.id === "mol_06_agility") {
+              b.speedBuffTimer = 540; // 9 seconds of high-agility gyro turn & speed
+              b.dodgeCd = 0;
+              b.abilityCd = 0;
+              b.stamina = b.maxStamina;
+              addFloatText(b.x, b.y - 58, "🌀🏎️ GYRO AGILITY MOLECULE! +35% TURN/SPD & DODGE RESET!", "#ec4899");
+            } else if (dr.id === "mol_07_shield") {
+              b.shieldHp = 200;
+              addFloatText(b.x, b.y - 58, "🛡️✨ AEGIS MOLECULE! +200 HP ENERGY BARRIER!", "#3b82f6");
+            } else if (dr.id === "mol_08_stamina") {
+              b.stamina = b.maxStamina;
+              b.staminaState = "fresh";
+              b.speedBuffTimer = 480;
+              b.empStunTimer = 0;
+              b.cryoTimer = 0;
+              addFloatText(b.x, b.y - 58, "🔋⚡ ZERO-POINT REACTOR! 100% STAMINA & OVERDRIVE!", "#84cc16");
+            } else if (dr.id === "mol_10_jackpot") {
+              b.hp = Math.min(b.maxHp, b.hp + 150);
+              b.stamina = b.maxStamina;
+              b.megaStrikeCharges = (b.megaStrikeCharges || 0) + 1;
+              b.megaStrikeMult = 2.5;
+              if (b.team === "player") {
+                state.scrap += 150;
+                state.cpuXp = (state.cpuXp || 0) + 150;
+                persistWalletAndRig();
+                updatePlayerUI();
+                addFloatText(b.x, b.y - 58, "👑💎 GOLDEN FORTUNE! +150 💎, +150 XP, +150 HP & 2.5x HIT!", "#ffd700");
+              } else {
+                b.shieldHp = 150;
+                addFloatText(b.x, b.y - 58, "👑⚡ GOLDEN FORTUNE! +150 HP, +150 SHIELD & 2.5x HIT!", "#ffd700");
+              }
+            } else {
+              b.megaStrikeCharges = (b.megaStrikeCharges || 0) + 1;
+              b.megaStrikeMult = 3.0;
+              addFloatText(b.x, b.y - 58, "☢️🔥 NOVA OVERDRIVE! NEXT HIT DEALS 3.0x CRIT!", "#ff5500");
+            }
+
+            sim.arenaDrops.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
+
     function createPhysicsBot(cp, team, name, color, x, y, angle, scaleMult = 1.0, initialParts = null) {
       const parts = normalizePartIntegrity(initialParts || (team === "player" ? state.partIntegrity : { tires: 100, armor: 100, weapon: 100, core: 100 }));
       const pMults = computeBotMultipliersFromParts(parts);
@@ -9111,7 +9404,12 @@
         circleDir: Math.random() < 0.5 ? 1 : -1,
         roundDmgDealt: 0,
         roundStrikes: 0,
-        octagonControl: 0
+        octagonControl: 0,
+        redlineActive: false,
+        speedBuffTimer: 0,
+        megaStrikeCharges: 0,
+        megaStrikeMult: 1.0,
+        shieldHp: 0
       };
     }
 
@@ -9125,6 +9423,9 @@
       sim.timeLeft = 90.0;
       sim.preFightCountdownTicks = 0;
       sim.lastCountdownSec = 0;
+      sim.suddenOverchargeActive = false;
+      sim.scheduledDropSecs = buildRandomRoundDropSchedule();
+      sim.arenaDrops = [];
       sim.currentRound = 1;
       sim.maxRounds = 3;
       sim.pRoundsWon = 0;
@@ -9590,6 +9891,25 @@
         return { desiredAngle, throttle: 1.15, turnMult: 1.1 };
       }
 
+      // Contest active Upgrade Molecule drops if one has landed or is about to land nearby!
+      if (Array.isArray(sim.arenaDrops) && sim.arenaDrops.length > 0) {
+        let bestDrop = null;
+        let bestDist = 520;
+        for (const dr of sim.arenaDrops) {
+          if (dr.beaconTicks <= 45) {
+            const dDr = Math.hypot(dr.x - bot.x, dr.y - bot.y);
+            if (dDr < bestDist) {
+              bestDist = dDr;
+              bestDrop = dr;
+            }
+          }
+        }
+        if (bestDrop && dist > 115) {
+          desiredAngle = Math.atan2(bestDrop.y - bot.y, bestDrop.x - bot.x);
+          return { desiredAngle, throttle: 1.16, turnMult: 1.35 };
+        }
+      }
+
       let aimDiff = toOther - bot.angle;
       while (aimDiff > Math.PI) aimDiff -= Math.PI * 2;
       while (aimDiff < -Math.PI) aimDiff += Math.PI * 2;
@@ -9925,10 +10245,16 @@
         addFloatText(bot.x, bot.y - 54, "⚠️ HULL BREACH! DEBRIS FLYING!", "#f97316");
       } else if (bot.armorStage === 1 && pct <= 0.25) {
         bot.armorStage = 0;
+        bot.redlineActive = true;
+        bot.stamina = bot.maxStamina;
+        bot.staminaState = "fresh";
+        bot.pacingTimer = 0;
         spawnArmorDebris(bot.x, bot.y, bot.color, 9, 10.5);
-        emit3DSparks(bot.x, bot.y, "#ef4444", 28, 9.5);
+        emit3DSparks(bot.x, bot.y, "#ef4444", 32, 10.0);
+        addPulseRing(bot.x, bot.y, 175, "#ff2a55");
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playPredatorLock();
         triggerCameraFocus(bot.x, bot.y, 1.16, 26, 3);
-        addFloatText(bot.x, bot.y - 58, "🚨 CRITICAL CHASSIS DAMAGE!", "#ef4444");
+        addFloatText(bot.x, bot.y - 64, "🚨🔥 REDLINE OVERDRIVE! +35% DMG & KNOCKBACK + FULL STAMINA!", "#ff2a55");
       }
       // Progressive Battle Damage: smoke & electric arcs below 45% HP
       if (pct < 0.45 && sim.ticks % 5 === 0) {
@@ -10091,6 +10417,9 @@
           sim.intermissionSummary = null;
           sim.miniBots = [];
           sim.miniBotsSpawnedThisRound = false;
+          sim.suddenOverchargeActive = false;
+          sim.scheduledDropSecs = buildRandomRoundDropSchedule();
+          sim.arenaDrops = [];
           const rdBanner = sim.currentRound === 3 && sim.pRoundsWon === 1 && sim.eRoundsWon === 1
             ? "🔥 FINAL ROUND 3 — SUDDEN DEATH! FIGHT!"
             : `🔔 ROUND ${sim.currentRound} OF 3 — FIGHT!`;
@@ -10104,6 +10433,7 @@
       }
 
       stepArenaMapHazardsAndMiniBots(pBot, eBot);
+      stepRandomArenaDropsAndOvercharge(pBot, eBot);
 
       if (pBot.hp <= 0 || eBot.hp <= 0 || sim.timeLeft <= 0) {
         const pPct = pBot.hp / pBot.maxHp;
@@ -10182,10 +10512,17 @@
             b.roundDmgDealt = 0;
             b.roundStrikes = 0;
             b.octagonControl = 0;
+            b.redlineActive = false;
+            b.speedBuffTimer = 0;
+            b.megaStrikeCharges = 0;
+            b.shieldHp = 0;
           }
           sim.projectiles = [];
           sim.miniBots = [];
           sim.miniBotsSpawnedThisRound = false;
+          sim.suddenOverchargeActive = false;
+          sim.scheduledDropSecs = buildRandomRoundDropSchedule();
+          sim.arenaDrops = [];
           sim.clashLock = null;
           if (sim.centerSaw) {
             sim.centerSaw.state = "off";
@@ -10419,6 +10756,12 @@
         if (bot.wallSlamCd > 0) bot.wallSlamCd--;
         if (bot.debrisCd > 0) bot.debrisCd--;
         if (bot.flipCd > 0) bot.flipCd--;
+        if (bot.speedBuffTimer > 0) {
+          bot.speedBuffTimer--;
+          if (sim.ticks % 3 === 0) {
+            sim.afterimages.push({ x: bot.x, y: bot.y, angle: bot.angle, sprite: bot.sprite, radius: bot.radius, life: 6 });
+          }
+        }
 
         checkBotArmorThresholdsAndDamageFX(bot);
 
@@ -10473,14 +10816,15 @@
         while (diff < -Math.PI) diff += Math.PI * 2;
         const tireTurnScale = livePartMults ? livePartMults.turnMult : 1.0;
         const tireSpeedScale = livePartMults ? livePartMults.speedMult : 1.0;
-        const maxTurnStep = bot.cp.turnRateRad * turnMult * stunScale * tireTurnScale;
+        const molSpeedBoost = (bot.speedBuffTimer > 0 ? 1.35 : 1.0) * (bot.redlineActive ? 1.12 : 1.0);
+        const maxTurnStep = bot.cp.turnRateRad * turnMult * stunScale * tireTurnScale * molSpeedBoost;
         if (isManual && Math.abs(diff) < 0.42) {
           bot.angle += diff * 0.42;
         } else {
           bot.angle += Math.sign(diff) * Math.min(Math.abs(diff), maxTurnStep);
         }
 
-        const accel = bot.cp.accelPx * throttle * stunScale * tireSpeedScale;
+        const accel = bot.cp.accelPx * throttle * stunScale * tireSpeedScale * molSpeedBoost;
         if (isManual) {
           if (throttle > 0.02) {
             // Smooth, balanced manual steering & acceleration
@@ -10777,9 +11121,20 @@
             const isAirJuggle = targetBot.z > 10 || targetBot.airTimer > 0;
             const airMult = isAirJuggle ? 1.5 : 1.0;
             const atkWpnMult = prj.attacker && prj.attacker.parts ? computeBotMultipliersFromParts(prj.attacker.parts).weaponDmgMult : 1.0;
+            const redlineMult = (prj.attacker && prj.attacker.redlineActive) ? 1.35 : 1.0;
+            const overchargeMult = sim.suddenOverchargeActive ? 1.50 : 1.0;
             const defPartMults = computeBotMultipliersFromParts(targetBot.parts);
             const armorMult = prj.kind === "rail" ? (1 - targetBot.cp.armorReduction * defPartMults.armorDefMult * 0.25) : (1 - targetBot.cp.armorReduction * defPartMults.armorDefMult * 0.55);
-            const finalDmg = Math.round(prj.dmg * atkWpnMult * armorMult * defPartMults.incomingVulnMult * (targetBot.cryoTimer > 0 ? 1.25 : 1.0) * airMult);
+            let finalDmg = Math.round(prj.dmg * atkWpnMult * redlineMult * overchargeMult * armorMult * defPartMults.incomingVulnMult * (targetBot.cryoTimer > 0 ? 1.25 : 1.0) * airMult);
+            if (targetBot.shieldHp > 0) {
+              const absorbed = Math.min(targetBot.shieldHp, finalDmg);
+              targetBot.shieldHp -= absorbed;
+              finalDmg -= absorbed;
+              addPulseRing(targetBot.x, targetBot.y, targetBot.radius * 1.25, "#3b82f6");
+              if (finalDmg <= 0) {
+                addFloatText(targetBot.x, targetBot.y - 54, `🛡️ SHIELD ABSORBED -${absorbed}!`, "#3b82f6");
+              }
+            }
             if (prj.kind === "rail" || prj.kind === "mortar") {
               damageBotSubsystem(targetBot, "core", 8);
               damageBotSubsystem(targetBot, "armor", 7);
@@ -11163,6 +11518,8 @@
           kbMult *= 1.40;
           addPulseRing(defender.x, defender.y, 130, "#ffd700");
         }
+        if (attacker.redlineActive) kbMult *= 1.35;
+        if (sim.suddenOverchargeActive) kbMult *= 1.35;
         if (defender.cp.has("tire_05")) kbMult *= 0.60;
 
         const force = (9.5 + aVelToward * 0.4) * (attacker.cp.shoveRatio / defender.cp.shoveRatio) * kbMult;
@@ -11179,6 +11536,32 @@
         attacker.retreatTimer = 24;
       }
 
+      function computeSuspenseAndMoleculeMult(attacker) {
+        let m = 1.0;
+        if (attacker.redlineActive) m *= 1.35;
+        if (sim.suddenOverchargeActive) m *= 1.50;
+        if (attacker.megaStrikeCharges && attacker.megaStrikeCharges > 0) {
+          m *= (attacker.megaStrikeMult || 2.5);
+          attacker.megaStrikeCharges--;
+          addPulseRing(attacker.x, attacker.y, 185, "#ff2a55");
+          addFloatText(attacker.x, attacker.y - 68, `🔥💥 MOLECULE MEGA-STRIKE (${(attacker.megaStrikeMult || 2.5).toFixed(1)}x)!`, "#ff2a55");
+        }
+        return m;
+      }
+
+      function applyDamageWithShield(defender, rawDmg) {
+        let dmg = rawDmg;
+        if (defender.shieldHp && defender.shieldHp > 0) {
+          const absorbed = Math.min(defender.shieldHp, dmg);
+          defender.shieldHp -= absorbed;
+          dmg -= absorbed;
+          addPulseRing(defender.x, defender.y, defender.radius * 1.3, "#3b82f6");
+          addFloatText(defender.x, defender.y - 60, `🛡️ AEGIS SHIELD -${absorbed}!`, "#3b82f6");
+        }
+        defender.hp = Math.max(0, defender.hp - dmg);
+        return dmg;
+      }
+
       if (aFacing && Math.abs(bAim) >= 0.85) {
         const isRear = Math.abs(bAim) > 1.95;
         const hasRing = botB.cp.has("wpn_12");
@@ -11189,9 +11572,10 @@
         const cryoVuln = botB.cryoTimer > 0 ? 1.25 : 1.0;
         const aMults = computeBotMultipliersFromParts(botA.parts);
         const bMults = computeBotMultipliersFromParts(botB.parts);
-        const dmg = Math.max(2, Math.round(botA.cp.baseStrikeDmg * aMults.weaponDmgMult * zoneMult * velMult * chargeMult * (1 - effArmor * bMults.armorDefMult) * bMults.incomingVulnMult * cryoVuln));
+        const suspMult = computeSuspenseAndMoleculeMult(botA);
+        const rawDmg = Math.max(2, Math.round(botA.cp.baseStrikeDmg * aMults.weaponDmgMult * suspMult * zoneMult * velMult * chargeMult * (1 - effArmor * bMults.armorDefMult) * bMults.incomingVulnMult * cryoVuln));
+        const dmg = applyDamageWithShield(botB, rawDmg);
 
-        botB.hp = Math.max(0, botB.hp - dmg);
         // Directional subsystem breakdown: Rear hits Core & Armor; Flank shreds Tires & Armor; Weapon wear on attacker
         damageBotSubsystem(botA, "weapon", 3);
         if (isRear) {
@@ -11229,9 +11613,9 @@
         const cryoVuln = botA.cryoTimer > 0 ? 1.25 : 1.0;
         const bMults = computeBotMultipliersFromParts(botB.parts);
         const aMults = computeBotMultipliersFromParts(botA.parts);
-        const dmg = Math.max(2, Math.round(botB.cp.baseStrikeDmg * bMults.weaponDmgMult * zoneMult * velMult * chargeMult * (1 - effArmor * aMults.armorDefMult) * aMults.incomingVulnMult * cryoVuln));
-
-        botA.hp = Math.max(0, botA.hp - dmg);
+        const suspMult = computeSuspenseAndMoleculeMult(botB);
+        const rawDmg = Math.max(2, Math.round(botB.cp.baseStrikeDmg * bMults.weaponDmgMult * suspMult * zoneMult * velMult * chargeMult * (1 - effArmor * aMults.armorDefMult) * aMults.incomingVulnMult * cryoVuln));
+        const dmg = applyDamageWithShield(botA, rawDmg);
         damageBotSubsystem(botB, "weapon", 3);
         if (isRear) {
           damageBotSubsystem(botA, "core", 11);
@@ -11305,11 +11689,13 @@
 
       const aHeadMults = computeBotMultipliersFromParts(botA.parts);
       const bHeadMults = computeBotMultipliersFromParts(botB.parts);
-      const aDmgToB = Math.max(2, Math.round(aForce * aHeadMults.weaponDmgMult * (1 - bGuard * bHeadMults.armorDefMult) * bHeadMults.incomingVulnMult * (botB.cryoTimer > 0 ? 1.25 : 1.0)));
-      const bDmgToA = Math.max(2, Math.round(bForce * bHeadMults.weaponDmgMult * (1 - aGuard * aHeadMults.armorDefMult) * aHeadMults.incomingVulnMult * (botA.cryoTimer > 0 ? 1.25 : 1.0)));
+      const aSusp = computeSuspenseAndMoleculeMult(botA);
+      const bSusp = computeSuspenseAndMoleculeMult(botB);
+      const rawADmgToB = Math.max(2, Math.round(aForce * aHeadMults.weaponDmgMult * aSusp * (1 - bGuard * bHeadMults.armorDefMult) * bHeadMults.incomingVulnMult * (botB.cryoTimer > 0 ? 1.25 : 1.0)));
+      const rawBDmgToA = Math.max(2, Math.round(bForce * bHeadMults.weaponDmgMult * bSusp * (1 - aGuard * aHeadMults.armorDefMult) * aHeadMults.incomingVulnMult * (botA.cryoTimer > 0 ? 1.25 : 1.0)));
 
-      botB.hp = Math.max(0, botB.hp - aDmgToB);
-      botA.hp = Math.max(0, botA.hp - bDmgToA);
+      const aDmgToB = applyDamageWithShield(botB, rawADmgToB);
+      const bDmgToA = applyDamageWithShield(botA, rawBDmgToA);
       // Head-on clashes wear down both bots' Weapons and Armor!
       damageBotSubsystem(botA, "weapon", 7);
       damageBotSubsystem(botB, "weapon", 7);
@@ -11937,6 +12323,86 @@
         }
       }
 
+      // Render Random Mid-Round Upgrade Molecule Drops (#4 Randomly)
+      if (Array.isArray(sim.arenaDrops) && sim.arenaDrops.length > 0) {
+        for (const dr of sim.arenaDrops) {
+          ctx.save();
+          ctx.translate(dr.x, dr.y);
+          const col = dr.color || "#38bdf8";
+          if (dr.beaconTicks > 0) {
+            // 2.5-Second Incoming Drop Target Beacon
+            const prog = 1 - (dr.beaconTicks / 150);
+            const ringR = 68 - prog * 30;
+            ctx.strokeStyle = col;
+            ctx.lineWidth = 2.8;
+            ctx.setLineDash([8, 6]);
+            ctx.beginPath();
+            ctx.arc(0, 0, ringR, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = col + "28";
+            ctx.beginPath();
+            ctx.arc(0, 0, 36, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.font = "900 11px 'Orbitron', sans-serif";
+            ctx.fillStyle = col;
+            ctx.textAlign = "center";
+            ctx.fillText(`📦 ${dr.shortLabel} DROP IN ${(dr.beaconTicks / 60).toFixed(1)}s`, 0, -48);
+          } else {
+            // Landed 3D Upgrade Molecule Pickup Capsule!
+            const bobY = Math.sin(rTicks * 0.12) * 4;
+            const pulseR = 42 + Math.sin(rTicks * 0.18) * 5;
+            const mGrad = ctx.createRadialGradient(0, 0, 6, 0, 0, pulseR * 1.35);
+            mGrad.addColorStop(0, col + "88");
+            mGrad.addColorStop(0.6, col + "33");
+            mGrad.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = mGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, pulseR * 1.35, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.save();
+            ctx.translate(0, bobY);
+            const molImg = dr.img ? getImg(dr.img) : null;
+            if (molImg && molImg.complete && molImg.naturalWidth > 0) {
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(0, 0, 28, 0, Math.PI * 2);
+              ctx.clip();
+              ctx.drawImage(molImg, -30, -30, 60, 60);
+              ctx.restore();
+            } else {
+              ctx.fillStyle = "#090d1a";
+              ctx.beginPath();
+              ctx.arc(0, 0, 26, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.strokeStyle = col;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(0, 0, 28, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.font = "900 18px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(dr.icon || "🧬", 0, 6);
+            ctx.restore();
+
+            ctx.font = "900 11px 'Orbitron', sans-serif";
+            ctx.fillStyle = "#ffffff";
+            ctx.strokeStyle = "rgba(0,0,0,0.88)";
+            ctx.lineWidth = 3.5;
+            ctx.textAlign = "center";
+            ctx.strokeText(`${dr.icon} ${dr.shortLabel}`, 0, -38 + bobY);
+            ctx.fillStyle = col;
+            ctx.fillText(`${dr.icon} ${dr.shortLabel}`, 0, -38 + bobY);
+          }
+          ctx.restore();
+        }
+      }
+
       for (const bot of sim.bots) {
         if (bot.hp <= 0) continue;
 
@@ -11977,7 +12443,28 @@
         );
         ctx.restore();
 
-        // Visual Status Effects for Cryo-Freeze & EMP Stun
+        // Visual Status Effects for Redline Overdrive (<25% HP), Aegis Shield, Cryo-Freeze & EMP Stun
+        if (bot.redlineActive) {
+          ctx.save();
+          const rlPulse = 1.12 + Math.sin(rTicks * 0.28) * 0.08;
+          ctx.strokeStyle = "rgba(255, 42, 85, 0.85)";
+          ctx.lineWidth = 3.5;
+          ctx.beginPath();
+          ctx.arc(0, 0, bot.radius * rlPulse, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+        if (bot.shieldHp && bot.shieldHp > 0) {
+          ctx.save();
+          ctx.fillStyle = "rgba(59, 130, 246, 0.18)";
+          ctx.strokeStyle = "rgba(96, 165, 250, 0.88)";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(0, 0, bot.radius * 1.16, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
         if (bot.cryoTimer > 0) {
           ctx.fillStyle = "rgba(56, 189, 248, 0.22)";
           ctx.beginPath();
@@ -12188,6 +12675,16 @@
         ctx.strokeText(ft.text, ft.x, ft.y);
         ctx.fillStyle = ft.color;
         ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+      }
+
+      // Final 30-Second SUDDEN OVERCHARGE Strobe Border (#3)
+      if (sim.running && sim.suddenOverchargeActive && sim.preFightCountdownTicks <= 0 && sim.intermissionTimer <= 0) {
+        ctx.save();
+        const strobeAlpha = 0.22 + Math.abs(Math.sin(rTicks * 0.14)) * 0.32;
+        ctx.strokeStyle = `rgba(255, 42, 85, ${strobeAlpha.toFixed(2)})`;
+        ctx.lineWidth = 10;
+        ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
         ctx.restore();
       }
 
