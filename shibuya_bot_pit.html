@@ -16792,6 +16792,8 @@
     // =========================================================================
     // GOLDEN TICKET REWARD (PVP WINS) & IN-GAME DIAMOND STORE
     // =========================================================================
+    const STRIPE_LIVE_PUBLISHABLE_KEY = "pk_live_51UXh480OyGGkytHEcuF5RM0XGEfKZSztfcVH8bx5mlBbrpflL323vVfw3BovqLOGUFl0plc3BDmW78EKBRVGq6wP00JCrFYGar";
+
     const DIAMOND_STORE_PACKS = [
       {
         id: "pack_starter",
@@ -16799,6 +16801,9 @@
         diamonds: 500,
         bonus: 0,
         priceUsd: "$0.99",
+        stripeProductId: "prod_VaWDUmCcF5SKUk",
+        stripePriceId: "price_1UZLAk0OyGGkytHEqc0hW2qa",
+        stripePaymentLink: "https://buy.stripe.com/3cIeV52Z24q73AieNw7Re00",
         color: "#38bdf8",
         desc: "Enough Diamonds to unlock 2–3 Tier-1/Tier-2 3D modules immediately."
       },
@@ -16808,6 +16813,9 @@
         diamonds: 1500,
         bonus: 150,
         priceUsd: "$2.99",
+        stripeProductId: "prod_VaWDyefBGkqlgX",
+        stripePriceId: "price_1UZLAl0OyGGkytHEVKILPH0k",
+        stripePaymentLink: "https://buy.stripe.com/eVqfZ9dDG8Gn9YG6h07Re01",
         color: "#34d399",
         desc: "Outfit a full 6-Slot Street Tuned Rig + extra Diamonds for Arena Stakes."
       },
@@ -16817,6 +16825,9 @@
         diamonds: 3500,
         bonus: 700,
         priceUsd: "$4.99",
+        stripeProductId: "prod_VaWD49Tdf6VGBH",
+        stripePriceId: "price_1UZLAm0OyGGkytHECz5s9Vnl",
+        stripePaymentLink: "https://buy.stripe.com/3cI5kv8jm2hZ0o6eNw7Re02",
         color: "#fbbf24",
         featured: true,
         desc: "Unlock an entire Tier-3/Tier-4 Heavy Assault Loadout + Champion Arena Stake reserve."
@@ -16827,6 +16838,9 @@
         diamonds: 8000,
         bonus: 2000,
         priceUsd: "$9.99",
+        stripeProductId: "prod_VaWDoklFm63GTd",
+        stripePriceId: "price_1UZLAn0OyGGkytHEcAVE6ciV",
+        stripePaymentLink: "https://buy.stripe.com/4gM28j8jm2hZ8UCeNw7Re03",
         color: "#a855f7",
         desc: "Unlock multiple complete 6-Slot builds (Bulldozer, Sniper, Spinner & Cryo)!"
       },
@@ -16836,6 +16850,9 @@
         diamonds: 20000,
         bonus: 5000,
         priceUsd: "$19.99",
+        stripeProductId: "prod_VaWDpjLLUtBIGJ",
+        stripePriceId: "price_1UZLAn0OyGGkytHEL7xaKPHg",
+        stripePaymentLink: "https://buy.stripe.com/cNifZ9czC4q7fj0axg7Re04",
         color: "#f43f5e",
         desc: "Enough Diamonds to buy every single 3D Tire, Weapon & Ability in the Armory!"
       }
@@ -17748,6 +17765,30 @@
           return;
         }
       }
+
+      // Live Stripe Checkout Redirect for Web / PWA players
+      if (pk.stripePaymentLink && !window.__rcBypassStripeRedirect) {
+        try {
+          const uKey = state.loggedInUserKey || state.pilotCallsign || "pilot";
+          localStorage.setItem("rc_pending_stripe_pack_v1", JSON.stringify({
+            packId: pk.id,
+            userKey: uKey,
+            diamonds: pk.diamonds + pk.bonus,
+            priceUsd: pk.priceUsd,
+            ts: Date.now()
+          }));
+          const sep = pk.stripePaymentLink.includes("?") ? "&" : "?";
+          let checkoutUrl = `${pk.stripePaymentLink}${sep}client_reference_id=${encodeURIComponent(uKey)}`;
+          if (state.loggedInEmail && state.loggedInEmail.includes("@")) {
+            checkoutUrl += `&prefilled_email=${encodeURIComponent(state.loggedInEmail)}`;
+          }
+          showShopToast(`💳 Redirecting to secure Stripe Checkout (${pk.priceUsd})...`, "#38bdf8");
+          window.location.href = checkoutUrl;
+          return;
+        } catch (err) {
+          console.warn("Stripe redirect error:", err);
+        }
+      }
       const totalCredited = pk.diamonds + pk.bonus;
       state.scrap += totalCredited;
       persistWalletAndRig();
@@ -17763,6 +17804,45 @@
         subEl.innerHTML = `<span style="color:#34d399;font-weight:800;">✅ PURCHASE COMPLETE: +${totalCredited.toLocaleString()} 💎 added to ${state.pilotCallsign}'s Vault!</span>`;
       }
     }
+
+    function checkStripeCheckoutReturn() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("stripe_success") !== "1") return;
+        const packId = params.get("pack_id") || "";
+        const sessionId = params.get("session_id") || ("session_" + Date.now());
+        const pk = DIAMOND_STORE_PACKS.find(p => p.id === packId);
+        if (!pk) return;
+
+        const redeemedRaw = localStorage.getItem("rc_redeemed_stripe_sessions_v1") || "[]";
+        let redeemedList = [];
+        try { redeemedList = JSON.parse(redeemedRaw) || []; } catch (_) {}
+        if (sessionId && redeemedList.includes(sessionId)) {
+          const cleanUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState({}, document.title, cleanUrl);
+          return;
+        }
+
+        redeemedList.push(sessionId);
+        localStorage.setItem("rc_redeemed_stripe_sessions_v1", JSON.stringify(redeemedList.slice(-100)));
+        localStorage.removeItem("rc_pending_stripe_pack_v1");
+
+        const totalCredited = pk.diamonds + pk.bonus;
+        state.scrap = (state.scrap || 0) + totalCredited;
+        persistWalletAndRig();
+        updatePlayerUI();
+
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+        setTimeout(() => {
+          showShopToast(`✅ STRIPE PAYMENT COMPLETE: +${totalCredited.toLocaleString()} 💎 CREDITED TO VAULT!`, "#34d399");
+        }, 450);
+      } catch (e) {
+        console.warn("checkStripeCheckoutReturn error:", e);
+      }
+    }
+    setTimeout(checkStripeCheckoutReturn, 600);
 
     // =========================================================================
     // 👥 FRIENDS LIST, ONLINE/OFFLINE PRESENCE & PRIVATE LOGGED CHATS ENGINE
