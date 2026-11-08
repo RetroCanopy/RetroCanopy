@@ -6364,7 +6364,6 @@
     <div class="pilot-id-cluster">
       <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" alt="Shibuya Bot Pit App Icon" style="width:36px;height:36px;border-radius:10px;border:1.5px solid #fbbf24;box-shadow:0 0 12px rgba(251,191,36,0.45);object-fit:cover;" />
       <a href="index.html" class="top-nav-pill" title="Return to Retrocanopy Home">🏠 HOME</a>
-      <a href="games.html" class="top-nav-pill" title="Return to Neo-Tokyo Arcade">🕹️ ARCADE</a>
       <button type="button" class="top-nav-pill" style="background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;border-color:#fde047;" onclick="window.__openBotPitAppOverlay(event)" title="Download & Install Shibuya Bot Pit App">📲 GET APP</button>
       <div class="pilot-badge" id="pilotAccountBadge" onclick="openPilotAuthGateModal()" title="Logged-In Pilot Account">
         <span class="pilot-status-dot"></span>
@@ -6373,7 +6372,7 @@
       <div class="elo-pill" id="pilotEloDisplay">🏆 1,000</div>
       <div class="record-pill" id="pilotRecordDisplay">⚔️ 0W - 0L</div>
       <div class="elo-pill" id="pilotXpDisplay" style="border-color:rgba(56,189,248,0.45);color:#38bdf8;" title="Battle CPU Bots to earn XP — every XP converts into Diamonds!">⚡ 0 XP</div>
-      <a href="games.html?openTickets=1" class="elo-pill" id="pilotTicketsDisplay" style="border-color:rgba(251,191,36,0.55);color:#fde047;text-decoration:none;" title="Golden Tickets are won strictly 1 at a time from Live PvP Victories (never sold for cash or Diamonds)!">🎟️ 0 PVP TICKETS</a>
+      <div class="elo-pill" id="pilotTicketsDisplay" onclick="openPrivacyAndTermsModal()" style="border-color:rgba(251,191,36,0.55);color:#fde047;cursor:pointer;" title="Golden Tickets are won strictly 1 at a time from Live PvP Victories (never sold for cash or Diamonds)!">🎟️ 0 PVP TICKETS</div>
       <div class="scrap-top-pill" id="topScrapDisplay" onclick="openBuyDiamondsModal()" style="cursor:pointer;" title="Click to Purchase Diamonds">💎 0</div>
       <button type="button" class="top-nav-pill" style="background:linear-gradient(180deg,#38bdf8 0%,#0284c7 100%);color:#041019;border-color:#7dd3fc;font-weight:900;" onclick="openBuyDiamondsModal()" title="Purchase Diamonds in-game">💎 BUY DIAMONDS</button>
       <button type="button" class="top-nav-pill friends-top-btn" id="topFriendsNavBtn" onclick="openFriendsCommsTab()" title="Open Friends List, Online/Offline Status &amp; Private 1-on-1 Chats">
@@ -7282,14 +7281,13 @@
 
       <div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.75rem;">
         <a href="index.html" style="color:#38bdf8;text-decoration:none;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;">&larr; BACK TO HOME</a>
-        <a href="games.html" style="color:#fbbf24;text-decoration:none;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;">🕹️ NEO-TOKYO ARCADE &rarr;</a>
       </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
-  <script src="auth_hub.js?v=154"></script>
+  <script src="auth_hub.js?v=155"></script>
   <script src="bot_addons_data.js?v=arenas7_v3"></script>
   <script>
     // =========================================================================

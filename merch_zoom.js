@@ -1512,7 +1512,7 @@
 
       const initTree = getCanopyTreeTier(getCanopyXp());
       headerArcadeBtn = document.createElement('a');
-      headerArcadeBtn.href = 'games.html';
+      headerArcadeBtn.href = 'index.html';
       headerArcadeBtn.className = 'rc-arcade-xp-pill';
       headerArcadeBtn.id = 'rcHeaderArcadeBtn';
       headerArcadeBtn.title = `Stage ${initTree.stage}: ${initTree.name} • Play Synth's Flight to Grow Your Canopy Tree`;
@@ -1575,7 +1575,7 @@
           <div class="rc-checkout-section-box">
             <div class="rc-section-heading">
               <span>&#127915; CURRENT 1-TIME COUPON (NOT SAVED)</span>
-              <a href="games.html" style="color:#ffae00;text-decoration:none;font-size:0.65rem;">&#129417; Play Synth's Flight &rarr;</a>
+              <a href="index.html" style="color:#ffae00;text-decoration:none;font-size:0.65rem;">&#129417; Play Synth's Flight &rarr;</a>
             </div>
             <div class="rc-checkout-coupons-grid" id="rcCheckoutCouponsGrid"></div>
           </div>
@@ -2718,7 +2718,7 @@
       isUpsetCutscenePlaying = false;
       upsetBypassExit = true;
       upsetCutscene.classList.remove('active');
-      window.location.href = 'games.html';
+      window.location.href = 'index.html';
     }
 
     // -------------------------------------------------------------------------

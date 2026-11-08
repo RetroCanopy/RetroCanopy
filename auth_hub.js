@@ -1169,9 +1169,6 @@
     const bar = document.createElement('div');
     bar.className = 'rc-home-auth-bar';
     bar.innerHTML = `
-      <a href="games.html?openTickets=1" class="rc-home-ticket-btn" id="rcHomeTicketCounterLink" style="display:none;">
-        &#127915; <span id="rcHomeTicketCounterText">TICKET COUNTER</span>
-      </a>
       <a href="admin.html" class="rc-home-admin-btn" id="rcHomeAdminHubLink" style="display:none;">
         &#128737;&#65039; <span id="rcHomeAdminHubText">OWNER / ADMIN HUB</span>
       </a>
@@ -1278,9 +1275,7 @@
         signInBtn.classList.remove('logged-in');
         signInLabel.textContent = 'SIGN IN';
       }
-      if (ticketCounterLink) {
-        ticketCounterLink.style.display = admin ? 'inline-flex' : 'none';
-      }
+      
       if (adminHubLink) {
         adminHubLink.style.display = admin ? 'inline-flex' : 'none';
         if (adminHubText) {
