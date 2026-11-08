@@ -1430,23 +1430,275 @@
       gap: 18px;
     }
 
+
+    /* =====================================================================
+       ULTRA-REFRACTIVE VISION-OS LIQUID CRYSTAL GLASS ENHANCEMENT
+       ===================================================================== */
+    .vision-ambient-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(45, 36, 78, 0.55) 0%, rgba(10, 8, 18, 0.92) 72%);
+    }
+
+    .vision-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(72px);
+      opacity: 0.72;
+      mix-blend-mode: screen;
+      animation: orbFloatSlow 18s ease-in-out infinite alternate;
+    }
+
+    .vision-orb.orb-gold {
+      width: 540px;
+      height: 540px;
+      top: -90px;
+      left: 6%;
+      background: radial-gradient(circle, rgba(245, 196, 81, 0.52) 0%, rgba(255, 140, 26, 0.16) 55%, transparent 75%);
+      animation-duration: 16s;
+    }
+
+    .vision-orb.orb-cyan {
+      width: 580px;
+      height: 580px;
+      top: 18%;
+      right: 4%;
+      background: radial-gradient(circle, rgba(44, 230, 255, 0.48) 0%, rgba(0, 140, 255, 0.16) 55%, transparent 75%);
+      animation-duration: 21s;
+      animation-delay: -5s;
+    }
+
+    .vision-orb.orb-magenta {
+      width: 520px;
+      height: 520px;
+      bottom: -80px;
+      left: 24%;
+      background: radial-gradient(circle, rgba(255, 79, 163, 0.44) 0%, rgba(157, 78, 221, 0.18) 55%, transparent 75%);
+      animation-duration: 19s;
+      animation-delay: -9s;
+    }
+
+    .vision-orb.orb-violet {
+      width: 460px;
+      height: 460px;
+      bottom: 12%;
+      right: 26%;
+      background: radial-gradient(circle, rgba(164, 108, 255, 0.4) 0%, rgba(34, 245, 155, 0.14) 55%, transparent 75%);
+      animation-duration: 23s;
+      animation-delay: -3s;
+    }
+
+    @keyframes orbFloatSlow {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(38px, -28px, 0) scale(1.08); }
+      100% { transform: translate3d(-32px, 34px, 0) scale(0.95); }
+    }
+
+    .vision-shell {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Thick Optical Frosted Glass Container with 3D Specular Rim & Diagonal Sheen */
+    .vision-glass {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.16) 0%,
+        rgba(255, 255, 255, 0.06) 45%,
+        rgba(24, 20, 42, 0.34) 100%
+      ) !important;
+      backdrop-filter: blur(42px) saturate(210%) brightness(1.06) !important;
+      -webkit-backdrop-filter: blur(42px) saturate(210%) brightness(1.06) !important;
+      border: 1px solid rgba(255, 255, 255, 0.34) !important;
+      box-shadow:
+        0 30px 70px rgba(2, 1, 8, 0.68),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.68),
+        inset 1.5px 0 1px rgba(255, 255, 255, 0.28),
+        inset 0 -1.5px 2px rgba(0, 0, 0, 0.45) !important;
+      border-radius: 28px !important;
+    }
+
+    /* Diagonal Optical Glass Reflection Streak + Cursor-Tracked Specular Glint */
+    .vision-glass::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(
+          640px circle at var(--mx, 25%) var(--my, 15%),
+          rgba(255, 255, 255, 0.15),
+          transparent 55%
+        ),
+        linear-gradient(
+          125deg,
+          rgba(255, 255, 255, 0.22) 0%,
+          rgba(255, 255, 255, 0.05) 26%,
+          rgba(255, 255, 255, 0) 48%,
+          rgba(255, 255, 255, 0.04) 100%
+        );
+    }
+
+    .vision-glass > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Spatial Focus Navigation Bar — Floating Liquid Crystal Bar */
+    .spatial-focus-nav {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.18) 0%,
+        rgba(255, 255, 255, 0.07) 100%
+      ) !important;
+      backdrop-filter: blur(40px) saturate(215%) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(215%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.36) !important;
+      box-shadow:
+        0 22px 50px rgba(0, 0, 0, 0.55),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.72),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.35) !important;
+      border-radius: 24px !important;
+      padding: 12px 18px !important;
+    }
+
+    .spatial-focus-tab {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04)) !important;
+      backdrop-filter: blur(20px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.28) !important;
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.52) !important;
+    }
+
+    .spatial-focus-tab:hover {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.09)) !important;
+      border-color: rgba(255, 255, 255, 0.52) !important;
+      transform: translateY(-1px);
+    }
+
+    .spatial-focus-tab.active {
+      background: linear-gradient(
+        135deg,
+        rgba(44, 230, 255, 0.32) 0%,
+        rgba(245, 196, 81, 0.32) 100%
+      ) !important;
+      border: 1.5px solid rgba(255, 238, 170, 0.92) !important;
+      box-shadow:
+        0 10px 28px rgba(245, 196, 81, 0.32),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.85) !important;
+    }
+
+    /* Layered Glass-on-Glass Order Cards */
+    .prod-order-card {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.07) 52%,
+        rgba(255, 255, 255, 0.03) 100%
+      ) !important;
+      backdrop-filter: blur(32px) saturate(200%) !important;
+      -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.38) !important;
+      border-radius: 24px !important;
+      box-shadow:
+        0 20px 48px rgba(0, 0, 0, 0.45),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.75),
+        inset 1px 0 1px rgba(255, 255, 255, 0.3),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.35) !important;
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease !important;
+    }
+
+    .prod-order-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(
+          420px circle at var(--mx, 30%) var(--my, 20%),
+          rgba(255, 255, 255, 0.18),
+          transparent 60%
+        ),
+        linear-gradient(
+          130deg,
+          rgba(255, 255, 255, 0.22) 0%,
+          rgba(255, 255, 255, 0.03) 36%,
+          transparent 62%
+        );
+    }
+
+    .prod-order-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .prod-order-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.62) !important;
+      box-shadow:
+        0 28px 60px rgba(0, 0, 0, 0.58),
+        0 0 28px rgba(44, 230, 255, 0.18),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.9) !important;
+    }
+
+    /* Inner Garment Showcase Stage — Smoked Obsidian Glass Well */
+    .vision-garment-stage {
+      background: linear-gradient(160deg, rgba(12, 10, 24, 0.62), rgba(6, 5, 14, 0.78)) !important;
+      backdrop-filter: blur(20px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.26) !important;
+      box-shadow:
+        inset 0 2px 16px rgba(0, 0, 0, 0.65),
+        0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    }
+
+    /* Frosted Glass Download Buttons & KPI Tiles */
+    .prod-dl-btn,
+    .kpi-pill,
+    .item-row,
+    .mini-btn {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06)) !important;
+      backdrop-filter: blur(20px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.55) !important;
+    }
+
+    .prod-dl-btn:hover,
+    .mini-btn:hover {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12)) !important;
+      border-color: rgba(255, 235, 160, 0.85) !important;
+      box-shadow:
+        0 10px 24px rgba(245, 196, 81, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+      transform: translateY(-1px);
+    }
+
   </style>
 </head>
 <body data-layout="tabbed-studio" data-focus-pane="orders">
 
-  <!-- LIVE SPATIAL LAYOUT SWITCHER BAR (1-Click Instant Layout Restructure) -->
-  <div class="layout-switcher-bar">
-    <div class="layout-switcher-title">
-      <span>&#10024; CHOOSE YOUR LAYOUT:</span>
-      <span style="font-family:'Outfit',sans-serif;font-weight:500;color:rgba(255,255,255,0.75);font-size:0.78rem;">Same visuals &amp; official logo — pick the layout structure that feels best:</span>
-    </div>
-    <div class="layout-pills-group" id="layoutSwitcherBtns">
-      <button type="button" class="layout-mode-btn active" data-set-layout="tabbed-studio">1. Tabbed Focus Studio (Cleanest)</button>
-      <button type="button" class="layout-mode-btn" data-set-layout="wide-bento">2. Wide Bento Grid (No Sidebars)</button>
-      <button type="button" class="layout-mode-btn" data-set-layout="split-deck">3. 65/35 Split Command Deck</button>
-      <button type="button" class="layout-mode-btn" data-set-layout="bottom-dock">4. Floating Bottom Dock</button>
-      <button type="button" class="layout-mode-btn" data-set-layout="three-col">5. 3-Column Wing</button>
-    </div>
+  <!-- AMBIENT BACKLIT STUDIO AURORA ORBS (Refracted through the VisionOS Frosted Glass) -->
+  <div class="vision-ambient-canvas" aria-hidden="true">
+    <div class="vision-orb orb-gold"></div>
+    <div class="vision-orb orb-cyan"></div>
+    <div class="vision-orb orb-magenta"></div>
+    <div class="vision-orb orb-violet"></div>
+    <div class="vision-glass-grid-shimmer"></div>
   </div>
 
   <!-- Concept #2: Apple VisionOS Spatial Glassmorphic Shell -->
@@ -1889,22 +2141,23 @@
       let cloudFriendshipsCount = 0;
       let cloudMessagesCount = 0;
 
-      // 5-Mode Live Spatial Layout Switcher & Workspace Focus Tabs
-      const LAYOUT_STORAGE_KEY = 'rc_owner_preferred_layout_v1';
-      const savedLayout = localStorage.getItem(LAYOUT_STORAGE_KEY);
-      if (savedLayout) {
-        document.body.setAttribute('data-layout', savedLayout);
-        document.querySelectorAll('[data-set-layout]').forEach((b) => {
-          b.classList.toggle('active', b.getAttribute('data-set-layout') === savedLayout);
-        });
-      }
+      // Lock in Layout 1 (Tabbed Focus Studio) + Interactive Optical Glass Specular Glint
+      document.body.setAttribute('data-layout', 'tabbed-studio');
 
-      document.querySelectorAll('[data-set-layout]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const mode = btn.getAttribute('data-set-layout') || 'tabbed-studio';
-          document.body.setAttribute('data-layout', mode);
-          localStorage.setItem(LAYOUT_STORAGE_KEY, mode);
-          document.querySelectorAll('[data-set-layout]').forEach((b) => b.classList.toggle('active', b === btn));
+      document.addEventListener('pointermove', (e) => {
+        document.querySelectorAll('.vision-glass, .prod-order-card').forEach((card) => {
+          const rect = card.getBoundingClientRect();
+          if (
+            e.clientX >= rect.left - 120 &&
+            e.clientX <= rect.right + 120 &&
+            e.clientY >= rect.top - 120 &&
+            e.clientY <= rect.bottom + 120
+          ) {
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            card.style.setProperty('--mx', `${x.toFixed(1)}%`);
+            card.style.setProperty('--my', `${y.toFixed(1)}%`);
+          }
         });
       });
 
