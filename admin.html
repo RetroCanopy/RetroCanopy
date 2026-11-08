@@ -1163,11 +1163,293 @@
       color: #ff77aa;
       margin-top: 8px;
     }
+
+    /* =====================================================================
+       5-MODE LIVE SPATIAL LAYOUT ENGINE (PRESERVES ALL VISUALS & GLASS)
+       ===================================================================== */
+    .layout-switcher-bar {
+      max-width: 1860px;
+      margin: 0 auto 14px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(38, 34, 58, 0.78), rgba(20, 17, 34, 0.78));
+      backdrop-filter: blur(24px);
+      border: 1.5px solid rgba(245, 196, 81, 0.48);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+    }
+
+    .layout-switcher-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--neon-gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .layout-pills-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .layout-mode-btn {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 255, 255, 0.82);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .layout-mode-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    .layout-mode-btn.active {
+      background: linear-gradient(135deg, #ffe28a 0%, #d9a13c 100%);
+      color: #161105;
+      border-color: #fff2be;
+      box-shadow: 0 0 18px rgba(245, 196, 81, 0.45);
+    }
+
+    /* Workspace Focus Navigation Bar (Used in Tabbed Studio & Bottom Dock modes) */
+    .spatial-focus-nav {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 20px;
+      background: rgba(18, 15, 30, 0.72);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      flex-wrap: wrap;
+    }
+
+    .spatial-focus-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .spatial-focus-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 11px 20px;
+      border-radius: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.82);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .spatial-focus-tab:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+    }
+
+    .spatial-focus-tab.active {
+      background: linear-gradient(135deg, rgba(44, 230, 255, 0.24), rgba(245, 196, 81, 0.24));
+      border: 1.5px solid rgba(245, 196, 81, 0.82);
+      color: #ffffff;
+      box-shadow: 0 6px 22px rgba(245, 196, 81, 0.24);
+    }
+
+    .spatial-focus-quicklinks {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ---------------------------------------------------------------------
+       LAYOUT 1: TABBED FOCUS STUDIO (Full-Width 1-View-At-A-Time, Zero Clutter)
+       --------------------------------------------------------------------- */
+    body[data-layout="tabbed-studio"] .vision-shell {
+      grid-template-columns: 1fr;
+      max-width: 1740px;
+    }
+    body[data-layout="tabbed-studio"] .vision-sidebar {
+      display: none;
+    }
+    body[data-layout="tabbed-studio"] .spatial-focus-nav {
+      display: flex;
+    }
+    body[data-layout="tabbed-studio"] #merchUnfulfilledList,
+    body[data-layout="tabbed-studio"] #merchHistoryList {
+      grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+      gap: 20px;
+    }
+    body[data-layout="tabbed-studio"] .owner-section {
+      max-height: none;
+      min-height: 520px;
+    }
+    body[data-layout="tabbed-studio"] .card-scroll-body {
+      max-height: 680px;
+    }
+    /* View visibility inside Tabbed Studio */
+    body[data-layout="tabbed-studio"][data-focus-pane="orders"] .owner-workspace,
+    body[data-layout="tabbed-studio"][data-focus-pane="orders"] .vision-telemetry-wing {
+      display: none;
+    }
+    body[data-layout="tabbed-studio"][data-focus-pane="vault"] #websiteOrdersHubSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="vault"] .vision-telemetry-wing,
+    body[data-layout="tabbed-studio"][data-focus-pane="vault"] .owner-section[data-card="traffic"],
+    body[data-layout="tabbed-studio"][data-focus-pane="vault"] .owner-section[data-card="members"] {
+      display: none;
+    }
+    body[data-layout="tabbed-studio"][data-focus-pane="vault"] .owner-workspace {
+      grid-template-columns: 1fr;
+    }
+    body[data-layout="tabbed-studio"][data-focus-pane="botpit"] #websiteOrdersHubSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="botpit"] .owner-workspace {
+      display: none;
+    }
+    body[data-layout="tabbed-studio"][data-focus-pane="botpit"] .vision-telemetry-wing {
+      display: grid;
+      grid-template-columns: 380px minmax(0, 1fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+    body[data-layout="tabbed-studio"][data-focus-pane="traffic"] #websiteOrdersHubSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="traffic"] .vision-telemetry-wing,
+    body[data-layout="tabbed-studio"][data-focus-pane="traffic"] .owner-section[data-card="store"] {
+      display: none;
+    }
+    body[data-layout="tabbed-studio"][data-focus-pane="traffic"] .owner-workspace {
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* ---------------------------------------------------------------------
+       LAYOUT 2: WIDE BENTO GRID (No Sidebars — Symmetrical 2x2 Bento Below Orders)
+       --------------------------------------------------------------------- */
+    body[data-layout="wide-bento"] .vision-shell {
+      grid-template-columns: 1fr;
+      max-width: 1780px;
+    }
+    body[data-layout="wide-bento"] .vision-sidebar {
+      display: none;
+    }
+    body[data-layout="wide-bento"] #merchUnfulfilledList,
+    body[data-layout="wide-bento"] #merchHistoryList {
+      grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+      gap: 20px;
+    }
+    body[data-layout="wide-bento"] .owner-workspace {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    body[data-layout="wide-bento"] .vision-telemetry-wing {
+      display: grid;
+      grid-template-columns: 380px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    /* ---------------------------------------------------------------------
+       LAYOUT 3: 65 / 35 SPLIT COMMAND DECK (Left: Orders+Vault | Right: Telemetry+Traffic)
+       --------------------------------------------------------------------- */
+    body[data-layout="split-deck"] .vision-shell {
+      grid-template-columns: minmax(0, 1.85fr) minmax(360px, 1fr);
+      max-width: 1840px;
+      gap: 20px;
+    }
+    body[data-layout="split-deck"] .vision-sidebar {
+      display: none;
+    }
+    body[data-layout="split-deck"] #merchUnfulfilledList,
+    body[data-layout="split-deck"] #merchHistoryList {
+      grid-template-columns: 1fr;
+    }
+    body[data-layout="split-deck"] .vision-order-body-grid {
+      grid-template-columns: 230px minmax(0, 1fr);
+    }
+
+    /* ---------------------------------------------------------------------
+       LAYOUT 4: FLOATING BOTTOM MAC-OS / VISION-OS DOCK + CINEMA STAGE
+       --------------------------------------------------------------------- */
+    body[data-layout="bottom-dock"] {
+      padding-bottom: 110px;
+    }
+    body[data-layout="bottom-dock"] .vision-shell {
+      grid-template-columns: 1fr;
+      max-width: 1680px;
+    }
+    body[data-layout="bottom-dock"] .vision-sidebar {
+      display: none;
+    }
+    body[data-layout="bottom-dock"] .spatial-focus-nav {
+      display: flex;
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 950;
+      width: max-content;
+      max-width: 96vw;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(16, 13, 28, 0.88);
+      backdrop-filter: blur(28px) saturate(180%);
+      border: 1.5px solid rgba(245, 196, 81, 0.68);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(245, 196, 81, 0.25);
+    }
+    body[data-layout="bottom-dock"] .spatial-focus-tab {
+      border-radius: 999px;
+      padding: 9px 18px;
+    }
+    body[data-layout="bottom-dock"] #merchUnfulfilledList,
+    body[data-layout="bottom-dock"] #merchHistoryList {
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 20px;
+    }
+    body[data-layout="bottom-dock"] .vision-telemetry-wing {
+      display: grid;
+      grid-template-columns: 380px minmax(0, 1fr);
+      gap: 18px;
+    }
+
   </style>
 </head>
-<body>
+<body data-layout="tabbed-studio" data-focus-pane="orders">
 
-  <!-- Concept #2: Apple VisionOS Spatial Glassmorphic 3-Column Shell -->
+  <!-- LIVE SPATIAL LAYOUT SWITCHER BAR (1-Click Instant Layout Restructure) -->
+  <div class="layout-switcher-bar">
+    <div class="layout-switcher-title">
+      <span>&#10024; CHOOSE YOUR LAYOUT:</span>
+      <span style="font-family:'Outfit',sans-serif;font-weight:500;color:rgba(255,255,255,0.75);font-size:0.78rem;">Same visuals &amp; official logo — pick the layout structure that feels best:</span>
+    </div>
+    <div class="layout-pills-group" id="layoutSwitcherBtns">
+      <button type="button" class="layout-mode-btn active" data-set-layout="tabbed-studio">1. Tabbed Focus Studio (Cleanest)</button>
+      <button type="button" class="layout-mode-btn" data-set-layout="wide-bento">2. Wide Bento Grid (No Sidebars)</button>
+      <button type="button" class="layout-mode-btn" data-set-layout="split-deck">3. 65/35 Split Command Deck</button>
+      <button type="button" class="layout-mode-btn" data-set-layout="bottom-dock">4. Floating Bottom Dock</button>
+      <button type="button" class="layout-mode-btn" data-set-layout="three-col">5. 3-Column Wing</button>
+    </div>
+  </div>
+
+  <!-- Concept #2: Apple VisionOS Spatial Glassmorphic Shell -->
   <div class="vision-shell">
 
     <!-- =================================================================== -->
@@ -1273,6 +1555,34 @@
           </div>
         </div>
       </header>
+
+      <!-- SPATIAL FOCUS WORKSPACE BAR (Used in Tabbed Studio & Floating Bottom Dock Layouts) -->
+      <nav class="spatial-focus-nav" id="spatialFocusNav">
+        <div class="spatial-focus-tabs">
+          <button type="button" class="spatial-focus-tab active" data-focus-target="orders">
+            <span>&#128717;&#65039;</span>
+            <span>Merch Orders &amp; Production Queue</span>
+          </button>
+          <button type="button" class="spatial-focus-tab" data-focus-target="vault">
+            <span>&#128193;</span>
+            <span>300 DPI DTF / .DST Vault &amp; Store ($1)</span>
+          </button>
+          <button type="button" class="spatial-focus-tab" data-focus-target="botpit">
+            <span>&#129302;</span>
+            <span>Shibuya Bot Pit Live Arena</span>
+          </button>
+          <button type="button" class="spatial-focus-tab" data-focus-target="traffic">
+            <span>&#127760;</span>
+            <span>Live Traffic &amp; Members</span>
+          </button>
+        </div>
+        <div class="spatial-focus-quicklinks">
+          <a href="index.html" class="vision-quick-link">Home Stage</a>
+          <a href="hoodie_preview.html" class="vision-quick-link">Hoodie ($1)</a>
+          <a href="hat_preview.html" class="vision-quick-link">Hat ($1)</a>
+          <a href="shibuya_bot_pit.html" class="vision-quick-link">Bot Pit</a>
+        </div>
+      </nav>
 
       <!-- MAIN PRODUCTION QUEUE GLASS PANEL -->
       <section class="vision-glass owner-major-section" id="websiteOrdersHubSection">
@@ -1578,6 +1888,43 @@
       let cloudPilots = [];
       let cloudFriendshipsCount = 0;
       let cloudMessagesCount = 0;
+
+      // 5-Mode Live Spatial Layout Switcher & Workspace Focus Tabs
+      const LAYOUT_STORAGE_KEY = 'rc_owner_preferred_layout_v1';
+      const savedLayout = localStorage.getItem(LAYOUT_STORAGE_KEY);
+      if (savedLayout) {
+        document.body.setAttribute('data-layout', savedLayout);
+        document.querySelectorAll('[data-set-layout]').forEach((b) => {
+          b.classList.toggle('active', b.getAttribute('data-set-layout') === savedLayout);
+        });
+      }
+
+      document.querySelectorAll('[data-set-layout]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const mode = btn.getAttribute('data-set-layout') || 'tabbed-studio';
+          document.body.setAttribute('data-layout', mode);
+          localStorage.setItem(LAYOUT_STORAGE_KEY, mode);
+          document.querySelectorAll('[data-set-layout]').forEach((b) => b.classList.toggle('active', b === btn));
+        });
+      });
+
+      document.querySelectorAll('[data-focus-target]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-focus-target') || 'orders';
+          document.body.setAttribute('data-focus-pane', target);
+          document.querySelectorAll('[data-focus-target]').forEach((b) => b.classList.toggle('active', b === btn));
+          if (document.body.getAttribute('data-layout') === 'bottom-dock') {
+            const map = {
+              orders: 'websiteOrdersHubSection',
+              vault: 'storeCatalogSection',
+              botpit: 'gameAnalyticsHubSection',
+              traffic: 'storeCatalogSection'
+            };
+            const el = document.getElementById(map[target]);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
 
       // Tab Switching across all sections
       document.querySelectorAll('.card-tab-btn[data-tab-target]').forEach((btn) => {
