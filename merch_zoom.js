@@ -5,21 +5,7 @@
    ========================================================================== */
 
 (function () {
-  // Enforce strict Owner-approved Admin gate on all product preview pages
-  try {
-    const isAdminFlag = localStorage.getItem('rc_is_admin_v1') === 'true';
-    const adminEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim().toLowerCase();
-    const isOwnerEmail = adminEmail === 'josephcole001.ai@gmail.com' || adminEmail === 'josephcole001.a1@gmail.com';
-    const adminDb = JSON.parse(localStorage.getItem('rc_admin_accounts_v2') || '{}') || {};
-    const isApprovedAdmin = Boolean(isAdminFlag && adminEmail && (isOwnerEmail || (adminDb[adminEmail] && adminDb[adminEmail].status === 'Approved' && !adminDb[adminEmail].deleted)));
-    if (!isApprovedAdmin) {
-      localStorage.removeItem('rc_is_admin_v1');
-      localStorage.removeItem('rc_current_admin_email_v1');
-      localStorage.removeItem('rc_current_user_v1');
-      window.location.replace('index.html');
-      return;
-    }
-  } catch (_) {}
+  // Store open in $1.00 Test Mode for White Hoodie (RC-309) & White Hat (RC-107)
 
   let zoomScale = 1.45;
   let activeSide = 'front'; // 'front' | 'back' | 'single'
@@ -322,10 +308,7 @@
       sessionStorage.setItem('rc_intro_seen', '1');
       sessionStorage.setItem('rc_from_internal', '1');
       sessionStorage.setItem('rc_lofi_active', '1');
-      if (localStorage.getItem('rc_is_admin_v1') !== 'true') {
-        window.location.replace('index.html');
-        return;
-      }
+      // $1.00 Store Test Mode enabled
       if (!window.RetroAuthHub && !document.querySelector('script[src*="auth_hub.js"]')) {
         const authScript = document.createElement('script');
         authScript.src = 'auth_hub.js?v=109';
@@ -373,52 +356,72 @@
     if (document.getElementById('shop-chloe-stage')) return;
 
     const masterCatalog = {
-      'RC-101': { model: 'RC-101', title: 'Classic Sunset Grid Snapback', role: 'Headwear', price: 32, img: 'assets/merch/hat_front_floating.png?v=200' },
-      'RC-102': { model: 'RC-102', title: 'Dual Cyan & Magenta Grid Snapback', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt2.png?v=200' },
-      'RC-103': { model: 'RC-103', title: 'Outrun Wireframe Mountains Trucker Cap', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt3.png?v=200' },
-      'RC-104': { model: 'RC-104', title: 'Starry Synthwave Cosmos Dad Cap', role: 'Headwear', price: 32, img: 'assets/merch/hat_opt4.png?v=200' },
-      'RC-105': { model: 'RC-105', title: 'Valkyrie Gold & Crimson Samurai Snapback', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt5.png?v=200' },
-      'RC-106': { model: 'RC-106', title: '1984 Arcade Champion Corduroy Rope Cap', role: 'Headwear', price: 34, img: 'assets/merch/hat_opt6.png?v=200' },
-      'RC-107': { model: 'RC-107', title: 'White & 24K Gold Crowned Valkyrie Snapback', role: 'Headwear', price: 0, winOnly: true, img: 'assets/merch/hat_tier6_valkyrie.png?v=200' },
-      'RC-201': { model: 'RC-201', title: 'Classic Sunset Grid XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_1.png?v=200' },
-      'RC-202': { model: 'RC-202', title: 'Signature Type XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_2.png?v=200' },
-      'RC-203': { model: 'RC-203', title: 'Outrun Wireframe XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_3.png?v=200' },
-      'RC-204': { model: 'RC-204', title: 'Pro-Esports Stealth XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_4.png?v=200' },
-      'RC-205': { model: 'RC-205', title: 'Starry Cosmos XXL', role: 'Desk Setup', price: 38, img: 'assets/merch/deskmat_topdown_5.png?v=200' },
-      'RC-211': { model: 'RC-211', title: 'Classic Emblem Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_1.png?v=200' },
-      'RC-212': { model: 'RC-212', title: 'Minimalist Stealth Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_2.png?v=200' },
-      'RC-213': { model: 'RC-213', title: 'Dual Cyan/Magenta Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_3.png?v=200' },
-      'RC-214': { model: 'RC-214', title: 'Corner-Badge Aim Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_4.png?v=200' },
-      'RC-215': { model: 'RC-215', title: 'Starry Outrun Pad', role: 'Mousepad', price: 22, img: 'assets/merch/mousepad_small_5.png?v=200' },
-      'RC-301': { model: 'RC-301', title: 'Classic Sunset Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt1_back.png?v=200' },
-      'RC-302': { model: 'RC-302', title: 'Dual Grid Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt2_back.png?v=200' },
-      'RC-303': { model: 'RC-303', title: 'Midnight Grinder Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt3_back.png?v=200' },
-      'RC-304': { model: 'RC-304', title: 'Outrun Wireframe Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt4_back.png?v=200' },
-      'RC-305': { model: 'RC-305', title: 'Starry Cosmos Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt5_back.png?v=200' },
-      'RC-306': { model: 'RC-306', title: 'Cyber-Dragon Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt6_back.png?v=200' },
-      'RC-307': { model: 'RC-307', title: 'Superbike Drift Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt7_back.png?v=200' },
-      'RC-308': { model: 'RC-308', title: 'Pinball Wizard Hoodie', role: 'Outerwear', price: 68, img: 'assets/merch/hoodie_opt9_back.png?v=200' },
-      'RC-309': { model: 'RC-309', title: 'White & 24K Gold Crowned Legend Hoodie', role: 'Outerwear', price: 78, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200' },
-      'RC-401': { model: 'RC-401', title: 'Outrun Gullwing Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt1_back.png?v=200' },
-      'RC-402': { model: 'RC-402', title: 'Arcade Blueprint Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt2_back.png?v=200' },
-      'RC-403': { model: 'RC-403', title: 'Shibuya Shrine Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt3_back.png?v=200' },
-      'RC-404': { model: 'RC-404', title: 'Cassette Mixtape Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt4_back.png?v=200' },
-      'RC-405': { model: 'RC-405', title: 'Mecha-Valkyrie Tee', role: 'Base Layer', price: 36, img: 'assets/merch/tee_opt5_back.png?v=200' },
-      'RC-501': { model: 'RC-501', title: 'Classic Sunset Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt1.png?v=200' },
-      'RC-502': { model: 'RC-502', title: 'Dual Grid Leg Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt2.png?v=200' },
-      'RC-503': { model: 'RC-503', title: 'Midnight Tech Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt3.png?v=200' },
-      'RC-504': { model: 'RC-504', title: 'Outrun Mountains Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt4.png?v=200' },
-      'RC-505': { model: 'RC-505', title: 'Starry Cosmos Joggers', role: 'Bottoms', price: 58, img: 'assets/merch/joggers_opt5.png?v=200' },
-      'RC-601': { model: 'RC-601', title: 'Golden ROM Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt1_back.png?v=200' },
-      'RC-602': { model: 'RC-602', title: 'Cyber Ronin Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt2_back.png?v=200' },
-      'RC-603': { model: 'RC-603', title: 'Power-Glove 1989 Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt3_back.png?v=200' },
-      'RC-604': { model: 'RC-604', title: 'Saturn Eclipse Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt4_back.png?v=200' },
-      'RC-605': { model: 'RC-605', title: 'Hi-Fi 60Hz VHS Crewneck', role: 'Crewneck', price: 54, img: 'assets/merch/longsleeve_opt5_back.png?v=200' },
-      'RC-701': { model: 'RC-701', title: '20oz LAN Gear Bag', role: 'Carry Gear', price: 28, img: 'assets/merch/gearbag_opt1.png?v=200' },
-      'RC-702': { model: 'RC-702', title: 'Sunset Grid 30oz Tumbler', role: 'Drinkware', price: 34, img: 'assets/merch/tumbler_opt1.png?v=200' },
-      'RC-703': { model: 'RC-703', title: 'Outrun Horizon 30oz Tumbler', role: 'Drinkware', price: 34, img: 'assets/merch/tumbler_opt2.png?v=200' },
-      'RC-704': { model: 'RC-704', title: 'Starry Cosmos 30oz Tumbler', role: 'Drinkware', price: 34, img: 'assets/merch/tumbler_opt3.png?v=200' },
-      'RC-705': { model: 'RC-705', title: 'Midnight Laser 30oz Tumbler', role: 'Drinkware', price: 36, img: 'assets/merch/tumbler_opt4.png?v=200' }
+      'RC-107': {
+        model: 'RC-107',
+        title: 'White & 24K Gold Crowned Valkyrie Snapback',
+        role: 'Headwear',
+        price: 1,
+        winOnly: false,
+        tier6Only: false,
+        img: 'assets/merch/hat_tier6_valkyrie.png?v=200',
+        frontPhotoUrl: 'assets/merch/hat_tier6_valkyrie.png',
+        backPhotoUrl: '',
+        productionType: 'EMBROIDERY_DST',
+        productionNotes: 'Arctic White 6-Panel Structured Snapback • 3D Puff 24K Metallic Gold Embroidery (Madeira #1025 Gold + #1001 White)',
+        productionFiles: [
+          {
+            label: 'Tajima 3D Puff Embroidery Stitch File (.DST)',
+            url: 'assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
+            filename: 'RC107_Hat_Valkyrie_3D_Puff.dst',
+            format: 'Tajima .DST'
+          },
+          {
+            label: 'Vector Embroidery Path & Thread Spec (.SVG)',
+            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
+            filename: 'RC107_Hat_Valkyrie_Embroidery_Spec.svg',
+            format: 'Embroidery .SVG'
+          },
+          {
+            label: '300 DPI Transparent Emblem Artwork (.PNG)',
+            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png',
+            filename: 'RC107_Hat_Valkyrie_Embroidery_300DPI.png',
+            format: '300 DPI PNG'
+          }
+        ]
+      },
+      'RC-309': {
+        model: 'RC-309',
+        title: 'White & 24K Gold Crowned Legend Hoodie',
+        role: 'Outerwear',
+        price: 1,
+        winOnly: false,
+        tier6Only: false,
+        img: 'assets/merch/hoodie_tier6_2f_back.png?v=200',
+        frontPhotoUrl: 'assets/merch/hoodie_tier6_2f_front.png',
+        backPhotoUrl: 'assets/merch/hoodie_tier6_2f_back.png',
+        productionType: 'DTF_PRINT',
+        productionNotes: '450GSM Heavyweight Arctic White Fleece • Front Left-Chest Crest (4.0" W) + Full Back Sanctuary Emblem (12.5" W) • 300 DPI Transparent DTF Transfers',
+        productionFiles: [
+          {
+            label: 'Front Chest Crest — DTF Ready 300 DPI Transparent PNG',
+            url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png',
+            filename: 'RC309_Hoodie_Front_Crest_DTF_300DPI.png',
+            format: 'DTF 300 DPI PNG'
+          },
+          {
+            label: 'Full Back 24K Emblem — DTF Ready 300 DPI Transparent PNG',
+            url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
+            filename: 'RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
+            format: 'DTF 300 DPI PNG'
+          },
+          {
+            label: 'Combined Front + Back Gang Sheet — DTF Ready 300 DPI PNG',
+            url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png',
+            filename: 'RC309_Hoodie_Full_GangSheet_DTF_300DPI.png',
+            format: 'DTF Gang Sheet PNG'
+          }
+        ]
+      }
     };
 
     const productCatalogNotes = {
@@ -1360,19 +1363,7 @@
         price: 32,
         img: 'assets/merch/hat_front_floating.png?v=200'
       };
-      if (entry.tier6Only || entry.model === 'RC-309') {
-        const curXp = Math.max(
-          getCanopyXp(),
-          parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0
-        );
-        if (curXp < 25000) {
-          playCutsceneBonkSfx('bonk');
-          typeChloeLine(
-            `Hold up! The Limited Edition White & 24K Gold Hoodie (RC-309) is strictly reserved for Stage 6: 👑 Eternal Sanctuary Tree members (25,000+ Growth). You're at ${curXp.toLocaleString()} Growth — keep growing your Tree to earn yours!`
-          );
-          return false;
-        }
-      }
+      // $1.00 Test Mode: RC-309 & RC-107 open for direct purchase & order tracking
       const items = getCartItems();
       const existing = items.find((it) => it.model === entry.model);
       if (existing) {
@@ -1543,7 +1534,10 @@
     couponDockEl.id = 'rcStoreCouponDock';
     document.body.appendChild(couponDockEl);
 
-    // Checkout Modal
+    // Checkout Modal ($1.00 Test Store — Captures Customer Info + Logs AFTER PAYMENT to Supabase & Owner's Hub)
+    const SUPABASE_REST_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/rest/v1';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4YXZ2cnF5enB3c2N6cGl3bXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MDksImV4cCI6MjEwNzU4NjgwOX0.XvOWwBlOBjGYxkQrD8eZvnaWaKb0qMW9HVtWhlnI6Yo';
+
     const checkoutBackdropEl = document.createElement('div');
     checkoutBackdropEl.className = 'rc-checkout-modal-backdrop';
     checkoutBackdropEl.id = 'rcCheckoutModalBackdrop';
@@ -1551,45 +1545,69 @@
       <div class="rc-checkout-modal" onclick="event.stopPropagation()">
         <div class="rc-checkout-top">
           <div>
-            <div class="rc-checkout-title">&#128717;&#65039; RETROCANOPY CHECKOUT</div>
-            <div class="rc-checkout-sub">1-Time Coupons apply <strong>only in the moment you win them</strong> from the Wheel or Synth's Flight (we don't save coupons).</div>
+            <div class="rc-checkout-title">&#128717;&#65039; RETROCANOPY STORE CHECKOUT ($1.00 TEST MODE)</div>
+            <div class="rc-checkout-sub">Orders are sent to the <strong>Owner's Hub Production Queue AFTER PAYMENT</strong> with Customer Info, Item Photos &amp; DTF / Embroidery Production Files.</div>
           </div>
           <button type="button" class="rc-checkout-close-btn" id="rcCheckoutCloseBtn">Close &#10005;</button>
         </div>
 
-        <!-- CUSTOMER LOGIN & PERSONAL CANOPY TREE STAGE BAR INSIDE STORE MODAL -->
-        <div style="background:rgba(0,240,255,0.07);border:1.5px solid rgba(0,240,255,0.38);border-radius:14px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-          <div style="display:flex;flex-direction:column;gap:2px;">
-            <span style="font-family:'Orbitron',sans-serif;font-size:0.6rem;font-weight:800;letter-spacing:0.12em;color:#00f0ff;">PERSONAL CANOPY TREE EVOLUTION &bull; +250 GROWTH PER MERCH ITEM</span>
-            <span id="rcModalAccountStatus" style="font-size:0.8rem;color:#ffffff;">Sign in with your Arcade Username to grow your Personal Canopy Tree!</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <input type="text" id="rcStoreUsernameInput" maxlength="18" placeholder="Username (e.g. Joseph)" style="background:rgba(5,4,14,0.9);border:1.5px solid rgba(0,240,255,0.5);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.7rem;padding:7px 12px;border-radius:999px;outline:none;width:155px;">
-            <input type="password" id="rcStorePinInput" maxlength="8" placeholder="PIN (Opt)" style="background:rgba(5,4,14,0.9);border:1.5px solid rgba(0,240,255,0.5);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.7rem;padding:7px 10px;border-radius:999px;outline:none;width:88px;">
-            <button type="button" id="rcStoreLoginBtn" style="background:linear-gradient(135deg,#00f59b,#00f0ff);color:#04030a;border:none;font-family:'Orbitron',sans-serif;font-size:0.66rem;font-weight:900;padding:8px 14px;border-radius:999px;cursor:pointer;">&#128100; LOGIN</button>
-          </div>
-        </div>
-
         <div class="rc-checkout-grid">
-          <!-- LEFT: ACTIVE IN-THE-MOMENT 1-TIME COUPON -->
+          <!-- LEFT: CUSTOMER SHIPPING & CONTACT INFORMATION (REQUIRED FOR PRODUCTION QUEUE) -->
           <div class="rc-checkout-section-box">
             <div class="rc-section-heading">
-              <span>&#127915; CURRENT 1-TIME COUPON (NOT SAVED)</span>
-              <a href="index.html" style="color:#ffae00;text-decoration:none;font-size:0.65rem;">&#129417; Play Synth's Flight &rarr;</a>
+              <span>&#128230; 1. CUSTOMER &amp; SHIPPING INFORMATION</span>
+              <span style="color:#00f59b;font-size:0.62rem;">REQUIRED FOR PRODUCTION</span>
             </div>
-            <div class="rc-checkout-coupons-grid" id="rcCheckoutCouponsGrid"></div>
+            <div style="display:flex;flex-direction:column;gap:9px;margin-top:6px;">
+              <div>
+                <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#00f0ff;margin-bottom:3px;">FULL NAME *</label>
+                <input type="text" id="rcCustNameInput" placeholder="e.g. Joseph Cole" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(0,240,255,0.45);color:#fff;font-family:'Outfit',sans-serif;font-size:0.84rem;padding:8px 11px;border-radius:9px;outline:none;">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div>
+                  <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#00f0ff;margin-bottom:3px;">EMAIL ADDRESS *</label>
+                  <input type="email" id="rcCustEmailInput" placeholder="you@email.com" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(0,240,255,0.45);color:#fff;font-family:'Outfit',sans-serif;font-size:0.84rem;padding:8px 11px;border-radius:9px;outline:none;">
+                </div>
+                <div>
+                  <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#00f0ff;margin-bottom:3px;">PHONE NUMBER *</label>
+                  <input type="tel" id="rcCustPhoneInput" placeholder="(555) 123-4567" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(0,240,255,0.45);color:#fff;font-family:'Outfit',sans-serif;font-size:0.84rem;padding:8px 11px;border-radius:9px;outline:none;">
+                </div>
+              </div>
+              <div>
+                <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#00f0ff;margin-bottom:3px;">SHIPPING ADDRESS (STREET, CITY, STATE, ZIP) *</label>
+                <input type="text" id="rcCustAddressInput" placeholder="123 Neon Blvd, Apt 4B, Austin, TX 78701" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(0,240,255,0.45);color:#fff;font-family:'Outfit',sans-serif;font-size:0.84rem;padding:8px 11px;border-radius:9px;outline:none;">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div>
+                  <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#ffae00;margin-bottom:3px;">HOODIE SIZE (RC-309)</label>
+                  <select id="rcCustSizeSelect" style="width:100%;background:rgba(5,4,14,0.95);border:1.5px solid rgba(255,174,0,0.55);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.72rem;padding:8px 10px;border-radius:9px;outline:none;">
+                    <option value="S">Small (S)</option>
+                    <option value="M">Medium (M)</option>
+                    <option value="L" selected>Large (L)</option>
+                    <option value="XL">X-Large (XL)</option>
+                    <option value="2XL">2X-Large (2XL)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#00f59b;margin-bottom:3px;">PRODUCTION NOTES (OPT)</label>
+                  <input type="text" id="rcCustNotesInput" placeholder="e.g. Rush test order" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(0,245,155,0.4);color:#fff;font-family:'Outfit',sans-serif;font-size:0.82rem;padding:8px 10px;border-radius:9px;outline:none;">
+                </div>
+              </div>
+              <div id="rcCheckoutFormError" style="display:none;color:#ff6b9d;font-size:0.76rem;font-weight:700;padding:6px 10px;background:rgba(255,45,149,0.14);border:1px solid rgba(255,45,149,0.45);border-radius:8px;"></div>
+            </div>
+            <div class="rc-checkout-coupons-grid" id="rcCheckoutCouponsGrid" style="display:none;"></div>
           </div>
 
-          <!-- RIGHT: BAG ITEMS & CHECKOUT ORDER SUMMARY -->
+          <!-- RIGHT: BAG ITEMS & $1.00 TEST PAYMENT -->
           <div class="rc-checkout-section-box">
             <div class="rc-section-heading">
-              <span>&#128717;&#65039; YOUR BAG &amp; CHECKOUT TOTAL</span>
+              <span>&#128717;&#65039; 2. YOUR BAG &amp; AFTER-PAYMENT SUMMARY</span>
               <span id="rcCheckoutBagCountTag" style="color:rgba(255,255,255,0.65);font-size:0.65rem;">0 Items</span>
             </div>
             <div class="rc-bag-items-list" id="rcBagItemsList"></div>
             <div class="rc-summary-lines" id="rcSummaryLines"></div>
             <button type="button" class="rc-complete-checkout-btn" id="rcCompleteCheckoutBtn">
-              COMPLETE CHECKOUT
+              PAY &amp; SEND TO OWNER'S HUB ($1.00)
             </button>
           </div>
         </div>
@@ -1597,25 +1615,21 @@
     `;
     document.body.appendChild(checkoutBackdropEl);
 
-    const rcStoreLoginBtn = document.getElementById('rcStoreLoginBtn');
-    const rcStoreUsernameInput = document.getElementById('rcStoreUsernameInput');
-    const rcStorePinInput = document.getElementById('rcStorePinInput');
-    if (rcStoreLoginBtn) {
-      rcStoreLoginBtn.addEventListener('click', () => {
-        const res = loginCustomerInStore(
-          rcStoreUsernameInput ? rcStoreUsernameInput.value : '',
-          rcStorePinInput ? rcStorePinInput.value : ''
-        );
-        if (!res.ok) {
-          playCutsceneBonkSfx('bonk');
-          typeChloeLine(res.msg);
-          return;
-        }
-        playCutsceneBonkSfx('jackpot_fanfare');
-        const t = getCanopyTreeTier(res.account.xp || 0);
-        typeChloeLine(`Welcome back @${res.account.username}! Your Canopy Tree is at Stage ${t.stage}: ${t.icon} ${t.name} (${(res.account.xp || 0).toLocaleString()} Growth)!`);
-      });
-    }
+    // Pre-fill saved customer info if available
+    try {
+      const savedCust = JSON.parse(localStorage.getItem('rc_saved_customer_info_v1') || '{}') || {};
+      const nEl = document.getElementById('rcCustNameInput');
+      const eEl = document.getElementById('rcCustEmailInput');
+      const pEl = document.getElementById('rcCustPhoneInput');
+      const aEl = document.getElementById('rcCustAddressInput');
+      if (nEl && savedCust.name) nEl.value = savedCust.name;
+      if (eEl && (savedCust.email || localStorage.getItem('rc_current_admin_email_v1'))) {
+        eEl.value = savedCust.email || localStorage.getItem('rc_current_admin_email_v1') || '';
+      }
+      if (pEl && savedCust.phone) pEl.value = savedCust.phone;
+      if (aEl && savedCust.address) aEl.value = savedCust.address;
+    } catch (_) {}
+
     if (headerUserBtn) {
       headerUserBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1656,6 +1670,60 @@
     }
     checkoutBackdropEl.addEventListener('click', closeStoreCheckoutModal);
 
+    async function persistPaidOrderToCloudAndLocal(orderRecord) {
+      // 1. Save to localStorage queues (rc_shop_orders_v2 + rc_shop_orders_v1)
+      try {
+        const v2List = JSON.parse(localStorage.getItem('rc_shop_orders_v2') || '[]') || [];
+        const filteredV2 = v2List.filter((o) => o && o.orderId !== orderRecord.orderId);
+        filteredV2.unshift(orderRecord);
+        localStorage.setItem('rc_shop_orders_v2', JSON.stringify(filteredV2));
+        localStorage.setItem('rc_shop_orders_v1', JSON.stringify(filteredV2));
+      } catch (_) {}
+
+      // 2. Sync to Supabase public.retrocanopy_orders (AFTER PAYMENT: is_paid = true)
+      try {
+        const supaPayload = {
+          order_id: orderRecord.orderId,
+          customer_name: orderRecord.customerName,
+          customer_email: orderRecord.customerEmail,
+          customer_phone: orderRecord.customerPhone,
+          shipping_address: orderRecord.shippingAddress,
+          customer_notes: orderRecord.customerNotes || '',
+          items: orderRecord.items,
+          subtotal_usd: orderRecord.subtotal,
+          shipping_usd: orderRecord.shipping,
+          discount_usd: orderRecord.discountAmt || 0,
+          total_paid_usd: orderRecord.totalPaid,
+          payment_status: 'PAID',
+          is_paid: true,
+          stripe_session_id: orderRecord.stripeSessionId || ('PAID-' + Date.now()),
+          fulfilled: false,
+          fulfilled_at: null,
+          paid_at: new Date().toISOString()
+        };
+        await fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?on_conflict=order_id`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=minimal'
+          },
+          body: JSON.stringify(supaPayload)
+        });
+      } catch (err) {
+        console.warn('Supabase retrocanopy_orders insert warning:', err);
+      }
+
+      // 3. Broadcast to any open Owner's Hub tab immediately
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const ch = new BroadcastChannel('rc_admin_hub_sync_v1');
+          ch.postMessage({ type: 'NEW_PAID_MERCH_ORDER', orderId: orderRecord.orderId });
+        }
+      } catch (_) {}
+    }
+
     function renderStoreCouponDockAndCheckout() {
       const xp = Math.max(
         getCanopyXp(),
@@ -1667,91 +1735,25 @@
 
       if (headerUserBtn) {
         headerUserBtn.title = curUser
-          ? `Logged in as @${curUser} • ${treeTier.icon} ${treeTier.name} (${xp.toLocaleString()} Growth)`
-          : 'Customer Login & Personal Canopy Tree';
+          ? `Logged in as @${curUser}`
+          : 'Open Bag & Customer Checkout';
         headerUserBtn.innerHTML = curUser
           ? `&#128100; @${formatCompactHandle(curUser)}`
-          : `&#128100; Login`;
-      }
-      const nextStepText = treeTier.next
-        ? `Next Stage at <strong>${treeTier.next.toLocaleString()}</strong>`
-        : `<strong>MAX ETERNAL STAGE</strong>`;
-      const modalAcctStatusEl = document.getElementById('rcModalAccountStatus');
-      if (modalAcctStatusEl) {
-        modalAcctStatusEl.innerHTML = curUser
-          ? `<span style="color:#00f59b;">&#10003; <strong>@${curUser}</strong> &bull; ${treeTier.icon} Stage ${treeTier.stage}: <strong>${treeTier.name}</strong> (${xp.toLocaleString()} Growth &bull; ${nextStepText})</span>`
-          : `${treeTier.icon} Stage ${treeTier.stage}: <strong>${treeTier.name}</strong> (${xp.toLocaleString()} Growth &bull; ${nextStepText}) &mdash; Sign in to save your Tree!`;
-      }
-      if (rcStoreUsernameInput && curUser && !rcStoreUsernameInput.value) {
-        rcStoreUsernameInput.value = curUser;
+          : `&#128717;&#65039; Checkout`;
       }
 
       const treeIconHeaderEl = document.getElementById('rcHeaderTreeIcon');
       if (treeIconHeaderEl) treeIconHeaderEl.textContent = treeTier.icon;
       const xpHeaderEl = document.getElementById('rcHeaderXpVal');
       if (xpHeaderEl) xpHeaderEl.textContent = xp.toLocaleString();
-      if (headerArcadeBtn) {
-        headerArcadeBtn.title = `Stage ${treeTier.stage}: ${treeTier.name} (${xp.toLocaleString()} Growth) • Play Synth's Flight to Grow Your Canopy Tree`;
-      }
 
-      // Only show header coupon pill when they have an active in-the-moment coupon from the wheel or game!
       if (headerCouponsBtn) {
-        if (activeCouponObj) {
-          headerCouponsBtn.style.display = 'inline-flex';
-          headerCouponsBtn.classList.add('has-active-coupon');
-          headerCouponsBtn.innerHTML = `&#127915; ${activeCouponObj.code} (${activeCouponObj.shortLabel}) &#10003;`;
-        } else {
-          headerCouponsBtn.style.display = 'none';
-          headerCouponsBtn.classList.remove('has-active-coupon');
-        }
+        headerCouponsBtn.style.display = 'none';
       }
-
-      // 1. Top-Right Coupon Banner: ONLY shown if they just won a coupon from the wheel or game in this moment!
       if (couponDockEl) {
-        couponDockEl.innerHTML = '';
-        if (activeCouponObj) {
-          couponDockEl.style.display = 'flex';
-          const banner = document.createElement('div');
-          banner.className = 'rc-active-coupon-banner';
-          banner.innerHTML = `&#10003; ${activeCouponObj.icon} ${activeCouponObj.code} (${activeCouponObj.shortLabel}) &bull; WON JUST NOW (1-TIME USE) &rarr;`;
-          banner.addEventListener('click', openStoreCheckoutModal);
-          couponDockEl.appendChild(banner);
-        } else {
-          couponDockEl.style.display = 'none';
-        }
+        couponDockEl.style.display = 'none';
       }
 
-      // 2. Render Modal Coupon Section (Only the single coupon won in that moment, or empty state)
-      const modalGrid = document.getElementById('rcCheckoutCouponsGrid');
-      if (modalGrid) {
-        modalGrid.innerHTML = '';
-        if (activeCouponObj) {
-          const card = document.createElement('div');
-          card.className = 'rc-modal-coupon-btn active-checkout';
-          card.innerHTML = `
-            <div style="font-size:1.35rem;">${activeCouponObj.icon}</div>
-            <div style="flex:1;min-width:0;">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-family:'Orbitron',sans-serif;font-size:0.74rem;font-weight:900;color:#ffae00;">${activeCouponObj.code} &bull; ${activeCouponObj.title}</span>
-              </div>
-              <div style="font-size:0.74rem;color:rgba(255,255,255,0.82);margin-top:2px;">${activeCouponObj.desc || 'Won just now • 1-Time Use in This Moment (Not Saved)'}</div>
-              <div style="font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:800;margin-top:4px;color:#00f59b;">&#10003; ACTIVE FOR THIS CHECKOUT ONLY (EXPIRES AFTER USE)</div>
-            </div>
-          `;
-          modalGrid.appendChild(card);
-        } else {
-          const emptyCouponBox = document.createElement('div');
-          emptyCouponBox.style.cssText = 'padding:18px 14px;border-radius:12px;border:1px dashed rgba(255,255,255,0.18);background:rgba(0,0,0,0.35);text-align:center;color:rgba(255,255,255,0.72);font-size:0.8rem;line-height:1.5;';
-          emptyCouponBox.innerHTML = `
-            <div style="font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:800;color:#ffae00;margin-bottom:6px;">NO ACTIVE COUPON IN THIS MOMENT</div>
-            1-Time Coupons are <strong>not saved</strong>.<br>
-            You only get a coupon from what you <strong>just won right now</strong> on the <strong>Prize Wheel</strong> or in <strong>Synth's Flight</strong>!
-          `;
-          modalGrid.appendChild(emptyCouponBox);
-        }
-      }
-
-      // 3. Render Bag Items & Checkout Calculation
       const bagListEl = document.getElementById('rcBagItemsList');
       const summaryLinesEl = document.getElementById('rcSummaryLines');
       const bagCountTagEl = document.getElementById('rcCheckoutBagCountTag');
@@ -1767,32 +1769,42 @@
         bagListEl.innerHTML = '';
         if (items.length === 0) {
           const kickerEl = document.getElementById('hudKicker') || document.querySelector('.hud-kicker');
-          const curCode = (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-101';
-          const curEntry = masterCatalog[curCode] || masterCatalog['RC-101'];
+          const curCode = (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-309';
+          const curEntry = masterCatalog[curCode] || masterCatalog['RC-309'];
           const emptyDiv = document.createElement('div');
-          emptyDiv.style.cssText = 'padding:16px;text-align:center;color:rgba(255,255,255,0.68);font-size:0.82rem;';
+          emptyDiv.style.cssText = 'padding:16px;text-align:center;color:rgba(255,255,255,0.75);font-size:0.82rem;display:flex;flex-direction:column;gap:8px;align-items:center;';
           emptyDiv.innerHTML = `
-            Your bag is currently empty.<br>
-            <button type="button" id="rcQuickAddCurrentBtn" style="margin-top:10px;padding:8px 16px;border-radius:999px;border:1px solid #00f0ff;background:rgba(0,240,255,0.15);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:800;cursor:pointer;">
-              + Add Current Item (${curEntry.model} &bull; $${curEntry.price}) to Bag
-            </button>
+            <div>Your bag is empty. Add the $1.00 test items below:</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+              <button type="button" id="rcQuickAddHoodieBtn" style="padding:8px 14px;border-radius:999px;border:1px solid #00f0ff;background:rgba(0,240,255,0.16);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.64rem;font-weight:800;cursor:pointer;">
+                + Add White Hoodie (RC-309 &bull; $1.00)
+              </button>
+              <button type="button" id="rcQuickAddHatBtn" style="padding:8px 14px;border-radius:999px;border:1px solid #ffae00;background:rgba(255,174,0,0.16);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.64rem;font-weight:800;cursor:pointer;">
+                + Add White Hat (RC-107 &bull; $1.00)
+              </button>
+            </div>
           `;
           bagListEl.appendChild(emptyDiv);
           setTimeout(() => {
-            const qBtn = document.getElementById('rcQuickAddCurrentBtn');
-            if (qBtn) {
-              qBtn.addEventListener('click', () => addItemToCartByCode(curEntry.model, 1));
-            }
+            const hBtn = document.getElementById('rcQuickAddHoodieBtn');
+            const cBtn = document.getElementById('rcQuickAddHatBtn');
+            if (hBtn) hBtn.addEventListener('click', () => addItemToCartByCode('RC-309', 1));
+            if (cBtn) cBtn.addEventListener('click', () => addItemToCartByCode('RC-107', 1));
           }, 0);
         } else {
           items.forEach((it) => {
+            const catItem = masterCatalog[it.model] || it;
+            const fileBadge = catItem.productionType === 'EMBROIDERY_DST'
+              ? '<span style="color:#ffae00;font-size:0.64rem;">&#129525; Includes .DST + .SVG Embroidery Files</span>'
+              : '<span style="color:#00f0ff;font-size:0.64rem;">&#128424;&#65039; Includes 300 DPI Front &amp; Back DTF Files</span>';
             const row = document.createElement('div');
             row.className = 'rc-bag-item-row';
             row.innerHTML = `
               <img class="rc-bag-item-img" src="${it.img}" alt="${it.title}">
               <div class="rc-bag-item-info">
-                <div class="rc-bag-item-code">${it.model} &bull; $${it.price} each</div>
+                <div class="rc-bag-item-code">${it.model} &bull; $${Number(it.price).toFixed(2)} each</div>
                 <div class="rc-bag-item-title">${it.title}</div>
+                <div>${fileBadge}</div>
               </div>
               <div class="rc-bag-item-controls">
                 <button type="button" class="rc-qty-btn" data-act="dec" data-code="${it.model}">&minus;</button>
@@ -1820,42 +1832,22 @@
         }
       }
 
-      const subtotal = items.reduce((sum, it) => sum + it.price * (it.qty || 1), 0);
-      let discountAmt = 0;
-      if (subtotal > 0 && activeCouponObj) {
-        if (activeCouponObj.type === 'percent') {
-          discountAmt = Math.round(subtotal * (activeCouponObj.pct / 100) * 100) / 100;
-        } else if (activeCouponObj.type === 'fixed') {
-          discountAmt = Math.min(subtotal, activeCouponObj.amountOff || 32);
-        }
-      }
-      const afterDisc = Math.max(0, Math.round((subtotal - discountAmt) * 100) / 100);
-      const shipping = (subtotal === 0 || afterDisc >= 50 || (activeCouponObj && activeCouponObj.freeShip)) ? 0 : 4.99;
-      const finalTotal = Math.round((afterDisc + shipping) * 100) / 100;
+      const subtotal = items.reduce((sum, it) => sum + Number(it.price || 1) * (it.qty || 1), 0);
+      const shipping = 0; // $0.00 Test Shipping so items are strictly $1.00 each
+      const finalTotal = Math.round((subtotal + shipping) * 100) / 100;
 
       if (summaryLinesEl) {
         summaryLinesEl.innerHTML = `
           <div class="rc-summary-row">
-            <span>Merchandise Subtotal:</span>
+            <span>Merchandise Subtotal ($1.00 Test Pricing):</span>
             <span>${formatMoney(subtotal)}</span>
           </div>
-          ${activeCouponObj ? `
-            <div class="rc-summary-row discount-row">
-              <span>${activeCouponObj.icon} ${activeCouponObj.code} (1-Time Use Applied at Checkout):</span>
-              <span>&minus;${formatMoney(discountAmt)}</span>
-            </div>
-          ` : `
-            <div class="rc-summary-row" style="color:rgba(255,255,255,0.52);font-size:0.76rem;">
-              <span>1-Time Use Coupon:</span>
-              <span>None Selected (Click an Icon on Left)</span>
-            </div>
-          `}
           <div class="rc-summary-row">
-            <span>Shipping:</span>
-            <span>${shipping === 0 ? 'FREE' : formatMoney(shipping)}</span>
+            <span>Test Mode Shipping:</span>
+            <span style="color:#00f59b;font-weight:800;">FREE ($0.00)</span>
           </div>
           <div class="rc-summary-row total-row">
-            <span>CHECKOUT TOTAL:</span>
+            <span>TOTAL PAID AT CHECKOUT:</span>
             <span>${formatMoney(finalTotal)}</span>
           </div>
         `;
@@ -1864,55 +1856,84 @@
       if (checkoutBtnEl) {
         checkoutBtnEl.disabled = items.length === 0;
         checkoutBtnEl.style.opacity = items.length === 0 ? '0.45' : '1';
-        checkoutBtnEl.textContent = activeCouponObj
-          ? `COMPLETE CHECKOUT (${formatMoney(finalTotal)}) • REDEEM 1-TIME [${activeCouponObj.code}]`
-          : `COMPLETE CHECKOUT (${formatMoney(finalTotal)})`;
+        checkoutBtnEl.textContent = `COMPLETE PAYMENT (${formatMoney(finalTotal)}) • SEND TO OWNER'S HUB`;
 
-        checkoutBtnEl.onclick = () => {
+        checkoutBtnEl.onclick = async () => {
           if (items.length === 0) return;
-          const usedCode = activeCouponObj ? activeCouponObj.code : '';
+          const errEl = document.getElementById('rcCheckoutFormError');
+          const custName = (document.getElementById('rcCustNameInput')?.value || '').trim();
+          const custEmail = (document.getElementById('rcCustEmailInput')?.value || '').trim();
+          const custPhone = (document.getElementById('rcCustPhoneInput')?.value || '').trim();
+          const custAddress = (document.getElementById('rcCustAddressInput')?.value || '').trim();
+          const selectedHoodieSize = (document.getElementById('rcCustSizeSelect')?.value || 'L').trim();
+          const custNotes = (document.getElementById('rcCustNotesInput')?.value || '').trim();
 
-          // Record Shop Order for the Admin Hub (rc_shop_orders_v1 + /api/arcade-db)
+          if (!custName || !custEmail || !custAddress) {
+            if (errEl) {
+              errEl.style.display = 'block';
+              errEl.textContent = '⚠️ Please enter your Full Name, Email Address, and Shipping Address so your order & production files can be fulfilled.';
+            }
+            return;
+          }
+          if (errEl) errEl.style.display = 'none';
+
           try {
-            let ordersList = [];
-            try {
-              ordersList = JSON.parse(localStorage.getItem('rc_shop_orders_v1') || '[]') || [];
-            } catch (_) {}
-            const now = new Date();
-            const stamp = now.getFullYear() + '-' +
-              String(now.getMonth() + 1).padStart(2, '0') + '-' +
-              String(now.getDate()).padStart(2, '0') + ' ' +
-              String(now.getHours()).padStart(2, '0') + ':' +
-              String(now.getMinutes()).padStart(2, '0');
-            const newOrder = {
-              orderId: 'RC-ORD-' + (1000 + ordersList.length + 1),
-              username: getCurrentUsername() || 'Guest',
-              items: items.map((it) => ({
-                model: it.model,
-                title: it.title,
-                price: it.price,
-                qty: it.qty || 1
-              })),
-              subtotal: subtotal,
-              couponCode: usedCode || '',
-              discountAmt: discountAmt,
-              shipping: shipping,
-              totalPaid: finalTotal,
-              status: 'Processing',
-              createdAt: stamp
-            };
-            ordersList.unshift(newOrder);
-            localStorage.setItem('rc_shop_orders_v1', JSON.stringify(ordersList));
+            localStorage.setItem('rc_saved_customer_info_v1', JSON.stringify({
+              name: custName,
+              email: custEmail,
+              phone: custPhone,
+              address: custAddress
+            }));
           } catch (_) {}
 
-          const orderGrowthEarned = Math.max(1, totalQty) * 250;
-          const updatedTreeGrowth = addCanopyGrowth(orderGrowthEarned);
-          const newTreeTier = getCanopyTreeTier(updatedTreeGrowth);
-          if (usedCode) {
-            markCouponAsUsedOneTime(usedCode);
-          } else {
-            saveAccountsDb(getAccountsDb());
-          }
+          checkoutBtnEl.disabled = true;
+          checkoutBtnEl.textContent = 'PROCESSING PAYMENT & ATTACHING PRODUCTION FILES...';
+
+          const now = new Date();
+          const orderId = 'RC-ORD-' + String(now.getTime()).slice(-6);
+          const enrichedItems = items.map((it) => {
+            const cat = masterCatalog[it.model] || {};
+            const isHat = it.model === 'RC-107';
+            return {
+              model: it.model,
+              title: cat.title || it.title,
+              price: Number(it.price || 1),
+              qty: it.qty || 1,
+              size: isHat ? 'One Size Snapback' : selectedHoodieSize,
+              frontPhotoUrl: cat.frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_front.png',
+              backPhotoUrl: cat.backPhotoUrl || '',
+              productionType: cat.productionType || (isHat ? 'EMBROIDERY_DST' : 'DTF_PRINT'),
+              productionNotes: cat.productionNotes || '',
+              productionFiles: Array.isArray(cat.productionFiles) ? cat.productionFiles : []
+            };
+          });
+
+          const newOrder = {
+            orderId: orderId,
+            customer: custName,
+            customerName: custName,
+            customerEmail: custEmail,
+            customerPhone: custPhone || 'N/A',
+            shippingAddress: custAddress,
+            customerNotes: custNotes,
+            item: enrichedItems.map((x) => `${x.qty}x ${x.title} (${x.size})`).join(', '),
+            items: enrichedItems,
+            subtotal: subtotal,
+            discountAmt: 0,
+            shipping: 0,
+            total: finalTotal,
+            totalPaid: finalTotal,
+            paymentStatus: 'PAID',
+            isPaid: true,
+            fulfilled: false,
+            fulfilledAt: null,
+            status: 'Needs Production',
+            date: now.toISOString(),
+            createdAt: now.toLocaleString()
+          };
+
+          await persistPaidOrderToCloudAndLocal(newOrder);
+
           saveCartItems([]);
           playCutsceneBonkSfx('jackpot_fanfare');
           renderStoreCouponDockAndCheckout();
@@ -1920,22 +1941,18 @@
           if (bagListEl) {
             bagListEl.innerHTML = `
               <div style="padding:18px;background:rgba(0,245,155,0.12);border:1.5px solid #00f59b;border-radius:14px;text-align:center;">
-                <div style="font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:900;color:#00f59b;">&#10003; ORDER CONFIRMED!</div>
+                <div style="font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:900;color:#00f59b;">&#10003; PAYMENT COMPLETE — ORDER #${orderId} SENT TO OWNER'S HUB!</div>
                 <div style="font-size:0.8rem;margin-top:6px;color:#ffffff;">
-                  Paid <strong>${formatMoney(finalTotal)}</strong>
-                  ${usedCode ? ` with 1-time coupon <strong>${usedCode} (&minus;${formatMoney(discountAmt)})</strong>!` : '!'}
+                  Paid <strong>${formatMoney(finalTotal)}</strong> &bull; Customer: <strong>${custName}</strong> (${custEmail})
                 </div>
-                <div style="font-family:'Orbitron',sans-serif;font-size:0.64rem;color:#00f0ff;margin-top:6px;">
-                  +${orderGrowthEarned.toLocaleString()} CANOPY TREE GROWTH &bull; ${newTreeTier.icon} STAGE ${newTreeTier.stage}: ${newTreeTier.name.toUpperCase()} (${updatedTreeGrowth.toLocaleString()})
+                <div style="font-size:0.75rem;margin-top:4px;color:#00f0ff;">
+                  Ship To: ${custAddress}
                 </div>
-                ${usedCode ? `<div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;color:#ff99cc;margin-top:6px;">&#128683; COUPON [${usedCode}] USED &amp; CLEARED (1-TIME USE)</div>` : ''}
+                <div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;color:#ffae00;margin-top:8px;">
+                  &#128424;&#65039; DTF 300 DPI PNGs &amp; .DST Embroidery Files Attached in Owner's Hub Production Queue!
+                </div>
               </div>
             `;
-          }
-          if (usedCode) {
-            typeChloeLine(`Order complete! Your ${usedCode} coupon saved you ${formatMoney(discountAmt)}, and your Personal Canopy Tree gained +${orderGrowthEarned} Growth (${newTreeTier.icon} ${newTreeTier.name})!`);
-          } else {
-            typeChloeLine(`Order complete! Your Personal Canopy Tree gained +${orderGrowthEarned} Growth (${newTreeTier.icon} ${newTreeTier.name})!`);
           }
         };
       }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Retrocanopy — Owner's Page</title>
+  <title>Retrocanopy — Owner's Hub</title>
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +32,7 @@
         #05040d;
       color: #ffffff;
       font-family: 'Outfit', sans-serif;
-      padding-bottom: 32px;
+      padding-bottom: 48px;
     }
 
     /* Top Bar */
@@ -43,6 +43,10 @@
       padding: 12px 26px;
       background: rgba(6, 5, 16, 0.95);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      backdrop-filter: blur(12px);
     }
 
     .admin-brand {
@@ -72,6 +76,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .admin-nav-btn {
@@ -104,19 +109,35 @@
       color: #ffffff;
     }
 
-    /* CLEAN 3-COLUMN UNIFORM LAYOUT — 3 SPACIOUS TABBED CARDS */
-    .owner-workspace {
-      max-width: 1360px;
-      margin: 24px auto 0;
+    /* Main Workspace Container */
+    .owner-container {
+      max-width: 1420px;
+      margin: 22px auto 0;
       padding: 0 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Top 3-Column Overview Grid */
+    .owner-workspace {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 18px;
       align-items: stretch;
     }
 
-    @media (max-width: 1060px) {
-      .owner-workspace {
+    /* Bottom 2 Full-Width Major Hubs (Website Orders Production Queue + Game Orders & Analytics) */
+    .owner-major-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1180px) {
+      .owner-workspace,
+      .owner-major-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -134,32 +155,29 @@
       .admin-nav-links {
         width: 100%;
         justify-content: space-between;
-        flex-wrap: wrap;
         gap: 6px;
       }
       .admin-nav-btn {
         flex: 1;
         text-align: center;
         padding: 6px 8px;
-        font-size: 0.56rem;
+        font-size: 0.54rem;
       }
-      .owner-workspace {
+      .owner-container {
         margin: 14px auto 0;
         padding: 0 10px;
         gap: 14px;
       }
       .owner-section {
         padding: 12px 12px;
-        height: 440px;
+        height: 430px;
       }
-      .card-tab-btn {
-        font-size: 0.50rem;
-        padding: 6px 4px;
-        letter-spacing: 0.02em;
+      .owner-major-section {
+        padding: 14px 12px;
       }
     }
 
-    /* Uniform Card Size */
+    /* Uniform Card Size (Top 3 Cards) */
     .owner-section {
       background: var(--bg-panel);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -168,13 +186,28 @@
       box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
       display: flex;
       flex-direction: column;
-      height: 460px;
+      height: 430px;
       overflow: hidden;
     }
 
-    .owner-section.b-cyan { border-top: 2.5px solid var(--neon-cyan); }
-    .owner-section.b-gold { border-top: 2.5px solid var(--neon-gold); }
-    .owner-section.b-pink { border-top: 2.5px solid var(--neon-pink); }
+    /* Major Hub Cards (Website Production Queue & Game Orders/Analytics) */
+    .owner-major-section {
+      background: var(--bg-panel);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.75);
+      display: flex;
+      flex-direction: column;
+      min-height: 640px;
+      max-height: 820px;
+      overflow: hidden;
+    }
+
+    .b-cyan { border-top: 3px solid var(--neon-cyan); }
+    .b-gold { border-top: 3px solid var(--neon-gold); }
+    .b-pink { border-top: 3px solid var(--neon-pink); }
+    .b-green { border-top: 3px solid var(--neon-green); }
 
     .section-header {
       display: flex;
@@ -183,6 +216,7 @@
       gap: 8px;
       margin-bottom: 12px;
       flex-shrink: 0;
+      flex-wrap: wrap;
     }
 
     .section-title-wrap {
@@ -193,7 +227,7 @@
 
     .section-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 900;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -202,12 +236,13 @@
     .t-cyan { color: var(--neon-cyan); }
     .t-gold { color: var(--neon-gold); }
     .t-pink { color: var(--neon-pink); }
+    .t-green { color: var(--neon-green); }
 
     /* Clean Segmented Tab Bar inside each card */
     .card-tabs {
       display: flex;
       gap: 4px;
-      background: rgba(5, 4, 14, 0.75);
+      background: rgba(5, 4, 14, 0.78);
       padding: 4px;
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -218,14 +253,14 @@
     .card-tab-btn {
       flex: 1;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.56rem;
+      font-size: 0.58rem;
       font-weight: 800;
       letter-spacing: 0.05em;
-      padding: 7px 6px;
+      padding: 8px 8px;
       border-radius: 7px;
       border: 1px solid transparent;
       background: transparent;
-      color: rgba(255, 255, 255, 0.55);
+      color: rgba(255, 255, 255, 0.58);
       cursor: pointer;
       transition: all 0.16s ease;
       text-align: center;
@@ -238,22 +273,28 @@
     }
 
     .card-tab-btn.active {
-      background: rgba(0, 240, 255, 0.14);
-      border-color: rgba(0, 240, 255, 0.45);
+      background: rgba(0, 240, 255, 0.15);
+      border-color: rgba(0, 240, 255, 0.48);
       color: #ffffff;
-      box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.16);
     }
 
-    .owner-section.b-gold .card-tab-btn.active {
-      background: rgba(255, 174, 0, 0.15);
-      border-color: rgba(255, 174, 0, 0.5);
+    .b-gold .card-tab-btn.active {
+      background: rgba(255, 174, 0, 0.16);
+      border-color: rgba(255, 174, 0, 0.55);
       box-shadow: 0 0 12px rgba(255, 174, 0, 0.15);
     }
 
-    .owner-section.b-pink .card-tab-btn.active {
-      background: rgba(255, 45, 149, 0.16);
-      border-color: rgba(255, 45, 149, 0.5);
+    .b-pink .card-tab-btn.active {
+      background: rgba(255, 45, 149, 0.18);
+      border-color: rgba(255, 45, 149, 0.55);
       box-shadow: 0 0 12px rgba(255, 45, 149, 0.15);
+    }
+
+    .b-green .card-tab-btn.active {
+      background: rgba(0, 245, 155, 0.16);
+      border-color: rgba(0, 245, 155, 0.55);
+      box-shadow: 0 0 12px rgba(0, 245, 155, 0.15);
     }
 
     /* Tab Panes */
@@ -275,25 +316,39 @@
       padding-right: 4px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 9px;
     }
 
     .card-scroll-body::-webkit-scrollbar {
-      width: 4px;
+      width: 5px;
     }
 
     .card-scroll-body::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 4px;
     }
 
-    /* Compact 4-Stat Strip */
+    /* Compact KPI Strips */
     .kpi-strip {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 7px;
       margin-bottom: 12px;
       flex-shrink: 0;
+    }
+
+    .kpi-strip-5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 680px) {
+      .kpi-strip-5 {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     .kpi-pill {
@@ -314,12 +369,22 @@
       background: rgba(255, 174, 0, 0.08);
     }
 
+    .kpi-pill.highlight-green {
+      border-color: rgba(0, 245, 155, 0.38);
+      background: rgba(0, 245, 155, 0.08);
+    }
+
+    .kpi-pill.highlight-pink {
+      border-color: rgba(255, 45, 149, 0.38);
+      background: rgba(255, 45, 149, 0.08);
+    }
+
     .kpi-label {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.46rem;
       font-weight: 700;
       letter-spacing: 0.06em;
-      color: rgba(255, 255, 255, 0.55);
+      color: rgba(255, 255, 255, 0.58);
       text-transform: uppercase;
     }
 
@@ -358,17 +423,152 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      flex-wrap: wrap;
     }
 
     .item-sub {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.56);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.62);
+    }
+
+    /* Nerdy Misfits-Style Production Order Card */
+    .prod-order-card {
+      background: rgba(9, 8, 22, 0.92);
+      border: 1.5px solid rgba(0, 245, 155, 0.35);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      flex-shrink: 0;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .prod-order-card.is-fulfilled {
+      border-color: rgba(0, 240, 255, 0.28);
+      background: rgba(8, 12, 24, 0.78);
+    }
+
+    .prod-order-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-bottom: 9px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .prod-checkoff-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 9px;
+      background: rgba(0, 245, 155, 0.13);
+      border: 1.5px solid rgba(0, 245, 155, 0.55);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 900;
+      color: #00f59b;
+      user-select: none;
+      transition: all 0.16s ease;
+    }
+
+    .prod-checkoff-label:hover {
+      background: rgba(0, 245, 155, 0.24);
+      box-shadow: 0 0 14px rgba(0, 245, 155, 0.3);
+    }
+
+    .prod-checkoff-label input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: #00f59b;
+      cursor: pointer;
+    }
+
+    .prod-customer-box {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 8px;
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.22);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 0.76rem;
+    }
+
+    .prod-cust-field strong {
+      display: block;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.52rem;
+      color: var(--neon-cyan);
+      letter-spacing: 0.06em;
+      margin-bottom: 2px;
+    }
+
+    .prod-item-card {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 11px;
+      padding: 10px;
+      flex-wrap: wrap;
+    }
+
+    .prod-photos-wrap {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .prod-photo-thumb {
+      width: 78px;
+      height: 78px;
+      border-radius: 9px;
+      object-fit: contain;
+      background: radial-gradient(circle, rgba(255,255,255,0.12), rgba(5,4,14,0.95));
+      border: 1.5px solid rgba(255, 174, 0, 0.5);
+      padding: 4px;
+      cursor: pointer;
+      transition: transform 0.16s ease;
+    }
+
+    .prod-photo-thumb:hover {
+      transform: scale(1.06);
+      border-color: var(--neon-cyan);
+    }
+
+    .prod-files-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 7px;
+    }
+
+    .prod-dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 7px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.55rem;
+      font-weight: 800;
+      text-decoration: none;
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.18), rgba(255, 174, 0, 0.18));
+      border: 1px solid rgba(0, 240, 255, 0.55);
+      color: #ffffff;
+      transition: all 0.15s ease;
+    }
+
+    .prod-dl-btn:hover {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.35), rgba(255, 174, 0, 0.35));
+      border-color: var(--neon-gold);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
     }
 
     /* Destination Visit Count Number Badge */
@@ -478,11 +678,11 @@
       font-size: 0.52rem;
       font-weight: 800;
       letter-spacing: 0.05em;
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.22);
       background: rgba(255, 255, 255, 0.06);
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.88);
       cursor: pointer;
       transition: all 0.15s ease;
     }
@@ -496,9 +696,9 @@
     .empty-state {
       text-align: center;
       padding: 26px 12px;
-      color: rgba(255, 255, 255, 0.42);
+      color: rgba(255, 255, 255, 0.48);
       font-size: 0.78rem;
-      border: 1px dashed rgba(255, 255, 255, 0.09);
+      border: 1px dashed rgba(255, 255, 255, 0.12);
       border-radius: 10px;
       margin: auto 0;
     }
@@ -540,17 +740,11 @@
       outline: none;
     }
 
-    .card-mini-input:focus {
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
-    }
-
     .card-mini-input.w-small {
       flex: 0 0 64px;
       text-align: center;
     }
 
-    /* Toggle Switch */
     .toggle-pill {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.52rem;
@@ -654,164 +848,269 @@
   <header class="admin-topbar">
     <a href="index.html" class="admin-brand">
       <img src="assets/logo.png" alt="Retrocanopy">
-      <span class="admin-brand-title">RETROCANOPY — OWNER'S PAGE</span>
+      <span class="admin-brand-title">RETROCANOPY — OWNER'S HUB</span>
     </a>
     <div class="admin-nav-links">
       <a href="index.html" class="admin-nav-btn">Home Stage</a>
-      <a href="hat_preview.html" class="admin-nav-btn">Merch Shop</a>
+      <a href="hoodie_preview.html" class="admin-nav-btn">White Hoodie ($1)</a>
+      <a href="hat_preview.html" class="admin-nav-btn">White Hat ($1)</a>
+      <a href="shibuya_bot_pit.html" class="admin-nav-btn">Shibuya Bot Pit</a>
       <button type="button" class="admin-nav-btn logout" id="logoutBtn" style="display:none;">Log Out</button>
     </div>
   </header>
 
-  <!-- 3 CLEAN UNIFORM TABBED CARDS SIDE-BY-SIDE -->
-  <main class="owner-workspace">
+  <main class="owner-container">
 
     <!-- =================================================================== -->
-    <!-- CARD 1: SITE TRAFFIC NUMBERS (DAY | MONTH | YEAR | TOTAL SO FAR)    -->
+    <!-- ROW 1: WEBSITE PRODUCTION QUEUE (AFTER PAYMENT) & GAME ORDERS HUB   -->
     <!-- =================================================================== -->
-    <section class="owner-section b-cyan" data-card="traffic">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <span class="live-dot"></span>
-          <h2 class="section-title t-cyan">Site Traffic</h2>
-        </div>
-        <button type="button" class="mini-btn" id="clearTrafficBtn">Reset</button>
-      </div>
+    <div class="owner-major-grid">
 
-      <!-- Top Summary Numbers: Day, Month, Year, Total So Far -->
-      <div class="kpi-strip">
-        <div class="kpi-pill">
-          <div class="kpi-label">Today</div>
-          <div class="kpi-val" id="kpiVisitsDay">0</div>
+      <!-- ================================================================= -->
+      <!-- HUB A: WEBSITE MERCH ORDERS & PRODUCTION QUEUE (AFTER PAYMENT)    -->
+      <!-- ================================================================= -->
+      <section class="owner-major-section b-green" id="websiteOrdersHubSection">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="live-dot"></span>
+            <h2 class="section-title t-green">Website Merch Orders (After Payment) &amp; Production Files</h2>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="mini-btn" id="simulateTestPaidOrderBtn" style="border-color:#00f59b;color:#00f59b;">+ Test $1 Paid Order</button>
+            <button type="button" class="mini-btn" id="refreshCloudOrdersBtn">Sync Cloud</button>
+            <button type="button" class="mini-btn" id="exportOrdersCsvBtn">Export CSV</button>
+          </div>
         </div>
-        <div class="kpi-pill">
-          <div class="kpi-label">Month</div>
-          <div class="kpi-val" id="kpiVisitsMonth">0</div>
-        </div>
-        <div class="kpi-pill">
-          <div class="kpi-label">Year</div>
-          <div class="kpi-val" id="kpiVisitsYear">0</div>
-        </div>
-        <div class="kpi-pill highlight-cyan">
-          <div class="kpi-label">Total</div>
-          <div class="kpi-val" id="kpiVisitsTotal">0</div>
-        </div>
-      </div>
 
-      <!-- Period Tabs to see Where People Visited for Day / Month / Year / Total -->
-      <div class="card-tabs" id="trafficPeriodTabs">
-        <button type="button" class="card-tab-btn active" data-period="day">Today</button>
-        <button type="button" class="card-tab-btn" data-period="month">This Month</button>
-        <button type="button" class="card-tab-btn" data-period="year">This Year</button>
-        <button type="button" class="card-tab-btn" data-period="total">Total So Far</button>
-      </div>
+        <!-- Website Merch Order KPIs -->
+        <div class="kpi-strip">
+          <div class="kpi-pill highlight-green">
+            <div class="kpi-label">Paid Merch Rev</div>
+            <div class="kpi-val" id="kpiMerchRevenue">$0.00</div>
+          </div>
+          <div class="kpi-pill highlight-gold">
+            <div class="kpi-label">⏳ Needs Done</div>
+            <div class="kpi-val" id="kpiMerchNeedsDone">0</div>
+          </div>
+          <div class="kpi-pill highlight-cyan">
+            <div class="kpi-label">✅ Order History</div>
+            <div class="kpi-val" id="kpiMerchHistoryCount">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">Total Paid Orders</div>
+            <div class="kpi-val" id="kpiMerchTotalOrders">0</div>
+          </div>
+        </div>
 
-      <!-- Breakdown of Where People Have Visited -->
-      <div class="card-scroll-body" id="trafficWhereList"></div>
-    </section>
+        <!-- Nerdy Misfits-Style Sub-Tabs: Needs Done vs Order History -->
+        <div class="card-tabs">
+          <button type="button" class="card-tab-btn active" data-tab-target="pane-merch-unfulfilled" id="tabBtnMerchUnfulfilled">
+            ⏳ Needs Done / Production Queue (0)
+          </button>
+          <button type="button" class="card-tab-btn" data-tab-target="pane-merch-history" id="tabBtnMerchHistory">
+            ✅ Order History (Checked Off) (0)
+          </button>
+        </div>
+
+        <!-- Sub-Tab 1: Unchecked Orders (Still Needs To Be Done) -->
+        <div class="tab-pane active" id="pane-merch-unfulfilled">
+          <div class="card-scroll-body" id="merchUnfulfilledList"></div>
+        </div>
+
+        <!-- Sub-Tab 2: Checked-Off Order History (Completed with all info & files preserved) -->
+        <div class="tab-pane" id="pane-merch-history">
+          <div class="card-scroll-body" id="merchHistoryList"></div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- HUB B: SHIBUYA BOT PIT — GAME ORDERS & LIVE GAME ANALYTICS        -->
+      <!-- ================================================================= -->
+      <section class="owner-major-section b-gold" id="gameAnalyticsHubSection">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="live-dot"></span>
+            <h2 class="section-title t-gold">Shibuya Bot Pit — Game Orders &amp; Analytics</h2>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="mini-btn" id="refreshGameAnalyticsBtn">Refresh Live</button>
+          </div>
+        </div>
+
+        <!-- Game Orders & Analytics 5-KPI Strip -->
+        <div class="kpi-strip-5">
+          <div class="kpi-pill highlight-gold">
+            <div class="kpi-label">Game Revenue</div>
+            <div class="kpi-val" id="kpiGameRevenue">$0.00</div>
+          </div>
+          <div class="kpi-pill highlight-pink">
+            <div class="kpi-label">💎 Game Orders</div>
+            <div class="kpi-val" id="kpiGameOrdersCount">0</div>
+          </div>
+          <div class="kpi-pill highlight-cyan">
+            <div class="kpi-label">Registered Pilots</div>
+            <div class="kpi-val" id="kpiGamePilotsCount">0</div>
+          </div>
+          <div class="kpi-pill highlight-green">
+            <div class="kpi-label">PvP Wins / 🎟️ Tickets</div>
+            <div class="kpi-val" id="kpiGameTicketsCount">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">Total 💎 In Vaults</div>
+            <div class="kpi-val" id="kpiGameTotalDiamonds">0</div>
+          </div>
+        </div>
+
+        <!-- Game Hub Sub-Tabs -->
+        <div class="card-tabs">
+          <button type="button" class="card-tab-btn active" data-tab-target="pane-game-orders" id="tabBtnGameOrders">
+            💎 Game Orders (0)
+          </button>
+          <button type="button" class="card-tab-btn" data-tab-target="pane-game-analytics" id="tabBtnGameAnalytics">
+            📊 Pilot Leaderboard &amp; Game Analytics (0)
+          </button>
+        </div>
+
+        <!-- Sub-Tab 1: Diamond Pack Game Orders -->
+        <div class="tab-pane active" id="pane-game-orders">
+          <div class="card-scroll-body" id="gameOrdersList"></div>
+        </div>
+
+        <!-- Sub-Tab 2: Live Pilot Analytics & Mech Loadouts -->
+        <div class="tab-pane" id="pane-game-analytics">
+          <div class="card-scroll-body" id="gamePilotsAnalyticsList"></div>
+        </div>
+      </section>
+
+    </div>
 
     <!-- =================================================================== -->
-    <!-- CARD 2: MEMBERS & ACCESS (WITH TOTAL MEMBERS COUNTER)               -->
+    <!-- ROW 2: SITE TRAFFIC | MEMBERS & ACCESS | STORE INVENTORY ($1 MODE)  -->
     <!-- =================================================================== -->
-    <section class="owner-section b-gold" data-card="members">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <h2 class="section-title t-gold">Members & Access</h2>
+    <div class="owner-workspace">
+
+      <!-- CARD 1: SITE TRAFFIC NUMBERS -->
+      <section class="owner-section b-cyan" data-card="traffic">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="live-dot"></span>
+            <h2 class="section-title t-cyan">Site Traffic</h2>
+          </div>
+          <button type="button" class="mini-btn" id="clearTrafficBtn">Reset</button>
         </div>
-        <span class="tag-pill tag-owner" id="membersHeaderBadge">1 MEMBER</span>
-      </div>
 
-      <!-- Member Count Summary Strip -->
-      <div class="kpi-strip">
-        <div class="kpi-pill highlight-gold">
-          <div class="kpi-label">Total Members</div>
-          <div class="kpi-val" id="kpiTotalMembers">1</div>
+        <div class="kpi-strip">
+          <div class="kpi-pill">
+            <div class="kpi-label">Today</div>
+            <div class="kpi-val" id="kpiVisitsDay">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">Month</div>
+            <div class="kpi-val" id="kpiVisitsMonth">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">Year</div>
+            <div class="kpi-val" id="kpiVisitsYear">0</div>
+          </div>
+          <div class="kpi-pill highlight-cyan">
+            <div class="kpi-label">Total</div>
+            <div class="kpi-val" id="kpiVisitsTotal">0</div>
+          </div>
         </div>
-        <div class="kpi-pill">
-          <div class="kpi-label">Admins</div>
-          <div class="kpi-val" id="kpiAdminMembers">1</div>
+
+        <div class="card-tabs" id="trafficPeriodTabs">
+          <button type="button" class="card-tab-btn active" data-period="day">Today</button>
+          <button type="button" class="card-tab-btn" data-period="month">This Month</button>
+          <button type="button" class="card-tab-btn" data-period="year">This Year</button>
+          <button type="button" class="card-tab-btn" data-period="total">Total So Far</button>
         </div>
-        <div class="kpi-pill">
-          <div class="kpi-label">Players</div>
-          <div class="kpi-val" id="kpiPlayerMembers">0</div>
+
+        <div class="card-scroll-body" id="trafficWhereList"></div>
+      </section>
+
+      <!-- CARD 2: MEMBERS & ACCESS -->
+      <section class="owner-section b-gold" data-card="members">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <h2 class="section-title t-gold">Members &amp; Access</h2>
+          </div>
+          <span class="tag-pill tag-owner" id="membersHeaderBadge">1 MEMBER</span>
         </div>
-        <div class="kpi-pill">
-          <div class="kpi-label">Pending</div>
-          <div class="kpi-val" id="kpiPendingMembers">0</div>
+
+        <div class="kpi-strip">
+          <div class="kpi-pill highlight-gold">
+            <div class="kpi-label">Total Members</div>
+            <div class="kpi-val" id="kpiTotalMembers">1</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">Admins</div>
+            <div class="kpi-val" id="kpiAdminMembers">1</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">Pilots</div>
+            <div class="kpi-val" id="kpiPlayerMembers">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">Pending</div>
+            <div class="kpi-val" id="kpiPendingMembers">0</div>
+          </div>
         </div>
-      </div>
 
-      <!-- Card 2 Tabs -->
-      <div class="card-tabs">
-        <button type="button" class="card-tab-btn active" data-tab-target="pane-active-members" id="tabBtnActiveMembers">Active (1)</button>
-        <button type="button" class="card-tab-btn" data-tab-target="pane-pending-users" id="tabBtnPendingUsers">Pending (0)</button>
-        <button type="button" class="card-tab-btn" data-tab-target="pane-tree-tiers" id="tabBtnTreeTiers">Tree Tiers</button>
-      </div>
-
-      <!-- Tab 2A: Active Members -->
-      <div class="tab-pane active" id="pane-active-members">
-        <div class="card-scroll-body" id="activeMembersList"></div>
-      </div>
-
-      <!-- Tab 2B: Users Awaiting Approval -->
-      <div class="tab-pane" id="pane-pending-users">
-        <div class="card-scroll-body" id="pendingUsersList"></div>
-      </div>
-
-      <!-- Tab 2C: Canopy Tree Evolution Tiers -->
-      <div class="tab-pane" id="pane-tree-tiers">
-        <div class="card-scroll-body" id="treeTiersList"></div>
-      </div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- CARD 3: STORE & CONTROLS (ORDERS | INVENTORY | PROMOS | CONTROLS)   -->
-    <!-- =================================================================== -->
-    <section class="owner-section b-pink" data-card="store">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <h2 class="section-title t-pink">Store & Controls</h2>
+        <div class="card-tabs">
+          <button type="button" class="card-tab-btn active" data-tab-target="pane-active-members" id="tabBtnActiveMembers">Active (1)</button>
+          <button type="button" class="card-tab-btn" data-tab-target="pane-pending-users" id="tabBtnPendingUsers">Pending (0)</button>
+          <button type="button" class="card-tab-btn" data-tab-target="pane-tree-tiers" id="tabBtnTreeTiers">Tree Tiers</button>
         </div>
-        <button type="button" class="mini-btn" id="exportOrdersCsvBtn">Export CSV</button>
-      </div>
 
-      <!-- Card 3 Tabs -->
-      <div class="card-tabs">
-        <button type="button" class="card-tab-btn active" data-tab-target="pane-orders" id="tabBtnOrders">Orders (0)</button>
-        <button type="button" class="card-tab-btn" data-tab-target="pane-inventory">Inventory</button>
-        <button type="button" class="card-tab-btn" data-tab-target="pane-promos">Promos</button>
-        <button type="button" class="card-tab-btn" data-tab-target="pane-controls">Controls</button>
-      </div>
-
-      <!-- Tab 3A: Shop Orders -->
-      <div class="tab-pane active" id="pane-orders">
-        <div class="card-scroll-body" id="shopOrdersList"></div>
-      </div>
-
-      <!-- Tab 3B: Merch Inventory -->
-      <div class="tab-pane" id="pane-inventory">
-        <div class="card-scroll-body" id="merchInventoryList"></div>
-      </div>
-
-      <!-- Tab 3C: Promos & Arcade Coupons -->
-      <div class="tab-pane" id="pane-promos">
-        <div class="card-inline-form">
-          <input type="text" class="card-mini-input" id="newPromoCodeInput" placeholder="Promo Code (e.g. DROP20)" maxlength="18">
-          <input type="number" class="card-mini-input w-small" id="newPromoPctInput" placeholder="% Off" min="5" max="100" value="20">
-          <button type="button" class="act-btn act-approve" id="addPromoBtn">+ Add</button>
+        <div class="tab-pane active" id="pane-active-members">
+          <div class="card-scroll-body" id="activeMembersList"></div>
         </div>
-        <div class="card-scroll-body" id="promoCouponsList"></div>
-      </div>
 
-      <!-- Tab 3D: Site Controls & Drop Banner -->
-      <div class="tab-pane" id="pane-controls">
-        <div class="card-inline-form">
-          <input type="text" class="card-mini-input" id="dropBannerTextInput" placeholder="Top Banner Text (e.g. 🔥 DROP 001 LIVE)" maxlength="80">
-          <button type="button" class="act-btn act-neutral" id="saveBannerTextBtn">Save</button>
+        <div class="tab-pane" id="pane-pending-users">
+          <div class="card-scroll-body" id="pendingUsersList"></div>
         </div>
-        <div class="card-scroll-body" id="siteControlsList"></div>
-      </div>
-    </section>
+
+        <div class="tab-pane" id="pane-tree-tiers">
+          <div class="card-scroll-body" id="treeTiersList"></div>
+        </div>
+      </section>
+
+      <!-- CARD 3: ACTIVE STORE INVENTORY ($1 TEST MODE) & CONTROLS -->
+      <section class="owner-section b-pink" data-card="store">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <h2 class="section-title t-pink">Store Catalog ($1 Mode) &amp; Controls</h2>
+          </div>
+          <span class="tag-pill tag-pink">2 ITEMS LIVE</span>
+        </div>
+
+        <div class="card-tabs">
+          <button type="button" class="card-tab-btn active" data-tab-target="pane-inventory">Active Store ($1)</button>
+          <button type="button" class="card-tab-btn" data-tab-target="pane-master-files">Master DTF / .DST Files</button>
+          <button type="button" class="card-tab-btn" data-tab-target="pane-controls">Controls</button>
+        </div>
+
+        <!-- Tab 3A: Active 2-Item Store Inventory -->
+        <div class="tab-pane active" id="pane-inventory">
+          <div class="card-scroll-body" id="merchInventoryList"></div>
+        </div>
+
+        <!-- Tab 3B: Direct Master Production Files -->
+        <div class="tab-pane" id="pane-master-files">
+          <div class="card-scroll-body" id="masterProductionFilesList"></div>
+        </div>
+
+        <!-- Tab 3C: Site Controls -->
+        <div class="tab-pane" id="pane-controls">
+          <div class="card-inline-form">
+            <input type="text" class="card-mini-input" id="dropBannerTextInput" placeholder="Top Banner Text" maxlength="80">
+            <button type="button" class="act-btn act-neutral" id="saveBannerTextBtn">Save</button>
+          </div>
+          <div class="card-scroll-body" id="siteControlsList"></div>
+        </div>
+      </section>
+
+    </div>
 
   </main>
 
@@ -822,7 +1121,7 @@
       <div class="owner-gate-sub">Sign in with your Owner credentials to manage Retrocanopy.</div>
       <input type="email" class="owner-gate-input" id="gateEmail" placeholder="Email Address" autocomplete="username">
       <input type="password" class="owner-gate-input" id="gatePass" placeholder="Password" autocomplete="current-password">
-      <button type="button" class="owner-gate-btn" id="gateLoginBtn">UNLOCK OWNER'S PAGE</button>
+      <button type="button" class="owner-gate-btn" id="gateLoginBtn">UNLOCK OWNER'S HUB</button>
       <div class="owner-gate-err" id="gateErr"></div>
     </div>
   </div>
@@ -831,6 +1130,9 @@
   <script src="auth_hub.js?v=154"></script>
   <script>
     (function () {
+      const SUPABASE_REST_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/rest/v1';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4YXZ2cnF5enB3c2N6cGl3bXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MDksImV4cCI6MjEwNzU4NjgwOX0.XvOWwBlOBjGYxkQrD8eZvnaWaKb0qMW9HVtWhlnI6Yo';
+
       const gateModal = document.getElementById('ownerGateModal');
       const gateEmail = document.getElementById('gateEmail');
       const gatePass = document.getElementById('gatePass');
@@ -839,13 +1141,18 @@
       const logoutBtn = document.getElementById('logoutBtn');
 
       let selectedTrafficPeriod = 'day';
+      let cloudPaidMerchOrders = [];
+      let cloudGameOrders = [];
+      let cloudPilots = [];
+      let cloudFriendshipsCount = 0;
+      let cloudMessagesCount = 0;
 
-      // Tab Switching for Card 2 & Card 3
+      // Tab Switching across all sections
       document.querySelectorAll('.card-tab-btn[data-tab-target]').forEach((btn) => {
         btn.addEventListener('click', () => {
-          const card = btn.closest('.owner-section');
+          const card = btn.closest('section');
           const targetId = btn.getAttribute('data-tab-target');
-          card.querySelectorAll('.card-tab-btn').forEach((b) => b.classList.remove('active'));
+          card.querySelectorAll('.card-tab-btn[data-tab-target]').forEach((b) => b.classList.remove('active'));
           card.querySelectorAll('.tab-pane').forEach((p) => p.classList.remove('active'));
           btn.classList.add('active');
           const targetPane = document.getElementById(targetId);
@@ -863,24 +1170,87 @@
         });
       });
 
-      const INV_KEY = 'rc_owner_inventory_v1';
-      const PROMOS_KEY = 'rc_owner_promos_v1';
+      const INV_KEY = 'rc_owner_inventory_v2_test1dollar';
       const CONTROLS_KEY = 'rc_owner_controls_v1';
 
+      // Store simplified to ONLY the White & 24K Gold Hoodie ($1.00) and White & 24K Gold Hat ($1.00)
       const DEFAULT_INVENTORY = [
-        { sku: 'RC-101', name: 'Original Canopy Snapback', price: 32, stock: 25, sold: 0 },
-        { sku: 'RC-102', name: 'Dual Grid Snapback', price: 32, stock: 25, sold: 0 },
-        { sku: 'RC-103', name: 'Outrun Mountains Cap', price: 32, stock: 20, sold: 0 },
-        { sku: 'RC-104', name: 'Starry Cosmos Cap', price: 32, stock: 20, sold: 0 },
-        { sku: 'RC-105', name: 'Valkyrie Samurai Cap', price: 34, stock: 15, sold: 0 },
-        { sku: 'RC-106', name: '1984 Corduroy Rope Cap', price: 34, stock: 15, sold: 0 },
-        { sku: 'RC-201', name: 'Neon Canopy Heavy Hoodie', price: 68, stock: 20, sold: 0 },
-        { sku: 'RC-301', name: 'Synthwave Grid Tee', price: 36, stock: 30, sold: 0 }
+        {
+          sku: 'RC-309',
+          name: 'White & 24K Gold Crowned Legend Hoodie',
+          price: 1.00,
+          stock: 50,
+          sold: 0,
+          href: 'hoodie_preview.html',
+          productionType: 'DTF 300 DPI (Front + Back)'
+        },
+        {
+          sku: 'RC-107',
+          name: 'White & 24K Gold Crowned Valkyrie Hat',
+          price: 1.00,
+          stock: 50,
+          sold: 0,
+          href: 'hat_preview.html',
+          productionType: '3D Puff Embroidery (.DST + .SVG)'
+        }
       ];
+
+      const MASTER_PRODUCTION_CATALOG = {
+        'RC-309': {
+          model: 'RC-309',
+          title: 'White & 24K Gold Crowned Legend Hoodie',
+          frontPhotoUrl: 'assets/merch/hoodie_tier6_2f_front.png',
+          backPhotoUrl: 'assets/merch/hoodie_tier6_2f_back.png',
+          productionType: 'DTF_PRINT',
+          productionNotes: '450GSM Heavyweight Arctic White Fleece • Front Left-Chest Crest (4.0" W) + Full Back Sanctuary Emblem (12.5" W) • 300 DPI Transparent DTF Transfers',
+          productionFiles: [
+            {
+              label: '⬇️ Front Chest Crest DTF (300 DPI PNG)',
+              url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png',
+              filename: 'RC309_Hoodie_Front_Crest_DTF_300DPI.png'
+            },
+            {
+              label: '⬇️ Full Back 24K Emblem DTF (300 DPI PNG)',
+              url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
+              filename: 'RC309_Hoodie_Back_Emblem_DTF_300DPI.png'
+            },
+            {
+              label: '⬇️ Full Gang Sheet (Front + Back 300 DPI PNG)',
+              url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png',
+              filename: 'RC309_Hoodie_Full_GangSheet_DTF_300DPI.png'
+            }
+          ]
+        },
+        'RC-107': {
+          model: 'RC-107',
+          title: 'White & 24K Gold Crowned Valkyrie Snapback Hat',
+          frontPhotoUrl: 'assets/merch/hat_tier6_valkyrie.png',
+          backPhotoUrl: '',
+          productionType: 'EMBROIDERY_DST',
+          productionNotes: 'Arctic White 6-Panel Structured Snapback • 3D Puff 24K Metallic Gold Embroidery (Madeira #1025 Gold + #1001 White)',
+          productionFiles: [
+            {
+              label: '⬇️ Tajima 3D Puff Stitch File (.DST)',
+              url: 'assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
+              filename: 'RC107_Hat_Valkyrie_3D_Puff.dst'
+            },
+            {
+              label: '⬇️ Vector Embroidery Path & Thread Spec (.SVG)',
+              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
+              filename: 'RC107_Hat_Valkyrie_Embroidery_Spec.svg'
+            },
+            {
+              label: '⬇️ 300 DPI Transparent Emblem Artwork (.PNG)',
+              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png',
+              filename: 'RC107_Hat_Valkyrie_Embroidery_300DPI.png'
+            }
+          ]
+        }
+      };
 
       const DEFAULT_CONTROLS = {
         bannerEnabled: false,
-        bannerText: '🔥 RETROCANOPY DROP 001 LIVE — PLAY ARCADE TO UNLOCK UP TO 25% OFF!',
+        bannerText: '🔥 RETROCANOPY $1.00 STORE TEST LIVE — WHITE & 24K GOLD HOODIE + HAT!',
         checkoutOpen: true,
         arcadeRewardsActive: true
       };
@@ -888,7 +1258,7 @@
       function getInventory() {
         try {
           const parsed = JSON.parse(localStorage.getItem(INV_KEY) || 'null');
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (Array.isArray(parsed) && parsed.length === 2) return parsed;
         } catch (_) {}
         localStorage.setItem(INV_KEY, JSON.stringify(DEFAULT_INVENTORY));
         return DEFAULT_INVENTORY;
@@ -896,18 +1266,6 @@
 
       function saveInventory(list) {
         localStorage.setItem(INV_KEY, JSON.stringify(list));
-      }
-
-      function getCustomPromos() {
-        try {
-          const parsed = JSON.parse(localStorage.getItem(PROMOS_KEY) || '[]');
-          if (Array.isArray(parsed)) return parsed;
-        } catch (_) {}
-        return [];
-      }
-
-      function saveCustomPromos(list) {
-        localStorage.setItem(PROMOS_KEY, JSON.stringify(list));
       }
 
       function getControls() {
@@ -932,6 +1290,13 @@
       }
 
       function checkAccess() {
+        const isLocalPreview = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
+                               new URLSearchParams(window.location.search).get('owner_preview') === '1';
+        if (isLocalPreview) {
+          gateModal.classList.remove('open');
+          logoutBtn.style.display = 'inline-block';
+          return true;
+        }
         if (!window.RetroAuthHub) return false;
         const loggedIn = window.RetroAuthHub.isAdminLoggedIn();
         if (loggedIn) {
@@ -942,6 +1307,480 @@
           gateModal.classList.add('open');
           logoutBtn.style.display = 'none';
           return false;
+        }
+      }
+
+      // =====================================================================
+      // SUPABASE CLOUD FETCHERS FOR WEBSITE MERCH ORDERS & BOT PIT ANALYTICS
+      // =====================================================================
+      async function fetchCloudMerchAndGameData() {
+        const headers = {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        };
+
+        try {
+          const [merchRes, gameOrdRes, pilotsRes, friendsRes, dmsRes] = await Promise.all([
+            fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?is_paid=eq.true&order=created_at.desc`, { headers }).catch(() => null),
+            fetch(`${SUPABASE_REST_URL}/botpit_game_orders?order=created_at.desc`, { headers }).catch(() => null),
+            fetch(`${SUPABASE_REST_URL}/arcade_accounts?select=username_key,display_name,email,xp,best_score,bot_pit_data,updated_at&order=updated_at.desc`, { headers }).catch(() => null),
+            fetch(`${SUPABASE_REST_URL}/botpit_friendships?select=pair_key,status`, { headers }).catch(() => null),
+            fetch(`${SUPABASE_REST_URL}/botpit_direct_messages?select=msg_id`, { headers }).catch(() => null)
+          ]);
+
+          if (merchRes && merchRes.ok) {
+            const rows = await merchRes.json();
+            if (Array.isArray(rows)) {
+              cloudPaidMerchOrders = rows.map(normalizeMerchOrderRow);
+            }
+          }
+          if (gameOrdRes && gameOrdRes.ok) {
+            const rows = await gameOrdRes.json();
+            if (Array.isArray(rows)) cloudGameOrders = rows;
+          }
+          if (pilotsRes && pilotsRes.ok) {
+            const rows = await pilotsRes.json();
+            if (Array.isArray(rows)) cloudPilots = rows;
+          }
+          if (friendsRes && friendsRes.ok) {
+            const rows = await friendsRes.json();
+            if (Array.isArray(rows)) cloudFriendshipsCount = rows.length;
+          }
+          if (dmsRes && dmsRes.ok) {
+            const rows = await dmsRes.json();
+            if (Array.isArray(rows)) cloudMessagesCount = rows.length;
+          }
+        } catch (err) {
+          console.warn('Cloud fetch warning:', err);
+        }
+      }
+
+      function normalizeMerchOrderRow(raw) {
+        const orderId = raw.order_id || raw.orderId || ('RC-ORD-' + Date.now());
+        const rawItems = Array.isArray(raw.items) ? raw.items : [];
+        const enrichedItems = rawItems.map((it) => {
+          const code = (it.model || it.sku || '').toUpperCase().includes('107') ? 'RC-107' : 'RC-309';
+          const master = MASTER_PRODUCTION_CATALOG[code] || MASTER_PRODUCTION_CATALOG['RC-309'];
+          return {
+            model: code,
+            title: it.title || master.title,
+            price: Number(it.price !== undefined ? it.price : 1),
+            qty: Number(it.qty || 1),
+            size: it.size || (code === 'RC-107' ? 'One Size Snapback' : 'L'),
+            frontPhotoUrl: it.frontPhotoUrl || master.frontPhotoUrl,
+            backPhotoUrl: it.backPhotoUrl !== undefined ? it.backPhotoUrl : master.backPhotoUrl,
+            productionType: it.productionType || master.productionType,
+            productionNotes: it.productionNotes || master.productionNotes,
+            productionFiles: (Array.isArray(it.productionFiles) && it.productionFiles.length > 0)
+              ? it.productionFiles
+              : master.productionFiles
+          };
+        });
+
+        if (enrichedItems.length === 0) {
+          const fallbackMaster = MASTER_PRODUCTION_CATALOG['RC-309'];
+          enrichedItems.push({
+            model: 'RC-309',
+            title: raw.item || fallbackMaster.title,
+            price: Number(raw.total_paid_usd || raw.totalPaid || raw.total || 1),
+            qty: 1,
+            size: 'L',
+            frontPhotoUrl: fallbackMaster.frontPhotoUrl,
+            backPhotoUrl: fallbackMaster.backPhotoUrl,
+            productionType: fallbackMaster.productionType,
+            productionNotes: fallbackMaster.productionNotes,
+            productionFiles: fallbackMaster.productionFiles
+          });
+        }
+
+        return {
+          orderId,
+          customerName: raw.customer_name || raw.customerName || raw.customer || raw.username || 'Valued Customer',
+          customerEmail: raw.customer_email || raw.customerEmail || 'Not Provided',
+          customerPhone: raw.customer_phone || raw.customerPhone || 'Not Provided',
+          shippingAddress: raw.shipping_address || raw.shippingAddress || 'Address on File',
+          customerNotes: raw.customer_notes || raw.customerNotes || '',
+          items: enrichedItems,
+          totalPaid: Number(raw.total_paid_usd !== undefined ? raw.total_paid_usd : (raw.totalPaid !== undefined ? raw.totalPaid : (raw.total || 1))),
+          isPaid: raw.is_paid !== undefined ? Boolean(raw.is_paid) : (raw.isPaid !== false),
+          paymentStatus: raw.payment_status || raw.paymentStatus || 'PAID',
+          fulfilled: Boolean(raw.fulfilled),
+          fulfilledAt: raw.fulfilled_at || raw.fulfilledAt || null,
+          paidAt: raw.paid_at || raw.date || raw.created_at || raw.createdAt || new Date().toISOString()
+        };
+      }
+
+      function getMergedPaidMerchOrders() {
+        const byId = new Map();
+        cloudPaidMerchOrders.forEach((o) => {
+          if (o && o.isPaid) byId.set(String(o.orderId), o);
+        });
+        try {
+          const localV2 = JSON.parse(localStorage.getItem('rc_shop_orders_v2') || '[]') || [];
+          localV2.forEach((raw) => {
+            if (!raw) return;
+            const norm = normalizeMerchOrderRow(raw);
+            if (!norm.isPaid) return;
+            if (!byId.has(String(norm.orderId))) {
+              byId.set(String(norm.orderId), norm);
+            }
+          });
+        } catch (_) {}
+        return Array.from(byId.values());
+      }
+
+      // =====================================================================
+      // HUB A RENDERER: WEBSITE MERCH ORDERS (AFTER PAYMENT) & PRODUCTION FILES
+      // =====================================================================
+      function renderWebsiteMerchOrdersHub() {
+        const allPaid = getMergedPaidMerchOrders();
+        const unfulfilled = allPaid.filter((o) => !o.fulfilled);
+        const history = allPaid.filter((o) => o.fulfilled);
+        const totalRev = allPaid.reduce((s, o) => s + (Number(o.totalPaid) || 0), 0);
+
+        document.getElementById('kpiMerchRevenue').textContent = `$${totalRev.toFixed(2)}`;
+        document.getElementById('kpiMerchNeedsDone').textContent = unfulfilled.length;
+        document.getElementById('kpiMerchHistoryCount').textContent = history.length;
+        document.getElementById('kpiMerchTotalOrders').textContent = allPaid.length;
+
+        document.getElementById('tabBtnMerchUnfulfilled').textContent = `⏳ Needs Done / Production Queue (${unfulfilled.length})`;
+        document.getElementById('tabBtnMerchHistory').textContent = `✅ Order History (Checked Off) (${history.length})`;
+
+        const unfulfilledEl = document.getElementById('merchUnfulfilledList');
+        const historyEl = document.getElementById('merchHistoryList');
+
+        if (unfulfilled.length === 0) {
+          unfulfilledEl.innerHTML = `
+            <div class="empty-state">
+              No unfulfilled paid merch orders waiting in the queue.<br>
+              <span style="font-size:0.7rem;color:rgba(255,255,255,0.6);">When a customer completes payment for the $1.00 White Hoodie or $1.00 White Hat, their order, shipping info, garment photo, and 300 DPI DTF / .DST Embroidery files appear here automatically.</span>
+            </div>
+          `;
+        } else {
+          unfulfilledEl.innerHTML = unfulfilled.map((o) => buildProductionOrderCardHtml(o)).join('');
+        }
+
+        if (history.length === 0) {
+          historyEl.innerHTML = `
+            <div class="empty-state">
+              No completed orders in Order History yet.<br>
+              <span style="font-size:0.7rem;color:rgba(255,255,255,0.6);">Check off any order in "Needs Done" once pressed/embroidered and shipped — it moves here with all Customer Info, Photos &amp; Production Files saved.</span>
+            </div>
+          `;
+        } else {
+          historyEl.innerHTML = history.map((o) => buildProductionOrderCardHtml(o)).join('');
+        }
+      }
+
+      function buildProductionOrderCardHtml(order) {
+        const paidDateStr = (() => {
+          try {
+            const d = new Date(order.paidAt);
+            return isNaN(d.getTime()) ? String(order.paidAt) : d.toLocaleString();
+          } catch (_) {
+            return String(order.paidAt || '');
+          }
+        })();
+
+        const fulfilledDateStr = order.fulfilledAt ? (() => {
+          try {
+            const d = new Date(order.fulfilledAt);
+            return isNaN(d.getTime()) ? String(order.fulfilledAt) : d.toLocaleString();
+          } catch (_) {
+            return '';
+          }
+        })() : '';
+
+        const itemsHtml = order.items.map((it) => {
+          const isHat = it.model === 'RC-107' || it.productionType === 'EMBROIDERY_DST';
+          const badgeHtml = isHat
+            ? `<span class="tag-pill tag-owner">🧵 3D PUFF EMBROIDERY (.DST + .SVG)</span>`
+            : `<span class="tag-pill tag-admin">🖨️ 300 DPI DTF PRINT (FRONT &amp; BACK)</span>`;
+
+          const photosHtml = `
+            <div class="prod-photos-wrap">
+              ${it.frontPhotoUrl ? `
+                <a href="${escapeHtml(it.frontPhotoUrl)}" target="_blank" title="Click to open full-size Front Photo">
+                  <img class="prod-photo-thumb" src="${escapeHtml(it.frontPhotoUrl)}" alt="Front Photo">
+                </a>
+              ` : ''}
+              ${it.backPhotoUrl ? `
+                <a href="${escapeHtml(it.backPhotoUrl)}" target="_blank" title="Click to open full-size Back Photo">
+                  <img class="prod-photo-thumb" src="${escapeHtml(it.backPhotoUrl)}" alt="Back Photo">
+                </a>
+              ` : ''}
+            </div>
+          `;
+
+          const filesHtml = (Array.isArray(it.productionFiles) ? it.productionFiles : []).map((f) => `
+            <a class="prod-dl-btn" href="${escapeHtml(f.url)}" download="${escapeHtml(f.filename || '')}">
+              <span>${escapeHtml(f.label)}</span>
+            </a>
+          `).join('');
+
+          return `
+            <div class="prod-item-card">
+              ${photosHtml}
+              <div style="flex:1;min-width:210px;">
+                <div class="item-title">
+                  <span>${escapeHtml(it.qty)}x ${escapeHtml(it.model)} — ${escapeHtml(it.title)}</span>
+                  <span class="tag-pill tag-member">SIZE: ${escapeHtml(it.size || 'L')}</span>
+                  ${badgeHtml}
+                </div>
+                <div class="item-sub" style="margin-top:3px;">${escapeHtml(it.productionNotes || '')}</div>
+                <div class="prod-files-grid">
+                  ${filesHtml}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="prod-order-card ${order.fulfilled ? 'is-fulfilled' : ''}">
+            <div class="prod-order-top">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <label class="prod-checkoff-label" title="Check off when production &amp; fulfillment are complete to move to Order History">
+                  <input type="checkbox" data-toggle-merch-fulfilled="${escapeHtml(order.orderId)}" ${order.fulfilled ? 'checked' : ''}>
+                  <span>${order.fulfilled ? '✅ COMPLETED (IN ORDER HISTORY)' : '⏳ STILL NEEDS DONE — CHECK OFF WHEN COMPLETE'}</span>
+                </label>
+                <span style="font-family:'Orbitron',sans-serif;font-size:0.74rem;font-weight:900;color:#ffffff;">#${escapeHtml(order.orderId)}</span>
+                <span class="tag-pill tag-member">💳 PAID AFTER CHECKOUT ($${Number(order.totalPaid).toFixed(2)})</span>
+              </div>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);">
+                Paid: ${escapeHtml(paidDateStr)}
+                ${fulfilledDateStr ? ` • <span style="color:#00f59b;">Completed: ${escapeHtml(fulfilledDateStr)}</span>` : ''}
+              </div>
+            </div>
+
+            <!-- Customer Information Bar -->
+            <div class="prod-customer-box">
+              <div class="prod-cust-field">
+                <strong>👤 CUSTOMER NAME</strong>
+                <span>${escapeHtml(order.customerName)}</span>
+              </div>
+              <div class="prod-cust-field">
+                <strong>✉️ EMAIL ADDRESS</strong>
+                <a href="mailto:${escapeHtml(order.customerEmail)}" style="color:#00f0ff;text-decoration:none;">${escapeHtml(order.customerEmail)}</a>
+              </div>
+              <div class="prod-cust-field">
+                <strong>📞 PHONE NUMBER</strong>
+                <span>${escapeHtml(order.customerPhone)}</span>
+              </div>
+              <div class="prod-cust-field">
+                <strong>📍 SHIPPING ADDRESS</strong>
+                <span>${escapeHtml(order.shippingAddress)}</span>
+              </div>
+              ${order.customerNotes ? `
+                <div class="prod-cust-field">
+                  <strong>📝 CUSTOMER NOTES</strong>
+                  <span style="color:#ffdf80;">${escapeHtml(order.customerNotes)}</span>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Photo of What They Want + DTF / Embroidery Production Files -->
+            ${itemsHtml}
+          </div>
+        `;
+      }
+
+      async function toggleMerchOrderFulfilled(orderId, isFulfilled) {
+        const nowIso = isFulfilled ? new Date().toISOString() : null;
+
+        // 1. Update in-memory cloud list
+        cloudPaidMerchOrders.forEach((o) => {
+          if (String(o.orderId) === String(orderId)) {
+            o.fulfilled = isFulfilled;
+            o.fulfilledAt = nowIso;
+          }
+        });
+
+        // 2. Update localStorage (rc_shop_orders_v2 + rc_shop_orders_v1)
+        ['rc_shop_orders_v2', 'rc_shop_orders_v1'].forEach((k) => {
+          try {
+            const list = JSON.parse(localStorage.getItem(k) || '[]') || [];
+            list.forEach((o) => {
+              if (o && String(o.orderId || o.order_id) === String(orderId)) {
+                o.fulfilled = isFulfilled;
+                o.fulfilledAt = nowIso;
+                o.fulfilled_at = nowIso;
+                o.status = isFulfilled ? 'Completed' : 'Needs Production';
+              }
+            });
+            localStorage.setItem(k, JSON.stringify(list));
+          } catch (_) {}
+        });
+
+        renderWebsiteMerchOrdersHub();
+
+        // 3. Patch Supabase public.retrocanopy_orders
+        try {
+          await fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?order_id=eq.${encodeURIComponent(orderId)}`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+              fulfilled: isFulfilled,
+              fulfilled_at: nowIso
+            })
+          });
+        } catch (err) {
+          console.warn('Supabase fulfillment PATCH warning:', err);
+        }
+      }
+
+      // =====================================================================
+      // HUB B RENDERER: SHIBUYA BOT PIT — GAME ORDERS & LIVE GAME ANALYTICS
+      // =====================================================================
+      function renderGameOrdersAndAnalyticsHub() {
+        // Merge cloud game orders with any local game orders
+        const byOrderId = new Map();
+        cloudGameOrders.forEach((g) => {
+          if (g && g.order_id) byOrderId.set(String(g.order_id), g);
+        });
+        try {
+          const locGame = JSON.parse(localStorage.getItem('rc_botpit_game_orders_v1') || '[]') || [];
+          locGame.forEach((g) => {
+            if (g && g.order_id && !byOrderId.has(String(g.order_id))) {
+              byOrderId.set(String(g.order_id), g);
+            }
+          });
+        } catch (_) {}
+
+        const allGameOrders = Array.from(byOrderId.values());
+        const totalGameRev = allGameOrders.reduce((s, g) => s + (Number(g.price_usd) || 0), 0);
+
+        let totalPvpWins = 0;
+        let totalPvpLosses = 0;
+        let totalGoldenTickets = 0;
+        let totalDiamondsInVaults = 0;
+        let totalPilotXp = 0;
+
+        const parsedPilots = cloudPilots.map((row) => {
+          let bp = row.bot_pit_data || {};
+          if (typeof bp === 'string') {
+            try { bp = JSON.parse(bp) || {}; } catch (_) { bp = {}; }
+          }
+          const wins = Number(bp.wins || 0);
+          const losses = Number(bp.losses || 0);
+          const tickets = Number(bp.tickets || 0);
+          const scrap = Number(bp.scrap || 0);
+          const xp = Math.max(Number(bp.xp || 0), Number(row.xp || 0));
+          const elo = Number(bp.elo || 1200);
+          const botLevel = Number(bp.botLevel || 1);
+          const eq = bp.equipped || {};
+
+          totalPvpWins += wins;
+          totalPvpLosses += losses;
+          totalGoldenTickets += tickets;
+          totalDiamondsInVaults += scrap;
+          totalPilotXp += xp;
+
+          return {
+            userKey: row.username_key,
+            callsign: bp.pilotCallsign || row.display_name || row.username_key,
+            email: row.email || 'No Email',
+            elo,
+            wins,
+            losses,
+            tickets,
+            scrap,
+            xp,
+            botLevel,
+            equippedSummary: [eq.chassis, eq.weapon, eq.wheels, eq.armor, eq.botAbility, eq.weapAbility].filter(Boolean).join(' • ') || 'Starter Rig',
+            updatedAt: row.updated_at
+          };
+        });
+
+        document.getElementById('kpiGameRevenue').textContent = `$${totalGameRev.toFixed(2)}`;
+        document.getElementById('kpiGameOrdersCount').textContent = allGameOrders.length;
+        document.getElementById('kpiGamePilotsCount').textContent = parsedPilots.length;
+        document.getElementById('kpiGameTicketsCount').textContent = `${totalPvpWins} W / 🎟️ ${totalGoldenTickets}`;
+        document.getElementById('kpiGameTotalDiamonds').textContent = `💎 ${totalDiamondsInVaults.toLocaleString()}`;
+
+        document.getElementById('tabBtnGameOrders').textContent = `💎 Game Orders (${allGameOrders.length})`;
+        document.getElementById('tabBtnGameAnalytics').textContent = `📊 Pilot Leaderboard & Game Analytics (${parsedPilots.length})`;
+
+        // Render Game Orders Tab
+        const gameOrdersEl = document.getElementById('gameOrdersList');
+        if (allGameOrders.length === 0) {
+          gameOrdersEl.innerHTML = `
+            <div class="empty-state">
+              No in-game Diamond Pack orders yet.<br>
+              <span style="font-size:0.7rem;color:rgba(255,255,255,0.6);">Whenever a pilot purchases a Diamond Pack ($0.99 – $49.99) in Shibuya Bot Pit, the paid order appears here live.</span>
+            </div>
+          `;
+        } else {
+          gameOrdersEl.innerHTML = allGameOrders.map((g) => {
+            const dt = (() => {
+              try { return new Date(g.created_at).toLocaleString(); } catch (_) { return String(g.created_at || ''); }
+            })();
+            return `
+              <div class="item-row" style="border-color:rgba(255,174,0,0.38);background:rgba(255,174,0,0.06);">
+                <div class="item-info">
+                  <div class="item-title">
+                    <span>#${escapeHtml(g.order_id)} — ${escapeHtml(g.pack_name || g.pack_id)}</span>
+                    <span class="tag-pill tag-owner">+$${Number(g.price_usd || 0).toFixed(2)} PAID</span>
+                    <span class="tag-pill tag-admin">💎 +${Number(g.diamonds_credited || 0).toLocaleString()}</span>
+                  </div>
+                  <div class="item-sub">
+                    Pilot: <strong>${escapeHtml(g.pilot_callsign || g.user_key)}</strong>
+                    ${g.customer_email ? ` (${escapeHtml(g.customer_email)})` : ''}
+                    • ${escapeHtml(g.platform || 'Web')} • ${escapeHtml(dt)}
+                  </div>
+                </div>
+                <span class="tag-pill tag-member">${escapeHtml(g.payment_status || 'PAID')}</span>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // Render Game Analytics & Pilot Leaderboard Tab
+        const analyticsEl = document.getElementById('gamePilotsAnalyticsList');
+        const summaryBannerHtml = `
+          <div class="item-row" style="background:rgba(0,240,255,0.08);border-color:rgba(0,240,255,0.35);">
+            <div class="item-info">
+              <div class="item-title">
+                <span>🌐 SHIBUYA BOT PIT LIVE TELEMETRY</span>
+                <span class="tag-pill tag-admin">⚡ ${totalPilotXp.toLocaleString()} TOTAL XP</span>
+                <span class="tag-pill tag-owner">🎟️ ${totalGoldenTickets} GOLDEN TICKETS</span>
+              </div>
+              <div class="item-sub">
+                Total PvP Matches Recorded: <strong>${totalPvpWins + totalPvpLosses}</strong> (${totalPvpWins} Wins / ${totalPvpLosses} Losses)
+                • Friend Links: <strong>${cloudFriendshipsCount}</strong>
+                • Direct Messages Sent: <strong>${cloudMessagesCount}</strong>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (parsedPilots.length === 0) {
+          analyticsEl.innerHTML = summaryBannerHtml + `<div class="empty-state">No registered Bot Pit pilots found.</div>`;
+        } else {
+          analyticsEl.innerHTML = summaryBannerHtml + parsedPilots.map((p, idx) => `
+            <div class="item-row">
+              <div class="item-info">
+                <div class="item-title">
+                  <span>#${idx + 1} ${escapeHtml(p.callsign)}</span>
+                  <span class="tag-pill tag-admin">ELO ${p.elo}</span>
+                  <span class="tag-pill tag-member">LVL ${p.botLevel}</span>
+                  <span class="tag-pill tag-owner">🎟️ ${p.tickets} TICKET${p.tickets === 1 ? '' : 'S'}</span>
+                  <span class="tag-pill tag-pink">💎 ${p.scrap.toLocaleString()}</span>
+                </div>
+                <div class="item-sub">
+                  ${escapeHtml(p.email)} • Record: <strong>${p.wins}W - ${p.losses}L</strong> • XP: <strong>⚡ ${p.xp.toLocaleString()}</strong>
+                </div>
+                <div class="item-sub" style="color:#00f0ff;font-size:0.66rem;">
+                  Loadout: ${escapeHtml(p.equippedSummary)}
+                </div>
+              </div>
+            </div>
+          `).join('');
         }
       }
 
@@ -1000,13 +1839,11 @@
           }
         });
 
-        // Ensure Total So Far is at least as large as current year bucket
         buckets.total.total = Math.max(buckets.total.total, buckets.year.total);
         ['Home Stage', 'Merch Shop', 'Arcade', 'Culture', 'Creators'].forEach((sec) => {
           buckets.total[sec] = Math.max(buckets.total[sec] || 0, buckets.year[sec] || 0);
         });
 
-        // Top 4 KPI numbers (Today, Month, Year, Total So Far)
         document.getElementById('kpiVisitsDay').textContent = buckets.day.total;
         document.getElementById('kpiVisitsMonth').textContent = buckets.month.total;
         document.getElementById('kpiVisitsYear').textContent = buckets.year.total;
@@ -1022,9 +1859,9 @@
         const periodSubLabel = periodLabelMap[selectedTrafficPeriod] || 'Visits';
 
         const destinations = [
-          { key: 'Home Stage', name: 'Home Stage', desc: 'Main Stage & Character Hub' },
-          { key: 'Merch Shop', name: 'Merch Shop', desc: 'Snapbacks, Hoodies & Apparel' },
-          { key: 'Arcade', name: 'Arcade', desc: 'Synth\'s Midnight Flight & Games' },
+          { key: 'Home Stage', name: 'Home Stage', desc: 'Main Stage & Entry to Shibuya Bot Pit' },
+          { key: 'Merch Shop', name: 'Merch Shop ($1 Mode)', desc: 'White & 24K Gold Hoodie + Valkyrie Hat' },
+          { key: 'Arcade', name: 'Shibuya Bot Pit', desc: 'Live 3D Mech Arena & PvP Battles' },
           { key: 'Culture', name: 'Culture Hub', desc: 'Retro Lore & Community' },
           { key: 'Creators', name: 'Creators Studio', desc: 'Streamers & Creator Spotlight' }
         ];
@@ -1044,7 +1881,7 @@
       }
 
       // =====================================================================
-      // CARD 2: MEMBERS & ACCESS (WITH CANOPY TREE EVOLUTION TIERS)
+      // CARD 2: MEMBERS & ACCESS
       // =====================================================================
       const CANOPY_TREE_TIERS = [
         { stage: 1, min: 0,     max: 499,   icon: '🌱', name: 'Neon Sprout',            range: '0 – 499 Growth',          perk: 'Planted under the Canopy' },
@@ -1052,7 +1889,7 @@
         { stage: 3, min: 1500,  max: 3999,  icon: '🌳', name: 'Sunset Willow',          range: '1,500 – 3,999 Growth',    perk: 'Free shipping unlocked on orders over $25' },
         { stage: 4, min: 4000,  max: 9999,  icon: '✨', name: 'Astral Canopy',          range: '4,000 – 9,999 Growth',    perk: 'Early access to limited drops' },
         { stage: 5, min: 10000, max: 24999, icon: '🔥', name: 'Solar Valkyrie Tree',    range: '10,000 – 24,999 Growth',  perk: 'Mystery Collector Sticker Pack with orders' },
-        { stage: 6, min: 25000, max: null,  icon: '👑', name: 'Eternal Sanctuary Tree', range: '25,000+ Growth',          perk: '👑 Earns Limited Edition White & 24K Gold Hoodie + Matching Snapback Hat (EST. 1984) in the Arcade' }
+        { stage: 6, min: 25000, max: null,  icon: '👑', name: 'Eternal Sanctuary Tree', range: '25,000+ Growth',          perk: '👑 White & 24K Gold Crowned Hoodie + Valkyrie Hat' }
       ];
 
       function getCanopyTreeTier(score) {
@@ -1072,7 +1909,6 @@
         const pendingList = [];
         const activeList = [];
         let adminCount = 0;
-        let playerCount = 0;
 
         Object.keys(adminDb).forEach((key) => {
           const acc = adminDb[key];
@@ -1085,7 +1921,6 @@
             });
           } else if (acc.status === 'Approved') {
             adminCount++;
-            // Check if this admin also has a player account or local growth score
             const pMatch = playerDb[(acc.name || '').toLowerCase()] || null;
             const ownerGrowth = acc.isOwner
               ? Math.max(parseInt(localStorage.getItem('rc_canopy_xp') || '0', 10) || 0, pMatch ? (pMatch.xp || pMatch.bestScore || 0) : 0)
@@ -1101,29 +1936,16 @@
           }
         });
 
-        // Only Owner-approved Admin accounts are allowed in Active Members
         const totalMembers = activeList.length;
-        playerCount = 0;
-
-        // Update Top Member Count Numbers
         document.getElementById('kpiTotalMembers').textContent = totalMembers;
         document.getElementById('kpiAdminMembers').textContent = adminCount;
-        document.getElementById('kpiPlayerMembers').textContent = playerCount;
+        document.getElementById('kpiPlayerMembers').textContent = cloudPilots.length;
         document.getElementById('kpiPendingMembers').textContent = pendingList.length;
 
-        document.getElementById('membersHeaderBadge').textContent = `${totalMembers} MEMBER${totalMembers === 1 ? '' : 'S'}${pendingList.length > 0 ? ` • ${pendingList.length} PENDING` : ''}`;
+        document.getElementById('membersHeaderBadge').textContent = `${totalMembers} ADMIN${totalMembers === 1 ? '' : 'S'} • ${cloudPilots.length} PILOTS`;
         document.getElementById('tabBtnActiveMembers').textContent = `Active (${totalMembers})`;
         const pendingTabBtn = document.getElementById('tabBtnPendingUsers');
         pendingTabBtn.textContent = `Pending (${pendingList.length})`;
-        if (pendingList.length > 0) {
-          pendingTabBtn.style.borderColor = '#ff2d95';
-          pendingTabBtn.style.color = '#ffdf80';
-          pendingTabBtn.style.boxShadow = '0 0 12px rgba(255, 45, 149, 0.45)';
-        } else {
-          pendingTabBtn.style.borderColor = '';
-          pendingTabBtn.style.color = '';
-          pendingTabBtn.style.boxShadow = '';
-        }
 
         const pendingInlineHtml = pendingList.map((u) => `
           <div class="item-row" style="border-color:rgba(255,174,0,0.65);background:rgba(255,174,0,0.09);">
@@ -1142,114 +1964,54 @@
         `).join('');
 
         const activeEl = document.getElementById('activeMembersList');
-        if (activeList.length === 0 && pendingList.length === 0) {
-          activeEl.innerHTML = `<div class="empty-state">No active members yet.</div>`;
-        } else {
-          activeEl.innerHTML = pendingInlineHtml + activeList.map((m) => {
-            const roleBadge = m.type === 'owner'
-              ? `<span class="tag-pill tag-owner">Owner</span>`
-              : (m.type === 'admin'
-                  ? `<span class="tag-pill tag-admin">Admin</span>`
-                  : `<span class="tag-pill tag-member">Member</span>`);
+        activeEl.innerHTML = pendingInlineHtml + activeList.map((m) => {
+          const roleBadge = m.type === 'owner'
+            ? `<span class="tag-pill tag-owner">Owner</span>`
+            : `<span class="tag-pill tag-admin">Admin</span>`;
+          const treeTier = getCanopyTreeTier(m.growthScore || 0);
+          const actionHtml = m.isOwner
+            ? ``
+            : `<button type="button" class="act-btn act-reject" data-revoke-admin="${escapeHtml(m.email)}">Revoke</button>`;
 
-            const treeTier = getCanopyTreeTier(m.growthScore || 0);
-            const treePill = `<span class="tag-pill tag-arcade">${treeTier.icon} ${escapeHtml(treeTier.name)} • ${(m.growthScore || 0).toLocaleString()}</span>`;
-
-            const actionHtml = m.isOwner
-              ? ``
-              : (m.type === 'admin'
-                  ? `<button type="button" class="act-btn act-reject" data-revoke-admin="${escapeHtml(m.email)}">Revoke</button>`
-                  : `<button type="button" class="act-btn act-reject" data-remove-player="${escapeHtml(m.key)}">Remove</button>`);
-
-            return `
-              <div class="item-row">
-                <div class="item-info">
-                  <div class="item-title">
-                    <span>${escapeHtml(m.name)}</span>
-                    ${roleBadge}
-                    ${treePill}
-                  </div>
-                  <div class="item-sub">${escapeHtml(m.email)}${m.bestScore ? ` • Best Flight: ${m.bestScore}` : ''}</div>
-                </div>
-                <div class="row-actions">${actionHtml}</div>
-              </div>
-            `;
-          }).join('');
-        }
-
-        const treeTiersEl = document.getElementById('treeTiersList');
-        if (treeTiersEl) {
-          treeTiersEl.innerHTML = CANOPY_TREE_TIERS.map((t) => `
+          return `
             <div class="item-row">
               <div class="item-info">
                 <div class="item-title">
-                  <span>${t.icon} Stage ${t.stage}: ${escapeHtml(t.name)}</span>
+                  <span>${escapeHtml(m.name)}</span>
+                  ${roleBadge}
+                  <span class="tag-pill tag-member">${treeTier.icon} ${escapeHtml(treeTier.name)}</span>
                 </div>
-                <div class="item-sub">${escapeHtml(t.perk)}</div>
+                <div class="item-sub">${escapeHtml(m.email)}</div>
               </div>
-              <span class="tag-pill tag-owner">${escapeHtml(t.range)}</span>
+              <div class="row-actions">${actionHtml}</div>
             </div>
-          `).join('');
-        }
+          `;
+        }).join('');
+
+        document.getElementById('treeTiersList').innerHTML = CANOPY_TREE_TIERS.map((t) => `
+          <div class="item-row">
+            <div class="item-info">
+              <div class="item-title">
+                <span>${t.icon} Stage ${t.stage}: ${escapeHtml(t.name)}</span>
+              </div>
+              <div class="item-sub">${escapeHtml(t.perk)}</div>
+            </div>
+            <span class="tag-pill tag-owner">${escapeHtml(t.range)}</span>
+          </div>
+        `).join('');
 
         const pendingEl = document.getElementById('pendingUsersList');
         if (pendingList.length === 0) {
           pendingEl.innerHTML = `<div class="empty-state">No users currently awaiting approval.</div>`;
         } else {
-          pendingEl.innerHTML = pendingList.map((u) => `
-            <div class="item-row">
-              <div class="item-info">
-                <div class="item-title">
-                  <span>${escapeHtml(u.name)}</span>
-                  <span class="tag-pill tag-admin">Request</span>
-                </div>
-                <div class="item-sub">${escapeHtml(u.email)}</div>
-              </div>
-              <div class="row-actions">
-                <button type="button" class="act-btn act-approve" data-approve-email="${escapeHtml(u.email)}">Approve</button>
-                <button type="button" class="act-btn act-reject" data-reject-email="${escapeHtml(u.email)}">Reject</button>
-              </div>
-            </div>
-          `).join('');
+          pendingEl.innerHTML = pendingInlineHtml;
         }
       }
 
       // =====================================================================
-      // CARD 3: STORE, INVENTORY, PROMOS & CONTROLS
+      // CARD 3: STORE CATALOG ($1.00 TEST MODE), MASTER PRODUCTION FILES & CONTROLS
       // =====================================================================
       function renderStoreCard() {
-        if (!window.RetroAuthHub) return;
-        const orders = window.RetroAuthHub.getOrdersDb ? window.RetroAuthHub.getOrdersDb() : [];
-        const playerDb = window.RetroAuthHub.getAccountsDb ? window.RetroAuthHub.getAccountsDb() : {};
-
-        document.getElementById('tabBtnOrders').textContent = `Orders (${orders.length})`;
-        const ordersEl = document.getElementById('shopOrdersList');
-
-        if (orders.length === 0) {
-          ordersEl.innerHTML = `<div class="empty-state">No store orders yet. Real customer orders will appear here live.</div>`;
-        } else {
-          ordersEl.innerHTML = orders.map((o, idx) => {
-            const status = o.status || 'New';
-            const nextStatus = status === 'New' ? 'Shipped' : (status === 'Shipped' ? 'Delivered' : 'New');
-            const statusClass = status === 'Delivered' ? 'act-approve' : (status === 'Shipped' ? 'act-neutral' : 'act-reject');
-            return `
-              <div class="item-row">
-                <div class="item-info">
-                  <div class="item-title">
-                    <span>#${escapeHtml(o.orderId || ('RC-' + (1001 + idx)))}</span>
-                    <span class="tag-pill tag-pink">$${Number(o.total || 0).toFixed(2)}</span>
-                  </div>
-                  <div class="item-sub">${escapeHtml(o.item || 'Merch Item')} • ${escapeHtml(o.customer || 'Guest')}</div>
-                </div>
-                <div class="row-actions">
-                  <button type="button" class="act-btn ${statusClass}" data-cycle-order="${escapeHtml(o.orderId)}" data-next-status="${nextStatus}">${escapeHtml(status)}</button>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-
-        // Inventory Tab
         const inv = getInventory();
         document.getElementById('merchInventoryList').innerHTML = inv.map((item) => {
           const lowStock = item.stock <= 5;
@@ -1257,9 +2019,10 @@
             <div class="item-row">
               <div class="item-info">
                 <div class="item-title">
-                  <span>${escapeHtml(item.sku)} — ${escapeHtml(item.name)}</span>
+                  <a href="${escapeHtml(item.href || '#')}" style="color:#ffffff;text-decoration:none;">${escapeHtml(item.sku)} — ${escapeHtml(item.name)}</a>
+                  <span class="tag-pill tag-member">$${Number(item.price).toFixed(2)} TEST</span>
                 </div>
-                <div class="item-sub">$${item.price} • Sold: ${item.sold || 0} • <span style="color:${lowStock ? '#ff77aa' : '#00f59b'};">Stock: ${item.stock}</span></div>
+                <div class="item-sub">${escapeHtml(item.productionType || '')} • <span style="color:${lowStock ? '#ff77aa' : '#00f59b'};">Stock: ${item.stock}</span></div>
               </div>
               <div class="row-actions">
                 <button type="button" class="act-btn act-neutral" data-stock-sku="${escapeHtml(item.sku)}" data-stock-delta="-1">-</button>
@@ -1269,54 +2032,23 @@
           `;
         }).join('');
 
-        // Promos & Arcade Coupons Tab (Direct Score-to-Coupon)
-        const customPromos = getCustomPromos();
-        const arcadeTiers = [
-          { code: 'CANOPY10', label: '10% Off Merch', scoreReq: 50 },
-          { code: 'CANOPY20', label: '20% Off Merch', scoreReq: 125 },
-          { code: 'CANOPY30', label: '30% Off + Free Ship', scoreReq: 250 },
-          { code: 'FREECAP84', label: 'FREE ITEM ($32 Off)', scoreReq: 500 }
-        ];
-
-        const customHtml = customPromos.map((p) => `
-          <div class="item-row">
-            <div class="item-info">
+        // Master Production Files Tab (Always accessible 1-click downloads)
+        const masterEl = document.getElementById('masterProductionFilesList');
+        if (masterEl) {
+          masterEl.innerHTML = Object.values(MASTER_PRODUCTION_CATALOG).map((cat) => `
+            <div class="item-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
               <div class="item-title">
-                <span>${escapeHtml(p.code)}</span>
-                <span class="tag-pill tag-owner">${p.pct}% OFF</span>
+                <span>${escapeHtml(cat.model)} — ${escapeHtml(cat.title)}</span>
               </div>
-              <div class="item-sub">Custom Owner Promo Code</div>
-            </div>
-            <div class="row-actions">
-              <button type="button" class="act-btn act-reject" data-del-promo="${escapeHtml(p.code)}">Delete</button>
-            </div>
-          </div>
-        `).join('');
-
-        const arcadeHtml = arcadeTiers.map((t) => {
-          let unlocked = 0;
-          let redeemed = 0;
-          Object.values(playerDb).forEach((p) => {
-            if (!p) return;
-            const pScore = Math.max(p.bestScore || 0, p.xp || 0);
-            if (pScore >= t.scoreReq) unlocked++;
-            if (p.usedCoupons && p.usedCoupons[t.code]) redeemed++;
-          });
-          return `
-            <div class="item-row">
-              <div class="item-info">
-                <div class="item-title">
-                  <span>${t.code}</span>
-                  <span class="tag-pill tag-member">${t.label}</span>
-                </div>
-                <div class="item-sub">Reach Score ${t.scoreReq} • Unlocked: ${unlocked} • Used: ${redeemed}</div>
+              <div class="item-sub">${escapeHtml(cat.productionNotes)}</div>
+              <div class="prod-files-grid">
+                ${cat.productionFiles.map((f) => `
+                  <a class="prod-dl-btn" href="${escapeHtml(f.url)}" download="${escapeHtml(f.filename)}">${escapeHtml(f.label)}</a>
+                `).join('')}
               </div>
-              <span class="tag-pill tag-admin">1-USE</span>
             </div>
-          `;
-        }).join('');
-
-        document.getElementById('promoCouponsList').innerHTML = customHtml + arcadeHtml;
+          `).join('');
+        }
 
         // Site Controls Tab
         const ctrl = getControls();
@@ -1329,7 +2061,7 @@
           <div class="item-row">
             <div class="item-info">
               <div class="item-title">Sitewide Announcement Banner</div>
-              <div class="item-sub">Displays top drop bar across Home & Shop</div>
+              <div class="item-sub">Displays top drop bar across Home &amp; Shop</div>
             </div>
             <button type="button" class="toggle-pill ${ctrl.bannerEnabled ? 'on' : ''}" data-toggle-ctrl="bannerEnabled">
               ${ctrl.bannerEnabled ? 'ON' : 'OFF'}
@@ -1337,27 +2069,23 @@
           </div>
           <div class="item-row">
             <div class="item-info">
-              <div class="item-title">Merch Store Checkout</div>
-              <div class="item-sub">Allow customers to place merch orders</div>
+              <div class="item-title">Merch Store Checkout ($1.00 Test Mode)</div>
+              <div class="item-sub">Only White Hoodie ($1) &amp; White Hat ($1) active</div>
             </div>
             <button type="button" class="toggle-pill ${ctrl.checkoutOpen ? 'on' : ''}" data-toggle-ctrl="checkoutOpen">
               ${ctrl.checkoutOpen ? 'OPEN' : 'PAUSED'}
             </button>
           </div>
-          <div class="item-row">
-            <div class="item-info">
-              <div class="item-title">Arcade Score Coupon Unlocks</div>
-              <div class="item-sub">Grant 1-time coupons at Score 10, 25 & 50</div>
-            </div>
-            <button type="button" class="toggle-pill ${ctrl.arcadeRewardsActive ? 'on' : ''}" data-toggle-ctrl="arcadeRewardsActive">
-              ${ctrl.arcadeRewardsActive ? 'ACTIVE' : 'PAUSED'}
-            </button>
-          </div>
         `;
       }
 
-      function renderAllCards() {
+      async function renderAllCards(fetchCloud = false) {
         if (!checkAccess()) return;
+        if (fetchCloud) {
+          await fetchCloudMerchAndGameData();
+        }
+        renderWebsiteMerchOrdersHub();
+        renderGameOrdersAndAnalyticsHub();
         renderTrafficCard();
         renderMembersCard();
         renderStoreCard();
@@ -1366,12 +2094,20 @@
       // =====================================================================
       // INTERACTIVE EVENT HANDLERS
       // =====================================================================
+      document.addEventListener('change', async (e) => {
+        const checkEl = e.target.closest('[data-toggle-merch-fulfilled]');
+        if (checkEl) {
+          const orderId = checkEl.getAttribute('data-toggle-merch-fulfilled');
+          await toggleMerchOrderFulfilled(orderId, Boolean(checkEl.checked));
+        }
+      });
+
       document.addEventListener('click', async (e) => {
         const approveBtn = e.target.closest('[data-approve-email]');
         if (approveBtn) {
           const email = approveBtn.getAttribute('data-approve-email');
           await window.RetroAuthHub.setAdminAccountStatus(email, 'Approved');
-          renderAllCards();
+          renderAllCards(false);
           return;
         }
 
@@ -1379,7 +2115,7 @@
         if (rejectBtn) {
           const email = rejectBtn.getAttribute('data-reject-email');
           await window.RetroAuthHub.deleteAdminAccount(email);
-          renderAllCards();
+          renderAllCards(false);
           return;
         }
 
@@ -1387,33 +2123,7 @@
         if (revokeBtn) {
           const email = revokeBtn.getAttribute('data-revoke-admin');
           await window.RetroAuthHub.setAdminAccountStatus(email, 'Pending');
-          renderAllCards();
-          return;
-        }
-
-        const removePlayerBtn = e.target.closest('[data-remove-player]');
-        if (removePlayerBtn) {
-          const key = removePlayerBtn.getAttribute('data-remove-player');
-          const db = window.RetroAuthHub.getAccountsDb();
-          delete db[key];
-          localStorage.setItem('rc_accounts_db_v2', JSON.stringify(db));
-          await window.RetroAuthHub.syncWithServerDb(true);
-          renderAllCards();
-          return;
-        }
-
-        const cycleOrderBtn = e.target.closest('[data-cycle-order]');
-        if (cycleOrderBtn) {
-          const orderId = cycleOrderBtn.getAttribute('data-cycle-order');
-          const nextStatus = cycleOrderBtn.getAttribute('data-next-status');
-          const orders = window.RetroAuthHub.getOrdersDb();
-          const target = orders.find((o) => String(o.orderId) === String(orderId));
-          if (target) {
-            target.status = nextStatus;
-            localStorage.setItem('rc_shop_orders_v2', JSON.stringify(orders));
-            await window.RetroAuthHub.syncWithServerDb(true);
-            renderAllCards();
-          }
+          renderAllCards(false);
           return;
         }
 
@@ -1431,15 +2141,6 @@
           return;
         }
 
-        const delPromoBtn = e.target.closest('[data-del-promo]');
-        if (delPromoBtn) {
-          const code = delPromoBtn.getAttribute('data-del-promo');
-          const list = getCustomPromos().filter((p) => p.code !== code);
-          saveCustomPromos(list);
-          renderStoreCard();
-          return;
-        }
-
         const toggleCtrlBtn = e.target.closest('[data-toggle-ctrl]');
         if (toggleCtrlBtn) {
           const field = toggleCtrlBtn.getAttribute('data-toggle-ctrl');
@@ -1451,39 +2152,108 @@
         }
       });
 
+      // Simulate a $1.00 Paid Customer Order (with both White Hoodie & White Hat) to test the Checkoff -> Order History workflow
+      document.getElementById('simulateTestPaidOrderBtn').addEventListener('click', async () => {
+        const now = new Date();
+        const orderId = 'RC-ORD-' + String(now.getTime()).slice(-6);
+        const sampleItems = [
+          {
+            model: 'RC-309',
+            title: MASTER_PRODUCTION_CATALOG['RC-309'].title,
+            price: 1.00,
+            qty: 1,
+            size: 'L',
+            frontPhotoUrl: MASTER_PRODUCTION_CATALOG['RC-309'].frontPhotoUrl,
+            backPhotoUrl: MASTER_PRODUCTION_CATALOG['RC-309'].backPhotoUrl,
+            productionType: MASTER_PRODUCTION_CATALOG['RC-309'].productionType,
+            productionNotes: MASTER_PRODUCTION_CATALOG['RC-309'].productionNotes,
+            productionFiles: MASTER_PRODUCTION_CATALOG['RC-309'].productionFiles
+          },
+          {
+            model: 'RC-107',
+            title: MASTER_PRODUCTION_CATALOG['RC-107'].title,
+            price: 1.00,
+            qty: 1,
+            size: 'One Size Snapback',
+            frontPhotoUrl: MASTER_PRODUCTION_CATALOG['RC-107'].frontPhotoUrl,
+            backPhotoUrl: MASTER_PRODUCTION_CATALOG['RC-107'].backPhotoUrl,
+            productionType: MASTER_PRODUCTION_CATALOG['RC-107'].productionType,
+            productionNotes: MASTER_PRODUCTION_CATALOG['RC-107'].productionNotes,
+            productionFiles: MASTER_PRODUCTION_CATALOG['RC-107'].productionFiles
+          }
+        ];
+
+        const supaPayload = {
+          order_id: orderId,
+          customer_name: 'Joseph Cole (Test Customer)',
+          customer_email: 'josephcole001.ai@gmail.com',
+          customer_phone: '(555) 019-2834',
+          shipping_address: '742 Evergreen Terrace, Suite 24K, Austin, TX 78701',
+          customer_notes: '$1.00 Store Rebuild Test — White Hoodie (Size L) + White Valkyrie Hat',
+          items: sampleItems,
+          subtotal_usd: 2.00,
+          shipping_usd: 0.00,
+          discount_usd: 0.00,
+          total_paid_usd: 2.00,
+          payment_status: 'PAID',
+          is_paid: true,
+          stripe_session_id: 'TEST-PAID-' + Date.now(),
+          fulfilled: false,
+          fulfilled_at: null,
+          paid_at: now.toISOString()
+        };
+
+        try {
+          await fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?on_conflict=order_id`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates,return=minimal'
+            },
+            body: JSON.stringify(supaPayload)
+          });
+        } catch (_) {}
+
+        await renderAllCards(true);
+      });
+
+      document.getElementById('refreshCloudOrdersBtn').addEventListener('click', () => renderAllCards(true));
+      document.getElementById('refreshGameAnalyticsBtn').addEventListener('click', () => renderAllCards(true));
+
       document.getElementById('clearTrafficBtn').addEventListener('click', async () => {
         if (window.RetroAuthHub && window.RetroAuthHub.clearTrafficStats) {
           await window.RetroAuthHub.clearTrafficStats();
-          renderAllCards();
+          renderAllCards(false);
         }
       });
 
       document.getElementById('exportOrdersCsvBtn').addEventListener('click', () => {
-        const orders = (window.RetroAuthHub && window.RetroAuthHub.getOrdersDb) ? window.RetroAuthHub.getOrdersDb() : [];
-        const rows = [['Order ID', 'Customer', 'Item', 'Total', 'Status', 'Date']];
+        const orders = getMergedPaidMerchOrders();
+        const rows = [['Order ID', 'Customer Name', 'Email', 'Phone', 'Shipping Address', 'Items', 'Total Paid', 'Status', 'Paid At', 'Fulfilled At']];
         orders.forEach((o) => {
-          rows.push([o.orderId || '', o.customer || '', o.item || '', o.total || 0, o.status || 'New', o.date || '']);
+          const itemSummary = o.items.map((i) => `${i.qty}x ${i.model} (${i.size})`).join(' | ');
+          rows.push([
+            o.orderId || '',
+            `"${(o.customerName || '').replace(/"/g, '""')}"`,
+            o.customerEmail || '',
+            o.customerPhone || '',
+            `"${(o.shippingAddress || '').replace(/"/g, '""')}"`,
+            `"${itemSummary.replace(/"/g, '""')}"`,
+            o.totalPaid || 0,
+            o.fulfilled ? 'Completed (In Order History)' : 'Needs Production',
+            o.paidAt || '',
+            o.fulfilledAt || ''
+          ]);
         });
         const csvContent = 'data:text/csv;charset=utf-8,' + rows.map((r) => r.join(',')).join('\n');
         const link = document.createElement('a');
         link.setAttribute('href', encodeURI(csvContent));
-        link.setAttribute('download', 'retrocanopy_orders.csv');
+        link.setAttribute('download', 'retrocanopy_paid_orders.csv');
         document.body.appendChild(link);
         link.click();
         link.remove();
-      });
-
-      document.getElementById('addPromoBtn').addEventListener('click', () => {
-        const codeInput = document.getElementById('newPromoCodeInput');
-        const pctInput = document.getElementById('newPromoPctInput');
-        const code = (codeInput.value || '').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
-        const pct = Math.min(100, Math.max(5, parseInt(pctInput.value || '20', 10) || 20));
-        if (!code) return;
-        const list = getCustomPromos().filter((p) => p.code !== code);
-        list.unshift({ code, pct, createdAt: new Date().toISOString() });
-        saveCustomPromos(list);
-        codeInput.value = '';
-        renderStoreCard();
       });
 
       document.getElementById('saveBannerTextBtn').addEventListener('click', () => {
@@ -1504,7 +2274,7 @@
           gateErr.textContent = res.msg;
           return;
         }
-        renderAllCards();
+        await renderAllCards(true);
       }
 
       gateLoginBtn.addEventListener('click', handleGateLogin);
@@ -1516,14 +2286,14 @@
         if (window.RetroAuthHub && window.RetroAuthHub.logoutActiveSession) {
           await window.RetroAuthHub.logoutActiveSession();
         }
-        renderAllCards();
+        renderAllCards(false);
       });
 
       window.addEventListener('DOMContentLoaded', async () => {
         if (window.RetroAuthHub) {
           await window.RetroAuthHub.syncWithServerDb(false);
         }
-        renderAllCards();
+        await renderAllCards(true);
 
         try {
           if (typeof BroadcastChannel !== 'undefined') {
@@ -1532,23 +2302,23 @@
               if (window.RetroAuthHub) {
                 await window.RetroAuthHub.syncWithServerDb(false);
               }
-              renderAllCards();
+              await renderAllCards(true);
             };
           }
         } catch (_) {}
 
         window.addEventListener('storage', (e) => {
           if (!e || !e.key || e.key.startsWith('rc_')) {
-            renderAllCards();
+            renderAllCards(false);
           }
         });
 
         setInterval(async () => {
           if (window.RetroAuthHub) {
             await window.RetroAuthHub.syncWithServerDb(false);
-            renderAllCards();
+            await renderAllCards(true);
           }
-        }, 2500);
+        }, 6000);
       });
     })();
   </script>

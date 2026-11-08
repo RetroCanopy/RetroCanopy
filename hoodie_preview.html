@@ -498,13 +498,8 @@
 
     <nav class="nav-center">
       <a href="index.html" class="nav-home-btn">&#8962; Home</a>
-      <a href="hat_preview.html">Hat</a>
-      <a href="deskmat_preview.html">Desk Mats</a>
-      <a href="hoodie_preview.html" class="active">Hoodies</a>
-      <a href="tee_preview.html">Tees</a>
-      <a href="joggers_preview.html">Joggers</a>
-      <a href="longsleeve_preview.html">Long-Sleeves</a>
-      <a href="gearbag_preview.html">Misc</a>
+      <a href="hat_preview.html">White Hat ($1)</a>
+      <a href="hoodie_preview.html" class="active">White Hoodie ($1)</a>
     </nav>
 
     <div class="nav-right">
@@ -517,13 +512,11 @@
   <main class="showroom-viewport">
     <div class="ambient-aura"></div>
 
-    <button class="glide-arrow glide-prev" onclick="stepHoodie(-1)" aria-label="Previous Hoodie">&#8592;</button>
-
     <div class="hoodie-pair-stage solo-mode" id="pairStage">
       <!-- Front View Floating Unit -->
       <div class="hoodie-unit hidden" id="frontUnit" onclick="toggleSolo('front')">
         <div class="hoodie-levitate-front">
-          <img class="hoodie-img" id="frontImg" src="assets/merch/hoodie_opt1_front.png?v=200" alt="Hoodie Front View">
+          <img class="hoodie-img" id="frontImg" src="assets/merch/hoodie_tier6_2f_front.png?v=200" alt="White & 24K Gold Hoodie Front View">
         </div>
         <button type="button" class="garment-flip-btn" onclick="event.stopPropagation(); setViewMode('back')">FRONT</button>
       </div>
@@ -531,18 +524,16 @@
       <!-- Back View Floating Unit (Centered Default View) -->
       <div class="hoodie-unit" id="backUnit" onclick="toggleSolo('back')">
         <div class="hoodie-levitate-back">
-          <img class="hoodie-img" id="backImg" src="assets/merch/hoodie_opt1_back.png?v=200" alt="Hoodie Back View">
+          <img class="hoodie-img" id="backImg" src="assets/merch/hoodie_tier6_2f_back.png?v=200" alt="White & 24K Gold Hoodie Back View">
         </div>
         <button type="button" class="garment-flip-btn" onclick="event.stopPropagation(); setViewMode('front')">BACK</button>
       </div>
     </div>
-
-    <button class="glide-arrow glide-next" onclick="stepHoodie(1)" aria-label="Next Hoodie">&#8594;</button>
   </main>
 
   <!-- 3. FLOATING BOTTOM HUD DOCK -->
   <footer class="hud-stack">
-    <!-- Top Strip: Minimalist Dot Indicators -->
+    <!-- Top Strip: View Mode Switch (Front & Back / Front / Back) -->
     <div class="hud-selector-strip">
       <div class="view-switch">
         <button class="view-pill active" id="pillBoth" onclick="setViewMode('both')">Front &amp; Back</button>
@@ -550,91 +541,42 @@
         <button class="view-pill" id="pillBack" onclick="setViewMode('back')">Back Only</button>
       </div>
 
-      <div class="strip-divider"></div>
+      <div class="strip-divider" style="display:none;"></div>
 
-      <div class="mini-thumbs" id="thumbStrip"></div>
+      <div class="mini-thumbs" id="thumbStrip" style="display:none;"></div>
     </div>
 
     <!-- Bottom Dock: Live Item Info + Price + Add to Bag -->
     <div class="hud-dock">
       <div class="hud-info">
-        <span class="hud-kicker" id="hudKicker">RC-301</span>
-        <span class="hud-title" id="hudTitle">Classic Sunset Grid Hoodie</span>
+        <span class="hud-kicker" id="hudKicker">RC-309</span>
+        <span class="hud-title" id="hudTitle">White &amp; 24K Gold Crowned Legend Hoodie</span>
       </div>
 
       <div class="hud-divider"></div>
 
       <div class="hud-specs" id="hudSpecs">
-        <span>Front: Breast-Pocket Crest</span>
-        <span>â€¢</span>
-        <span>Back: Full Sunset Grid Emblem</span>
+        <span>Front: 24K Gold Crest (DTF 300 DPI)</span>
+        <span>&bull;</span>
+        <span>Back: Full 24K Gold Emblem (DTF 300 DPI)</span>
       </div>
 
       <div class="hud-divider"></div>
 
-      <div class="hud-price">$68</div>
+      <div class="hud-price" id="hudPrice">$1</div>
 
-      <button class="hud-buy-btn" onclick="addToBag(this)">Add to Bag</button>
+      <button class="hud-buy-btn" onclick="addToBag(this)">Add to Bag ($1)</button>
     </div>
   </footer>
 
   <script>
     const hoodieOptions = [
       {
-        model: 'RC-301',
-        title: 'Classic Sunset Grid Hoodie',
-        specs: '<span>Front: Breast-Pocket Crest</span><span>â€¢</span><span>Back: Oversized Classic Emblem</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/hoodie_opt1_front.png?v=200',
-        back: 'assets/merch/hoodie_opt1_back.png?v=200'
-      },
-      {
-        model: 'RC-302',
-        title: 'Dual Cyan & Magenta Grid Hoodie',
-        specs: '<span>Front: Breast-Pocket Crest</span><span>â€¢</span><span>Back: Oversized Dual-Grid Emblem</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/hoodie_opt2_front.png?v=200',
-        back: 'assets/merch/hoodie_opt2_back.png?v=200'
-      },
-      {
-        model: 'RC-303',
-        title: 'Midnight Grinder Vault Hoodie',
-        specs: '<span>Front: Breast-Pocket Crest</span><span>â€¢</span><span>Back: Full Midnight Grinder Print</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/hoodie_opt3_front.png?v=200',
-        back: 'assets/merch/hoodie_opt3_back.png?v=200'
-      },
-      {
-        model: 'RC-304',
-        title: 'Outrun Wireframe Mountains Hoodie',
-        specs: '<span>Front: Breast-Pocket Crest</span><span>â€¢</span><span>Back: Full Outrun Horizon Print</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/hoodie_opt4_front.png?v=200',
-        back: 'assets/merch/hoodie_opt4_back.png?v=200'
-      },
-      {
-        model: 'RC-305',
-        title: 'Starry Synthwave Cosmos Hoodie',
-        specs: '<span>Front: Breast-Pocket Crest</span><span>â€¢</span><span>Back: Full Starry Cosmos Print</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/hoodie_opt5_front.png?v=200',
-        back: 'assets/merch/hoodie_opt5_back.png?v=200'
-      },
-      {
-        model: 'RC-306',
-        title: 'Cyber-Dragon Shenron Arcade Hoodie',
-        specs: '<span>Front: Cyber Dragon-Claw Crest</span><span>â€¢</span><span>Back: Coiled Chrome Dragon &amp; Sunset Tree</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/hoodie_opt6_front.png?v=200',
-        back: 'assets/merch/hoodie_opt6_back.png?v=200'
-      },
-      {
-        model: 'RC-307',
-        title: '1987 Superbike Cyber Drift Hoodie',
-        specs: '<span>Front: Cyber Racing Visor Crest</span><span>â€¢</span><span>Back: Drifting Superbike &amp; Sunset Tree</span><span>â€¢</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/hoodie_opt7_front.png?v=200',
-        back: 'assets/merch/hoodie_opt7_back.png?v=200'
-      },
-      {
-        model: 'RC-308',
-        title: 'Pinball Wizard Multiball Jackpot Hoodie',
-        specs: '<span>Front: 1000 PTS Pop-Bumper Crest</span><span>&bull;</span><span>Back: Arcade Pinball Playfield &amp; Flippers</span><span>&bull;</span><span>Blank Sleeves</span>',
-        front: 'assets/merch/hoodie_opt9_front.png?v=200',
-        back: 'assets/merch/hoodie_opt9_back.png?v=200'
+        model: 'RC-309',
+        title: 'White & 24K Gold Crowned Legend Hoodie',
+        specs: '<span>Front: 24K Gold Breast Crest (300 DPI DTF)</span><span>&bull;</span><span>Back: Full 24K Gold Sanctuary Emblem (300 DPI DTF)</span><span>&bull;</span><span>450GSM Heavyweight Arctic White</span>',
+        front: 'assets/merch/hoodie_tier6_2f_front.png?v=200',
+        back: 'assets/merch/hoodie_tier6_2f_back.png?v=200'
       }
     ];
 

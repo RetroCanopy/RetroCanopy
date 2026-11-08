@@ -17790,6 +17790,7 @@
       const totalCredited = pk.diamonds + pk.bonus;
       state.scrap += totalCredited;
       persistWalletAndRig();
+      recordBotPitGameOrder(pk, isNativeStoreApp ? 'Native IAP' : 'Web Instant');
       updatePlayerUI();
       const vaultEl = document.getElementById("diamondStoreVaultReadout");
       if (vaultEl) vaultEl.textContent = `💎 ${state.scrap.toLocaleString()}`;
@@ -17800,6 +17801,49 @@
       const subEl = document.getElementById("diamondStoreSubMsg");
       if (subEl) {
         subEl.innerHTML = `<span style="color:#34d399;font-weight:800;">✅ PURCHASE COMPLETE: +${totalCredited.toLocaleString()} 💎 added to ${state.pilotCallsign}'s Vault!</span>`;
+      }
+    }
+
+    async function recordBotPitGameOrder(pk, platformLabel) {
+      try {
+        if (!pk) return;
+        const totalCredited = (pk.diamonds || 0) + (pk.bonus || 0);
+        const rawPrice = parseFloat(String(pk.priceUsd || '0').replace(/[^0-9.]/g, '')) || 0;
+        const orderId = 'BP-ORD-' + String(Date.now()).slice(-6);
+        const rec = {
+          order_id: orderId,
+          user_key: state.loggedInUserKey || (state.pilotCallsign || 'pilot').toLowerCase(),
+          pilot_callsign: state.pilotCallsign || 'PILOT',
+          customer_email: state.loggedInEmail || '',
+          pack_id: pk.id,
+          pack_name: pk.name || pk.id,
+          diamonds_credited: totalCredited,
+          price_usd: rawPrice,
+          payment_status: 'PAID',
+          platform: platformLabel || 'Web',
+          created_at: new Date().toISOString()
+        };
+        const localOrders = JSON.parse(localStorage.getItem('rc_botpit_game_orders_v1') || '[]') || [];
+        localOrders.unshift(rec);
+        localStorage.setItem('rc_botpit_game_orders_v1', JSON.stringify(localOrders.slice(0, 200)));
+        if (typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined') {
+          await fetch(${SUPABASE_URL}/rest/v1/botpit_game_orders, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': Bearer ,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates,return=minimal'
+            },
+            body: JSON.stringify(rec)
+          });
+        }
+        if (typeof BroadcastChannel !== 'undefined') {
+          const ch = new BroadcastChannel('rc_admin_hub_sync_v1');
+          ch.postMessage({ type: 'NEW_GAME_ORDER', orderId });
+        }
+      } catch (e) {
+        console.warn('recordBotPitGameOrder warning:', e);
       }
     }
 
@@ -17829,6 +17873,7 @@
         state.scrap = (state.scrap || 0) + totalCredited;
         persistWalletAndRig();
         updatePlayerUI();
+        recordBotPitGameOrder(pk, 'Stripe Web Checkout');
 
         const cleanUrl = window.location.pathname + window.location.hash;
         window.history.replaceState({}, document.title, cleanUrl);
