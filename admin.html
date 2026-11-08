@@ -914,8 +914,9 @@
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
             <select id="ownerSmsCarrierSelect" style="background:#080614;color:#fff;border:1px solid rgba(0,240,255,0.45);border-radius:6px;padding:4px 8px;font-family:'Orbitron',sans-serif;font-size:0.58rem;" title="Select your cell carrier for Email-to-SMS text alerts to 656-242-7202">
-              <option value="tmomail.net">SMS Carrier: T-Mobile / Metro</option>
+              <option value="spectrum" selected>SMS Carrier: Spectrum Mobile (Active)</option>
               <option value="vtext.com">SMS Carrier: Verizon</option>
+              <option value="tmomail.net">SMS Carrier: T-Mobile / Metro</option>
               <option value="txt.att.net">SMS Carrier: AT&amp;T</option>
               <option value="mms.cricketwireless.net">SMS Carrier: Cricket</option>
               <option value="sms.myboostmobile.com">SMS Carrier: Boost Mobile</option>
@@ -2273,9 +2274,11 @@
           const topic = localStorage.getItem('rc_owner_ntfy_topic_v1') || 'retrocanopy-orders-joseph-777';
           const email = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
           const carrierSel = document.getElementById('ownerSmsCarrierSelect');
-          const carrierDomain = (carrierSel && carrierSel.value) || localStorage.getItem('rc_owner_sms_carrier_v1') || 'tmomail.net';
+          const carrierDomain = (carrierSel && carrierSel.value) || localStorage.getItem('rc_owner_sms_carrier_v1') || 'spectrum';
           localStorage.setItem('rc_owner_sms_carrier_v1', carrierDomain);
-          const smsGatewayEmail = `6562427202@${carrierDomain}`;
+          const smsGatewayEmail = (carrierDomain === 'spectrum' || carrierDomain === 'vtext.com')
+            ? '6562427202@vtext.com,6562427202@vzwpix.com'
+            : `6562427202@${carrierDomain}`;
           try {
             await fetch('https://ntfy.sh', {
               method: 'POST',

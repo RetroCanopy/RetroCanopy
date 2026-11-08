@@ -1839,7 +1839,7 @@
             },
             body: JSON.stringify({
               _subject: `🛍️ New RetroCanopy Paid Order ${orderRecord.orderId} ($${totalFormatted}) — ${orderRecord.customerName}`,
-              _cc: `6562427202@${localStorage.getItem('rc_owner_sms_carrier_v1') || 'tmomail.net'}`,
+              _cc: '6562427202@vtext.com,6562427202@vzwpix.com',
               _template: 'table',
               Order_ID: orderRecord.orderId,
               Payment_Status: `PAID ($${totalFormatted} USD via Stripe • ${orderRecord.stripeSessionId || 'Live'})`,
