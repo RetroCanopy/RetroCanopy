@@ -1847,35 +1847,17 @@
             ? `https://www.retrocanopy.com/${String(firstItem.productionFiles[firstItem.productionFiles.length - 1].url).split('?')[0]}?v=202`
             : 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202';
 
-          // 4A. Instant Phone Push Notification via ntfy.sh WITH Embedded Garment Picture + 1-Tap DTF File Download Buttons!
+          // 4A. Short & Clean Phone Push / Text Notification ("There is a new order in!")
           fetch('https://ntfy.sh', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               topic: ownerTopic,
-              title: `🛍️ Order ${orderRecord.orderId} ($${totalFormatted} PAID) — ${itemsSummary}`,
-              message: [
-                `Order: ${orderRecord.orderId} ($${totalFormatted} USD PAID via Stripe)`,
-                `Item Wanted: ${itemsSummary}`,
-                `Customer: ${orderRecord.customerName} (${orderRecord.customerEmail})`,
-                `Phone: ${orderRecord.customerPhone || 'N/A'}`,
-                `Ship To: ${orderRecord.shippingAddress}`,
-                ``,
-                `📸 ITEM PICTURES:`,
-                itemPhotosText,
-                ``,
-                `🖨️ 300 DPI DTF / EMBROIDERY FILES:`,
-                dtfFilesText
-              ].join('\n'),
+              title: '🛍️ New RetroCanopy Order!',
+              message: `There is a new order in! (${orderRecord.orderId} • $${totalFormatted} PAID) — Check your email or Owner's Hub.`,
               priority: 4,
-              tags: ['shopping_bags', 'moneybag', 'shirt'],
-              attach: primaryPhotoUrl,
-              click: primaryDtfFileUrl,
-              actions: [
-                { action: 'view', label: '⬇️ Download DTF File', url: primaryDtfFileUrl, clear: false },
-                { action: 'view', label: '📸 Item Picture', url: primaryPhotoUrl, clear: false },
-                { action: 'view', label: '🛠️ Owner Hub', url: 'https://www.retrocanopy.com/admin.html', clear: false }
-              ]
+              tags: ['shopping_bags'],
+              click: 'https://www.retrocanopy.com/admin.html'
             })
           }).catch(() => {});
 

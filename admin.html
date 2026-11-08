@@ -2291,31 +2291,11 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 topic: topic,
-                title: '🛍️ Order RC-ORD-499625 ($1.00 PAID) — 1x RC-309 White & 24K Gold Hoodie (Size L)',
-                message: [
-                  'Order: RC-ORD-499625 ($1.00 USD PAID via Stripe)',
-                  'Item Wanted: 1x RC-309 White & 24K Gold Crowned Legend Hoodie (Size: L)',
-                  'Customer: JOSEPH DANIEL COLE (656-242-7202)',
-                  'Ship To: 4866 Sunburst Ave',
-                  '',
-                  '📸 ITEM PICTURES:',
-                  '• Front Photo: ' + itemFrontPhoto,
-                  '• Back Photo: ' + itemBackPhoto,
-                  '',
-                  '🖨️ 300 DPI DTF PRINT FILES:',
-                  '• Full Gang Sheet (Front+Back): ' + dtfGangSheet,
-                  '• Front Chest Crest (300 DPI): ' + dtfFrontCrest,
-                  '• Full Back Emblem (300 DPI): ' + dtfBackEmblem
-                ].join('\n'),
+                title: '🛍️ New RetroCanopy Order!',
+                message: 'There is a new order in! (Check your email or Owner\'s Hub for photos & DTF files).',
                 priority: 4,
-                tags: ['shopping_bags', 'moneybag', 'shirt'],
-                attach: itemBackPhoto,
-                click: dtfGangSheet,
-                actions: [
-                  { action: 'view', label: '⬇️ DTF Gang Sheet', url: dtfGangSheet, clear: false },
-                  { action: 'view', label: '📸 Item Picture', url: itemBackPhoto, clear: false },
-                  { action: 'view', label: '🛠️ Owner Hub', url: 'https://www.retrocanopy.com/admin.html', clear: false }
-                ]
+                tags: ['shopping_bags'],
+                click: 'https://www.retrocanopy.com/admin.html'
               })
             });
           } catch (_) {}
