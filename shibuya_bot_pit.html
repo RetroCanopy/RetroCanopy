@@ -8182,6 +8182,7 @@
       }
 
       const idLower = rawId.toLowerCase();
+      const hashedPass = typeof hashPilotPasscode === "function" ? await hashPilotPasscode(rawPass) : rawPass;
       const bpMap = getBotPitAccountsMap();
       const siteMap = getSiteAccountsMap();
 
@@ -8219,11 +8220,11 @@
           if (rows && rows.length > 0) {
             const row = rows[0];
             const savedPass = String(row.password || "");
-            if (!savedPass || savedPass === "pilot123" || savedPass === rawPass || savedPass.toLowerCase() === rawPass.toLowerCase()) {
+            if (!savedPass || savedPass === "pilot123" || savedPass === rawPass || savedPass === hashedPass || savedPass.toLowerCase() === rawPass.toLowerCase()) {
               const cloudBp = row.bot_pit_data && Object.keys(row.bot_pit_data).length > 0
                 ? row.bot_pit_data
-                : (bpMap[row.username_key] || createDefaultAccountProgress(row.username, row.email, rawPass));
-              bpMap[row.username_key] = { ...cloudBp, password: rawPass, username: row.username, email: row.email };
+                : (bpMap[row.username_key] || createDefaultAccountProgress(row.username, row.email, hashedPass));
+              bpMap[row.username_key] = { ...cloudBp, password: hashedPass, username: row.username, email: row.email };
               saveBotPitAccountsMap(bpMap);
               applyAccountProgressToState(row.username_key, bpMap[row.username_key]);
               closePilotAuthGateModal();
@@ -8269,7 +8270,7 @@
       }
 
       const localPass = String(matchedRec.password || "");
-      if (localPass && localPass !== "pilot123" && localPass !== rawPass && localPass.toLowerCase() !== rawPass.toLowerCase()) {
+      if (localPass && localPass !== "pilot123" && localPass !== rawPass && localPass !== hashedPass && localPass.toLowerCase() !== rawPass.toLowerCase()) {
         if (msgEl) msgEl.textContent = "Incorrect password. Please try again.";
         return;
       }
@@ -8277,7 +8278,7 @@
       const mergedRecord = {
         ...(siteMap[matchedKey] || {}),
         ...(bpMap[matchedKey] || {}),
-        password: rawPass
+        password: hashedPass
       };
       applyAccountProgressToState(matchedKey, mergedRecord);
       closePilotAuthGateModal();
@@ -8316,14 +8317,15 @@
         return;
       }
 
-      const newProgress = createDefaultAccountProgress(rawUser, rawEmail, rawPass);
+      const hashedRegPass = typeof hashPilotPasscode === "function" ? await hashPilotPasscode(rawPass) : rawPass;
+      const newProgress = createDefaultAccountProgress(rawUser, rawEmail, hashedRegPass);
       bpMap[uKey] = newProgress;
       saveBotPitAccountsMap(bpMap);
 
       siteMap[uKey] = {
         username: rawUser,
         email: rawEmail,
-        password: rawPass,
+        password: hashedRegPass,
         tickets: 0,
         highScores: { "Shibuya Bot Pit": 1000 },
         unlockedTiers: {},
@@ -17725,10 +17727,27 @@
       if (el) el.classList.remove("active");
     }
 
-    function purchaseDiamondPack(packId) {
+    async function purchaseDiamondPack(packId) {
       if (!ensurePilotLoggedIn()) return;
       const pk = DIAMOND_STORE_PACKS.find(p => p.id === packId);
       if (!pk) return;
+
+      // Native App Store / Google Play StoreKit / Play Billing integration hook
+      const isNativeStoreApp = Boolean(window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform());
+      if (isNativeStoreApp) {
+        if (window.RetroCanopyNativeIAP && typeof window.RetroCanopyNativeIAP.purchasePack === "function") {
+          try {
+            const ok = await window.RetroCanopyNativeIAP.purchasePack(pk.id);
+            if (!ok) return;
+          } catch (err) {
+            showShopToast("⚠️ Store billing cancelled or unavailable.", "#fb7185");
+            return;
+          }
+        } else {
+          showShopToast("🤖 In-App Store Billing is being finalized — earn free Diamonds now by battling CPU Bots & Quests!", "#38bdf8");
+          return;
+        }
+      }
       const totalCredited = pk.diamonds + pk.bonus;
       state.scrap += totalCredited;
       persistWalletAndRig();
@@ -20240,8 +20259,9 @@
               </div>
               <div>
                 <strong style="color:#34d399;">3. 🔒 PRIVACY POLICY &amp; ACCOUNT DELETION:</strong><br>
-                • We store only your Pilot Callsign, Email, hashed credentials, and in-game Bot progress in Supabase Cloud.<br>
-                • You may permanently delete your Pilot Account and all associated cloud data at any time by clicking <strong>🗑️ DELETE ACCOUNT</strong> in the top bar or login screen.
+                • We store only your Pilot Callsign, Email, SHA-256 hashed credentials, and in-game Bot progress in Supabase Cloud.<br>
+                • You may permanently delete your Pilot Account and all associated cloud data at any time by clicking <strong>🗑️ DELETE ACCOUNT</strong> in the top bar, login screen, or on our dedicated web portal.<br>
+                • <a href="privacy.html" target="_blank" rel="noopener" style="color:#38bdf8;font-weight:800;text-decoration:underline;">🔗 Open Full Public Privacy Policy &amp; Web Data Deletion Portal (privacy.html) ↗</a>
               </div>
             </div>
           </div>

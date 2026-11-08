@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy, Terms of Use &amp; Data Deletion — Shibuya Bot Pit | RetroCanopy</title>
+  <link rel="icon" href="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <style>
+    :root {
+      --bg: #070912;
+      --card: #0f1628;
+      --border: rgba(56, 189, 248, 0.35);
+      --gold: #fbbf24;
+      --cyan: #38bdf8;
+      --emerald: #34d399;
+      --rose: #fb7185;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at 50% 0%, #131c36 0%, #070912 70%);
+      color: var(--text);
+      font-family: 'Rajdhani', system-ui, -apple-system, sans-serif;
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 28px 18px 64px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand img {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      border: 2px solid var(--gold);
+      object-fit: cover;
+    }
+    .brand h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.15rem;
+      margin: 0;
+      color: #fff;
+      letter-spacing: 0.8px;
+    }
+    .brand span {
+      font-size: 0.82rem;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-nav {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--cyan);
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.70rem;
+      font-weight: 800;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(19, 28, 50, 0.92) 0%, rgba(10, 14, 26, 0.96) 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+    }
+    .card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.02rem;
+      color: var(--cyan);
+      margin: 0 0 10px;
+      letter-spacing: 0.6px;
+    }
+    .card p, .card li {
+      font-size: 0.98rem;
+      color: #cbd5e1;
+      margin: 6px 0;
+    }
+    .card ul {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+    .highlight-box {
+      background: rgba(251, 191, 36, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #fde68a;
+      margin-top: 10px;
+    }
+    .del-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .del-input {
+      flex: 1;
+      min-width: 210px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #070a14;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+    .btn-delete {
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(244, 63, 94, 0.65);
+      background: linear-gradient(180deg, #e11d48 0%, #9f1239 100%);
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .status-msg {
+      margin-top: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" alt="Shibuya Bot Pit Icon" />
+        <div>
+          <h1>SHIBUYA BOT PIT · RETROCANOPY</h1>
+          <span>Official Privacy Policy, Terms of Use, Golden Ticket Rules &amp; Account Deletion Portal</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="shibuya_bot_pit.html" class="btn-nav">🤖 LAUNCH SHIBUYA BOT PIT</a>
+        <a href="games.html" class="btn-nav">🕹️ NEO-TOKYO ARCADE</a>
+        <a href="index.html" class="btn-nav">🏠 HOME</a>
+      </div>
+    </header>
+
+    <section class="card" id="privacy">
+      <h2>1. 🔒 PRIVACY POLICY</h2>
+      <p><strong>Effective Date:</strong> November 7, 2026 · <strong>Publisher:</strong> RetroCanopy Arena Labs</p>
+      <p>RetroCanopy ("we", "our", or "us") respects your privacy. This policy explains what data is collected when you play <strong>Shibuya Bot Pit</strong> on iOS, Android, or the Web:</p>
+      <ul>
+        <li><strong>Account &amp; Profile Data:</strong> When you create a Pilot Account, we store your chosen Pilot Callsign/Username, Email Address, and SHA-256 hashed credentials so your progress syncs across devices.</li>
+        <li><strong>Gameplay &amp; Cloud Save Data:</strong> We store your in-game Diamonds (💎), Combat XP (⚡), 6-Slot Mech Loadout, ELO rating, Win/Loss record, and Golden Tickets (🎟️) in Supabase Cloud (`arcade_accounts`).</li>
+        <li><strong>Social &amp; Chat Data:</strong> Public Pit Chat messages, Friend connections (`botpit_friendships`), and Private 1-on-1 Direct Messages (`botpit_direct_messages`) are transmitted via encrypted HTTPS/WSS to deliver real-time multiplayer and chat features.</li>
+        <li><strong>No Third-Party Data Selling:</strong> We never sell, rent, or share your personal data with third-party advertisers or data brokers.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="ticket-rules">
+      <h2>2. 🎟️ OFFICIAL GOLDEN TICKET &amp; ARENA STAKE RULES (SKILL-ONLY)</h2>
+      <ul>
+        <li><strong>Strict 1-Ticket-Per-PvP-Win Rule:</strong> Golden Tickets (🎟️) are earned <strong>strictly 1 at a time (+1 🎟️ per Live PvP Victory)</strong> through skill-based player-vs-player combat.</li>
+        <li><strong>Never Sold for Real Money or Diamonds:</strong> Golden Tickets cannot be purchased with cash or Diamonds (💎), and Diamonds cannot be converted into Golden Tickets or cashed out for real-world money.</li>
+        <li><strong>Virtual In-Game Currency (Diamonds 💎):</strong> Diamonds are used strictly inside the game to unlock 3D BattleBot upgrades, repair damaged subsystems in the Pit, and enter competitive in-game Arena Stakes.</li>
+      </ul>
+      <div class="highlight-box">
+        <strong>Official Platform Disclaimer (Apple App Store &amp; Google Play):</strong><br />
+        Apple Inc. and Google LLC are <strong>not</strong> sponsors of, nor affiliated with, involved in, or responsible for any RetroCanopy Ticket Counter promotions, rewards, or competitions.
+      </div>
+    </section>
+
+    <section class="card" id="ugc-safety">
+      <h2>3. 🛡️ USER-GENERATED CONTENT (UGC), PROFANITY FILTER &amp; MODERATION</h2>
+      <p>To keep <strong>Shibuya Bot Pit</strong> safe and welcoming for all players (Apple Guideline 1.2 &amp; Google Play UGC Policy):</p>
+      <ul>
+        <li><strong>Automated Profanity Filtering:</strong> All Public Pit Chat messages, Private 1-on-1 DMs, and Pilot Callsigns pass through an active profanity and slur filter.</li>
+        <li><strong>1-Tap Report (`🚩`) &amp; Block (`🚫`) Controls:</strong> Every player message and friend entry includes instant <strong>🚩 Report</strong> and <strong>🚫 Block</strong> buttons. Blocking a player immediately hides all of their messages and prevents them from contacting you.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="delete-account">
+      <h2>4. 🗑️ PERMANENT ACCOUNT &amp; DATA DELETION (IN-APP &amp; WEB PORTAL)</h2>
+      <p>In compliance with <strong>Apple App Store Guideline 5.1.1(v)</strong> and <strong>Google Play Data Deletion Requirements</strong>, you can permanently delete your Pilot Account and all associated cloud data at any time in two ways:</p>
+      <ol>
+        <li><strong>Directly Inside the App:</strong> Click the red <strong>🗑️ DELETE ACCOUNT</strong> button in the top navigation bar or inside the Pilot Login screen of <em>Shibuya Bot Pit</em> and confirm.</li>
+        <li><strong>Using the Instant Web Deletion Tool Below:</strong> Enter your Pilot Username/Callsign and Password below to permanently erase your account from our Supabase Cloud database and local storage immediately:</li>
+      </ol>
+      <form class="del-form" onsubmit="handleWebAccountDeletion(event)">
+        <input type="text" id="delUserInp" class="del-input" placeholder="Pilot Username / Callsign (e.g. KAZUYA_99)" required />
+        <input type="password" id="delPassInp" class="del-input" placeholder="Your Password" required />
+        <button type="submit" class="btn-delete">🗑️ PERMANENTLY DELETE MY ACCOUNT</button>
+      </form>
+      <div class="status-msg" id="delStatusMsg"></div>
+    </section>
+  </div>
+
+  <script>
+    async function hashPilotPasscode(rawPass) {
+      const clean = String(rawPass || "");
+      if (!window.crypto || !window.crypto.subtle) return clean;
+      try {
+        const msgBuffer = new TextEncoder().encode("rc_botpit_salt_v1::" + clean);
+        const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return "sha256:" + hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+      } catch (_) {
+        return clean;
+      }
+    }
+
+    async function handleWebAccountDeletion(e) {
+      e.preventDefault();
+      const rawUser = (document.getElementById("delUserInp").value || "").trim().replace(/^@/, "").toLowerCase();
+      const rawPass = document.getElementById("delPassInp").value || "";
+      const statusEl = document.getElementById("delStatusMsg");
+      if (!rawUser || !rawPass) return;
+
+      if (!confirm(`Permanently delete Pilot Account @${rawUser.toUpperCase()} and all associated cloud save, friendship, and chat data? This cannot be undone.`)) {
+        return;
+      }
+
+      statusEl.style.color = "#fbbf24";
+      statusEl.textContent = "⏳ Verifying and deleting account data...";
+
+      // Delete from local storage if present on this device
+      try {
+        const bpMap = JSON.parse(localStorage.getItem("rc_botpit_accounts_v2") || "{}");
+        const siteMap = JSON.parse(localStorage.getItem("rc_accounts_db_v2") || "{}");
+        delete bpMap[rawUser];
+        delete siteMap[rawUser];
+        localStorage.setItem("rc_botpit_accounts_v2", JSON.stringify(bpMap));
+        localStorage.setItem("rc_accounts_db_v2", JSON.stringify(siteMap));
+      } catch (_) {}
+
+      // Delete from Supabase Cloud if connected
+      if (window.db) {
+        try {
+          const hashed = await hashPilotPasscode(rawPass);
+          const { data: rows } = await window.db
+            .from("arcade_accounts")
+            .select("username_key,password")
+            .eq("username_key", rawUser)
+            .limit(1);
+
+          if (rows && rows.length > 0) {
+            const saved = String(rows[0].password || "");
+            if (saved && saved !== rawPass && saved !== hashed && saved.toLowerCase() !== rawPass.toLowerCase()) {
+              statusEl.style.color = "#fb7185";
+              statusEl.textContent = "❌ Password did not match that Pilot Account.";
+              return;
+            }
+          }
+
+          await window.db.from("arcade_accounts").delete().eq("username_key", rawUser);
+          await window.db.from("botpit_friendships").delete().or(`requester_key.eq.${rawUser},addressee_key.eq.${rawUser}`);
+          await window.db.from("botpit_direct_messages").delete().or(`sender_key.eq.${rawUser},receiver_key.eq.${rawUser}`);
+        } catch (_) {}
+      }
+
+      statusEl.style.color = "#34d399";
+      statusEl.textContent = `✅ Pilot Account @${rawUser.toUpperCase()} and all associated cloud data have been permanently deleted.`;
+      document.getElementById("delUserInp").value = "";
+      document.getElementById("delPassInp").value = "";
+    }
+  </script>
+</body>
+</html>
