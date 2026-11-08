@@ -1407,14 +1407,15 @@
     const initialBagCount = getShopBagCount();
     setShopBagCount(initialBagCount);
 
-    // Listen to solo "Add to Bag" button clicks so actual product items are stored for Checkout
+    // Listen to solo "Add to Bag" button clicks so actual product items are stored for Checkout and Checkout Modal opens right away
     document.querySelectorAll('.hud-buy-btn').forEach((buyBtn) => {
       buyBtn.addEventListener('click', () => {
         const kickerEl = document.getElementById('hudKicker') || document.querySelector('.hud-kicker');
-        const activeCode = (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-101';
+        const activeCode = (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-309';
         setTimeout(() => {
           addItemToCartByCode(activeCode, 1);
-        }, 10);
+          openStoreCheckoutModal();
+        }, 15);
       });
     });
 
@@ -1670,7 +1671,77 @@
     }
     checkoutBackdropEl.addEventListener('click', closeStoreCheckoutModal);
 
+    // =========================================================================
+    // LIVE STRIPE CONFIGURATION FOR RETROCANOPY MERCH SHOP ($1.00 LIVE ITEMS)
+    // =========================================================================
+    const STRIPE_PUBLISHABLE_KEY_LIVE = 'pk_live_51UXh480OyGGkytHEcuF5RM0XGEfKZSztfcVH8bx5mlBbrpflL323vVfw3BovqLOGUFl0plc3BDmW78EKBRVGq6wP00JCrFYGar';
+    const STRIPE_CHECKOUT_FUNCTION_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout';
+    const LIVE_STRIPE_MERCH_LINKS = {
+      'RC-309': {
+        sku: 'RC-309',
+        productId: 'prod_VaXU77oamBRfcX',
+        priceId: 'price_1UZMPf0OyGGkytHEHJZ49gl8',
+        paymentLinkUrl: 'https://buy.stripe.com/fZufZ9bvy8Gn2we48S7Re06'
+      },
+      'RC-107': {
+        sku: 'RC-107',
+        productId: 'prod_VaXUbb60Ne69G2',
+        priceId: 'price_1UZMPg0OyGGkytHEsTPWIGqK',
+        paymentLinkUrl: 'https://buy.stripe.com/28E6ozfLOe0HdaS48S7Re07'
+      },
+      'BUNDLE': {
+        sku: 'RC-BUNDLE-309-107',
+        productId: 'prod_VaXUU2rjmTuo9a',
+        priceId: 'price_1UZMPh0OyGGkytHEoId9KvQE',
+        paymentLinkUrl: 'https://buy.stripe.com/8x28wHdDG2hZeeWbBk7Re08'
+      }
+    };
+
+    async function stagePendingOrderBeforeStripe(orderRecord) {
+      // Stage in localStorage so when Stripe redirects back, we have full customer + production file metadata
+      try {
+        localStorage.setItem('rc_pending_merch_stripe_order_v1', JSON.stringify(orderRecord));
+      } catch (_) {}
+
+      // Stage in Supabase with is_paid = false (AWAITING_STRIPE) so it does NOT show in Owner's Hub until paid
+      try {
+        const stagedPayload = {
+          order_id: orderRecord.orderId,
+          customer_name: orderRecord.customerName,
+          customer_email: orderRecord.customerEmail,
+          customer_phone: orderRecord.customerPhone,
+          shipping_address: orderRecord.shippingAddress,
+          customer_notes: orderRecord.customerNotes || '',
+          items: orderRecord.items,
+          subtotal_usd: orderRecord.subtotal,
+          shipping_usd: orderRecord.shipping,
+          discount_usd: orderRecord.discountAmt || 0,
+          total_paid_usd: orderRecord.totalPaid,
+          payment_status: 'AWAITING_STRIPE',
+          is_paid: false,
+          stripe_session_id: orderRecord.stripeSessionId || ('PENDING-' + Date.now()),
+          fulfilled: false,
+          fulfilled_at: null,
+          paid_at: null
+        };
+        await fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?on_conflict=order_id`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=minimal'
+          },
+          body: JSON.stringify(stagedPayload)
+        });
+      } catch (err) {
+        console.warn('Supabase stage pending order warning:', err);
+      }
+    }
+
     async function persistPaidOrderToCloudAndLocal(orderRecord) {
+      orderRecord.isPaid = true;
+      orderRecord.paymentStatus = 'PAID';
       // 1. Save to localStorage queues (rc_shop_orders_v2 + rc_shop_orders_v1)
       try {
         const v2List = JSON.parse(localStorage.getItem('rc_shop_orders_v2') || '[]') || [];
@@ -1722,6 +1793,133 @@
           ch.postMessage({ type: 'NEW_PAID_MERCH_ORDER', orderId: orderRecord.orderId });
         }
       } catch (_) {}
+    }
+
+    async function checkMerchStripeCheckoutReturn() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const isSuccess = urlParams.get('stripe_merch_success') === '1';
+        const isCancel = urlParams.get('stripe_merch_cancel') === '1';
+        if (!isSuccess && !isCancel) return;
+
+        const returnedOrderId = urlParams.get('order_id') || '';
+        const returnedSessionId = urlParams.get('session_id') || '';
+        const returnedSku = urlParams.get('sku') || 'RC-309';
+
+        // Clean URL query parameters so refreshing doesn't re-trigger
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+        if (isCancel) {
+          openStoreCheckoutModal();
+          const errEl = document.getElementById('rcCheckoutFormError');
+          if (errEl) {
+            errEl.style.display = 'block';
+            errEl.textContent = 'Stripe checkout was canceled. Your items and shipping info are still saved below whenever you are ready.';
+          }
+          return;
+        }
+
+        // Verify session server-side with Stripe Live API if session_id is present
+        let verifiedSession = null;
+        if (returnedSessionId) {
+          try {
+            const vRes = await fetch(STRIPE_CHECKOUT_FUNCTION_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'verify_session',
+                sessionId: returnedSessionId,
+                orderId: returnedOrderId
+              })
+            });
+            if (vRes.ok) {
+              verifiedSession = await vRes.json();
+            }
+          } catch (_) {}
+        }
+
+        // Retrieve staged order from localStorage (or reconstruct from saved customer info + SKU)
+        let pendingOrder = null;
+        try {
+          pendingOrder = JSON.parse(localStorage.getItem('rc_pending_merch_stripe_order_v1') || 'null');
+        } catch (_) {}
+
+        if (!pendingOrder) {
+          const savedCust = JSON.parse(localStorage.getItem('rc_saved_customer_info_v1') || '{}') || {};
+          const fallbackCode = (returnedSku === 'RC-107') ? 'RC-107' : 'RC-309';
+          const cat = masterCatalog[fallbackCode] || masterCatalog['RC-309'];
+          const isHat = fallbackCode === 'RC-107';
+          const fallbackItems = [{
+            model: fallbackCode,
+            title: cat.title,
+            price: 1,
+            qty: 1,
+            size: isHat ? 'One Size Snapback' : 'L',
+            frontPhotoUrl: cat.frontPhotoUrl,
+            backPhotoUrl: cat.backPhotoUrl || '',
+            productionType: cat.productionType,
+            productionNotes: cat.productionNotes,
+            productionFiles: cat.productionFiles
+          }];
+          pendingOrder = {
+            orderId: returnedOrderId || ('RC-ORD-' + String(Date.now()).slice(-6)),
+            customer: savedCust.name || 'Stripe Customer',
+            customerName: savedCust.name || 'Stripe Customer',
+            customerEmail: savedCust.email || 'verified@stripe.com',
+            customerPhone: savedCust.phone || 'N/A',
+            shippingAddress: savedCust.address || 'Verified in Stripe Checkout',
+            customerNotes: '',
+            item: fallbackItems.map((x) => `${x.qty}x ${x.title} (${x.size})`).join(', '),
+            items: fallbackItems,
+            subtotal: verifiedSession?.amountTotalUsd || 1,
+            discountAmt: 0,
+            shipping: 0,
+            total: verifiedSession?.amountTotalUsd || 1,
+            totalPaid: verifiedSession?.amountTotalUsd || 1,
+            status: 'Needs Production',
+            date: new Date().toISOString(),
+            createdAt: new Date().toLocaleString()
+          };
+        }
+
+        pendingOrder.isPaid = true;
+        pendingOrder.paymentStatus = 'PAID';
+        pendingOrder.stripeSessionId = returnedSessionId || pendingOrder.stripeSessionId || ('STRIPE-LIVE-' + Date.now());
+        if (verifiedSession?.amountTotalUsd) {
+          pendingOrder.totalPaid = verifiedSession.amountTotalUsd;
+          pendingOrder.total = verifiedSession.amountTotalUsd;
+        }
+
+        await persistPaidOrderToCloudAndLocal(pendingOrder);
+        try {
+          localStorage.removeItem('rc_pending_merch_stripe_order_v1');
+        } catch (_) {}
+
+        saveCartItems([]);
+        openStoreCheckoutModal();
+        playCutsceneBonkSfx('jackpot_fanfare');
+
+        const bagListEl = document.getElementById('rcBagItemsList');
+        if (bagListEl) {
+          bagListEl.innerHTML = `
+            <div style="padding:18px;background:rgba(0,245,155,0.14);border:1.5px solid #00f59b;border-radius:14px;text-align:center;">
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:900;color:#00f59b;">&#10003; LIVE STRIPE PAYMENT VERIFIED — ORDER #${pendingOrder.orderId}</div>
+              <div style="font-size:0.82rem;margin-top:6px;color:#ffffff;">
+                Paid <strong>${formatMoney(pendingOrder.totalPaid)}</strong> via Stripe &bull; Customer: <strong>${pendingOrder.customerName}</strong> (${pendingOrder.customerEmail})
+              </div>
+              <div style="font-size:0.76rem;margin-top:4px;color:#00f0ff;">
+                Ship To: ${pendingOrder.shippingAddress}
+              </div>
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;color:#ffae00;margin-top:8px;">
+                &#128424;&#65039; Sent to Owner's Hub Production Queue with Garment Photos + 300 DPI DTF / .DST Embroidery Files!
+              </div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.warn('Stripe return check error:', err);
+      }
     }
 
     function renderStoreCouponDockAndCheckout() {
@@ -1856,7 +2054,7 @@
       if (checkoutBtnEl) {
         checkoutBtnEl.disabled = items.length === 0;
         checkoutBtnEl.style.opacity = items.length === 0 ? '0.45' : '1';
-        checkoutBtnEl.textContent = `COMPLETE PAYMENT (${formatMoney(finalTotal)}) • SEND TO OWNER'S HUB`;
+        checkoutBtnEl.textContent = `💳 PAY WITH STRIPE (${formatMoney(finalTotal)}) • LIVE CHECKOUT`;
 
         checkoutBtnEl.onclick = async () => {
           if (items.length === 0) return;
@@ -1871,7 +2069,7 @@
           if (!custName || !custEmail || !custAddress) {
             if (errEl) {
               errEl.style.display = 'block';
-              errEl.textContent = '⚠️ Please enter your Full Name, Email Address, and Shipping Address so your order & production files can be fulfilled.';
+              errEl.textContent = '⚠️ Please enter your Full Name, Email Address, and Shipping Address before proceeding to Stripe Checkout.';
             }
             return;
           }
@@ -1887,7 +2085,7 @@
           } catch (_) {}
 
           checkoutBtnEl.disabled = true;
-          checkoutBtnEl.textContent = 'PROCESSING PAYMENT & ATTACHING PRODUCTION FILES...';
+          checkoutBtnEl.textContent = '🔒 OPENING LIVE STRIPE CHECKOUT...';
 
           const now = new Date();
           const orderId = 'RC-ORD-' + String(now.getTime()).slice(-6);
@@ -1908,7 +2106,7 @@
             };
           });
 
-          const newOrder = {
+          const pendingOrder = {
             orderId: orderId,
             customer: custName,
             customerName: custName,
@@ -1923,8 +2121,8 @@
             shipping: 0,
             total: finalTotal,
             totalPaid: finalTotal,
-            paymentStatus: 'PAID',
-            isPaid: true,
+            paymentStatus: 'AWAITING_STRIPE',
+            isPaid: false,
             fulfilled: false,
             fulfilledAt: null,
             status: 'Needs Production',
@@ -1932,33 +2130,65 @@
             createdAt: now.toLocaleString()
           };
 
-          await persistPaidOrderToCloudAndLocal(newOrder);
+          // 1. Stage order BEFORE Stripe redirect (is_paid: false until Stripe completes)
+          await stagePendingOrderBeforeStripe(pendingOrder);
 
-          saveCartItems([]);
-          playCutsceneBonkSfx('jackpot_fanfare');
-          renderStoreCouponDockAndCheckout();
+          // 2. Create dynamic Live Stripe Checkout Session via Supabase Edge Function
+          const returnBaseUrl = window.location.origin + window.location.pathname;
+          try {
+            const sessionRes = await fetch(STRIPE_CHECKOUT_FUNCTION_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'create_session',
+                orderId: orderId,
+                customerName: custName,
+                customerEmail: custEmail,
+                customerPhone: custPhone,
+                shippingAddress: custAddress,
+                customerNotes: custNotes,
+                returnBaseUrl: returnBaseUrl,
+                items: enrichedItems.map((x) => ({
+                  sku: x.model,
+                  name: x.title,
+                  size: x.size,
+                  qty: x.qty,
+                  priceUsd: x.price
+                }))
+              })
+            });
 
-          if (bagListEl) {
-            bagListEl.innerHTML = `
-              <div style="padding:18px;background:rgba(0,245,155,0.12);border:1.5px solid #00f59b;border-radius:14px;text-align:center;">
-                <div style="font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:900;color:#00f59b;">&#10003; PAYMENT COMPLETE — ORDER #${orderId} SENT TO OWNER'S HUB!</div>
-                <div style="font-size:0.8rem;margin-top:6px;color:#ffffff;">
-                  Paid <strong>${formatMoney(finalTotal)}</strong> &bull; Customer: <strong>${custName}</strong> (${custEmail})
-                </div>
-                <div style="font-size:0.75rem;margin-top:4px;color:#00f0ff;">
-                  Ship To: ${custAddress}
-                </div>
-                <div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;color:#ffae00;margin-top:8px;">
-                  &#128424;&#65039; DTF 300 DPI PNGs &amp; .DST Embroidery Files Attached in Owner's Hub Production Queue!
-                </div>
-              </div>
-            `;
+            if (sessionRes.ok) {
+              const sessionData = await sessionRes.json();
+              if (sessionData && sessionData.url) {
+                pendingOrder.stripeSessionId = sessionData.sessionId || '';
+                localStorage.setItem('rc_pending_merch_stripe_order_v1', JSON.stringify(pendingOrder));
+                window.location.href = sessionData.url;
+                return;
+              }
+            }
+          } catch (err) {
+            console.warn('Edge function checkout fallback to direct Stripe Payment Link:', err);
           }
+
+          // 3. Fallback to official Live Stripe Payment Links if Edge Function is unreachable
+          const hasHoodie = enrichedItems.some((x) => x.model === 'RC-309');
+          const hasHat = enrichedItems.some((x) => x.model === 'RC-107');
+          let linkObj = LIVE_STRIPE_MERCH_LINKS['RC-309'];
+          if (hasHoodie && hasHat) {
+            linkObj = LIVE_STRIPE_MERCH_LINKS['BUNDLE'];
+          } else if (hasHat) {
+            linkObj = LIVE_STRIPE_MERCH_LINKS['RC-107'];
+          }
+          const sep = linkObj.paymentLinkUrl.includes('?') ? '&' : '?';
+          const stripeRedirectUrl = `${linkObj.paymentLinkUrl}${sep}client_reference_id=${encodeURIComponent(orderId)}&prefilled_email=${encodeURIComponent(custEmail)}`;
+          window.location.href = stripeRedirectUrl;
         };
       }
     }
 
     renderStoreCouponDockAndCheckout();
+    checkMerchStripeCheckoutReturn();
     loadStoreAccountsFromServer();
 
     function syncChloeWithActiveProduct(forceRetype) {
