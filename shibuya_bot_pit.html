@@ -6337,6 +6337,24 @@
       text-overflow: ellipsis;
     }
 
+  
+      .btn-chat-ugc {
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 5px;
+        color: #94a3b8;
+        font-size: 0.58rem;
+        line-height: 1;
+        padding: 2px 5px;
+        cursor: pointer;
+        transition: all 0.14s ease;
+      }
+      .btn-chat-ugc:hover {
+        background: rgba(244, 63, 94, 0.22);
+        border-color: rgba(244, 63, 94, 0.55);
+        color: #fda4af;
+      }
+
   </style>
 </head>
 <body>
@@ -6355,7 +6373,7 @@
       <div class="elo-pill" id="pilotEloDisplay">🏆 1,000</div>
       <div class="record-pill" id="pilotRecordDisplay">⚔️ 0W - 0L</div>
       <div class="elo-pill" id="pilotXpDisplay" style="border-color:rgba(56,189,248,0.45);color:#38bdf8;" title="Battle CPU Bots to earn XP — every XP converts into Diamonds!">⚡ 0 XP</div>
-      <a href="games.html?openTickets=1" class="elo-pill" id="pilotTicketsDisplay" style="border-color:rgba(251,191,36,0.55);color:#fde047;text-decoration:none;" title="Win PvP Battles to earn Golden Tickets for the Ticket Counter!">🎟️ 0 TICKETS</a>
+      <a href="games.html?openTickets=1" class="elo-pill" id="pilotTicketsDisplay" style="border-color:rgba(251,191,36,0.55);color:#fde047;text-decoration:none;" title="Golden Tickets are won strictly 1 at a time from Live PvP Victories (never sold for cash or Diamonds)!">🎟️ 0 PVP TICKETS</a>
       <div class="scrap-top-pill" id="topScrapDisplay" onclick="openBuyDiamondsModal()" style="cursor:pointer;" title="Click to Purchase Diamonds">💎 0</div>
       <button type="button" class="top-nav-pill" style="background:linear-gradient(180deg,#38bdf8 0%,#0284c7 100%);color:#041019;border-color:#7dd3fc;font-weight:900;" onclick="openBuyDiamondsModal()" title="Purchase Diamonds in-game">💎 BUY DIAMONDS</button>
       <button type="button" class="top-nav-pill friends-top-btn" id="topFriendsNavBtn" onclick="openFriendsCommsTab()" title="Open Friends List, Online/Offline Status &amp; Private 1-on-1 Chats">
@@ -6399,6 +6417,9 @@
       </button>
       <button class="top-nav-pill logout-btn" id="btnLogoutPilot" onclick="logoutPilotAccount()" title="Log Out or Switch Pilot Account">
         🔒 LOG OUT / SWITCH
+      </button>
+      <button class="top-nav-pill" id="btnDeletePilotTop" onclick="promptDeletePilotAccount()" style="background:rgba(244,63,94,0.16);border-color:rgba(244,63,94,0.55);color:#fda4af;font-weight:800;" title="Permanently Delete Your Pilot Account &amp; Cloud Data">
+        🗑️ DELETE ACCOUNT
       </button>
     </div>
   </header>
@@ -6742,7 +6763,7 @@
             <div class="pre-step-box" id="preStepWagerWrap" style="display:none;">
               <div class="wager-panel">
                 <div class="wager-title-row">
-                  <span>🎰 TAP YOUR DIAMOND WAGER</span>
+                  <span>🏆 SELECT ARENA ENTRY STAKE</span>
                   <span id="wagerVaultReadout" style="color:#38bdf8;">💎 3,500</span>
                 </div>
                 <div class="wager-chips-row" id="overlayWagerChips">
@@ -6751,10 +6772,10 @@
                   <button class="wager-chip active" data-wager="250" onclick="selectWagerAndAdvance(250)">💎 250</button>
                   <button class="wager-chip" data-wager="500" onclick="selectWagerAndAdvance(500)">💎 500</button>
                   <button class="wager-chip" data-wager="1000" onclick="selectWagerAndAdvance(1000)">💎 1,000</button>
-                  <button class="wager-chip all-in" data-wager="allin" onclick="selectAllInAndAdvance()">🔥 ALL-IN</button>
+                  <button class="wager-chip all-in" data-wager="allin" onclick="selectAllInAndAdvance()">🔥 MAX STAKE</button>
                 </div>
                 <div class="wager-pot-summary" id="wagerPotSummary" style="display:block !important;">
-                  🏆 WIN POT: +500 💎
+                  🏆 TROPHY BOUNTY: +500 💎
                 </div>
               </div>
               <div class="pre-step-nav-row">
@@ -6783,7 +6804,7 @@
                 </div>
               </div>
               <div class="pre-step-nav-row">
-                <button type="button" class="btn-pre-step-back" onclick="setPreBattleStep('wager')">← BACK TO WAGER</button>
+                <button type="button" class="btn-pre-step-back" onclick="setPreBattleStep('wager')">← BACK TO STAKE</button>
                 <button type="button" class="btn-pre-step-next" onclick="openFullScreenMapSelector()">🖼️ EXPAND FULL SCREEN</button>
               </div>
             </div>
@@ -6944,7 +6965,10 @@
                 <span class="friend-callsign-txt" id="dmHeaderCallsign">@FRIEND</span>
                 <span id="dmHeaderStatusTxt" style="font-size:0.60rem;color:#34d399;font-weight:700;">🟢 ONLINE · PRIVATE CHAT</span>
               </div>
-              <span class="friend-status-badge online" style="background:rgba(56,189,248,0.16);border-color:rgba(56,189,248,0.45);color:#7dd3fc;">🔒 PRIVATE</span>
+              <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+                <button type="button" class="btn-friend-act" onclick="reportActiveDmPartner()" style="padding:3px 7px;font-size:0.56rem;border-color:rgba(251,191,36,0.45);color:#fde047;" title="Report Player or Private Message">🚩 REPORT</button>
+                <button type="button" class="btn-friend-act danger" onclick="blockActiveDmPartner()" style="padding:3px 7px;font-size:0.56rem;" title="Block Player">🚫 BLOCK</button>
+              </div>
             </div>
 
             <div class="dm-messages-feed" id="dmMessagesFeed">
@@ -6967,7 +6991,7 @@
                 <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('👋 Yo! Online now?')">👋 Yo!</button>
                 <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('⚔️ Want to 1v1 in Live PvP?')">⚔️ 1v1 PvP?</button>
                 <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('🔥 GG! Great battle!')">🔥 GG!</button>
-                <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('💎 High-roller wager match?')">💎 Wager?</button>
+                <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('💎 High-stakes trophy match?')">💎 Stake?</button>
                 <button type="button" class="btn-dm-quick" onclick="sendPrivateQuickMsg('👍 Ready when you are!')">👍 Ready!</button>
               </div>
             </div>
@@ -6987,8 +7011,8 @@
           <span class="fs-map-top-title" id="fsMapModeTitle">🗺️ SELECT YOUR BATTLE ARENA (ALL 7 MAPS AVAILABLE FOR PVP &amp; CPU)</span>
         </div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-          <span class="fs-map-wager-pill" id="fsMapWagerPill">🔒 WAGER: 💎 250</span>
-          <button type="button" class="btn-pre-step-back" onclick="closeFullScreenMapSelector(true)">← BACK TO WAGER</button>
+          <span class="fs-map-wager-pill" id="fsMapWagerPill">🔒 ARENA STAKE: 💎 250</span>
+          <button type="button" class="btn-pre-step-back" onclick="closeFullScreenMapSelector(true)">← BACK TO STAKE</button>
         </div>
       </div>
 
@@ -7244,6 +7268,15 @@
       <div class="pilot-saved-accounts" id="pilotSavedAccountsWrap" style="display:none;">
         <div class="pilot-saved-title">⚡ SAVED PILOT ACCOUNTS ON THIS DEVICE (CLICK TO FILL):</div>
         <div class="pilot-saved-chips" id="pilotSavedChipsList"></div>
+      </div>
+
+      <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:7px 10px;font-size:0.68rem;color:#fde68a;line-height:1.35;text-align:center;">
+        🎟️ <strong>GOLDEN TICKET RULE:</strong> Golden Tickets are won <strong>strictly 1 at a time from Live PvP Victories</strong> and cannot be purchased.
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding-top:6px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.72rem;">
+        <button type="button" onclick="openPrivacyAndTermsModal()" style="background:none;border:none;color:#94a3b8;text-decoration:underline;cursor:pointer;font-size:0.64rem;font-weight:700;padding:0;">📜 Privacy, Terms &amp; Ticket Rules</button>
+        <button type="button" onclick="promptDeletePilotAccount()" style="background:rgba(244,63,94,0.14);border:1px solid rgba(244,63,94,0.45);border-radius:6px;color:#fda4af;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:800;padding:4px 8px;">🗑️ DELETE ACCOUNT</button>
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.75rem;">
@@ -7904,8 +7937,11 @@
         unlockedTiers: {},
         createdAt: Date.now()
       };
+      // Enforce strict rule: Golden Tickets are ONLY won 1 at a time from Live PvP Victories (1 PvP Win = 1 Ticket max)
+      progressSnapshot.tickets = Math.max(0, Math.min(Number(progressSnapshot.tickets) || 0, Number(progressSnapshot.pvpWins) || 0));
+      state.tickets = progressSnapshot.tickets;
       existingSite.botPitData = progressSnapshot;
-      existingSite.tickets = Math.max(Number(existingSite.tickets) || 0, progressSnapshot.tickets);
+      existingSite.tickets = progressSnapshot.tickets;
       // In games.html Ticket Counter, 10 rc_canopy_xp = 1 Golden Ticket (🎟️)
       const minTicketCounterPoints = progressSnapshot.tickets * 10;
       existingSite.xp = Math.max(Number(existingSite.xp) || 0, minTicketCounterPoints);
@@ -7969,9 +8005,10 @@
         : (typeof bp.totalXpEarned === "number" && !Number.isNaN(bp.totalXpEarned) ? bp.totalXpEarned : state.cpuXp);
       const lvlProg = computeBotLevelProgressFromTotalXp(state.totalXpEarned);
       state.botLevel = lvlProg.botLevel;
-      state.tickets = needsSeasonReset
-        ? 0
-        : (typeof bp.tickets === "number" && !Number.isNaN(bp.tickets) ? bp.tickets : 0);
+      const loadedPvpWins = needsSeasonReset ? 0 : (typeof bp.pvpWins === "number" && !Number.isNaN(bp.pvpWins) ? Math.max(0, bp.pvpWins) : 0);
+      const rawTickets = needsSeasonReset ? 0 : (typeof bp.tickets === "number" && !Number.isNaN(bp.tickets) ? Math.max(0, bp.tickets) : 0);
+      // Golden Tickets can ONLY be won 1 at a time from PvP battles (never exceed pvpWins)
+      state.tickets = Math.min(rawTickets, loadedPvpWins);
       state.partIntegrity = needsSeasonReset
         ? { tires: 100, armor: 100, weapon: 100, core: 100 }
         : normalizePartIntegrity(bp.partIntegrity);
@@ -8254,6 +8291,10 @@
 
       if (rawUser.length < 2) {
         if (msgEl) msgEl.textContent = "Callsign / Username must be at least 2 characters.";
+        return;
+      }
+      if (typeof containsProfanityText === "function" && containsProfanityText(rawUser)) {
+        if (msgEl) msgEl.textContent = "Please choose a clean Pilot Callsign (profanity is not permitted).";
         return;
       }
       if (!rawEmail.includes("@")) {
@@ -8995,7 +9036,7 @@
         }
         if (subTxt) {
           const activeMap = typeof getActiveArenaMap === "function" ? getActiveArenaMap() : null;
-          subTxt.innerHTML = `Map: <strong style="color:#fbbf24;">${activeMap ? activeMap.name : 'SHIBUYA PIT'}</strong> · Wager: <strong style="color:#38bdf8;">💎 ${getPlayerProposedWager().toLocaleString()}</strong>`;
+          subTxt.innerHTML = `Map: <strong style="color:#fbbf24;">${activeMap ? activeMap.name : 'SHIBUYA PIT'}</strong> · Arena Stake: <strong style="color:#38bdf8;">💎 ${getPlayerProposedWager().toLocaleString()}</strong>`;
         }
         sendLobbySignal({ type: "queue_announce", peer: getMyPeerSpec() });
       }, 450);
@@ -9170,7 +9211,7 @@
       addFloatText(
         800,
         360,
-        `🟢 LIVE PVP VS ${oppPeer.callsign}! 🔒 LOWEST WAGER: 💎 ${stake.toLocaleString()} (POT: 💎 ${potTotal.toLocaleString()})`,
+        `🟢 LIVE PVP VS ${oppPeer.callsign}! 🔒 MATCHED STAKE: 💎 ${stake.toLocaleString()} (BOUNTY: 💎 ${potTotal.toLocaleString()})`,
         "#00ff88"
       );
       if (livePvp.role === "host") {
@@ -9420,7 +9461,7 @@
           tag: "🌐 LIVE ONLINE PVP RESULT",
           banner: `💥 DEFEATED BY ${chObj.callsign}`,
           color: "#ff2a55",
-          desc: `+${rewardRes.xpAdded} ⚡ XP · +${rewardRes.totalDiamondsAdded} 💎 (20% Loss Payout)${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''}${lvlUpNote}`
+          desc: `+${rewardRes.xpAdded} ⚡ XP · +${rewardRes.totalDiamondsAdded} 💎 (20% Loss Payout)${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Arena Stake' : ''}${lvlUpNote}`
         };
       }
 
@@ -10742,15 +10783,15 @@
 
       const vaultEl = document.getElementById("wagerVaultReadout");
       if (vaultEl) {
-        vaultEl.innerHTML = `OPPONENT WAGER: <span style="color:#fbbf24;">💎 ${oWager.toLocaleString()}</span>`;
+        vaultEl.innerHTML = `OPPONENT STAKE: <span style="color:#fbbf24;">💎 ${oWager.toLocaleString()}</span>`;
       }
 
       const potSumEl = document.getElementById("wagerPotSummary");
       if (potSumEl) {
         if (matchedWager > 0) {
-          potSumEl.innerHTML = `YOU: <span style="color:#38bdf8;">💎 ${pWager.toLocaleString()}</span> · OPP: <span style="color:#fbbf24;">💎 ${oWager.toLocaleString()}</span> ➔ 🔒 LOWEST WAGER: <span style="color:#fbbf24;">💎 ${matchedWager.toLocaleString()}</span> · 🏆 WINNER TAKES ALL: <span style="color:#ffffff;">💎 ${totalWinPot.toLocaleString()}</span>!`;
+          potSumEl.innerHTML = `YOU: <span style="color:#38bdf8;">💎 ${pWager.toLocaleString()}</span> · OPP: <span style="color:#fbbf24;">💎 ${oWager.toLocaleString()}</span> ➔ 🔒 MATCHED STAKE: <span style="color:#fbbf24;">💎 ${matchedWager.toLocaleString()}</span> · 🏆 TROPHY BOUNTY: <span style="color:#ffffff;">💎 ${totalWinPot.toLocaleString()}</span>!`;
         } else {
-          potSumEl.innerHTML = `YOU: <span style="color:#38bdf8;">💎 0</span> · OPP: <span style="color:#fbbf24;">💎 ${oWager.toLocaleString()}</span> ➔ 🔒 MATCH WAGER: <span style="color:#ffffff;">FREE MATCH (0 💎)</span>`;
+          potSumEl.innerHTML = `YOU: <span style="color:#38bdf8;">💎 0</span> · OPP: <span style="color:#fbbf24;">💎 ${oWager.toLocaleString()}</span> ➔ 🔒 ARENA STAKE: <span style="color:#ffffff;">FREE EXHIBITION (0 💎)</span>`;
         }
       }
 
@@ -10759,7 +10800,7 @@
         const activeEscrow = sim.running && typeof sim.escrowWager === "number" ? sim.escrowWager : matchedWager;
         const livePot = activeEscrow * 2;
         hudPotEl.textContent = activeEscrow > 0
-          ? `🔒 MATCH WAGER: 💎 ${activeEscrow.toLocaleString()} · 🏆 POT: 💎 ${livePot.toLocaleString()}`
+          ? `🔒 ARENA STAKE: 💎 ${activeEscrow.toLocaleString()} · 🏆 BOUNTY: 💎 ${livePot.toLocaleString()}`
           : `🔒 FREE EXHIBITION MATCH`;
       }
 
@@ -10790,7 +10831,7 @@
       const xpEl = document.getElementById("pilotXpDisplay");
       if (xpEl) xpEl.textContent = `⚡ ${(state.cpuXp || 0).toLocaleString()} XP`;
       const tkEl = document.getElementById("pilotTicketsDisplay");
-      if (tkEl) tkEl.textContent = `🎟️ ${(state.tickets || 0).toLocaleString()} TICKET${state.tickets === 1 ? '' : 'S'}`;
+      if (tkEl) tkEl.textContent = `🎟️ ${(state.tickets || 0).toLocaleString()} PVP TICKET${state.tickets === 1 ? '' : 'S'}`;
       document.getElementById("topScrapDisplay").textContent = `💎 ${state.scrap.toLocaleString()}`;
       document.getElementById("scrapReadout").textContent = `💎 ${state.scrap.toLocaleString()} DIAMONDS`;
 
@@ -13872,7 +13913,7 @@
               tag: "🤖 CPU BATTLE RESULT",
               banner: "💥 DEFEATED",
               color: "#ff2a55",
-              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${rewardRes.totalDiamondsAdded.toLocaleString()} Diamonds (20% Loss Payout)${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''}${lvlUpNotice}`
+              desc: `+⚡ ${rewardRes.xpEarned.toLocaleString()} XP · +💎 ${rewardRes.totalDiamondsAdded.toLocaleString()} Diamonds (20% Loss Payout)${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Arena Stake' : ''}${lvlUpNotice}`
             };
           }
           state.activeSimilarCpu = generateSimilarLevelCpuBot();
@@ -13940,7 +13981,7 @@
               tag: "🌐 LIVE ONLINE PVP RESULT",
               banner: `💥 DEFEATED BY ${chObj.callsign}`,
               color: "#ff2a55",
-              desc: `+⚡ ${rewardRes.xpEarned} XP · +💎 ${rewardRes.totalDiamondsAdded}${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Wager' : ''} · -16 🏆 ELO${lvlUpNotice}`
+              desc: `+⚡ ${rewardRes.xpEarned} XP · +💎 ${rewardRes.totalDiamondsAdded}${staked > 0 ? ' · -' + staked.toLocaleString() + ' 💎 Arena Stake' : ''} · -16 🏆 ELO${lvlUpNotice}`
             };
           }
           if (!state.customFriendChallenger) {
@@ -16207,7 +16248,12 @@
 
     function appendPitChatMessage(msgObj) {
       const feed = document.getElementById("pitChatFeed");
-      if (!feed) return;
+      if (!feed || !msgObj) return;
+
+      const senderKey = (msgObj.userKey || String(msgObj.callsign || "").replace(/^@/, "")).trim().toLowerCase();
+      if (senderKey && typeof isPilotBlocked === "function" && isPilotBlocked(senderKey)) {
+        return; // Hide messages from blocked players immediately
+      }
 
       // Deduplicate by message id
       if (msgObj.id && pitSpectator.chatHistory.some(m => m.id === msgObj.id)) return;
@@ -16217,34 +16263,76 @@
       const div = document.createElement("div");
       if (msgObj.kind === "system") {
         div.className = "chat-line system";
-        div.textContent = msgObj.text;
+        div.textContent = typeof filterProfanityText === "function" ? filterProfanityText(msgObj.text || "") : (msgObj.text || "");
       } else {
         div.className = "chat-line";
+        div.dataset.senderKey = senderKey;
         const eloSpan = document.createElement("span");
         eloSpan.className = "chat-elo-tag";
         eloSpan.textContent = `🏆 ${msgObj.elo || 1000}`;
 
+        const safeCallsign = typeof filterProfanityText === "function"
+          ? filterProfanityText(msgObj.callsign || "@PILOT")
+          : (msgObj.callsign || "@PILOT");
+
         const authorSpan = document.createElement("span");
         authorSpan.className = "chat-author";
-        authorSpan.textContent = `${msgObj.callsign || "@PILOT"}:`;
-        const senderKey = (msgObj.userKey || String(msgObj.callsign || "").replace(/^@/, "")).trim().toLowerCase();
+        authorSpan.textContent = `${safeCallsign}:`;
         if (senderKey && senderKey !== state.loggedInUserKey) {
           authorSpan.style.cursor = "pointer";
-          authorSpan.title = `Click to add or message ${msgObj.callsign || "@PILOT"}`;
+          authorSpan.title = `Click to add or message ${safeCallsign}`;
           authorSpan.onclick = () => {
             if (typeof handlePublicChatAuthorClick === "function") {
-              handlePublicChatAuthorClick(senderKey, msgObj.callsign || "@PILOT");
+              handlePublicChatAuthorClick(senderKey, safeCallsign);
             }
           };
         }
 
         const textSpan = document.createElement("span");
         textSpan.className = "chat-text";
-        textSpan.textContent = msgObj.text || "";
+        const cleanMsgText = typeof filterProfanityText === "function"
+          ? filterProfanityText(msgObj.text || "")
+          : (msgObj.text || "");
+        textSpan.textContent = cleanMsgText;
 
         div.appendChild(eloSpan);
         div.appendChild(authorSpan);
         div.appendChild(textSpan);
+
+        // Add Report (🚩) & Block (🚫) UGC Moderation actions on messages
+        const actionsWrap = document.createElement("span");
+        actionsWrap.className = "chat-ugc-actions";
+        actionsWrap.style.cssText = "margin-left:auto;display:inline-flex;align-items:center;gap:4px;flex-shrink:0;";
+
+        const reportBtn = document.createElement("button");
+        reportBtn.type = "button";
+        reportBtn.className = "btn-chat-ugc report";
+        reportBtn.title = `Report message from ${safeCallsign}`;
+        reportBtn.textContent = "🚩";
+        reportBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          if (typeof reportPilotOrMessage === "function") {
+            reportPilotOrMessage(senderKey || "unknown", safeCallsign, cleanMsgText, "Public Pit Chat");
+          }
+        };
+        actionsWrap.appendChild(reportBtn);
+
+        if (senderKey && senderKey !== state.loggedInUserKey) {
+          const blockBtn = document.createElement("button");
+          blockBtn.type = "button";
+          blockBtn.className = "btn-chat-ugc block";
+          blockBtn.title = `Block ${safeCallsign}`;
+          blockBtn.textContent = "🚫";
+          blockBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            if (typeof blockPilotUser === "function") {
+              blockPilotUser(senderKey, safeCallsign);
+            }
+          };
+          actionsWrap.appendChild(blockBtn);
+        }
+
+        div.appendChild(actionsWrap);
       }
       feed.appendChild(div);
       feed.scrollTop = feed.scrollHeight;
@@ -16262,9 +16350,11 @@
       if (!ensurePilotLoggedIn()) return;
       const inp = document.getElementById("pitChatInput");
       if (!inp) return;
-      const txt = inp.value.trim();
-      if (!txt) return;
+      const rawTxt = inp.value.trim();
+      if (!rawTxt) return;
       inp.value = "";
+
+      const txt = typeof filterProfanityText === "function" ? filterProfanityText(rawTxt) : rawTxt;
 
       const payload = {
         id: "chat_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
@@ -16356,7 +16446,7 @@
           chat: {
             id: "sys_start_" + livePvp.activeRoomId,
             kind: "system",
-            text: `📢 LIVE FIGHT STARTED: ${pBot.name} vs ${eBot.name}${pot > 0 ? ' (🎰 POT: 💎 ' + pot.toLocaleString() + ')' : ''} — Click 👁️ WATCH LIVE!`
+            text: `📢 LIVE FIGHT STARTED: ${pBot.name} vs ${eBot.name}${pot > 0 ? ' (🏆 BOUNTY: 💎 ' + pot.toLocaleString() + ')' : ''} — Click 👁️ WATCH LIVE!`
           }
         });
       }
@@ -16576,7 +16666,7 @@
         const p1Pct = Math.max(0, Math.min(100, Math.round((b.p1Hp / Math.max(1, b.p1MaxHp)) * 100)));
         const p2Pct = Math.max(0, Math.min(100, Math.round((b.p2Hp / Math.max(1, b.p2MaxHp)) * 100)));
         const clockStr = formatUfcClock(b.timeLeft || 90);
-        const potStr = b.pot > 0 ? `💎 ${b.pot.toLocaleString()} POT` : `FREE MATCH`;
+        const potStr = b.pot > 0 ? `💎 ${b.pot.toLocaleString()} BOUNTY` : `FREE MATCH`;
 
         let btnHtml = "";
         if (isMyOwnFight) {
@@ -16598,7 +16688,7 @@
               <div class="lf-meta">
                 <span>🥊 RD ${b.currentRound}/3 (${b.pRoundsWon}-${b.eRoundsWon})</span>
                 <span>⏱️ ${clockStr}</span>
-                <span style="color:#38bdf8;">🎰 ${potStr}</span>
+                <span style="color:#38bdf8;">🏆 ${potStr}</span>
                 <span style="color:#fde047;">👁️ ${b.watchers || 0}</span>
               </div>
               <div class="lf-hp-dual">
@@ -16716,7 +16806,7 @@
         bonus: 150,
         priceUsd: "$2.99",
         color: "#34d399",
-        desc: "Outfit a full 6-Slot Street Tuned Rig + extra Diamonds for PvP wagers."
+        desc: "Outfit a full 6-Slot Street Tuned Rig + extra Diamonds for Arena Stakes."
       },
       {
         id: "pack_champion_crate",
@@ -16726,7 +16816,7 @@
         priceUsd: "$4.99",
         color: "#fbbf24",
         featured: true,
-        desc: "Unlock an entire Tier-3/Tier-4 Heavy Assault Loadout + high-roller wager bankroll."
+        desc: "Unlock an entire Tier-3/Tier-4 Heavy Assault Loadout + Champion Arena Stake reserve."
       },
       {
         id: "pack_shibuya_king",
@@ -16749,14 +16839,14 @@
     ];
 
     function awardPvpVictoryTicket() {
-      state.tickets = (state.tickets || 0) + 1;
+      // Strictly +1 Golden Ticket per Live PvP Victory, clamped to total PvP Wins
+      state.tickets = Math.min((state.pvpWins || 1), (state.tickets || 0) + 1);
       // Sync with RetroCanopy Ticket Counter (1 Golden Ticket = 10 Canopy Points in games.html)
       try {
-        const curPts = parseInt(localStorage.getItem("rc_canopy_xp") || "0", 10) || 0;
-        const nextPts = Math.max(curPts + 10, state.tickets * 10);
+        const nextPts = state.tickets * 10;
         localStorage.setItem("rc_canopy_xp", String(nextPts));
       } catch (_) {}
-      addFloatText(800, 310, "🎟️ +1 GOLDEN ARCADE TICKET EARNED! (REDEEM AT TICKET COUNTER)", "#fde047");
+      addFloatText(800, 310, "🎟️ +1 GOLDEN TICKET WON! (ONLY EARNED 1 AT A TIME FROM PVP WINS)", "#fde047");
     }
 
     function ensureDiamondStoreModalInjected() {
@@ -16935,7 +17025,7 @@
           <div class="diamond-store-top">
             <div class="diamond-store-title">
               <h2>💎 SHIBUYA BOT PIT — DIAMOND VAULT STORE</h2>
-              <p id="diamondStoreSubMsg">Top up Diamonds instantly for 3D Upgrades &amp; High-Roller PvP Wagers, or earn Diamonds for free by battling CPU Bots for XP!</p>
+              <p id="diamondStoreSubMsg">Top up Diamonds instantly for 3D Upgrades, Repairs &amp; Competitive Arena Stakes, or earn Diamonds for free by battling CPU Bots for XP!</p>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
               <div class="shop-scrap-vault" id="diamondStoreVaultReadout">💎 0</div>
@@ -16948,7 +17038,7 @@
           </div>
 
           <div class="diamond-store-earn-note">
-            <span>🤖 <strong>FREE PLAY-TO-EARN PATH:</strong> Every CPU Bot match awards <strong>Combat XP (⚡)</strong> that converts 1:1 into <strong>Diamonds (💎)</strong>! Every <strong>PvP Victory</strong> awards <strong>+1 Golden Ticket (🎟️)</strong> for the RetroCanopy Ticket Counter!</span>
+            <span>🤖 <strong>SKILL-ONLY GOLDEN TICKET RULE:</strong> Diamonds (💎) are strictly for in-game 3D Upgrades &amp; Repairs. <strong>Golden Tickets (🎟️)</strong> are <strong>NEVER sold for cash or Diamonds</strong>—they can only be won <strong>1 at a time</strong> from skill-based Live PvP Victories! <em style="color:#94a3b8;">(Apple Inc. &amp; Google LLC are not sponsors of, nor affiliated with, any RetroCanopy Ticket Counter rewards.)</em></span>
             <button type="button" class="shop-tab" style="color:#34d399;border-color:#34d399;" onclick="closeBuyDiamondsModal(); closeShopModal(); matchSimilarLevelCpu(false);">🤖 FIGHT CPU FOR XP &rarr;</button>
           </div>
         </div>
@@ -18425,14 +18515,19 @@
         const isMine = normalizeAuthKey(m.sender_key) === myKey;
         const authorLabel = isMine ? "YOU" : escapeSocialHtml(m.sender_callsign || fCall);
         const timeLabel = formatDmTimestamp(m.created_at);
+        const cleanDmText = typeof filterProfanityText === "function" ? filterProfanityText(m.message_text || "") : (m.message_text || "");
+        const reportBtnHtml = !isMine
+          ? `<button type="button" class="btn-chat-ugc report" title="Report this message" onclick="reportPilotOrMessage('${escapeSocialHtml(fKey)}', '${escapeSocialHtml(fCall)}', '${escapeSocialHtml(cleanDmText.replace(/'/g, "\'"))}', 'Private DM')">🚩</button>`
+          : "";
         return `
           <div class="dm-msg-bubble ${isMine ? 'mine' : 'theirs'}">
             <div class="dm-msg-meta">
               <span>${authorLabel}</span>
               <span>·</span>
               <span>${escapeSocialHtml(timeLabel)}</span>
+              ${reportBtnHtml}
             </div>
-            <div class="dm-msg-text">${escapeSocialHtml(m.message_text)}</div>
+            <div class="dm-msg-text">${escapeSocialHtml(cleanDmText)}</div>
           </div>
         `;
       }).join("");
@@ -18459,11 +18554,18 @@
       const myKey = normalizeAuthKey(state.loggedInUserKey || "");
       const fKey = normalizeAuthKey(socialState.activeChatFriendKey || "");
       if (!myKey || !fKey || !text) return;
+      if (typeof isPilotBlocked === "function" && isPilotBlocked(fKey)) {
+        showShopToast("🚫 You have blocked this player. Unblock them first to send messages.", "#fb7185");
+        return;
+      }
 
       const myCall = state.pilotCallsign || ("@" + myKey.toUpperCase());
       const fCall = socialState.activeChatFriendCallsign || ("@" + fKey.toUpperCase());
       const tKey = makePairKey(myKey, fKey);
       const nowIso = new Date().toISOString();
+      const sanitizedText = typeof filterProfanityText === "function"
+        ? filterProfanityText(String(text).slice(0, 240))
+        : String(text).slice(0, 240);
 
       const msgObj = {
         msg_id: "dm_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
@@ -18472,7 +18574,7 @@
         sender_callsign: myCall,
         receiver_key: fKey,
         receiver_callsign: fCall,
-        message_text: String(text).slice(0, 240),
+        message_text: sanitizedText,
         is_read: false,
         created_at: nowIso
       };
@@ -18695,6 +18797,8 @@
                 <button type="button" class="f-act-btn chat-btn" onclick="openFriendPrivateChat('${item.userKey}', '${safeCall}')">
                   💬 CHAT ${unread > 0 ? `<span class="friend-unread-pill">${unread}</span>` : ''}
                 </button>
+                <button type="button" class="f-act-btn decline-btn" title="Report ${safeCall}" onclick="reportPilotOrMessage('${item.userKey}', '${safeCall}', 'Reported from Friends List', 'Friends List')">🚩</button>
+                <button type="button" class="f-act-btn decline-btn" title="Block ${safeCall}" onclick="blockPilotUser('${item.userKey}', '${safeCall}')">🚫</button>
                 ${item.isFriend
                   ? `<button type="button" class="f-act-btn decline-btn" title="Remove Friend" onclick="declineOrRemoveFriend('${item.pairKey}')">✕</button>`
                   : `<button type="button" class="f-act-btn add-btn" onclick="sendFriendRequestToTarget('${item.userKey}', '${safeCall}')">➕ ADD</button>`}
@@ -19868,6 +19972,283 @@
     }
   };
 })();
+
+
+    // =========================================================================
+    // APP STORE & GOOGLE PLAY COMPLIANCE MODULE (ITEMS C, D, E, F)
+    // - Profanity Filter across Public Pit Chat, Private DMs & Callsigns
+    // - Report Player/Message (🚩) & Block Player (🚫) UGC Moderation
+    // - Permanent In-App Account Deletion (Apple Guideline 5.1.1(v))
+    // - SHA-256 Passcode Hashing Helper & Privacy / Terms / Ticket Rules Modal
+    // =========================================================================
+    const BOTPIT_BLOCKED_USERS_KEY = "rc_botpit_blocked_users_v1";
+    const BOTPIT_UGC_REPORTS_KEY = "rc_botpit_ugc_reports_v1";
+
+    const PROFANITY_WORD_LIST = [
+      "fuck", "fucker", "fucking", "motherfucker", "fck", "fuk",
+      "shit", "bullshit", "shitty", "bitch", "bitches", "asshole",
+      "bastard", "cunt", "dick", "cock", "pussy", "whore", "slut",
+      "nigger", "nigga", "faggot", "fag", "retard", "retarded", "kys"
+    ];
+
+    const PROFANITY_REGEX = new RegExp(
+      "\\b(" + PROFANITY_WORD_LIST.join("|") + ")\\b",
+      "gi"
+    );
+
+    function containsProfanityText(str) {
+      if (!str) return false;
+      PROFANITY_REGEX.lastIndex = 0;
+      return PROFANITY_REGEX.test(String(str));
+    }
+
+    function filterProfanityText(str) {
+      if (str === null || str === undefined) return "";
+      const raw = String(str);
+      return raw.replace(PROFANITY_REGEX, (match) => "*".repeat(Math.max(3, match.length)));
+    }
+
+    function getBlockedPilotsMap() {
+      try {
+        const raw = localStorage.getItem(BOTPIT_BLOCKED_USERS_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (_) {
+        return {};
+      }
+    }
+
+    function saveBlockedPilotsMap(mapObj) {
+      try {
+        localStorage.setItem(BOTPIT_BLOCKED_USERS_KEY, JSON.stringify(mapObj || {}));
+      } catch (_) {}
+    }
+
+    function isPilotBlocked(userKey) {
+      if (!userKey) return false;
+      const cleanKey = String(userKey).trim().replace(/^@/, "").toLowerCase();
+      const map = getBlockedPilotsMap();
+      return Boolean(map[cleanKey]);
+    }
+
+    function blockPilotUser(userKey, callsign) {
+      const cleanKey = String(userKey || "").trim().replace(/^@/, "").toLowerCase();
+      if (!cleanKey || cleanKey === state.loggedInUserKey) return;
+      const dispCall = callsign || ("@" + cleanKey.toUpperCase());
+      if (!confirm(`🚫 Block ${dispCall}?\n\nYou will no longer see messages or friend requests from ${dispCall} in Public Pit Chat or Private DMs.`)) {
+        return;
+      }
+
+      const map = getBlockedPilotsMap();
+      map[cleanKey] = {
+        userKey: cleanKey,
+        callsign: dispCall,
+        blockedAt: new Date().toISOString()
+      };
+      saveBlockedPilotsMap(map);
+
+      // Remove any visible public chat lines from this blocked user immediately
+      document.querySelectorAll(`#pitChatFeed .chat-line[data-sender-key="${cleanKey}"]`).forEach(el => el.remove());
+
+      // Remove from active friendships / DM view if open
+      if (typeof socialState !== "undefined") {
+        const myKey = normalizeAuthKey(state.loggedInUserKey || "");
+        if (myKey) {
+          const pKey = makePairKey(myKey, cleanKey);
+          socialState.friendships = (socialState.friendships || []).filter(f => f.pair_key !== pKey);
+          saveSocialLocalCache();
+        }
+        if (normalizeAuthKey(socialState.activeChatFriendKey || "") === cleanKey) {
+          closeFriendPrivateChat();
+        } else {
+          renderFriendsAndSocialUI();
+        }
+      }
+
+      showShopToast(`🚫 Blocked ${dispCall}. Their messages are now hidden.`, "#fb7185");
+    }
+
+    function unblockAllPilots() {
+      saveBlockedPilotsMap({});
+      showShopToast("✅ Cleared blocked players list.", "#34d399");
+      if (typeof renderFriendsAndSocialUI === "function") renderFriendsAndSocialUI();
+    }
+
+    function reportPilotOrMessage(userKey, callsign, messageExcerpt, contextLabel) {
+      const cleanKey = String(userKey || "unknown").trim().replace(/^@/, "").toLowerCase();
+      const dispCall = callsign || ("@" + cleanKey.toUpperCase());
+      const reason = prompt(
+        `🚩 Report ${dispCall} (${contextLabel || "Chat"}):\nEnter reason for moderation report (e.g. harassment, spam, offensive language):`,
+        "Inappropriate language / harassment"
+      );
+      if (reason === null) return;
+
+      const reportRecord = {
+        id: "rep_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+        reporter_key: state.loggedInUserKey || "guest",
+        reported_key: cleanKey,
+        reported_callsign: dispCall,
+        context: contextLabel || "Chat",
+        excerpt: String(messageExcerpt || "").slice(0, 200),
+        reason: String(reason || "Reported by player").slice(0, 200),
+        created_at: new Date().toISOString()
+      };
+
+      try {
+        const existing = JSON.parse(localStorage.getItem(BOTPIT_UGC_REPORTS_KEY) || "[]");
+        existing.push(reportRecord);
+        localStorage.setItem(BOTPIT_UGC_REPORTS_KEY, JSON.stringify(existing.slice(-100)));
+      } catch (_) {}
+
+      showShopToast(`🚩 Report submitted against ${dispCall}. Thank you for keeping Shibuya Bot Pit safe!`, "#fde047");
+
+      if (cleanKey && cleanKey !== "unknown" && cleanKey !== state.loggedInUserKey && !isPilotBlocked(cleanKey)) {
+        setTimeout(() => {
+          if (confirm(`Would you also like to 🚫 BLOCK ${dispCall} so you no longer see their messages?`)) {
+            blockPilotUser(cleanKey, dispCall);
+          }
+        }, 120);
+      }
+    }
+
+    function reportActiveDmPartner() {
+      const fKey = normalizeAuthKey((typeof socialState !== "undefined" && socialState.activeChatFriendKey) || "");
+      const fCall = (typeof socialState !== "undefined" && socialState.activeChatFriendCallsign) || ("@" + fKey.toUpperCase());
+      if (!fKey) return;
+      reportPilotOrMessage(fKey, fCall, "Reported from Private DM Thread", "Private DM");
+    }
+
+    function blockActiveDmPartner() {
+      const fKey = normalizeAuthKey((typeof socialState !== "undefined" && socialState.activeChatFriendKey) || "");
+      const fCall = (typeof socialState !== "undefined" && socialState.activeChatFriendCallsign) || ("@" + fKey.toUpperCase());
+      if (!fKey) return;
+      blockPilotUser(fKey, fCall);
+    }
+
+    // SHA-256 Passcode Hashing Helper (Item F)
+    async function hashPilotPasscode(rawPass) {
+      const clean = String(rawPass || "");
+      if (!window.crypto || !window.crypto.subtle) return clean;
+      try {
+        const msgBuffer = new TextEncoder().encode("rc_botpit_salt_v1::" + clean);
+        const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return "sha256:" + hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+      } catch (_) {
+        return clean;
+      }
+    }
+
+    // Permanent Account Deletion (Item D - Apple Guideline 5.1.1(v) & Google Play Data Deletion)
+    async function promptDeletePilotAccount() {
+      const activeKey = (state.loggedInUserKey || (document.getElementById("botpitLoginUser") && document.getElementById("botpitLoginUser").value) || "").trim().replace(/^@/, "").toLowerCase();
+      if (!activeKey) {
+        alert("Please log into the Pilot Account you wish to delete first, or enter your username in the Login box.");
+        openPilotAuthGateModal();
+        return;
+      }
+
+      const dispCall = state.pilotCallsign && !state.pilotCallsign.includes("LOGIN")
+        ? state.pilotCallsign
+        : ("@" + activeKey.toUpperCase());
+
+      const confirmed = confirm(
+        `🗑️ PERMANENTLY DELETE PILOT ACCOUNT (${dispCall})?\n\n` +
+        `This will permanently delete your Pilot Account (${dispCall}), Diamonds, 6-Slot Mech Loadout, ELO record, Friendships, and Cloud Save data from this device and our servers.\n\n` +
+        `This action cannot be undone. Proceed?`
+      );
+      if (!confirmed) return;
+
+      if (sim && sim.running) {
+        sim.running = false;
+      }
+
+      // 1. Delete from local BotPit & Site Account stores
+      const bpMap = getBotPitAccountsMap();
+      const siteMap = getSiteAccountsMap();
+      delete bpMap[activeKey];
+      delete siteMap[activeKey];
+      saveBotPitAccountsMap(bpMap);
+      saveSiteAccountsMap(siteMap);
+
+      // 2. Delete from Supabase Cloud tables (arcade_accounts, botpit_friendships, botpit_direct_messages)
+      if (window.db) {
+        try {
+          await window.db.from("arcade_accounts").delete().eq("username_key", activeKey);
+        } catch (_) {}
+        try {
+          await window.db.from("botpit_friendships").delete().or(`requester_key.eq.${activeKey},addressee_key.eq.${activeKey}`);
+        } catch (_) {}
+        try {
+          await window.db.from("botpit_direct_messages").delete().or(`sender_key.eq.${activeKey},receiver_key.eq.${activeKey}`);
+        } catch (_) {}
+      }
+
+      // 3. Reset active session state & open login gate
+      state._explicitOffline = true;
+      state.loggedInUserKey = null;
+      state.loggedInUsername = "";
+      state.loggedInEmail = "";
+      state.pilotCallsign = "🔒 LOGIN REQUIRED";
+      state.scrap = 0;
+      state.tickets = 0;
+      state.pvpWins = 0;
+      state.pvpLosses = 0;
+      state.ownedIds = [];
+      state.loadout = { ...EMPTY_LOADOUT };
+      localStorage.removeItem(BOTPIT_ACTIVE_USER_KEY);
+      localStorage.removeItem(SITE_CURRENT_USER_KEY);
+      localStorage.removeItem(SITE_CURRENT_USER_V1_KEY);
+
+      setCloudSaveStatus("🗑️ ACCOUNT DELETED", true);
+      updatePlayerUI();
+      openPilotAuthGateModal();
+      const msgEl = document.getElementById("pilotAuthStatusMsg");
+      if (msgEl) {
+        msgEl.style.color = "#34d399";
+        msgEl.textContent = `✅ Pilot account ${dispCall} and all associated cloud data have been permanently deleted.`;
+      }
+      showShopToast(`🗑️ Account ${dispCall} permanently deleted.`, "#fb7185");
+    }
+
+    // Privacy Policy, Terms of Use & Official Golden Ticket Rules Modal (Items C & F)
+    function openPrivacyAndTermsModal() {
+      let bd = document.getElementById("rcPrivacyTermsModalBackdrop");
+      if (!bd) {
+        bd = document.createElement("div");
+        bd.id = "rcPrivacyTermsModalBackdrop";
+        bd.style.cssText = "position:fixed;inset:0;z-index:100000;background:rgba(4,6,14,0.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:16px;";
+        bd.onclick = (e) => { if (e.target === bd) bd.style.display = "none"; };
+        bd.innerHTML = `
+          <div style="width:100%;max-width:620px;max-height:86vh;overflow-y:auto;background:linear-gradient(180deg,#131b2e 0%,#090d16 100%);border:1.5px solid rgba(56,189,248,0.55);border-radius:20px;padding:20px 22px;color:#e2e8f0;font-family:'Rajdhani',sans-serif;box-shadow:0 28px 80px rgba(0,0,0,0.95);" onclick="event.stopPropagation()">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px;margin-bottom:12px;">
+              <h3 style="margin:0;font-family:'Orbitron',sans-serif;font-size:0.95rem;color:#38bdf8;">📜 PRIVACY POLICY, TERMS &amp; GOLDEN TICKET RULES</h3>
+              <button type="button" onclick="document.getElementById('rcPrivacyTermsModalBackdrop').style.display='none'" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-weight:800;">✕ CLOSE</button>
+            </div>
+            <div style="font-size:0.84rem;line-height:1.45;display:flex;flex-direction:column;gap:10px;">
+              <div>
+                <strong style="color:#fde047;">1. 🎟️ OFFICIAL GOLDEN TICKET &amp; ARENA STAKE RULES (SKILL-ONLY):</strong><br>
+                • <strong>Golden Tickets (🎟️)</strong> are earned <strong>strictly 1 at a time (+1 🎟️ per Live PvP Victory)</strong> through skill-based player-vs-player combat.<br>
+                • Golden Tickets <strong>cannot be purchased</strong> with real money or Diamonds (💎), and Diamonds cannot be converted into Golden Tickets or cashed out.<br>
+                • <strong>Diamonds (💎)</strong> are a virtual in-game currency used strictly for 3D BattleBot upgrades, Pit Repairs, and in-game Arena Stakes.<br>
+                • <em>Disclaimer: Apple Inc. and Google LLC are not sponsors of, nor affiliated with, Shibuya Bot Pit or any RetroCanopy Ticket Counter rewards.</em>
+              </div>
+              <div>
+                <strong style="color:#38bdf8;">2. 🛡️ COMMUNITY SAFETY, PROFANITY FILTER &amp; UGC MODERATION:</strong><br>
+                • Automated profanity filtering is active across Public Pit Chat, Private DMs, and Pilot Callsigns.<br>
+                • Players may report offensive messages (🚩) or block abusive users (🚫) at any time with a single tap in Public Chat or Friends/DMs.
+              </div>
+              <div>
+                <strong style="color:#34d399;">3. 🔒 PRIVACY POLICY &amp; ACCOUNT DELETION:</strong><br>
+                • We store only your Pilot Callsign, Email, hashed credentials, and in-game Bot progress in Supabase Cloud.<br>
+                • You may permanently delete your Pilot Account and all associated cloud data at any time by clicking <strong>🗑️ DELETE ACCOUNT</strong> in the top bar or login screen.
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(bd);
+      }
+      bd.style.display = "flex";
+    }
 
   </script>
 </body>
