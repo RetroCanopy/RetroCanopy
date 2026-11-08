@@ -902,19 +902,26 @@
           </div>
         </div>
 
-        <!-- Instant Phone Push & Email Order Alerts Panel -->
+        <!-- Instant Phone Push, SMS Text & Email Order Alerts Panel -->
         <div style="margin-bottom:10px;padding:10px 12px;border-radius:10px;background:rgba(0,245,155,0.08);border:1px solid rgba(0,245,155,0.35);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;">
-          <div style="display:flex;flex-direction:column;gap:2px;">
+          <div style="display:flex;flex-direction:column;gap:3px;">
             <div style="font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:800;color:#00f59b;">
-              &#128242; LIVE ORDER EMAIL &amp; PHONE PUSH ALERTS: ACTIVE
+              &#128242; LIVE ORDER EMAIL, SMS TEXT &amp; PHONE PUSH ALERTS: ACTIVE
             </div>
             <div style="font-size:0.73rem;color:rgba(255,255,255,0.82);">
-              Email: <strong id="ownerAlertEmailLabel">josephcole001.ai@gmail.com</strong> &bull; Phone Push Topic (ntfy app): <strong style="color:#00f0ff;" id="ownerNtfyTopicLabel">retrocanopy-orders-joseph-777</strong>
+              Email: <strong id="ownerAlertEmailLabel">josephcole001.ai@gmail.com</strong> &bull; SMS: <strong>656-242-7202</strong> &bull; Push Topic (ntfy): <strong style="color:#00f0ff;" id="ownerNtfyTopicLabel">retrocanopy-orders-joseph-777</strong>
             </div>
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <select id="ownerSmsCarrierSelect" style="background:#080614;color:#fff;border:1px solid rgba(0,240,255,0.45);border-radius:6px;padding:4px 8px;font-family:'Orbitron',sans-serif;font-size:0.58rem;" title="Select your cell carrier for Email-to-SMS text alerts to 656-242-7202">
+              <option value="tmomail.net">SMS Carrier: T-Mobile / Metro</option>
+              <option value="vtext.com">SMS Carrier: Verizon</option>
+              <option value="txt.att.net">SMS Carrier: AT&amp;T</option>
+              <option value="mms.cricketwireless.net">SMS Carrier: Cricket</option>
+              <option value="sms.myboostmobile.com">SMS Carrier: Boost Mobile</option>
+            </select>
             <button type="button" class="mini-btn" id="enableBrowserPushBtn" style="border-color:#00f0ff;color:#00f0ff;">&#128276; Enable Device Push</button>
-            <button type="button" class="mini-btn" id="testPhonePushEmailBtn" style="border-color:#ffae00;color:#ffae00;">&#128242; Send Test Phone Push + Email</button>
+            <button type="button" class="mini-btn" id="testPhonePushEmailBtn" style="border-color:#ffae00;color:#ffae00;">&#128242; Test Push + SMS + Email</button>
           </div>
         </div>
 
@@ -2265,6 +2272,10 @@
           testPhonePushEmailBtn.textContent = 'Sending Push + Email...';
           const topic = localStorage.getItem('rc_owner_ntfy_topic_v1') || 'retrocanopy-orders-joseph-777';
           const email = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
+          const carrierSel = document.getElementById('ownerSmsCarrierSelect');
+          const carrierDomain = (carrierSel && carrierSel.value) || localStorage.getItem('rc_owner_sms_carrier_v1') || 'tmomail.net';
+          localStorage.setItem('rc_owner_sms_carrier_v1', carrierDomain);
+          const smsGatewayEmail = `6562427202@${carrierDomain}`;
           try {
             await fetch('https://ntfy.sh', {
               method: 'POST',
@@ -2286,6 +2297,7 @@
               headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
               body: JSON.stringify({
                 _subject: '🛍️ [TEST] New RetroCanopy Paid Order — $1.00 USD (RC-309 Hoodie)',
+                _cc: smsGatewayEmail,
                 _template: 'table',
                 Order_ID: 'RC-ORD-TEST',
                 Items_Ordered: '1x RC-309 White & 24K Gold Crowned Legend Hoodie (Size L)',
