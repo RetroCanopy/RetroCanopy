@@ -6382,6 +6382,7 @@
         <span class="social-unread-pill hidden" id="topFriendsUnreadBadge">0</span>
       </button>
       <button type="button" class="top-nav-pill" id="btnSoundToggle" onclick="BotPitAudio.toggleMute()" style="border-color:rgba(52,211,153,0.5);color:#34d399;font-weight:900;" title="Toggle Arena Combat Sound & Audio FX">🔊 SOUND: ON</button>
+      <button type="button" class="top-nav-pill" id="btnDeletePilotCluster" onclick="promptDeletePilotAccount()" style="display:inline-flex !important;background:rgba(244,63,94,0.16);border-color:rgba(244,63,94,0.55);color:#fda4af;font-weight:800;" title="Permanently Delete Your Pilot Account &amp; Cloud Data">🗑️ DELETE ACCOUNT</button>
       <div class="cloud-save-pill" id="cloudSyncBadge">☁️ SAVED</div>
     </div>
 
@@ -11185,20 +11186,20 @@
             bannerEl.textContent = "CHOOSE BATTLE MODE";
             bannerEl.style.color = "#f8fafc";
           }
-          if (descEl) descEl.textContent = "Select Online PvP or CPU Bot to choose your wager & arena map";
+          if (descEl) descEl.textContent = "Select Online PvP (+1 🎟️ Golden Ticket per Win) or CPU Bot to choose your Arena Stake & Map";
         }
       } else if (step === "wager") {
         const isPvp = state.gameMode === "pvp";
         const oppWager = getCurrentOpponentWager();
         if (tagEl) tagEl.textContent = `STEP 1 OF 2 · ${isPvp ? '🌐 LIVE ONLINE PVP' : '🤖 VS. CPU BOT'}`;
         if (bannerEl) {
-          bannerEl.textContent = "SELECT YOUR WAGER";
+          bannerEl.textContent = "SELECT ARENA STAKE";
           bannerEl.style.color = "#fbbf24";
         }
         if (descEl) {
           descEl.textContent = isPvp
-            ? `Opponent Wager: 💎 ${oppWager.toLocaleString()} · Tap a wager below to continue`
-            : `CPU Wager: 💎 ${oppWager.toLocaleString()} (+Guaranteed XP) · Tap a wager below to continue`;
+            ? `Opponent Stake: 💎 ${oppWager.toLocaleString()} · Golden Tickets are won 1 at a time from PvP Wins!`
+            : `CPU Stake: 💎 ${oppWager.toLocaleString()} (+Guaranteed XP) · Tap an Arena Stake below to continue`;
         }
         syncWagerUI();
       } else if (step === "map") {
@@ -11209,7 +11210,7 @@
           bannerEl.style.color = "#38bdf8";
         }
         if (descEl) {
-          descEl.textContent = `🔒 Locked Wager: 💎 ${effWager.toLocaleString()} · Use ◀ / ▶ to preview all 7 maps & launch battle!`;
+          descEl.textContent = `🔒 Locked Arena Stake: 💎 ${effWager.toLocaleString()} · Use ◀ / ▶ to preview all 7 maps & launch battle!`;
         }
         renderArenaMapSelector();
       } else if (step === "searching") {
