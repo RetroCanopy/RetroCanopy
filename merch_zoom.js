@@ -1805,53 +1805,110 @@
           const itemsSummary = Array.isArray(orderRecord.items)
             ? orderRecord.items.map((x) => `${x.qty || 1}x ${x.model || 'RC-309'} ${x.title || ''} (Size: ${x.size || 'L'})`).join(', ')
             : (orderRecord.item || '1x RetroCanopy Merch');
-          const prodFilesLinks = Array.isArray(orderRecord.items)
-            ? orderRecord.items.flatMap((x) => (x.productionFiles || []).map((pf) => `https://www.retrocanopy.com/${String(pf.url || '').split('?')[0]}`)).join('\n')
-            : '';
+          const orderItemsArr = Array.isArray(orderRecord.items) && orderRecord.items.length > 0
+            ? orderRecord.items
+            : [{
+                model: 'RC-309',
+                title: 'White & 24K Gold Crowned Legend Hoodie',
+                size: 'L',
+                qty: 1,
+                frontPhotoUrl: 'assets/merch/hoodie_tier6_2f_front.png',
+                backPhotoUrl: 'assets/merch/hoodie_tier6_2f_back.png',
+                productionNotes: '450GSM Heavyweight Arctic White Fleece • Front Left-Chest Crest (4.0" W) + Full Back Sanctuary Emblem (12.5" W) • 300 DPI Transparent DTF Transfers',
+                productionFiles: [
+                  { label: 'Front Chest Crest DTF (300 DPI PNG)', url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202' },
+                  { label: 'Full Back 24K Emblem DTF (300 DPI PNG)', url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202' },
+                  { label: 'Combined Front + Back Full Gang Sheet DTF (300 DPI PNG)', url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202' }
+                ]
+              }];
 
-          // 4A. Instant Phone Push Notification via ntfy.sh (iOS / Android App)
+          const firstItem = orderItemsArr[0] || {};
+          const primaryPhotoUrl = firstItem.backPhotoUrl
+            ? `https://www.retrocanopy.com/${String(firstItem.backPhotoUrl).split('?')[0]}?v=202`
+            : `https://www.retrocanopy.com/${String(firstItem.frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_back.png').split('?')[0]}?v=202`;
+
+          const itemPhotosText = orderItemsArr.map((x, idx) => {
+            const fUrl = x.frontPhotoUrl ? `https://www.retrocanopy.com/${String(x.frontPhotoUrl).split('?')[0]}?v=202` : '';
+            const bUrl = x.backPhotoUrl ? `https://www.retrocanopy.com/${String(x.backPhotoUrl).split('?')[0]}?v=202` : '';
+            return [
+              `Item #${idx + 1} (${x.model} - ${x.title}, Size: ${x.size || 'L'}):`,
+              fUrl ? `  • Front Garment Picture: ${fUrl}` : '',
+              bUrl ? `  • Back Garment Picture: ${bUrl}` : ''
+            ].filter(Boolean).join('\n');
+          }).join('\n\n');
+
+          const dtfFilesText = orderItemsArr.map((x, idx) => {
+            const pFiles = Array.isArray(x.productionFiles) ? x.productionFiles : [];
+            const lines = pFiles.map((pf) => `  • ${pf.label || pf.filename || 'Production File'}: https://www.retrocanopy.com/${String(pf.url || '').split('?')[0]}?v=202`);
+            return `Item #${idx + 1} (${x.model} — ${x.productionNotes || '300 DPI Production Ready'}):\n` + lines.join('\n');
+          }).join('\n\n');
+
+          const primaryDtfFileUrl = (firstItem.productionFiles && firstItem.productionFiles[firstItem.productionFiles.length - 1])
+            ? `https://www.retrocanopy.com/${String(firstItem.productionFiles[firstItem.productionFiles.length - 1].url).split('?')[0]}?v=202`
+            : 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202';
+
+          // 4A. Instant Phone Push Notification via ntfy.sh WITH Embedded Garment Picture + 1-Tap DTF File Download Buttons!
           fetch('https://ntfy.sh', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               topic: ownerTopic,
-              title: `New RetroCanopy Order ${orderRecord.orderId} ($${totalFormatted} PAID)`,
+              title: `🛍️ Order ${orderRecord.orderId} ($${totalFormatted} PAID) — ${itemsSummary}`,
               message: [
                 `Order: ${orderRecord.orderId} ($${totalFormatted} USD PAID via Stripe)`,
-                `Items: ${itemsSummary}`,
+                `Item Wanted: ${itemsSummary}`,
                 `Customer: ${orderRecord.customerName} (${orderRecord.customerEmail})`,
                 `Phone: ${orderRecord.customerPhone || 'N/A'}`,
                 `Ship To: ${orderRecord.shippingAddress}`,
-                `Tap to open Owner's Hub & download 300 DPI DTF / .DST files.`
+                ``,
+                `📸 ITEM PICTURES:`,
+                itemPhotosText,
+                ``,
+                `🖨️ 300 DPI DTF / EMBROIDERY FILES:`,
+                dtfFilesText
               ].join('\n'),
               priority: 4,
               tags: ['shopping_bags', 'moneybag', 'shirt'],
-              click: 'https://www.retrocanopy.com/admin.html'
+              attach: primaryPhotoUrl,
+              click: primaryDtfFileUrl,
+              actions: [
+                { action: 'view', label: '⬇️ Download DTF File', url: primaryDtfFileUrl, clear: false },
+                { action: 'view', label: '📸 Item Picture', url: primaryPhotoUrl, clear: false },
+                { action: 'view', label: '🛠️ Owner Hub', url: 'https://www.retrocanopy.com/admin.html', clear: false }
+              ]
             })
           }).catch(() => {});
 
-          // 4B. Instant Production Email Alert to Owner via FormSubmit AJAX + Edge Function
+          // 4B. Instant Production Email + Spectrum SMS/MMS Alert with Garment Pictures + 300 DPI DTF Files
+          const emailPayload = {
+            _subject: `🛍️ New RetroCanopy Paid Order ${orderRecord.orderId} ($${totalFormatted}) — ${itemsSummary}`,
+            _cc: '6562427202@vtext.com,6562427202@vzwpix.com',
+            _template: 'table',
+            '1_Order_ID_And_Payment': `${orderRecord.orderId} — PAID $${totalFormatted} USD via Live Stripe (${orderRecord.stripeSessionId || 'Verified'})`,
+            '2_Item_Ordered_And_Size': itemsSummary,
+            '3_Customer_And_Shipping': `${orderRecord.customerName} | Phone: ${orderRecord.customerPhone || 'N/A'} | Email: ${orderRecord.customerEmail} | Ship To: ${orderRecord.shippingAddress}`,
+            '4_Item_Picture_Front': firstItem.frontPhotoUrl ? `https://www.retrocanopy.com/${String(firstItem.frontPhotoUrl).split('?')[0]}?v=202` : 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_front.png?v=202',
+            '5_Item_Picture_Back': firstItem.backPhotoUrl ? `https://www.retrocanopy.com/${String(firstItem.backPhotoUrl).split('?')[0]}?v=202` : (firstItem.model === 'RC-107' ? 'N/A (6-Panel Hat)' : 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_back.png?v=202'),
+            '6_DTF_Full_Gang_Sheet_300DPI': firstItem.model === 'RC-107'
+              ? 'https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202'
+              : 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202',
+            '7_DTF_Front_Crest_300DPI': firstItem.model === 'RC-107'
+              ? 'https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
+              : 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202',
+            '8_DTF_Back_Emblem_300DPI': firstItem.model === 'RC-107'
+              ? 'https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=202'
+              : 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202',
+            '9_All_Production_Files_Detail': dtfFilesText,
+            '10_Owners_Hub_Production_Queue': 'https://www.retrocanopy.com/admin.html'
+          };
+
           fetch(`https://formsubmit.co/ajax/${encodeURIComponent(ownerEmail)}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: JSON.stringify({
-              _subject: `🛍️ New RetroCanopy Paid Order ${orderRecord.orderId} ($${totalFormatted}) — ${orderRecord.customerName}`,
-              _cc: '6562427202@vtext.com,6562427202@vzwpix.com',
-              _template: 'table',
-              Order_ID: orderRecord.orderId,
-              Payment_Status: `PAID ($${totalFormatted} USD via Stripe • ${orderRecord.stripeSessionId || 'Live'})`,
-              Items_Ordered: itemsSummary,
-              Customer_Name: orderRecord.customerName,
-              Customer_Email: orderRecord.customerEmail,
-              Customer_Phone: orderRecord.customerPhone || 'N/A',
-              Shipping_Address: orderRecord.shippingAddress,
-              Customer_Notes: orderRecord.customerNotes || 'None',
-              Production_Files_300DPI: prodFilesLinks || 'https://www.retrocanopy.com/admin.html',
-              Owners_Hub_Link: 'https://www.retrocanopy.com/admin.html'
-            })
+            body: JSON.stringify(emailPayload)
           }).catch(() => {});
 
           fetch(STRIPE_CHECKOUT_FUNCTION_URL, {

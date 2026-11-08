@@ -2279,17 +2279,43 @@
           const smsGatewayEmail = (carrierDomain === 'spectrum' || carrierDomain === 'vtext.com')
             ? '6562427202@vtext.com,6562427202@vzwpix.com'
             : `6562427202@${carrierDomain}`;
+          const itemFrontPhoto = 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_front.png?v=202';
+          const itemBackPhoto = 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_back.png?v=202';
+          const dtfGangSheet = 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202';
+          const dtfFrontCrest = 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202';
+          const dtfBackEmblem = 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202';
+
           try {
             await fetch('https://ntfy.sh', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 topic: topic,
-                title: '🛍️ RetroCanopy Order Alert Test ($1.00 PAID)',
-                message: '1x RC-309 White & 24K Gold Crowned Legend Hoodie (Size L)\nCustomer: Joseph Cole\nShip To: 4866 Sunburst Ave\nTap to open Owner\'s Hub Production Queue.',
+                title: '🛍️ Order RC-ORD-499625 ($1.00 PAID) — 1x RC-309 White & 24K Gold Hoodie (Size L)',
+                message: [
+                  'Order: RC-ORD-499625 ($1.00 USD PAID via Stripe)',
+                  'Item Wanted: 1x RC-309 White & 24K Gold Crowned Legend Hoodie (Size: L)',
+                  'Customer: JOSEPH DANIEL COLE (656-242-7202)',
+                  'Ship To: 4866 Sunburst Ave',
+                  '',
+                  '📸 ITEM PICTURES:',
+                  '• Front Photo: ' + itemFrontPhoto,
+                  '• Back Photo: ' + itemBackPhoto,
+                  '',
+                  '🖨️ 300 DPI DTF PRINT FILES:',
+                  '• Full Gang Sheet (Front+Back): ' + dtfGangSheet,
+                  '• Front Chest Crest (300 DPI): ' + dtfFrontCrest,
+                  '• Full Back Emblem (300 DPI): ' + dtfBackEmblem
+                ].join('\n'),
                 priority: 4,
-                tags: ['shopping_bags', 'moneybag'],
-                click: 'https://www.retrocanopy.com/admin.html'
+                tags: ['shopping_bags', 'moneybag', 'shirt'],
+                attach: itemBackPhoto,
+                click: dtfGangSheet,
+                actions: [
+                  { action: 'view', label: '⬇️ DTF Gang Sheet', url: dtfGangSheet, clear: false },
+                  { action: 'view', label: '📸 Item Picture', url: itemBackPhoto, clear: false },
+                  { action: 'view', label: '🛠️ Owner Hub', url: 'https://www.retrocanopy.com/admin.html', clear: false }
+                ]
               })
             });
           } catch (_) {}
@@ -2299,14 +2325,19 @@
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
               body: JSON.stringify({
-                _subject: '🛍️ [TEST] New RetroCanopy Paid Order — $1.00 USD (RC-309 Hoodie)',
+                _subject: '🛍️ RetroCanopy Order #RC-ORD-499625 ($1.00 PAID) — RC-309 Hoodie + 300 DPI DTF Files & Item Photos',
                 _cc: smsGatewayEmail,
                 _template: 'table',
-                Order_ID: 'RC-ORD-TEST',
-                Items_Ordered: '1x RC-309 White & 24K Gold Crowned Legend Hoodie (Size L)',
-                Customer_Name: 'Joseph Cole',
-                Shipping_Address: '4866 Sunburst Ave',
-                Owners_Hub_Link: 'https://www.retrocanopy.com/admin.html'
+                '1_Order_ID_And_Payment': 'RC-ORD-499625 — PAID $1.00 USD via Live Stripe',
+                '2_Item_Wanted_And_Size': '1x RC-309 — White & 24K Gold Crowned Legend Hoodie (Size: Large / L)',
+                '3_Customer_And_Shipping': 'JOSEPH DANIEL COLE | Phone: 656-242-7202 | Email: josephcole001.ai@gmail.com | Ship To: 4866 Sunburst Ave',
+                '4_Item_Picture_Front': itemFrontPhoto,
+                '5_Item_Picture_Back': itemBackPhoto,
+                '6_DTF_Full_Gang_Sheet_300DPI': dtfGangSheet,
+                '7_DTF_Front_Chest_Crest_300DPI': dtfFrontCrest,
+                '8_DTF_Full_Back_Emblem_300DPI': dtfBackEmblem,
+                '9_Production_Specs': '450GSM Heavyweight Arctic White Fleece • Front Left-Chest Crest (4.0" W) + Full Back Sanctuary Emblem (12.5" W) • 300 DPI Transparent DTF Transfers',
+                '10_Owners_Hub_Queue': 'https://www.retrocanopy.com/admin.html'
               })
             });
           } catch (_) {}
