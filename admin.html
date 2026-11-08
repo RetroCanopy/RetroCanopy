@@ -902,6 +902,22 @@
           </div>
         </div>
 
+        <!-- Instant Phone Push & Email Order Alerts Panel -->
+        <div style="margin-bottom:10px;padding:10px 12px;border-radius:10px;background:rgba(0,245,155,0.08);border:1px solid rgba(0,245,155,0.35);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;">
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:800;color:#00f59b;">
+              &#128242; LIVE ORDER EMAIL &amp; PHONE PUSH ALERTS: ACTIVE
+            </div>
+            <div style="font-size:0.73rem;color:rgba(255,255,255,0.82);">
+              Email: <strong id="ownerAlertEmailLabel">josephcole001.ai@gmail.com</strong> &bull; Phone Push Topic (ntfy app): <strong style="color:#00f0ff;" id="ownerNtfyTopicLabel">retrocanopy-orders-joseph-777</strong>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <button type="button" class="mini-btn" id="enableBrowserPushBtn" style="border-color:#00f0ff;color:#00f0ff;">&#128276; Enable Device Push</button>
+            <button type="button" class="mini-btn" id="testPhonePushEmailBtn" style="border-color:#ffae00;color:#ffae00;">&#128242; Send Test Phone Push + Email</button>
+          </div>
+        </div>
+
         <!-- Nerdy Misfits-Style Sub-Tabs: Needs Done vs Order History -->
         <div class="card-tabs">
           <button type="button" class="card-tab-btn active" data-tab-target="pane-merch-unfulfilled" id="tabBtnMerchUnfulfilled">
@@ -2220,6 +2236,76 @@
       });
 
       document.getElementById('refreshCloudOrdersBtn').addEventListener('click', () => renderAllCards(true));
+
+      const enableBrowserPushBtn = document.getElementById('enableBrowserPushBtn');
+      if (enableBrowserPushBtn) {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+          enableBrowserPushBtn.textContent = '✓ Device Push Enabled';
+        }
+        enableBrowserPushBtn.addEventListener('click', async () => {
+          if (typeof Notification === 'undefined') {
+            alert('Install the free "ntfy" app on iOS/Android and subscribe to topic: retrocanopy-orders-joseph-777 (or use the Stripe Dashboard mobile app) for native phone push notifications!');
+            return;
+          }
+          const perm = await Notification.requestPermission();
+          if (perm === 'granted') {
+            enableBrowserPushBtn.textContent = '✓ Device Push Enabled';
+            new Notification('RetroCanopy Owner\'s Hub', {
+              body: 'Instant order notifications are now active on this device!',
+              icon: 'assets/logo.png'
+            });
+          }
+        });
+      }
+
+      const testPhonePushEmailBtn = document.getElementById('testPhonePushEmailBtn');
+      if (testPhonePushEmailBtn) {
+        testPhonePushEmailBtn.addEventListener('click', async () => {
+          const origLabel = testPhonePushEmailBtn.textContent;
+          testPhonePushEmailBtn.textContent = 'Sending Push + Email...';
+          const topic = localStorage.getItem('rc_owner_ntfy_topic_v1') || 'retrocanopy-orders-joseph-777';
+          const email = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
+          try {
+            await fetch('https://ntfy.sh', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                topic: topic,
+                title: '🛍️ RetroCanopy Order Alert Test ($1.00 PAID)',
+                message: '1x RC-309 White & 24K Gold Crowned Legend Hoodie (Size L)\nCustomer: Joseph Cole\nShip To: 4866 Sunburst Ave\nTap to open Owner\'s Hub Production Queue.',
+                priority: 4,
+                tags: ['shopping_bags', 'moneybag'],
+                click: 'https://www.retrocanopy.com/admin.html'
+              })
+            });
+          } catch (_) {}
+
+          try {
+            await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(email)}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({
+                _subject: '🛍️ [TEST] New RetroCanopy Paid Order — $1.00 USD (RC-309 Hoodie)',
+                _template: 'table',
+                Order_ID: 'RC-ORD-TEST',
+                Items_Ordered: '1x RC-309 White & 24K Gold Crowned Legend Hoodie (Size L)',
+                Customer_Name: 'Joseph Cole',
+                Shipping_Address: '4866 Sunburst Ave',
+                Owners_Hub_Link: 'https://www.retrocanopy.com/admin.html'
+              })
+            });
+          } catch (_) {}
+
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            new Notification('🛍️ Test Order Alert Sent!', {
+              body: `Sent Phone Push (${topic}) & Email (${email})`,
+              icon: 'assets/logo.png'
+            });
+          }
+          testPhonePushEmailBtn.textContent = '✓ Sent to Phone & Email!';
+          setTimeout(() => { testPhonePushEmailBtn.textContent = origLabel; }, 3000);
+        });
+      }
       document.getElementById('refreshGameAnalyticsBtn').addEventListener('click', () => renderAllCards(true));
 
       document.getElementById('clearTrafficBtn').addEventListener('click', async () => {

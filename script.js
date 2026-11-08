@@ -3873,7 +3873,7 @@ function initGamerIntro() {
             sessionStorage.removeItem('rc_shop_bag_count');
         } catch (_) {}
         dismissTapForAudioPrompt();
-        const targetUrl = url.indexOf('?') === -1 ? (url + '?v=99') : url;
+        const targetUrl = url.indexOf('?') === -1 ? (url + '?v=203') : (url.indexOf('v=') === -1 ? (url + '&v=203') : url);
         window.location.href = targetUrl;
     }
 
@@ -4624,18 +4624,18 @@ function initHomeShopScroller() {
 
     const shopCatalog = [
         // Simplified Store ($1.00 Test Mode): Only White & 24K Gold Crowned Hoodie (RC-309) and White & 24K Gold Valkyrie Hat (RC-107)
-        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200', href: 'hoodie_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front - $1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_front.png?v=200', href: 'hoodie_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200', href: 'hoodie_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front - $1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_front.png?v=200', href: 'hoodie_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200', href: 'hoodie_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front - $1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_front.png?v=200', href: 'hoodie_preview.html?idx=0' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0' }
+        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200', href: 'hoodie_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front - $1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_front.png?v=200', href: 'hoodie_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200', href: 'hoodie_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front - $1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_front.png?v=200', href: 'hoodie_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200', href: 'hoodie_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front - $1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_front.png?v=200', href: 'hoodie_preview.html?idx=0&v=203' },
+        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=203' }
     ];
 
     function toCarouselThumb(rawUrl) {

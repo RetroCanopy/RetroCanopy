@@ -1608,7 +1608,7 @@
             <div class="rc-bag-items-list" id="rcBagItemsList"></div>
             <div class="rc-summary-lines" id="rcSummaryLines"></div>
             <button type="button" class="rc-complete-checkout-btn" id="rcCompleteCheckoutBtn">
-              PAY &amp; SEND TO OWNER'S HUB ($1.00)
+              &#128179; PAY WITH STRIPE ($1.00) &bull; LIVE CHECKOUT
             </button>
           </div>
         </div>
@@ -1791,6 +1791,85 @@
         if (typeof BroadcastChannel !== 'undefined') {
           const ch = new BroadcastChannel('rc_admin_hub_sync_v1');
           ch.postMessage({ type: 'NEW_PAID_MERCH_ORDER', orderId: orderRecord.orderId });
+        }
+      } catch (_) {}
+
+      // 4. Dispatch Instant Phone Push Notification (ntfy.sh) + Order Production Email to Owner
+      try {
+        const alertDedupeKey = 'rc_alert_sent_' + String(orderRecord.orderId || '');
+        if (!sessionStorage.getItem(alertDedupeKey)) {
+          sessionStorage.setItem(alertDedupeKey, '1');
+          const ownerTopic = localStorage.getItem('rc_owner_ntfy_topic_v1') || 'retrocanopy-orders-joseph-777';
+          const ownerEmail = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
+          const totalFormatted = Number(orderRecord.totalPaid || 1).toFixed(2);
+          const itemsSummary = Array.isArray(orderRecord.items)
+            ? orderRecord.items.map((x) => `${x.qty || 1}x ${x.model || 'RC-309'} ${x.title || ''} (Size: ${x.size || 'L'})`).join(', ')
+            : (orderRecord.item || '1x RetroCanopy Merch');
+          const prodFilesLinks = Array.isArray(orderRecord.items)
+            ? orderRecord.items.flatMap((x) => (x.productionFiles || []).map((pf) => `https://www.retrocanopy.com/${String(pf.url || '').split('?')[0]}`)).join('\n')
+            : '';
+
+          // 4A. Instant Phone Push Notification via ntfy.sh (iOS / Android App)
+          fetch('https://ntfy.sh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              topic: ownerTopic,
+              title: `New RetroCanopy Order ${orderRecord.orderId} ($${totalFormatted} PAID)`,
+              message: [
+                `Order: ${orderRecord.orderId} ($${totalFormatted} USD PAID via Stripe)`,
+                `Items: ${itemsSummary}`,
+                `Customer: ${orderRecord.customerName} (${orderRecord.customerEmail})`,
+                `Phone: ${orderRecord.customerPhone || 'N/A'}`,
+                `Ship To: ${orderRecord.shippingAddress}`,
+                `Tap to open Owner's Hub & download 300 DPI DTF / .DST files.`
+              ].join('\n'),
+              priority: 4,
+              tags: ['shopping_bags', 'moneybag', 'shirt'],
+              click: 'https://www.retrocanopy.com/admin.html'
+            })
+          }).catch(() => {});
+
+          // 4B. Instant Production Email Alert to Owner via FormSubmit AJAX + Edge Function
+          fetch(`https://formsubmit.co/ajax/${encodeURIComponent(ownerEmail)}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              _subject: `🛍️ New RetroCanopy Paid Order ${orderRecord.orderId} ($${totalFormatted}) — ${orderRecord.customerName}`,
+              _template: 'table',
+              Order_ID: orderRecord.orderId,
+              Payment_Status: `PAID ($${totalFormatted} USD via Stripe • ${orderRecord.stripeSessionId || 'Live'})`,
+              Items_Ordered: itemsSummary,
+              Customer_Name: orderRecord.customerName,
+              Customer_Email: orderRecord.customerEmail,
+              Customer_Phone: orderRecord.customerPhone || 'N/A',
+              Shipping_Address: orderRecord.shippingAddress,
+              Customer_Notes: orderRecord.customerNotes || 'None',
+              Production_Files_300DPI: prodFilesLinks || 'https://www.retrocanopy.com/admin.html',
+              Owners_Hub_Link: 'https://www.retrocanopy.com/admin.html'
+            })
+          }).catch(() => {});
+
+          fetch(STRIPE_CHECKOUT_FUNCTION_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'send_order_alert',
+              orderId: orderRecord.orderId,
+              customerName: orderRecord.customerName,
+              customerEmail: orderRecord.customerEmail,
+              customerPhone: orderRecord.customerPhone,
+              shippingAddress: orderRecord.shippingAddress,
+              itemsSummary: itemsSummary,
+              totalUsd: totalFormatted,
+              stripeSessionId: orderRecord.stripeSessionId,
+              ntfyTopic: ownerTopic,
+              ownerEmail: ownerEmail
+            })
+          }).catch(() => {});
         }
       } catch (_) {}
     }
@@ -2163,7 +2242,7 @@
               if (sessionData && sessionData.url) {
                 pendingOrder.stripeSessionId = sessionData.sessionId || '';
                 localStorage.setItem('rc_pending_merch_stripe_order_v1', JSON.stringify(pendingOrder));
-                window.location.href = sessionData.url;
+                (window.top || window).location.href = sessionData.url;
                 return;
               }
             }
