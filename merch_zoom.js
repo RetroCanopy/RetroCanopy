@@ -371,19 +371,19 @@
         productionFiles: [
           {
             label: 'Tajima 3D Puff Embroidery Stitch File (.DST)',
-            url: 'assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
+            url: 'assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202',
             filename: 'RC107_Hat_Valkyrie_3D_Puff.dst',
             format: 'Tajima .DST'
           },
           {
             label: 'Vector Embroidery Path & Thread Spec (.SVG)',
-            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
+            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=202',
             filename: 'RC107_Hat_Valkyrie_Embroidery_Spec.svg',
             format: 'Embroidery .SVG'
           },
           {
             label: '300 DPI Transparent Emblem Artwork (.PNG)',
-            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png',
+            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202',
             filename: 'RC107_Hat_Valkyrie_Embroidery_300DPI.png',
             format: '300 DPI PNG'
           }
@@ -404,19 +404,19 @@
         productionFiles: [
           {
             label: 'Front Chest Crest — DTF Ready 300 DPI Transparent PNG',
-            url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png',
+            url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202',
             filename: 'RC309_Hoodie_Front_Crest_DTF_300DPI.png',
             format: 'DTF 300 DPI PNG'
           },
           {
             label: 'Full Back 24K Emblem — DTF Ready 300 DPI Transparent PNG',
-            url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
+            url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202',
             filename: 'RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
             format: 'DTF 300 DPI PNG'
           },
           {
             label: 'Combined Front + Back Gang Sheet — DTF Ready 300 DPI PNG',
-            url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png',
+            url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202',
             filename: 'RC309_Hoodie_Full_GangSheet_DTF_300DPI.png',
             format: 'DTF Gang Sheet PNG'
           }
