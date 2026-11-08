@@ -130,28 +130,67 @@
     .vision-brand-box {
       text-align: center;
       padding-bottom: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
       text-decoration: none;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .vision-crown-svg {
-      width: 78px;
-      height: 54px;
-      filter: drop-shadow(0 4px 14px rgba(245, 196, 81, 0.45));
+    .vision-brand-logos-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .vision-official-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: rgba(8, 7, 16, 0.85);
+      border: 1.5px solid rgba(255, 79, 163, 0.55);
+      padding: 4px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), 0 0 16px rgba(255, 79, 163, 0.28);
+      transition: transform 0.2s ease;
+    }
+
+    .vision-official-crest {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: rgba(8, 7, 16, 0.85);
+      border: 1.5px solid rgba(245, 196, 81, 0.68);
+      padding: 4px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), 0 0 16px rgba(245, 196, 81, 0.35);
+      transition: transform 0.2s ease;
+    }
+
+    .vision-brand-box:hover .vision-official-logo,
+    .vision-brand-box:hover .vision-official-crest {
+      transform: scale(1.07);
     }
 
     .vision-brand-name {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.96rem;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: 0.14em;
-      background: linear-gradient(180deg, #ffe89e 0%, #d49b35 100%);
+      background: linear-gradient(180deg, #ffe89e 0%, #ffae00 45%, #ff2d95 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 10px rgba(245, 196, 81, 0.38));
+    }
+
+    .vision-brand-sub {
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.72);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .vision-nav-list {
@@ -563,20 +602,58 @@
 
     .vision-garment-sub-row {
       display: flex;
+      flex-wrap: wrap;
       gap: 6px;
       width: 100%;
       justify-content: center;
     }
 
-    .vision-garment-mini-thumb {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-      border-radius: 8px;
+    .vision-thumb-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      text-decoration: none;
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(245, 196, 81, 0.45);
-      padding: 3px;
+      border-radius: 9px;
+      padding: 4px;
       cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .vision-thumb-card:hover {
+      border-color: #ffe28a;
+      background: rgba(245, 196, 81, 0.16);
+      transform: translateY(-2px);
+    }
+
+    .vision-garment-mini-thumb {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
+    .vision-thumb-caption {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.46rem;
+      font-weight: 800;
+      color: #ffe28a;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .prod-dl-thumb {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: rgba(8, 7, 16, 0.85);
+      border: 1px solid rgba(245, 196, 81, 0.55);
+      padding: 2px;
+      flex-shrink: 0;
     }
 
     .vision-order-details-col {
@@ -1098,22 +1175,13 @@
     <!-- =================================================================== -->
     <aside class="vision-glass vision-sidebar">
       <div>
-        <a href="index.html" class="vision-brand-box">
-          <svg class="vision-crown-svg" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="goldGrad" x1="0" y1="0" x2="120" y2="80" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#FFE999"/>
-                <stop offset="50%" stop-color="#F5C451"/>
-                <stop offset="100%" stop-color="#B8821E"/>
-              </linearGradient>
-            </defs>
-            <path d="M16 62L8 24L35 42L60 12L85 42L112 24L104 62H16Z" stroke="url(#goldGrad)" stroke-width="4.5" stroke-linejoin="round" fill="rgba(245,196,81,0.14)"/>
-            <path d="M14 69H106" stroke="url(#goldGrad)" stroke-width="4.5" stroke-linecap="round"/>
-            <circle cx="60" cy="8" r="4" fill="#FFE999"/>
-            <circle cx="8" cy="19" r="3.5" fill="#FFE999"/>
-            <circle cx="112" cy="19" r="3.5" fill="#FFE999"/>
-          </svg>
+        <a href="index.html" class="vision-brand-box" title="Return to RetroCanopy Home Stage">
+          <div class="vision-brand-logos-row">
+            <img src="assets/logo.png" alt="RetroCanopy Official Neon Tree Logo" class="vision-official-logo">
+            <img src="assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202" alt="RetroCanopy 24K Gold Crown Crest" class="vision-official-crest">
+          </div>
           <span class="vision-brand-name">RETROCANOPY</span>
+          <span class="vision-brand-sub">Official Brand &amp; 24K Vault</span>
         </a>
 
         <nav class="vision-nav-list" style="margin-top:18px;">
@@ -1174,7 +1242,14 @@
       <!-- TOP SPATIAL GLASS HEADER CARD -->
       <header class="vision-glass vision-header-card">
         <div class="vision-header-top">
-          <h1 class="vision-main-title">RETROCANOPY — OWNER'S HUB</h1>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <img src="assets/logo.png" alt="RetroCanopy Logo" style="width:46px;height:46px;object-fit:contain;border-radius:12px;background:rgba(8,7,16,0.85);border:1.5px solid rgba(255,79,163,0.55);padding:4px;box-shadow:0 0 16px rgba(255,79,163,0.3);">
+            <img src="assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202" alt="24K Gold Winged Valkyrie Crest" style="width:46px;height:46px;object-fit:contain;border-radius:12px;background:rgba(8,7,16,0.85);border:1.5px solid rgba(245,196,81,0.68);padding:4px;box-shadow:0 0 16px rgba(245,196,81,0.35);">
+            <div>
+              <h1 class="vision-main-title">RETROCANOPY — OWNER'S HUB</h1>
+              <div style="font-size:0.74rem;color:rgba(255,255,255,0.72);">Official 300 DPI DTF &amp; 3D Puff Embroidery Production Studio</div>
+            </div>
+          </div>
           <button type="button" class="vision-gold-cta-btn" id="simulateTestPaidOrderBtn">+ Test $1 Order</button>
         </div>
 
@@ -1398,7 +1473,7 @@
               <circle id="visionInnerGaugeArc" cx="93" cy="93" r="58" stroke="#2ce6ff" stroke-width="10" stroke-linecap="round" fill="none" stroke-dasharray="364" stroke-dashoffset="182" transform="rotate(-90 93 93)" style="filter:drop-shadow(0 0 8px rgba(44,230,255,0.65));transition:stroke-dashoffset 0.5s ease;" />
             </svg>
             <div class="vision-gauge-center-label">
-              <span>VisionOS</span>
+              <img src="assets/logo.png" alt="RetroCanopy" style="width:32px;height:32px;object-fit:contain;border-radius:8px;margin-bottom:2px;">
               <strong id="visionGaugeCenterVal">$2.00</strong>
             </div>
           </div>
@@ -1447,11 +1522,14 @@
         </div>
 
         <div class="vision-bot-holo-box">
-          <div>
-            <div style="font-size:0.78rem;font-weight:700;color:#2ce6ff;">Mecha Bot Telemetry</div>
-            <div style="font-size:0.7rem;color:rgba(255,255,255,0.72);">Shibuya 3D Arena Live Sync</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" alt="Shibuya Bot Pit App Icon" style="width:54px;height:54px;object-fit:cover;border-radius:10px;border:1.5px solid #2ce6ff;">
+            <div>
+              <div style="font-size:0.78rem;font-weight:700;color:#2ce6ff;">Shibuya Bot Pit</div>
+              <div style="font-size:0.68rem;color:rgba(255,255,255,0.72);">Official 3D Arena Telemetry</div>
+            </div>
           </div>
-          <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" alt="Shibuya Bot Pit">
+          <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg" alt="Shibuya Bot Pit 16:9 Key Art" style="width:92px;height:54px;object-fit:cover;border-radius:10px;border:1.5px solid rgba(245,196,81,0.65);">
         </div>
 
         <div class="card-tabs" style="width:100%;">
@@ -1849,7 +1927,7 @@
       }
 
       function buildProductionOrderCardHtml(order) {
-        const firstItem = (Array.isArray(order.items) && order.items[0]) || {
+        const itemsList = (Array.isArray(order.items) && order.items.length > 0) ? order.items : [{
           model: 'RC-309',
           title: 'White & 24K Gold Crowned Legend Hoodie',
           size: 'L',
@@ -1857,18 +1935,68 @@
           frontPhotoUrl: 'assets/merch/hoodie_tier6_2f_front.png',
           backPhotoUrl: 'assets/merch/hoodie_tier6_2f_back.png',
           productionFiles: MASTER_PRODUCTION_CATALOG['RC-309'].productionFiles
-        };
+        }];
 
-        const titleLine = order.items.map((it) => `${it.model} ${it.title} (${it.size || 'L'})`).join(' + ');
-        const mainPhoto = firstItem.frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_front.png';
-        const secondPhoto = firstItem.backPhotoUrl || '';
+        const titleLine = itemsList.map((it) => `${it.model} ${it.title} (${it.size || 'L'} ×${it.qty || 1})`).join(' + ');
+        const mainPhoto = itemsList[0].frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_front.png';
+        const mainImgId = `mainOrderImg_${String(order.orderId).replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
-        const allFiles = order.items.flatMap((it) => Array.isArray(it.productionFiles) ? it.productionFiles : []);
-        const filesButtonsHtml = allFiles.map((f) => `
-          <a class="prod-dl-btn" href="${escapeHtml(f.url)}" download="${escapeHtml(f.filename || '')}">
-            <span>${escapeHtml(f.label)}</span>
-          </a>
+        // Collect all garment photos + 300 DPI logo crest previews across every ordered item
+        const previewThumbs = [];
+        itemsList.forEach((it) => {
+          const isHat = String(it.model).toUpperCase() === 'RC-107';
+          if (it.frontPhotoUrl) {
+            previewThumbs.push({
+              url: it.frontPhotoUrl,
+              caption: isHat ? 'HAT MOCKUP' : 'HOODIE FRONT',
+              title: `${it.model} — Front Garment Photo`
+            });
+          }
+          if (it.backPhotoUrl) {
+            previewThumbs.push({
+              url: it.backPhotoUrl,
+              caption: 'HOODIE BACK',
+              title: `${it.model} — Back Garment Photo`
+            });
+          }
+          // Add the official 300 DPI DTF / Embroidery logo artwork thumbnail for this item
+          if (isHat) {
+            previewThumbs.push({
+              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202',
+              caption: 'HAT LOGO',
+              title: 'RC-107 Official 300 DPI 24K Gold Crown & Canopy Tree Embroidery Logo'
+            });
+          } else {
+            previewThumbs.push({
+              url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202',
+              caption: 'DTF LOGO',
+              title: 'RC-309 Official 300 DPI 24K Gold Winged Valkyrie DTF Crest'
+            });
+          }
+        });
+
+        const thumbsHtml = previewThumbs.map((t) => `
+          <div class="vision-thumb-card" title="${escapeHtml(t.title)} (Click to preview)" onclick="const m=document.getElementById('${mainImgId}');if(m){m.src='${escapeHtml(t.url)}';m.parentElement.href='${escapeHtml(t.url)}';}">
+            <img class="vision-garment-mini-thumb" src="${escapeHtml(t.url)}" alt="${escapeHtml(t.caption)}">
+            <span class="vision-thumb-caption">${escapeHtml(t.caption)}</span>
+          </div>
         `).join('');
+
+        const allFiles = itemsList.flatMap((it) => Array.isArray(it.productionFiles) ? it.productionFiles : []);
+        const filesButtonsHtml = allFiles.map((f) => {
+          const isPngOrSvg = /\.(png|svg)(\?|$)/i.test(f.url);
+          const previewIconUrl = isPngOrSvg
+            ? f.url
+            : (String(f.url).includes('RC107')
+                ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
+                : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202');
+          return `
+            <a class="prod-dl-btn" href="${escapeHtml(f.url)}" download="${escapeHtml(f.filename || '')}" style="justify-content:flex-start;">
+              <img class="prod-dl-thumb" src="${escapeHtml(previewIconUrl)}" alt="Logo File">
+              <span>${escapeHtml(f.label)}</span>
+            </a>
+          `;
+        }).join('');
 
         return `
           <div class="prod-order-card ${order.fulfilled ? 'is-fulfilled' : ''}">
@@ -1878,26 +2006,17 @@
             </div>
 
             <div class="vision-order-body-grid">
-              <!-- Left Dark Garment Preview Box -->
+              <!-- Left Dark Garment & Official Logo Preview Stage -->
               <div class="vision-garment-stage">
-                <a href="${escapeHtml(mainPhoto)}" target="_blank" title="Click to open full-size Garment Photo">
-                  <img class="vision-garment-main-img" src="${escapeHtml(mainPhoto)}" alt="Garment Photo">
+                <a href="${escapeHtml(mainPhoto)}" target="_blank" title="Click to open full-resolution image in new tab">
+                  <img class="vision-garment-main-img" id="${mainImgId}" src="${escapeHtml(mainPhoto)}" alt="Garment & Logo Preview">
                 </a>
                 <div class="vision-garment-sub-row">
-                  ${firstItem.frontPhotoUrl ? `
-                    <a href="${escapeHtml(firstItem.frontPhotoUrl)}" target="_blank" title="Front Garment Photo">
-                      <img class="vision-garment-mini-thumb" src="${escapeHtml(firstItem.frontPhotoUrl)}" alt="Front">
-                    </a>
-                  ` : ''}
-                  ${secondPhoto ? `
-                    <a href="${escapeHtml(secondPhoto)}" target="_blank" title="Back Garment Photo">
-                      <img class="vision-garment-mini-thumb" src="${escapeHtml(secondPhoto)}" alt="Back">
-                    </a>
-                  ` : ''}
+                  ${thumbsHtml}
                 </div>
               </div>
 
-              <!-- Right Customer Details + PAID Badge + DTF Downloads -->
+              <!-- Right Customer Details + PAID Badge + DTF Downloads with Logo Previews -->
               <div class="vision-order-details-col">
                 <div class="vision-cust-block">
                   <span class="vision-cust-label">Customer Name</span>
@@ -2358,14 +2477,27 @@
         const inv = getInventory();
         document.getElementById('merchInventoryList').innerHTML = inv.map((item) => {
           const lowStock = item.stock <= 5;
+          const catEntry = MASTER_PRODUCTION_CATALOG[item.sku] || {};
+          const thumbUrl = catEntry.frontPhotoUrl || 'assets/logo.png';
+          const logoUrl = item.sku === 'RC-107'
+            ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
+            : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202';
           return `
             <div class="item-row">
-              <div class="item-info">
-                <div class="item-title">
-                  <a href="${escapeHtml(item.href || '#')}" style="color:#ffffff;text-decoration:none;">${escapeHtml(item.sku)} — ${escapeHtml(item.name)}</a>
-                  <span class="tag-pill tag-member">$${Number(item.price).toFixed(2)} TEST</span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <a href="${escapeHtml(item.href || '#')}" title="View Live Showroom">
+                  <img src="${escapeHtml(thumbUrl)}" alt="${escapeHtml(item.name)}" style="width:46px;height:46px;object-fit:contain;border-radius:9px;background:rgba(8,7,16,0.85);border:1px solid rgba(255,255,255,0.22);padding:3px;">
+                </a>
+                <a href="${escapeHtml(logoUrl)}" target="_blank" title="View Official 300 DPI Production Logo">
+                  <img src="${escapeHtml(logoUrl)}" alt="300 DPI Logo" style="width:46px;height:46px;object-fit:contain;border-radius:9px;background:rgba(8,7,16,0.85);border:1px solid rgba(245,196,81,0.55);padding:3px;">
+                </a>
+                <div class="item-info">
+                  <div class="item-title">
+                    <a href="${escapeHtml(item.href || '#')}" style="color:#ffffff;text-decoration:none;">${escapeHtml(item.sku)} — ${escapeHtml(item.name)}</a>
+                    <span class="tag-pill tag-member">$${Number(item.price).toFixed(2)} TEST</span>
+                  </div>
+                  <div class="item-sub">${escapeHtml(item.productionType || '')} • <span style="color:${lowStock ? '#ff77aa' : '#00f59b'};">Stock: ${item.stock}</span></div>
                 </div>
-                <div class="item-sub">${escapeHtml(item.productionType || '')} • <span style="color:${lowStock ? '#ff77aa' : '#00f59b'};">Stock: ${item.stock}</span></div>
               </div>
               <div class="row-actions">
                 <button type="button" class="act-btn act-neutral" data-stock-sku="${escapeHtml(item.sku)}" data-stock-delta="-1">-</button>
@@ -2375,22 +2507,42 @@
           `;
         }).join('');
 
-        // Master Production Files Tab (Always accessible 1-click downloads)
+        // Master Production Files Tab (Always accessible 1-click downloads + visual garment & 300 DPI logo previews)
         const masterEl = document.getElementById('masterProductionFilesList');
         if (masterEl) {
-          masterEl.innerHTML = Object.values(MASTER_PRODUCTION_CATALOG).map((cat) => `
-            <div class="item-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
-              <div class="item-title">
-                <span>${escapeHtml(cat.model)} — ${escapeHtml(cat.title)}</span>
+          masterEl.innerHTML = Object.values(MASTER_PRODUCTION_CATALOG).map((cat) => {
+            const isHat = cat.model === 'RC-107';
+            const logoUrl = isHat
+              ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
+              : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202';
+            return `
+              <div class="item-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                  <div class="item-title">
+                    <span>${escapeHtml(cat.model)} — ${escapeHtml(cat.title)}</span>
+                  </div>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    ${cat.frontPhotoUrl ? `<a href="${escapeHtml(cat.frontPhotoUrl)}" target="_blank" title="Front Garment Photo"><img src="${escapeHtml(cat.frontPhotoUrl)}" alt="Front" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(8,7,16,0.9);border:1px solid rgba(255,255,255,0.25);padding:3px;"></a>` : ''}
+                    ${cat.backPhotoUrl ? `<a href="${escapeHtml(cat.backPhotoUrl)}" target="_blank" title="Back Garment Photo"><img src="${escapeHtml(cat.backPhotoUrl)}" alt="Back" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(8,7,16,0.9);border:1px solid rgba(255,255,255,0.25);padding:3px;"></a>` : ''}
+                    <a href="${escapeHtml(logoUrl)}" target="_blank" title="300 DPI Official Crest Artwork"><img src="${escapeHtml(logoUrl)}" alt="300 DPI Crest" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(8,7,16,0.9);border:1.5px solid rgba(245,196,81,0.68);padding:3px;"></a>
+                  </div>
+                </div>
+                <div class="item-sub">${escapeHtml(cat.productionNotes)}</div>
+                <div class="prod-files-grid">
+                  ${cat.productionFiles.map((f) => {
+                    const isImg = /\.(png|svg)(\?|$)/i.test(f.url);
+                    const thumb = isImg ? f.url : logoUrl;
+                    return `
+                      <a class="prod-dl-btn" href="${escapeHtml(f.url)}" download="${escapeHtml(f.filename)}" style="justify-content:flex-start;">
+                        <img class="prod-dl-thumb" src="${escapeHtml(thumb)}" alt="Logo">
+                        <span>${escapeHtml(f.label)}</span>
+                      </a>
+                    `;
+                  }).join('')}
+                </div>
               </div>
-              <div class="item-sub">${escapeHtml(cat.productionNotes)}</div>
-              <div class="prod-files-grid">
-                ${cat.productionFiles.map((f) => `
-                  <a class="prod-dl-btn" href="${escapeHtml(f.url)}" download="${escapeHtml(f.filename)}">${escapeHtml(f.label)}</a>
-                `).join('')}
-              </div>
-            </div>
-          `).join('');
+            `;
+          }).join('');
         }
 
         // Site Controls Tab
