@@ -3830,8 +3830,24 @@ function initGamerIntro() {
             revealLinkFor(id);
         });
 
+        const wasCinemaIntro = document.body && (document.body.classList.contains('cinema-intro-active') || document.body.classList.contains('cinema-logo-handover'));
+        const fgIntroVid = document.getElementById('rc-cinema-intro-video');
+        if (fgIntroVid) fgIntroVid.classList.add('video-fade-out');
+        const bgIntroVid = document.getElementById('rc-cinema-intro-bg-video');
+        if (bgIntroVid) bgIntroVid.classList.add('video-fade-out');
+
+        if (wasCinemaIntro && heroContainer && !heroContainer.classList.contains('no-transition')) {
+            // Position logo at center handover state for 1 frame so it smoothly glides up to the main site header
+            heroContainer.classList.remove('cinema-reveal-stage', 'shifted-up');
+            heroContainer.classList.add('cinematic-center');
+            if (document.body) {
+                document.body.classList.add('cinema-logo-handover');
+            }
+            void heroContainer.offsetWidth;
+        }
+
         if (document.body) {
-            document.body.classList.remove('cinema-intro-active', 'holo-journey-active', 'diorama-reveal-active', 'coming-soon-finale-active', 'syn-in-background');
+            document.body.classList.remove('cinema-intro-active', 'cinema-logo-handover', 'holo-journey-active', 'diorama-reveal-active', 'coming-soon-finale-active', 'syn-in-background');
             document.body.classList.add('rc-logged-in-home');
         }
         if (heroContainer) {
@@ -4245,22 +4261,35 @@ function initGamerIntro() {
         }
     }
 
-    function finishIntroWithLogoHold(holdLogoMs = 2200) {
+    function finishIntroWithLogoHold(holdLogoMs = 1400) {
         if (sequenceComplete || introCraneTimer) return;
         if (introTransitionTimer) {
             clearTimeout(introTransitionTimer);
             introTransitionTimer = null;
         }
-        // Hold on the final glowing RETROCANOPY logo frame so it never feels rushed on mobile or desktop
+        // Seamless handover: cross-dissolve the video's centered RETROCANOPY logo directly into the
+        // live DOM .hero-container logo at the exact same center position, then smoothly glide it up!
         introTransitionTimer = setTimeout(() => {
             if (sequenceComplete) return;
+            if (document.body) {
+                document.body.classList.add('cinema-logo-handover');
+            }
+            if (heroContainer) {
+                heroContainer.classList.remove('no-transition', 'shifted-up');
+                heroContainer.classList.add('cinematic-center');
+            }
             const fgVid = document.getElementById('rc-cinema-intro-video');
             if (fgVid) fgVid.classList.add('video-fade-out');
+            const bgVid = document.getElementById('rc-cinema-intro-bg-video');
+            if (bgVid) bgVid.classList.add('video-fade-out');
             fadeIntroAudio();
             introCraneTimer = setTimeout(() => {
                 if (sequenceComplete) return;
+                if (document.body) {
+                    document.body.classList.remove('cinema-logo-handover');
+                }
                 skipEntireIntro();
-            }, 1050);
+            }, 520);
         }, holdLogoMs);
     }
 
@@ -4442,7 +4471,7 @@ function initGamerIntro() {
                 } catch (_) {}
             }
             if (document.body) {
-                document.body.classList.remove('intro-awaiting-audio', 'syn-in-background', 'holo-pitch-black', 'holo-journey-active', 'diorama-reveal-active', 'coming-soon-finale-active');
+                document.body.classList.remove('cinema-logo-handover', 'intro-awaiting-audio', 'syn-in-background', 'holo-pitch-black', 'holo-journey-active', 'diorama-reveal-active', 'coming-soon-finale-active');
                 document.body.classList.add('cinema-intro-active');
             }
             if (heroContainer) {
