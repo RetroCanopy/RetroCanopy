@@ -4670,6 +4670,233 @@ function initSubpageLofiMusic() {
  * Bottom row: Continuously scrolls Retrocanopy Arcade games left-to-right (opposite direction).
  */
 function initHomeShopScroller() {
+    // =========================================================================
+    // CONCEPT #1: MOLTEN-GOLD LIGHT-BLOOM 1-BY-1 CENTERPIECE SHOP CYCLER
+    // Data-driven array so new shop items can be added 1-by-1 cleanly.
+    // =========================================================================
+    window.RC_CENTERPIECE_SHOP_ITEMS = [
+        {
+            id: 'rc-309-front',
+            plaque: 'WHITE & GOLD HOODIE • $160',
+            aria: 'White & Gold Hoodie (Front) — $160',
+            sprite: 'assets/ui/c1_items/c1_hoodie_front.png?v=232',
+            href: 'hoodie_preview.html?filter=all&side=front'
+        },
+        {
+            id: 'rc-309-back',
+            plaque: 'WHITE & GOLD HOODIE • $160',
+            aria: 'White & Gold Hoodie (Back Emblem) — $160',
+            sprite: 'assets/ui/c1_items/c1_hoodie_back.png?v=232',
+            href: 'hoodie_preview.html?filter=all&side=back'
+        },
+        {
+            id: 'rc-107-hat',
+            plaque: 'WHITE & GOLD HAT • $85',
+            aria: 'White & Gold Valkyrie Hat — $85',
+            sprite: 'assets/ui/c1_items/c1_valkyrie_hat.png?v=232',
+            href: 'hat_preview.html?filter=all&focus=hat'
+        }
+    ];
+
+    const c1Showcase = document.getElementById('rc-c1-centerpiece-cycler');
+    if (c1Showcase && !c1Showcase.dataset.rcC1Wired) {
+        c1Showcase.dataset.rcC1Wired = '1';
+        const c1Items = window.RC_CENTERPIECE_SHOP_ITEMS;
+        const slidesStack = document.getElementById('rc-c1-slides-stack');
+        const reflStack = document.getElementById('rc-c1-refl-stack');
+        const dotsWrap = document.getElementById('rc-c1-phase-dots');
+        const itemLink = document.getElementById('rc-c1-item-link');
+        const pedLink = document.getElementById('rc-c1-pedestal-link');
+        const plaqueLink = document.getElementById('rc-c1-plaque-link');
+        const plaqueText = document.getElementById('rc-c1-plaque-text');
+        const emberCanvas = document.getElementById('rc-c1-ember-canvas');
+
+        // Ensure DOM slides, reflections, and dots stay 100% synced with RC_CENTERPIECE_SHOP_ITEMS
+        if (slidesStack && reflStack && dotsWrap && c1Items.length > 0) {
+            slidesStack.innerHTML = c1Items.map((it, idx) =>
+                `<img class="rc-c1-item-slide${idx === 0 ? ' is-active' : ''}" data-c1-idx="${idx}" src="${it.sprite}" alt="${it.aria}" loading="eager" decoding="async" draggable="false" />`
+            ).join('');
+            reflStack.innerHTML = c1Items.map((it, idx) =>
+                `<img class="rc-c1-refl-slide${idx === 0 ? ' is-active' : ''}" data-c1-idx="${idx}" src="${it.sprite}" alt="" draggable="false" />`
+            ).join('');
+            dotsWrap.innerHTML = c1Items.map((it, idx) =>
+                `<button type="button" class="rc-c1-phase-dot${idx === 0 ? ' is-active' : ''}" data-c1-dot="${idx}" aria-label="${it.aria}" aria-selected="${idx === 0 ? 'true' : 'false'}"></button>`
+            ).join('');
+        }
+
+        const c1Slides = Array.from(c1Showcase.querySelectorAll('.rc-c1-item-slide'));
+        const c1Refls = Array.from(c1Showcase.querySelectorAll('.rc-c1-refl-slide'));
+        const c1Dots = Array.from(c1Showcase.querySelectorAll('.rc-c1-phase-dot'));
+
+        let c1Idx = 0;
+        let c1HoverPaused = false;
+        let c1AutoTimer = null;
+        let c1CleanupTimer = null;
+        let c1PulseTimer = null;
+        let c1PlaqueTimer = null;
+        let emberBurstEnergy = 0;
+
+        function phaseCenterpieceTo(nextRawIdx) {
+            if (c1Items.length < 2) return;
+            const targetIdx = ((nextRawIdx % c1Items.length) + c1Items.length) % c1Items.length;
+            if (targetIdx === c1Idx) return;
+
+            const prevIdx = c1Idx;
+            c1Idx = targetIdx;
+            const nextItem = c1Items[targetIdx];
+
+            c1Slides.forEach((sl, idx) => {
+                if (idx !== targetIdx && idx !== prevIdx) {
+                    sl.classList.remove('is-active', 'is-phasing-out');
+                }
+            });
+            c1Refls.forEach((rf, idx) => {
+                if (idx !== targetIdx && idx !== prevIdx) {
+                    rf.classList.remove('is-active', 'is-phasing-out');
+                }
+            });
+
+            if (c1Slides[prevIdx]) {
+                c1Slides[prevIdx].classList.remove('is-active');
+                c1Slides[prevIdx].classList.add('is-phasing-out');
+            }
+            if (c1Refls[prevIdx]) {
+                c1Refls[prevIdx].classList.remove('is-active');
+                c1Refls[prevIdx].classList.add('is-phasing-out');
+            }
+
+            if (c1CleanupTimer) clearTimeout(c1CleanupTimer);
+            c1CleanupTimer = setTimeout(() => {
+                if (c1Slides[prevIdx]) c1Slides[prevIdx].classList.remove('is-phasing-out');
+                if (c1Refls[prevIdx]) c1Refls[prevIdx].classList.remove('is-phasing-out');
+            }, 950);
+
+            if (c1Slides[targetIdx]) {
+                c1Slides[targetIdx].classList.remove('is-phasing-out');
+                c1Slides[targetIdx].classList.add('is-active');
+            }
+            if (c1Refls[targetIdx]) {
+                c1Refls[targetIdx].classList.remove('is-phasing-out');
+                c1Refls[targetIdx].classList.add('is-active');
+            }
+
+            // Warm molten-gold stand & aura pulse + golden bokeh surge
+            c1Showcase.classList.add('is-pulsing-gold');
+            emberBurstEnergy = 1.0;
+            if (c1PulseTimer) clearTimeout(c1PulseTimer);
+            c1PulseTimer = setTimeout(() => {
+                c1Showcase.classList.remove('is-pulsing-gold');
+            }, 760);
+
+            // Update store deep-links & plaque readout
+            [itemLink, pedLink, plaqueLink].forEach((lnk) => {
+                if (lnk) lnk.setAttribute('href', nextItem.href);
+            });
+            if (itemLink) {
+                itemLink.setAttribute('aria-label', `Shop ${nextItem.aria}`);
+                itemLink.setAttribute('title', nextItem.aria);
+            }
+
+            if (plaqueText) {
+                const sameLabel = plaqueText.textContent === nextItem.plaque;
+                if (!sameLabel) {
+                    plaqueText.classList.add('is-phasing-plaque');
+                    if (c1PlaqueTimer) clearTimeout(c1PlaqueTimer);
+                    c1PlaqueTimer = setTimeout(() => {
+                        plaqueText.textContent = nextItem.plaque;
+                        plaqueText.classList.remove('is-phasing-plaque');
+                    }, 250);
+                }
+            }
+
+            c1Dots.forEach((dot, idx) => {
+                const active = idx === targetIdx;
+                dot.classList.toggle('is-active', active);
+                dot.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+        }
+
+        function startCenterpieceAutoCycle() {
+            if (c1AutoTimer) clearInterval(c1AutoTimer);
+            c1AutoTimer = setInterval(() => {
+                if (document.hidden || c1HoverPaused) return;
+                phaseCenterpieceTo(c1Idx + 1);
+            }, 5200);
+        }
+
+        c1Dots.forEach((dot, idx) => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                phaseCenterpieceTo(idx);
+                startCenterpieceAutoCycle();
+            });
+        });
+
+        [itemLink, document.getElementById('rc-c1-glass-plaque')].forEach((el) => {
+            if (!el) return;
+            el.addEventListener('mouseenter', () => { c1HoverPaused = true; });
+            el.addEventListener('mouseleave', () => { c1HoverPaused = false; });
+        });
+
+        startCenterpieceAutoCycle();
+
+        // 24K Golden Bokeh & Rising Ember Particles (Concept #1 Volumetric Glow)
+        if (emberCanvas && emberCanvas.getContext) {
+            const ctx = emberCanvas.getContext('2d');
+            const W = emberCanvas.width;
+            const H = emberCanvas.height;
+            const particles = Array.from({ length: 28 }, (_, i) => ({
+                x: W * (0.20 + Math.random() * 0.60),
+                y: H * (0.15 + Math.random() * 0.75),
+                r: i % 5 === 0 ? (4.5 + Math.random() * 5.0) : (1.4 + Math.random() * 2.8),
+                vy: -(0.18 + Math.random() * 0.34),
+                vx: (Math.random() - 0.5) * 0.16,
+                phase: Math.random() * Math.PI * 2,
+                speed: 0.018 + Math.random() * 0.024,
+                soft: i % 5 === 0
+            }));
+
+            function tickEmbers() {
+                if (!document.hidden) {
+                    ctx.clearRect(0, 0, W, H);
+                    emberBurstEnergy *= 0.965;
+                    const boost = 1 + emberBurstEnergy * 0.85;
+
+                    for (let i = 0; i < particles.length; i++) {
+                        const p = particles[i];
+                        p.phase += p.speed;
+                        p.y += p.vy * boost;
+                        p.x += p.vx + Math.sin(p.phase) * 0.12;
+
+                        if (p.y < H * 0.08) {
+                            p.y = H * (0.78 + Math.random() * 0.16);
+                            p.x = W * (0.22 + Math.random() * 0.56);
+                        }
+
+                        const edgeFadeY = Math.min(1, Math.max(0, (p.y - H * 0.08) / (H * 0.22))) *
+                                          Math.min(1, Math.max(0, (H * 0.96 - p.y) / (H * 0.20)));
+                        const twinkle = 0.45 + 0.55 * Math.sin(p.phase);
+                        const alpha = Math.min(0.88, (p.soft ? 0.26 : 0.56) * twinkle * edgeFadeY * boost);
+
+                        if (alpha > 0.02) {
+                            const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * (p.soft ? 2.1 : 1.5));
+                            grad.addColorStop(0, `rgba(255, 242, 195, ${alpha})`);
+                            grad.addColorStop(0.45, `rgba(255, 182, 62, ${(alpha * 0.65).toFixed(3)})`);
+                            grad.addColorStop(1, 'rgba(255, 130, 15, 0)');
+                            ctx.fillStyle = grad;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.r * (p.soft ? 2.1 : 1.5), 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                }
+                requestAnimationFrame(tickEmbers);
+            }
+            requestAnimationFrame(tickEmbers);
+        }
+    }
+
     const studioDeck = document.getElementById('rc-hero-studio-marquee');
     const studioModal = document.getElementById('rc-web-studio-modal');
     const studioClose = document.getElementById('rc-web-studio-close-btn');

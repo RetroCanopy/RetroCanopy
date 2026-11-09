@@ -8430,3 +8430,410 @@ body.rc-logged-in-home .brand-name {
         width: 14px;
     }
 }
+
+
+/* ==========================================================================
+   V232: CONCEPT #1 MOLTEN-GOLD LIGHT-BLOOM CENTERPIECE SHOP CYCLER
+   ========================================================================== */
+.rc-c1-centerpiece-showcase {
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+}
+
+.rc-c1-stage-box {
+    position: relative;
+    aspect-ratio: 1200 / 1160;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+    pointer-events: none;
+}
+
+/* Warm Volumetric 24K Amber-Gold Aura Behind Hovering Item */
+.rc-c1-molten-aura {
+    position: absolute;
+    left: 11%;
+    top: -2%;
+    width: 78%;
+    height: 58%;
+    border-radius: 50%;
+    background:
+        radial-gradient(ellipse at 50% 62%,
+            rgba(255, 190, 75, 0.38) 0%,
+            rgba(255, 130, 20, 0.19) 34%,
+            rgba(185, 72, 6, 0.08) 58%,
+            transparent 76%);
+    filter: blur(12px);
+    z-index: 1;
+    opacity: 0.85;
+    pointer-events: none;
+    transition:
+        opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.65s ease;
+}
+
+.rc-c1-centerpiece-showcase.is-pulsing-gold .rc-c1-molten-aura {
+    opacity: 1;
+    transform: scale(1.10);
+    filter: blur(10px) brightness(1.45);
+}
+
+/* Shimmering 24K Gold Bokeh & Rising Ember Particles Canvas */
+.rc-c1-ember-canvas {
+    position: absolute;
+    left: 11%;
+    top: -2%;
+    width: 78%;
+    height: 58%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Clean Unbaked 3-Tiered Molten-Orange Liquid Glass Stand */
+.rc-c1-stand-img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center bottom !important;
+    z-index: 3 !important;
+    pointer-events: none !important;
+    transition: filter 0.65s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.rc-c1-centerpiece-showcase.is-pulsing-gold .rc-c1-stand-img {
+    filter:
+        drop-shadow(0 16px 36px rgba(0, 0, 0, 0.88))
+        brightness(1.20)
+        drop-shadow(0 0 26px rgba(255, 145, 25, 0.42)) !important;
+}
+
+/* Live Dynamic Inverted Reflection Clipped Strictly to Top Amber Glass Disc */
+.rc-c1-top-disc-refl-mask {
+    position: absolute;
+    left: 24.7%;
+    top: 41.9%;
+    width: 50.6%;
+    height: 14.3%;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 4;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, transparent 42%, rgba(0, 0, 0, 0.92) 53%, rgba(0, 0, 0, 0.42) 78%, transparent 98%);
+    mask-image: linear-gradient(180deg, transparent 42%, rgba(0, 0, 0, 0.92) 53%, rgba(0, 0, 0, 0.42) 78%, transparent 98%);
+}
+
+.rc-c1-refl-slide {
+    position: absolute;
+    left: 3.95%;
+    top: 48.5%;
+    width: 92.1%;
+    height: 135%;
+    object-fit: contain;
+    opacity: 0;
+    transform: scaleY(-1) scale(0.88);
+    filter: blur(2.6px) brightness(0.92);
+    transition:
+        opacity 0.82s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.86s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+}
+
+.rc-c1-refl-slide.is-active {
+    opacity: 0.32;
+    transform: scaleY(-1) scale(1);
+}
+
+.rc-c1-refl-slide.is-phasing-out {
+    opacity: 0;
+    transform: scaleY(-1) scale(1.06);
+}
+
+/* Breathing Soft Contact Shadow on Top Glass Disc */
+.rc-c1-contact-shadow {
+    position: absolute;
+    left: 50%;
+    top: 47.8%;
+    width: 28%;
+    height: 3.4%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0) 76%);
+    z-index: 4;
+    pointer-events: none;
+    animation: rcC1ShadowBreath 3.6s ease-in-out infinite;
+}
+
+@keyframes rcC1ShadowBreath {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.74;
+    }
+    50% {
+        transform: translateX(-50%) scale(0.88);
+        opacity: 0.50;
+    }
+}
+
+/* Single Central Hovering Hero Item Link & Stack */
+.rc-c1-hover-item-link {
+    position: absolute;
+    left: 26.67%;
+    top: 2.1%;
+    width: 46.67%;
+    height: 48.28%;
+    z-index: 6;
+    display: block;
+    pointer-events: auto;
+    cursor: pointer;
+    text-decoration: none;
+    outline: none;
+}
+
+.rc-c1-hover-float-wrap {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    animation: rcC1ApparelFloat 3.6s ease-in-out infinite;
+    will-change: transform;
+}
+
+@keyframes rcC1ApparelFloat {
+    0%, 100% {
+        transform: translate3d(0, 0px, 0);
+    }
+    50% {
+        transform: translate3d(0, -12px, 0);
+    }
+}
+
+.rc-c1-item-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, 18px, 0) scale(0.86);
+    filter:
+        brightness(2.05)
+        saturate(1.65)
+        blur(9px)
+        drop-shadow(0 0 28px rgba(255, 185, 55, 0.96));
+    transition:
+        opacity 0.88s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.94s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.88s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform, filter;
+}
+
+.rc-c1-item-slide.is-active {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter:
+        brightness(1.03)
+        saturate(1.04)
+        blur(0px)
+        drop-shadow(0 18px 28px rgba(0, 0, 0, 0.82))
+        drop-shadow(0 0 18px rgba(255, 165, 42, 0.30));
+}
+
+.rc-c1-item-slide.is-phasing-out {
+    opacity: 0;
+    transform: translate3d(0, -22px, 0) scale(1.09);
+    filter:
+        brightness(2.2)
+        saturate(1.8)
+        blur(9px)
+        drop-shadow(0 0 32px rgba(255, 195, 65, 1));
+}
+
+.rc-c1-hover-item-link:hover .rc-c1-item-slide.is-active {
+    transform: translate3d(0, -4px, 0) scale(1.035);
+    filter:
+        brightness(1.07)
+        saturate(1.06)
+        blur(0px)
+        drop-shadow(0 22px 34px rgba(0, 0, 0, 0.88))
+        drop-shadow(0 0 26px rgba(255, 175, 48, 0.52));
+}
+
+/* Pedestal Base Clickable Hotspot */
+.rc-c1-pedestal-base-link {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 46%;
+    bottom: 11%;
+    border-radius: 50%;
+    z-index: 5;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* 3D Smoked-Obsidian & Molten-Amber Liquid Glass Plaque Pill (Concept #1 Front Base) */
+.rc-c1-plaque-wrap {
+    position: absolute;
+    left: 50%;
+    bottom: 8.2%;
+    transform: translateX(-50%);
+    z-index: 9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+}
+
+.rc-c1-glass-plaque {
+    position: relative;
+    padding: clamp(6px, 0.85vh, 10px) clamp(18px, 2.1vw, 28px) clamp(5px, 0.7vh, 8px);
+    border-radius: 999px;
+    background:
+        linear-gradient(180deg,
+            rgba(32, 24, 16, 0.88) 0%,
+            rgba(12, 10, 12, 0.95) 54%,
+            rgba(6, 6, 9, 0.98) 100%);
+    border: 1.5px solid rgba(255, 172, 65, 0.65);
+    box-shadow:
+        0 0 0 3px rgba(5, 6, 10, 0.92),
+        0 0 0 4px rgba(255, 145, 35, 0.24),
+        0 12px 28px rgba(0, 0, 0, 0.94),
+        0 0 22px rgba(255, 130, 18, 0.30),
+        inset 0 1.5px 2px rgba(255, 236, 188, 0.72),
+        inset 0 -2px 5px rgba(255, 120, 14, 0.48);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.rc-c1-glass-plaque:hover {
+    border-color: rgba(255, 205, 110, 0.88);
+    box-shadow:
+        0 0 0 3px rgba(5, 6, 10, 0.92),
+        0 0 0 4px rgba(255, 165, 55, 0.38),
+        0 14px 32px rgba(0, 0, 0, 0.96),
+        0 0 28px rgba(255, 145, 25, 0.52),
+        inset 0 1.5px 2.5px rgba(255, 244, 205, 0.88),
+        inset 0 -2px 6px rgba(255, 135, 20, 0.62);
+    transform: translateY(-1px);
+}
+
+.rc-c1-plaque-title-link {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.rc-c1-plaque-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(0.72rem, 0.96vw, 0.94rem);
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: linear-gradient(180deg, #fff5dc 0%, #f5c26b 55%, #d9912b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(255, 160, 35, 0.35));
+    transition: opacity 0.28s ease, transform 0.28s ease, filter 0.28s ease;
+}
+
+.rc-c1-plaque-text.is-phasing-plaque {
+    opacity: 0;
+    transform: translateY(3px);
+    filter: blur(4px);
+}
+
+.rc-c1-phase-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.rc-c1-phase-dot {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 190, 95, 0.55);
+    background: rgba(95, 62, 24, 0.65);
+    cursor: pointer;
+    transition: transform 0.26s ease, background 0.26s ease, box-shadow 0.26s ease, border-color 0.26s ease;
+}
+
+.rc-c1-phase-dot:hover {
+    background: rgba(255, 195, 95, 0.85);
+    transform: scale(1.2);
+}
+
+.rc-c1-phase-dot.is-active {
+    background: #ffe39e;
+    border-color: #ffffff;
+    transform: scale(1.25);
+    box-shadow:
+        0 0 8px #ffb32c,
+        0 0 14px rgba(255, 150, 20, 0.95);
+}
+
+/* Subtle Floor Reflection Under the Smoked-Glass Plaque Pill */
+.rc-c1-plaque-floor-refl {
+    width: 88%;
+    height: 10px;
+    margin-top: 3px;
+    border-radius: 999px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255, 165, 55, 0.26) 0%, rgba(255, 120, 15, 0.08) 55%, transparent 85%);
+    filter: blur(2.5px);
+    pointer-events: none;
+}
+
+/* Responsive Mobile Polish for Concept #1 Centerpiece Cycler */
+@media (max-width: 960px) {
+    .rc-c1-glass-plaque {
+        padding: 4px 13px 4px;
+        gap: 3px;
+        box-shadow:
+            0 0 0 2px rgba(5, 6, 10, 0.92),
+            0 8px 18px rgba(0, 0, 0, 0.92),
+            0 0 14px rgba(255, 130, 18, 0.28),
+            inset 0 1px 1.5px rgba(255, 236, 188, 0.68);
+    }
+
+    .rc-c1-plaque-text {
+        font-size: clamp(0.50rem, 2.05vw, 0.66rem);
+        letter-spacing: 0.07em;
+    }
+
+    .rc-c1-phase-dots {
+        gap: 5px;
+    }
+
+    .rc-c1-phase-dot {
+        width: 5px;
+        height: 5px;
+    }
+
+    .rc-c1-plaque-floor-refl {
+        height: 6px;
+        margin-top: 2px;
+    }
+}
