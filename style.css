@@ -8852,7 +8852,12 @@ body.rc-logged-in-home .brand-name {
     aspect-ratio: 840 / 1152 !important;
     max-width: none !important;
     max-height: 41vh !important;
+    filter: none !important;
     transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.rc-f14-corner-pod.rc-c07-neon-pod:hover {
+    filter: none !important;
 }
 
 .rc-f14-corner-pod.rc-c07-neon-pod .rc-c07-marquee-stage-img {
@@ -8861,6 +8866,7 @@ body.rc-logged-in-home .brand-name {
     object-fit: contain !important;
     object-position: center bottom !important;
     display: block !important;
+    filter: none !important;
     transition: filter 0.3s ease !important;
 }
 
