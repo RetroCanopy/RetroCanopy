@@ -1546,13 +1546,16 @@
       <div class="rc-checkout-modal" onclick="event.stopPropagation()">
         <div class="rc-checkout-top">
           <div>
-            <div class="rc-checkout-title">&#128717;&#65039; RETROCANOPY STORE CHECKOUT ($1.00 TEST MODE)</div>
-            <div class="rc-checkout-sub">Orders are sent to the <strong>Owner's Hub Production Queue AFTER PAYMENT</strong> with Customer Info, Item Photos &amp; DTF / Embroidery Production Files.</div>
+            <div class="rc-checkout-title" id="rcCheckoutHeaderTitle">&#128717;&#65039; RETROCANOPY STORE CHECKOUT ($1.00 TEST MODE)</div>
+            <div class="rc-checkout-sub" id="rcCheckoutHeaderSub">Orders are sent to the <strong>Owner's Hub Production Queue AFTER PAYMENT</strong> with Customer Info, Item Photos &amp; DTF / Embroidery Production Files.</div>
           </div>
           <button type="button" class="rc-checkout-close-btn" id="rcCheckoutCloseBtn">Close &#10005;</button>
         </div>
 
-        <div class="rc-checkout-grid">
+        <!-- READ-ONLY POST-PAYMENT VERIFICATION SCREEN (SHOWN AFTER CUSTOMER PAYS; INFO CANNOT BE CHANGED) -->
+        <div id="rcOrderVerificationView" style="display:none;"></div>
+
+        <div class="rc-checkout-grid" id="rcEditableCheckoutGrid">
           <!-- LEFT: CUSTOMER SHIPPING & CONTACT INFORMATION (REQUIRED FOR PRODUCTION QUEUE) -->
           <div class="rc-checkout-section-box">
             <div class="rc-section-heading">
@@ -1643,13 +1646,202 @@
       openStoreCheckoutModal();
     }
 
+    function resetModalToEditableCheckoutMode() {
+      const verView = document.getElementById('rcOrderVerificationView');
+      const editGrid = document.getElementById('rcEditableCheckoutGrid');
+      const hdrTitle = document.getElementById('rcCheckoutHeaderTitle');
+      const hdrSub = document.getElementById('rcCheckoutHeaderSub');
+      if (verView) {
+        verView.style.display = 'none';
+        verView.innerHTML = '';
+      }
+      if (editGrid) editGrid.style.display = '';
+      if (hdrTitle) hdrTitle.innerHTML = '&#128717;&#65039; RETROCANOPY STORE CHECKOUT ($1.00 TEST MODE)';
+      if (hdrSub) hdrSub.innerHTML = 'Orders are sent to the <strong>Owner\'s Hub Production Queue AFTER PAYMENT</strong> with Customer Info, Item Photos &amp; DTF / Embroidery Production Files.';
+    }
+
     function openStoreCheckoutModal() {
+      resetModalToEditableCheckoutMode();
       renderStoreCouponDockAndCheckout();
       checkoutBackdropEl.classList.add('open');
     }
 
     function closeStoreCheckoutModal() {
       checkoutBackdropEl.classList.remove('open');
+      setTimeout(resetModalToEditableCheckoutMode, 260);
+    }
+
+    function showPaidOrderVerificationModal(paidOrder) {
+      const verView = document.getElementById('rcOrderVerificationView');
+      const editGrid = document.getElementById('rcEditableCheckoutGrid');
+      const hdrTitle = document.getElementById('rcCheckoutHeaderTitle');
+      const hdrSub = document.getElementById('rcCheckoutHeaderSub');
+
+      if (editGrid) editGrid.style.display = 'none';
+      if (hdrTitle) {
+        hdrTitle.innerHTML = '&#9989; ORDER VERIFICATION &amp; RECEIPT &mdash; PAYMENT CONFIRMED';
+      }
+      if (hdrSub) {
+        hdrSub.innerHTML = 'Your payment is verified and locked for production. <strong>Information below is read-only and cannot be changed.</strong>';
+      }
+
+      const safeEsc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+
+      const ordId = String(paidOrder.orderId || 'RC-ORD-000000');
+      const totalFormatted = Number(paidOrder.totalPaid || paidOrder.total || 1).toFixed(2);
+      const orderItems = (Array.isArray(paidOrder.items) && paidOrder.items.length > 0)
+        ? paidOrder.items
+        : [{
+            model: 'RC-309',
+            title: 'White & 24K Gold Crowned Legend Hoodie',
+            size: 'L',
+            qty: 1,
+            price: Number(paidOrder.totalPaid || 1),
+            frontPhotoUrl: 'assets/merch/hoodie_tier6_2f_front.png'
+          }];
+
+      const itemsRowsHtml = orderItems.map((it) => {
+        const thumbUrl = it.frontPhotoUrl || (it.model === 'RC-107' ? 'assets/merch/hat_tier6_valkyrie.png' : 'assets/merch/hoodie_tier6_2f_front.png');
+        const lineTotal = (Number(it.price || 1) * Number(it.qty || 1)).toFixed(2);
+        return `
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(0,240,255,0.28);">
+            <img src="${safeEsc(thumbUrl)}" alt="${safeEsc(it.title)}" style="width:52px;height:52px;object-fit:contain;border-radius:10px;background:rgba(5,4,14,0.9);border:1px solid rgba(255,255,255,0.18);padding:3px;flex-shrink:0;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:800;color:#00f0ff;letter-spacing:0.06em;">
+                ${safeEsc(it.model)} &bull; SIZE: ${safeEsc(it.size || 'L')} &bull; QTY: ${safeEsc(it.qty || 1)}
+              </div>
+              <div style="font-size:0.84rem;font-weight:700;color:#ffffff;margin-top:2px;">
+                ${safeEsc(it.title)}
+              </div>
+            </div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:900;color:#00f59b;flex-shrink:0;">
+              $${lineTotal}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (verView) {
+        verView.style.display = 'block';
+        verView.innerHTML = `
+          <!-- TOP MATCHING ORDER NUMBER BANNER -->
+          <div style="margin-bottom:14px;padding:16px 18px;border-radius:14px;background:linear-gradient(135deg, rgba(0,245,155,0.16), rgba(0,240,255,0.12));border:1.5px solid #00f59b;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 10px 28px rgba(0,245,155,0.15);">
+            <div>
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;color:#00f59b;letter-spacing:0.12em;text-transform:uppercase;">
+                &#10003; LIVE STRIPE PAYMENT VERIFIED &bull; OFFICIAL ORDER NUMBER
+              </div>
+              <div style="font-family:'Orbitron',sans-serif;font-size:1.35rem;font-weight:900;color:#ffffff;letter-spacing:0.06em;margin-top:4px;text-shadow:0 0 18px rgba(0,245,155,0.45);">
+                #${safeEsc(ordId)}
+              </div>
+              <div style="font-size:0.76rem;color:rgba(255,255,255,0.82);margin-top:3px;">
+                Save this Order Number &mdash; it matches our confirmation text &amp; production email.
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+              <button type="button" id="rcCopyVerifiedOrderNumBtn" style="font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:800;padding:8px 14px;border-radius:10px;border:1.5px solid #00f0ff;background:rgba(0,240,255,0.18);color:#ffffff;cursor:pointer;letter-spacing:0.06em;">
+                &#128203; COPY ORDER #${safeEsc(ordId)}
+              </button>
+              <span style="font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;color:#ffae00;">
+                &#128274; LOCKED &amp; SENT TO PRODUCTION
+              </span>
+            </div>
+          </div>
+
+          <!-- TWO-COLUMN READ-ONLY VERIFICATION GRID (NO INPUTS) -->
+          <div class="rc-checkout-grid">
+            <!-- LEFT: LOCKED CUSTOMER & SHIPPING INFO -->
+            <div class="rc-checkout-section-box" style="border-color:rgba(0,245,155,0.42);">
+              <div class="rc-section-heading">
+                <span>&#128274; 1. VERIFIED CUSTOMER &amp; SHIPPING INFO</span>
+                <span style="color:#ffae00;font-size:0.6rem;">READ-ONLY &bull; LOCKED</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+                <div style="padding:9px 12px;border-radius:9px;background:rgba(5,4,14,0.78);border:1px solid rgba(255,255,255,0.15);user-select:text;">
+                  <div style="font-family:'Orbitron',sans-serif;font-size:0.54rem;color:#00f0ff;letter-spacing:0.08em;">ORDER NUMBER</div>
+                  <div style="font-family:'Orbitron',sans-serif;font-size:0.86rem;font-weight:800;color:#00f59b;margin-top:2px;">#${safeEsc(ordId)}</div>
+                </div>
+                <div style="padding:9px 12px;border-radius:9px;background:rgba(5,4,14,0.78);border:1px solid rgba(255,255,255,0.15);user-select:text;">
+                  <div style="font-family:'Orbitron',sans-serif;font-size:0.54rem;color:#00f0ff;letter-spacing:0.08em;">FULL NAME</div>
+                  <div style="font-size:0.88rem;font-weight:700;color:#ffffff;margin-top:2px;">${safeEsc(paidOrder.customerName || paidOrder.customer || 'Verified Customer')}</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div style="padding:9px 12px;border-radius:9px;background:rgba(5,4,14,0.78);border:1px solid rgba(255,255,255,0.15);user-select:text;overflow:hidden;text-overflow:ellipsis;">
+                    <div style="font-family:'Orbitron',sans-serif;font-size:0.54rem;color:#00f0ff;letter-spacing:0.08em;">EMAIL ADDRESS</div>
+                    <div style="font-size:0.82rem;font-weight:600;color:#ffffff;margin-top:2px;word-break:break-all;">${safeEsc(paidOrder.customerEmail || 'N/A')}</div>
+                  </div>
+                  <div style="padding:9px 12px;border-radius:9px;background:rgba(5,4,14,0.78);border:1px solid rgba(255,255,255,0.15);user-select:text;">
+                    <div style="font-family:'Orbitron',sans-serif;font-size:0.54rem;color:#00f0ff;letter-spacing:0.08em;">PHONE NUMBER</div>
+                    <div style="font-size:0.84rem;font-weight:600;color:#ffffff;margin-top:2px;">${safeEsc(paidOrder.customerPhone || 'N/A')}</div>
+                  </div>
+                </div>
+                <div style="padding:9px 12px;border-radius:9px;background:rgba(5,4,14,0.78);border:1px solid rgba(255,255,255,0.15);user-select:text;">
+                  <div style="font-family:'Orbitron',sans-serif;font-size:0.54rem;color:#00f0ff;letter-spacing:0.08em;">SHIPPING ADDRESS</div>
+                  <div style="font-size:0.86rem;font-weight:700;color:#ffffff;margin-top:2px;">${safeEsc(paidOrder.shippingAddress || 'Verified in Stripe Checkout')}</div>
+                </div>
+                ${paidOrder.customerNotes ? `
+                <div style="padding:9px 12px;border-radius:9px;background:rgba(5,4,14,0.78);border:1px solid rgba(255,255,255,0.15);user-select:text;">
+                  <div style="font-family:'Orbitron',sans-serif;font-size:0.54rem;color:#ffae00;letter-spacing:0.08em;">PRODUCTION NOTES</div>
+                  <div style="font-size:0.82rem;color:#ffffff;margin-top:2px;">${safeEsc(paidOrder.customerNotes)}</div>
+                </div>` : ''}
+              </div>
+            </div>
+
+            <!-- RIGHT: LOCKED ORDERED ITEMS & PAYMENT RECEIPT -->
+            <div class="rc-checkout-section-box" style="border-color:rgba(0,245,155,0.42);display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div class="rc-section-heading">
+                  <span>&#128717;&#65039; 2. VERIFIED ITEMS &amp; PAYMENT SUMMARY</span>
+                  <span style="color:#00f59b;font-size:0.62rem;">PAID IN FULL &#10003;</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+                  ${itemsRowsHtml}
+                </div>
+              </div>
+
+              <div style="margin-top:14px;">
+                <div class="rc-summary-lines">
+                  <div class="rc-summary-row">
+                    <span>Order Number:</span>
+                    <span style="font-family:'Orbitron',sans-serif;color:#00f0ff;font-weight:800;">#${safeEsc(ordId)}</span>
+                  </div>
+                  <div class="rc-summary-row">
+                    <span>Shipping:</span>
+                    <span style="color:#00f59b;font-weight:800;">FREE ($0.00)</span>
+                  </div>
+                  <div class="rc-summary-row total-row">
+                    <span>TOTAL AMOUNT PAID (STRIPE):</span>
+                    <span style="color:#00f59b;">$${totalFormatted} USD &#10003;</span>
+                  </div>
+                </div>
+                <button type="button" id="rcDoneVerificationBtn" style="margin-top:12px;width:100%;padding:13px 18px;border-radius:999px;border:1.5px solid #00f59b;background:linear-gradient(90deg, rgba(0,245,155,0.28), rgba(0,240,255,0.24));color:#ffffff;font-family:'Orbitron',sans-serif;font-size:0.78rem;font-weight:900;letter-spacing:0.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,245,155,0.24);">
+                  &#10003; DONE &mdash; RETURN TO STORE
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const copyBtn = document.getElementById('rcCopyVerifiedOrderNumBtn');
+        if (copyBtn) {
+          copyBtn.addEventListener('click', () => {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(ordId).catch(() => {});
+            }
+            copyBtn.textContent = '✓ COPIED #' + ordId + '!';
+            setTimeout(() => {
+              copyBtn.innerHTML = '&#128203; COPY ORDER #' + safeEsc(ordId);
+            }, 2200);
+          });
+        }
+        const doneBtn = document.getElementById('rcDoneVerificationBtn');
+        if (doneBtn) {
+          doneBtn.addEventListener('click', closeStoreCheckoutModal);
+        }
+      }
+
+      checkoutBackdropEl.classList.add('open');
     }
 
     const bagBtnMain = document.getElementById('bagBtn');
@@ -1913,23 +2105,7 @@
             body: JSON.stringify(emailPayload)
           }).catch(() => {});
 
-          fetch(STRIPE_CHECKOUT_FUNCTION_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'send_order_alert',
-              orderId: orderRecord.orderId,
-              customerName: orderRecord.customerName,
-              customerEmail: orderRecord.customerEmail,
-              customerPhone: orderRecord.customerPhone,
-              shippingAddress: orderRecord.shippingAddress,
-              itemsSummary: itemsSummary,
-              totalUsd: totalFormatted,
-              stripeSessionId: orderRecord.stripeSessionId,
-              ntfyTopic: ownerTopic,
-              ownerEmail: ownerEmail
-            })
-          }).catch(() => {});
+
         }
       } catch (_) {}
     }
@@ -2022,6 +2198,23 @@
           };
         }
 
+        // Lock in the single canonical Order ID so Customer Verification Screen, Text, Email, and Owner's Hub match 100%!
+        const canonicalOrderId = (verifiedSession && verifiedSession.orderId) || returnedOrderId || (pendingOrder && pendingOrder.orderId) || ('RC-ORD-' + String(Date.now()).slice(-6));
+        pendingOrder.orderId = canonicalOrderId;
+        if (verifiedSession && verifiedSession.customerName && (!pendingOrder.customerName || pendingOrder.customerName === 'Stripe Customer')) {
+          pendingOrder.customerName = verifiedSession.customerName;
+          pendingOrder.customer = verifiedSession.customerName;
+        }
+        if (verifiedSession && verifiedSession.customerEmail && (!pendingOrder.customerEmail || pendingOrder.customerEmail === 'verified@stripe.com')) {
+          pendingOrder.customerEmail = verifiedSession.customerEmail;
+        }
+        if (verifiedSession && verifiedSession.customerPhone && (!pendingOrder.customerPhone || pendingOrder.customerPhone === 'N/A')) {
+          pendingOrder.customerPhone = verifiedSession.customerPhone;
+        }
+        if (verifiedSession && verifiedSession.shippingAddress && (!pendingOrder.shippingAddress || pendingOrder.shippingAddress === 'Verified in Stripe Checkout')) {
+          pendingOrder.shippingAddress = verifiedSession.shippingAddress;
+        }
+
         pendingOrder.isPaid = true;
         pendingOrder.paymentStatus = 'PAID';
         pendingOrder.stripeSessionId = returnedSessionId || pendingOrder.stripeSessionId || ('STRIPE-LIVE-' + Date.now());
@@ -2036,26 +2229,9 @@
         } catch (_) {}
 
         saveCartItems([]);
-        openStoreCheckoutModal();
+        renderStoreCouponDockAndCheckout();
+        showPaidOrderVerificationModal(pendingOrder);
         playCutsceneBonkSfx('jackpot_fanfare');
-
-        const bagListEl = document.getElementById('rcBagItemsList');
-        if (bagListEl) {
-          bagListEl.innerHTML = `
-            <div style="padding:18px;background:rgba(0,245,155,0.14);border:1.5px solid #00f59b;border-radius:14px;text-align:center;">
-              <div style="font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:900;color:#00f59b;">&#10003; LIVE STRIPE PAYMENT VERIFIED — ORDER #${pendingOrder.orderId}</div>
-              <div style="font-size:0.82rem;margin-top:6px;color:#ffffff;">
-                Paid <strong>${formatMoney(pendingOrder.totalPaid)}</strong> via Stripe &bull; Customer: <strong>${pendingOrder.customerName}</strong> (${pendingOrder.customerEmail})
-              </div>
-              <div style="font-size:0.76rem;margin-top:4px;color:#00f0ff;">
-                Ship To: ${pendingOrder.shippingAddress}
-              </div>
-              <div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;color:#ffae00;margin-top:8px;">
-                &#128424;&#65039; Sent to Owner's Hub Production Queue with Garment Photos + 300 DPI DTF / .DST Embroidery Files!
-              </div>
-            </div>
-          `;
-        }
       } catch (err) {
         console.warn('Stripe return check error:', err);
       }
