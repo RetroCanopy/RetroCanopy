@@ -4672,28 +4672,22 @@ function initSubpageLofiMusic() {
 function initHomeShopScroller() {
     // =========================================================================
     // CONCEPT #1: MOLTEN-GOLD LIGHT-BLOOM 1-BY-1 CENTERPIECE SHOP CYCLER
-    // Data-driven array so new shop items can be added 1-by-1 cleanly.
+    // Rule: 1 single best hero view per item (Hoodies/Shirts/Tops = BACK view;
+    // Hats/Pants/Bags/Mats/Accessories = FRONT view).
     // =========================================================================
     window.RC_CENTERPIECE_SHOP_ITEMS = [
         {
-            id: 'rc-309-front',
+            id: 'rc-309',
             plaque: 'WHITE & GOLD HOODIE • $160',
-            aria: 'White & Gold Hoodie (Front) — $160',
-            sprite: 'assets/ui/c1_items/c1_hoodie_front.png?v=232',
-            href: 'hoodie_preview.html?filter=all&side=front'
-        },
-        {
-            id: 'rc-309-back',
-            plaque: 'WHITE & GOLD HOODIE • $160',
-            aria: 'White & Gold Hoodie (Back Emblem) — $160',
-            sprite: 'assets/ui/c1_items/c1_hoodie_back.png?v=232',
+            aria: 'White & Gold Hoodie — $160',
+            sprite: 'assets/ui/c1_items/c1_hoodie_back.png?v=233',
             href: 'hoodie_preview.html?filter=all&side=back'
         },
         {
-            id: 'rc-107-hat',
+            id: 'rc-107',
             plaque: 'WHITE & GOLD HAT • $85',
             aria: 'White & Gold Valkyrie Hat — $85',
-            sprite: 'assets/ui/c1_items/c1_valkyrie_hat.png?v=232',
+            sprite: 'assets/ui/c1_items/c1_valkyrie_hat.png?v=233',
             href: 'hat_preview.html?filter=all&focus=hat'
         }
     ];
