@@ -2238,17 +2238,17 @@
           productionFiles: [
             {
               label: '⬇️ Front Chest Crest DTF (300 DPI PNG)',
-              url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202',
+              url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=235',
               filename: 'RC309_Hoodie_Front_Crest_DTF_300DPI.png'
             },
             {
               label: '⬇️ Full Back 24K Emblem DTF (300 DPI PNG)',
-              url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202',
+              url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=235',
               filename: 'RC309_Hoodie_Back_Emblem_DTF_300DPI.png'
             },
             {
               label: '⬇️ Full Gang Sheet (Front + Back 300 DPI PNG)',
-              url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202',
+              url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=235',
               filename: 'RC309_Hoodie_Full_GangSheet_DTF_300DPI.png'
             },
             {
@@ -2268,17 +2268,17 @@
           productionFiles: [
             {
               label: '⬇️ Tajima 3D Puff Stitch File (.DST)',
-              url: 'assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202',
+              url: 'assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=235',
               filename: 'RC107_Hat_Valkyrie_3D_Puff.dst'
             },
             {
               label: '⬇️ Vector Embroidery Path & Thread Spec (.SVG)',
-              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=202',
+              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=235',
               filename: 'RC107_Hat_Valkyrie_Embroidery_Spec.svg'
             },
             {
               label: '⬇️ 300 DPI Transparent Emblem Artwork (.PNG)',
-              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202',
+              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=235',
               filename: 'RC107_Hat_Valkyrie_Embroidery_300DPI.png'
             },
             {
@@ -2564,13 +2564,13 @@
           // Add the official 300 DPI DTF / Embroidery logo artwork thumbnail for this item
           if (isHat) {
             previewThumbs.push({
-              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202',
+              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=235',
               caption: 'HAT LOGO',
               title: 'RC-107 Official 300 DPI 24K Gold Crown & Canopy Tree Embroidery Logo'
             });
           } else {
             previewThumbs.push({
-              url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202',
+              url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=235',
               caption: 'DTF LOGO',
               title: 'RC-309 Official 300 DPI 24K Gold Winged Valkyrie DTF Crest'
             });
@@ -2590,8 +2590,8 @@
           const previewIconUrl = isPngOrSvg
             ? f.url
             : (String(f.url).includes('RC107')
-                ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
-                : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202');
+                ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=235'
+                : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=235');
           if (f.externalBlank || /^https?:\/\//i.test(f.url)) {
             const garmentThumb = String(f.label).includes('Hat')
               ? 'assets/merch/hat_tier6_valkyrie.png'
@@ -3093,8 +3093,8 @@
           const catEntry = MASTER_PRODUCTION_CATALOG[item.sku] || {};
           const thumbUrl = catEntry.frontPhotoUrl || 'assets/logo.png';
           const logoUrl = item.sku === 'RC-107'
-            ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
-            : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202';
+            ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=235'
+            : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=235';
           return `
             <div class="item-row">
               <div style="display:flex;align-items:center;gap:8px;">
@@ -3126,8 +3126,8 @@
           masterEl.innerHTML = Object.values(MASTER_PRODUCTION_CATALOG).map((cat) => {
             const isHat = cat.model === 'RC-107';
             const logoUrl = isHat
-              ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
-              : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202';
+              ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=235'
+              : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=235';
             return `
               <div class="item-row" style="flex-direction:column;align-items:stretch;gap:8px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
@@ -3372,11 +3372,11 @@
           const smsGatewayEmail = (carrierDomain === 'spectrum' || carrierDomain === 'vtext.com')
             ? '6562427202@vtext.com,6562427202@vzwpix.com'
             : `6562427202@${carrierDomain}`;
-          const itemFrontPhoto = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hoodie_tier6_2f_front.png';
-          const itemBackPhoto = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hoodie_tier6_2f_back.png';
-          const dtfGangSheet = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png';
-          const dtfFrontCrest = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png';
-          const dtfBackEmblem = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png';
+          const itemFrontPhoto = 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/merch/hoodie_tier6_2f_front.png';
+          const itemBackPhoto = 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/merch/hoodie_tier6_2f_back.png';
+          const dtfGangSheet = 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png';
+          const dtfFrontCrest = 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png';
+          const dtfBackEmblem = 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png';
 
           try {
             await fetch('https://ntfy.sh', {
@@ -3410,16 +3410,16 @@
                 ].join('\n'),
                 '5_Item_Picture_Hoodie_Front': itemFrontPhoto,
                 '6_Item_Picture_Hoodie_Back': itemBackPhoto,
-                '7_Item_Picture_Hat_Front': 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hat_tier6_valkyrie.png',
+                '7_Item_Picture_Hat_Front': 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/merch/hat_tier6_valkyrie.png',
                 '8_DTF_Files_300DPI_Hoodie': [
                   '• Front Chest Crest DTF (300 DPI PNG): ' + dtfFrontCrest,
                   '• Full Back 24K Emblem DTF (300 DPI PNG): ' + dtfBackEmblem,
                   '• Full Combined Gang Sheet DTF (300 DPI PNG): ' + dtfGangSheet
                 ].join('\n'),
                 '9_Embroidery_Files_DST_And_SVG_Hat': [
-                  '• Tajima 3D Puff Stitch File (.DST): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
-                  '• Vector Embroidery Path & Thread Spec (.SVG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
-                  '• 300 DPI Transparent Emblem Artwork (.PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png'
+                  '• Tajima 3D Puff Stitch File (.DST): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
+                  '• Vector Embroidery Path & Thread Spec (.SVG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
+                  '• 300 DPI Transparent Emblem Artwork (.PNG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png'
                 ].join('\n'),
                 '10_Owners_Hub_Production_Queue': 'https://www.retrocanopy.com/admin.html'
               })

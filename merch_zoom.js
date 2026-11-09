@@ -2016,12 +2016,12 @@
 
           const firstItem = orderItemsArr[0] || {};
           const primaryPhotoUrl = firstItem.backPhotoUrl
-            ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.backPhotoUrl).split('?')[0]}`
-            : `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_back.png').split('?')[0]}`;
+            ? `https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/${String(firstItem.backPhotoUrl).split('?')[0]}`
+            : `https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/${String(firstItem.frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_back.png').split('?')[0]}`;
 
           const itemPhotosText = orderItemsArr.map((x, idx) => {
-            const fUrl = x.frontPhotoUrl ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(x.frontPhotoUrl).split('?')[0]}` : '';
-            const bUrl = x.backPhotoUrl ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(x.backPhotoUrl).split('?')[0]}` : '';
+            const fUrl = x.frontPhotoUrl ? `https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/${String(x.frontPhotoUrl).split('?')[0]}` : '';
+            const bUrl = x.backPhotoUrl ? `https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/${String(x.backPhotoUrl).split('?')[0]}` : '';
             return [
               `Item #${idx + 1} (${x.model} - ${x.title}, Size: ${x.size || 'L'}):`,
               fUrl ? `  • Front Garment Picture: ${fUrl}` : '',
@@ -2031,13 +2031,13 @@
 
           const dtfFilesText = orderItemsArr.map((x, idx) => {
             const pFiles = Array.isArray(x.productionFiles) ? x.productionFiles : [];
-            const lines = pFiles.map((pf) => `  • ${pf.label || pf.filename || 'Production File'}: https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(pf.url || '').split('?')[0]}`);
+            const lines = pFiles.map((pf) => `  • ${pf.label || pf.filename || 'Production File'}: https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/${String(pf.url || '').split('?')[0]}`);
             return `Item #${idx + 1} (${x.model} — ${x.productionNotes || '300 DPI Production Ready'}):\n` + lines.join('\n');
           }).join('\n\n');
 
           const primaryDtfFileUrl = (firstItem.productionFiles && firstItem.productionFiles[firstItem.productionFiles.length - 1])
-            ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.productionFiles[firstItem.productionFiles.length - 1].url).split('?')[0]}`
-            : 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png';
+            ? `https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/${String(firstItem.productionFiles[firstItem.productionFiles.length - 1].url).split('?')[0]}`
+            : 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png';
 
           // 4A. Short & Clean Phone Push / Text Notification ("There is a new order in!")
           fetch('https://ntfy.sh', {
@@ -2062,16 +2062,16 @@
           ].filter(Boolean).join('\n');
 
           const dtfLinksBlock = hasHoodie ? [
-            '• Front Chest Crest DTF (300 DPI PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png',
-            '• Full Back 24K Emblem DTF (300 DPI PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
-            '• Full Combined Gang Sheet DTF (300 DPI PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png'
+            '• Front Chest Crest DTF (300 DPI PNG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png',
+            '• Full Back 24K Emblem DTF (300 DPI PNG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
+            '• Full Combined Gang Sheet DTF (300 DPI PNG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png'
           ].join('\n') : 'N/A (No Hoodie in this order — see Embroidery Files below)';
 
           const embroideryLinksBlock = hasHat ? [
-            '• Tajima 3D Puff Stitch File (.DST): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
-            '• Vector Embroidery Path & Thread Spec (.SVG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
-            '• 300 DPI Transparent Emblem Artwork (.PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png'
-          ].join('\n') : '• Reference Hat .DST (if needed): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst';
+            '• Tajima 3D Puff Stitch File (.DST): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
+            '• Vector Embroidery Path & Thread Spec (.SVG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
+            '• 300 DPI Transparent Emblem Artwork (.PNG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png'
+          ].join('\n') : '• Reference Hat .DST (if needed): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst';
 
           // 4B. Instant Production Email + Spectrum SMS/MMS Alert with Blank Supplier Links, DTF Files, Embroidery Files, Customer Info, Amount Paid & Item Pictures
           const emailPayload = {
@@ -2089,8 +2089,8 @@
             '3_Item_Wanted_And_Size': itemsSummary,
             '4_Blank_Garments_To_Order_Links': blankSupplierLinks,
             '5_Pictures_Of_Item_Wanted': itemPhotosText,
-            '6_Item_Picture_Front_Direct': firstItem.frontPhotoUrl ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.frontPhotoUrl).split('?')[0]}` : 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hoodie_tier6_2f_front.png',
-            '7_Item_Picture_Back_Direct': firstItem.backPhotoUrl ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.backPhotoUrl).split('?')[0]}` : (firstItem.model === 'RC-107' ? 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hat_tier6_valkyrie.png' : 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hoodie_tier6_2f_back.png'),
+            '6_Item_Picture_Front_Direct': firstItem.frontPhotoUrl ? `https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/${String(firstItem.frontPhotoUrl).split('?')[0]}` : 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/merch/hoodie_tier6_2f_front.png',
+            '7_Item_Picture_Back_Direct': firstItem.backPhotoUrl ? `https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/${String(firstItem.backPhotoUrl).split('?')[0]}` : (firstItem.model === 'RC-107' ? 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/merch/hat_tier6_valkyrie.png' : 'https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/merch/hoodie_tier6_2f_back.png'),
             '8_DTF_Files_300DPI_Links': dtfLinksBlock,
             '9_Embroidery_Files_DST_And_SVG_Links': embroideryLinksBlock,
             '10_Owners_Hub_Production_Queue': 'https://www.retrocanopy.com/admin.html'
