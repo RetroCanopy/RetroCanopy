@@ -1397,8 +1397,11 @@
       } else {
         sessionStorage.removeItem('rc_shop_bag_count');
       }
+      const bagBadgeEl = document.getElementById('bagCountBadge');
       const bagBtnEl = document.getElementById('bagBtn');
-      if (bagBtnEl) {
+      if (bagBadgeEl) {
+        bagBadgeEl.textContent = String(safeCount);
+      } else if (bagBtnEl) {
         bagBtnEl.textContent = `Bag (${safeCount})`;
       }
     }
@@ -1410,8 +1413,20 @@
     // Listen to solo "Add to Bag" button clicks so actual product items are stored for Checkout and Checkout Modal opens right away
     document.querySelectorAll('.hud-buy-btn').forEach((buyBtn) => {
       buyBtn.addEventListener('click', () => {
+        const btnCode = buyBtn.getAttribute('data-model-code');
         const kickerEl = document.getElementById('hudKicker') || document.querySelector('.hud-kicker');
-        const activeCode = (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-309';
+        if (btnCode && kickerEl) {
+          kickerEl.textContent = btnCode;
+        }
+        const activeCode = btnCode || (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-309';
+        const cardEl = buyBtn.closest('[data-product-card]');
+        if (cardEl) {
+          const activeSizeBtn = cardEl.querySelector('.f14-size-pill.active');
+          const sizeSelectEl = document.getElementById('rcCustSizeSelect');
+          if (activeSizeBtn && sizeSelectEl) {
+            sizeSelectEl.value = activeSizeBtn.getAttribute('data-size') || 'S';
+          }
+        }
         setTimeout(() => {
           addItemToCartByCode(activeCode, 1);
           openStoreCheckoutModal();
@@ -1487,7 +1502,7 @@
       const firstToken = cleaned.split(/\s+/)[0] || cleaned;
       return firstToken.length > 12 ? firstToken.slice(0, 12) : firstToken;
     }
-    if (navRightEl) {
+    if (navRightEl && !document.body.classList.contains('rc-fresh14-store-body')) {
       headerUserBtn = document.createElement('button');
       headerUserBtn.type = 'button';
       headerUserBtn.className = 'rc-arcade-xp-pill';

@@ -7026,3 +7026,578 @@ body.rc-logged-in-home .hero-container.shifted-up {
     opacity: 0 !important;
     pointer-events: none !important;
 }
+
+
+/* ==========================================================================
+   CONCEPT #14 (FRESH #14): EXACT 3D LIQUID GLASS HOME STAGE
+   ========================================================================== */
+body.rc-logged-in-home #stage-3d-neon-grid-floor,
+body.rc-logged-in-home #stage-3d-home-backdrop {
+    display: none !important;
+}
+
+body.rc-logged-in-home {
+    background: #04060a !important;
+}
+
+/* Top Logo & RETROCANOPY Wordmark with Warm Orange Halo + Flipped Reflection */
+body.rc-logged-in-home .hero-container.shifted-up {
+    transform: translate3d(0, -34px, 0) scale(0.66) !important;
+    z-index: 750 !important;
+}
+
+body.rc-logged-in-home .hero-container.shifted-up .brand-name {
+    position: relative;
+    filter: drop-shadow(0 0 28px rgba(255, 95, 35, 0.55));
+}
+
+body.rc-logged-in-home .hero-container.shifted-up .brand-name::after {
+    content: 'RETROCANOPY';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 86%;
+    transform: scaleY(-0.58);
+    transform-origin: center top;
+    opacity: 0.22;
+    filter: blur(2.5px);
+    background: linear-gradient(to bottom, #ff5522 0%, transparent 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    pointer-events: none;
+}
+
+.rc-home-shop-scroller.rc-fresh14-home-stage {
+    position: fixed !important;
+    inset: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    z-index: 620;
+    display: block !important;
+    overflow: hidden !important;
+    background: radial-gradient(ellipse at 50% 22%, rgba(255, 88, 24, 0.13) 0%, rgba(4, 6, 10, 0) 52%);
+}
+
+/* Outer 3D Smoked-Glass Bezel Rim around Screen */
+.rc-f14-outer-bezel {
+    position: fixed;
+    inset: 6px;
+    border-radius: 26px;
+    border: 2px solid rgba(185, 215, 235, 0.22);
+    box-shadow:
+        inset 0 2px 2px rgba(255, 255, 255, 0.42),
+        inset 0 8px 22px rgba(175, 215, 245, 0.12),
+        inset 0 -3px 12px rgba(0, 0, 0, 0.88),
+        0 0 0 8px #020306;
+    pointer-events: none;
+    z-index: 880;
+}
+
+/* Polished Dark Obsidian & Slate Floor with Molten-Orange & Cyan Caustics */
+.rc-f14-obsidian-floor {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 43vh;
+    z-index: 1;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg,
+            rgba(4, 6, 10, 0) 0%,
+            rgba(12, 20, 26, 0.65) 18%,
+            rgba(18, 29, 36, 0.88) 48%,
+            rgba(12, 20, 26, 0.96) 78%,
+            rgba(5, 8, 12, 1) 100%);
+}
+
+.rc-f14-floor-horizon {
+    position: absolute;
+    top: 12%;
+    left: 4%;
+    right: 4%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.16) 22%, rgba(255, 130, 30, 0.28) 50%, rgba(0, 240, 255, 0.16) 78%, transparent 100%);
+    filter: blur(1px);
+}
+
+.rc-f14-floor-caustics-orange {
+    position: absolute;
+    left: 50%;
+    top: 8%;
+    transform: translateX(-50%);
+    width: min(62vw, 820px);
+    height: 82%;
+    background: radial-gradient(ellipse at 50% 42%,
+        rgba(255, 120, 16, 0.36) 0%,
+        rgba(215, 72, 6, 0.20) 36%,
+        rgba(120, 34, 0, 0.08) 58%,
+        transparent 76%);
+    filter: blur(14px);
+}
+
+.rc-f14-floor-caustics-cyan-left {
+    position: absolute;
+    left: 4%;
+    top: 6%;
+    width: 28vw;
+    height: 65%;
+    background: radial-gradient(ellipse at 45% 35%, rgba(0, 240, 255, 0.18) 0%, rgba(0, 160, 200, 0.06) 52%, transparent 75%);
+    filter: blur(18px);
+}
+
+.rc-f14-floor-caustics-cyan-right {
+    position: absolute;
+    right: 4%;
+    top: 6%;
+    width: 28vw;
+    height: 65%;
+    background: radial-gradient(ellipse at 55% 35%, rgba(0, 240, 255, 0.18) 0%, rgba(0, 160, 200, 0.06) 52%, transparent 75%);
+    filter: blur(18px);
+}
+
+/* Main 3-Column Stage Container */
+.rc-f14-main-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* LEFT WING: 3D Perspective-Angled Smoked-Cyan Liquid Glass Slab (Shibuya 3D Arena Bot Pit) */
+.rc-f14-left-wing-col {
+    position: absolute;
+    left: clamp(24px, 3.2vw, 56px);
+    top: 46.5%;
+    transform: translateY(-50%);
+    width: clamp(255px, 23.5vw, 376px);
+    perspective: 1050px;
+    z-index: 12;
+    pointer-events: auto;
+}
+
+.rc-f14-botpit-glass-slab {
+    display: block;
+    position: relative;
+    width: 100%;
+    padding: clamp(13px, 1.35vw, 19px) clamp(13px, 1.35vw, 19px) clamp(15px, 1.5vw, 21px) clamp(16px, 1.6vw, 22px);
+    border-radius: 20px;
+    text-decoration: none;
+    transform-style: preserve-3d;
+    transform: rotateY(16deg) rotateX(1.5deg);
+    background: linear-gradient(135deg,
+        rgba(175, 252, 255, 0.30) 0%,
+        rgba(28, 82, 98, 0.46) 32%,
+        rgba(10, 32, 44, 0.72) 72%,
+        rgba(24, 74, 90, 0.56) 100%);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(155, 250, 255, 0.72);
+    box-shadow:
+        -12px 22px 44px rgba(0, 0, 0, 0.92),
+        0 0 28px rgba(0, 240, 255, 0.30),
+        inset 0 2px 3px rgba(255, 255, 255, 0.65),
+        inset 0 -2px 6px rgba(0, 240, 255, 0.32);
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.32s ease, filter 0.32s ease;
+}
+
+.rc-f14-botpit-glass-slab:hover {
+    transform: rotateY(11deg) rotateX(1deg) translateY(-4px) scale(1.03);
+    box-shadow:
+        -14px 26px 52px rgba(0, 0, 0, 0.95),
+        0 0 42px rgba(0, 240, 255, 0.58),
+        inset 0 2px 4px rgba(255, 255, 255, 0.85),
+        inset 0 -2px 10px rgba(0, 240, 255, 0.48);
+    filter: brightness(1.06);
+}
+
+/* Physical 3D Extruded Left Glass Wall */
+.rc-f14-slab-edge-left {
+    position: absolute;
+    left: -9px;
+    top: 6px;
+    bottom: 6px;
+    width: 10px;
+    border-radius: 16px 0 0 16px;
+    background: linear-gradient(180deg,
+        #ffffff 0%,
+        #84fbff 18%,
+        #156b82 52%,
+        #0b3948 78%,
+        #78f8ff 100%);
+    border-left: 1.5px solid #e0ffff;
+    box-shadow: -4px 0 16px rgba(0, 240, 255, 0.65);
+    pointer-events: none;
+}
+
+/* Glossy Diagonal Liquid-Glass Window Sheen */
+.rc-f14-slab-sheen {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(125deg,
+        rgba(255, 255, 255, 0.32) 0%,
+        rgba(255, 255, 255, 0.08) 24%,
+        transparent 46%,
+        transparent 78%,
+        rgba(0, 240, 255, 0.12) 100%);
+    pointer-events: none;
+    z-index: 4;
+}
+
+.rc-f14-botpit-inner-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10.6;
+    border-radius: 13px;
+    overflow: hidden;
+    background: #04070e;
+    border: 2.5px solid #9efcff;
+    box-shadow:
+        0 0 14px #00f0ff,
+        0 0 30px rgba(0, 240, 255, 0.88),
+        inset 0 0 16px rgba(0, 240, 255, 0.78);
+    z-index: 2;
+}
+
+.rc-f14-botpit-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.rc-f14-botpit-title-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 18px 8px 8px;
+    background: linear-gradient(180deg, transparent 0%, rgba(2, 6, 14, 0.78) 58%, rgba(2, 6, 14, 0.94) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    text-align: center;
+    pointer-events: none;
+}
+
+.rc-f14-botpit-line-top {
+    font-family: 'Audiowide', 'Orbitron', sans-serif;
+    font-size: clamp(0.68rem, 0.96vw, 0.96rem);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #e6fbff;
+    text-shadow:
+        0 2px 0 #000,
+        -1.5px -1.5px 0 #000,
+        1.5px -1.5px 0 #000,
+        -1.5px 1.5px 0 #000,
+        1.5px 1.5px 0 #000,
+        0 0 10px rgba(0, 240, 255, 0.85);
+    line-height: 1.05;
+}
+
+.rc-f14-botpit-line-main {
+    font-family: 'Audiowide', 'Orbitron', sans-serif;
+    font-size: clamp(1.02rem, 1.48vw, 1.48rem);
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    line-height: 1.02;
+    margin-top: 1px;
+    text-shadow:
+        0 2.5px 0 #000,
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000,
+        2px 2px 0 #000,
+        0 4px 10px rgba(0, 0, 0, 0.95);
+}
+
+.rc-f14-botpit-line-main .bot-cyan {
+    color: #2cf6ff;
+    text-shadow:
+        0 2.5px 0 #000,
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000,
+        2px 2px 0 #000,
+        0 0 14px rgba(0, 240, 255, 0.9);
+}
+
+.rc-f14-botpit-line-main .pit-pink {
+    color: #ff3b9a;
+    text-shadow:
+        0 2.5px 0 #000,
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000,
+        2px 2px 0 #000,
+        0 0 14px rgba(255, 45, 149, 0.9);
+}
+
+/* CENTERPIECE: Giant 3-Tiered 3D Smoked-Glass & Molten-Orange Pedestal */
+.rc-f14-center-pedestal-col {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(4px, 0.8vh, 14px);
+    transform: translateX(-50%);
+    width: clamp(420px, 45vw, 690px);
+    height: clamp(410px, 73vh, 680px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.rc-f14-pedestal-showcase {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.rc-f14-pedestal-composite-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+    display: block;
+    filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.85));
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+    pointer-events: none;
+    user-select: none;
+}
+
+.rc-f14-pedestal-showcase:hover .rc-f14-pedestal-composite-img {
+    transform: translateY(-3px) scale(1.012);
+    filter: drop-shadow(0 20px 42px rgba(0, 0, 0, 0.92)) drop-shadow(0 0 22px rgba(255, 125, 20, 0.25));
+}
+
+.rc-f14-hotspot {
+    position: absolute;
+    pointer-events: auto;
+    cursor: pointer;
+    border-radius: 18px;
+    z-index: 15;
+}
+
+.rc-f14-hotspot-hat {
+    left: 19%;
+    top: 30%;
+    width: 30%;
+    height: 29%;
+}
+
+.rc-f14-hotspot-hoodie {
+    left: 36%;
+    top: 2%;
+    width: 40%;
+    height: 53%;
+}
+
+.rc-f14-hotspot-pedestal {
+    left: 10%;
+    bottom: 8%;
+    width: 80%;
+    height: 36%;
+    border-radius: 50%;
+}
+
+/* RIGHT WING: 3D Perspective-Angled Smoked-Cyan Liquid Glass Tower (WE BUILD & CREATE) */
+.rc-f14-right-wing-col {
+    position: absolute;
+    right: clamp(24px, 3.2vw, 56px);
+    top: 47.5%;
+    transform: translateY(-50%);
+    width: clamp(250px, 22.8vw, 358px);
+    perspective: 1050px;
+    z-index: 12;
+    pointer-events: auto;
+}
+
+.rc-f14-studio-glass-tower {
+    position: relative;
+    width: 100% !important;
+    height: auto !important;
+    padding: clamp(14px, 1.8vh, 22px) clamp(14px, 1.5vw, 22px) clamp(16px, 2vh, 24px) !important;
+    border-radius: 22px;
+    transform-style: preserve-3d;
+    transform: rotateY(-16deg) rotateX(1.5deg);
+    background: linear-gradient(225deg,
+        rgba(170, 250, 255, 0.26) 0%,
+        rgba(18, 56, 70, 0.50) 34%,
+        rgba(6, 18, 28, 0.82) 74%,
+        rgba(16, 56, 70, 0.58) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(135, 248, 255, 0.72);
+    box-shadow:
+        12px 24px 48px rgba(0, 0, 0, 0.92),
+        0 0 28px rgba(0, 240, 255, 0.28),
+        inset 0 2px 3px rgba(255, 255, 255, 0.62),
+        inset 0 -2px 8px rgba(0, 240, 255, 0.30);
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: clamp(10px, 1.4vh, 16px) !important;
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.32s ease;
+}
+
+.rc-f14-studio-glass-tower:hover {
+    transform: rotateY(-11deg) rotateX(1deg) translateY(-4px) scale(1.025);
+    box-shadow:
+        14px 28px 54px rgba(0, 0, 0, 0.95),
+        0 0 40px rgba(0, 240, 255, 0.52),
+        inset 0 2px 4px rgba(255, 255, 255, 0.82),
+        inset 0 -2px 10px rgba(0, 240, 255, 0.42);
+}
+
+/* Physical 3D Extruded Right Glass Wall */
+.rc-f14-slab-edge-right {
+    position: absolute;
+    right: -9px;
+    top: 6px;
+    bottom: 6px;
+    width: 10px;
+    border-radius: 0 16px 16px 0;
+    background: linear-gradient(180deg,
+        #ffffff 0%,
+        #84fbff 18%,
+        #156b82 52%,
+        #0b3948 78%,
+        #78f8ff 100%);
+    border-right: 1.5px solid #e0ffff;
+    box-shadow: 4px 0 16px rgba(0, 240, 255, 0.65);
+    pointer-events: none;
+}
+
+.rc-f14-tower-header {
+    font-size: clamp(0.72rem, 1.02vw, 0.98rem) !important;
+    letter-spacing: 0.12em !important;
+    color: #d8fcff !important;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.92), 0 0 20px rgba(0, 240, 255, 0.48) !important;
+    z-index: 5;
+}
+
+.rc-f14-holo-grid-2x2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: clamp(8px, 1.2vh, 14px) clamp(10px, 1.4vw, 22px) !important;
+    width: 100% !important;
+    justify-items: center !important;
+    align-items: end !important;
+    z-index: 5;
+}
+
+.rc-f14-holo-grid-2x2 .rc-holo-projection-well {
+    width: clamp(74px, 9.4vh, 108px) !important;
+    height: clamp(74px, 9.6vh, 110px) !important;
+}
+
+.rc-f14-holo-grid-2x2 .rc-holo-label {
+    font-size: clamp(0.58rem, 0.76vw, 0.74rem) !important;
+    letter-spacing: 0.10em !important;
+    color: #c8fcff !important;
+}
+
+.rc-f14-start-btn {
+    width: 94% !important;
+    padding: clamp(9px, 1.15vh, 13px) 16px !important;
+    border-radius: 999px !important;
+    border: 2px solid #58f6ff !important;
+    background: linear-gradient(180deg, rgba(12, 46, 62, 0.86) 0%, rgba(4, 18, 28, 0.96) 100%) !important;
+    box-shadow:
+        0 0 18px rgba(0, 240, 255, 0.55),
+        inset 0 0 12px rgba(0, 240, 255, 0.28) !important;
+    color: #ffffff !important;
+    font-size: clamp(0.68rem, 0.92vw, 0.88rem) !important;
+    letter-spacing: 0.10em !important;
+    z-index: 5;
+}
+
+.rc-f14-start-btn .rc-c7-bolt {
+    color: #ff9922 !important;
+    filter: drop-shadow(0 0 8px rgba(255, 128, 0, 0.95)) !important;
+}
+
+/* Bottom Corner Curved Smoked-Glass Partner Pods (Nerdy Misfits & Deaf Hammer) */
+.rc-f14-bottom-pods-row {
+    position: absolute !important;
+    left: clamp(16px, 1.8vw, 28px) !important;
+    right: clamp(16px, 1.8vw, 28px) !important;
+    bottom: clamp(12px, 1.6vh, 20px) !important;
+    width: auto !important;
+    height: clamp(118px, 16.5vh, 168px) !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+    pointer-events: none;
+    z-index: 14;
+}
+
+.rc-f14-corner-pod {
+    pointer-events: auto;
+    height: 100% !important;
+    padding: clamp(8px, 1vh, 14px) clamp(18px, 1.8vw, 28px) !important;
+    background: linear-gradient(160deg, rgba(16, 22, 28, 0.92) 0%, rgba(4, 6, 10, 0.98) 100%);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(210, 230, 245, 0.22);
+    box-shadow:
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.34),
+        inset 0 0 18px rgba(0, 0, 0, 0.85),
+        0 14px 36px rgba(0, 0, 0, 0.95);
+}
+
+.rc-f14-corner-pod.pod-left {
+    border-radius: 20px 68px 18px 18px !important;
+    padding-right: clamp(24px, 2.4vw, 38px) !important;
+}
+
+.rc-f14-corner-pod.pod-right {
+    border-radius: 68px 20px 18px 18px !important;
+    padding-left: clamp(24px, 2.4vw, 38px) !important;
+}
+
+.rc-f14-corner-pod .rc-misfits-char-wrap {
+    height: clamp(96px, 14.2vh, 144px) !important;
+}
+
+.rc-f14-corner-pod .rc-misfits-logo-wrap {
+    height: clamp(82px, 12.2vh, 126px) !important;
+}
+
+@media (max-width: 960px) {
+    .rc-f14-left-wing-col {
+        left: 12px;
+        top: 42%;
+        width: clamp(150px, 34vw, 220px);
+    }
+    .rc-f14-right-wing-col {
+        right: 12px;
+        top: 42%;
+        width: clamp(150px, 34vw, 220px);
+    }
+    .rc-f14-center-pedestal-col {
+        width: clamp(260px, 56vw, 420px);
+        height: clamp(260px, 48vh, 420px);
+        bottom: 110px;
+    }
+    .rc-f14-bottom-pods-row {
+        height: 92px !important;
+    }
+    .rc-f14-corner-pod .rc-misfits-char-wrap {
+        height: 74px !important;
+    }
+    .rc-f14-corner-pod .rc-misfits-logo-wrap {
+        height: 64px !important;
+    }
+}

@@ -14,7 +14,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bungee&family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Press+Start+2P&family=Righteous&family=Russo+One&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=220">
+    <link rel="stylesheet" href="style.css?v=225">
 </head>
 
 <body class="cinema-intro-active">
@@ -292,98 +292,129 @@
         </div>
     </section>
 
-    <!-- Logged-In Home Screen Scrolling Shop Items, Arcade Games & NerdyMisfits.com Feature -->
-    <section id="rc-home-shop-scroller" class="rc-home-shop-scroller" aria-label="Retrocanopy Shop, Arcade, and NerdyMisfits Collection">
-        <div class="rc-shop-scroll-viewport" id="rc-shop-scroll-viewport">
-            <div class="rc-shop-scroll-track" id="rc-shop-scroll-track"></div>
+    <!-- CONCEPT #14 EXACT 3D LIQUID GLASS HOME STAGE -->
+    <section id="rc-home-shop-scroller" class="rc-home-shop-scroller rc-fresh14-home-stage" aria-label="Retrocanopy 3D Liquid Glass Showroom, Shibuya Bot Pit, Studio, and Partner Showcase">
+        <!-- Outer 3D Smoked-Glass Bezel Rim -->
+        <div class="rc-f14-outer-bezel" aria-hidden="true"></div>
+
+        <!-- Polished Obsidian & Slate Floor with Molten-Orange & Cyan Caustics -->
+        <div class="rc-f14-obsidian-floor" aria-hidden="true">
+            <div class="rc-f14-floor-horizon"></div>
+            <div class="rc-f14-floor-caustics-orange"></div>
+            <div class="rc-f14-floor-caustics-cyan-left"></div>
+            <div class="rc-f14-floor-caustics-cyan-right"></div>
         </div>
-        <div class="rc-shop-scroll-viewport rc-games-scroll-viewport" id="rc-games-scroll-viewport">
-            <div class="rc-shop-scroll-track rc-games-scroll-track" id="rc-games-scroll-track"></div>
+
+        <!-- Center 3-Column 3D Perspective Stage -->
+        <div class="rc-f14-main-stage">
+            <!-- LEFT WING: 3D Perspective-Angled Smoked-Cyan Liquid Glass Slab (Shibuya 3D Arena Bot Pit) -->
+            <div class="rc-f14-left-wing-col">
+                <a class="rc-f14-botpit-glass-slab" href="shibuya_bot_pit.html" onclick="window.__openBotPitAppOverlay(event)" draggable="false" aria-label="Play Shibuya 3D Arena Bot Pit">
+                    <span class="rc-f14-slab-edge-left" aria-hidden="true"></span>
+                    <span class="rc-f14-slab-sheen" aria-hidden="true"></span>
+                    <div class="rc-f14-botpit-inner-frame">
+                        <img class="rc-f14-botpit-img" src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg" alt="Shibuya 3D Arena Bot Pit" loading="eager" decoding="async" draggable="false" />
+                        <div class="rc-f14-botpit-title-overlay">
+                            <div class="rc-f14-botpit-line-top">SHIBUYA 3D ARENA</div>
+                            <div class="rc-f14-botpit-line-main"><span class="bot-cyan">BOT</span> <span class="pit-pink">PIT</span></div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- CENTERPIECE: Giant 3-Tiered 3D Smoked-Glass & Molten-Orange Turntable Pedestal with White & Gold Hoodie + Hat -->
+            <div class="rc-f14-center-pedestal-col">
+                <div class="rc-f14-pedestal-showcase">
+                    <img class="rc-f14-pedestal-composite-img" src="assets/ui/fresh14_centerpiece_hoodie_hat.png?v=225" alt="White & 24K Gold Pullover Hoodie and Snapback Hat on 3-Tiered Molten-Orange Liquid Glass Pedestal" loading="eager" decoding="async" draggable="false" />
+                    <!-- Interactive Clickable Hotspots for Hat, Hoodie, and Pedestal Store -->
+                    <a class="rc-f14-hotspot rc-f14-hotspot-hat" href="hat_preview.html?filter=all&amp;focus=hat" aria-label="Shop White &amp; Gold Hat — $85.00" title="White &amp; Gold Hat — $85.00"></a>
+                    <a class="rc-f14-hotspot rc-f14-hotspot-hoodie" href="hoodie_preview.html?filter=all&amp;focus=hoodie" aria-label="Shop White &amp; Gold Hoodie — $160.00" title="White &amp; Gold Hoodie — $160.00"></a>
+                    <a class="rc-f14-hotspot rc-f14-hotspot-pedestal" href="hat_preview.html" aria-label="Enter Retrocanopy Merch Store" title="Enter Retrocanopy Merch Store"></a>
+                </div>
+            </div>
+
+            <!-- RIGHT WING: 3D Perspective-Angled Smoked-Cyan Liquid Glass Tower (WE BUILD & CREATE 2x2 Grid) -->
+            <div class="rc-f14-right-wing-col">
+                <div class="rc-concept7-tokens-showcase rc-holo-pedestal-showcase rc-f14-studio-glass-tower" id="rc-hero-studio-marquee" role="group" aria-label="We Build and Create: Websites, Apps, Games, and Custom Apparel — Start a Project">
+                    <span class="rc-f14-slab-edge-right" aria-hidden="true"></span>
+                    <span class="rc-f14-slab-sheen" aria-hidden="true"></span>
+                    <div class="rc-c7-header rc-holo-header rc-f14-tower-header">
+                        <span class="rc-holo-header-dot" aria-hidden="true"></span>
+                        <span>WE BUILD &amp; CREATE</span>
+                        <span class="rc-holo-header-dot" aria-hidden="true"></span>
+                    </div>
+                    <div class="rc-c7-tokens-row rc-holo-projectors-row rc-f14-holo-grid-2x2">
+                        <button type="button" class="rc-c7-token-item rc-holo-projector-unit" style="--holo-delay: 0s;" data-service="Custom Website" aria-label="Custom Websites — Start a Project">
+                            <span class="rc-holo-projection-well">
+                                <span class="rc-holo-beam-cone" aria-hidden="true"></span>
+                                <span class="rc-holo-scan-laser" aria-hidden="true"></span>
+                                <span class="rc-holo-proj-stage">
+                                    <img class="rc-holo-proj-main" src="assets/misfits/holo_proj_websites.png?v=141" alt="" loading="eager" decoding="async" />
+                                </span>
+                                <span class="rc-holo-emitter-ring" aria-hidden="true"></span>
+                                <span class="rc-holo-floor-glow" aria-hidden="true"></span>
+                            </span>
+                            <span class="rc-c7-token-label rc-holo-label">WEBSITES</span>
+                        </button>
+                        <button type="button" class="rc-c7-token-item rc-holo-projector-unit" style="--holo-delay: -0.85s;" data-service="Mobile / Web App" aria-label="Mobile and Web Apps — Start a Project">
+                            <span class="rc-holo-projection-well">
+                                <span class="rc-holo-beam-cone" aria-hidden="true"></span>
+                                <span class="rc-holo-scan-laser" aria-hidden="true"></span>
+                                <span class="rc-holo-proj-stage">
+                                    <img class="rc-holo-proj-main" src="assets/misfits/holo_proj_apps.png?v=141" alt="" loading="eager" decoding="async" />
+                                </span>
+                                <span class="rc-holo-emitter-ring" aria-hidden="true"></span>
+                                <span class="rc-holo-floor-glow" aria-hidden="true"></span>
+                            </span>
+                            <span class="rc-c7-token-label rc-holo-label">APPS</span>
+                        </button>
+                        <button type="button" class="rc-c7-token-item rc-holo-projector-unit" style="--holo-delay: -1.7s;" data-service="Custom Arcade / Web Game" aria-label="Custom Arcade and Web Games — Start a Project">
+                            <span class="rc-holo-projection-well">
+                                <span class="rc-holo-beam-cone" aria-hidden="true"></span>
+                                <span class="rc-holo-scan-laser" aria-hidden="true"></span>
+                                <span class="rc-holo-proj-stage">
+                                    <img class="rc-holo-proj-main" src="assets/misfits/holo_proj_games.png?v=141" alt="" loading="eager" decoding="async" />
+                                </span>
+                                <span class="rc-holo-emitter-ring" aria-hidden="true"></span>
+                                <span class="rc-holo-floor-glow" aria-hidden="true"></span>
+                            </span>
+                            <span class="rc-c7-token-label rc-holo-label">GAMES</span>
+                        </button>
+                        <button type="button" class="rc-c7-token-item rc-holo-projector-unit" style="--holo-delay: -2.55s;" data-service="Custom Apparel & Merch" aria-label="Custom Apparel and Merch — Start a Project">
+                            <span class="rc-holo-projection-well">
+                                <span class="rc-holo-beam-cone" aria-hidden="true"></span>
+                                <span class="rc-holo-scan-laser" aria-hidden="true"></span>
+                                <span class="rc-holo-proj-stage">
+                                    <img class="rc-holo-proj-main" src="assets/misfits/holo_proj_apparel.png?v=141" alt="" loading="eager" decoding="async" />
+                                </span>
+                                <span class="rc-holo-emitter-ring" aria-hidden="true"></span>
+                                <span class="rc-holo-floor-glow" aria-hidden="true"></span>
+                            </span>
+                            <span class="rc-c7-token-label rc-holo-label">APPAREL</span>
+                        </button>
+                    </div>
+                    <button type="button" class="rc-c7-start-btn rc-holo-start-btn rc-f14-start-btn" data-service="Full Custom Project" aria-label="Start a Project">
+                        START A PROJECT <span class="rc-c7-bolt">&#9889;</span>
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="rc-misfits-banner-row" id="rc-misfits-banner-row">
-            <a class="rc-misfits-feature-link rc-partner-misfits" href="https://nerdymisfits.com" target="_blank" rel="noopener" aria-label="Visit NerdyMisfits.com">
+
+        <!-- Bottom Corner Curved Smoked-Glass Partner Pods (Nerdy Misfits & Deaf Hammer Productions) -->
+        <div class="rc-misfits-banner-row rc-f14-bottom-pods-row" id="rc-misfits-banner-row">
+            <a class="rc-misfits-feature-link rc-partner-misfits rc-f14-corner-pod pod-left" href="https://nerdymisfits.com" target="_blank" rel="noopener" aria-label="Visit NerdyMisfits.com">
                 <div class="rc-misfits-char-wrap">
                     <img class="rc-misfits-char-body" src="assets/misfits/glitch_body.png?v=141" alt="" loading="eager" decoding="async" />
                     <img class="rc-misfits-char-arm" src="assets/misfits/glitch_arm.png?v=141" loading="eager" alt="" aria-hidden="true" decoding="async" />
                 </div>
                 <div class="rc-misfits-logo-wrap">
-                    <img class="rc-misfits-logo-img" src="assets/misfits/official_logo_transparent.png?v=141" alt="" loading="eager" decoding="async" />
+                    <img class="rc-misfits-logo-img" src="assets/misfits/official_logo_transparent.png?v=141" alt="Nerdy Misfits" loading="eager" decoding="async" />
                 </div>
             </a>
 
-            <!-- Concept 02: HOLOGRAM BLUEPRINT PEDESTAL (WEBSITES, APPS, GAMES, APPAREL) + START A PROJECT -->
-            <div class="rc-concept7-tokens-showcase rc-holo-pedestal-showcase" id="rc-hero-studio-marquee" role="group" aria-label="We Build and Create: Websites, Apps, Games, and Custom Apparel — Start a Project">
-                <div class="rc-c7-header rc-holo-header">
-                    <span class="rc-holo-header-dot" aria-hidden="true"></span>
-                    <span>WE BUILD &amp; CREATE</span>
-                    <span class="rc-holo-header-dot" aria-hidden="true"></span>
-                </div>
-                <div class="rc-c7-tokens-row rc-holo-projectors-row">
-                    <button type="button" class="rc-c7-token-item rc-holo-projector-unit" style="--holo-delay: 0s;" data-service="Custom Website" aria-label="Custom Websites — Start a Project">
-                        <span class="rc-holo-projection-well">
-                            <span class="rc-holo-beam-cone" aria-hidden="true"></span>
-                            <span class="rc-holo-scan-laser" aria-hidden="true"></span>
-                            <span class="rc-holo-proj-stage">
-                                <img class="rc-holo-proj-main" src="assets/misfits/holo_proj_websites.png?v=141" alt="" loading="eager" decoding="async" />
-                                <img class="rc-holo-proj-glitch glitch-cyan" src="assets/misfits/holo_proj_websites.png?v=141" loading="eager" alt="" aria-hidden="true" decoding="async" />
-                                <img class="rc-holo-proj-glitch glitch-magenta" src="assets/misfits/holo_proj_websites.png?v=141" loading="eager" alt="" aria-hidden="true" decoding="async" />
-                            </span>
-                            <span class="rc-holo-emitter-ring" aria-hidden="true"></span>
-                            <span class="rc-holo-floor-glow" aria-hidden="true"></span>
-                        </span>
-                        <span class="rc-c7-token-label rc-holo-label">WEBSITES</span>
-                    </button>
-                    <button type="button" class="rc-c7-token-item rc-holo-projector-unit" style="--holo-delay: -0.85s;" data-service="Mobile / Web App" aria-label="Mobile and Web Apps — Start a Project">
-                        <span class="rc-holo-projection-well">
-                            <span class="rc-holo-beam-cone" aria-hidden="true"></span>
-                            <span class="rc-holo-scan-laser" aria-hidden="true"></span>
-                            <span class="rc-holo-proj-stage">
-                                <img class="rc-holo-proj-main" src="assets/misfits/holo_proj_apps.png?v=141" alt="" loading="eager" decoding="async" />
-                                <img class="rc-holo-proj-glitch glitch-cyan" src="assets/misfits/holo_proj_apps.png?v=141" loading="eager" alt="" aria-hidden="true" decoding="async" />
-                                <img class="rc-holo-proj-glitch glitch-magenta" src="assets/misfits/holo_proj_apps.png?v=141" loading="eager" alt="" aria-hidden="true" decoding="async" />
-                            </span>
-                            <span class="rc-holo-emitter-ring" aria-hidden="true"></span>
-                            <span class="rc-holo-floor-glow" aria-hidden="true"></span>
-                        </span>
-                        <span class="rc-c7-token-label rc-holo-label">APPS</span>
-                    </button>
-                    <button type="button" class="rc-c7-token-item rc-holo-projector-unit" style="--holo-delay: -1.7s;" data-service="Custom Arcade / Web Game" aria-label="Custom Arcade and Web Games — Start a Project">
-                        <span class="rc-holo-projection-well">
-                            <span class="rc-holo-beam-cone" aria-hidden="true"></span>
-                            <span class="rc-holo-scan-laser" aria-hidden="true"></span>
-                            <span class="rc-holo-proj-stage">
-                                <img class="rc-holo-proj-main" src="assets/misfits/holo_proj_games.png?v=141" alt="" loading="eager" decoding="async" />
-                                <img class="rc-holo-proj-glitch glitch-cyan" src="assets/misfits/holo_proj_games.png?v=141" loading="eager" alt="" aria-hidden="true" decoding="async" />
-                                <img class="rc-holo-proj-glitch glitch-magenta" src="assets/misfits/holo_proj_games.png?v=141" loading="eager" alt="" aria-hidden="true" decoding="async" />
-                            </span>
-                            <span class="rc-holo-emitter-ring" aria-hidden="true"></span>
-                            <span class="rc-holo-floor-glow" aria-hidden="true"></span>
-                        </span>
-                        <span class="rc-c7-token-label rc-holo-label">GAMES</span>
-                    </button>
-                    <button type="button" class="rc-c7-token-item rc-holo-projector-unit" style="--holo-delay: -2.55s;" data-service="Custom Apparel & Merch" aria-label="Custom Apparel and Merch — Start a Project">
-                        <span class="rc-holo-projection-well">
-                            <span class="rc-holo-beam-cone" aria-hidden="true"></span>
-                            <span class="rc-holo-scan-laser" aria-hidden="true"></span>
-                            <span class="rc-holo-proj-stage">
-                                <img class="rc-holo-proj-main" src="assets/misfits/holo_proj_apparel.png?v=141" alt="" loading="eager" decoding="async" />
-                                <img class="rc-holo-proj-glitch glitch-cyan" src="assets/misfits/holo_proj_apparel.png?v=141" loading="eager" alt="" aria-hidden="true" decoding="async" />
-                                <img class="rc-holo-proj-glitch glitch-magenta" src="assets/misfits/holo_proj_apparel.png?v=141" loading="eager" alt="" aria-hidden="true" decoding="async" />
-                            </span>
-                            <span class="rc-holo-emitter-ring" aria-hidden="true"></span>
-                            <span class="rc-holo-floor-glow" aria-hidden="true"></span>
-                        </span>
-                        <span class="rc-c7-token-label rc-holo-label">APPAREL</span>
-                    </button>
-                </div>
-                <button type="button" class="rc-c7-start-btn rc-holo-start-btn" data-service="Full Custom Project" aria-label="Start a Project">
-                    START A PROJECT <span class="rc-c7-bolt">&#9889;</span>
-                </button>
-            </div>
-
-            <a class="rc-misfits-feature-link rc-partner-deafhammer" href="https://deafhammer.com" target="_blank" rel="noopener" aria-label="Visit DeafHammer.com">
+            <a class="rc-misfits-feature-link rc-partner-deafhammer rc-f14-corner-pod pod-right" href="https://deafhammer.com" target="_blank" rel="noopener" aria-label="Visit DeafHammer.com">
                 <div class="rc-misfits-logo-wrap rc-deafhammer-logo-wrap">
-                    <img class="rc-misfits-logo-img rc-deafhammer-logo-img" src="assets/misfits/deafhammer_logo_lockup.png?v=141" alt="" loading="eager" decoding="async" />
+                    <img class="rc-misfits-logo-img rc-deafhammer-logo-img" src="assets/misfits/deafhammer_logo_lockup.png?v=141" alt="Deaf Hammer Productions" loading="eager" decoding="async" />
                 </div>
                 <div class="rc-misfits-char-wrap rc-deafhammer-char-wrap">
                     <img class="rc-misfits-char-body rc-deafhammer-char-body" src="assets/misfits/deafhammer_mascot.png?v=141" alt="" loading="eager" decoding="async" />
@@ -440,8 +471,8 @@
     <!-- Stage container (crew characters and section tabs removed; Synth owl butler & login preserved) -->
     <div id="crew-stage" class="crew-stage" aria-hidden="true"></div>
 
-    <script src="script.js?v=220"></script>
-    <script src="auth_hub.js?v=220"></script>
+    <script src="script.js?v=225"></script>
+    <script src="auth_hub.js?v=225"></script>
 </body>
 
 </html>

@@ -3,20 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Retrocanopy — Official Snapback Hat | Vault Drop</title>
+  <title>Retrocanopy — Official Merch Showroom | Liquid Glass Vault</title>
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="merch_minimal.css?v=225">
+  <link rel="stylesheet" href="merch_zoom.css?v=225">
+  <script src="merch_zoom.js?v=240" defer></script>
   <style>
     :root {
-      --bg-color: #000000;
-      --neon-pink: #ff2d95;
-      --neon-purple: #9d4edd;
-      --neon-blue: #00d4ff;
-      --sunset-orange: #ffae00;
-      --text-color: #ffffff;
-      --muted: #94a3b8;
+      --bg-dark: #05060a;
+      --molten-orange: #ff7b00;
+      --molten-amber: #ffbe42;
+      --molten-copper: #b8540a;
+      --neon-cyan: #00f0ff;
+      --text-white: #ffffff;
+      --text-gold-muted: #d2bda1;
     }
 
     * {
@@ -28,682 +31,786 @@
     html, body {
       width: 100%;
       min-height: 100vh;
-      background: #000000;
+      background: #040508;
       color: #ffffff;
       font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
       overflow-x: hidden;
       user-select: none;
     }
 
-    /* ── MINIMAL FLOATING SITE HEADER ─────────────────────────────────── */
-    .site-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 300;
-      padding: 18px 44px;
+    body.rc-fresh14-store-body {
       display: flex;
       align-items: center;
+      justify-content: center;
+      padding: clamp(8px, 1.2vh, 16px) clamp(10px, 1.8vw, 28px);
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 115, 15, 0.14) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(255, 100, 10, 0.12) 0%, transparent 55%),
+        #040508;
+    }
+
+    /* Hide legacy floating elements from merch_minimal.css */
+    .hud-stack,
+    .showroom-3d-controls,
+    #shop-chloe-stage,
+    #shop-chloe-dialogue {
+      display: none !important;
+    }
+
+    /* ── OUTER 3D MOLTEN-ORANGE & OBSIDIAN LIQUID GLASS SHELL ─────────── */
+    .f14-store-outer-shell {
+      position: relative;
+      width: min(1320px, 98vw);
+      min-height: calc(100vh - clamp(16px, 2.4vh, 32px));
+      border-radius: 30px;
+      padding: clamp(14px, 1.8vh, 22px) clamp(18px, 2.4vw, 34px) clamp(16px, 2vh, 24px);
+      background:
+        radial-gradient(ellipse at 50% 12%, rgba(255, 95, 25, 0.16) 0%, rgba(8, 9, 14, 0.96) 46%, #05060a 100%);
+      border: 3px solid rgba(255, 150, 45, 0.65);
+      box-shadow:
+        0 0 0 6px #07080d,
+        0 0 0 8px rgba(255, 140, 40, 0.25),
+        0 26px 70px rgba(0, 0, 0, 0.96),
+        0 0 42px rgba(255, 115, 15, 0.28),
+        inset 0 0 38px rgba(255, 110, 15, 0.22),
+        inset 0 2px 3px rgba(255, 235, 180, 0.75),
+        inset 0 -3px 6px rgba(255, 125, 20, 0.65);
+      display: flex;
+      flex-direction: column;
       justify-content: space-between;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
-      pointer-events: none;
-    }
-
-    .site-header > * {
-      pointer-events: auto;
-    }
-
-    .brand-link {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-
-    .nav-logo {
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-      mix-blend-mode: screen;
-      transition: transform 0.3s ease;
-    }
-
-    .brand-link:hover .nav-logo {
-      transform: scale(1.08);
-    }
-
-    .nav-wordmark {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 900;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .brand-text-base {
-      background: linear-gradient(to bottom, var(--sunset-orange) 10%, var(--neon-pink) 90%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 10px rgba(255, 45, 149, 0.5));
-    }
-
-    .flicker-letter {
-      background: linear-gradient(to bottom, var(--sunset-orange) 10%, var(--neon-pink) 90%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 10px rgba(255, 45, 149, 0.5));
-      animation: smooth-neon-pulse 6s infinite ease-in-out;
-    }
-
-    @keyframes smooth-neon-pulse {
-      0%, 100% { opacity: 1; }
-      48% { opacity: 0.95; }
-      51% { opacity: 0.42; }
-      54% { opacity: 0.78; }
-      57% { opacity: 0.48; }
-      62% { opacity: 1; }
-    }
-
-    .nav-center {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      background: rgba(10, 12, 22, 0.65);
-      backdrop-filter: blur(12px);
-      padding: 8px 24px;
-      border-radius: 999px;
-    }
-
-    .nav-center a {
-      color: var(--muted);
-      text-decoration: none;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      transition: color 0.2s ease, text-shadow 0.2s ease;
-    }
-
-    .nav-center a:hover,
-    .nav-center a.active {
-      color: #ffffff;
-      text-shadow: 0 0 12px rgba(255, 45, 149, 0.8);
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .cart-pill {
-      background: rgba(255, 45, 149, 0.14);
-      color: #ffffff;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      padding: 8px 18px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-
-    .cart-pill:hover {
-      background: rgba(255, 45, 149, 0.32);
-      box-shadow: 0 0 18px rgba(255, 45, 149, 0.5);
-    }
-
-    /* ── CENTER-STAGE FLOATING SHOWROOM ───────────────────────────────── */
-    .showroom-viewport {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      perspective: 1200px;
       overflow: hidden;
     }
 
-    /* Subtle Ambient Aura Behind Floating Hat (No base, no border) */
-    .ambient-aura {
+    /* Top & Bottom Glowing Molten-Orange Liquid Glass Light Pipes */
+    .f14-store-outer-shell::before {
+      content: '';
       position: absolute;
-      width: 460px;
-      height: 460px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 45, 149, 0.08) 0%, rgba(0, 212, 255, 0.04) 45%, transparent 70%);
-      filter: blur(40px);
+      left: 3%;
+      right: 3%;
+      top: 0;
+      height: 7px;
+      border-radius: 0 0 12px 12px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        #ff6a00 12%,
+        #ffd478 32%,
+        #ff8811 52%,
+        #ffd478 74%,
+        #ff6a00 90%,
+        transparent 100%);
+      box-shadow:
+        0 0 18px #ff8811,
+        0 2px 26px rgba(255, 125, 20, 0.85);
       pointer-events: none;
-      z-index: 1;
+      z-index: 5;
     }
 
-    /* -- CONCEPT 2: 360� 3D HOLOGRAPHIC MERCH & HAT SHOWROOM ----------- */
-    .showroom-3d-floor {
+    .f14-store-outer-shell::after {
+      content: '';
+      position: absolute;
+      left: 3%;
+      right: 3%;
+      bottom: 0;
+      height: 7px;
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        #ff6a00 14%,
+        #ffc85c 38%,
+        #ff7b00 55%,
+        #ffc85c 76%,
+        #ff6a00 90%,
+        transparent 100%);
+      box-shadow:
+        0 0 18px #ff8811,
+        0 -2px 26px rgba(255, 125, 20, 0.85);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Left & Right Vertical Molten-Orange Glass Wall Tubes */
+    .f14-side-light-left,
+    .f14-side-light-right {
+      position: absolute;
+      top: 4%;
+      bottom: 4%;
+      width: 6px;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        #ff7b00 12%,
+        #ffd478 28%,
+        #b34800 50%,
+        #ffd478 74%,
+        #ff7b00 90%,
+        transparent 100%);
+      box-shadow: 0 0 18px rgba(255, 130, 20, 0.8);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .f14-side-light-left { left: 0; border-radius: 0 8px 8px 0; }
+    .f14-side-light-right { right: 0; border-radius: 8px 0 0 8px; }
+
+    /* ── TOP HEADER BAR (HOME, CENTER SYNTHWAVE TREE LOGO, OWNER HUB & CART) ── */
+    .f14-store-header {
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: start;
+      width: 100%;
+      padding-top: 2px;
+    }
+
+    .f14-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 8px;
+    }
+
+    .f14-home-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(16, 18, 28, 0.82);
+      border: 1.5px solid rgba(255, 175, 75, 0.42);
+      color: #f3e5d0;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.22);
+      transition: all 0.22s ease;
+    }
+
+    .f14-home-pill:hover {
+      border-color: #ffbe42;
+      color: #ffffff;
+      box-shadow: 0 0 18px rgba(255, 165, 40, 0.55);
+      transform: translateY(-1px);
+    }
+
+    /* Center Tree + RETROCANOPY Wordmark */
+    .f14-brand-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      margin-top: -6px;
+    }
+
+    .f14-tree-logo {
+      width: clamp(68px, 7.6vh, 92px);
+      height: clamp(68px, 7.6vh, 92px);
+      object-fit: contain;
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 0 18px rgba(255, 75, 120, 0.45));
+    }
+
+    .f14-wordmark {
+      position: relative;
+      margin-top: -4px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.45rem, 2.5vw, 2.25rem);
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #ffb84d 0%, #ff6438 55%, #ff2d7a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 22px rgba(255, 90, 35, 0.65));
+    }
+
+    .f14-wordmark::after {
+      content: 'RETROCANOPY';
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0;
-      height: 34vh;
-      perspective: 680px;
-      transform-style: preserve-3d;
+      top: 84%;
+      transform: scaleY(-0.52);
+      transform-origin: center top;
+      opacity: 0.20;
+      filter: blur(2px);
+      background: linear-gradient(to bottom, #ff5522 0%, transparent 85%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
       pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
     }
 
-    .showroom-3d-floor-horizon {
-      position: absolute;
-      top: 0;
-      left: -10%;
-      width: 120%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.7) 22%, rgba(255, 45, 149, 0.9) 50%, rgba(0, 212, 255, 0.7) 78%, transparent 100%);
-      box-shadow: 0 0 18px rgba(0, 212, 255, 0.8), 0 0 36px rgba(255, 45, 149, 0.65);
-    }
-
-    .showroom-3d-floor-grid {
-      position: absolute;
-      top: 0;
-      left: -50%;
-      width: 200%;
-      height: 520%;
-      transform-origin: 50% 0%;
-      transform: perspective(460px) rotateX(64deg);
-      background-image:
-        repeating-linear-gradient(90deg, rgba(0, 212, 255, 0.34) 0px, rgba(0, 212, 255, 0.34) 1.5px, transparent 1.5px, transparent 54px),
-        repeating-linear-gradient(0deg, rgba(255, 45, 149, 0.30) 0px, rgba(255, 45, 149, 0.30) 1.5px, transparent 1.5px, transparent 42px);
-    }
-
-    .hat-levitate-wrapper {
-      position: relative;
-      z-index: 3;
-      animation: floatLevitate 3.8s ease-in-out infinite;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 54px;
-      transform-style: preserve-3d;
-    }
-
-    /* 360� Glowing Cyan & Magenta Holographic Turntable Orbit Rings */
-    .holo-360-orbit-system {
-      position: absolute;
-      width: min(82vw, 560px);
-      height: min(82vw, 560px);
-      pointer-events: none;
-      transform-style: preserve-3d;
+    /* Top-Right Owner Hub & Cart Badge Pills */
+    .f14-header-right {
       display: flex;
       align-items: center;
-      justify-content: center;
-      z-index: 1;
-    }
-
-    .holo-orbit-ring-1 {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: 2px solid rgba(0, 212, 255, 0.72);
-      box-shadow: 0 0 24px rgba(0, 212, 255, 0.55), inset 0 0 18px rgba(0, 212, 255, 0.3);
-      transform: rotateX(74deg) rotateZ(0deg);
-      animation: orbitSpin1 14s linear infinite;
-    }
-
-    .holo-orbit-ring-2 {
-      position: absolute;
-      width: 82%;
-      height: 82%;
-      border-radius: 50%;
-      border: 2px dashed rgba(255, 45, 149, 0.78);
-      box-shadow: 0 0 24px rgba(255, 45, 149, 0.55);
-      transform: rotateX(74deg) rotateY(12deg) rotateZ(0deg);
-      animation: orbitSpin2 10s linear infinite reverse;
-    }
-
-    .holo-pedestal-emitter {
-      position: absolute;
-      bottom: -36px;
-      width: 58%;
-      height: 26px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(0, 212, 255, 0.65) 38%, rgba(255, 45, 149, 0.45) 72%, transparent 100%);
-      border: 2px solid #00d4ff;
-      box-shadow: 0 0 32px #00d4ff, 0 0 58px rgba(255, 45, 149, 0.75);
-    }
-
-    .holo-360-badge {
-      position: absolute;
-      bottom: -52px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.68rem;
-      font-weight: 900;
-      letter-spacing: 0.18em;
-      color: #00d4ff;
-      background: rgba(6, 12, 24, 0.92);
-      border: 1.5px solid #00d4ff;
-      padding: 4px 14px;
-      border-radius: 999px;
-      box-shadow: 0 0 18px rgba(0, 212, 255, 0.65);
-    }
-
-    @keyframes orbitSpin1 {
-      0% { transform: rotateX(74deg) rotateZ(0deg); }
-      100% { transform: rotateX(74deg) rotateZ(360deg); }
-    }
-    @keyframes orbitSpin2 {
-      0% { transform: rotateX(70deg) rotateY(8deg) rotateZ(0deg); }
-      100% { transform: rotateX(70deg) rotateY(8deg) rotateZ(360deg); }
-    }
-
-    .hat-3d-rotor {
-      position: relative;
-      transform-style: preserve-3d;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.15s ease-out;
-    }
-
-    .hat-3d-rotor.auto-orbit {
-      animation: hat360Turntable 11s ease-in-out infinite alternate;
-    }
-
-    @keyframes hat360Turntable {
-      0% { transform: rotateY(-28deg) rotateX(6deg); }
-      50% { transform: rotateY(0deg) rotateX(-4deg) scale(1.03); }
-      100% { transform: rotateY(28deg) rotateX(6deg); }
-    }
-
-    .hat-img {
-      position: relative;
-      z-index: 2;
-      width: min(74vw, 500px);
-      height: auto;
-      object-fit: contain;
-      filter:
-        drop-shadow(2px 0 0 rgba(0, 212, 255, 0.42))
-        drop-shadow(-2px 0 0 rgba(255, 45, 149, 0.42))
-        drop-shadow(0 36px 44px rgba(0, 0, 0, 0.96));
-      transition: transform 0.15s ease-out, filter 0.35s ease;
-      pointer-events: none;
-    }
-
-    /* Blender 3D Cyan Wireframe Mesh Pass Overlay */
-    .hat-wireframe-pass {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      z-index: 3;
-      pointer-events: none;
-      opacity: 0;
-      mix-blend-mode: screen;
-      filter: invert(1) brightness(1.9) sepia(1) hue-rotate(145deg) saturate(6) contrast(2.2) drop-shadow(0 0 12px #00d4ff);
-      clip-path: inset(0 100% 0 0);
-      transition: opacity 0.35s ease, clip-path 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .hat-levitate-wrapper.wireframe-active .hat-wireframe-pass {
-      opacity: 0.78;
-      clip-path: inset(0 44% 0 0);
-      animation: wireframeSweep 4.2s ease-in-out infinite alternate;
-    }
-
-    @keyframes wireframeSweep {
-      0% { clip-path: inset(0 65% 0 0); }
-      100% { clip-path: inset(0 20% 0 0); }
-    }
-
-    .showroom-3d-controls {
-      position: fixed;
-      bottom: 104px;
-      z-index: 255;
-      display: flex;
+      justify-content: flex-end;
       gap: 10px;
+      padding-top: 8px;
     }
 
-    .showroom-3d-pill {
-      background: rgba(8, 12, 24, 0.85);
-      border: 1.5px solid rgba(0, 212, 255, 0.55);
-      color: #b8f5ff;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.64rem;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 7px 15px;
-      border-radius: 999px;
-      cursor: pointer;
-      box-shadow: 0 0 16px rgba(0, 212, 255, 0.25);
-      transition: all 0.2s ease;
-    }
-
-    .showroom-3d-pill.active,
-    .showroom-3d-pill:hover {
-      background: rgba(0, 212, 255, 0.22);
-      border-color: #ff2d95;
-      color: #ffffff;
-      box-shadow: 0 0 22px rgba(255, 45, 149, 0.55);
-    }
-
-    @keyframes floatLevitate {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-22px); }
-    }
-
-    /* ── FLOATING BOTTOM HUD BAR (Ultra-Clean Borderless Dock) ────────── */
-    .hud-dock {
-      position: fixed;
-      bottom: 32px;
-      z-index: 250;
-      display: flex;
+    .f14-owner-pill {
+      display: inline-flex;
       align-items: center;
-      gap: 32px;
-      background: rgba(10, 12, 20, 0.72);
-      backdrop-filter: blur(18px);
-      padding: 14px 28px;
+      gap: 7px;
+      padding: 8px 16px;
       border-radius: 999px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
-    }
-
-    .hud-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .hud-kicker {
+      background: linear-gradient(180deg, rgba(58, 38, 12, 0.78) 0%, rgba(26, 16, 5, 0.92) 100%);
+      border: 1.5px solid rgba(255, 185, 65, 0.72);
+      color: #f8e7c8;
+      text-decoration: none;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--neon-blue);
-    }
-
-    .hud-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.98rem;
+      font-size: 0.70rem;
       font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+      box-shadow: 0 0 16px rgba(255, 165, 35, 0.28), inset 0 1px 1px rgba(255, 235, 180, 0.35);
+      transition: all 0.22s ease;
+    }
+
+    .f14-owner-pill:hover {
+      border-color: #ffd478;
+      color: #ffffff;
+      box-shadow: 0 0 22px rgba(255, 180, 45, 0.58);
+      transform: translateY(-1px);
+    }
+
+    .f14-owner-shield {
+      color: #5b9dff;
+      font-size: 0.82rem;
+    }
+
+    .f14-cart-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px 6px 14px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(10, 32, 34, 0.85) 0%, rgba(5, 16, 20, 0.95) 100%);
+      border: 1.5px solid rgba(0, 235, 190, 0.68);
+      box-shadow: 0 0 16px rgba(0, 235, 190, 0.26), inset 0 1px 1px rgba(180, 255, 240, 0.3);
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+
+    .f14-cart-pill:hover {
+      border-color: #58ffdf;
+      box-shadow: 0 0 22px rgba(0, 240, 200, 0.55);
+      transform: translateY(-1px);
+    }
+
+    .f14-cart-icon {
+      font-size: 0.92rem;
+      color: #b47cff;
+      filter: drop-shadow(0 0 6px rgba(180, 124, 255, 0.65));
+    }
+
+    .f14-cart-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #ffbe42 0%, #d96b00 100%);
+      color: #090602;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.70rem;
+      font-weight: 900;
+      box-shadow: 0 0 10px rgba(255, 165, 30, 0.75);
+    }
+
+    /* ── TOP & BOTTOM CATEGORY FILTER PILL BARS (ALL | HATS | HOODIES | VAULT) ── */
+    .f14-filter-bar-wrap {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin: clamp(6px, 1vh, 12px) 0;
+    }
+
+    .f14-filter-bar-wrap.top-filter-wrap::before,
+    .f14-filter-bar-wrap.top-filter-wrap::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255, 150, 50, 0.12), rgba(255, 165, 65, 0.42));
+      margin: 0 16px;
+    }
+    .f14-filter-bar-wrap.top-filter-wrap::after {
+      background: linear-gradient(90deg, rgba(255, 165, 65, 0.42), rgba(255, 150, 50, 0.12));
+    }
+
+    .f14-filter-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: clamp(8px, 1vw, 14px);
+    }
+
+    .f14-filter-pill {
+      padding: clamp(6px, 0.85vh, 9px) clamp(18px, 1.8vw, 26px);
+      border-radius: 999px;
+      background: rgba(16, 19, 28, 0.86);
+      border: 1.5px solid rgba(145, 160, 188, 0.30);
+      color: #c5cedf;
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.68rem, 0.84vw, 0.80rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.14), 0 4px 12px rgba(0, 0, 0, 0.65);
+    }
+
+    .f14-filter-pill:hover {
+      border-color: rgba(255, 185, 75, 0.65);
       color: #ffffff;
     }
 
-    .hud-specs {
+    .f14-filter-pill.active {
+      background: linear-gradient(180deg, rgba(168, 96, 18, 0.72) 0%, rgba(78, 38, 6, 0.92) 100%);
+      border-color: #ffbe48;
+      color: #ffffff;
+      box-shadow:
+        0 0 18px rgba(255, 150, 25, 0.58),
+        inset 0 1.5px 2px rgba(255, 235, 175, 0.65);
+    }
+
+    /* ── CENTER 2-CARD PEDESTAL SHOWROOM GRID ─────────────────────────── */
+    .f14-showroom-inner-frame {
+      position: relative;
+      z-index: 8;
+      flex: 1;
       display: flex;
       align-items: center;
-      gap: 16px;
-      font-size: 0.8rem;
-      color: var(--muted);
+      justify-content: center;
+      width: 100%;
+      padding: clamp(4px, 0.8vh, 10px) 0;
     }
 
-    .hud-divider {
-      width: 1px;
-      height: 28px;
-      background: rgba(255, 255, 255, 0.1);
+    .f14-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(280px, 500px));
+      gap: clamp(16px, 2.2vw, 32px);
+      width: 100%;
+      justify-content: center;
+      align-items: stretch;
     }
 
-    .hud-price {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 900;
-      background: linear-gradient(to right, var(--sunset-orange), var(--neon-pink));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .f14-cards-grid.single-card-mode {
+      grid-template-columns: minmax(300px, 520px);
     }
 
-    .hud-buy-btn {
-      background: linear-gradient(135deg, var(--sunset-orange) 0%, var(--neon-pink) 100%);
-      border: none;
-      color: #000000;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.74rem;
-      font-weight: 900;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 12px 24px;
+    .f14-product-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(180deg, rgba(10, 12, 18, 0.75) 0%, rgba(6, 7, 11, 0.92) 100%);
+      border: 1px solid rgba(255, 165, 75, 0.22);
+      border-radius: 22px;
+      padding: clamp(12px, 1.5vh, 18px) clamp(14px, 1.6vw, 22px) clamp(16px, 2vh, 24px);
+      box-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.88),
+        inset 0 1px 1px rgba(255, 225, 180, 0.16);
+      transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+    }
+
+    .f14-product-card:hover {
+      border-color: rgba(255, 175, 65, 0.48);
+      box-shadow:
+        0 22px 52px rgba(0, 0, 0, 0.94),
+        0 0 28px rgba(255, 130, 20, 0.15),
+        inset 0 1px 2px rgba(255, 230, 175, 0.28);
+    }
+
+    /* Upper Pedestal Well */
+    .f14-pedestal-well {
+      position: relative;
+      width: 100%;
+      height: clamp(250px, 37vh, 370px);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 50% 36%, rgba(0, 230, 255, 0.18) 0%, rgba(0, 150, 210, 0.05) 38%, rgba(4, 6, 10, 0.96) 70%),
+        #04060a;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+
+    .f14-pedestal-img {
+      width: 94%;
+      height: 96%;
+      object-fit: contain;
+      object-position: center bottom;
+      display: block;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.85));
+    }
+
+    .f14-pedestal-well:hover .f14-pedestal-img {
+      transform: scale(1.035) translateY(-3px);
+      filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.92)) drop-shadow(0 0 18px rgba(255, 140, 25, 0.24));
+    }
+
+    /* Subtle Front/Back View Toggle on Hoodie Card */
+    .f14-view-toggle-group {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 6;
+      display: inline-flex;
+      gap: 4px;
+      background: rgba(8, 10, 16, 0.86);
+      border: 1px solid rgba(255, 175, 70, 0.42);
       border-radius: 999px;
+      padding: 3px;
+      backdrop-filter: blur(8px);
+    }
+
+    .f14-view-toggle-btn {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: #b8c4d8;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(255, 45, 149, 0.45);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: all 0.18s ease;
     }
 
-    .hud-buy-btn:hover {
+    .f14-view-toggle-btn.active {
+      background: linear-gradient(180deg, rgba(175, 100, 18, 0.85) 0%, rgba(90, 44, 6, 0.95) 100%);
+      color: #ffffff;
+      box-shadow: 0 0 10px rgba(255, 150, 25, 0.55);
+    }
+
+    /* Product Meta: Title, Price, Circular Size Pills, ADD TO BAG */
+    .f14-card-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-top: clamp(10px, 1.4vh, 16px);
+      gap: clamp(8px, 1.1vh, 13px);
+    }
+
+    .f14-product-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.18rem, 1.55vw, 1.48rem);
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.01em;
+      text-align: center;
+    }
+
+    .f14-product-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.02rem, 1.25vw, 1.22rem);
+      font-weight: 600;
+      color: var(--text-gold-muted);
+      margin-top: -4px;
+    }
+
+    /* Circular Size Selector Pills (S | M | L | XL) */
+    .f14-size-row {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 2px 0;
+    }
+
+    .f14-size-pill {
+      width: clamp(34px, 3.8vh, 40px);
+      height: clamp(34px, 3.8vh, 40px);
+      border-radius: 50%;
+      background: rgba(16, 20, 30, 0.88);
+      border: 1.5px solid rgba(145, 160, 188, 0.32);
+      color: #c5cedf;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+    }
+
+    .f14-size-pill:hover {
+      border-color: rgba(255, 185, 75, 0.72);
+      color: #ffffff;
+    }
+
+    .f14-size-pill.active {
+      background: linear-gradient(180deg, rgba(165, 95, 18, 0.78) 0%, rgba(75, 38, 6, 0.95) 100%);
+      border-color: #ffbe48;
+      color: #ffffff;
+      box-shadow:
+        0 0 16px rgba(255, 150, 25, 0.62),
+        inset 0 1.5px 2px rgba(255, 235, 175, 0.65);
+    }
+
+    /* Glowing Amber-Gold Liquid Glass ADD TO BAG Pill Button */
+    .f14-add-bag-btn {
+      width: min(82%, 270px);
+      padding: clamp(10px, 1.35vh, 14px) 24px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(145, 80, 14, 0.62) 0%, rgba(58, 28, 4, 0.92) 100%);
+      border: 1.5px solid #ffba42;
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.76rem, 0.94vw, 0.88rem);
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow:
+        0 0 24px rgba(255, 140, 20, 0.45),
+        inset 0 1.5px 2px rgba(255, 235, 175, 0.62),
+        inset 0 -2px 6px rgba(255, 120, 10, 0.35);
+      transition: all 0.24s ease;
+    }
+
+    .f14-add-bag-btn:hover {
+      background: linear-gradient(180deg, rgba(185, 105, 20, 0.78) 0%, rgba(82, 40, 6, 0.96) 100%);
+      border-color: #ffd97d;
+      box-shadow:
+        0 0 32px rgba(255, 155, 30, 0.78),
+        inset 0 2px 3px rgba(255, 245, 200, 0.82);
       transform: translateY(-2px);
-      box-shadow: 0 0 28px rgba(255, 45, 149, 0.8);
     }
 
-    @media (max-width: 768px) {
-      .site-header {
-        padding: 14px 20px;
+    @media (max-width: 820px) {
+      .f14-store-header {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 8px;
       }
-      .nav-center {
-        display: none;
+      .f14-header-left {
+        order: 2;
+        padding-top: 0;
       }
-      .hud-dock {
-        flex-direction: column;
-        gap: 12px;
-        border-radius: 24px;
-        padding: 16px 22px;
-        width: 90vw;
-        text-align: center;
+      .f14-brand-center {
+        order: 1;
       }
-      .hud-divider, .hud-specs {
-        display: none;
+      .f14-header-right {
+        order: 3;
+        padding-top: 0;
+      }
+      .f14-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .f14-pedestal-well {
+        height: 260px;
       }
     }
   </style>
-  <link rel="stylesheet" href="merch_minimal.css?v=200">
-  <link rel="stylesheet" href="merch_zoom.css?v=200">
-  <script src="merch_zoom.js?v=235" defer></script>
 </head>
-<body>
+<body class="rc-fresh14-store-body">
 
-  <!-- 1. MINIMAL FLOATING SITE HEADER -->
-  <header class="site-header">
-    <a href="index.html" class="brand-link">
-      <img src="assets/logo.png" alt="Retrocanopy Logo" class="nav-logo">
-      <div class="nav-wordmark">
-        <span class="brand-text-base">RETROCAN</span><span class="flicker-letter">O</span><span class="brand-text-base">PY</span>
-      </div>
-    </a>
+  <!-- Hidden state hooks used by merch_zoom.js for 2K Zoom Inspector & Active SKU -->
+  <div style="display:none;" aria-hidden="true">
+    <img id="hatImg" src="assets/merch/hat_tier6_valkyrie.png?v=200" alt="">
+    <span id="hudKicker" class="hud-kicker">RC-107</span>
+    <span id="hudTitle" class="hud-title">White &amp; Gold Hat</span>
+    <span id="hudPrice" class="hud-price" data-orig-price="1">$85.00</span>
+    <div id="hudSpecs" class="hud-specs"></div>
+  </div>
 
-    <nav class="nav-center">
-      <a href="index.html" class="nav-home-btn">&#8962; Home</a>
-      <a href="hat_preview.html" class="active">White Hat ($1)</a>
-      <a href="hoodie_preview.html">White Hoodie ($1)</a>
-    </nav>
+  <!-- CONCEPT #14: 3D MOLTEN-ORANGE & OBSIDIAN LIQUID GLASS MERCH STORE SHELL -->
+  <div class="f14-store-outer-shell">
+    <div class="f14-side-light-left" aria-hidden="true"></div>
+    <div class="f14-side-light-right" aria-hidden="true"></div>
 
-    <div class="nav-right">
-      <a href="index.html" class="nav-home-pill">&#8962; Home</a>
-      <button class="cart-pill" id="bagBtn">Bag (0)</button>
-    </div>
-  </header>
-
-  <!-- 2. CENTER-STAGE 3D HOLOGRAPHIC SHOWROOM -->
-  <main class="showroom-viewport" id="stage">
-    <div class="ambient-aura"></div>
-    <div class="showroom-3d-floor" aria-hidden="true">
-      <div class="showroom-3d-floor-horizon"></div>
-      <div class="showroom-3d-floor-grid"></div>
-    </div>
-
-    <button class="glide-arrow glide-prev" onclick="stepItem(-1)" aria-label="Previous Hat">&#8592;</button>
-
-    <div class="hat-levitate-wrapper" id="hatLevitateWrap">
-      <div class="hat-3d-rotor" id="hat3dRotor">
-        <img class="hat-img" id="hatImg" src="assets/merch/hat_tier6_valkyrie.png?v=200" alt="Retrocanopy Floating Hat">
-      </div>
-    </div>
-
-    <button class="glide-arrow glide-next" onclick="stepItem(1)" aria-label="Next Hat">&#8594;</button>
-  </main>
-
-  <!-- 3. FLOATING BOTTOM HUD DOCK -->
-  <footer class="hud-stack">
-    <div class="hud-selector-strip">
-      <div class="mini-thumbs" id="thumbStrip"></div>
-    </div>
-
-    <div class="hud-dock">
-      <div class="hud-info">
-        <span class="hud-kicker" id="hudKicker">RC-107</span>
-        <span class="hud-title" id="hudTitle">White &amp; 24K Gold Crowned Valkyrie Snapback</span>
+    <!-- 1. TOP STORE HEADER -->
+    <header class="f14-store-header">
+      <div class="f14-header-left">
+        <a href="index.html" class="f14-home-pill" aria-label="Back to Retrocanopy Home">&#8962; HOME</a>
       </div>
 
-      <div class="hud-divider"></div>
+      <a href="index.html" class="f14-brand-center" aria-label="Retrocanopy Home">
+        <img src="assets/logo.png" alt="Retrocanopy 1984 Synthwave Tree Logo" class="f14-tree-logo">
+        <div class="f14-wordmark">RETROCANOPY</div>
+      </a>
 
-      <div class="hud-specs" id="hudSpecs">
-        <span>6-Panel Structured Crown</span>
-        <span>�</span>
-        <span>3D Puff Front Emblem</span>
-        <span>�</span>
-        <span>One Size Adjustable</span>
+      <div class="f14-header-right nav-right">
+        <a href="admin.html" class="f14-owner-pill" aria-label="Owner Hub">
+          <span class="f14-owner-shield" aria-hidden="true">&#128737;&#65039;</span>
+          <span>OWNER HUB</span>
+        </a>
+        <button type="button" class="f14-cart-pill" id="bagBtn" aria-label="Open Shopping Bag &amp; Stripe Checkout">
+          <span class="f14-cart-icon" aria-hidden="true">&#128722;</span>
+          <span class="f14-cart-count-badge" id="bagCountBadge">0</span>
+        </button>
       </div>
+    </header>
 
-      <div class="hud-divider"></div>
-
-      <div class="hud-price" id="hudPrice">$1</div>
-
-      <button class="hud-buy-btn" onclick="addToBag(this)">Buy with Stripe ($1)</button>
+    <!-- 2. TOP FILTER PILL ROW (ALL | HATS | HOODIES | VAULT) -->
+    <div class="f14-filter-bar-wrap top-filter-wrap">
+      <nav class="f14-filter-bar" aria-label="Product Category Filter Top">
+        <button type="button" class="f14-filter-pill active" data-filter="all">ALL</button>
+        <button type="button" class="f14-filter-pill" data-filter="hats">HATS</button>
+        <button type="button" class="f14-filter-pill" data-filter="hoodies">HOODIES</button>
+        <button type="button" class="f14-filter-pill" data-filter="vault">VAULT</button>
+      </nav>
     </div>
-  </footer>
+
+    <!-- 3. CENTER 2-CARD 3D PEDESTAL SHOWROOM GRID -->
+    <main class="f14-showroom-inner-frame">
+      <div class="f14-cards-grid" id="f14CardsGrid">
+
+        <!-- LEFT CARD: WHITE & GOLD HAT (RC-107) ON 3-TIERED MOLTEN-ORANGE GLASS PEDESTAL -->
+        <article class="f14-product-card" data-product-card="hats" id="f14CardHat">
+          <div class="f14-pedestal-well" onclick="openF14Zoom('RC-107', 'White & Gold Hat', 'assets/merch/hat_tier6_valkyrie.png?v=200')" title="Click to inspect in 2K HD">
+            <img class="f14-pedestal-img" src="assets/ui/fresh14_store_hat_pedestal.png?v=225" alt="White &amp; Gold Snapback Hat on 3-Tiered Molten-Orange Liquid Glass Pedestal" draggable="false">
+          </div>
+          <div class="f14-card-meta">
+            <h2 class="f14-product-title">White &amp; Gold Hat</h2>
+            <div class="f14-product-price">$85.00</div>
+            <div class="f14-size-row" role="group" aria-label="Select Hat Size">
+              <button type="button" class="f14-size-pill active" data-size="S">S</button>
+              <button type="button" class="f14-size-pill" data-size="M">M</button>
+              <button type="button" class="f14-size-pill" data-size="L">L</button>
+              <button type="button" class="f14-size-pill" data-size="XL">XL</button>
+            </div>
+            <button type="button" class="f14-add-bag-btn hud-buy-btn" data-model-code="RC-107">ADD TO BAG</button>
+          </div>
+        </article>
+
+        <!-- RIGHT CARD: WHITE & GOLD HOODIE (RC-309) ON 3-TIERED MOLTEN-ORANGE GLASS PEDESTAL -->
+        <article class="f14-product-card" data-product-card="hoodies" id="f14CardHoodie">
+          <div class="f14-pedestal-well" onclick="openF14Zoom('RC-309', 'White & Gold Hoodie', window.__f14HoodieBackActive ? 'assets/merch/hoodie_tier6_2f_back.png?v=200' : 'assets/merch/hoodie_tier6_2f_front.png?v=200')" title="Click to inspect in 2K HD">
+            <div class="f14-view-toggle-group" onclick="event.stopPropagation()">
+              <button type="button" class="f14-view-toggle-btn active" id="f14HoodieFrontBtn" onclick="setF14HoodieSide('front')">FRONT</button>
+              <button type="button" class="f14-view-toggle-btn" id="f14HoodieBackBtn" onclick="setF14HoodieSide('back')">BACK</button>
+            </div>
+            <img class="f14-pedestal-img" id="f14HoodiePedestalImg" src="assets/ui/fresh14_store_hoodie_pedestal.png?v=225" alt="White &amp; Gold Pullover Hoodie on 3-Tiered Molten-Orange Liquid Glass Pedestal" draggable="false">
+          </div>
+          <div class="f14-card-meta">
+            <h2 class="f14-product-title">White &amp; Gold Hoodie</h2>
+            <div class="f14-product-price">$160.00</div>
+            <div class="f14-size-row" role="group" aria-label="Select Hoodie Size">
+              <button type="button" class="f14-size-pill active" data-size="S">S</button>
+              <button type="button" class="f14-size-pill" data-size="M">M</button>
+              <button type="button" class="f14-size-pill" data-size="L">L</button>
+              <button type="button" class="f14-size-pill" data-size="XL">XL</button>
+            </div>
+            <button type="button" class="f14-add-bag-btn hud-buy-btn" data-model-code="RC-309">ADD TO BAG</button>
+          </div>
+        </article>
+
+      </div>
+    </main>
+
+    <!-- 4. BOTTOM FILTER PILL ROW (ALL | HATS | HOODIES | VAULT) -->
+    <div class="f14-filter-bar-wrap bottom-filter-wrap">
+      <nav class="f14-filter-bar" aria-label="Product Category Filter Bottom">
+        <button type="button" class="f14-filter-pill active" data-filter="all">ALL</button>
+        <button type="button" class="f14-filter-pill" data-filter="hats">HATS</button>
+        <button type="button" class="f14-filter-pill" data-filter="hoodies">HOODIES</button>
+        <button type="button" class="f14-filter-pill" data-filter="vault">VAULT</button>
+      </nav>
+    </div>
+  </div>
 
   <script>
-    const hatOptions = [
-      {
-        model: 'RC-107',
-        title: 'White & 24K Gold Crowned Valkyrie Snapback',
-        price: '$1',
-        winOnly: false,
-        specs: '<span>Arctic White 6-Panel Crown</span><span>&bull;</span><span>24K Gold 3D Puff Embroidery (.DST Ready)</span><span>&bull;</span><span>One Size Adjustable</span>',
-        src: 'assets/merch/hat_tier6_valkyrie.png?v=200'
-      }
-    ];
-
-    let currentIdx = 0;
-    let bagCount = 0;
-    const hatImg = document.getElementById('hatImg');
-    const hat3dRotor = document.getElementById('hat3dRotor');
-    const hatLevitateWrap = document.getElementById('hatLevitateWrap');
-    const hudKicker = document.getElementById('hudKicker');
-    const hudTitle = document.getElementById('hudTitle');
-    const hudSpecs = document.getElementById('hudSpecs');
-    const hudPrice = document.getElementById('hudPrice');
-    const thumbStrip = document.getElementById('thumbStrip');
-    const bagBtn = document.getElementById('bagBtn');
-    const hudBuyBtn = document.querySelector('.hud-buy-btn');
-
-    function updateShowroom() {
-      const item = hatOptions[currentIdx];
-      hatImg.src = item.src;
-      hudKicker.textContent = item.model;
-      hudTitle.textContent = item.title;
-      hudSpecs.innerHTML = item.specs;
-      if (hudPrice) {
-        if (item.winOnly) {
-          hudPrice.removeAttribute('data-orig-price');
-          hudPrice.textContent = 'WIN ONLY';
-        } else {
-          hudPrice.setAttribute('data-orig-price', item.price.replace('$', ''));
-          hudPrice.textContent = item.price;
-        }
-      }
-      if (hudBuyBtn) {
-        hudBuyBtn.textContent = item.winOnly ? 'Win at Arcade' : 'Buy with Stripe ($1)';
-      }
-
-      if (thumbStrip) {
-        thumbStrip.innerHTML = '';
-        hatOptions.forEach((it, idx) => {
-          const div = document.createElement('div');
-          div.className = 'mini-thumb' + (idx === currentIdx ? ' active' : '');
-          div.title = `${it.model} � ${it.title}`;
-          div.onclick = () => {
-            currentIdx = idx;
-            updateShowroom();
-          };
-          thumbStrip.appendChild(div);
-        });
-      }
-    }
-
-    function stepItem(dir) {
-      const len = hatOptions.length;
-      currentIdx = (currentIdx + dir + len) % len;
-      updateShowroom();
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') stepItem(1);
-      if (e.key === 'ArrowLeft') stepItem(-1);
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      hatImg.style.transform = `rotateY(${x * 16}deg) rotateX(${-y * 10}deg)`;
-    });
-
-    function addToBag(btn) {
-      const item = hatOptions[currentIdx];
-      if (item && item.winOnly) {
-        window.location.href = 'index.html';
-        return;
-      }
-      bagCount++;
-      bagBtn.textContent = `Bag (${bagCount})`;
-      const orig = btn.textContent;
-      btn.textContent = 'Added ?';
-      setTimeout(() => { btn.textContent = orig; }, 900);
-    }
-
-    updateShowroom();
-
-    // Preload remaining product images asynchronously after initial paint for 0ms Next/Prev switching
-    window.__rcPreloadShopImgs = true;
-    setTimeout(() => {
-      const lists = [
-        typeof hatOptions !== 'undefined' ? hatOptions : null,
-        typeof hoodieOptions !== 'undefined' ? hoodieOptions : null,
-        typeof teeOptions !== 'undefined' ? teeOptions : null,
-        typeof crewneckOptions !== 'undefined' ? crewneckOptions : null,
-        typeof joggerOptions !== 'undefined' ? joggerOptions : null,
-        typeof xxlOptions !== 'undefined' ? xxlOptions : null,
-        typeof smallOptions !== 'undefined' ? smallOptions : null,
-        typeof miscOptions !== 'undefined' ? miscOptions : null
-      ].filter(Boolean);
-      lists.forEach((arr) => {
-        arr.forEach((it) => {
-          [it.src, it.front, it.back].filter(Boolean).forEach((u) => {
-            const im = new Image();
-            im.decoding = 'async';
-            im.src = u;
-          });
+    // 1. Size Pill Selection per Card
+    document.querySelectorAll('.f14-product-card').forEach((card) => {
+      const pills = card.querySelectorAll('.f14-size-pill');
+      pills.forEach((pill) => {
+        pill.addEventListener('click', () => {
+          pills.forEach((p) => p.classList.remove('active'));
+          pill.classList.add('active');
         });
       });
-    }, 180);
+    });
+
+    // 2. Top & Bottom Filter Pill Sync (ALL | HATS | HOODIES | VAULT)
+    const allFilterPills = document.querySelectorAll('.f14-filter-pill');
+    const cardsGrid = document.getElementById('f14CardsGrid');
+    const cardHat = document.getElementById('f14CardHat');
+    const cardHoodie = document.getElementById('f14CardHoodie');
+
+    function applyF14Filter(filterKey) {
+      allFilterPills.forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === filterKey);
+      });
+      if (filterKey === 'hats') {
+        cardHat.style.display = 'flex';
+        cardHoodie.style.display = 'none';
+        cardsGrid.classList.add('single-card-mode');
+      } else if (filterKey === 'hoodies') {
+        cardHat.style.display = 'none';
+        cardHoodie.style.display = 'flex';
+        cardsGrid.classList.add('single-card-mode');
+      } else {
+        cardHat.style.display = 'flex';
+        cardHoodie.style.display = 'flex';
+        cardsGrid.classList.remove('single-card-mode');
+      }
+    }
+
+    allFilterPills.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        applyF14Filter(btn.getAttribute('data-filter') || 'all');
+      });
+    });
+
+    // 3. Hoodie Front / Back Pedestal Toggle
+    window.__f14HoodieBackActive = false;
+    function setF14HoodieSide(side) {
+      window.__f14HoodieBackActive = (side === 'back');
+      const imgEl = document.getElementById('f14HoodiePedestalImg');
+      const fBtn = document.getElementById('f14HoodieFrontBtn');
+      const bBtn = document.getElementById('f14HoodieBackBtn');
+      if (imgEl) {
+        imgEl.src = window.__f14HoodieBackActive
+          ? 'assets/ui/fresh14_store_hoodie_back_pedestal.png?v=225'
+          : 'assets/ui/fresh14_store_hoodie_pedestal.png?v=225';
+      }
+      if (fBtn) fBtn.classList.toggle('active', !window.__f14HoodieBackActive);
+      if (bBtn) bBtn.classList.toggle('active', window.__f14HoodieBackActive);
+    }
+
+    // 4. 2K HD Zoom Inspector Trigger for Either Card
+    function openF14Zoom(code, title, rawImgUrl) {
+      const hatImgEl = document.getElementById('hatImg');
+      const kickerEl = document.getElementById('hudKicker');
+      const titleEl = document.getElementById('hudTitle');
+      if (hatImgEl) hatImgEl.src = rawImgUrl;
+      if (kickerEl) kickerEl.textContent = code;
+      if (titleEl) titleEl.textContent = title;
+      const zoomOverlay = document.getElementById('rcZoomOverlay');
+      const zoomImg = document.getElementById('rcZoomImg');
+      const zoomKicker = document.getElementById('rcZoomKicker');
+      const zoomTitle = document.getElementById('rcZoomTitle');
+      if (zoomOverlay && zoomImg) {
+        if (zoomKicker) zoomKicker.textContent = code;
+        if (zoomTitle) zoomTitle.textContent = title;
+        zoomImg.src = rawImgUrl.indexOf('?') !== -1 ? rawImgUrl + '&hd=2k' : rawImgUrl + '?hd=2k';
+        zoomOverlay.classList.add('open');
+      }
+    }
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
