@@ -3,7 +3,7 @@
   "short_name": "Shibuya Bot Pit",
   "description": "Build your 6-Slot 3D BattleBot, compete in 3x3:00 UFC-style rounds, spectate live fights, and chat in the Shibuya Pit.",
   "start_url": "./shibuya_bot_pit.html?app=1",
-  "scope": "./",
+  "scope": "./shibuya_bot_pit.html",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#07080c",
@@ -21,5 +21,9 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "handle_links": "not-preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

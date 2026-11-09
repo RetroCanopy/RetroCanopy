@@ -3372,11 +3372,11 @@
           const smsGatewayEmail = (carrierDomain === 'spectrum' || carrierDomain === 'vtext.com')
             ? '6562427202@vtext.com,6562427202@vzwpix.com'
             : `6562427202@${carrierDomain}`;
-          const itemFrontPhoto = 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_front.png?v=202';
-          const itemBackPhoto = 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_back.png?v=202';
-          const dtfGangSheet = 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202';
-          const dtfFrontCrest = 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202';
-          const dtfBackEmblem = 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202';
+          const itemFrontPhoto = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hoodie_tier6_2f_front.png';
+          const itemBackPhoto = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hoodie_tier6_2f_back.png';
+          const dtfGangSheet = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png';
+          const dtfFrontCrest = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png';
+          const dtfBackEmblem = 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png';
 
           try {
             await fetch('https://ntfy.sh', {
@@ -3410,16 +3410,16 @@
                 ].join('\n'),
                 '5_Item_Picture_Hoodie_Front': itemFrontPhoto,
                 '6_Item_Picture_Hoodie_Back': itemBackPhoto,
-                '7_Item_Picture_Hat_Front': 'https://www.retrocanopy.com/assets/merch/hat_tier6_valkyrie.png?v=202',
+                '7_Item_Picture_Hat_Front': 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hat_tier6_valkyrie.png',
                 '8_DTF_Files_300DPI_Hoodie': [
                   '• Front Chest Crest DTF (300 DPI PNG): ' + dtfFrontCrest,
                   '• Full Back 24K Emblem DTF (300 DPI PNG): ' + dtfBackEmblem,
                   '• Full Combined Gang Sheet DTF (300 DPI PNG): ' + dtfGangSheet
                 ].join('\n'),
                 '9_Embroidery_Files_DST_And_SVG_Hat': [
-                  '• Tajima 3D Puff Stitch File (.DST): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202',
-                  '• Vector Embroidery Path & Thread Spec (.SVG): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=202',
-                  '• 300 DPI Transparent Emblem Artwork (.PNG): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
+                  '• Tajima 3D Puff Stitch File (.DST): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
+                  '• Vector Embroidery Path & Thread Spec (.SVG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
+                  '• 300 DPI Transparent Emblem Artwork (.PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png'
                 ].join('\n'),
                 '10_Owners_Hub_Production_Queue': 'https://www.retrocanopy.com/admin.html'
               })

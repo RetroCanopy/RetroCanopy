@@ -883,7 +883,6 @@ function initGamerIntro() {
     const isReload = navType === 'reload';
     const isBackForward = navType === 'back_forward';
     const cameFromInternalPage = Boolean(
-        isAdminSiteUnlocked() ||
         window.__rcSkipIntroOnLoad ||
         (!isReload && (
             sessionStorage.getItem('rc_from_internal') === '1' ||
@@ -1575,7 +1574,7 @@ function initGamerIntro() {
             }
         } else {
             try {
-                prebuiltIntroAudio = new Audio('assets/intro_theme.mp3?v=104');
+                prebuiltIntroAudio = new Audio('assets/intro_theme.mp3?v=220');
                 prebuiltIntroAudio.muted = Boolean(cameFromInternalPage || window.__rcSkipIntroOnLoad);
                 prebuiltIntroAudio.volume = (cameFromInternalPage || window.__rcSkipIntroOnLoad) ? 0 : 0.88;
                 prebuiltIntroAudio.preload = (cameFromInternalPage || window.__rcSkipIntroOnLoad) ? 'none' : 'auto';
@@ -4007,7 +4006,7 @@ function initGamerIntro() {
     // Detect browser Reload vs. Returning to Home from another internal page:
     // - Reloading the site (F5 / Ctrl+R) ALWAYS triggers the full intro animation!
     // - Going back to the Home page from inside the site skips the intro!
-    if (isAdminSiteUnlocked() || (!isReload && cameFromInternalPage)) {
+    if (!isReload && cameFromInternalPage) {
         sessionStorage.removeItem('rc_from_internal');
         if (heroContainer) {
             heroContainer.classList.add('no-transition');
@@ -4246,8 +4245,7 @@ function initGamerIntro() {
         if (introCraneTimer) clearTimeout(introCraneTimer);
 
         const introVideoEl = document.getElementById('rc-cinema-intro-video');
-        const isMobile = window.innerWidth <= 900 || (window.matchMedia && window.matchMedia('(max-aspect-ratio: 4/3)').matches);
-        const rate = isMobile ? 0.85 : 0.92;
+        const rate = 1.0;
 
         if (introVideoEl) {
             try {
@@ -4302,7 +4300,7 @@ function initGamerIntro() {
     function playCinemaStudioLogoSwell() {
         if (sequenceComplete || state !== 'LOGO_ZOOM_OUT') return;
 
-        // Play the single pre-rendered Title Screen audio track (assets/intro_theme.mp3?v=104) —
+        // Play the single pre-rendered Title Screen audio track (assets/intro_theme.mp3?v=220) —
         // do NOT layer a second Web Audio synth copy on top so the logo audio never plays twice!
         tryStartIntroHtmlAudio(false);
     }
@@ -4435,7 +4433,7 @@ function initGamerIntro() {
                     prebuiltIntroAudio._playingSynFallback = false;
                     prebuiltIntroAudio._playingLofiFallback = false;
                     if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('intro_theme.wav') === -1) {
-                        prebuiltIntroAudio.src = 'assets/intro_theme.mp3?v=104';
+                        prebuiltIntroAudio.src = 'assets/intro_theme.mp3?v=220';
                     }
                     prebuiltIntroAudio.loop = false;
                     prebuiltIntroAudio.muted = false;
@@ -4463,7 +4461,6 @@ function initGamerIntro() {
     }
 
     window.addEventListener('keydown', (e) => {
-        if (isAdminSiteUnlocked()) return;
         const isF5 = (e.key === 'F5' || e.code === 'F5');
         const isCtrlR = ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'r' || e.key === 'R'));
         if (isF5 || isCtrlR) {
@@ -4947,17 +4944,15 @@ if (document.readyState === 'loading') {
 (function() {
   if (window.__openBotPitAppOverlay) return;
 
-  // Link manifest & service worker so Chrome/Edge/Android/iOS recognize the installable PWA
-  if (!document.querySelector('link[rel="manifest"]')) {
-    const mf = document.createElement('link');
-    mf.rel = 'manifest';
-    mf.href = 'shibuya_bot_pit_manifest.json';
-    document.head.appendChild(mf);
-  }
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('botpit_sw.js').catch(() => {});
-    });
+  // Ensure non-game pages (index, shop, admin, email file links) are NEVER hijacked by the Bot Pit PWA scope
+  if ('serviceWorker' in navigator && !window.location.pathname.includes('shibuya_bot_pit')) {
+    navigator.serviceWorker.getRegistrations().then((regs) => {
+      regs.forEach((r) => {
+        if (r && r.active && String(r.active.scriptURL).includes('botpit_sw')) {
+          r.unregister().catch(() => {});
+        }
+      });
+    }).catch(() => {});
   }
 
   let deferredInstallPrompt = null;

@@ -371,19 +371,19 @@
         productionFiles: [
           {
             label: 'Tajima 3D Puff Embroidery Stitch File (.DST)',
-            url: 'assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202',
+            url: 'assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
             filename: 'RC107_Hat_Valkyrie_3D_Puff.dst',
             format: 'Tajima .DST'
           },
           {
             label: 'Vector Embroidery Path & Thread Spec (.SVG)',
-            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=202',
+            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
             filename: 'RC107_Hat_Valkyrie_Embroidery_Spec.svg',
             format: 'Embroidery .SVG'
           },
           {
             label: '300 DPI Transparent Emblem Artwork (.PNG)',
-            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202',
+            url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png',
             filename: 'RC107_Hat_Valkyrie_Embroidery_300DPI.png',
             format: '300 DPI PNG'
           }
@@ -404,19 +404,19 @@
         productionFiles: [
           {
             label: 'Front Chest Crest — DTF Ready 300 DPI Transparent PNG',
-            url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202',
+            url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png',
             filename: 'RC309_Hoodie_Front_Crest_DTF_300DPI.png',
             format: 'DTF 300 DPI PNG'
           },
           {
             label: 'Full Back 24K Emblem — DTF Ready 300 DPI Transparent PNG',
-            url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202',
+            url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
             filename: 'RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
             format: 'DTF 300 DPI PNG'
           },
           {
             label: 'Combined Front + Back Gang Sheet — DTF Ready 300 DPI PNG',
-            url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202',
+            url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png',
             filename: 'RC309_Hoodie_Full_GangSheet_DTF_300DPI.png',
             format: 'DTF Gang Sheet PNG'
           }
@@ -1816,20 +1816,20 @@
                 backPhotoUrl: 'assets/merch/hoodie_tier6_2f_back.png',
                 productionNotes: '450GSM Heavyweight Arctic White Fleece • Front Left-Chest Crest (4.0" W) + Full Back Sanctuary Emblem (12.5" W) • 300 DPI Transparent DTF Transfers',
                 productionFiles: [
-                  { label: 'Front Chest Crest DTF (300 DPI PNG)', url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202' },
-                  { label: 'Full Back 24K Emblem DTF (300 DPI PNG)', url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202' },
-                  { label: 'Combined Front + Back Full Gang Sheet DTF (300 DPI PNG)', url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202' }
+                  { label: 'Front Chest Crest DTF (300 DPI PNG)', url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png' },
+                  { label: 'Full Back 24K Emblem DTF (300 DPI PNG)', url: 'assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png' },
+                  { label: 'Combined Front + Back Full Gang Sheet DTF (300 DPI PNG)', url: 'assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png' }
                 ]
               }];
 
           const firstItem = orderItemsArr[0] || {};
           const primaryPhotoUrl = firstItem.backPhotoUrl
-            ? `https://www.retrocanopy.com/${String(firstItem.backPhotoUrl).split('?')[0]}?v=202`
-            : `https://www.retrocanopy.com/${String(firstItem.frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_back.png').split('?')[0]}?v=202`;
+            ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.backPhotoUrl).split('?')[0]}`
+            : `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_back.png').split('?')[0]}`;
 
           const itemPhotosText = orderItemsArr.map((x, idx) => {
-            const fUrl = x.frontPhotoUrl ? `https://www.retrocanopy.com/${String(x.frontPhotoUrl).split('?')[0]}?v=202` : '';
-            const bUrl = x.backPhotoUrl ? `https://www.retrocanopy.com/${String(x.backPhotoUrl).split('?')[0]}?v=202` : '';
+            const fUrl = x.frontPhotoUrl ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(x.frontPhotoUrl).split('?')[0]}` : '';
+            const bUrl = x.backPhotoUrl ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(x.backPhotoUrl).split('?')[0]}` : '';
             return [
               `Item #${idx + 1} (${x.model} - ${x.title}, Size: ${x.size || 'L'}):`,
               fUrl ? `  • Front Garment Picture: ${fUrl}` : '',
@@ -1839,13 +1839,13 @@
 
           const dtfFilesText = orderItemsArr.map((x, idx) => {
             const pFiles = Array.isArray(x.productionFiles) ? x.productionFiles : [];
-            const lines = pFiles.map((pf) => `  • ${pf.label || pf.filename || 'Production File'}: https://www.retrocanopy.com/${String(pf.url || '').split('?')[0]}?v=202`);
+            const lines = pFiles.map((pf) => `  • ${pf.label || pf.filename || 'Production File'}: https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(pf.url || '').split('?')[0]}`);
             return `Item #${idx + 1} (${x.model} — ${x.productionNotes || '300 DPI Production Ready'}):\n` + lines.join('\n');
           }).join('\n\n');
 
           const primaryDtfFileUrl = (firstItem.productionFiles && firstItem.productionFiles[firstItem.productionFiles.length - 1])
-            ? `https://www.retrocanopy.com/${String(firstItem.productionFiles[firstItem.productionFiles.length - 1].url).split('?')[0]}?v=202`
-            : 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202';
+            ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.productionFiles[firstItem.productionFiles.length - 1].url).split('?')[0]}`
+            : 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png';
 
           // 4A. Short & Clean Phone Push / Text Notification ("There is a new order in!")
           fetch('https://ntfy.sh', {
@@ -1870,16 +1870,16 @@
           ].filter(Boolean).join('\n');
 
           const dtfLinksBlock = hasHoodie ? [
-            '• Front Chest Crest DTF (300 DPI PNG): https://www.retrocanopy.com/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202',
-            '• Full Back 24K Emblem DTF (300 DPI PNG): https://www.retrocanopy.com/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202',
-            '• Full Combined Gang Sheet DTF (300 DPI PNG): https://www.retrocanopy.com/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202'
+            '• Front Chest Crest DTF (300 DPI PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png',
+            '• Full Back 24K Emblem DTF (300 DPI PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
+            '• Full Combined Gang Sheet DTF (300 DPI PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png'
           ].join('\n') : 'N/A (No Hoodie in this order — see Embroidery Files below)';
 
           const embroideryLinksBlock = hasHat ? [
-            '• Tajima 3D Puff Stitch File (.DST): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202',
-            '• Vector Embroidery Path & Thread Spec (.SVG): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=202',
-            '• 300 DPI Transparent Emblem Artwork (.PNG): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
-          ].join('\n') : '• Reference Hat .DST (if needed): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202';
+            '• Tajima 3D Puff Stitch File (.DST): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
+            '• Vector Embroidery Path & Thread Spec (.SVG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
+            '• 300 DPI Transparent Emblem Artwork (.PNG): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png'
+          ].join('\n') : '• Reference Hat .DST (if needed): https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst';
 
           // 4B. Instant Production Email + Spectrum SMS/MMS Alert with Blank Supplier Links, DTF Files, Embroidery Files, Customer Info, Amount Paid & Item Pictures
           const emailPayload = {
@@ -1897,8 +1897,8 @@
             '3_Item_Wanted_And_Size': itemsSummary,
             '4_Blank_Garments_To_Order_Links': blankSupplierLinks,
             '5_Pictures_Of_Item_Wanted': itemPhotosText,
-            '6_Item_Picture_Front_Direct': firstItem.frontPhotoUrl ? `https://www.retrocanopy.com/${String(firstItem.frontPhotoUrl).split('?')[0]}?v=202` : 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_front.png?v=202',
-            '7_Item_Picture_Back_Direct': firstItem.backPhotoUrl ? `https://www.retrocanopy.com/${String(firstItem.backPhotoUrl).split('?')[0]}?v=202` : (firstItem.model === 'RC-107' ? 'https://www.retrocanopy.com/assets/merch/hat_tier6_valkyrie.png?v=202' : 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_back.png?v=202'),
+            '6_Item_Picture_Front_Direct': firstItem.frontPhotoUrl ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.frontPhotoUrl).split('?')[0]}` : 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hoodie_tier6_2f_front.png',
+            '7_Item_Picture_Back_Direct': firstItem.backPhotoUrl ? `https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/${String(firstItem.backPhotoUrl).split('?')[0]}` : (firstItem.model === 'RC-107' ? 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hat_tier6_valkyrie.png' : 'https://raw.githubusercontent.com/RetroCanopy/RetroCanopy/main/assets/merch/hoodie_tier6_2f_back.png'),
             '8_DTF_Files_300DPI_Links': dtfLinksBlock,
             '9_Embroidery_Files_DST_And_SVG_Links': embroideryLinksBlock,
             '10_Owners_Hub_Production_Queue': 'https://www.retrocanopy.com/admin.html'

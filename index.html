@@ -6,20 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Retrocanopy - Official Brand &amp; Synthwave Apparel">
     <title>Retrocanopy</title>
-    <link rel="preload" href="assets/retrocanopy_intro_video.mp4?v=104" as="video" type="video/mp4">
-    <link rel="preload" href="assets/intro_theme.mp3?v=104" as="audio" type="audio/mpeg">
+    <link rel="preload" href="assets/retrocanopy_intro_video.mp4?v=220" as="video" type="video/mp4">
+    <link rel="preload" href="assets/intro_theme.mp3?v=220" as="audio" type="audio/mpeg">
     <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bungee&family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Press+Start+2P&family=Righteous&family=Russo+One&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=204">
+    <link rel="stylesheet" href="style.css?v=220">
 </head>
 
 <body class="cinema-intro-active">
     <!-- Preloaded HTML5 Audio Tracks -->
-    <audio id="intro-title-audio" src="assets/intro_theme.mp3?v=104" playsinline webkit-playsinline preload="auto"></audio>
+    <audio id="intro-title-audio" src="assets/intro_theme.mp3?v=220" playsinline webkit-playsinline preload="auto"></audio>
     <audio id="syn-journey-audio" src="assets/syn_journey.wav?v=93" playsinline webkit-playsinline preload="none"></audio>
     <audio id="cup-boom-audio" src="assets/cup_boom.wav?v=36" playsinline webkit-playsinline preload="auto"></audio>
     <audio id="lofi-loop-audio" src="assets/dearly_beloved.mp3?v=80" loop playsinline webkit-playsinline preload="none"></audio>
@@ -30,7 +30,7 @@
 
     <!-- High-Production Movie Studio Intro Atmosphere & Widescreen Letterbox Stage -->
     <div class="cinema-intro-fx" id="cinema-intro-fx" aria-hidden="true">
-        <video id="rc-cinema-intro-video" class="rc-cinema-intro-video" src="assets/retrocanopy_intro_video.mp4?v=105" autoplay muted playsinline webkit-playsinline preload="auto"></video>
+        <video id="rc-cinema-intro-video" class="rc-cinema-intro-video" src="assets/retrocanopy_intro_video.mp4?v=220" autoplay muted playsinline webkit-playsinline preload="auto"></video>
         <div class="cinema-letterbox cinema-letterbox-top"></div>
         <div class="cinema-letterbox cinema-letterbox-bottom"></div>
     </div>
@@ -57,10 +57,11 @@
                     localStorage.removeItem('rc_current_user_v1');
                 }
             } catch (_) {}
-            var skipIntro = isLoggedIn || (!isReload && (
+            // Play the intro video regardless of whether the user is logged in or not!
+            var skipIntro = !isReload && (
                 fromInternal ||
                 isBackForward
-            ));
+            );
             if (skipIntro) {
                 window.__rcSkipIntroOnLoad = true;
                 if (v) {
@@ -87,8 +88,7 @@
             // 1. Keep #rc-cinema-intro-video strictly muted so mobile hardware video playback NEVER stutters or pauses!
             if (v) {
                 v.muted = true;
-                var isMobileViewport = window.innerWidth <= 900 || (window.matchMedia && window.matchMedia('(max-aspect-ratio: 4/3)').matches);
-                var targetRate = isMobileViewport ? 0.85 : 0.92;
+                var targetRate = 1.0;
                 try {
                     v.defaultPlaybackRate = targetRate;
                     v.playbackRate = targetRate;
@@ -440,8 +440,8 @@
     <!-- Stage container (crew characters and section tabs removed; Synth owl butler & login preserved) -->
     <div id="crew-stage" class="crew-stage" aria-hidden="true"></div>
 
-    <script src="script.js?v=216"></script>
-    <script src="auth_hub.js?v=155"></script>
+    <script src="script.js?v=220"></script>
+    <script src="auth_hub.js?v=220"></script>
 </body>
 
 </html>

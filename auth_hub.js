@@ -1465,7 +1465,8 @@
     });
 
     updateTopPill();
-    if (isAdminLoggedIn() && typeof window.__rcUnlockFullSiteForAdmin === 'function') {
+    const isIntroCurrentlyPlaying = Boolean(document.body && document.body.classList.contains('cinema-intro-active'));
+    if (!isIntroCurrentlyPlaying && isAdminLoggedIn() && typeof window.__rcUnlockFullSiteForAdmin === 'function') {
       window.__rcUnlockFullSiteForAdmin();
     } else if (!isAdminLoggedIn() && typeof window.__rcLockSiteToTeaserMode === 'function' && document.body && document.body.classList.contains('rc-logged-in-home')) {
       window.__rcLockSiteToTeaserMode();
