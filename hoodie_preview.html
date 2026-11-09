@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="merch_minimal.css?v=229">
-  <link rel="stylesheet" href="merch_zoom.css?v=229">
-  <script src="merch_zoom.js?v=229" defer></script>
+  <link rel="stylesheet" href="merch_minimal.css?v=231">
+  <link rel="stylesheet" href="merch_zoom.css?v=231">
+  <script src="merch_zoom.js?v=231" defer></script>
   <style>
     :root {
       --bg-dark: #05060a;
@@ -670,7 +670,7 @@
 
   <!-- Hidden state hooks used by merch_zoom.js for 2K Zoom Inspector & Active SKU -->
   <div style="display:none;" aria-hidden="true">
-    <img id="hatImg" src="assets/merch/hoodie_tier6_2f_front.png?v=229" alt="">
+    <img id="hatImg" src="assets/merch/hoodie_tier6_2f_front.png?v=231" alt="">
     <span id="hudKicker" class="hud-kicker">RC-309</span>
     <span id="hudTitle" class="hud-title">White &amp; Gold Hoodie</span>
     <span id="hudPrice" class="hud-price" data-orig-price="1">$160.00</span>
@@ -689,7 +689,7 @@
       </div>
 
       <a href="index.html" class="f14-brand-center" aria-label="Retrocanopy Home">
-        <img src="assets/logo.png?v=229" alt="Retrocanopy 1984 Synthwave Tree Logo" class="f14-tree-logo">
+        <img src="assets/logo.png?v=231" alt="Retrocanopy 1984 Synthwave Tree Logo" class="f14-tree-logo">
         <div class="f14-wordmark">RETROCANOPY</div>
       </a>
 
@@ -721,8 +721,8 @@
 
         <!-- LEFT CARD: WHITE & GOLD HAT (RC-107) ON 3-TIERED MOLTEN-ORANGE GLASS PEDESTAL -->
         <article class="f14-product-card" data-product-card="hats" id="f14CardHat">
-          <div class="f14-pedestal-well" onclick="openF14Zoom('RC-107', 'White & Gold Hat', 'assets/merch/hat_tier6_valkyrie.png?v=229')" title="Click to inspect in 2K HD">
-            <img class="f14-pedestal-img" src="assets/ui/fresh14_store_hat_pedestal.png?v=229" alt="White &amp; Gold Snapback Hat on 3-Tiered Molten-Orange Liquid Glass Pedestal" draggable="false">
+          <div class="f14-pedestal-well" onclick="openF14Zoom('RC-107', 'White & Gold Hat', 'assets/merch/hat_tier6_valkyrie.png?v=231')" title="Click to inspect in 2K HD">
+            <img class="f14-pedestal-img" src="assets/ui/fresh14_store_hat_pedestal.png?v=231" alt="White &amp; Gold Snapback Hat on 3-Tiered Molten-Orange Liquid Glass Pedestal" draggable="false">
           </div>
           <div class="f14-card-meta">
             <h2 class="f14-product-title">White &amp; Gold Hat</h2>
@@ -739,12 +739,12 @@
 
         <!-- RIGHT CARD: WHITE & GOLD HOODIE (RC-309) ON 3-TIERED MOLTEN-ORANGE GLASS PEDESTAL -->
         <article class="f14-product-card" data-product-card="hoodies" id="f14CardHoodie">
-          <div class="f14-pedestal-well" onclick="openF14Zoom('RC-309', 'White & Gold Hoodie', window.__f14HoodieBackActive ? 'assets/merch/hoodie_tier6_2f_back.png?v=229' : 'assets/merch/hoodie_tier6_2f_front.png?v=229')" title="Click to inspect in 2K HD">
+          <div class="f14-pedestal-well" onclick="openF14Zoom('RC-309', 'White & Gold Hoodie', window.__f14HoodieBackActive ? 'assets/merch/hoodie_tier6_2f_back.png?v=231' : 'assets/merch/hoodie_tier6_2f_front.png?v=231')" title="Click to inspect in 2K HD">
             <div class="f14-view-toggle-group" onclick="event.stopPropagation()">
               <button type="button" class="f14-view-toggle-btn active" id="f14HoodieFrontBtn" onclick="setF14HoodieSide('front')">FRONT</button>
               <button type="button" class="f14-view-toggle-btn" id="f14HoodieBackBtn" onclick="setF14HoodieSide('back')">BACK</button>
             </div>
-            <img class="f14-pedestal-img" id="f14HoodiePedestalImg" src="assets/ui/fresh14_store_hoodie_pedestal.png?v=229" alt="White &amp; Gold Pullover Hoodie on 3-Tiered Molten-Orange Liquid Glass Pedestal" draggable="false">
+            <img class="f14-pedestal-img" id="f14HoodiePedestalImg" src="assets/ui/fresh14_store_hoodie_pedestal.png?v=231" alt="White &amp; Gold Pullover Hoodie on 3-Tiered Molten-Orange Liquid Glass Pedestal" draggable="false">
           </div>
           <div class="f14-card-meta">
             <h2 class="f14-product-title">White &amp; Gold Hoodie</h2>
@@ -825,8 +825,8 @@
       const bBtn = document.getElementById('f14HoodieBackBtn');
       if (imgEl) {
         imgEl.src = window.__f14HoodieBackActive
-          ? 'assets/ui/fresh14_store_hoodie_back_pedestal.png?v=229'
-          : 'assets/ui/fresh14_store_hoodie_pedestal.png?v=229';
+          ? 'assets/ui/fresh14_store_hoodie_back_pedestal.png?v=231'
+          : 'assets/ui/fresh14_store_hoodie_pedestal.png?v=231';
       }
       if (fBtn) fBtn.classList.toggle('active', !window.__f14HoodieBackActive);
       if (bBtn) bBtn.classList.toggle('active', window.__f14HoodieBackActive);
