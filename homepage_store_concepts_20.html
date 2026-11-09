@@ -3,50 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RetroCanopy — Concept #01 (20 Variations) &amp; Concept #19 (20 Variations) Showcase</title>
+  <title>RETROCANOPY — 20 Combined (#01 Liquid Glass + #19 3D Pedestals + Current Live Site) Concepts</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-void: #040407;
-      --orange-core: #ff6b1a;
-      --orange-amber: #ff9e2c;
-      --cyan-neon: #38bdf8;
-      --gold-retro: #fbbf24;
-      --text-main: #f8fafc;
-      --text-muted: #a1a1aa;
+      --bg: #030306;
+      --molten-orange: #ff5a00;
+      --solar-amber: #ff9e00;
+      --gold: #ffd166;
+      --cyan: #00e5ff;
+      --neon-green: #39ff14;
+      --electric-blue: #2962ff;
+      --text: #f6f4f0;
+      --muted: #9e9a95;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--bg-void);
+      background-color: var(--bg);
       background-image:
-        radial-gradient(circle at 30% 0%, rgba(255, 107, 26, 0.16) 0%, transparent 52%),
-        radial-gradient(circle at 75% 10%, rgba(56, 189, 248, 0.10) 0%, transparent 48%),
-        linear-gradient(180deg, #050508 0%, #09080c 50%, #040406 100%);
-      color: var(--text-main);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        radial-gradient(circle at 50% 0%, rgba(255, 90, 0, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 82% 22%, rgba(0, 229, 255, 0.1) 0%, transparent 40%),
+        linear-gradient(180deg, #040408 0%, #020204 100%);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* Sticky Top Navigation */
-    .top-showcase-header {
+    /* Sticky Top Command Header */
+    .top-header {
       position: sticky;
       top: 0;
-      z-index: 1000;
-      background: linear-gradient(180deg, rgba(12, 10, 15, 0.92) 0%, rgba(7, 6, 10, 0.88) 100%);
-      backdrop-filter: blur(22px) saturate(160%);
-      -webkit-backdrop-filter: blur(22px) saturate(160%);
-      border-bottom: 1.5px solid rgba(255, 122, 26, 0.42);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.88);
-      padding: 14px 24px;
+      z-index: 100;
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      background: rgba(6, 5, 10, 0.88);
+      border-bottom: 1px solid rgba(255, 110, 0, 0.42);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 180, 70, 0.22) inset;
+      padding: 12px 24px;
     }
 
     .header-inner {
@@ -59,171 +57,743 @@
       gap: 14px;
     }
 
-    .brand-cluster {
+    .brand-block {
       display: flex;
       align-items: center;
       gap: 14px;
     }
 
-    .sunset-tree-badge {
+    .brand-logo {
       width: 44px;
       height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, #ffdd55 0%, #ff7722 48%, #d91b5c 100%);
-      border: 2px solid rgba(255, 165, 70, 0.85);
-      box-shadow: 0 0 22px rgba(255, 107, 26, 0.55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.35rem;
-      flex-shrink: 0;
+      border-radius: 11px;
+      object-fit: contain;
+      background: rgba(255, 90, 0, 0.12);
+      border: 1px solid rgba(255, 130, 0, 0.55);
+      box-shadow: 0 0 18px rgba(255, 90, 0, 0.4);
+      padding: 3px;
     }
 
-    .brand-titles h1 {
+    .brand-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.12rem;
+      font-size: 1.15rem;
       font-weight: 900;
-      letter-spacing: 2px;
-      background: linear-gradient(90deg, #ff9e2c 0%, #ff5511 55%, #38bdf8 100%);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #ffffff 0%, #ffd166 45%, #ff5a00 80%, #00e5ff 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .brand-titles p {
+    .brand-sub {
+      font-family: 'Share Tech Mono', monospace;
       font-size: 0.76rem;
-      color: #cbd5e1;
-      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.06em;
     }
 
-    .tab-switcher-bar {
+    .controls-bar {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
     }
 
-    .tab-pill-btn {
-      background: linear-gradient(180deg, rgba(24, 20, 28, 0.9) 0%, rgba(10, 9, 14, 0.96) 100%);
-      border: 1.5px solid rgba(255, 130, 40, 0.35);
-      color: #cbd5e1;
+    .filter-btn {
+      background: rgba(14, 12, 18, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text);
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.66rem;
-      font-weight: 800;
-      letter-spacing: 0.6px;
-      padding: 9px 15px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      padding: 9px 14px;
       border-radius: 999px;
       cursor: pointer;
-      transition: all 0.16s ease;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
     }
 
-    .tab-pill-btn:hover {
-      border-color: #ff9e2c;
+    .filter-btn:hover {
+      border-color: var(--molten-orange);
       color: #fff;
+      box-shadow: 0 0 16px rgba(255, 90, 0, 0.35);
     }
 
-    .tab-pill-btn.active-c1 {
-      background: linear-gradient(180deg, rgba(255, 107, 26, 0.38) 0%, rgba(180, 50, 10, 0.28) 100%);
-      border-color: #ff8c24;
-      color: #fff7ed;
-      box-shadow: 0 0 22px rgba(255, 107, 26, 0.48);
+    .filter-btn.active {
+      background: linear-gradient(135deg, rgba(255, 90, 0, 0.36), rgba(0, 229, 255, 0.22));
+      border-color: var(--molten-orange);
+      color: #fff;
+      box-shadow: 0 0 22px rgba(255, 90, 0, 0.48), 0 0 10px rgba(255, 209, 102, 0.3) inset;
     }
 
-    .tab-pill-btn.active-c19 {
-      background: linear-gradient(180deg, rgba(56, 189, 248, 0.32) 0%, rgba(255, 107, 26, 0.28) 100%);
-      border-color: #38bdf8;
-      color: #f0f9ff;
-      box-shadow: 0 0 22px rgba(56, 189, 248, 0.42);
+    .search-box {
+      background: rgba(10, 9, 14, 0.95);
+      border: 1px solid rgba(255, 110, 0, 0.35);
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      padding: 8px 14px;
+      border-radius: 999px;
+      width: 220px;
+      outline: none;
     }
 
-    /* Winner Reference Split Hero */
-    .winners-reference-strip {
+    .search-box:focus {
+      border-color: var(--molten-orange);
+      box-shadow: 0 0 14px rgba(255, 90, 0, 0.4);
+    }
+
+    /* ============================================================================
+       LIVE INTERACTIVE REAL-ASSET PROTOTYPE (#01 LIQUID GLASS + #19 3D PEDESTALS + LIVE SITE)
+       ============================================================================ */
+    .live-fusion-wrapper {
       max-width: 1760px;
-      margin: 20px auto 12px;
+      margin: 22px auto 12px;
       padding: 0 24px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
     }
 
-    @media (max-width: 1024px) {
-      .winners-reference-strip {
+    .live-fusion-banner {
+      border-radius: 24px;
+      padding: 20px;
+      background:
+        radial-gradient(circle at 25% 15%, rgba(255, 90, 0, 0.16), transparent 50%),
+        radial-gradient(circle at 78% 20%, rgba(0, 229, 255, 0.12), transparent 50%),
+        linear-gradient(180deg, rgba(12, 10, 16, 0.96), rgba(4, 4, 8, 0.99));
+      border: 1px solid rgba(255, 115, 0, 0.55);
+      box-shadow:
+        0 24px 65px rgba(0, 0, 0, 0.92),
+        0 0 40px rgba(255, 90, 0, 0.18),
+        inset 0 1px 1px rgba(255, 210, 130, 0.35);
+    }
+
+    .live-fusion-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 110, 0, 0.25);
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255, 90, 0, 0.28), rgba(0, 229, 255, 0.22));
+      border: 1px solid rgba(255, 140, 0, 0.65);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+
+    .live-dual-screens {
+      display: grid;
+      grid-template-columns: 1.18fr 0.82fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 1260px) {
+      .live-dual-screens {
         grid-template-columns: 1fr;
       }
     }
 
-    .winner-ref-card {
-      background: linear-gradient(165deg, rgba(22, 18, 25, 0.9) 0%, rgba(8, 7, 11, 0.96) 100%);
-      border-radius: 18px;
-      padding: 14px 16px;
+    /* Individual Mock Screen (Home on Left, 360 Store on Right) */
+    .fusion-screen {
+      background:
+        radial-gradient(circle at 50% 10%, rgba(255, 90, 0, 0.14), transparent 55%),
+        radial-gradient(circle at 50% 80%, rgba(0, 229, 255, 0.08), transparent 55%),
+        #030306;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 110, 0, 0.45);
+      box-shadow:
+        inset 0 1px 1px rgba(255, 200, 110, 0.28),
+        0 14px 40px rgba(0, 0, 0, 0.85);
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .screen-tag {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 120, 0, 0.45);
+      color: var(--gold);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* Top Nav inside Live Mockup */
+    .mock-topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 8px;
+      padding-top: 8px;
+    }
+
+    .liquid-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 999px;
+      background: linear-gradient(145deg, rgba(22, 18, 28, 0.82), rgba(8, 7, 12, 0.92));
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 120, 0, 0.45);
+      box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.65),
+        inset 0 1px 1px rgba(255, 200, 120, 0.35);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #f2efe9;
+      letter-spacing: 0.08em;
       cursor: pointer;
-      transition: all 0.18s ease;
+      transition: all 0.2s ease;
     }
 
-    .winner-ref-card.c1 {
-      border: 2px solid #ff7b1a;
-      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.85), 0 0 24px rgba(255, 107, 26, 0.25);
+    .liquid-pill:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 16px rgba(255, 90, 0, 0.45);
     }
 
-    .winner-ref-card.c19 {
-      border: 2px solid #38bdf8;
-      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.85), 0 0 24px rgba(56, 189, 248, 0.22);
+    .liquid-pill.gold-pill {
+      border-color: rgba(255, 185, 50, 0.75);
+      color: #ffd166;
+      box-shadow: 0 0 14px rgba(255, 160, 0, 0.28), inset 0 1px 1px rgba(255, 225, 130, 0.4);
     }
 
-    .winner-ref-card:hover {
-      transform: translateY(-2px);
+    .liquid-pill.cyan-pill {
+      border-color: rgba(0, 229, 255, 0.7);
+      color: #6ef3ff;
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.25), inset 0 1px 1px rgba(150, 245, 255, 0.35);
     }
 
-    .winner-ref-thumb {
-      width: 170px;
-      aspect-ratio: 16 / 9;
-      border-radius: 10px;
-      object-fit: cover;
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      flex-shrink: 0;
-    }
-
-    /* Section Header */
-    .gallery-container {
-      max-width: 1760px;
-      margin: 18px auto 80px;
-      padding: 0 24px;
-    }
-
-    .group-banner {
-      margin: 26px 0 16px;
-      padding: 14px 20px;
-      border-radius: 16px;
+    .center-tree-brand {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
+      text-align: center;
     }
 
-    .group-banner.c1-banner {
-      background: linear-gradient(90deg, rgba(255, 107, 26, 0.24) 0%, rgba(14, 11, 16, 0.92) 100%);
-      border: 1.5px solid rgba(255, 130, 40, 0.55);
+    .center-tree-brand img {
+      width: 66px;
+      height: 66px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 14px rgba(255, 90, 0, 0.55));
     }
 
-    .group-banner.c19-banner {
-      background: linear-gradient(90deg, rgba(56, 189, 248, 0.22) 0%, rgba(255, 107, 26, 0.16) 60%, rgba(12, 14, 22, 0.94) 100%);
-      border: 1.5px solid rgba(56, 189, 248, 0.55);
-    }
-
-    .group-banner h2 {
+    .center-tree-title {
       font-family: 'Orbitron', sans-serif;
       font-size: 1.05rem;
       font-weight: 900;
-      letter-spacing: 1.2px;
+      letter-spacing: 0.22em;
+      color: #ff6d38;
+      text-shadow: 0 0 16px rgba(255, 90, 0, 0.75);
+      margin-top: 2px;
+    }
+
+    /* 3 Apparel Capsules on 3D Stepped Showroom Pedestals */
+    .hero-pedestals-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      align-items: end;
+      padding: 6px 4px;
+    }
+
+    .capsule-pedestal-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.25s ease;
+    }
+
+    .capsule-pedestal-unit:hover {
+      transform: translateY(-4px);
+    }
+
+    /* Concept #01: Smoked Black & Molten Orange Liquid Glass Capsule */
+    .liquid-glass-capsule {
+      width: 100%;
+      border-radius: 22px 22px 16px 16px;
+      padding: 12px 10px 8px;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(255, 110, 0, 0.22), transparent 65%),
+        linear-gradient(160deg, rgba(28, 20, 32, 0.75) 0%, rgba(8, 7, 12, 0.88) 100%);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 115, 0, 0.65);
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.8),
+        0 0 22px rgba(255, 90, 0, 0.22),
+        inset 0 1px 2px rgba(255, 220, 140, 0.45),
+        inset 0 -8px 18px rgba(0, 229, 255, 0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .liquid-glass-capsule img {
+      width: 100%;
+      max-width: 128px;
+      height: 112px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.85));
+      transition: transform 0.3s ease;
+    }
+
+    .capsule-pedestal-unit:hover .liquid-glass-capsule img {
+      transform: scale(1.06);
+    }
+
+    .capsule-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    /* Concept #19: 3D Stepped Orange & Cyan Showroom Pedestal Base */
+    .pedestal-3d-base {
+      width: 92%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: -3px;
+    }
+
+    .pedestal-ring-top {
+      width: 88%;
+      height: 9px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, #ffae00 0%, #ff5a00 60%, #1a0c04 100%);
+      box-shadow: 0 0 16px rgba(255, 90, 0, 0.85);
+      border: 1px solid rgba(255, 220, 140, 0.8);
+    }
+
+    .pedestal-ring-mid {
+      width: 96%;
+      height: 11px;
+      margin-top: -2px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #0d1218, #1f2b38 50%, #0d1218);
+      border: 1px solid rgba(0, 229, 255, 0.75);
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.55);
+    }
+
+    .pedestal-ring-bot {
+      width: 100%;
+      height: 10px;
+      margin-top: -2px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #160b04, #ff5a00 50%, #160b04);
+      border: 1px solid rgba(255, 120, 0, 0.65);
+      box-shadow: 0 6px 18px rgba(255, 90, 0, 0.45);
+    }
+
+    /* Mid Row: Shibuya 3D Arena Bot Pit Card + Quick Telemetry */
+    .mid-botpit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 2px 4px;
+    }
+
+    .botpit-liquid-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 14px 8px 8px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(16, 22, 30, 0.9), rgba(10, 8, 16, 0.95));
+      border: 1px solid rgba(0, 229, 255, 0.7);
+      box-shadow:
+        0 0 22px rgba(0, 229, 255, 0.3),
+        0 0 14px rgba(255, 90, 0, 0.2),
+        inset 0 1px 1px rgba(170, 245, 255, 0.4);
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+
+    .botpit-liquid-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--molten-orange);
+      box-shadow: 0 0 26px rgba(255, 90, 0, 0.55), 0 0 18px rgba(0, 229, 255, 0.4);
+    }
+
+    .botpit-liquid-card img {
+      width: 132px;
+      height: 68px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 140, 0, 0.65);
+    }
+
+    .botpit-info-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
       color: #fff;
+      letter-spacing: 0.08em;
+    }
+
+    .botpit-info-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--cyan);
+      margin-top: 2px;
+    }
+
+    /* Bottom Tri-Brand Dock: Nerdy Misfits | We Build & Create (4 Holograms) | Deaf Hammer */
+    .bottom-tribrand-dock {
+      display: grid;
+      grid-template-columns: 1fr 1.65fr 1fr;
+      gap: 10px;
+      align-items: stretch;
+      padding: 10px 12px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(20, 15, 26, 0.86), rgba(7, 6, 12, 0.96));
+      border: 1px solid rgba(255, 110, 0, 0.48);
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.85),
+        inset 0 1px 1px rgba(255, 200, 120, 0.28);
+    }
+
+    @media (max-width: 900px) {
+      .bottom-tribrand-dock {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .partner-wing {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 14px;
+      background: rgba(8, 8, 14, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .partner-wing.misfits-wing {
+      border-color: rgba(57, 255, 20, 0.38);
+      box-shadow: inset 0 0 16px rgba(57, 255, 20, 0.08);
+    }
+
+    .partner-wing.deafhammer-wing {
+      border-color: rgba(41, 98, 255, 0.48);
+      box-shadow: inset 0 0 16px rgba(41, 98, 255, 0.12);
+    }
+
+    .partner-char {
+      height: 68px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.8));
+    }
+
+    .partner-logo {
+      height: 54px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* Center We Build & Create 4 Cyan Holograms */
+    .we-build-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .we-build-heading {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: #a8f7ff;
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+    }
+
+    .holo-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .holo-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .holo-unit img {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.55));
+    }
+
+    .holo-unit span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.54rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--cyan);
+      margin-top: 2px;
+    }
+
+    .start-project-btn {
+      padding: 5px 18px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(0, 229, 255, 0.18), rgba(255, 90, 0, 0.28));
+      border: 1px solid rgba(0, 229, 255, 0.75);
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.35);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* RIGHT SCREEN: 360° 3D Stepped Turntable Store + Liquid Glass HUD */
+    .store-turntable-layout {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 14px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .turntable-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(255, 110, 0, 0.24), transparent 65%),
+        linear-gradient(165deg, rgba(25, 18, 30, 0.8), rgba(7, 6, 12, 0.94));
+      border: 1px solid rgba(255, 120, 0, 0.65);
+      box-shadow:
+        0 12px 34px rgba(0, 0, 0, 0.85),
+        inset 0 1px 2px rgba(255, 215, 130, 0.4);
+      position: relative;
+    }
+
+    .turntable-hero-img {
+      width: 175px;
+      height: 155px;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.9));
+      transition: transform 0.35s ease;
+    }
+
+    .degree-pill {
+      margin-top: 6px;
+      padding: 3px 12px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--cyan);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--cyan);
+    }
+
+    .store-hud-panel {
+      padding: 14px;
+      border-radius: 18px;
+      background: linear-gradient(155deg, rgba(22, 16, 26, 0.88), rgba(8, 7, 12, 0.96));
+      border: 1px solid rgba(255, 110, 0, 0.55);
+      box-shadow: inset 0 1px 1px rgba(255, 205, 120, 0.32);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hud-item-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+    }
+
+    .hud-item-price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 12px rgba(255, 160, 0, 0.45);
+    }
+
+    .size-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .size-btn {
+      flex: 1;
+      padding: 5px 0;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 120, 0, 0.4);
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .size-btn.active {
+      background: linear-gradient(135deg, #ff5a00, #ff9e00);
+      color: #050508;
+      border-color: #ffd166;
+      box-shadow: 0 0 12px rgba(255, 90, 0, 0.6);
+    }
+
+    .buy-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-cart {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(255, 90, 0, 0.2);
+      border: 1px solid var(--molten-orange);
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-buy {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #ff5a00, #ffae00);
+      border: 1px solid #ffd166;
+      color: #050508;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 16px rgba(255, 90, 0, 0.5);
+    }
+
+    .store-mini-pedestals {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .mini-pedestal-card {
+      padding: 6px;
+      border-radius: 12px;
+      background: rgba(16, 13, 22, 0.85);
+      border: 1px solid rgba(255, 110, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mini-pedestal-card:hover,
+    .mini-pedestal-card.active {
+      border-color: var(--cyan);
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.35);
+    }
+
+    .mini-pedestal-card img {
+      height: 44px;
+      object-fit: contain;
+    }
+
+    .mini-pedestal-card span {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    /* ============================================================================
+       CONCEPT GALLERY GRID
+       ============================================================================ */
+    .gallery-container {
+      max-width: 1760px;
+      margin: 18px auto 60px;
+      padding: 0 24px;
+    }
+
+    .section-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 18px 0 14px;
+      padding: 14px 20px;
+      border-radius: 16px;
+      background: linear-gradient(90deg, rgba(255, 90, 0, 0.18), rgba(0, 229, 255, 0.1), rgba(10, 9, 14, 0.9));
+      border: 1px solid rgba(255, 110, 0, 0.45);
+    }
+
+    .section-banner h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .section-banner p {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--gold);
     }
 
     .concepts-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(490px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
       gap: 22px;
     }
 
@@ -234,484 +804,768 @@
     }
 
     .concept-card {
-      background: linear-gradient(165deg, rgba(22, 18, 25, 0.88) 0%, rgba(9, 8, 12, 0.96) 100%);
-      border: 1.5px solid rgba(255, 130, 40, 0.32);
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.85);
-      transition: all 0.2s ease;
+      background: linear-gradient(165deg, rgba(19, 15, 24, 0.94), rgba(6, 5, 10, 0.98));
+      border: 1px solid rgba(255, 110, 0, 0.42);
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.85),
+        inset 0 1px 1px rgba(255, 210, 140, 0.25);
+      transition: all 0.25s ease;
       display: flex;
       flex-direction: column;
     }
 
-    .concept-card.series-c19 {
-      border-color: rgba(56, 189, 248, 0.35);
-    }
-
     .concept-card:hover {
-      border-color: #ff9e2c;
-      transform: translateY(-4px);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 28px rgba(255, 107, 26, 0.32);
+      transform: translateY(-5px);
+      border-color: var(--molten-orange);
+      box-shadow:
+        0 22px 50px rgba(0, 0, 0, 0.95),
+        0 0 28px rgba(255, 90, 0, 0.35),
+        inset 0 1px 2px rgba(255, 220, 150, 0.45);
     }
 
-    .concept-card.series-c19:hover {
-      border-color: #38bdf8;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 28px rgba(56, 189, 248, 0.32);
-    }
-
-    .concept-art-viewport {
+    .card-img-wrap {
       position: relative;
       width: 100%;
       aspect-ratio: 16 / 9;
-      background: #060509;
+      background: #020204;
       overflow: hidden;
       cursor: pointer;
     }
 
-    .concept-art-viewport img {
+    .card-img-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.32s ease;
-      display: block;
+      transition: transform 0.35s ease;
     }
 
-    .concept-card:hover .concept-art-viewport img {
+    .concept-card:hover .card-img-wrap img {
       transform: scale(1.03);
     }
 
-    .concept-top-badges {
+    .card-badge {
       position: absolute;
-      top: 10px;
+      top: 12px;
       left: 12px;
-      right: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      pointer-events: none;
-    }
-
-    .concept-num-pill {
-      background: rgba(8, 7, 11, 0.9);
-      backdrop-filter: blur(8px);
-      border: 1.5px solid #ff8c24;
-      color: #ffae42;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(5, 4, 8, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--molten-orange);
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.64rem;
+      font-size: 0.72rem;
       font-weight: 900;
-      padding: 5px 11px;
-      border-radius: 999px;
-      letter-spacing: 0.7px;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      box-shadow: 0 0 14px rgba(255, 90, 0, 0.45);
     }
 
-    .series-c19 .concept-num-pill {
-      border-color: #38bdf8;
-      color: #7dd3fc;
-    }
-
-    .concept-match-pill {
-      background: rgba(8, 7, 11, 0.88);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      color: #f8fafc;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.54rem;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 999px;
-    }
-
-    .concept-split-indicator {
+    .card-zoom-hint {
       position: absolute;
       bottom: 10px;
-      left: 12px;
       right: 12px;
-      display: flex;
-      justify-content: space-between;
-      pointer-events: none;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.78);
+      border: 1px solid rgba(0, 229, 255, 0.55);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--cyan);
     }
 
-    .split-tag {
-      background: rgba(6, 5, 9, 0.86);
-      border: 1px solid rgba(255, 140, 50, 0.45);
-      color: #fde047;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.50rem;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 6px;
-    }
-
-    .concept-body {
-      padding: 15px 18px 18px;
+    .card-body {
+      padding: 16px 18px 18px;
       display: flex;
       flex-direction: column;
       gap: 8px;
       flex: 1;
     }
 
-    .concept-title {
+    .card-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.90rem;
-      font-weight: 900;
+      font-size: 0.98rem;
+      font-weight: 800;
       color: #fff;
+      letter-spacing: 0.04em;
     }
 
-    .concept-desc {
-      font-size: 0.79rem;
-      color: #cbd5e1;
-      line-height: 1.46;
+    .card-desc {
+      font-size: 0.92rem;
+      color: #c8c4be;
+      line-height: 1.45;
     }
 
-    .btn-inspect {
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
       margin-top: auto;
-      background: linear-gradient(180deg, rgba(255, 115, 25, 0.26) 0%, rgba(180, 55, 10, 0.22) 100%);
-      border: 1px solid rgba(255, 140, 50, 0.65);
-      color: #fff;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.62rem;
-      font-weight: 900;
-      padding: 9px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.15s ease;
+      padding-top: 8px;
     }
 
-    .series-c19 .btn-inspect {
-      background: linear-gradient(180deg, rgba(56, 189, 248, 0.24) 0%, rgba(255, 107, 26, 0.20) 100%);
-      border-color: rgba(56, 189, 248, 0.65);
+    .tag-chip {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(255, 90, 0, 0.12);
+      border: 1px solid rgba(255, 120, 0, 0.35);
+      color: var(--gold);
     }
 
-    .btn-inspect:hover {
-      background: linear-gradient(180deg, #ff7b1a 0%, #d9460f 100%);
-      color: #050507;
-    }
-
-    /* Full-Screen Lightbox */
-    .lightbox-backdrop {
+    /* Fullscreen Lightbox Modal */
+    .lightbox {
       position: fixed;
       inset: 0;
-      z-index: 9999;
-      background: rgba(4, 3, 7, 0.95);
-      backdrop-filter: blur(20px);
+      z-index: 999;
+      background: rgba(2, 2, 5, 0.94);
+      backdrop-filter: blur(18px);
       display: none;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 18px;
+      padding: 24px;
     }
 
-    .lightbox-backdrop.open {
+    .lightbox.open {
       display: flex;
     }
 
-    .lightbox-shell {
-      max-width: 1620px;
+    .lightbox-inner {
+      max-width: 1640px;
       width: 100%;
-      background: linear-gradient(180deg, rgba(20, 16, 22, 0.98) 0%, rgba(8, 7, 11, 0.99) 100%);
-      border: 2px solid #ff8c24;
+      background: #07060c;
+      border: 1px solid var(--molten-orange);
       border-radius: 22px;
       overflow: hidden;
-      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95);
-      display: flex;
-      flex-direction: column;
+      box-shadow: 0 0 60px rgba(255, 90, 0, 0.4);
     }
 
     .lightbox-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 13px 20px;
-      border-bottom: 1px solid rgba(255, 140, 50, 0.35);
-      gap: 12px;
-      flex-wrap: wrap;
+      padding: 12px 20px;
+      background: rgba(18, 14, 24, 0.95);
+      border-bottom: 1px solid rgba(255, 110, 0, 0.4);
     }
 
     .lightbox-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.96rem;
-      font-weight: 900;
-      color: #ffae42;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--gold);
     }
 
-    .lightbox-img-stage {
+    .lightbox-close {
+      background: rgba(255, 90, 0, 0.25);
+      border: 1px solid var(--molten-orange);
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .lightbox-img-wrap {
       width: 100%;
-      max-height: 76vh;
-      background: #030305;
+      max-height: 80vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: #000;
     }
 
-    .lightbox-img-stage img {
+    .lightbox-img-wrap img {
       max-width: 100%;
-      max-height: 76vh;
+      max-height: 80vh;
       object-fit: contain;
-      display: block;
-    }
-
-    .lightbox-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      padding: 13px 20px;
-      border-top: 1px solid rgba(255, 140, 50, 0.28);
     }
   </style>
 </head>
 <body>
 
   <!-- STICKY HEADER -->
-  <header class="top-showcase-header">
+  <header class="top-header">
     <div class="header-inner">
-      <div class="brand-cluster">
-        <div class="sunset-tree-badge">🌴</div>
-        <div class="brand-titles">
-          <h1>CONCEPT #01 (20 VARIATIONS) &amp; CONCEPT #19 (20 VARIATIONS)</h1>
-          <p>40 Custom Home Page + Merch Store Boards Narrowing Down Your Top 2 Favorites</p>
+      <div class="brand-block">
+        <img src="assets/logo.png" alt="RetroCanopy" class="brand-logo" />
+        <div>
+          <div class="brand-title">RETROCANOPY — #01 + #19 + LIVE SITE FUSION STUDIO</div>
+          <div class="brand-sub">20 Combined Concepts: Obsidian &amp; Molten Orange Liquid Glass (#01) + 3D Stepped Turntable Pedestals (#19) + Full Current Site</div>
         </div>
       </div>
 
-      <div class="tab-switcher-bar">
-        <button type="button" class="tab-pill-btn active-c1" id="tabBtnAll" onclick="setGalleryView('all')">⚡ ALL 40 VARIATIONS (#01 + #19)</button>
-        <button type="button" class="tab-pill-btn" id="tabBtnC1" onclick="setGalleryView('c01')">🔥 20 VARIATIONS OF #01 (BLACK &amp; ORANGE LIQUID GLASS)</button>
-        <button type="button" class="tab-pill-btn" id="tabBtnC19" onclick="setGalleryView('c19')">🛸 20 VARIATIONS OF #19 (3D SHOWROOM PEDESTALS &amp; HUD)</button>
-        <button type="button" class="tab-pill-btn" id="tabBtnOrig" onclick="setGalleryView('orig')">🏛️ ORIGINAL 20 CONCEPTS</button>
+      <div class="controls-bar">
+        <button class="filter-btn active" onclick="setFilter('fusion', this)">🔥 20 Combined (#01 + #19 + Current Site)</button>
+        <button class="filter-btn" onclick="setFilter('c01', this)">🟠 20 Concept #01 Variations</button>
+        <button class="filter-btn" onclick="setFilter('c19', this)">🛸 20 Concept #19 Variations</button>
+        <button class="filter-btn" onclick="setFilter('orig', this)">🏛️ Original 20</button>
+        <button class="filter-btn" onclick="setFilter('all', this)">⚡ View All (80)</button>
+        <input type="text" id="searchInput" class="search-box" placeholder="Search concepts..." oninput="renderGallery()" />
       </div>
     </div>
   </header>
 
-  <!-- TOP REFERENCE CARDS FOR ORIGINAL #01 & ORIGINAL #19 -->
-  <section class="winners-reference-strip">
-    <div class="winner-ref-card c1" onclick="setGalleryView('c01')">
-      <div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:0.65rem;color:#ff9e2c;font-weight:900;">★ YOUR PICK #1 — 20 VARIATIONS BELOW</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:0.95rem;color:#fff;font-weight:900;margin:4px 0;">CONCEPT #01: OBSIDIAN &amp; ORANGE LIQUID GLASS</div>
-        <div style="font-size:0.76rem;color:#cbd5e1;">Smoked-black refractive liquid glass capsules, molten sunset-orange rim glow, bottom glass agency dock &amp; 3D glass pedestal store.</div>
+  <!-- INTERACTIVE REAL-ASSET FUSION PROTOTYPE (#01 + #19 + CURRENT LIVE SITE) -->
+  <section class="live-fusion-wrapper">
+    <div class="live-fusion-banner">
+      <div class="live-fusion-header">
+        <div>
+          <span class="live-badge">⚡ INTERACTIVE LIVE ASSET FUSION PREVIEW — CONCEPT #01 + CONCEPT #19 + CURRENT SITE</span>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.76rem;color:#c8c4be;">
+          Click any apparel pedestal or rotate the 360° store turntable on the right
+        </div>
       </div>
-      <img class="winner-ref-thumb" src="assets/concept_gallery/homepage_store_20/01_black_orange_liquid_glass.jpg" alt="Original Concept 01" />
-    </div>
 
-    <div class="winner-ref-card c19" onclick="setGalleryView('c19')">
-      <div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:0.65rem;color:#38bdf8;font-weight:900;">★ YOUR PICK #2 — 20 VARIATIONS BELOW</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:0.95rem;color:#fff;font-weight:900;margin:4px 0;">CONCEPT #19: 3D SHOWROOM PEDESTALS &amp; GLASS HUD</div>
-        <div style="font-size:0.76rem;color:#cbd5e1;">Stepped 3D illuminated orange &amp; cyan showroom pedestals in center, floating smoked-glass HUD panels &amp; 360° Turntable Store.</div>
+      <div class="live-dual-screens">
+        <!-- LEFT SCREEN: CURRENT SITE HOME PAGE IN #01 LIQUID GLASS + #19 3D PEDESTALS -->
+        <div class="fusion-screen">
+          <div class="screen-tag">LEFT: HOME PAGE (#01 LIQUID GLASS + #19 3D PEDESTALS + LIVE SITE)</div>
+
+          <!-- Top Bar: MUSIC: OFF | Synthwave Sunset Tree RETROCANOPY | OWNER HUB + @Joseph -->
+          <div class="mock-topbar">
+            <button class="liquid-pill" onclick="this.textContent = this.textContent.includes('OFF') ? '🔊 MUSIC: ON ▾' : '🔇 MUSIC: OFF ▾'">🔇 MUSIC: OFF ▾</button>
+
+            <div class="center-tree-brand">
+              <img src="assets/logo.png" alt="RetroCanopy 1984 Tree" />
+              <div class="center-tree-title">RETROCANOPY</div>
+            </div>
+
+            <div style="display:flex;gap:6px;">
+              <button class="liquid-pill gold-pill">🛡️ OWNER HUB</button>
+              <button class="liquid-pill cyan-pill">👤 @Joseph</button>
+            </div>
+          </div>
+
+          <!-- Center Hero: 3 White & Gold Apparel Items in Liquid Glass Capsules atop 3D Stepped Pedestals -->
+          <div class="hero-pedestals-row">
+            <!-- Left Snapback Hat -->
+            <div class="capsule-pedestal-unit" onclick="selectStoreMerch(0)">
+              <div class="liquid-glass-capsule">
+                <img src="assets/merch/hat_tier6_valkyrie.png?v=200" alt="RetroCanopy Winged Crown Hat" />
+                <div class="capsule-label">VALKYRIE SNAPBACK // $65</div>
+              </div>
+              <div class="pedestal-3d-base">
+                <div class="pedestal-ring-top"></div>
+                <div class="pedestal-ring-mid"></div>
+                <div class="pedestal-ring-bot"></div>
+              </div>
+            </div>
+
+            <!-- Center White & Gold Hoodie -->
+            <div class="capsule-pedestal-unit" onclick="selectStoreMerch(1)">
+              <div class="liquid-glass-capsule" style="border-color:#ffd166;box-shadow:0 0 28px rgba(255,140,0,0.35), inset 0 1px 2px rgba(255,230,150,0.6);">
+                <img src="assets/merch/hoodie_tier6_2f_front.png?v=200" alt="RetroCanopy White Gold Hoodie" />
+                <div class="capsule-label">EST. 1984 CROWN HOODIE // $128</div>
+              </div>
+              <div class="pedestal-3d-base">
+                <div class="pedestal-ring-top"></div>
+                <div class="pedestal-ring-mid"></div>
+                <div class="pedestal-ring-bot"></div>
+              </div>
+            </div>
+
+            <!-- Right Snapback Hat -->
+            <div class="capsule-pedestal-unit" onclick="selectStoreMerch(2)">
+              <div class="liquid-glass-capsule">
+                <img src="assets/merch/hat_tier6_valkyrie.png?v=200" alt="RetroCanopy Gold Edition Hat" />
+                <div class="capsule-label">FOUNDERS GOLD HAT // $68</div>
+              </div>
+              <div class="pedestal-3d-base">
+                <div class="pedestal-ring-top"></div>
+                <div class="pedestal-ring-mid"></div>
+                <div class="pedestal-ring-bot"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mid Row: Shibuya 3D Arena Bot Pit Card -->
+          <div class="mid-botpit-row">
+            <a href="shibuya_bot_pit.html" class="botpit-liquid-card">
+              <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg" alt="Shibuya 3D Arena Bot Pit" />
+              <div>
+                <div class="botpit-info-title">SHIBUYA 3D ARENA — BOT PIT</div>
+                <div class="botpit-info-sub">⚡ ENTER 3D ARENA • QUESTS 1–10 • PVP &amp; BOSS BATTLES</div>
+              </div>
+            </a>
+
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:#ffd166;text-align:right;">
+              <div>LIQUID GLASS HUD v2.4</div>
+              <div style="color:#00e5ff;">PEDESTAL TELEMETRY: ONLINE</div>
+            </div>
+          </div>
+
+          <!-- Bottom Tri-Brand Dock: Nerdy Misfits | We Build & Create 4 Holograms | Deaf Hammer -->
+          <div class="bottom-tribrand-dock">
+            <!-- Left: Nerdy Misfits -->
+            <div class="partner-wing misfits-wing">
+              <img src="assets/misfits/glitch_body.png?v=141" alt="Nerdy Misfits Mascot" class="partner-char" />
+              <img src="assets/misfits/official_logo_transparent.png?v=141" alt="Nerdy Misfits Logo" class="partner-logo" />
+            </div>
+
+            <!-- Center: We Build & Create 4 Cyan Holograms -->
+            <div class="we-build-center">
+              <div class="we-build-heading">• WE BUILD &amp; CREATE •</div>
+              <div class="holo-grid-4">
+                <div class="holo-unit">
+                  <img src="assets/misfits/holo_proj_websites.png?v=141" alt="Websites" />
+                  <span>WEBSITES</span>
+                </div>
+                <div class="holo-unit">
+                  <img src="assets/misfits/holo_proj_apps.png?v=141" alt="Apps" />
+                  <span>APPS</span>
+                </div>
+                <div class="holo-unit">
+                  <img src="assets/misfits/holo_proj_games.png?v=141" alt="Games" />
+                  <span>GAMES</span>
+                </div>
+                <div class="holo-unit">
+                  <img src="assets/misfits/holo_proj_apparel.png?v=141" alt="Apparel" />
+                  <span>APPAREL</span>
+                </div>
+              </div>
+              <button class="start-project-btn">START A PROJECT ⚡</button>
+            </div>
+
+            <!-- Right: Deaf Hammer Productions -->
+            <div class="partner-wing deafhammer-wing">
+              <img src="assets/misfits/deafhammer_logo_lockup.png?v=141" alt="Deaf Hammer Productions" class="partner-logo" />
+              <img src="assets/misfits/deafhammer_mascot.png?v=141" alt="Deaf Hammer Mascot" class="partner-char" />
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SCREEN: MATCHING 360° 3D TURNTABLE STORE + MOLTEN ORANGE LIQUID GLASS HUD -->
+        <div class="fusion-screen">
+          <div class="screen-tag">RIGHT: 360° TURNTABLE STORE (#01 LIQUID GLASS + #19 3D PEDESTAL)</div>
+
+          <div class="store-turntable-layout">
+            <!-- 360 Turntable Stage -->
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="turntable-stage" style="width:100%;">
+                <img id="liveStoreHeroImg" src="assets/merch/hat_tier6_valkyrie.png?v=200" alt="360 Showroom Item" class="turntable-hero-img" />
+                <div class="degree-pill" id="liveDegreePill">◄ 360° TURNTABLE • 0° ►</div>
+              </div>
+              <div class="pedestal-3d-base" style="width:94%;">
+                <div class="pedestal-ring-top"></div>
+                <div class="pedestal-ring-mid"></div>
+                <div class="pedestal-ring-bot"></div>
+              </div>
+              <input type="range" min="-180" max="180" value="0" style="width:85%;margin-top:8px;accent-color:#ff5a00;" oninput="rotateLiveTurntable(this.value)" />
+            </div>
+
+            <!-- Smoked Black & Molten Orange Liquid Glass Inspector HUD -->
+            <div class="store-hud-panel">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:0.66rem;color:var(--cyan);">RETROCANOPY VAULT // TIER-6 GOLD EDITION</div>
+              <div class="hud-item-title" id="liveStoreTitle">RETROCANOPY EST. 1984 WINGED-CROWN SNAPBACK</div>
+              <div class="hud-item-price" id="liveStorePrice">$65.00</div>
+              <div style="font-size:0.8rem;color:#c8c4be;">Heavyweight optical-white crown, 3D metallic 24K gold winged canopy embroidery, custom gold-foil visor sticker.</div>
+
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.64rem;color:var(--gold);margin-top:2px;">SELECT SIZE</div>
+              <div class="size-row">
+                <button class="size-btn" onclick="pickSize(this)">S</button>
+                <button class="size-btn" onclick="pickSize(this)">M</button>
+                <button class="size-btn active" onclick="pickSize(this)">L</button>
+                <button class="size-btn" onclick="pickSize(this)">XL</button>
+              </div>
+
+              <div class="buy-actions" style="margin-top:4px;">
+                <button class="btn-cart">ADD TO CART</button>
+                <button class="btn-buy">BUY NOW ⚡</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Mini Pedestal Selector Dock -->
+          <div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.65rem;color:var(--gold);margin-bottom:6px;letter-spacing:0.1em;">
+              SELECT PEDESTAL ITEM FOR 360° TURNTABLE INSPECTION:
+            </div>
+            <div class="store-mini-pedestals">
+              <div class="mini-pedestal-card active" onclick="selectStoreMerch(0, this)">
+                <img src="assets/merch/hat_tier6_valkyrie.png?v=200" alt="Valkyrie Hat" />
+                <span>VALKYRIE HAT • $65</span>
+              </div>
+              <div class="mini-pedestal-card" onclick="selectStoreMerch(1, this)">
+                <img src="assets/merch/hoodie_tier6_2f_front.png?v=200" alt="Crown Hoodie Front" />
+                <span>HOODIE (FRONT) • $128</span>
+              </div>
+              <div class="mini-pedestal-card" onclick="selectStoreMerch(2, this)">
+                <img src="assets/merch/hoodie_tier6_2f_back.png?v=200" alt="Crown Hoodie Back" />
+                <span>HOODIE (BACK) • $128</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <img class="winner-ref-thumb" src="assets/concept_gallery/homepage_store_20/19_isometric_dark_cyber_showroom.jpg" alt="Original Concept 19" />
     </div>
   </section>
 
-  <!-- MAIN GALLERY -->
-  <main class="gallery-container" id="galleryRoot"></main>
+  <!-- MAIN 20 COMBINED CONCEPTS GALLERY -->
+  <main class="gallery-container">
+    <div class="section-banner">
+      <h2 id="gallerySectionTitle">🔥 20 NEW COMBINED CONCEPTS (#01 BLACK/ORANGE LIQUID GLASS + #19 3D PEDESTALS + CURRENT SITE)</h2>
+      <p id="galleryCountLabel">Showing 20 concepts — Click any concept board to inspect full-screen</p>
+    </div>
 
-  <!-- LIGHTBOX -->
-  <div class="lightbox-backdrop" id="conceptLightbox" onclick="if(event.target === this) closeLightbox()">
-    <div class="lightbox-shell">
+    <div id="conceptsGrid" class="concepts-grid"></div>
+  </main>
+
+  <!-- FULLSCREEN LIGHTBOX -->
+  <div id="lightbox" class="lightbox" onclick="if(event.target===this) closeLightbox()">
+    <div class="lightbox-inner">
       <div class="lightbox-top">
-        <div class="lightbox-title" id="lbTitle"></div>
-        <div style="display:flex;gap:8px;">
-          <button type="button" class="tab-pill-btn" onclick="stepLightbox(-1)">◀ PREV</button>
-          <button type="button" class="tab-pill-btn" onclick="stepLightbox(1)">NEXT ▶</button>
-          <button type="button" class="tab-pill-btn active-c1" onclick="closeLightbox()">✕ CLOSE (ESC)</button>
-        </div>
+        <div id="lightboxTitle" class="lightbox-title">Concept Preview</div>
+        <button class="lightbox-close" onclick="closeLightbox()">✕ CLOSE [ESC]</button>
       </div>
-      <div class="lightbox-img-stage">
-        <img id="lbImage" src="" alt="Full Screen Concept" />
-      </div>
-      <div class="lightbox-bottom">
-        <div id="lbDesc" style="font-size:0.84rem;color:#e2e8f0;max-width:1050px;"></div>
-        <div style="display:flex;gap:10px;">
-          <span class="split-tag">LEFT: MAIN HOME PAGE</span>
-          <span class="split-tag">RIGHT: MATCHING SHOP SCREEN</span>
-        </div>
+      <div class="lightbox-img-wrap">
+        <img id="lightboxImg" src="" alt="Fullscreen Concept" />
       </div>
     </div>
   </div>
 
   <script>
-    const C01_VARIATIONS = [
-      { id: "01-V01", title: "Classic Vertical Pill Capsules & 3D Orange Ring Store", file: "assets/concept_gallery/homepage_store_20/c01_v01.jpg", desc: "3 tall vertical smoked-black & molten-orange liquid glass pill capsules for Hats, Hoodie & Controller above the wide Shibuya Bot Pit card and bottom dock; 3D orange glass ring pedestal + 3x2 product grid on Store." },
-      { id: "01-V02", title: "Panoramic Wide Liquid Glass Hero Stage", file: "assets/concept_gallery/homepage_store_20/c01_v02.jpg", desc: "Single wide curved black-and-orange liquid glass showcase stage holding all 3 apparel items on a glowing amber shelf, with 2-column Bot Pit + We Build & Create cards below; wide hero + 4-column Store grid." },
-      { id: "01-V03", title: "3D Spherical Liquid Glass Orbs & Slide-Out Cart Drawer", file: "assets/concept_gallery/homepage_store_20/c01_v03.jpg", desc: "3 glossy smoked-black & molten-orange liquid glass spheres encapsulating the floating hats and hoodie on Home; spherical orb showcase + right-side liquid glass cart drawer on Store." },
-      { id: "01-V04", title: "Beveled Hexagonal Molten Honeycomb Pods", file: "assets/concept_gallery/homepage_store_20/c01_v04.jpg", desc: "Precision hexagon-cut black-and-orange liquid glass cells with glowing amber seams for Apparel, Bot Pit, and Agency icons on Home; hexagonal collector's honeycomb grid on Store." },
-      { id: "01-V05", title: "Ultra-Stealth 95% Obsidian with 1px Solar-Orange Rim", file: "assets/concept_gallery/homepage_store_20/c01_v05.jpg", desc: "Ultra-clean minimal dark glass where panels are 95% pitch-black smoked obsidian bounded by razor-sharp 1px glowing solar-orange specular borders on Home and Store." },
-      { id: "01-V06", title: "Mirror-Black Floor Reflection & Sunset Caustics", file: "assets/concept_gallery/homepage_store_20/c01_v06.jpg", desc: "Smoked black-and-orange liquid glass capsules hovering over a polished wet-black mirror floor that reflects the warm orange caustics and 1984 sunset tree across Home and Store." },
-      { id: "01-V07", title: "Asymmetric Modular Bento in Black & Orange Liquid Glass", file: "assets/concept_gallery/homepage_store_20/c01_v07.jpg", desc: "Structured bento grid composed of thick refractive black-and-orange liquid glass blocks for Apparel, Bot Pit, Misfits, Deaf Hammer & Studio; Bento Store with left category rail." },
-      { id: "01-V08", title: "24K Brushed Gold & Molten Amber Liquid Glass", file: "assets/concept_gallery/homepage_store_20/c01_v08.jpg", desc: "Infuses 24K brushed gold highlights into the smoked black-and-orange liquid glass chambers to harmonize with the gold embroidery on your white RetroCanopy hats and hoodies." },
-      { id: "01-V09", title: "3D Coverflow Angled Liquid Glass Carousel", file: "assets/concept_gallery/homepage_store_20/c01_v09.jpg", desc: "Angled 3D coverflow cards made of smoked black-and-orange liquid glass with the center apparel piece brought forward in radiant amber glow on both Home and Store." },
-      { id: "01-V10", title: "Twin Command Portals (Apparel Vault + Bot Pit Arena)", file: "assets/concept_gallery/homepage_store_20/c01_v10.jpg", desc: "Splits the Home Page into two prominent side-by-side black-orange liquid glass command windows (Apparel Vault left, Shibuya Bot Pit right) above the dock; dual-pane 360° Customizer + Grid on Store." },
-      { id: "01-V11", title: "Satin-Frosted Volcanic Smoke Glass & Diffused Ember Glow", file: "assets/concept_gallery/homepage_store_20/c01_v11.jpg", desc: "Matte-frosted smoked volcanic glass containers with soft diffused ember-orange inner lighting for maximum contrast against white-and-gold hats and hoodies." },
-      { id: "01-V12", title: "Multi-Layered 3D Depth Parallax Liquid Glass", file: "assets/concept_gallery/homepage_store_20/c01_v12.jpg", desc: "Overlapping floating sheets of translucent black-and-orange liquid glass casting soft orange drop-shadows onto deeper glass tiers on Home and Store." },
-      { id: "01-V13", title: "Neon-Filament Tube Encased Black Glass", file: "assets/concept_gallery/homepage_store_20/c01_v13.jpg", desc: "Thick molded dark glass capsules with glowing orange neon glass tube filaments embedded directly inside their borders on Home and Store." },
-      { id: "01-V14", title: "Zero-Scroll Master Console Liquid Glass Frame", file: "assets/concept_gallery/homepage_store_20/c01_v14.jpg", desc: "Wraps the entire Home Page inside a unified outer black-and-orange liquid glass master console frame with integrated top nav and bottom agency dock; matching Store console." },
-      { id: "01-V15", title: "Molten Amber Optical Caustic Refraction Glass", file: "assets/concept_gallery/homepage_store_20/c01_v15.jpg", desc: "Deep black glass panels with realistic golden-orange optical light caustics rippling beneath the 3D hats, hoodies, Bot Pit card, and Store product grid." },
-      { id: "01-V16", title: "Black & Orange Liquid Glass + Tri-Brand Glow Accents", file: "assets/concept_gallery/homepage_store_20/c01_v16.jpg", desc: "Dominant Obsidian & Sunset Orange liquid glass UI, accented with Neon Green liquid glass on Nerdy Misfits and Electric Blue liquid glass on Deaf Hammer." },
-      { id: "01-V17", title: "3-Column Architectural Liquid Glass Monolith Towers", file: "assets/concept_gallery/homepage_store_20/c01_v17.jpg", desc: "Three full-height vertical smoked-black & orange liquid glass columns on Home (Column 1: Apparel, Column 2: Sunset Tree & Bot Pit, Column 3: Partners & Services) + 3-column Store." },
-      { id: "01-V18", title: "Concave Curved Ultrawide Cinema Liquid Glass", file: "assets/concept_gallery/homepage_store_20/c01_v18.jpg", desc: "Sleek concave 3D perspective black-and-orange liquid glass interface that wraps subtly toward the viewer with panoramic Bot Pit and flanking apparel bays." },
-      { id: "01-V19", title: "Diamond-Chamfered Smoked Quartz & Orange Gem Glass", file: "assets/concept_gallery/homepage_store_20/c01_v19.jpg", desc: "Thick precision-chamfered black quartz glass cards with glowing orange beveled facets and tactile 3D glass buttons on Home and Store." },
-      { id: "01-V20", title: "Concept #01 + #19 Hybrid: Liquid Glass Cloche Domes on 3D Pedestals", file: "assets/concept_gallery/homepage_store_20/c01_v20.jpg", desc: "Encloses the white-and-gold hats, hoodies, and Bot Pit in Concept #01's smoked black-and-orange liquid glass domes mounted atop Concept #19's glowing 3D showroom pedestals." }
-    ];
-
-    const C19_VARIATIONS = [
-      { id: "19-V01", title: "Classic Stepped Orange & Cyan 3D Pedestals + Floating HUD", file: "assets/concept_gallery/homepage_store_20/c19_v01.jpg", desc: "Refined Concept #19: 3 stepped circular dark-metal pedestals glowing with sunset-orange bases and cyan top rings, flanked by 4 smoked-glass HUD panels on Home; isometric 3D turntable grid + dual spec HUDs on Store." },
-      { id: "19-V02", title: "Pure Obsidian Black, Molten Orange & Gold 3D Showroom Pedestals", file: "assets/concept_gallery/homepage_store_20/c19_v02.jpg", desc: "Concept #19's exact 3D stepped pedestals and floating glass HUD panels rendered in a pure Pitch-Black, Molten Sunset-Orange, and 1984 Gold color palette." },
-      { id: "19-V03", title: "Isometric Diamond Platform Matrix & Circuit Conduits", file: "assets/concept_gallery/homepage_store_20/c19_v03.jpg", desc: "Interlocking chamfered diamond-shaped dark-metal pedestals connected by illuminated orange and cyan circuit traces across the floor on both Home and Store." },
-      { id: "19-V04", title: "Volumetric Light-Cone Holographic Projector Pedestals", file: "assets/concept_gallery/homepage_store_20/c19_v04.jpg", desc: "Dark-titanium circular floor emitters projecting soft upward orange and cyan holographic light cones around the levitating hats and hoodies, paired with crisp floating HUDs." },
-      { id: "19-V05", title: "5-Pedestal Semicircular Command Stage", file: "assets/concept_gallery/homepage_store_20/c19_v05.jpg", desc: "Arranges 5 illuminated 3D pedestals in a semicircular arc on Home (3 center pedestals for Apparel, left for Shibuya Bot Pit, right for We Build & Create) + multi-pod 3D Turntable Store." },
-      { id: "19-V06", title: "Liquid Glass Domed 3D Pedestals (#19 + #01 Hybrid)", file: "assets/concept_gallery/homepage_store_20/c19_v06.jpg", desc: "Tops each glowing orange-and-cyan 3D stepped pedestal with a transparent smoked-glass protective dome, paired with molten-orange liquid glass HUD panels." },
-      { id: "19-V07", title: "Tiered 3D Arena Amphitheater Showroom", file: "assets/concept_gallery/homepage_store_20/c19_v07.jpg", desc: "Multi-level stepped dark showroom amphitheater crowned by the glowing 1984 RetroCanopy sunset tree emblem at top, apparel risers mid-stage, and Bot Pit / Partner HUDs in front." },
-      { id: "19-V08", title: "Shibuya Mecha-Hangar Hydraulic Turntable Lifts", file: "assets/concept_gallery/homepage_store_20/c19_v08.jpg", desc: "Heavy dark-carbon hydraulic piston turntable lifts with hazard-orange perimeter rings and cyan laser scanner grids inspecting hats, hoodies, and BattleBots." },
-      { id: "19-V09", title: "Levitating Gyroscopic Neon Rings Showroom", file: "assets/concept_gallery/homepage_store_20/c19_v09.jpg", desc: "Zero-gravity dark void where hats and hoodies hover weightlessly inside concentric glowing orange and cyan metallic rings, framed by frosted smoked-glass HUD cards." },
-      { id: "19-V10", title: "1984 OutRun Horizon Grid + 3D Showroom Pedestals", file: "assets/concept_gallery/homepage_store_20/c19_v10.jpg", desc: "Places Concept #19's circular stepped orange-and-cyan pedestals directly onto a glossy dark 1984 synthwave perspective grid receding toward the sunset tree horizon." },
-      { id: "19-V11", title: "Luxury Obsidian & 24K Gold Museum Pedestals", file: "assets/concept_gallery/homepage_store_20/c19_v11.jpg", desc: "Brushed black-obsidian cylindrical pedestals rimmed with glowing 24K gold and warm sunset-amber LED rings to match the gold crest on your white hats and hoodies." },
-      { id: "19-V12", title: "Rising Hexagonal Pillar Arena Showroom", file: "assets/concept_gallery/homepage_store_20/c19_v12.jpg", desc: "Interlocking black hexagonal floor tiles where center hexagonal pillars rise at staggered heights with glowing orange and cyan edges to support the apparel and Store turntable." },
-      { id: "19-V13", title: "Wrap-Around Curved Cockpit HUD + 3D Pedestal Stage", file: "assets/concept_gallery/homepage_store_20/c19_v13.jpg", desc: "Inward-angled curved translucent smoked-glass cockpit HUD panels framing the left and right edges of the viewport while looking out over the 3D illuminated pedestals." },
-      { id: "19-V14", title: "Tri-Brand Color-Coded 3D Showroom Pedestals", file: "assets/concept_gallery/homepage_store_20/c19_v14.jpg", desc: "Left pedestal & HUD glow Nerdy Misfits Neon Green, center apparel pedestals glow RetroCanopy Sunset Orange & Gold, right pedestal & HUD glow Deaf Hammer Electric Blue." },
-      { id: "19-V15", title: "Obsidian Mirror-Lake Reflective Pedestal Sanctuary", file: "assets/concept_gallery/homepage_store_20/c19_v15.jpg", desc: "Razor-sharp obsidian mirror-black floor casting crystal-clear inverted reflections of the glowing orange-and-cyan 3D pedestals, apparel, and floating smoked-glass HUD cards." },
-      { id: "19-V16", title: "Giant Mechanical Rotary Carousel Turntable Stage", file: "assets/concept_gallery/homepage_store_20/c19_v16.jpg", desc: "Master circular dark-metal rotary stage on the floor with concentric orange/cyan tracks carrying satellite pedestals that rotate into the front spotlight on Home and Store." },
-      { id: "19-V17", title: "3D Pedestals with 1984 CAD Vector Callouts & Degree Rings", file: "assets/concept_gallery/homepage_store_20/c19_v17.jpg", desc: "Integrates realistic dark-metal orange/cyan pedestals with glowing 360° degree-tick floor rings, laser pointer callout lines, and interactive wireframe CAD inspection on Store." },
-      { id: "19-V18", title: "Shibuya Midnight Rooftop Cyber-Deck Pedestal Showroom", file: "assets/concept_gallery/homepage_store_20/c19_v18.jpg", desc: "Deep dark rooftop terrace overlooking subtle out-of-focus Tokyo neon bokeh behind sharp dark-metal stepped pedestals and floating smoked-glass HUD panels." },
-      { id: "19-V19", title: "Minimalist Matte-Black Architectural Monolith Pedestals", file: "assets/concept_gallery/homepage_store_20/c19_v19.jpg", desc: "Sleek rectangular matte-black monolith blocks with recessed glowing orange and cyan light channels and ultra-clean minimal smoked-glass HUD cards." },
-      { id: "19-V20", title: "Ultimate 50/50 Fusion Masterpiece (Concept #01 + Concept #19)", file: "assets/concept_gallery/homepage_store_20/c19_v20.jpg", desc: "Combines Concept #19's stepped 3D showroom pedestals & 360° turntable store layout with Concept #01's glossy Obsidian Black & Molten Sunset Orange liquid glass HUD panels." }
-    ];
-
-    const ORIGINAL_20 = [
-      { id: "ORIG-01", title: "Original #01 — Obsidian & Molten Sunset Orange Liquid Glass", file: "assets/concept_gallery/homepage_store_20/01_black_orange_liquid_glass.jpg", desc: "Original Concept #01." },
-      { id: "ORIG-02", title: "Original #02 — 1984 OutRun Synthwave Dark Bento Grid", file: "assets/concept_gallery/homepage_store_20/02_1984_outrun_synthwave_bento.jpg", desc: "Original Concept #02." },
-      { id: "ORIG-03", title: "Original #03 — Cyber-Noir Matte Carbon & Brushed Gold", file: "assets/concept_gallery/homepage_store_20/03_cyber_noir_matte_carbon_gold.jpg", desc: "Original Concept #03." },
-      { id: "ORIG-04", title: "Original #04 — Shibuya Midnight Arcade Cabinet CRT HUD", file: "assets/concept_gallery/homepage_store_20/04_shibuya_midnight_arcade_crt.jpg", desc: "Original Concept #04." },
-      { id: "ORIG-05", title: "Original #05 — Smoked Titanium & Neon Persimmon Bento", file: "assets/concept_gallery/homepage_store_20/05_smoked_titanium_persimmon_bento.jpg", desc: "Original Concept #05." },
-      { id: "ORIG-06", title: "Original #06 — 1984 Hi-Fi Stereo Deck & Phosphor Amber", file: "assets/concept_gallery/homepage_store_20/06_vhs_hifi_deck_phosphor_amber.jpg", desc: "Original Concept #06." },
-      { id: "ORIG-07", title: "Original #07 — OLED Void & 1980s Vector Holograms", file: "assets/concept_gallery/homepage_store_20/07_holographic_wireframe_oled_void.jpg", desc: "Original Concept #07." },
-      { id: "ORIG-08", title: "Original #08 — Neo-Tokyo Frosted Dark Glass & Neon", file: "assets/concept_gallery/homepage_store_20/08_neo_tokyo_frosted_neon_glass.jpg", desc: "Original Concept #08." },
-      { id: "ORIG-09", title: "Original #09 — 1984 Flight-Deck Telemetry Dark UI", file: "assets/concept_gallery/homepage_store_20/09_retro_flight_deck_telemetry_dark.jpg", desc: "Original Concept #09." },
-      { id: "ORIG-10", title: "Original #10 — Curved Onyx & Molten Tangerine Liquid Glass V2", file: "assets/concept_gallery/homepage_store_20/10_molten_amber_onyx_liquid_glass_v2.jpg", desc: "Original Concept #10." },
-      { id: "ORIG-11", title: "Original #11 — 16-Bit Deluxe Black & Gold Cartridge Vault", file: "assets/concept_gallery/homepage_store_20/11_16bit_deluxe_cartridge_vault.jpg", desc: "Original Concept #11." },
-      { id: "ORIG-12", title: "Original #12 — Laserdisc Dark Chrome & Obsidian Sunset", file: "assets/concept_gallery/homepage_store_20/12_laserdisc_chrome_obsidian_sunset.jpg", desc: "Original Concept #12." },
-      { id: "ORIG-13", title: "Original #13 — Underground Cyber-Bunker & Nixie Orange", file: "assets/concept_gallery/homepage_store_20/13_cyber_bunker_nixie_orange.jpg", desc: "Original Concept #13." },
-      { id: "ORIG-14", title: "Original #14 — Minimalist Dark Editorial + Sunset Halftone", file: "assets/concept_gallery/homepage_store_20/14_minimal_dark_editorial_sunset_halftone.jpg", desc: "Original Concept #14." },
-      { id: "ORIG-15", title: "Original #15 — 1980s Cocktail Table Under-Glass Vector UI", file: "assets/concept_gallery/homepage_store_20/15_vector_cocktail_table_dark_glass.jpg", desc: "Original Concept #15." },
-      { id: "ORIG-16", title: "Original #16 — Panoramic Sunset Canopy Horizon Cards", file: "assets/concept_gallery/homepage_store_20/16_sunset_canopy_horizon_cards.jpg", desc: "Original Concept #16." },
-      { id: "ORIG-17", title: "Original #17 — Matte Black Stealth with Tri-Brand Neon Pods", file: "assets/concept_gallery/homepage_store_20/17_matte_stealth_tricolor_neon_pods.jpg", desc: "Original Concept #17." },
-      { id: "ORIG-18", title: "Original #18 — 1984 Roland Jupiter Analog Synth Dark UI", file: "assets/concept_gallery/homepage_store_20/18_analog_synth_studio_dark_ui.jpg", desc: "Original Concept #18." },
-      { id: "ORIG-19", title: "Original #19 — Dark Retro-Futuristic 3D Showroom Pedestals", file: "assets/concept_gallery/homepage_store_20/19_isometric_dark_cyber_showroom.jpg", desc: "Original Concept #19." },
-      { id: "ORIG-20", title: "Original #20 — Flagship Black & Orange Liquid Glass + 1984 Grid", file: "assets/concept_gallery/homepage_store_20/20_flagship_black_orange_liquid_synthwave.jpg", desc: "Original Concept #20." }
-    ];
-
-    let activeList = [];
-    let currentLbIndex = 0;
-
-    function buildCardsHtml(items, seriesClass, offsetIndex) {
-      return items.map((item, idx) => {
-        const globalIdx = offsetIndex + idx;
-        return `
-          <article class="concept-card ${seriesClass}">
-            <div class="concept-art-viewport" onclick="openLightbox(${globalIdx})">
-              <img src="${item.file}" alt="${item.id} — ${item.title}" loading="lazy" />
-              <div class="concept-top-badges">
-                <span class="concept-num-pill">VARIATION #${item.id}</span>
-                <span class="concept-match-pill">HOME + STORE MATCHED</span>
-              </div>
-              <div class="concept-split-indicator">
-                <span class="split-tag">◀ LEFT: HOME PAGE</span>
-                <span class="split-tag">RIGHT: SHOP SCREEN ▶</span>
-              </div>
-            </div>
-            <div class="concept-body">
-              <h3 class="concept-title">#${item.id} — ${item.title}</h3>
-              <p class="concept-desc">${item.desc}</p>
-              <button type="button" class="btn-inspect" onclick="openLightbox(${globalIdx})">
-                🔍 INSPECT FULL-SCREEN (#${item.id})
-              </button>
-            </div>
-          </article>
-        `;
-      }).join("");
-    }
-
-    function setGalleryView(mode) {
-      const root = document.getElementById("galleryRoot");
-      document.getElementById("tabBtnAll").className = "tab-pill-btn" + (mode === "all" ? " active-c1" : "");
-      document.getElementById("tabBtnC1").className = "tab-pill-btn" + (mode === "c01" ? " active-c1" : "");
-      document.getElementById("tabBtnC19").className = "tab-pill-btn" + (mode === "c19" ? " active-c19" : "");
-      document.getElementById("tabBtnOrig").className = "tab-pill-btn" + (mode === "orig" ? " active-c1" : "");
-
-      if (mode === "c01") {
-        activeList = [...C01_VARIATIONS];
-        root.innerHTML = `
-          <div class="group-banner c1-banner">
-            <h2>🔥 CONCEPT #01 — 20 VARIATIONS (OBSIDIAN BLACK &amp; MOLTEN ORANGE LIQUID GLASS)</h2>
-            <span style="font-size:0.80rem;color:#fed7aa;">Pick any variation (#01-V01 to #01-V20) to inspect full-screen</span>
-          </div>
-          <div class="concepts-grid">${buildCardsHtml(C01_VARIATIONS, "series-c01", 0)}</div>
-        `;
-      } else if (mode === "c19") {
-        activeList = [...C19_VARIATIONS];
-        root.innerHTML = `
-          <div class="group-banner c19-banner">
-            <h2>🛸 CONCEPT #19 — 20 VARIATIONS (DARK 3D SHOWROOM PEDESTALS &amp; SMOKED GLASS HUD)</h2>
-            <span style="font-size:0.80rem;color:#bae6fd;">Pick any variation (#19-V01 to #19-V20) to inspect full-screen</span>
-          </div>
-          <div class="concepts-grid">${buildCardsHtml(C19_VARIATIONS, "series-c19", 0)}</div>
-        `;
-      } else if (mode === "orig") {
-        activeList = [...ORIGINAL_20];
-        root.innerHTML = `
-          <div class="group-banner c1-banner">
-            <h2>🏛️ ORIGINAL 20 CONCEPTS (#01 TO #20)</h2>
-          </div>
-          <div class="concepts-grid">${buildCardsHtml(ORIGINAL_20, "series-c01", 0)}</div>
-        `;
-      } else {
-        activeList = [...C01_VARIATIONS, ...C19_VARIATIONS];
-        root.innerHTML = `
-          <div class="group-banner c1-banner">
-            <h2>🔥 PART 1: 20 VARIATIONS OF CONCEPT #01 (OBSIDIAN BLACK &amp; MOLTEN ORANGE LIQUID GLASS)</h2>
-            <span style="font-size:0.80rem;color:#fed7aa;">#01-V01 through #01-V20</span>
-          </div>
-          <div class="concepts-grid">${buildCardsHtml(C01_VARIATIONS, "series-c01", 0)}</div>
-
-          <div class="group-banner c19-banner" style="margin-top:42px;">
-            <h2>🛸 PART 2: 20 VARIATIONS OF CONCEPT #19 (DARK 3D SHOWROOM PEDESTALS &amp; SMOKED GLASS HUD)</h2>
-            <span style="font-size:0.80rem;color:#bae6fd;">#19-V01 through #19-V20</span>
-          </div>
-          <div class="concepts-grid">${buildCardsHtml(C19_VARIATIONS, "series-c19", C01_VARIATIONS.length)}</div>
-        `;
+    const LIVE_MERCH = [
+      {
+        title: "RETROCANOPY EST. 1984 WINGED-CROWN SNAPBACK",
+        price: "$65.00",
+        img: "assets/merch/hat_tier6_valkyrie.png?v=200"
+      },
+      {
+        title: "RETROCANOPY EST. 1984 WHITE & 24K GOLD PULLOVER HOODIE (FRONT)",
+        price: "$128.00",
+        img: "assets/merch/hoodie_tier6_2f_front.png?v=200"
+      },
+      {
+        title: "RETROCANOPY EST. 1984 WHITE & 24K GOLD PULLOVER HOODIE (BACK)",
+        price: "$128.00",
+        img: "assets/merch/hoodie_tier6_2f_back.png?v=200"
       }
+    ];
+
+    function selectStoreMerch(idx, el) {
+      const item = LIVE_MERCH[idx] || LIVE_MERCH[0];
+      document.getElementById('liveStoreHeroImg').src = item.img;
+      document.getElementById('liveStoreTitle').textContent = item.title;
+      document.getElementById('liveStorePrice').textContent = item.price;
+      document.querySelectorAll('.mini-pedestal-card').forEach((c, i) => {
+        c.classList.toggle('active', i === idx);
+      });
     }
 
-    function openLightbox(idx) {
-      currentLbIndex = idx;
-      const item = activeList[currentLbIndex];
-      if (!item) return;
-      document.getElementById("lbTitle").textContent = `VARIATION #${item.id} — ${item.title.toUpperCase()}`;
-      document.getElementById("lbImage").src = item.file;
-      document.getElementById("lbDesc").textContent = item.desc;
-      document.getElementById("conceptLightbox").classList.add("open");
+    function rotateLiveTurntable(deg) {
+      const img = document.getElementById('liveStoreHeroImg');
+      img.style.transform = `perspective(700px) rotateY(${deg * 0.35}deg)`;
+      document.getElementById('liveDegreePill').textContent = `◄ 360° TURNTABLE • ${deg}° ►`;
+    }
+
+    function pickSize(btn) {
+      btn.parentElement.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // 20 NEW COMBINED (#01 + #19 + CURRENT SITE) FUSION CONCEPTS
+    const FUSION_CONCEPTS = [
+      {
+        id: "FUSION #01",
+        group: "fusion",
+        title: "Flagship Liquid Glass Capsules on 3D Stepped Showroom Pedestals",
+        desc: "Combines #01's smoked-black & molten sunset-orange liquid glass capsules with #19's stepped 3D orange-and-cyan rings holding your 3 White & Gold hats/hoodie, Shibuya 3D Arena Bot Pit, Nerdy Misfits, We Build & Create (4 cyan holograms), Deaf Hammer, and a 360° Turntable Store.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_01.jpg",
+        tags: ["#01 + #19 + Current Site", "Liquid Glass Capsules", "3D Stepped Pedestals", "360° Store"]
+      },
+      {
+        id: "FUSION #02",
+        group: "fusion",
+        title: "Panoramic Liquid Glass Bridge Over 3D Stepped Pedestals",
+        desc: "A single wide curved obsidian-and-orange liquid glass visor spans across the 3 illuminated stepped 3D pedestals, with the Shibuya Bot Pit arena window and unified tri-brand hologram dock below.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_02.jpg",
+        tags: ["Panoramic Glass Bridge", "3D Pedestals", "4 Cyan Holograms", "Dual Turntable"]
+      },
+      {
+        id: "FUSION #03",
+        group: "fusion",
+        title: "Open-Air 3D Stepped Pedestals + Floating Molten Orange HUD Wings",
+        desc: "The 3 White & Gold hats and hoodie sit openly on glowing stepped 3D showroom pedestals while curved smoked-black & molten-orange liquid glass HUD wings float at their sides.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_03.jpg",
+        tags: ["Open 3D Pedestals", "Floating HUD Wings", "Bot Pit Portal", "360° Turntable"]
+      },
+      {
+        id: "FUSION #04",
+        group: "fusion",
+        title: "Retractable Liquid Glass Cloche Bell Domes on 360° Stepped Turntables",
+        desc: "Museum-grade smoked-black & orange liquid glass bell-jar domes hover above 3D stepped orange-and-cyan turntable pedestals, with a split-open dome on the 360° store screen.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_04.jpg",
+        tags: ["Cloche Bell Domes", "Museum Vault", "Tri-Brand Dock", "Split-Dome Store"]
+      },
+      {
+        id: "FUSION #05",
+        group: "fusion",
+        title: "Isometric 3D Pedestal Command Deck + Molten Orange Floor Conduits",
+        desc: "Architectural 3D showroom perspective with glowing molten-orange & cyan floor conduits linking the 3 apparel pedestals, the Shibuya Bot Pit battle bay, and the 4 cyan hologram projectors.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_05.jpg",
+        tags: ["Isometric Showroom", "Floor Energy Conduits", "Full Live Site", "360° Command Store"]
+      },
+      {
+        id: "FUSION #06",
+        group: "fusion",
+        title: "Mirror-Black Wet Obsidian Floor Reflection Fusion",
+        desc: "Ultra-clean mirror-polished pitch-black floor reflecting the 3D stepped orange-and-cyan pedestals, the smoked-black liquid glass capsules, and the 4 cyan WEBSITES/APPS/GAMES/APPAREL holograms.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_06.jpg",
+        tags: ["Wet Mirror Floor", "Obsidian Reflections", "Clean Dark Retro", "360° Store"]
+      },
+      {
+        id: "FUSION #07",
+        group: "fusion",
+        title: "Pure Obsidian, Molten Sunset Orange & 24K Gold Pedestal Edition",
+        desc: "Dialed-up black, molten orange, and 24K gold luxury palette — stepped pedestals with molten lava-orange & gold rings, amber-gold liquid glass rims, and full live site layout.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_07.jpg",
+        tags: ["Black & Molten Orange", "24K Gold Rims", "Luxury Pedestals", "Gold Foil Store"]
+      },
+      {
+        id: "FUSION #08",
+        group: "fusion",
+        title: "Tiered 3D Amphitheater Stage + Curved Liquid Glass Dock",
+        desc: "Multi-level stepped amphitheater showroom where the center White & Gold Hoodie pedestal rises higher than the flanking Snapback Hat pedestals, above a curved liquid-glass tri-brand dock.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_08.jpg",
+        tags: ["Tiered Amphitheater", "Elevated Hoodie Stage", "Curved Glass Dock", "360° Store"]
+      },
+      {
+        id: "FUSION #09",
+        group: "fusion",
+        title: "Twin 3D Pedestal Stages: Apparel Showcase + Shibuya Bot Pit 3D Arena Table",
+        desc: "Both the White & Gold apparel AND the Shibuya 3D Arena Bot Pit sit on their own glowing 3D stepped pedestals with smoked-black & orange liquid glass armor.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_09.jpg",
+        tags: ["3D Bot Pit Table", "Twin Pedestal Stages", "Dual-Turntable Store", "Full Site"]
+      },
+      {
+        id: "FUSION #10",
+        group: "fusion",
+        title: "1984 Synthwave Sunset Laser Grid + 3D Pedestals + Black/Orange Liquid Glass",
+        desc: "Extends the 1984 synthwave sunset grid from the top RetroCanopy tree logo across the showroom floor beneath the 3D stepped pedestals and molten-orange liquid glass capsules.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_10.jpg",
+        tags: ["1984 Laser Grid", "Synthwave Sunset", "3D Pedestals", "Liquid Glass"]
+      },
+      {
+        id: "FUSION #11",
+        group: "fusion",
+        title: "Hexagonal 3D Stepped Pedestals + Liquid Honeycomb Glass HUDs",
+        desc: "Precision hexagonal stepped 3D pedestals with glowing orange and cyan bevels paired with faceted hexagonal smoked-black & orange liquid glass frames.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_11.jpg",
+        tags: ["Hexagonal Pedestals", "Faceted Liquid Glass", "Tactical Retro", "Hex Turntable"]
+      },
+      {
+        id: "FUSION #12",
+        group: "fusion",
+        title: "Floating Gyroscopic Neon Rings Inside Liquid Glass Capsules",
+        desc: "Glowing molten-orange and cyan gyroscopic rings orbit around the White & Gold hats and hoodie inside tall smoked-black liquid glass capsules.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_12.jpg",
+        tags: ["Gyroscopic Rings", "Anti-Gravity Capsules", "3D Pedestals", "360° Gyro Store"]
+      },
+      {
+        id: "FUSION #13",
+        group: "fusion",
+        title: "Wrap-Around Curved Cockpit Liquid Glass HUD Over 3D Pedestal Stage",
+        desc: "Curved cockpit-style smoked-black & molten-orange liquid glass UI panels wrap cleanly around an open central 3D stepped pedestal stage.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_13.jpg",
+        tags: ["Curved Cockpit HUD", "Center Pedestal Stage", "Tri-Brand Dock", "360° Store"]
+      },
+      {
+        id: "FUSION #14",
+        group: "fusion",
+        title: "Tri-Brand Color-Coded Illuminated Pedestals & Liquid Glass Pods",
+        desc: "Each zone glows with its signature neon accent inside black-and-orange liquid glass: Molten Orange & Gold for Apparel, Cyan/Orange for Bot Pit, Neon Green for Nerdy Misfits, Cyan for We Build & Create, and Electric Blue for Deaf Hammer.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_14.jpg",
+        tags: ["Tri-Brand Neon", "Color-Coded Pods", "4 Cyan Holograms", "Full Ecosystem"]
+      },
+      {
+        id: "FUSION #15",
+        group: "fusion",
+        title: "Volumetric Light-Beam Pedestals & Tall Liquid Glass Pillars",
+        desc: "Warm amber-orange & cyan vertical light beams rise from the 3D stepped pedestals through tall smoked-black liquid glass pillars.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_15.jpg",
+        tags: ["Volumetric Light Beams", "Glass Pillars", "3D Pedestals", "Showroom Store"]
+      },
+      {
+        id: "FUSION #16",
+        group: "fusion",
+        title: "360° Rotary Carousel of Liquid Glass Capsules on Stepped Pedestals",
+        desc: "The 3 White & Gold hats and hoodie sit on a giant rotating circular 3D stepped ring platform in the center of the home page, mirrored by a rotary carousel store screen.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_16.jpg",
+        tags: ["Rotary Carousel", "Circular Stage", "Liquid Glass Capsules", "360° Store"]
+      },
+      {
+        id: "FUSION #17",
+        group: "fusion",
+        title: "Ultra-Clean Stealth 1px Solar-Orange Rim Glass + 3D Stepped Pedestals",
+        desc: "Maximum dark negative space and razor-sharp 1px glowing solar-orange specular borders on deep smoked glass, keeping the focus on the 3D pedestals and your live site assets.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_17.jpg",
+        tags: ["Ultra-Clean Minimal", "1px Solar Rim", "Stealth Obsidian", "3D Pedestals"]
+      },
+      {
+        id: "FUSION #18",
+        group: "fusion",
+        title: "3D Pedestals + 360° CAD Telemetry Rings in Black & Orange Liquid Glass",
+        desc: "Adds fine circular degree ticks, callout lines, and stitch/fabric telemetry overlays inside the smoked-black & orange liquid glass capsules and 360° turntable inspector.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_18.jpg",
+        tags: ["CAD Telemetry Rings", "360° Degree Ticks", "3D Pedestals", "Inspector Store"]
+      },
+      {
+        id: "FUSION #19",
+        group: "fusion",
+        title: "Unified Perimeter Liquid Glass Bento Frame + Open 3D Pedestal Center",
+        desc: "Frames the top bar, Shibuya Bot Pit, Nerdy Misfits, We Build & Create (4 cyan holograms), and Deaf Hammer into a sleek perimeter liquid-glass dock around the open 3D pedestal center stage.",
+        img: "assets/concept_gallery/homepage_store_20/fusion_19.jpg",
+        tags: ["Perimeter Bento Dock", "Open Pedestal Stage", "Clean Layout", "360° Store"]
+      },
+      {
+        id: "FUSION #20",
+        group: "fusion",
+        title: "The Ultimate RetroCanopy Masterpiece (1:1 Live Site + #01 Liquid Glass + #19 3D Pedestals)",
+        desc: "The definitive 1:1 evolution of your current homepage and store — preserving exact element placement while upgrading every surface with Obsidian & Molten Orange Liquid Glass (#01) and 3D Stepped Illuminated Pedestals (#19).",
+        img: "assets/concept_gallery/homepage_store_20/fusion_20.jpg",
+        tags: ["Masterpiece 1:1 Evolution", "#01 + #19 + Live Site", "Production Ready", "360° Turntable Store"]
+      }
+    ];
+
+    // 20 Concept #01 Variations
+    const C01_VARIATIONS = Array.from({ length: 20 }, (_, i) => {
+      const n = String(i + 1).padStart(2, '0');
+      return {
+        id: `#01-V${n}`,
+        group: "c01",
+        title: `Concept #01 Variation ${n} — Obsidian & Molten Orange Liquid Glass`,
+        desc: `Variation ${n} of Concept #01 featuring deep pitch-black obsidian glass, molten sunset-orange specular edges, and matching Home + Store screens.`,
+        img: `assets/concept_gallery/homepage_store_20/c01_v${n}.jpg`,
+        tags: ["Concept #01 Variation", "Black & Orange Liquid Glass", "Home + Store"]
+      };
+    });
+
+    // 20 Concept #19 Variations
+    const C19_VARIATIONS = Array.from({ length: 20 }, (_, i) => {
+      const n = String(i + 1).padStart(2, '0');
+      return {
+        id: `#19-V${n}`,
+        group: "c19",
+        title: `Concept #19 Variation ${n} — 3D Stepped Showroom Pedestals & 360° Turntable`,
+        desc: `Variation ${n} of Concept #19 featuring illuminated 3D stepped orange-and-cyan showroom pedestals, floating dark glass HUDs, and a 360° turntable store.`,
+        img: `assets/concept_gallery/homepage_store_20/c19_v${n}.jpg`,
+        tags: ["Concept #19 Variation", "3D Stepped Pedestals", "360° Turntable Store"]
+      };
+    });
+
+    // Original 20 Concepts
+    const ORIG_FILES = [
+      ["01_obsidian_molten_orange_liquid_glass.jpg", "Obsidian & Molten Sunset Orange Liquid Glass (Original #01)"],
+      ["02_smoked_quartz_amber_crt_refraction.jpg", "Smoked Quartz & Amber CRT Refraction"],
+      ["03_black_mirror_solar_flare_bento.jpg", "Black Mirror & Solar Flare Bento Grid"],
+      ["04_volcanic_slag_gold_foil_glass.jpg", "Volcanic Glass & 24K Gold Foil Luxury"],
+      ["05_stealth_matte_carbon_neon_perspex.jpg", "Stealth Matte Carbon & Orange Perspex"],
+      ["06_1984_sunset_horizon_chrome_grid.jpg", "1984 Sunset Horizon & Chrome Wireframe"],
+      ["07_outlaw_arcade_marquee_coin_door.jpg", "Outlaw Arcade Cabinet & Coin-Op Store"],
+      ["08_vhs_hi_fi_stereo_deck_rack.jpg", "1984 Hi-Fi VFD Stereo Receiver Deck"],
+      ["09_cyber_kanji_shibuya_alley_hub.jpg", "Shibuya Midnight Neon Alley Hub"],
+      ["10_laserdisc_gold_collector_vault.jpg", "1984 LaserDisc Collector Vault"],
+      ["11_amber_phosphor_dos_terminal.jpg", "Amber Phosphor Mainframe Terminal"],
+      ["12_tactical_mech_hangar_blueprint.jpg", "Tactical Mech Hangar & Blueprint Store"],
+      ["13_cassette_futurism_nasa_command.jpg", "1984 Cassette Futurism Command Deck"],
+      ["14_isometric_shibuya_cyber_bazaar.jpg", "Isometric 3D Cyber-Showroom"],
+      ["15_oscilloscope_vector_glow_beam.jpg", "Vector Oscilloscope Amber/Cyan Beam"],
+      ["16_editorial_noir_brutalist_lookbook.jpg", "Dark Luxury Editorial Lookbook"],
+      ["17_pinball_backglass_emerald_amber.jpg", "1984 High-Score Pinball Backglass"],
+      ["18_holographic_foil_collector_cards.jpg", "Holographic Collector Deck & Booster Store"],
+      ["19_spatial_retro_hud_horizon_pods.jpg", "3D Stepped Showroom Pedestals & 360° Turntable (Original #19)"],
+      ["20_synth_modular_patchbay_studio.jpg", "1984 Analog Synth Studio Console"]
+    ];
+
+    const ORIG_CONCEPTS = ORIG_FILES.map(([file, title], i) => {
+      const n = String(i + 1).padStart(2, '0');
+      return {
+        id: `ORIG #${n}`,
+        group: "orig",
+        title,
+        desc: `Original Concept #${n} pairing Home Page (left) and Store Screen (right).`,
+        img: `assets/concept_gallery/homepage_store_20/${file}`,
+        tags: ["Original 20", "Home + Store"]
+      };
+    });
+
+    const ALL_ITEMS = [
+      ...FUSION_CONCEPTS,
+      ...C01_VARIATIONS,
+      ...C19_VARIATIONS,
+      ...ORIG_CONCEPTS
+    ];
+
+    let currentFilter = 'fusion';
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      const titles = {
+        fusion: "🔥 20 NEW COMBINED CONCEPTS (#01 BLACK/ORANGE LIQUID GLASS + #19 3D PEDESTALS + CURRENT SITE)",
+        c01: "🟠 20 VARIATIONS OF CONCEPT #01 (OBSIDIAN BLACK & MOLTEN ORANGE LIQUID GLASS)",
+        c19: "🛸 20 VARIATIONS OF CONCEPT #19 (3D STEPPED PEDESTALS & 360° TURNTABLE STORE)",
+        orig: "🏛️ ORIGINAL 20 HOME PAGE & STORE CONCEPTS",
+        all: "⚡ ALL 80 CONCEPTS & VARIATIONS"
+      };
+      document.getElementById('gallerySectionTitle').textContent = titles[filter] || titles.fusion;
+      renderGallery();
+    }
+
+    function renderGallery() {
+      const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      const grid = document.getElementById('conceptsGrid');
+
+      const filtered = ALL_ITEMS.filter(item => {
+        const matchGroup = currentFilter === 'all' || item.group === currentFilter;
+        const matchQuery = !q || item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q) || item.id.toLowerCase().includes(q);
+        return matchGroup && matchQuery;
+      });
+
+      document.getElementById('galleryCountLabel').textContent =
+        `Showing ${filtered.length} concept boards — Click any image to view full-screen`;
+
+      grid.innerHTML = filtered.map(item => `
+        <article class="concept-card">
+          <div class="card-img-wrap" onclick="openLightbox('${item.img}', '${item.id} — ${item.title.replace(/'/g, "\\'")}')">
+            <img src="${item.img}" alt="${item.title}" loading="lazy" />
+            <span class="card-badge">${item.id}</span>
+            <span class="card-zoom-hint">🔍 FULLSCREEN</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">${item.title}</div>
+            <div class="card-desc">${item.desc}</div>
+            <div class="card-tags">
+              ${item.tags.map(t => `<span class="tag-chip">${t}</span>`).join('')}
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function openLightbox(imgSrc, title) {
+      document.getElementById('lightboxImg').src = imgSrc;
+      document.getElementById('lightboxTitle').textContent = title;
+      document.getElementById('lightbox').classList.add('open');
     }
 
     function closeLightbox() {
-      document.getElementById("conceptLightbox").classList.remove("open");
+      document.getElementById('lightbox').classList.remove('open');
     }
 
-    function stepLightbox(dir) {
-      if (!activeList.length) return;
-      currentLbIndex = (currentLbIndex + dir + activeList.length) % activeList.length;
-      openLightbox(currentLbIndex);
-    }
-
-    window.addEventListener("keydown", (e) => {
-      const lb = document.getElementById("conceptLightbox");
-      if (!lb || !lb.classList.contains("open")) return;
-      if (e.key === "Escape") closeLightbox();
-      if (e.key === "ArrowRight") stepLightbox(1);
-      if (e.key === "ArrowLeft") stepLightbox(-1);
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
     });
 
-    setGalleryView("all");
+    renderGallery();
   </script>
 </body>
 </html>
