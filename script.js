@@ -228,7 +228,7 @@ function initGamerIntro() {
         }
     }
     let TEASER_COMING_SOON_MODE = !isAdminSiteUnlocked();
-    const IS_LOCAL_DEV_SERVER = false;
+    const IS_LOCAL_DEV_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
     const fullPrologueSteps = [
         {
@@ -882,13 +882,7 @@ function initGamerIntro() {
     const navType = navEntries.length > 0 ? navEntries[0].type : ((window.performance && performance.navigation && performance.navigation.type === 1) ? 'reload' : 'navigate');
     const isReload = navType === 'reload';
     const isBackForward = navType === 'back_forward';
-    const cameFromInternalPage = Boolean(
-        window.__rcSkipIntroOnLoad ||
-        (!isReload && (
-            sessionStorage.getItem('rc_from_internal') === '1' ||
-            isBackForward
-        ))
-    );
+    const cameFromInternalPage = Boolean(window.__rcSkipIntroOnLoad);
     if (cameFromInternalPage) {
         window.__rcSkipIntroOnLoad = true;
         sequenceComplete = true;
@@ -1182,7 +1176,14 @@ function initGamerIntro() {
     }
 
     function updateTapForAudioPrompt() {
-        dismissTapForAudioPrompt();
+        if (window.__rcSkipIntroOnLoad || sequenceComplete || tapForAudioDismissed || isHtmlAudioTrulyPlayingUnmuted()) {
+            dismissTapForAudioPrompt();
+            return;
+        }
+        if (tapForAudioPromptEl) {
+            tapForAudioPromptEl.classList.remove('hidden');
+            tapForAudioPromptEl.classList.add('visible');
+        }
     }
 
     if (tapForAudioPromptEl) {
@@ -1194,8 +1195,8 @@ function initGamerIntro() {
         });
     }
 
-    // Show "TAP FOR AUDIO" if unmuted autoplay has not started within 350ms, and dismiss automatically the instant audio plays or user taps
-    setTimeout(updateTapForAudioPrompt, 350);
+    // Show "TAP FOR AUDIO" if unmuted autoplay is blocked by the browser at 250ms, and dismiss automatically the instant audio plays or user taps
+    setTimeout(updateTapForAudioPrompt, 250);
 
     function isAnyStageAudioPlayingUnmuted() {
         if (isHtmlAudioTrulyPlayingUnmuted()) {
@@ -1251,24 +1252,35 @@ function initGamerIntro() {
     }
 
     function tryStartIntroHtmlAudio(isUserGesture = false) {
-        if (window.__rcSkipIntroOnLoad || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT' || nativeIntroAudioActive) return;
+        if (window.__rcSkipIntroOnLoad || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT') return;
         if (!prebuiltIntroAudio) return;
         prebuiltIntroAudio.muted = false;
-        prebuiltIntroAudio.volume = 0.88;
-        if (!prebuiltIntroAudio.paused || introHtmlAudioStarted) {
+        prebuiltIntroAudio.volume = 0.92;
+        if (!prebuiltIntroAudio.paused && prebuiltIntroAudio.currentTime > 0.01) {
             introHtmlAudioStarted = true;
+            dismissTapForAudioPrompt();
             stopWebAudioBufferFallback();
             return;
         }
-        // NEVER interrupt an in-flight play() request (even across pointerdown -> mousedown -> click on the same tap)!
-        if (introPlayPending) return;
-        // Keep audio synced to actual video playback position (never wall-clock page load time)
+        if (introPlayPending && !isUserGesture) return;
         const introVidSync = document.getElementById('rc-cinema-intro-video');
-        if (!introGestureSynced && prebuiltIntroAudio.readyState >= 2 && introVidSync && introVidSync.currentTime > 0.6) {
-            const vidSec = Math.min(9.0, introVidSync.currentTime);
-            if (Math.abs(prebuiltIntroAudio.currentTime - vidSec) > 0.6) {
-                introGestureSynced = true;
-                try { prebuiltIntroAudio.currentTime = vidSec; } catch (_) {}
+        if (isUserGesture && !introGestureSynced && introVidSync) {
+            introGestureSynced = true;
+            if (introVidSync.currentTime > 2.2) {
+                // Rewind video & audio to 0.0s on gesture unlock so the user gets the full 10s intro with audio!
+                try {
+                    introVidSync.currentTime = 0;
+                    introVidSync.play().catch(() => {});
+                } catch (_) {}
+                try {
+                    prebuiltIntroAudio.currentTime = 0;
+                } catch (_) {}
+                introTransitionScheduled = false;
+                scheduleIntroTransition(10200);
+            } else if (prebuiltIntroAudio.readyState >= 1 && introVidSync.currentTime > 0.15) {
+                try {
+                    prebuiltIntroAudio.currentTime = introVidSync.currentTime;
+                } catch (_) {}
             }
         }
         try {
@@ -1285,18 +1297,38 @@ function initGamerIntro() {
                         } catch (_) {}
                         return;
                     }
+                    if (nativeIntroAudioActive) {
+                        nativeIntroAudioActive = false;
+                        triggerNativeServerAudio('stop');
+                    }
                     prebuiltIntroAudio.muted = false;
-                    prebuiltIntroAudio.volume = 0.88;
+                    prebuiltIntroAudio.volume = 0.92;
                     introHtmlAudioStarted = true;
                     dismissTapForAudioPrompt();
                     stopWebAudioBufferFallback();
                 }).catch((err) => {
                     introPlayPending = false;
                     if (window.__rcSkipIntroOnLoad || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT') return;
-                    if (IS_LOCAL_DEV_SERVER && !introHtmlAudioStarted && !nativeIntroAudioActive && (!err || err.name === 'NotAllowedError')) {
+                    if (isUserGesture && introVidSync) {
+                        // Backup: unmute the <video> element's own embedded AAC audio track directly on user gesture
+                        try {
+                            if (nativeIntroAudioActive) {
+                                nativeIntroAudioActive = false;
+                                triggerNativeServerAudio('stop');
+                            }
+                            introVidSync.muted = false;
+                            introVidSync.volume = 0.92;
+                            introVidSync.play().then(() => {
+                                introHtmlAudioStarted = true;
+                                dismissTapForAudioPrompt();
+                            }).catch(() => {});
+                        } catch (_) {}
+                    } else if (IS_LOCAL_DEV_SERVER && !nativeIntroAudioActive && (!err || err.name === 'NotAllowedError')) {
                         nativeIntroAudioActive = true;
-                        introHtmlAudioStarted = true;
                         triggerNativeServerAudio('intro');
+                        dismissTapForAudioPrompt();
+                    } else {
+                        updateTapForAudioPrompt();
                     }
                 });
             } else {
@@ -1304,6 +1336,7 @@ function initGamerIntro() {
             }
         } catch (_) {
             introPlayPending = false;
+            updateTapForAudioPrompt();
         }
     }
 
@@ -1515,16 +1548,12 @@ function initGamerIntro() {
         });
     }
 
-    // Gentle non-interrupting retry loop that NEVER aborts an in-flight HTTPS download or seeks currentTime while buffering
-    const autoplayRetryTimer = setInterval(() => {
-        if (sequenceComplete && isAnyStageAudioPlayingUnmuted()) {
-            clearInterval(autoplayRetryTimer);
-            return;
+    // Check prompt visibility once after initial load without spamming non-gesture .play() calls
+    setTimeout(() => {
+        if (!sequenceComplete && !isAnyStageAudioPlayingUnmuted()) {
+            updateTapForAudioPrompt();
         }
-        if (!isAnyStageAudioPlayingUnmuted()) {
-            unlockAudioOnce();
-        }
-    }, 350);
+    }, 600);
 
     // Stagger background audio preloading so Title Screen logos & intro_theme.wav get 100% network priority at 0.0s!
     setTimeout(() => {
@@ -4019,14 +4048,7 @@ function initGamerIntro() {
         sessionStorage.removeItem('rc_from_internal');
     }
 
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        if (heroContainer) {
-            heroContainer.classList.add('no-transition');
-        }
-        state = 'GREETING';
-        skipEntireIntro();
-        return;
-    }
+
 
     // Fresh Movie Studio Intro: Start with widescreen cinema letterbox + 3D emblem & RETROCANOPY title reveal in center,
     // then crane/zoom out to top of screen before the character story arc begins!
@@ -4166,6 +4188,10 @@ function initGamerIntro() {
      * Multi-Act Synthwave Cinema Studio Logo Score locked to the visual intro clock
      */
     function fadeIntroAudio() {
+        if (nativeIntroAudioActive) {
+            nativeIntroAudioActive = false;
+            triggerNativeServerAudio('stop');
+        }
         const introVid = document.getElementById('rc-cinema-intro-video');
         if (introVid && !introVid.paused && !introVid.muted) {
             let vVol = introVid.volume;
@@ -4432,7 +4458,7 @@ function initGamerIntro() {
                     prebuiltIntroAudio.pause();
                     prebuiltIntroAudio._playingSynFallback = false;
                     prebuiltIntroAudio._playingLofiFallback = false;
-                    if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('intro_theme.wav') === -1) {
+                    if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('intro_theme') === -1) {
                         prebuiltIntroAudio.src = 'assets/intro_theme.mp3?v=220';
                     }
                     prebuiltIntroAudio.loop = false;
@@ -4465,6 +4491,8 @@ function initGamerIntro() {
         const isCtrlR = ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'r' || e.key === 'R'));
         if (isF5 || isCtrlR) {
             e.preventDefault();
+            e.stopImmediatePropagation();
+            dismissTapForAudioPrompt();
             replayTitleScreenFromStart();
         }
     }, { capture: true });
@@ -4479,7 +4507,6 @@ function initSubpageLofiMusic() {
     if (document.getElementById('crew-stage')) return; // Handled by initGamerIntro on index.html
 
     try {
-        sessionStorage.setItem('rc_from_internal', '1');
         sessionStorage.setItem('rc_intro_seen', '1');
         const curPath = (window.location.pathname || '').toLowerCase();
         const hasPilotLogin = Boolean(localStorage.getItem('rc_current_user_v2') || localStorage.getItem('rc_botpit_active_user_v1'));

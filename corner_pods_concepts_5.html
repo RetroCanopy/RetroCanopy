@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrocanopy — 5 3D Liquid Glass Corner Pod Concepts (Nerdy Misfits & Deaf Hammer)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: radial-gradient(circle at 50% 0%, #160d08 0%, #05060a 55%, #020305 100%);
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            padding: 36px 28px 80px;
+        }
+        .header {
+            max-width: 1520px;
+            margin: 0 auto 36px;
+            text-align: center;
+            padding: 28px 32px;
+            border-radius: 26px;
+            background: linear-gradient(165deg, rgba(24, 15, 10, 0.85) 0%, rgba(8, 10, 16, 0.94) 100%);
+            border: 1.5px solid rgba(255, 135, 45, 0.55);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.9), 0 0 42px rgba(255, 105, 25, 0.22), inset 0 2px 3px rgba(255, 230, 190, 0.35);
+        }
+        .badge {
+            display: inline-block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            color: #ff9d42;
+            background: rgba(255, 125, 30, 0.14);
+            border: 1px solid rgba(255, 145, 50, 0.5);
+            padding: 6px 18px;
+            border-radius: 999px;
+            margin-bottom: 12px;
+        }
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 2.6vw, 2.35rem);
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            color: #ffffff;
+            text-shadow: 0 0 26px rgba(255, 115, 30, 0.55);
+            margin-bottom: 10px;
+        }
+        .sub {
+            color: #cbd5e1;
+            font-size: 1.02rem;
+            max-width: 880px;
+            margin: 0 auto 18px;
+            line-height: 1.5;
+        }
+        .nav-links {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            padding: 11px 24px;
+            border-radius: 999px;
+            text-decoration: none;
+            color: #fff3dc;
+            background: linear-gradient(165deg, rgba(255, 125, 30, 0.28), rgba(20, 12, 8, 0.92));
+            border: 1.5px solid rgba(255, 145, 50, 0.75);
+            box-shadow: 0 0 22px rgba(255, 115, 25, 0.35), inset 0 1px 2px rgba(255, 235, 200, 0.4);
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 32px rgba(255, 145, 45, 0.75);
+            background: linear-gradient(165deg, rgba(255, 140, 40, 0.42), rgba(28, 16, 10, 0.96));
+        }
+        .grid {
+            max-width: 1520px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 38px;
+        }
+        .card {
+            background: linear-gradient(170deg, rgba(18, 14, 14, 0.94) 0%, rgba(7, 9, 14, 0.98) 100%);
+            border: 1.5px solid rgba(255, 135, 45, 0.48);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 28px 75px rgba(0, 0, 0, 0.92), 0 0 38px rgba(255, 105, 25, 0.18), inset 0 2px 3px rgba(255, 255, 255, 0.22);
+            transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 165, 70, 0.88);
+            box-shadow: 0 32px 85px rgba(0, 0, 0, 0.96), 0 0 52px rgba(255, 125, 35, 0.36), inset 0 2px 4px rgba(255, 240, 200, 0.35);
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px;
+            border-bottom: 1px solid rgba(255, 140, 50, 0.28);
+            background: rgba(12, 9, 10, 0.85);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .num-pill {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            color: #090604;
+            background: linear-gradient(135deg, #ffb347 0%, #ff6b1a 100%);
+            padding: 7px 18px;
+            border-radius: 999px;
+            box-shadow: 0 0 20px rgba(255, 115, 25, 0.6);
+        }
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.18rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 0.06em;
+            flex: 1;
+            margin-left: 10px;
+        }
+        .zoom-hint {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #ff9d42;
+            letter-spacing: 0.12em;
+        }
+        .img-wrap {
+            position: relative;
+            width: 100%;
+            cursor: zoom-in;
+            background: #030407;
+        }
+        .img-wrap img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .card-desc {
+            padding: 18px 28px 22px;
+            color: #cbd5e1;
+            font-size: 0.98rem;
+            line-height: 1.5;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+        }
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(2, 3, 6, 0.95);
+            backdrop-filter: blur(16px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            cursor: zoom-out;
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img {
+            max-width: 96vw;
+            max-height: 92vh;
+            border-radius: 18px;
+            border: 1.5px solid rgba(255, 145, 50, 0.75);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.98), 0 0 50px rgba(255, 115, 25, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="badge">CONCEPT #14 CORNER POD VARIATIONS</div>
+        <h1>5 3D LIQUID GLASS CORNER POD CONCEPTS</h1>
+        <p class="sub">
+            5 distinct raytraced 3D Liquid Glass designs for the bottom-left <strong>Nerdy Misfits</strong> corner pod and bottom-right <strong>Deaf Hammer Productions</strong> corner pod on the Concept #14 Home Page. Click any concept to inspect full-screen.
+        </p>
+        <div class="nav-links">
+            <a class="nav-btn" href="index.html">🚀 VIEW LIVE HOME PAGE (WITH FIXED INTRO AUDIO)</a>
+            <a class="nav-btn" href="hat_preview.html">🛍️ VIEW CONCEPT #14 MERCH STORE</a>
+        </div>
+    </header>
+
+    <main class="grid">
+        <article class="card">
+            <div class="card-head">
+                <span class="num-pill">CONCEPT #1</span>
+                <h2 class="card-title">Molten-Orange &amp; Smoked Obsidian 3D Curved Liquid-Glass Corner Capsules</h2>
+                <span class="zoom-hint">🔍 CLICK IMAGE TO EXPAND</span>
+            </div>
+            <div class="img-wrap" onclick="openLightbox('assets/concept_gallery/homepage_store_20/corner_glass_01.jpg')">
+                <img src="assets/concept_gallery/homepage_store_20/corner_glass_01.jpg" alt="Concept 1 - Molten-Orange 3D Curved Liquid Glass Corner Capsules">
+            </div>
+            <p class="card-desc">
+                Thick, curved 3D smoked-obsidian glass capsules with glowing molten-orange internal refraction ribs along the curved top and side bevels, matching the center 3-tier amber glass pedestal.
+            </p>
+        </article>
+
+        <article class="card">
+            <div class="card-head">
+                <span class="num-pill">CONCEPT #2</span>
+                <h2 class="card-title">Bi-Luminescent Brand-Tinted 3D Liquid-Glass Corner Domes (Lime/Magenta + Cobalt/Amber)</h2>
+                <span class="zoom-hint">🔍 CLICK IMAGE TO EXPAND</span>
+            </div>
+            <div class="img-wrap" onclick="openLightbox('assets/concept_gallery/homepage_store_20/corner_glass_02.jpg')">
+                <img src="assets/concept_gallery/homepage_store_20/corner_glass_02.jpg" alt="Concept 2 - Brand-Tinted 3D Liquid Glass Corner Domes">
+            </div>
+            <p class="card-desc">
+                Thick sculpted 3D curved glass corner domes with double-wall neon light tubes embedded inside the crystal bevels: electric lime-green &amp; magenta refraction on the left for Nerdy Misfits, and royal cobalt-blue &amp; molten-amber refraction on the right for Deaf Hammer Productions.
+            </p>
+        </article>
+
+        <article class="card">
+            <div class="card-head">
+                <span class="num-pill">CONCEPT #3</span>
+                <h2 class="card-title">3D Perspective-Angled Liquid-Glass Wing Slabs Matching the Upper 3D Slabs</h2>
+                <span class="zoom-hint">🔍 CLICK IMAGE TO EXPAND</span>
+            </div>
+            <div class="img-wrap" onclick="openLightbox('assets/concept_gallery/homepage_store_20/corner_glass_03.jpg')">
+                <img src="assets/concept_gallery/homepage_store_20/corner_glass_03.jpg" alt="Concept 3 - 3D Perspective-Angled Liquid Glass Wing Slabs">
+            </div>
+            <p class="card-desc">
+                Thick, chamfered 3D clear-and-smoked acrylic-glass slabs angled inward toward the center pedestal to mirror the upper Shibuya Bot Pit and We Build &amp; Create 3D glass slabs, with warm amber-gold and cyan edge caustics reflecting onto the dark floor.
+            </p>
+        </article>
+
+        <article class="card">
+            <div class="card-head">
+                <span class="num-pill">CONCEPT #4</span>
+                <h2 class="card-title">Stepped 2-Tier 3D Molten-Orange Pedestal Bays with Curved Glass Shields</h2>
+                <span class="zoom-hint">🔍 CLICK IMAGE TO EXPAND</span>
+            </div>
+            <div class="img-wrap" onclick="openLightbox('assets/concept_gallery/homepage_store_20/corner_glass_04.jpg')">
+                <img src="assets/concept_gallery/homepage_store_20/corner_glass_04.jpg" alt="Concept 4 - Stepped 2-Tier 3D Molten-Orange Pedestal Bays">
+            </div>
+            <p class="card-desc">
+                Each corner partner sits on its own stepped 3D molten-orange optical-glass circular pedestal base with a wrap-around curved smoked-glass display shield rising behind the mascot and logo.
+            </p>
+        </article>
+
+        <article class="card">
+            <div class="card-head">
+                <span class="num-pill">CONCEPT #5</span>
+                <h2 class="card-title">Sculpted 3D Pill-Shaped Liquid-Glass Bubble Pods with Molten-Gold Rim &amp; Mirror Floor Reflection</h2>
+                <span class="zoom-hint">🔍 CLICK IMAGE TO EXPAND</span>
+            </div>
+            <div class="img-wrap" onclick="openLightbox('assets/concept_gallery/homepage_store_20/corner_glass_05.jpg')">
+                <img src="assets/concept_gallery/homepage_store_20/corner_glass_05.jpg" alt="Concept 5 - Sculpted 3D Pill-Shaped Liquid Glass Bubble Pods">
+            </div>
+            <p class="card-desc">
+                Deep pill-shaped 3D liquid-glass capsules with multi-layered internal neon/amber rim rings, thick convex lens specular highlights, and crisp inverted mirror reflections on the obsidian floor.
+            </p>
+        </article>
+    </main>
+
+    <div class="lightbox" id="lightbox" onclick="this.classList.remove('open')">
+        <img id="lightbox-img" src="" alt="Expanded Concept">
+    </div>
+
+    <script>
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').classList.add('open');
+        }
+    </script>
+</body>
+</html>

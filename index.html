@@ -14,7 +14,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bungee&family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Press+Start+2P&family=Righteous&family=Russo+One&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=225">
+    <link rel="stylesheet" href="style.css?v=226">
 </head>
 
 <body class="cinema-intro-active">
@@ -57,11 +57,11 @@
                     localStorage.removeItem('rc_current_user_v1');
                 }
             } catch (_) {}
-            // Play the intro video regardless of whether the user is logged in or not!
-            var skipIntro = !isReload && (
-                fromInternal ||
-                isBackForward
-            );
+            try {
+                // Consume rc_from_internal immediately so it never sticks across reloads or future navigations!
+                sessionStorage.removeItem('rc_from_internal');
+            } catch (_) {}
+            var skipIntro = !isReload && fromInternal;
             if (skipIntro) {
                 window.__rcSkipIntroOnLoad = true;
                 if (v) {
@@ -85,7 +85,7 @@
                 return;
             }
 
-            // 1. Keep #rc-cinema-intro-video strictly muted so mobile hardware video playback NEVER stutters or pauses!
+            window.__rcSkipIntroOnLoad = false;
             if (v) {
                 v.muted = true;
                 var targetRate = 1.0;
@@ -102,42 +102,6 @@
                 });
                 v.play().catch(function () {});
             }
-
-            // 2. Play audio via #intro-title-audio (never touching v.muted so video never stutters)
-            var audioStarted = false;
-            var audioPending = false;
-            var tryPlayAudio = function () {
-                if (window.__rcSkipIntroOnLoad || !a || audioStarted || audioPending) return;
-                if (!document.body || !document.body.classList.contains('cinema-intro-active')) return;
-                try {
-                    a.muted = false;
-                    a.volume = 0.90;
-                    audioPending = true;
-                    var p = a.play();
-                    if (p && typeof p.then === 'function') {
-                        p.then(function () {
-                            audioPending = false;
-                            audioStarted = true;
-                        }).catch(function () {
-                            audioPending = false;
-                        });
-                    } else {
-                        audioPending = false;
-                    }
-                } catch (_) {
-                    audioPending = false;
-                }
-            };
-
-            tryPlayAudio();
-            if (a) {
-                a.addEventListener('canplay', tryPlayAudio, { once: true });
-            }
-
-            // Only retry audio on real user gestures (never on devicemotion/deviceorientation/mousemove!)
-            ['touchstart', 'touchend', 'pointerdown', 'mousedown', 'keydown', 'click'].forEach(function (ev) {
-                window.addEventListener(ev, tryPlayAudio, { passive: true, capture: true });
-            });
         })();
     </script>
 
@@ -471,8 +435,8 @@
     <!-- Stage container (crew characters and section tabs removed; Synth owl butler & login preserved) -->
     <div id="crew-stage" class="crew-stage" aria-hidden="true"></div>
 
-    <script src="script.js?v=225"></script>
-    <script src="auth_hub.js?v=225"></script>
+    <script src="script.js?v=226"></script>
+    <script src="auth_hub.js?v=226"></script>
 </body>
 
 </html>

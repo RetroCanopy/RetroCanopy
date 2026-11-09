@@ -7021,10 +7021,54 @@ body.rc-logged-in-home .hero-container.shifted-up {
 }
 
 #tap-for-audio-prompt, .tap-for-audio-prompt {
-    display: none !important;
-    visibility: hidden !important;
+    position: fixed !important;
+    left: 50% !important;
+    bottom: clamp(32px, 6vh, 64px) !important;
+    transform: translateX(-50%) !important;
+    z-index: 99999 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 13px 28px !important;
+    border-radius: 999px !important;
+    background: linear-gradient(165deg, rgba(24, 14, 10, 0.92) 0%, rgba(10, 8, 14, 0.96) 100%) !important;
+    border: 1.5px solid rgba(255, 145, 50, 0.85) !important;
+    box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.9),
+        0 0 28px rgba(255, 115, 25, 0.55),
+        inset 0 2px 3px rgba(255, 235, 200, 0.45),
+        inset 0 -3px 8px rgba(255, 95, 15, 0.35) !important;
+    color: #fff3dc !important;
+    font-family: 'Orbitron', sans-serif !important;
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.14em !important;
+    cursor: pointer !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+#tap-for-audio-prompt.hidden,
+body:not(.cinema-intro-active) #tap-for-audio-prompt {
     opacity: 0 !important;
+    visibility: hidden !important;
     pointer-events: none !important;
+}
+#tap-for-audio-prompt.visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    animation: rcLiquidTapPulse 1.8s ease-in-out infinite alternate !important;
+}
+@keyframes rcLiquidTapPulse {
+    0% {
+        transform: translateX(-50%) scale(1);
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.9), 0 0 22px rgba(255, 115, 25, 0.48), inset 0 2px 3px rgba(255, 235, 200, 0.45);
+    }
+    100% {
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 0 16px 42px rgba(0, 0, 0, 0.95), 0 0 38px rgba(255, 145, 45, 0.85), inset 0 2px 4px rgba(255, 245, 220, 0.65);
+    }
 }
 
 

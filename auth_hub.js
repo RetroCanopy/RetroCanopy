@@ -854,9 +854,6 @@
     const path = (window.location.pathname || '').toLowerCase();
     const isHomePage = path === '/' || path === '' || path.endsWith('/index.html') || path.endsWith('index.html');
     if (!isHomePage) {
-      try {
-        sessionStorage.setItem('rc_from_internal', '1');
-      } catch (_) {}
       const hasBotPitLogin = Boolean(localStorage.getItem('rc_botpit_active_user_v1'));
       if (!path.includes('admin') && !path.includes('shibuya_bot_pit') && !isAdminLoggedIn() && !getCurrentUser() && !hasBotPitLogin) {
         window.location.replace('index.html');
