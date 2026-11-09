@@ -4702,6 +4702,98 @@ function initHomeShopScroller() {
             });
         });
         studioDeck.addEventListener('click', () => openStudioModal('Full Custom Project'));
+
+        // One-by-One Hologram Phaser inside "WE BUILD & CREATE"
+        const holoSlides = Array.from(studioDeck.querySelectorAll('.rc-f14-holo-slide'));
+        const holoDots = Array.from(studioDeck.querySelectorAll('.rc-f14-holo-dot'));
+        const activeHoloBtn = document.getElementById('rc-f14-active-holo-btn');
+        const cyclerTitle = document.getElementById('rc-f14-cycler-title');
+        const cyclerSub = document.getElementById('rc-f14-cycler-sub');
+        const cyclerReadout = document.getElementById('rc-f14-holo-readout');
+        const heroEmitter = document.getElementById('rc-f14-hero-emitter');
+
+        if (holoSlides.length > 1) {
+            let currentHoloIdx = 0;
+            let holoPhaseTimer = null;
+            let readoutSwapTimer = null;
+            let phaseOutCleanupTimer = null;
+
+            function phaseToHologram(nextIdx) {
+                const targetIdx = ((nextIdx % holoSlides.length) + holoSlides.length) % holoSlides.length;
+                if (targetIdx === currentHoloIdx) return;
+                const prevSlide = holoSlides[currentHoloIdx];
+                const nextSlide = holoSlides[targetIdx];
+                currentHoloIdx = targetIdx;
+
+                holoSlides.forEach((sl, idx) => {
+                    if (idx !== targetIdx && sl !== prevSlide) {
+                        sl.classList.remove('is-active', 'is-phasing-out');
+                    }
+                });
+
+                if (prevSlide) {
+                    prevSlide.classList.remove('is-active');
+                    prevSlide.classList.add('is-phasing-out');
+                }
+                if (phaseOutCleanupTimer) clearTimeout(phaseOutCleanupTimer);
+                phaseOutCleanupTimer = setTimeout(() => {
+                    if (prevSlide) prevSlide.classList.remove('is-phasing-out');
+                }, 780);
+
+                nextSlide.classList.remove('is-phasing-out');
+                nextSlide.classList.add('is-active');
+
+                // Pulse emitter ring & phase text readout in sync
+                if (heroEmitter) {
+                    heroEmitter.classList.remove('is-pulsing');
+                    void heroEmitter.offsetWidth;
+                    heroEmitter.classList.add('is-pulsing');
+                }
+
+                const newLabel = nextSlide.getAttribute('data-label') || '';
+                const newSub = nextSlide.getAttribute('data-sub') || '';
+                const newService = nextSlide.getAttribute('data-service') || 'Full Custom Project';
+
+                if (activeHoloBtn) {
+                    activeHoloBtn.setAttribute('data-service', newService);
+                    activeHoloBtn.setAttribute('aria-label', `${newLabel} — Start a Project`);
+                }
+
+                if (cyclerReadout) {
+                    cyclerReadout.classList.add('is-phasing-text');
+                    if (readoutSwapTimer) clearTimeout(readoutSwapTimer);
+                    readoutSwapTimer = setTimeout(() => {
+                        if (cyclerTitle) cyclerTitle.textContent = newLabel;
+                        if (cyclerSub) cyclerSub.textContent = newSub;
+                        cyclerReadout.classList.remove('is-phasing-text');
+                    }, 240);
+                }
+
+                holoDots.forEach((dot, idx) => {
+                    const active = idx === targetIdx;
+                    dot.classList.toggle('is-active', active);
+                    dot.setAttribute('aria-selected', active ? 'true' : 'false');
+                });
+            }
+
+            function startHoloAutoCycle() {
+                if (holoPhaseTimer) clearInterval(holoPhaseTimer);
+                holoPhaseTimer = setInterval(() => {
+                    if (document.hidden) return;
+                    phaseToHologram(currentHoloIdx + 1);
+                }, 2900);
+            }
+
+            holoDots.forEach((dot, idx) => {
+                dot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    phaseToHologram(idx);
+                    startHoloAutoCycle();
+                });
+            });
+
+            startHoloAutoCycle();
+        }
     }
     if (studioClose && !studioClose.dataset.rcStudioWired) {
         studioClose.dataset.rcStudioWired = '1';

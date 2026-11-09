@@ -8179,3 +8179,254 @@ body.rc-logged-in-home .brand-name {
     animation: none !important;
     filter: drop-shadow(0 0 24px rgba(255, 95, 35, 0.55));
 }
+
+
+/* ==========================================================================
+   V230: SINGLE CENTRAL HOLOGRAM ONE-BY-ONE PHASER ("WE BUILD & CREATE")
+   ========================================================================== */
+.rc-f14-holo-single-cycler {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 1.1vh, 12px);
+    z-index: 5;
+}
+
+.rc-f14-holo-stage-btn {
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: clamp(6px, 0.9vh, 10px) !important;
+    outline: none !important;
+}
+
+.rc-f14-hero-projection-well {
+    position: relative !important;
+    width: clamp(145px, 17.5vh, 210px) !important;
+    height: clamp(145px, 18vh, 214px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+}
+
+.rc-f14-hero-beam {
+    width: 92% !important;
+    height: 88% !important;
+    bottom: 12px !important;
+    filter: blur(1.8px) !important;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 15%, #000 85%, transparent 100%);
+}
+
+.rc-f14-holo-slides-stack {
+    position: relative !important;
+    width: 92% !important;
+    height: 86% !important;
+    margin-bottom: 14px !important;
+    display: block !important;
+    z-index: 3 !important;
+    animation: rcHoloLevitate 3.2s ease-in-out infinite !important;
+}
+
+.rc-f14-holo-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, 14px, 0) scale(0.86);
+    filter:
+        brightness(1.9)
+        saturate(1.45)
+        blur(7px)
+        drop-shadow(0 0 20px rgba(0, 240, 255, 0.95));
+    transition:
+        opacity 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.78s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform, filter;
+}
+
+.rc-f14-holo-slide.is-active {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter:
+        contrast(1.16)
+        brightness(1.12)
+        blur(0px)
+        drop-shadow(0 6px 14px rgba(0, 0, 0, 0.88))
+        drop-shadow(0 0 12px rgba(0, 240, 255, 0.62));
+}
+
+.rc-f14-holo-slide.is-phasing-out {
+    opacity: 0;
+    transform: translate3d(0, -16px, 0) scale(1.08);
+    filter:
+        brightness(2.0)
+        saturate(1.6)
+        blur(7px)
+        drop-shadow(0 0 24px rgba(0, 240, 255, 0.98));
+}
+
+.rc-f14-holo-stage-btn:hover .rc-f14-holo-slide.is-active {
+    transform: translate3d(0, -3px, 0) scale(1.05);
+    filter:
+        contrast(1.18)
+        brightness(1.18)
+        blur(0px)
+        drop-shadow(0 8px 18px rgba(0, 0, 0, 0.92))
+        drop-shadow(0 0 18px rgba(0, 240, 255, 0.88));
+}
+
+.rc-f14-hero-emitter {
+    width: 62% !important;
+    height: 15px !important;
+    bottom: 4px !important;
+}
+
+.rc-f14-hero-emitter.is-pulsing {
+    animation: rcHoloEmitterPhasePulse 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes rcHoloEmitterPhasePulse {
+    0% {
+        transform: translateX(-50%) scale(1);
+        filter: brightness(1);
+    }
+    40% {
+        transform: translateX(-50%) scale(1.14);
+        filter: brightness(1.75) drop-shadow(0 0 14px #00f0ff);
+    }
+    100% {
+        transform: translateX(-50%) scale(1);
+        filter: brightness(1);
+    }
+}
+
+.rc-f14-holo-readout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 36px;
+    text-align: center;
+    transition:
+        opacity 0.24s ease,
+        transform 0.24s ease,
+        filter 0.24s ease;
+}
+
+.rc-f14-holo-readout.is-phasing-text {
+    opacity: 0;
+    transform: translateY(4px);
+    filter: blur(4px);
+}
+
+.rc-f14-cycler-title {
+    font-size: clamp(0.76rem, 1.05vw, 0.98rem) !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.14em !important;
+    color: #e2feff !important;
+    text-shadow:
+        0 0 12px rgba(0, 240, 255, 0.92),
+        0 2px 4px rgba(0, 0, 0, 0.95) !important;
+}
+
+.rc-f14-cycler-sub {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(0.62rem, 0.78vw, 0.76rem);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: rgba(195, 245, 255, 0.82);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+.rc-f14-holo-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 1px;
+}
+
+.rc-f14-holo-dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid rgba(130, 245, 255, 0.55);
+    background: rgba(12, 42, 56, 0.65);
+    cursor: pointer;
+    transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1), background 0.28s ease, box-shadow 0.28s ease;
+}
+
+.rc-f14-holo-dot.is-active {
+    width: 20px;
+    background: #5cf8ff;
+    border-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.9);
+}
+
+/* Mobile sizing for Single Phasing Hologram Stage */
+@media (max-width: 960px) {
+    .rc-f14-holo-single-cycler {
+        gap: 4px;
+    }
+
+    .rc-f14-hero-projection-well {
+        width: clamp(78px, 20vw, 108px) !important;
+        height: clamp(78px, 20vw, 108px) !important;
+    }
+
+    .rc-f14-holo-slides-stack {
+        margin-bottom: 9px !important;
+    }
+
+    .rc-f14-hero-emitter {
+        height: 10px !important;
+        bottom: 2px !important;
+    }
+
+    .rc-f14-holo-readout {
+        min-height: 24px;
+        gap: 1px;
+    }
+
+    .rc-f14-cycler-title {
+        font-size: clamp(0.52rem, 2vw, 0.68rem) !important;
+        letter-spacing: 0.10em !important;
+    }
+
+    .rc-f14-cycler-sub {
+        font-size: clamp(0.42rem, 1.55vw, 0.54rem);
+        line-height: 1.15;
+    }
+
+    .rc-f14-holo-dots {
+        gap: 5px;
+    }
+
+    .rc-f14-holo-dot {
+        width: 5px;
+        height: 5px;
+    }
+
+    .rc-f14-holo-dot.is-active {
+        width: 14px;
+    }
+}
