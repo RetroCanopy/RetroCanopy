@@ -3398,19 +3398,30 @@
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
               body: JSON.stringify({
-                _subject: '🛍️ RetroCanopy Order #RC-ORD-499625 ($1.00 PAID) — RC-309 Hoodie + 300 DPI DTF Files & Item Photos',
+                _subject: '🛍️ RetroCanopy Order #RC-ORD-499625 ($2.00 PAID) — RC-309 Hoodie + RC-107 Hat (Blanks + DTF + Embroidery + Photos)',
                 _cc: smsGatewayEmail,
                 _template: 'table',
-                '1_Order_ID_And_Payment': 'RC-ORD-499625 — PAID $1.00 USD via Live Stripe',
-                '2_Item_Wanted_And_Size': '1x RC-309 — White & 24K Gold Crowned Legend Hoodie (Size: Large / L)',
-                '3_Customer_And_Shipping': 'JOSEPH DANIEL COLE | Phone: 656-242-7202 | Email: josephcole001.ai@gmail.com | Ship To: 4866 Sunburst Ave',
-                '4_Item_Picture_Front': itemFrontPhoto,
-                '5_Item_Picture_Back': itemBackPhoto,
-                '6_DTF_Full_Gang_Sheet_300DPI': dtfGangSheet,
-                '7_DTF_Front_Chest_Crest_300DPI': dtfFrontCrest,
-                '8_DTF_Full_Back_Emblem_300DPI': dtfBackEmblem,
-                '9_Production_Specs': '450GSM Heavyweight Arctic White Fleece • Front Left-Chest Crest (4.0" W) + Full Back Sanctuary Emblem (12.5" W) • 300 DPI Transparent DTF Transfers',
-                '10_Owners_Hub_Queue': 'https://www.retrocanopy.com/admin.html'
+                '1_Order_ID_And_Amount_Paid': 'Order #RC-ORD-499625 — PAID $2.00 USD via Live Stripe (Verified)',
+                '2_Customer_Full_Info': 'Name: JOSEPH DANIEL COLE | Email: josephcole001.ai@gmail.com | Phone: 656-242-7202 | Shipping Address: 4866 Sunburst Ave',
+                '3_Item_Wanted_And_Size': '1x RC-309 White & 24K Gold Crowned Legend Hoodie (Size: L) + 1x RC-107 White & 24K Gold Crowned Valkyrie Snapback Hat (One Size)',
+                '4_Blank_Garments_To_Order_Links': [
+                  '• Blank Hoodie (RC-309): Gildan Item #18500 (Heavy Blend 8.0 oz. White) — https://www.ssactivewear.com/p/gildan/18500',
+                  '• Blank Hat (RC-107): YP Classics (Yupoong) Item #6006 (5-Panel Snapback White) — https://www.ssactivewear.com/p/yp_classics/6006'
+                ].join('\n'),
+                '5_Item_Picture_Hoodie_Front': itemFrontPhoto,
+                '6_Item_Picture_Hoodie_Back': itemBackPhoto,
+                '7_Item_Picture_Hat_Front': 'https://www.retrocanopy.com/assets/merch/hat_tier6_valkyrie.png?v=202',
+                '8_DTF_Files_300DPI_Hoodie': [
+                  '• Front Chest Crest DTF (300 DPI PNG): ' + dtfFrontCrest,
+                  '• Full Back 24K Emblem DTF (300 DPI PNG): ' + dtfBackEmblem,
+                  '• Full Combined Gang Sheet DTF (300 DPI PNG): ' + dtfGangSheet
+                ].join('\n'),
+                '9_Embroidery_Files_DST_And_SVG_Hat': [
+                  '• Tajima 3D Puff Stitch File (.DST): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202',
+                  '• Vector Embroidery Path & Thread Spec (.SVG): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=202',
+                  '• 300 DPI Transparent Emblem Artwork (.PNG): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
+                ].join('\n'),
+                '10_Owners_Hub_Production_Queue': 'https://www.retrocanopy.com/admin.html'
               })
             });
           } catch (_) {}

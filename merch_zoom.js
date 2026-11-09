@@ -1861,26 +1861,46 @@
             })
           }).catch(() => {});
 
-          // 4B. Instant Production Email + Spectrum SMS/MMS Alert with Garment Pictures + 300 DPI DTF Files
+          // Build Blank Garment Supplier Links (S&S Activewear) for every ordered item
+          const hasHoodie = orderItemsArr.some((x) => String(x.model || '').toUpperCase() !== 'RC-107');
+          const hasHat = orderItemsArr.some((x) => String(x.model || '').toUpperCase() === 'RC-107');
+          const blankSupplierLinks = [
+            hasHoodie ? '• Blank Hoodie (RC-309): Gildan Item #18500 (Heavy Blend 8.0 oz. White) — https://www.ssactivewear.com/p/gildan/18500' : '',
+            hasHat ? '• Blank Hat (RC-107): YP Classics (Yupoong) Item #6006 (5-Panel Snapback White) — https://www.ssactivewear.com/p/yp_classics/6006' : ''
+          ].filter(Boolean).join('\n');
+
+          const dtfLinksBlock = hasHoodie ? [
+            '• Front Chest Crest DTF (300 DPI PNG): https://www.retrocanopy.com/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202',
+            '• Full Back 24K Emblem DTF (300 DPI PNG): https://www.retrocanopy.com/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202',
+            '• Full Combined Gang Sheet DTF (300 DPI PNG): https://www.retrocanopy.com/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202'
+          ].join('\n') : 'N/A (No Hoodie in this order — see Embroidery Files below)';
+
+          const embroideryLinksBlock = hasHat ? [
+            '• Tajima 3D Puff Stitch File (.DST): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202',
+            '• Vector Embroidery Path & Thread Spec (.SVG): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=202',
+            '• 300 DPI Transparent Emblem Artwork (.PNG): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
+          ].join('\n') : '• Reference Hat .DST (if needed): https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202';
+
+          // 4B. Instant Production Email + Spectrum SMS/MMS Alert with Blank Supplier Links, DTF Files, Embroidery Files, Customer Info, Amount Paid & Item Pictures
           const emailPayload = {
-            _subject: `🛍️ New RetroCanopy Paid Order ${orderRecord.orderId} ($${totalFormatted}) — ${itemsSummary}`,
+            _subject: `🛍️ New RetroCanopy Paid Order ${orderRecord.orderId} ($${totalFormatted} PAID) — ${itemsSummary}`,
             _cc: '6562427202@vtext.com,6562427202@vzwpix.com',
             _template: 'table',
-            '1_Order_ID_And_Payment': `${orderRecord.orderId} — PAID $${totalFormatted} USD via Live Stripe (${orderRecord.stripeSessionId || 'Verified'})`,
-            '2_Item_Ordered_And_Size': itemsSummary,
-            '3_Customer_And_Shipping': `${orderRecord.customerName} | Phone: ${orderRecord.customerPhone || 'N/A'} | Email: ${orderRecord.customerEmail} | Ship To: ${orderRecord.shippingAddress}`,
-            '4_Item_Picture_Front': firstItem.frontPhotoUrl ? `https://www.retrocanopy.com/${String(firstItem.frontPhotoUrl).split('?')[0]}?v=202` : 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_front.png?v=202',
-            '5_Item_Picture_Back': firstItem.backPhotoUrl ? `https://www.retrocanopy.com/${String(firstItem.backPhotoUrl).split('?')[0]}?v=202` : (firstItem.model === 'RC-107' ? 'N/A (6-Panel Hat)' : 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_back.png?v=202'),
-            '6_DTF_Full_Gang_Sheet_300DPI': firstItem.model === 'RC-107'
-              ? 'https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst?v=202'
-              : 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png?v=202',
-            '7_DTF_Front_Crest_300DPI': firstItem.model === 'RC-107'
-              ? 'https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=202'
-              : 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=202',
-            '8_DTF_Back_Emblem_300DPI': firstItem.model === 'RC-107'
-              ? 'https://www.retrocanopy.com/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg?v=202'
-              : 'https://www.retrocanopy.com/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png?v=202',
-            '9_All_Production_Files_Detail': dtfFilesText,
+            '1_Order_ID_And_Amount_Paid': `Order #${orderRecord.orderId} — PAID $${totalFormatted} USD via Live Stripe (${orderRecord.stripeSessionId || 'Verified'})`,
+            '2_Customer_Full_Info': [
+              `Name: ${orderRecord.customerName}`,
+              `Email: ${orderRecord.customerEmail}`,
+              `Phone: ${orderRecord.customerPhone || 'N/A'}`,
+              `Shipping Address: ${orderRecord.shippingAddress}`,
+              orderRecord.customerNotes ? `Notes: ${orderRecord.customerNotes}` : ''
+            ].filter(Boolean).join(' | '),
+            '3_Item_Wanted_And_Size': itemsSummary,
+            '4_Blank_Garments_To_Order_Links': blankSupplierLinks,
+            '5_Pictures_Of_Item_Wanted': itemPhotosText,
+            '6_Item_Picture_Front_Direct': firstItem.frontPhotoUrl ? `https://www.retrocanopy.com/${String(firstItem.frontPhotoUrl).split('?')[0]}?v=202` : 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_front.png?v=202',
+            '7_Item_Picture_Back_Direct': firstItem.backPhotoUrl ? `https://www.retrocanopy.com/${String(firstItem.backPhotoUrl).split('?')[0]}?v=202` : (firstItem.model === 'RC-107' ? 'https://www.retrocanopy.com/assets/merch/hat_tier6_valkyrie.png?v=202' : 'https://www.retrocanopy.com/assets/merch/hoodie_tier6_2f_back.png?v=202'),
+            '8_DTF_Files_300DPI_Links': dtfLinksBlock,
+            '9_Embroidery_Files_DST_And_SVG_Links': embroideryLinksBlock,
             '10_Owners_Hub_Production_Queue': 'https://www.retrocanopy.com/admin.html'
           };
 
