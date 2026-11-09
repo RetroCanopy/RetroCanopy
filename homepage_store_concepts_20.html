@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RETROCANOPY — 20 3D Black &amp; Molten Orange Liquid Glass Site Concepts</title>
+  <title>RETROCANOPY — 20 Fresh Exact-Brand 3D Black &amp; Orange Liquid Glass Concepts</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Outfit:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -29,7 +29,6 @@
       overflow-x: hidden;
     }
 
-    /* Sticky Top Header */
     .top-bar {
       position: sticky;
       top: 0;
@@ -129,11 +128,10 @@
       font-size: 0.78rem;
       padding: 8px 14px;
       border-radius: 999px;
-      width: 210px;
+      width: 200px;
       outline: none;
     }
 
-    /* Gallery Container */
     .main-wrap {
       max-width: 1840px;
       margin: 22px auto 60px;
@@ -149,8 +147,8 @@
       padding: 15px 22px;
       margin-bottom: 22px;
       border-radius: 18px;
-      background: linear-gradient(90deg, rgba(255, 90, 0, 0.2), rgba(16, 12, 20, 0.94));
-      border: 1px solid rgba(255, 115, 0, 0.5);
+      background: linear-gradient(90deg, rgba(255, 90, 0, 0.22), rgba(16, 12, 20, 0.94));
+      border: 1px solid rgba(255, 115, 0, 0.52);
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 220, 140, 0.35);
     }
 
@@ -295,7 +293,6 @@
       color: var(--gold);
     }
 
-    /* Fullscreen Lightbox */
     .lightbox {
       position: fixed;
       inset: 0;
@@ -384,14 +381,14 @@
       <div class="brand-left">
         <img src="assets/logo.png" alt="RetroCanopy" />
         <div>
-          <h1>RETROCANOPY — 3D BLACK &amp; MOLTEN ORANGE LIQUID GLASS + STEPPED PEDESTAL CONCEPTS</h1>
-          <p>True 3D Raytraced Blown Smoked-Black &amp; Molten Orange Liquid Glass (#01) + 3D Stepped Glass Pedestals (#19) + Current Site</p>
+          <h1>RETROCANOPY — 20 FRESH EXACT-BRAND 3D BLACK &amp; ORANGE LIQUID GLASS IDEAS</h1>
+          <p>Accurately depicting your exact Hats, Hoodie (Front &amp; Back), Shibuya Bot Pit, Nerdy Misfits, 4 Holograms &amp; Deaf Hammer in 3D Liquid Glass</p>
         </div>
       </div>
 
       <div class="filter-controls">
-        <button class="filter-btn active" onclick="setFilter('liquid_site', this)">🔥 20 Clean 3D Liquid Glass Site Concepts</button>
-        <button class="filter-btn" onclick="setFilter('fusion', this)">⚡ Previous 20 Fusion</button>
+        <button class="filter-btn active" onclick="setFilter('fresh', this)">🔥 20 Fresh Exact-Brand Ideas</button>
+        <button class="filter-btn" onclick="setFilter('liquid_site', this)">✨ Previous 20 Liquid Glass</button>
         <button class="filter-btn" onclick="setFilter('c01', this)">🟠 20 Concept #01 Variations</button>
         <button class="filter-btn" onclick="setFilter('c19', this)">🛸 20 Concept #19 Variations</button>
         <button class="filter-btn" onclick="setFilter('orig', this)">🏛️ Original 20</button>
@@ -402,14 +399,13 @@
 
   <main class="main-wrap">
     <div class="section-banner">
-      <h2 id="sectionTitle">🔥 20 CLEAN 3D BLACK &amp; MOLTEN ORANGE LIQUID GLASS + 3D PEDESTAL SITE CONCEPTS</h2>
+      <h2 id="sectionTitle">🔥 20 FRESH EXACT-BRAND 3D BLACK &amp; MOLTEN ORANGE LIQUID GLASS + STEPPED PEDESTAL CONCEPTS</h2>
       <span id="countLabel">Showing 20 concepts — Click any board for Full-Screen Inspection (Use ◀ / ▶ arrows to browse)</span>
     </div>
 
     <div id="conceptsGrid" class="concepts-grid"></div>
   </main>
 
-  <!-- FULLSCREEN LIGHTBOX -->
   <div id="lightbox" class="lightbox" onclick="if(event.target===this) closeLightbox()">
     <div class="lightbox-inner">
       <div class="lightbox-top">
@@ -427,178 +423,178 @@
   </div>
 
   <script>
-    const LIQUID_SITE_CONCEPTS = [
+    const FRESH_CONCEPTS = [
       {
-        id: "LIQUID #01",
-        group: "liquid_site",
-        title: "Classic 3D Pill Liquid Glass Capsules + Stepped Glass Pedestals",
-        desc: "Your current site layout rendered in thick 3D blown smoked-black & molten-orange liquid glass pill capsules on 3D stepped orange-lit glass pedestals, with the Shibuya Bot Pit liquid glass banner, unified bottom dock, and 360° glass turntable store.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_01.jpg",
-        tags: ["3D Blown Liquid Glass", "Stepped Glass Pedestals", "Current Site Layout", "360° Turntable Store"]
+        id: "FRESH #01",
+        group: "fresh",
+        title: "Signature 3-Capsule & Stepped Glass Pedestal Evolution (Exact Brand Kit)",
+        desc: "Your exact White & 24K Gold Hats and Hoodie inside thick 3D blown smoked-black & molten-orange liquid glass capsules on stepped glass pedestals, with your exact Shibuya Bot Pit artwork, Nerdy Misfits punk-elf & green smiley, 4 cyan holograms, and Deaf Hammer dH & mascot.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_01.jpg",
+        tags: ["Exact Logos & Products", "3D Liquid Glass Capsules", "Stepped Glass Pedestals", "Front + Back Store"]
       },
       {
-        id: "LIQUID #02",
-        group: "liquid_site",
-        title: "Open 3D Stepped Glass Pedestals + Curved Liquid Glass Arch Shields",
-        desc: "The 3 White & Gold hats and hoodie sit openly on glowing 3D stepped smoked-glass pedestals backed by thick curved black-and-orange liquid glass arch shields.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_02.jpg",
-        tags: ["Open 3D Pedestals", "Curved Glass Shields", "Molten Orange Rims", "Home + Store"]
+        id: "FRESH #02",
+        group: "fresh",
+        title: "Asymmetric Split-Stage Hero (3-Tiered Glass Pyramid + Tall Bot Pit Portal)",
+        desc: "Fresh 60/40 stage: on the left, your exact White & Gold Hoodie and two Snapback Hats sit on a 3-tiered stepped smoked-glass & molten-orange pyramid; on the right, a tall 3D liquid-glass portal showcases Shibuya 3D Arena Bot Pit, above the exact tri-brand dock.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_02.jpg",
+        tags: ["3-Tiered Glass Pyramid", "Split-Stage Hero", "Twin Turntable Store", "Exact Brand Kit"]
       },
       {
-        id: "LIQUID #03",
-        group: "liquid_site",
-        title: "Sleek Rounded-Square 3D Liquid Glass Showcase Pods",
-        desc: "Presents the 3 White & Gold merch items inside thick squircle 3D smoked-black and molten-orange liquid glass pods with glossy diagonal surface reflections and amber rim caustics.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_03.jpg",
-        tags: ["3D Squircle Glass Pods", "Specular Reflections", "Bot Pit Banner", "360° Store"]
+        id: "FRESH #03",
+        group: "fresh",
+        title: "360° Orbital Glass Ring Carousel (Circular 3D Showroom Stage)",
+        desc: "A floating 3D smoked-glass & molten-orange orbital ring rotates your exact White & Gold Hats and Hoodie on stepped glass pods around a central 1984 Sunset Tree core.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_03.jpg",
+        tags: ["360° Orbital Ring", "Rotary Glass Stage", "Exact Brand Kit", "Orbital Store"]
       },
       {
-        id: "LIQUID #04",
-        group: "liquid_site",
-        title: "Floating 3D Liquid Glass Platform Shelf + Individual Glass Domes",
-        desc: "A continuous thick 3D smoked-black & molten-orange liquid glass platform shelf with embedded orange light tubes supports the 3 stepped pedestals and glass domes.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_04.jpg",
-        tags: ["3D Glass Shelf", "Embedded Light Tubes", "Liquid Glass Domes", "Turntable Store"]
+        id: "FRESH #04",
+        group: "fresh",
+        title: "Luxury 6-Module Curved 3D Liquid Glass Bento Vault",
+        desc: "Organizes the Home Page into 6 interlocking ultra-thick 3D blown smoked-black & molten-orange liquid glass Bento modules housing your exact Hats, Hoodie, Bot Pit, Nerdy Misfits, 4 Holograms, and Deaf Hammer.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_04.jpg",
+        tags: ["6-Module 3D Bento", "Thick Molded Glass", "Exact Brand Kit", "Bento Store"]
       },
       {
-        id: "LIQUID #05",
-        group: "liquid_site",
-        title: "Pure Obsidian, Molten Sunset Orange & 24K Gold Liquid Glass",
-        desc: "Richer 24K gold and molten-orange prismatic glass caustics matching the 24K gold embroidery on your White Hats and Hoodie, with dual-glowing gold and orange stepped glass pedestals.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_05.jpg",
-        tags: ["24K Gold & Orange", "Prismatic Caustics", "Luxury Glass Pedestals", "Home + Store"]
+        id: "FRESH #05",
+        group: "fresh",
+        title: "Floating 3D Liquid Glass Runway Catwalk Bridge",
+        desc: "A perspective catwalk runway sculpted from smoked-black glass and molten-orange light extends from the top 1984 Sunset Tree logo, carrying the stepped glass merch pedestals.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_05.jpg",
+        tags: ["3D Glass Runway", "Perspective Catwalk", "Exact Brand Kit", "Turntable Store"]
       },
       {
-        id: "LIQUID #06",
-        group: "liquid_site",
-        title: "Elevated Center Hoodie Capsule + 3-Stepped Glass Turntables",
-        desc: "Center White & Gold Hoodie sits inside a taller 3D black-and-orange liquid glass capsule on a 3-stepped glowing orange glass turntable, flanked symmetrically by the two Snapback Hats.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_06.jpg",
-        tags: ["Elevated Center Hoodie", "3-Stepped Glass Base", "Symmetrical Stage", "360° Store"]
+        id: "FRESH #06",
+        group: "fresh",
+        title: "Open-Air Levitating Merch Over Recessed Molten-Orange Liquid Glass Wells",
+        desc: "Your exact White & Gold Hats and Hoodie levitate freely in pitch-black space above recessed circular molten-orange liquid glass floor wells that cast warm amber caustics upward.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_06.jpg",
+        tags: ["Recessed Magma Wells", "Open-Air Levitation", "Exact Brand Kit", "360° Store"]
       },
       {
-        id: "LIQUID #07",
-        group: "liquid_site",
-        title: "3-Pod Bottom Liquid Glass Dock + 3-Capsule Merch Stage",
-        desc: "Splits the bottom row into 3 distinct thick 3D blown black-and-orange liquid glass pods (Nerdy Misfits | We Build & Create 4 Icons | Deaf Hammer), mirroring the 3 merch capsules above.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_07.jpg",
-        tags: ["3-Pod Bottom Dock", "3-Capsule Merch Row", "Architectural Balance", "Home + Store"]
+        id: "FRESH #07",
+        group: "fresh",
+        title: "Wrap-Around Curved 3D Cockpit Liquid Glass HUD",
+        desc: "The top bar, Shibuya Bot Pit panel, and bottom Nerdy Misfits / We Build & Create / Deaf Hammer dock curve gently in 3D perspective around the central stepped glass pedestals.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_07.jpg",
+        tags: ["Curved 3D Cockpit HUD", "Stepped Pedestals", "Exact Brand Kit", "Panoramic Store"]
       },
       {
-        id: "LIQUID #08",
-        group: "liquid_site",
-        title: "Dual-Ring Molten Orange & Cyan-Hint Stepped Glass Pedestals",
-        desc: "Deep obsidian black and molten orange 3D liquid glass paired with a thin electric-cyan inner laser ring inside the stepped glass pedestals and hologram icons.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_08.jpg",
-        tags: ["Orange + Cyan Rings", "#01 + #19 Fusion", "3D Stepped Glass", "Turntable Store"]
+        id: "FRESH #08",
+        group: "fresh",
+        title: "Tri-Portal Archway Showroom (3 Monumental 3D Blown Liquid Glass Arches)",
+        desc: "Three grand architectural blown-glass arches with molten-orange light piping frame stepped glass pedestals holding your exact White & Gold Hat, Hoodie, and Hat.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_08.jpg",
+        tags: ["3 Blown Glass Arches", "Architectural Showroom", "Exact Brand Kit", "Archway Store"]
       },
       {
-        id: "LIQUID #09",
-        group: "liquid_site",
-        title: "Panoramic Curved 3D Liquid Glass Display Visor",
-        desc: "A single wide, ultra-thick curved 3D smoked-black & molten-orange liquid glass canopy encloses all 3 stepped glass pedestals and White & Gold merch items.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_09.jpg",
-        tags: ["Panoramic Glass Canopy", "3 Stepped Pedestals", "Clean Pitch-Black", "360° Store"]
+        id: "FRESH #09",
+        group: "fresh",
+        title: "Horizontal Flowing Liquid-Glass Ribbon Wave + Stepped Alcoves",
+        desc: "A sculptural 3D smoked-black & molten-orange liquid glass wave ribbon sweeps horizontally across the screen, cradling stepped glass turntables for your exact apparel.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_09.jpg",
+        tags: ["Liquid Glass Wave Ribbon", "Stepped Alcoves", "Exact Brand Kit", "360° Store"]
       },
       {
-        id: "LIQUID #10",
-        group: "liquid_site",
-        title: "Molten Lava Underglow 3D Smoked Quartz Glass",
-        desc: "Intense molten sunset-orange light pools at the curved bottom meniscus of every 3D smoked-quartz capsule, Bot Pit card, stepped turntable pedestal, and bottom dock.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_10.jpg",
-        tags: ["Molten Underglow", "Smoked Quartz Glass", "Thick Meniscus", "Home + Store"]
+        id: "FRESH #10",
+        group: "fresh",
+        title: "Split-Open Retractable 3D Liquid Glass Cylinder Vaults",
+        desc: "Cylindrical smoked-glass vaults with motorized curved glass doors slid open along glowing molten-orange circular rails, revealing your exact garments on turntable pedestals.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_10.jpg",
+        tags: ["Split-Open Glass Vaults", "Retractable Doors", "Exact Brand Kit", "Vault Store"]
       },
       {
-        id: "LIQUID #11",
-        group: "liquid_site",
-        title: "Exact Current Site Layout in Thick 3D Molded Liquid Glass",
-        desc: "Preserves your exact current site positioning with thick 3D molded black-and-orange liquid glass window frames, 3 capsule pedestals, Bot Pit card, and 3-section bottom dock.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_11.jpg",
-        tags: ["1:1 Site Positioning", "Thick Molded Glass", "Stepped Pedestals", "Turntable Store"]
+        id: "FRESH #11",
+        group: "fresh",
+        title: "Isometric 3D Stepped Showroom Floor (#19) + Foreground Liquid Glass HUDs (#01)",
+        desc: "Multi-tiered circular stepped glass pedestals display your White & Gold Hats, Hoodie, and Shibuya Bot Pit miniature on an isometric 3D floor while the header and tri-brand dock float in the foreground.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_11.jpg",
+        tags: ["Isometric 3D Floor", "Foreground Glass HUDs", "Exact Brand Kit", "360° Store"]
       },
       {
-        id: "LIQUID #12",
-        group: "liquid_site",
-        title: "3D Liquid Glass Turntable Rings + Floating Glass Inspector HUDs",
-        desc: "Combines #01's thick black-and-orange liquid glass capsules on the Home Page with #19's floating 3D angled dark liquid-glass HUD inspector cards on the Store screen.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_12.jpg",
-        tags: ["Floating Glass HUDs", "360° Inspector", "#01 + #19 Store", "Clean Dark Retro"]
+        id: "FRESH #12",
+        group: "fresh",
+        title: "Hexagonal Honeycomb 3D Liquid Glass Cells + Stepped Hex Pedestals",
+        desc: "Interlocking geometric smoked-black obsidian honeycomb cells with thick beveled glass edges, molten-orange illumination, and stepped hexagonal glass pedestals.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_12.jpg",
+        tags: ["3D Hex Honeycomb", "Stepped Hex Pedestals", "Exact Brand Kit", "Hex Store"]
       },
       {
-        id: "LIQUID #13",
-        group: "liquid_site",
-        title: "Mirror-Black Floor Reflection + 3D Blown Obsidian Glass",
-        desc: "Both browser windows feature a glossy wet-obsidian mirror-black floor reflecting the glowing molten-orange ring pedestals and thick liquid-glass capsules.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_13.jpg",
-        tags: ["Wet Obsidian Reflection", "3D Blown Glass", "Stepped Pedestals", "Home + Store"]
+        id: "FRESH #13",
+        group: "fresh",
+        title: "Dual-Deck Horizon Split (Upper Apparel Glass Deck / Lower Arcade & Studio Deck)",
+        desc: "Divided by a glowing molten-orange 1984 horizon line separating the upper stepped glass Apparel Showroom from the lower unified smoked-glass Bot Pit & tri-brand studio deck.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_13.jpg",
+        tags: ["Dual-Deck Horizon", "Clean Split Layout", "Exact Brand Kit", "360° Store"]
       },
       {
-        id: "LIQUID #14",
-        group: "liquid_site",
-        title: "100% Unified Black & Molten Orange Monochrome Hologram Edition",
-        desc: "All icons (WEBSITES, APPS, GAMES, APPAREL), Nerdy Misfits, and Deaf Hammer glow in unified Molten Sunset Orange & 24K Gold inside thick smoked-black liquid glass.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_14.jpg",
-        tags: ["100% Black & Orange", "Unified Color Theme", "Amber Holograms", "360° Store"]
+        id: "FRESH #14",
+        group: "fresh",
+        title: "Giant Centerpiece Dual-Merch Turntable + Flanking Glass Wing Docks",
+        desc: "A commanding central 360° stepped smoked-glass turntable presents the White & Gold Hoodie and Snapback Hat together, flanked by the Shibuya Bot Pit left wing and 4-Hologram right tower.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_14.jpg",
+        tags: ["Centerpiece Dual Turntable", "Flanking Glass Wings", "Exact Brand Kit", "Hero Store"]
       },
       {
-        id: "LIQUID #15",
-        group: "liquid_site",
-        title: "Bento-Aligned 3D Black & Orange Liquid Glass Grid",
-        desc: "Structures the Home Page into an ultra-clean modular 3D Bento layout of thick molded smoked-black & molten-orange liquid glass tiles with deep 3D bevels.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_15.jpg",
-        tags: ["3D Bento Glass", "Deep Glass Bevels", "Modular Clean UI", "Home + Store"]
+        id: "FRESH #15",
+        group: "fresh",
+        title: "4-Piece Front & Back Merch Vault (Hat | Hoodie Front | Hoodie Back | Hat)",
+        desc: "Showcases all 4 views on stepped glass pedestals: White & Gold Snapback Hat, Hoodie Front, Hoodie Back (with the large 24K gold 'RETROCANOPY TIER VI // CROWNED LEGEND' crest), and Hat.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_15.jpg",
+        tags: ["Hoodie Front & Back", "4-Pedestal Lineup", "Exact Brand Kit", "Full Vault Store"]
       },
       {
-        id: "LIQUID #16",
-        group: "liquid_site",
-        title: "1984 Sunset Horizon Glow + Thick 3D Smoked Liquid Glass",
-        desc: "A soft molten-orange sunset aura behind the top RetroCanopy Tree logo casts warm amber caustics across the thick 3D smoked-black liquid glass capsules and stepped pedestals.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_16.jpg",
-        tags: ["1984 Sunset Aura", "Amber Caustics", "3D Liquid Glass", "Turntable Store"]
+        id: "FRESH #16",
+        group: "fresh",
+        title: "Floating 3D Liquid Glass Islands Linked by Molten-Orange Conduits",
+        desc: "Each zone (Header, 3 Merch Pedestals, Shibuya Bot Pit, Nerdy Misfits, We Build & Create 4 Holograms, Deaf Hammer) sits on its own elevated smoked-black liquid glass island connected by molten-orange light conduits.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_16.jpg",
+        tags: ["Floating Glass Islands", "Molten Light Conduits", "Exact Brand Kit", "Island Store"]
       },
       {
-        id: "LIQUID #17",
-        group: "liquid_site",
-        title: "Frameless Floating Merch on 3D Liquid-Glass Pedestal Discs",
-        desc: "The 3 White & Gold merch items float in open pitch-black space directly above glowing 3D smoked-glass & molten-orange circular pedestal discs, with liquid glass Bot Pit and bottom dock.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_17.jpg",
-        tags: ["Frameless Merch", "3D Glass Pedestal Discs", "Maximum Breathing Room", "Home + Store"]
+        id: "FRESH #17",
+        group: "fresh",
+        title: "Floor-to-Ceiling 3D Smoked-Glass Monolith Pillars + Stepped Pedestal Rings",
+        desc: "Three monumental smoked liquid-glass monolith pillars rise behind the stepped glass pedestal rings holding your exact White & Gold Hats and Hoodie.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_17.jpg",
+        tags: ["Glass Monolith Pillars", "Stepped Glass Rings", "Exact Brand Kit", "360° Store"]
       },
       {
-        id: "LIQUID #18",
-        group: "liquid_site",
-        title: "Dual-Item Store Turntable (Hat + Hoodie) + 3D Liquid Glass Home",
-        desc: "Showcases both the White & Gold Hat and White & Gold Hoodie on twin 3D stepped smoked-glass & molten-orange turntable pedestals on the Store screen.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_18.jpg",
-        tags: ["Twin Store Turntables", "Hat + Hoodie Stage", "3D Liquid Glass", "Home + Store"]
+        id: "FRESH #18",
+        group: "fresh",
+        title: "Wet Obsidian Mirror Pool Stage + 1984 Sunset Caustics",
+        desc: "Mirror-polished liquid obsidian pool stage casting raytraced reflections and warm caustics beneath the 1984 Sunset Tree logo, stepped glass pedestals, and exact brand elements.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_18.jpg",
+        tags: ["Obsidian Mirror Pool", "Raytraced Caustics", "Exact Brand Kit", "Mirror Store"]
       },
       {
-        id: "LIQUID #19",
-        group: "liquid_site",
-        title: "Isometric 3D Stepped Glass Pedestals (#19) + Blown Liquid Glass (#01)",
-        desc: "Deep architectural multi-tiered stepped glass pedestals with intense molten-orange light channels fused seamlessly with thick blown smoked-black liquid glass capsules.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_19.jpg",
-        tags: ["Deep 3D Pedestals", "Blown Liquid Glass", "#01 + #19 Synthesis", "360° Store"]
+        id: "FRESH #19",
+        group: "fresh",
+        title: "Single-Row 4-Pod Center Stage (3 Merch Capsules + Shibuya Bot Pit Inline)",
+        desc: "Aligns the 3 White & Gold Merch items and the Shibuya 3D Arena Bot Pit into a clean 4-pod horizontal row across the middle of the Home Page on stepped glass pedestals.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_19.jpg",
+        tags: ["4-Pod Inline Row", "Ultra-Clean Spacing", "Exact Brand Kit", "Turntable Store"]
       },
       {
-        id: "LIQUID #20",
-        group: "liquid_site",
-        title: "The Ultimate RetroCanopy Clean 3D Black & Orange Liquid Glass Masterpiece",
-        desc: "The flagship 1:1 marriage of Concept #01's thick blown black-and-orange liquid glass, Concept #19's 3D stepped glass turntable pedestals, and your live RetroCanopy site on pure pitch-black.",
-        img: "assets/concept_gallery/homepage_store_20/liquid_site_20.jpg",
-        tags: ["Flagship Masterpiece", "3D Liquid Glass", "Stepped Glass Pedestals", "Production Target"]
+        id: "FRESH #20",
+        group: "fresh",
+        title: "The Ultimate RetroCanopy 3D Black & Orange Liquid Glass Masterpiece",
+        desc: "The definitive synthesis featuring your exact White & 24K Gold Winged-Crown Hats, Crowned Legend Hoodie (Front & Back), Shibuya 3D Arena Bot Pit, Nerdy Misfits elf & green smiley, 4 Cyan Holograms, and Deaf Hammer dH & mascot on 3D stepped glass pedestals.",
+        img: "assets/concept_gallery/homepage_store_20/fresh_20.jpg",
+        tags: ["Masterpiece Synthesis", "100% Exact Logos & Merch", "3D Stepped Glass", "Front & Back Store"]
       }
     ];
 
-    const FUSION_CONCEPTS = Array.from({ length: 20 }, (_, i) => {
+    const LIQUID_SITE_CONCEPTS = Array.from({ length: 20 }, (_, i) => {
       const n = String(i + 1).padStart(2, '0');
       return {
-        id: `FUSION #${n}`,
-        group: "fusion",
-        title: `Earlier Fusion Concept #${n} (#01 + #19 + Site)`,
-        desc: `Earlier combined concept #${n} pairing Home Page and Store Screen.`,
-        img: `assets/concept_gallery/homepage_store_20/fusion_${n}.jpg`,
-        tags: ["Earlier Fusion Batch", "Home + Store"]
+        id: `LIQUID #${n}`,
+        group: "liquid_site",
+        title: `Previous 3D Liquid Glass Concept #${n}`,
+        desc: `Earlier 3D Black & Molten Orange Liquid Glass concept #${n}.`,
+        img: `assets/concept_gallery/homepage_store_20/liquid_site_${n}.jpg`,
+        tags: ["Previous Batch", "3D Liquid Glass"]
       };
     });
 
@@ -662,14 +658,14 @@
     });
 
     const ALL_ITEMS = [
+      ...FRESH_CONCEPTS,
       ...LIQUID_SITE_CONCEPTS,
-      ...FUSION_CONCEPTS,
       ...C01_VARIATIONS,
       ...C19_VARIATIONS,
       ...ORIG_CONCEPTS
     ];
 
-    let currentFilter = 'liquid_site';
+    let currentFilter = 'fresh';
     let currentFilteredList = [];
     let currentLightboxIdx = 0;
 
@@ -679,13 +675,13 @@
       if (btn) btn.classList.add('active');
 
       const titles = {
-        liquid_site: "🔥 20 CLEAN 3D BLACK & MOLTEN ORANGE LIQUID GLASS + 3D PEDESTAL SITE CONCEPTS",
-        fusion: "⚡ PREVIOUS 20 FUSION CONCEPTS",
+        fresh: "🔥 20 FRESH EXACT-BRAND 3D BLACK & MOLTEN ORANGE LIQUID GLASS + STEPPED PEDESTAL CONCEPTS",
+        liquid_site: "✨ PREVIOUS 20 3D LIQUID GLASS CONCEPTS",
         c01: "🟠 20 VARIATIONS OF CONCEPT #01 (3D BLACK & ORANGE LIQUID GLASS)",
         c19: "🛸 20 VARIATIONS OF CONCEPT #19 (3D STEPPED PEDESTALS & TURNTABLE)",
         orig: "🏛️ ORIGINAL 20 HOME PAGE & STORE CONCEPTS"
       };
-      document.getElementById('sectionTitle').textContent = titles[filter] || titles.liquid_site;
+      document.getElementById('sectionTitle').textContent = titles[filter] || titles.fresh;
       renderGallery();
     }
 
