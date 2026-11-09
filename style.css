@@ -8837,3 +8837,92 @@ body.rc-logged-in-home .brand-name {
         margin-top: 2px;
     }
 }
+
+
+/* ==========================================================================
+   V234: CONCEPT #07 1984 BENT-NEON & SMOKED-GLASS PARTNER CORNER MARQUEES
+   ========================================================================== */
+.rc-f14-bottom-pods-row.rc-c07-neon-corners-row {
+    bottom: clamp(2px, 0.4vh, 8px) !important;
+}
+
+.rc-f14-corner-pod.rc-c07-neon-pod {
+    width: clamp(250px, 23.5vw, 375px) !important;
+    height: auto !important;
+    aspect-ratio: 1040 / 980 !important;
+    max-width: none !important;
+    max-height: none !important;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.rc-f14-corner-pod.rc-c07-neon-pod .rc-c07-marquee-stage-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    transition: filter 0.3s ease !important;
+}
+
+.rc-f14-corner-pod.rc-c07-neon-pod.pod-left:hover {
+    transform: translateY(-4px) scale(1.02) !important;
+}
+
+.rc-f14-corner-pod.rc-c07-neon-pod.pod-left:hover .rc-c07-marquee-stage-img {
+    filter:
+        brightness(1.12)
+        drop-shadow(0 0 18px rgba(95, 255, 85, 0.36))
+        drop-shadow(0 0 24px rgba(255, 55, 195, 0.28)) !important;
+}
+
+.rc-f14-corner-pod.rc-c07-neon-pod.pod-right:hover {
+    transform: translateY(-4px) scale(1.02) !important;
+}
+
+.rc-f14-corner-pod.rc-c07-neon-pod.pod-right:hover .rc-c07-marquee-stage-img {
+    filter:
+        brightness(1.12)
+        drop-shadow(0 0 22px rgba(45, 135, 255, 0.45)) !important;
+}
+
+/* Exact Base-Locked Mascot Positions Matching 1040x980 Concept #07 Marquee Stages */
+.rc-f14-corner-pod.rc-c07-neon-pod.pod-left .rc-misfits-char-wrap {
+    position: absolute !important;
+    left: 16.2% !important;
+    top: auto !important;
+    bottom: 29.0% !important;
+    height: 43.5% !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 4 !important;
+}
+
+.rc-f14-corner-pod.rc-c07-neon-pod.pod-right .rc-deafhammer-char-wrap {
+    position: absolute !important;
+    left: 60.0% !important;
+    top: auto !important;
+    bottom: 29.2% !important;
+    height: 42.0% !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 4 !important;
+}
+
+@media (max-width: 960px) {
+    .rc-f14-bottom-pods-row.rc-c07-neon-corners-row {
+        bottom: 2px !important;
+    }
+
+    .rc-f14-corner-pod.rc-c07-neon-pod {
+        width: min(45.5vw, 190px) !important;
+        height: auto !important;
+        aspect-ratio: 1040 / 980 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .rc-f14-corner-pod.rc-c07-neon-pod {
+        width: 46vw !important;
+    }
+}
