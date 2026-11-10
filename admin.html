@@ -1493,6 +1493,93 @@
       background: rgba(10, 22, 36, 0.76);
       border-color: rgba(44, 230, 255, 0.35);
     }
+    .bq-tax-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      border: 1.5px solid rgba(34, 245, 155, 0.65);
+      background: linear-gradient(135deg, rgba(34, 245, 155, 0.22), rgba(14, 90, 62, 0.38));
+      color: #6bffc3;
+      box-shadow: 0 0 16px rgba(34, 245, 155, 0.18);
+    }
+    .bq-tax-toggle-btn.is-off {
+      border-color: rgba(255, 154, 208, 0.55);
+      background: rgba(38, 22, 36, 0.75);
+      color: #ffb8dc;
+      box-shadow: none;
+    }
+    .bq-tax-toggle-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22f59b;
+      box-shadow: 0 0 8px #22f59b;
+      flex-shrink: 0;
+    }
+    .bq-tax-toggle-btn.is-off .bq-tax-toggle-dot {
+      background: #ff6fa8;
+      box-shadow: none;
+    }
+    .bq-branded-receipt {
+      background: linear-gradient(180deg, #100d21 0%, #090714 100%);
+      border: 1.5px solid rgba(245, 196, 81, 0.48);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      margin-bottom: 14px;
+    }
+    .bq-receipt-banner {
+      background: radial-gradient(circle at 18% 50%, rgba(255, 79, 163, 0.22), transparent 55%),
+                  radial-gradient(circle at 88% 30%, rgba(44, 230, 255, 0.18), transparent 55%),
+                  linear-gradient(135deg, #16112d 0%, #0b0819 100%);
+      border-bottom: 1.5px solid rgba(245, 196, 81, 0.45);
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .bq-receipt-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .bq-receipt-logo {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(255, 115, 179, 0.45));
+      background: rgba(8, 6, 18, 0.72);
+      border: 1px solid rgba(245, 196, 81, 0.45);
+      border-radius: 12px;
+      padding: 4px;
+    }
+    .bq-disc-chip {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #ffe89e;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+    .bq-disc-chip:hover,
+    .bq-disc-chip.active {
+      background: rgba(34, 245, 155, 0.22);
+      border-color: #22f59b;
+      color: #6bffc3;
+    }
     .bq-size-cell.has-qty {
       border-color: #22f59b;
       background: rgba(34, 245, 155, 0.1);
@@ -2420,7 +2507,7 @@
             </button>
           </div>
           <div style="font-size:0.74rem;color:rgba(255,255,255,0.72);margin-bottom:8px;">
-            Includes <strong>Youth Sizes (YXS–YXL: TT11Y #683D9 &amp; CE10LY #007A7)</strong> and <strong>Adult / Extended Sizes (XS–6XL: TT11 #671D9 &amp; CE10L #267A7)</strong> with automatic larger-size upcharges (<strong>2XL–6XL</strong>) and official S&amp;S colors.
+            Includes <strong>Youth Sizes (YXS–YXL: TT11Y #683D9 &amp; CE10LY #007A7)</strong> and <strong>Adult Sizes (XS–6XL: TT11 #671D9 &amp; CE10L #267A7)</strong> using direct S&amp;S size pricing and official S&amp;S colors.
           </div>
 
           <div id="bqGarmentLinesContainer"></div>
@@ -2495,33 +2582,29 @@
             </div>
           </div>
 
-          <!-- RIGHT: BUILT-IN BASE COSTS, SIZE UPCHARGES & LINE-BY-LINE ITEMIZED QUOTE -->
+          <!-- RIGHT: OFFICIAL BRANDED RECEIPT, PER-ITEM BREAKDOWN, DISCOUNT % OFF & TAX TOGGLE -->
           <div class="bq-subpanel" style="margin-top:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
               <div class="bq-subpanel-title">
                 <span class="bq-step-badge">STEP 4</span>
-                <span>Itemized Quote &amp; Built-In Base Cost Controls</span>
+                <span>Official Itemized Quote Receipt, Discount &amp; Tax</span>
               </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;">
                 <button type="button" class="mini-btn" id="bqSaveQuoteBtn" style="color:#22f59b;">&#128190; Save Quote</button>
-                <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#2ce6ff;">&#128203; Copy Itemized Quote</button>
-                <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:6px 12px;font-size:0.72rem;">&#128424; Print / Save Quote PDF</button>
+                <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#2ce6ff;">&#128203; Copy Quote</button>
+                <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:6px 13px;font-size:0.72rem;">&#128424; Official Quote / Receipt PDF</button>
               </div>
             </div>
 
-            <!-- Built-In Upcharge & Overhead Controls (Baked directly into Base Unit Cost — No % Markup Displayed) -->
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:10px;">
+            <!-- Row A: Built-In Per-Shirt Base Cost & Freight Controls -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:10px;">
               <div>
-                <label class="bq-field-lbl" title="Included directly inside the customer's Base Unit Price — never shown as an extra percentage!">Built-In Base Upcharge ($/Shirt)</label>
+                <label class="bq-field-lbl" title="Baked directly into each item's unit price">Built-In Base Upcharge ($/Shirt)</label>
                 <input type="number" min="0" max="200" step="0.5" class="bq-input" id="bqBuiltInUpchargeInput" value="8.00" style="width:100%;color:#22f59b;font-weight:700;">
               </div>
               <div>
                 <label class="bq-field-lbl">Pressing / Handling ($/Shirt)</label>
                 <input type="number" min="0" max="50" step="0.25" class="bq-input" id="bqPressLaborInput" value="1.50" style="width:100%;">
-              </div>
-              <div>
-                <label class="bq-field-lbl" title="Added on top of official S&S 2XL–6XL upcharges if desired ($0 = exact S&S size upcharges)">Extra 2XL+ Add-On ($)</label>
-                <input type="number" min="0" max="50" step="0.5" class="bq-input" id="bqExtraLargeAddOnInput" value="0.00" style="width:100%;">
               </div>
               <div>
                 <label class="bq-field-lbl">S&amp;S Shipping ($ blank=auto)</label>
@@ -2533,14 +2616,48 @@
               </div>
             </div>
 
-            <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.14);">
-              <label style="display:inline-flex;align-items:center;gap:7px;font-size:0.74rem;color:#ffe89e;cursor:pointer;font-weight:600;">
-                <input type="checkbox" id="bqIncludeColorsPdfCheck" checked>
-                Include Official Available Color Swatches &amp; Larger-Size Upcharge Schedule on Quote PDF
-              </label>
+            <!-- Row B: Customer Discount (% Off) + Sales Tax Toggle Button & Rate -->
+            <div style="background:rgba(10,8,22,0.72);border:1px solid rgba(245,196,81,0.32);border-radius:14px;padding:11px 13px;margin-bottom:10px;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:grid;grid-template-columns:125px minmax(150px,1fr);gap:10px;align-items:end;">
+                <div>
+                  <label class="bq-field-lbl" style="color:#6bffc3;">Discount (% Off)</label>
+                  <input type="number" min="0" max="100" step="0.5" class="bq-input" id="bqDiscountPctInput" value="0" style="width:100%;color:#6bffc3;font-weight:800;">
+                </div>
+                <div>
+                  <label class="bq-field-lbl">Discount Label Shown on Quote (Optional)</label>
+                  <input type="text" class="bq-input" id="bqDiscountLabelInput" placeholder="e.g. Bulk Team Order Discount" style="width:100%;">
+                </div>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <span style="font-size:0.68rem;color:rgba(255,255,255,0.62);font-weight:600;">Quick Discount:</span>
+                <button type="button" class="bq-disc-chip" data-disc-preset="0">None (0%)</button>
+                <button type="button" class="bq-disc-chip" data-disc-preset="5">5% Off</button>
+                <button type="button" class="bq-disc-chip" data-disc-preset="10">10% Off</button>
+                <button type="button" class="bq-disc-chip" data-disc-preset="15">15% Off</button>
+                <button type="button" class="bq-disc-chip" data-disc-preset="20">20% Off</button>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(255,255,255,0.12);">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                  <button type="button" class="bq-tax-toggle-btn" id="bqTaxToggleBtn" aria-pressed="true">
+                    <span class="bq-tax-toggle-dot"></span>
+                    <span id="bqTaxToggleLabel">SALES TAX: INCLUDED (ON)</span>
+                  </button>
+                  <div style="display:inline-flex;align-items:center;gap:6px;">
+                    <label class="bq-field-lbl" style="margin:0;">Tax Rate %:</label>
+                    <input type="number" min="0" max="25" step="0.05" class="bq-input" id="bqTaxRateInput" value="7.00" style="width:82px;padding:5px 8px;font-weight:700;color:#ffe89e;">
+                  </div>
+                </div>
+
+                <label style="display:inline-flex;align-items:center;gap:7px;font-size:0.72rem;color:#ffe89e;cursor:pointer;font-weight:600;">
+                  <input type="checkbox" id="bqIncludeColorsPdfCheck" checked>
+                  Include Available Color Chart on PDF
+                </label>
+              </div>
             </div>
 
-            <!-- Live Line-by-Line Itemized Financial Breakdown -->
+            <!-- Live Branded Official Receipt Preview + Overall Per-Item Breakdown -->
             <div id="bqFinancialBreakdownBody"></div>
 
             <!-- Saved Quotes History -->
@@ -4299,6 +4416,6 @@
       });
     })();
   </script>
-  <script src="bulk_quote_tool.js?v=250"></script>
+  <script src="bulk_quote_tool.js?v=260"></script>
 </body>
 </html>
