@@ -1,34 +1,59 @@
 /**
- * RetroCanopy Owner's Hub — Bulk Order Quoting & Live Gangsheet Nesting Studio
- * Suppliers:
- *   1. S&S Activewear (ssactivewear.com)
- *      - Short Sleeve Dri-Fit: Team 365 Style # TT11 (Item # 671D9) — 30 Official Colors, XS–6XL
- *      - Long Sleeve Dri-Fit:  CORE365 Style # CE10L (Item # 267A7) — 16 Official Colors, XS–6XL
- *   2. DigitalPrintWorx (digitalprintworx.com)
- *      - Live real-time gang sheet pricing via Supabase Edge Function `retrocanopy-bulk-quote-lookup`
- *      - 2D Gangsheet Packing + Dynamic Programming Minimum-Cost Sheet Combination Optimizer
- *      - Project DTF Artwork Upload (auto-reads px, 300 DPI inches, & transparent trim bounds) + 300 DPI Gangsheet Export
+ * RetroCanopy Owner's Hub — Bulk Order Quoting & Live Gangsheet Nesting Studio (v2)
+ *
+ * Updates included:
+ *  - Auto Print Sizes:
+ *      • Front Right Breast Pocket: Adult 4" × 4" (Youth auto-scales to 3" × 3")
+ *      • Full Back:                 Adult 10.5" × 11.5" (Youth auto-scales to 8" × 9")
+ *  - Youth Sizes Included:
+ *      • YXS, YS, YM, YL, YXL alongside XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL, 6XL
+ *      • S&S Activewear Youth Styles: Team 365 TT11Y (#683D9) & CORE365 CE10LY (#007A7)
+ *      • Gangsheet packer automatically packs Youth print sizes for Youth shirt quantities & Adult print sizes for Adult shirt quantities!
+ *  - Built-In Base Cost Upcharge (No percentage markup language anywhere):
+ *      • Per-shirt shop upcharge ($/shirt) is baked seamlessly into Base Unit Price
+ *      • Explicit Larger-Size Price Upcharges (+$2.00 2XL, +$6.00/+$4.00 3XL, etc.) shown & itemized
+ *      • Full Line-by-Line Itemized Table (on-screen + Client Copy + Printable PDF)
+ *  - Quote PDF Includes Official Available Colors Swatch Chart (print-color-adjust: exact)
+ *  - Customer Info CRM Panel with 100% Automatic Real-Time Saving & Quick-Load Directory
  */
 (function () {
   'use strict';
 
   const EDGE_LOOKUP_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-bulk-quote-lookup';
-  const SAVED_QUOTES_KEY = 'rc_owner_bulk_quotes_v1';
+  const SAVED_QUOTES_KEY = 'rc_owner_bulk_quotes_v2';
+  const CUSTOMERS_CRM_KEY = 'rc_owner_bulk_customers_crm_v1';
+  const ACTIVE_CUSTOMER_DRAFT_KEY = 'rc_owner_bulk_active_customer_v1';
+  const OWNER_RATES_PREF_KEY = 'rc_owner_bulk_rate_prefs_v1';
   const SS_CREDS_KEY = 'rc_owner_ss_api_creds_v1';
 
-  const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
+  const YOUTH_SIZES = ['YXS', 'YS', 'YM', 'YL', 'YXL'];
+  const ADULT_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
+  const ALL_SIZES = [...YOUTH_SIZES, ...ADULT_SIZES];
 
-  // Official S&S Activewear Verified Catalog (Styles TT11 / 671D9 & CE10L / 267A7)
+  // S&S Activewear Youth size name mapping for Live API lookups
+  const YOUTH_API_SIZE_MAP = { YXS: 'XS', YS: 'S', YM: 'M', YL: 'L', YXL: 'XL' };
+
+  // Official S&S Activewear Verified Catalog (Adult + Youth Dri-Fit Short Sleeve & Long Sleeve)
   const SS_CATALOG = {
     TT11: {
       styleCode: 'TT11',
+      youthStyleCode: 'TT11Y',
       itemNumber: '671D9',
+      youthItemNumber: '683D9',
       brand: 'Team 365',
-      shortLabel: 'Dri-Fit Short Sleeve (TT11 • #671D9)',
-      fullName: "Team 365 Men's Zone Performance Short Sleeve T-Shirt",
+      shortLabel: 'Dri-Fit Short Sleeve (Adult TT11 #671D9 / Youth TT11Y #683D9)',
+      fullName: "Team 365 Zone Performance Short Sleeve T-Shirt",
+      youthFullName: "Team 365 Youth Zone Performance Short Sleeve T-Shirt",
       specs: '3.5 oz./yd², 100% Polyester Interlock • Moisture-Wicking • UPF 40+ • Cationic Dyes',
       productUrl: 'https://www.ssactivewear.com/p/team_365/tt11',
+      youthProductUrl: 'https://www.ssactivewear.com/p/team_365/tt11y',
+      standardAdultBase: 8.30,
       basePrices: {
+        YXS: 8.30,
+        YS: 8.30,
+        YM: 8.30,
+        YL: 8.30,
+        YXL: 8.30,
         XS: 8.30,
         S: 8.30,
         M: 8.30,
@@ -39,6 +64,15 @@
         '4XL': 16.30,
         '5XL': 18.30,
         '6XL': 20.30
+      },
+      sizeUpcharges: {
+        YXS: 0, YS: 0, YM: 0, YL: 0, YXL: 0,
+        XS: 0, S: 0, M: 0, L: 0, XL: 0,
+        '2XL': 2.00,
+        '3XL': 6.00,
+        '4XL': 8.00,
+        '5XL': 10.00,
+        '6XL': 12.00
       },
       colors: [
         { name: 'White', hex: '#FFFFFF' },
@@ -75,13 +109,23 @@
     },
     CE10L: {
       styleCode: 'CE10L',
+      youthStyleCode: 'CE10LY',
       itemNumber: '267A7',
+      youthItemNumber: '007A7',
       brand: 'CORE365',
-      shortLabel: 'Dri-Fit Long Sleeve (CE10L • #267A7)',
-      fullName: 'CORE365 Unisex Capital Performance Long Sleeve T-Shirt',
+      shortLabel: 'Dri-Fit Long Sleeve (Adult CE10L #267A7 / Youth CE10LY #007A7)',
+      fullName: 'CORE365 Capital Performance Long Sleeve T-Shirt',
+      youthFullName: 'CORE365 Youth Capital Performance Long Sleeve T-Shirt',
       specs: '4.0 oz./yd² (140 gsm), 100% Polyester Interlock • Moisture-Wicking • UPF 50+ • Tear-Away Label',
       productUrl: 'https://www.ssactivewear.com/p/core365/ce10l',
+      youthProductUrl: 'https://www.ssactivewear.com/p/core365/ce10ly',
+      standardAdultBase: 7.70,
       basePrices: {
+        YXS: 7.10,
+        YS: 7.10,
+        YM: 7.10,
+        YL: 7.10,
+        YXL: 7.10,
         XS: 7.70,
         S: 7.70,
         M: 7.70,
@@ -92,6 +136,15 @@
         '4XL': 13.70,
         '5XL': 17.70,
         '6XL': 19.70
+      },
+      sizeUpcharges: {
+        YXS: 0, YS: 0, YM: 0, YL: 0, YXL: 0,
+        XS: 0, S: 0, M: 0, L: 0, XL: 0,
+        '2XL': 2.00,
+        '3XL': 4.00,
+        '4XL': 6.00,
+        '5XL': 10.00,
+        '6XL': 12.00
       },
       colors: [
         { name: 'White', hex: '#FFFFFF' },
@@ -125,41 +178,79 @@
     { id: 'dpw_22x60_std', label: '22" × 60" Standard DTF Sheet', widthIn: 22, lengthIn: 60, priceUsd: 27.00, productUrl: 'https://digitalprintworx.com/products/22-x-60-dtf-gang-sheet-print', builderType: 'standard22', liveVerified: false }
   ];
 
-  // Live S&S API data (when owner connects Account # + API Key)
   let liveSSData = null;
+  let customerSaveTimer = null;
 
-  // State for Current Bulk Quote
+  function makeEmptyQtyMap() {
+    const m = {};
+    ALL_SIZES.forEach((s) => { m[s] = 0; });
+    return m;
+  }
+
+  // Main State
   const state = {
-    projectName: '',
-    clientName: '',
-    clientContact: '',
-    ssDiscountPct: 0, // Optional wholesale account % discount off public S&S piece price
-    rollWidthMode: '27', // '27' (DigitalPrintWorx 27" wide-format) or '22' (22" standard)
-    includeAutoBuilder15: true, // Include 27"x15" ($7) in optimizer
-    gutterIn: 0.25, // 0.25" spacing between transfers
-    extraSpoilagePrints: 1, // Extra spare transfers per placement
-    pressLaborPerShirt: 1.50, // Pressing/handling cost per garment
-    ssShippingOverride: '', // Blank = auto ($0 if >= $200 else $14.95)
-    dpwShippingUsd: 9.95, // Estimated DTF shipping ($0 if local pickup)
-    pricingMode: 'margin', // 'margin' (Target Margin %) or 'fixed' (Fixed Base Retail Price XS-XL)
-    targetMarginPct: 50, // 50% gross margin (2.0x markup)
-    fixedRetailBasePrice: 22.00, // Used when pricingMode === 'fixed'
+    customer: {
+      customerId: '',
+      fullName: '',
+      companyOrTeam: '',
+      email: '',
+      phone: '',
+      address: '',
+      projectName: '',
+      notes: ''
+    },
+    ssDiscountPct: 0,
+    rollWidthMode: '27',
+    includeAutoBuilder15: true,
+    gutterIn: 0.25,
+    extraSpoilagePrints: 1,
+    pressLaborPerShirt: 1.50,
+    builtInUpchargePerShirt: 8.00, // Built directly into Base Shirt Price ($/shirt, NEVER shown as a %!)
+    extraLargeCustomAddOn: 0.00, // Optional extra buffer on 2XL+ if desired (0 = exact S&S size upcharges)
+    ssShippingOverride: '',
+    dpwShippingUsd: 9.95,
+    includeAvailableColorsOnPdf: true,
     garmentLines: [
       {
         id: 'line_1',
         styleCode: 'TT11',
         colorName: 'Black',
-        quantities: { XS: 0, S: 4, M: 8, L: 8, XL: 4, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0, '6XL': 0 }
+        quantities: Object.assign(makeEmptyQtyMap(), { YS: 2, YM: 4, YL: 2, S: 4, M: 8, L: 8, XL: 4, '2XL': 2 })
       }
     ],
+    // Default Placements:
+    //  #1 Front Right Breast Pocket -> Adult 4" x 4" | Youth 3" x 3"
+    //  #2 Full Back                 -> Adult 10.5" x 11.5" | Youth 8" x 9"
     dtfPlacements: [
       {
         id: 'dtf_1',
-        locationLabel: 'Front Chest / Full Front',
-        widthIn: 10.5,
-        heightIn: 11.5,
-        lockAspect: true,
-        aspectRatio: 10.5 / 11.5,
+        enabled: true,
+        locationLabel: 'Front Right Breast Pocket',
+        adultWidthIn: 4.0,
+        adultHeightIn: 4.0,
+        youthWidthIn: 3.0,
+        youthHeightIn: 3.0,
+        lockToPresetBox: true,
+        autoTrimTransparent: true,
+        fileName: '',
+        dataUrl: '',
+        trimmedDataUrl: '',
+        imgElement: null,
+        origPxW: 0,
+        origPxH: 0,
+        trimPxW: 0,
+        trimPxH: 0,
+        checkerboardBg: false
+      },
+      {
+        id: 'dtf_2',
+        enabled: true,
+        locationLabel: 'Full Back',
+        adultWidthIn: 10.5,
+        adultHeightIn: 11.5,
+        youthWidthIn: 8.0,
+        youthHeightIn: 9.0,
+        lockToPresetBox: true,
         autoTrimTransparent: true,
         fileName: '',
         dataUrl: '',
@@ -176,7 +267,7 @@
   };
 
   let lineCounter = 2;
-  let dtfCounter = 2;
+  let dtfCounter = 3;
 
   function esc(str) {
     return String(str == null ? '' : str)
@@ -191,23 +282,50 @@
     return '$' + n.toFixed(2);
   }
 
-  // Get effective unit blank cost for a style, color, and size
+  function isYouthSize(sz) {
+    return YOUTH_SIZES.includes(sz);
+  }
+
+  // Get exact S&S wholesale blank cost for a style, color, and size (supports Youth & Adult!)
   function getBlankUnitPrice(styleCode, colorName, sizeName) {
     const discMultiplier = Math.max(0, 1 - (Number(state.ssDiscountPct) || 0) / 100);
-    if (liveSSData && liveSSData[styleCode] && liveSSData[styleCode].colors && liveSSData[styleCode].colors[colorName]) {
-      const szObj = liveSSData[styleCode].colors[colorName].sizes[sizeName];
+    const cat = SS_CATALOG[styleCode] || SS_CATALOG.TT11;
+    const youth = isYouthSize(sizeName);
+    const apiStyleKey = youth ? cat.youthStyleCode : cat.styleCode;
+    const apiSizeKey = youth ? (YOUTH_API_SIZE_MAP[sizeName] || 'M') : sizeName;
+
+    if (liveSSData && liveSSData[apiStyleKey] && liveSSData[apiStyleKey].colors && liveSSData[apiStyleKey].colors[colorName]) {
+      const szObj = liveSSData[apiStyleKey].colors[colorName].sizes[apiSizeKey];
       if (szObj && szObj.price > 0) {
         return +(szObj.price * discMultiplier).toFixed(2);
       }
     }
-    const cat = SS_CATALOG[styleCode] || SS_CATALOG.TT11;
-    const base = cat.basePrices[sizeName] != null ? cat.basePrices[sizeName] : 8.30;
+    const base = cat.basePrices[sizeName] != null ? cat.basePrices[sizeName] : cat.standardAdultBase;
     return +(base * discMultiplier).toFixed(2);
   }
 
+  // Get explicit larger-size upcharge ($0 for Youth & XS-XL; +$2.00 2XL, +$6.00/+$4.00 3XL, etc.)
+  function getLargerSizeUpcharge(styleCode, colorName, sizeName) {
+    if (isYouthSize(sizeName) || ['XS', 'S', 'M', 'L', 'XL'].includes(sizeName)) {
+      return 0;
+    }
+    const cat = SS_CATALOG[styleCode] || SS_CATALOG.TT11;
+    // Compare live blank cost against Adult L blank cost so any account discount stays accurate
+    const blankSz = getBlankUnitPrice(styleCode, colorName, sizeName);
+    const blankStd = getBlankUnitPrice(styleCode, colorName, 'L');
+    const diff = Math.max(0, +(blankSz - blankStd).toFixed(2));
+    const fallbackUp = cat.sizeUpcharges[sizeName] || 0;
+    const baseUpcharge = diff > 0 ? diff : fallbackUp;
+    return +(baseUpcharge + Math.max(0, Number(state.extraLargeCustomAddOn) || 0)).toFixed(2);
+  }
+
   function getLiveStockBadge(styleCode, colorName, sizeName) {
-    if (liveSSData && liveSSData[styleCode] && liveSSData[styleCode].colors && liveSSData[styleCode].colors[colorName]) {
-      const szObj = liveSSData[styleCode].colors[colorName].sizes[sizeName];
+    const cat = SS_CATALOG[styleCode] || SS_CATALOG.TT11;
+    const youth = isYouthSize(sizeName);
+    const apiStyleKey = youth ? cat.youthStyleCode : cat.styleCode;
+    const apiSizeKey = youth ? (YOUTH_API_SIZE_MAP[sizeName] || 'M') : sizeName;
+    if (liveSSData && liveSSData[apiStyleKey] && liveSSData[apiStyleKey].colors && liveSSData[apiStyleKey].colors[colorName]) {
+      const szObj = liveSSData[apiStyleKey].colors[colorName].sizes[apiSizeKey];
       if (szObj && typeof szObj.qty === 'number') {
         return szObj.qty;
       }
@@ -227,20 +345,156 @@
   }
 
   // =========================================================================
-  // 2D SHELF GANGSHEET PACKER + DYNAMIC PROGRAMMING OPTIMAL SHEET SOLVER
+  // AUTOMATIC CUSTOMER INFO CRM SAVE & DIRECTORY
+  // =========================================================================
+  function getSavedCustomersList() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(CUSTOMERS_CRM_KEY) || '[]');
+      return Array.isArray(raw) ? raw : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function loadInitialCustomerAndRatePrefs() {
+    try {
+      const draft = JSON.parse(localStorage.getItem(ACTIVE_CUSTOMER_DRAFT_KEY) || 'null');
+      if (draft && typeof draft === 'object') {
+        Object.assign(state.customer, draft);
+      }
+    } catch (_) {}
+
+    try {
+      const prefs = JSON.parse(localStorage.getItem(OWNER_RATES_PREF_KEY) || 'null');
+      if (prefs && typeof prefs === 'object') {
+        if (prefs.pressLaborPerShirt != null) state.pressLaborPerShirt = Number(prefs.pressLaborPerShirt);
+        if (prefs.builtInUpchargePerShirt != null) state.builtInUpchargePerShirt = Number(prefs.builtInUpchargePerShirt);
+        if (prefs.dpwShippingUsd != null) state.dpwShippingUsd = Number(prefs.dpwShippingUsd);
+        if (prefs.ssDiscountPct != null) state.ssDiscountPct = Number(prefs.ssDiscountPct);
+      }
+    } catch (_) {}
+  }
+
+  function saveOwnerRatePrefs() {
+    try {
+      localStorage.setItem(OWNER_RATES_PREF_KEY, JSON.stringify({
+        pressLaborPerShirt: state.pressLaborPerShirt,
+        builtInUpchargePerShirt: state.builtInUpchargePerShirt,
+        dpwShippingUsd: state.dpwShippingUsd,
+        ssDiscountPct: state.ssDiscountPct
+      }));
+    } catch (_) {}
+  }
+
+  function triggerAutoSaveCustomer() {
+    const badge = document.getElementById('bqCustomerAutoSaveBadge');
+    if (badge) {
+      badge.textContent = 'Saving customer info...';
+      badge.style.color = '#ffe89e';
+    }
+    if (customerSaveTimer) clearTimeout(customerSaveTimer);
+    customerSaveTimer = setTimeout(() => {
+      // 1. Always save active customer draft immediately
+      try {
+        localStorage.setItem(ACTIVE_CUSTOMER_DRAFT_KEY, JSON.stringify(state.customer));
+      } catch (_) {}
+
+      // 2. Upsert into Customer CRM Directory if at least a name, company, email, or phone is typed
+      const hasIdentity = Boolean(
+        (state.customer.fullName && state.customer.fullName.trim()) ||
+        (state.customer.companyOrTeam && state.customer.companyOrTeam.trim()) ||
+        (state.customer.email && state.customer.email.trim()) ||
+        (state.customer.phone && state.customer.phone.trim())
+      );
+
+      if (hasIdentity) {
+        const list = getSavedCustomersList();
+        if (!state.customer.customerId) {
+          state.customer.customerId = 'CUST-' + Date.now();
+          try {
+            localStorage.setItem(ACTIVE_CUSTOMER_DRAFT_KEY, JSON.stringify(state.customer));
+          } catch (_) {}
+        }
+
+        // Match by customerId or exact email/phone
+        const emailClean = (state.customer.email || '').trim().toLowerCase();
+        const idx = list.findIndex((c) =>
+          c.customerId === state.customer.customerId ||
+          (emailClean && (c.email || '').trim().toLowerCase() === emailClean)
+        );
+
+        const record = {
+          ...state.customer,
+          updatedAt: new Date().toISOString(),
+          updatedLabel: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        if (idx >= 0) {
+          record.customerId = list[idx].customerId;
+          state.customer.customerId = record.customerId;
+          list[idx] = record;
+        } else {
+          list.unshift(record);
+        }
+
+        try {
+          localStorage.setItem(CUSTOMERS_CRM_KEY, JSON.stringify(list.slice(0, 100)));
+        } catch (_) {}
+
+        renderSavedCustomersDropdown();
+      }
+
+      if (badge) {
+        const tStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        badge.innerHTML = `&#10003; Customer Info Auto-Saved (${tStr})`;
+        badge.style.color = '#22f59b';
+      }
+    }, 320);
+  }
+
+  function renderSavedCustomersDropdown() {
+    const sel = document.getElementById('bqSavedCustomerSelect');
+    if (!sel) return;
+    const list = getSavedCustomersList();
+    const opts = [`<option value="">&#128199; Saved Customers (${list.length}) — Select to Auto-Fill...</option>`];
+    list.forEach((c) => {
+      const labelParts = [c.fullName, c.companyOrTeam, c.phone || c.email].filter(Boolean);
+      const selAttr = c.customerId === state.customer.customerId ? 'selected' : '';
+      opts.push(`<option value="${esc(c.customerId)}" ${selAttr}>${esc(labelParts.join(' • '))}</option>`);
+    });
+    sel.innerHTML = opts.join('');
+  }
+
+  function syncCustomerInputsFromState() {
+    const map = {
+      bqCustFullName: state.customer.fullName || '',
+      bqCustCompany: state.customer.companyOrTeam || '',
+      bqCustEmail: state.customer.email || '',
+      bqCustPhone: state.customer.phone || '',
+      bqCustAddress: state.customer.address || '',
+      bqCustProject: state.customer.projectName || '',
+      bqCustNotes: state.customer.notes || ''
+    };
+    Object.entries(map).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && document.activeElement !== el) el.value = val;
+    });
+    renderSavedCustomersDropdown();
+  }
+
+  // =========================================================================
+  // 2D SHELF GANGSHEET PACKER (SUPPORTS MIXED ADULT + YOUTH PRINT SIZES!)
   // =========================================================================
   function packRectanglesOnRoll(rollWidthIn, gutterIn, itemsToPack) {
-    // Usable printable width leaving 0.25" safe margin on left/right edges
     const edgeMargin = 0.25;
     const usableWidth = Math.max(4, rollWidthIn - edgeMargin * 2);
 
-    // Expand individual print instances and orient each for tightest height/packing
     const instances = [];
-    itemsToPack.forEach((p, pIdx) => {
+    itemsToPack.forEach((p) => {
+      if (p.count <= 0) return;
       const w0 = Math.max(0.5, Number(p.widthIn) || 1);
       const h0 = Math.max(0.5, Number(p.heightIn) || 1);
 
-      // Evaluate 0° vs 90° orientation to maximize items per row (minimize linear inches per item)
       let bestW = w0;
       let bestH = h0;
       let rotated = false;
@@ -255,10 +509,8 @@
       } else if (fitsNormal && fitsRot) {
         const colsNormal = Math.max(1, Math.floor((usableWidth + gutterIn) / (w0 + gutterIn)));
         const linearPerItemNormal = (h0 + gutterIn) / colsNormal;
-
         const colsRot = Math.max(1, Math.floor((usableWidth + gutterIn) / (h0 + gutterIn)));
         const linearPerItemRot = (w0 + gutterIn) / colsRot;
-
         if (linearPerItemRot < linearPerItemNormal - 0.001) {
           bestW = h0;
           bestH = w0;
@@ -266,14 +518,14 @@
         }
       }
 
-      // Clamp if user entered width wider than roll
       const clampedW = Math.min(usableWidth, bestW);
       const clampedH = bestH;
 
       for (let i = 0; i < p.count; i++) {
         instances.push({
           placementId: p.id,
-          placementIdx: pIdx,
+          placementIdx: p.placementIdx,
+          sizeGroup: p.sizeGroup, // 'ADULT' or 'YOUTH'
           label: p.locationLabel,
           w: clampedW,
           h: clampedH,
@@ -285,14 +537,12 @@
       }
     });
 
-    // Sort by height descending (First-Fit Decreasing Height / FFDH 2D strip packing)
+    // Sort tallest first (FFDH 2D Strip Packing — mixes smaller 4"x4" & 3"x3" pocket crests into free space alongside 10.5"x11.5" & 8"x9" backs!)
     instances.sort((a, b) => b.h - a.h || b.w - a.w);
 
-    // Shelves: { y, height, usedX, boxes: [] }
     const shelves = [];
     instances.forEach((inst) => {
       let placed = false;
-      // Try existing shelves where inst fits width-wise and height <= shelf.height
       for (let s = 0; s < shelves.length; s++) {
         const shelf = shelves[s];
         const nextX = shelf.boxes.length === 0 ? 0 : shelf.usedX + gutterIn;
@@ -354,7 +604,6 @@
       };
     }
 
-    // Filter candidate sheets from DigitalPrintWorx
     let candidates = dpwSheets.filter((s) => {
       if (rollWidthMode === '22') return s.widthIn === 22;
       if (s.widthIn !== 27) return false;
@@ -362,24 +611,18 @@
       return true;
     });
 
-    if (candidates.length === 0) {
-      candidates = [dpwSheets[4]];
-    }
+    if (candidates.length === 0) candidates = [dpwSheets[4]];
 
-    // Because physical sheets cannot cut a print shelf in half across two separate sheets,
-    // we assign whole shelves sequentially to sheets using exact DP over shelf index!
     const N = shelves.length;
     const edgeMargin = 0.25;
     const gutter = Number(state.gutterIn) || 0.25;
 
-    // dp[i] = min cost to pack shelves[i..N-1]
     const dp = new Array(N + 1).fill(Infinity);
     const choice = new Array(N + 1).fill(null);
     dp[N] = 0;
 
     for (let i = N - 1; i >= 0; i--) {
       for (const sheet of candidates) {
-        // How many consecutive shelves starting at i fit onto `sheet.lengthIn`?
         let usedLen = edgeMargin * 2;
         let j = i;
         while (j < N) {
@@ -391,7 +634,6 @@
             break;
           }
         }
-        // Even if a single print is taller than the smallest sheet, allow at least 1 shelf on the largest sheet
         if (j === i) {
           const maxSheetLen = Math.max(...candidates.map((c) => c.lengthIn));
           if (sheet.lengthIn === maxSheetLen && shelves[i].height > sheet.lengthIn - edgeMargin * 2) {
@@ -410,22 +652,17 @@
       }
     }
 
-    // Reconstruct optimal sheet list & group identical sheets for clean ordering summary
     const sheetAssignments = [];
     let cur = 0;
     while (cur < N && choice[cur]) {
       const step = choice[cur];
       const sliceShelves = shelves.slice(cur, step.nextIdx);
-      // Re-anchor Y coordinates inside this individual physical sheet
       let localY = edgeMargin;
       const localBoxes = [];
       sliceShelves.forEach((sh, idx) => {
         if (idx > 0) localY += gutter;
         sh.boxes.forEach((b) => {
-          localBoxes.push({
-            ...b,
-            localY
-          });
+          localBoxes.push({ ...b, localY });
         });
         localY += sh.height;
       });
@@ -439,7 +676,6 @@
       cur = step.nextIdx;
     }
 
-    // Aggregate counts by sheet ID
     const groupedMap = new Map();
     sheetAssignments.forEach((sa) => {
       const prev = groupedMap.get(sa.sheet.id) || { sheet: sa.sheet, qty: 0, subtotal: 0 };
@@ -469,7 +705,7 @@
   }
 
   // =========================================================================
-  // IMAGE / TRANSPARENT BOUNDING BOX ANALYZER FOR UPLOADED DTF ARTWORK
+  // UPLOADED ARTWORK ANALYZER (KEEPS PRESET 4"x4" & 10.5"x11.5" SIZES!)
   // =========================================================================
   function analyzeUploadedArtwork(file, placement) {
     const reader = new FileReader();
@@ -480,7 +716,6 @@
         const origW = img.naturalWidth || img.width || 1200;
         const origH = img.naturalHeight || img.height || 1200;
 
-        // Scan alpha channel to find non-transparent ink bounding box
         const maxScan = 1200;
         const scale = Math.min(1, maxScan / Math.max(origW, origH));
         const sw = Math.max(1, Math.round(origW * scale));
@@ -498,8 +733,7 @@
           let minX = sw, minY = sh, maxX = 0, maxY = 0;
           for (let y = 0; y < sh; y++) {
             for (let x = 0; x < sw; x++) {
-              const alpha = imgData[(y * sw + x) * 4 + 3];
-              if (alpha > 12) {
+              if (imgData[(y * sw + x) * 4 + 3] > 12) {
                 if (x < minX) minX = x;
                 if (x > maxX) maxX = x;
                 if (y < minY) minY = y;
@@ -519,7 +753,6 @@
         const trimPxW = Math.max(1, Math.round((trimX1 - trimX0 + 1) / scale));
         const trimPxH = Math.max(1, Math.round((trimY1 - trimY0 + 1) / scale));
 
-        // Create cropped preview dataUrl for tight gangsheet rendering
         let trimmedDataUrl = dataUrl;
         let trimmedImgEl = img;
         if (foundInk) {
@@ -549,23 +782,18 @@
         placement.origPxH = origH;
         placement.trimPxW = trimPxW;
         placement.trimPxH = trimPxH;
+        placement.enabled = true;
 
-        const useW = placement.autoTrimTransparent ? trimPxW : origW;
-        const useH = placement.autoTrimTransparent ? trimPxH : origH;
-
-        // Calculate physical inches assuming 300 DPI (clamped to sensible range 1.5" - 22")
-        let inW = +(useW / 300).toFixed(2);
-        let inH = +(useH / 300).toFixed(2);
-        if (inW < 1.0 || inW > 26.5) {
-          // Normalize to 10.5" wide if SVG or non-300DPI web graphic
-          const ratio = useW / Math.max(1, useH);
-          inW = 10.5;
-          inH = +(10.5 / ratio).toFixed(2);
+        // NOTE: Keep placement's configured target size (e.g. 4"x4" Breast Pocket / 10.5"x11.5" Full Back & Youth 3"x3" / 8"x9")
+        // unless user unchecked lockToPresetBox!
+        if (!placement.lockToPresetBox) {
+          const useW = placement.autoTrimTransparent ? trimPxW : origW;
+          const useH = placement.autoTrimTransparent ? trimPxH : origH;
+          placement.adultWidthIn = Math.min(26, Math.max(1, +(useW / 300).toFixed(2)));
+          placement.adultHeightIn = Math.min(90, Math.max(1, +(useH / 300).toFixed(2)));
+          placement.youthWidthIn = +(placement.adultWidthIn * 0.76).toFixed(2);
+          placement.youthHeightIn = +(placement.adultHeightIn * 0.78).toFixed(2);
         }
-
-        placement.widthIn = inW;
-        placement.heightIn = inH;
-        placement.aspectRatio = useW / Math.max(1, useH);
 
         renderDtfPlacementsList();
         recalculateEverything();
@@ -575,85 +803,127 @@
     reader.readAsDataURL(file);
   }
 
+  // Draw image aspect-fitted inside a target rectangle (never stretches/warps artwork inside 4x4 or 10.5x11.5 box!)
+  function drawContainImage(ctx, img, x, y, boxW, boxH) {
+    const iw = img.naturalWidth || img.width || 1;
+    const ih = img.naturalHeight || img.height || 1;
+    const scale = Math.min(boxW / iw, boxH / ih);
+    const dw = iw * scale;
+    const dh = ih * scale;
+    const dx = x + (boxW - dw) / 2;
+    const dy = y + (boxH - dh) / 2;
+    ctx.drawImage(img, dx, dy, dw, dh);
+  }
+
   // =========================================================================
-  // FULL QUOTE FINANCIAL & GANGSHEET CALCULATION
+  // FULL CALCULATION: YOUTH + ADULT SIZES, BUILT-IN BASE COSTS & LINE ITEMS
   // =========================================================================
   function recalculateEverything() {
-    // 1. Calculate Blank Garment Totals from S&S Activewear Matrix
-    let totalShirts = 0;
+    let totalAdultShirts = 0;
+    let totalYouthShirts = 0;
     let blanksSubtotal = 0;
-    const lineSummaries = [];
+
+    // Raw line items before shared DTF/shipping/press/upcharge allocation
+    const rawItems = [];
 
     state.garmentLines.forEach((line) => {
       const cat = SS_CATALOG[line.styleCode] || SS_CATALOG.TT11;
       let lineQty = 0;
-      let lineCost = 0;
-      const sizeBreakdowns = [];
+      let lineBlankSub = 0;
 
       ALL_SIZES.forEach((sz) => {
         const q = Math.max(0, parseInt(line.quantities[sz], 10) || 0);
-        const unitCost = getBlankUnitPrice(line.styleCode, line.colorName, sz);
-        if (q > 0) {
-          const sub = +(q * unitCost).toFixed(2);
-          lineQty += q;
-          lineCost += sub;
-          sizeBreakdowns.push({ size: sz, qty: q, unitCost, subtotal: sub });
-        }
+        if (q <= 0) return;
+
+        const youth = isYouthSize(sz);
+        if (youth) totalYouthShirts += q;
+        else totalAdultShirts += q;
+
+        const unitBlankCost = getBlankUnitPrice(line.styleCode, line.colorName, sz);
+        const sizeUpcharge = getLargerSizeUpcharge(line.styleCode, line.colorName, sz);
+        // Base blank cost without extended-size upcharge (e.g. $8.30 for TT11, $7.10 for CE10LY, $7.70 for CE10L)
+        const baseBlankWithoutSizeUp = +(unitBlankCost - sizeUpcharge).toFixed(2);
+        const subBlank = +(q * unitBlankCost).toFixed(2);
+
+        lineQty += q;
+        lineBlankSub += subBlank;
+
+        rawItems.push({
+          lineId: line.id,
+          styleCode: youth ? cat.youthStyleCode : cat.styleCode,
+          parentStyleCode: line.styleCode,
+          itemNumber: youth ? cat.youthItemNumber : cat.itemNumber,
+          brand: cat.brand,
+          garmentTitle: youth ? cat.youthFullName : cat.fullName,
+          productUrl: youth ? cat.youthProductUrl : cat.productUrl,
+          colorName: line.colorName,
+          sizeName: sz,
+          isYouth: youth,
+          qty: q,
+          unitBlankCost,
+          baseBlankWithoutSizeUp,
+          sizeUpcharge,
+          subBlank
+        });
       });
 
-      lineCost = +lineCost.toFixed(2);
-      totalShirts += lineQty;
-      blanksSubtotal += lineCost;
+      blanksSubtotal += lineBlankSub;
 
-      // Update row badge DOM directly so typing in size inputs never loses focus
       const rowQtyEl = document.getElementById(`bqLineQty_${line.id}`);
       const rowSubEl = document.getElementById(`bqLineSub_${line.id}`);
       if (rowQtyEl) rowQtyEl.textContent = `${lineQty} pcs`;
-      if (rowSubEl) rowSubEl.textContent = money(lineCost);
-
-      lineSummaries.push({
-        lineId: line.id,
-        styleCode: line.styleCode,
-        itemNumber: cat.itemNumber,
-        brand: cat.brand,
-        styleTitle: cat.fullName,
-        productUrl: cat.productUrl,
-        colorName: line.colorName,
-        lineQty,
-        lineCost,
-        sizeBreakdowns
-      });
+      if (rowSubEl) rowSubEl.textContent = `Blanks: ${money(lineBlankSub)}`;
     });
 
     blanksSubtotal = +blanksSubtotal.toFixed(2);
+    const totalShirts = totalAdultShirts + totalYouthShirts;
 
-    // 2. Pack DTF Transfers onto Gangsheet
-    const printCountPerPlacement = totalShirts > 0
-      ? totalShirts + Math.max(0, parseInt(state.extraSpoilagePrints, 10) || 0)
-      : 0;
+    // 2. Build Adult + Youth DTF Packing List for Active Placements
+    const activePlacements = state.dtfPlacements.filter((p) => p.enabled !== false);
+    const extraSpoilage = Math.max(0, parseInt(state.extraSpoilagePrints, 10) || 0);
+
+    // Split spoilage proportionally: if order has Youth, add 1 extra Youth & rest Adult; else all Adult
+    const extraYouth = totalYouthShirts > 0 ? Math.min(extraSpoilage, Math.max(1, Math.round(extraSpoilage * (totalYouthShirts / Math.max(1, totalShirts))))) : 0;
+    const extraAdult = totalAdultShirts > 0 ? Math.max(0, extraSpoilage - (totalYouthShirts > 0 ? 0 : 0)) : 0;
+
+    const itemsToPack = [];
+    activePlacements.forEach((p, pIdx) => {
+      if (totalAdultShirts > 0) {
+        itemsToPack.push({
+          id: p.id + '_adult',
+          placementIdx: pIdx,
+          sizeGroup: 'ADULT',
+          locationLabel: `${p.locationLabel} (Adult)`,
+          widthIn: Math.max(0.5, Number(p.adultWidthIn) || 4),
+          heightIn: Math.max(0.5, Number(p.adultHeightIn) || 4),
+          count: totalAdultShirts + extraAdult,
+          imgElement: p.imgElement
+        });
+      }
+      if (totalYouthShirts > 0) {
+        itemsToPack.push({
+          id: p.id + '_youth',
+          placementIdx: pIdx,
+          sizeGroup: 'YOUTH',
+          locationLabel: `${p.locationLabel} (Youth)`,
+          widthIn: Math.max(0.5, Number(p.youthWidthIn) || 3),
+          heightIn: Math.max(0.5, Number(p.youthHeightIn) || 3),
+          count: totalYouthShirts + extraYouth,
+          imgElement: p.imgElement
+        });
+      }
+    });
 
     const rollWidthNum = state.rollWidthMode === '22' ? 22 : 27;
-    const itemsToPack = printCountPerPlacement > 0
-      ? state.dtfPlacements.map((p) => ({
-          id: p.id,
-          locationLabel: p.locationLabel,
-          widthIn: Math.max(0.5, Number(p.widthIn) || 1),
-          heightIn: Math.max(0.5, Number(p.heightIn) || 1),
-          count: printCountPerPlacement,
-          imgElement: p.imgElement
-        }))
-      : [];
-
     const packRes = packRectanglesOnRoll(rollWidthNum, Math.max(0, Number(state.gutterIn) || 0.25), itemsToPack);
     const sheetSolution = solveOptimalGangSheets(packRes.shelves, state.rollWidthMode, state.includeAutoBuilder15);
 
-    // 3. Shipping & Labor Costs
+    // 3. Shipping, Pressing & Built-In Per-Shirt Upcharge
     let ssShippingUsd = 0;
     if (totalShirts > 0) {
       if (String(state.ssShippingOverride).trim() !== '') {
         ssShippingUsd = Math.max(0, Number(state.ssShippingOverride) || 0);
       } else {
-        // S&S Activewear standard $200+ free freight threshold
         ssShippingUsd = blanksSubtotal >= 200 ? 0 : 14.95;
       }
     }
@@ -662,7 +932,8 @@
       ? Math.max(0, Number(state.dpwShippingUsd) || 0)
       : 0;
 
-    const totalPressLaborUsd = +(totalShirts * Math.max(0, Number(state.pressLaborPerShirt) || 0)).toFixed(2);
+    const pressPerShirt = Math.max(0, Number(state.pressLaborPerShirt) || 0);
+    const totalPressLaborUsd = +(totalShirts * pressPerShirt).toFixed(2);
 
     const totalHardCostUsd = +(
       blanksSubtotal +
@@ -672,79 +943,73 @@
       totalPressLaborUsd
     ).toFixed(2);
 
-    const avgCostPerShirt = totalShirts > 0 ? totalHardCostUsd / totalShirts : 0;
+    const avgHardCostPerShirt = totalShirts > 0 ? totalHardCostUsd / totalShirts : 0;
     const dtfCostPerShirt = totalShirts > 0 ? sheetSolution.totalDtfCost / totalShirts : 0;
-    const blankAvgPerShirt = totalShirts > 0 ? blanksSubtotal / totalShirts : 0;
 
-    // 4. Customer Quoted Price & Net Profit Calculation
-    const marginFrac = Math.min(0.92, Math.max(0.0, (Number(state.targetMarginPct) || 0) / 100));
-    let customerQuoteTotal = 0;
-    const customerLineQuotes = [];
-
-    // Distribute non-blank costs (DTF + shipping + labor) evenly per shirt so extended sizes accurately pass through their exact blank upcharge!
-    const nonBlankPerShirtCost = totalShirts > 0
-      ? (ssShippingUsd + sheetSolution.totalDtfCost + dpwShippingUsd + totalPressLaborUsd) / totalShirts
+    // Shared per-shirt production + freight + built-in upcharge (baked directly into Base Unit Price!)
+    const builtInUpcharge = Math.max(0, Number(state.builtInUpchargePerShirt) || 0);
+    const sharedProductionAndBuiltInPerShirt = totalShirts > 0
+      ? ((ssShippingUsd + sheetSolution.totalDtfCost + dpwShippingUsd + totalPressLaborUsd) / totalShirts) + builtInUpcharge
       : 0;
 
-    lineSummaries.forEach((ls) => {
-      if (ls.lineQty === 0) return;
-      const quotedSizes = ls.sizeBreakdowns.map((sb) => {
-        const unitTrueCost = sb.unitCost + nonBlankPerShirtCost;
-        let unitCustomerPrice = 0;
-        if (state.pricingMode === 'fixed') {
-          // Base price for XS-XL + S&S extended-size differential
-          const cat = SS_CATALOG[ls.styleCode] || SS_CATALOG.TT11;
-          const sizeUpcharge = Math.max(0, (cat.basePrices[sb.size] || cat.basePrices.L) - cat.basePrices.L);
-          unitCustomerPrice = +(Math.max(0, Number(state.fixedRetailBasePrice) || 0) + sizeUpcharge).toFixed(2);
-        } else {
-          unitCustomerPrice = +(unitTrueCost / Math.max(0.08, 1 - marginFrac)).toFixed(2);
-        }
-        const subQuote = +(unitCustomerPrice * sb.qty).toFixed(2);
-        customerQuoteTotal += subQuote;
-        return {
-          ...sb,
-          unitTrueCost: +unitTrueCost.toFixed(2),
-          unitCustomerPrice,
-          subQuote
-        };
-      });
-      customerLineQuotes.push({
-        ...ls,
-        quotedSizes
-      });
+    // 4. Build Itemized Line-by-Line Quote Rows (Base Cost already includes built-in upcharge; Larger Size Upcharge added cleanly on top!)
+    let customerQuoteTotal = 0;
+    const itemizedLines = rawItems.map((item, idx) => {
+      const printSpecSummary = activePlacements.length > 0
+        ? activePlacements.map((p) => {
+            const w = item.isYouth ? p.youthWidthIn : p.adultWidthIn;
+            const h = item.isYouth ? p.youthHeightIn : p.adultHeightIn;
+            return `${p.locationLabel} (${w}"×${h}")`;
+          }).join(' + ')
+        : 'Blank Garment Only';
+
+      // Base Unit Price (includes blank base + DTF share + shipping share + pressing + built-in upcharge)
+      const baseUnitQuoted = +(item.baseBlankWithoutSizeUp + sharedProductionAndBuiltInPerShirt).toFixed(2);
+      // Final Unit Price = Base Unit Price + Larger Size Upcharge ($0 for Youth & XS-XL; +$2.00 2XL, +$6.00 3XL, etc.)
+      const finalUnitQuoted = +(baseUnitQuoted + item.sizeUpcharge).toFixed(2);
+      const lineTotalQuoted = +(finalUnitQuoted * item.qty).toFixed(2);
+      customerQuoteTotal += lineTotalQuoted;
+
+      return {
+        lineNumber: idx + 1,
+        ...item,
+        printSpecSummary,
+        baseUnitQuoted,
+        finalUnitQuoted,
+        lineTotalQuoted
+      };
     });
 
     customerQuoteTotal = +customerQuoteTotal.toFixed(2);
     const netProfitUsd = +(customerQuoteTotal - totalHardCostUsd).toFixed(2);
-    const actualMarginPct = customerQuoteTotal > 0 ? (netProfitUsd / customerQuoteTotal) * 100 : 0;
     const avgQuotePerShirt = totalShirts > 0 ? customerQuoteTotal / totalShirts : 0;
 
     state.lastCalculation = {
       totalShirts,
-      printCountPerPlacement,
+      totalAdultShirts,
+      totalYouthShirts,
       blanksSubtotal,
-      blankAvgPerShirt,
       ssShippingUsd,
       dpwShippingUsd,
       totalPressLaborUsd,
       dtfCostPerShirt,
       totalHardCostUsd,
-      avgCostPerShirt,
+      avgHardCostPerShirt,
       customerQuoteTotal,
       avgQuotePerShirt,
       netProfitUsd,
-      actualMarginPct,
+      builtInUpcharge,
       packRes,
       sheetSolution,
-      lineSummaries,
-      customerLineQuotes
+      activePlacements,
+      itemizedLines
     };
 
     renderSummaryAndCanvas();
   }
 
   // =========================================================================
-  // RENDER GANGSHEET BLUEPRINT CANVAS + SUMMARY DOM
+  // RENDER ITEMIZED QUOTE TABLE, GANGSHEET CANVAS & OWNER LEDGER
   // =========================================================================
   function renderSummaryAndCanvas() {
     const calc = state.lastCalculation;
@@ -755,27 +1020,25 @@
       if (el) el.textContent = val;
     };
 
-    // Top KPI Pills
-    setTxt('bqKpiTotalShirts', String(calc.totalShirts));
+    setTxt('bqKpiTotalShirts', `${calc.totalShirts} (${calc.totalAdultShirts}A / ${calc.totalYouthShirts}Y)`);
     setTxt('bqKpiBlanksCost', money(calc.blanksSubtotal));
     setTxt('bqKpiDtfCost', money(calc.sheetSolution.totalDtfCost));
-    setTxt('bqKpiHardCostPerShirt', `${money(calc.avgCostPerShirt)} / ea`);
+    setTxt('bqKpiHardCostPerShirt', `${money(calc.avgHardCostPerShirt)} / ea`);
     setTxt('bqKpiQuoteTotal', money(calc.customerQuoteTotal));
-    setTxt('bqKpiNetProfit', `${money(calc.netProfitUsd)} (${calc.actualMarginPct.toFixed(1)}%)`);
+    setTxt('bqKpiNetProfit', `+${money(calc.netProfitUsd)}`);
 
-    // Gangsheet Telemetry Badges
     setTxt(
       'bqGangsheetStatsLine',
-      calc.totalShirts > 0
-        ? `${calc.packRes.boxes.length} total transfers (${calc.printCountPerPlacement}/placement) • ${calc.packRes.totalLinearIn.toFixed(1)}" linear film needed on ${calc.packRes.rollWidthIn}" roll • ${calc.sheetSolution.utilizationPct.toFixed(1)}% sheet fill (${calc.sheetSolution.freeRemainingLinearIn.toFixed(1)}" spare length left)`
-        : 'Enter shirt quantities to pack your DTF transfers onto DigitalPrintWorx gangsheets.'
+      calc.totalShirts > 0 && calc.activePlacements.length > 0
+        ? `${calc.packRes.boxes.length} total transfers (${calc.totalAdultShirts} Adult + ${calc.totalYouthShirts} Youth + spares) • ${calc.packRes.totalLinearIn.toFixed(1)}" linear film on ${calc.packRes.rollWidthIn}" roll • ${calc.sheetSolution.utilizationPct.toFixed(1)}% sheet fill (${calc.sheetSolution.freeRemainingLinearIn.toFixed(1)}" free film left)`
+        : 'Add shirt quantities & active placements to pack Adult (4"×4" / 10.5"×11.5") & Youth (3"×3" / 8"×9") transfers.'
     );
 
-    // Recommended DigitalPrintWorx Gang Sheets List
+    // Recommended DigitalPrintWorx Gang Sheets Box
     const recEl = document.getElementById('bqRecommendedSheetsBox');
     if (recEl) {
       if (calc.sheetSolution.chosenSheets.length === 0) {
-        recEl.innerHTML = `<div style="font-size:0.78rem;color:rgba(255,255,255,0.62);">Add at least 1 shirt above to calculate exact DigitalPrintWorx gangsheet sizes &amp; live pricing.</div>`;
+        recEl.innerHTML = `<div style="font-size:0.78rem;color:rgba(255,255,255,0.62);">Add shirts above to compute exact DigitalPrintWorx gangsheet sizes &amp; live pricing.</div>`;
       } else {
         const rowsHtml = calc.sheetSolution.chosenSheets.map((cs) => `
           <div class="bq-sheet-order-row">
@@ -800,71 +1063,88 @@
       }
     }
 
-    // Financial Breakdown Table
+    // Line-by-Line Itemized Client Quote Preview + Private Owner Cost Summary
     const finEl = document.getElementById('bqFinancialBreakdownBody');
     if (finEl) {
       const ssShipNote = calc.blanksSubtotal >= 200 && String(state.ssShippingOverride).trim() === ''
         ? 'FREE ($200+ S&S Order)'
         : money(calc.ssShippingUsd);
 
-      const lineRowsHtml = calc.customerLineQuotes.map((lq) => {
-        const szSummary = lq.quotedSizes
-          .map((s) => `${s.size}: ${s.qty} × ${money(s.unitCustomerPrice)} <span style="color:rgba(255,255,255,0.5);">(blank ${money(s.unitCost)})</span>`)
-          .join(' &bull; ');
-        const lineCustTotal = lq.quotedSizes.reduce((a, b) => a + b.subQuote, 0);
+      const itemizedTableRows = calc.itemizedLines.map((row) => {
+        const upchargeBadge = row.sizeUpcharge > 0
+          ? `<span style="color:#ffe89e;font-weight:700;">+${money(row.sizeUpcharge)} (${esc(row.sizeName)})</span>`
+          : `<span style="color:rgba(255,255,255,0.45);">Included</span>`;
+
         return `
-          <div class="bq-quote-item-card">
-            <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-              <div>
-                <strong style="color:#ffe89e;">${esc(lq.brand)} ${esc(lq.styleCode)} (Item #${esc(lq.itemNumber)}) — ${esc(lq.colorName)}</strong>
-                <span style="font-size:0.74rem;color:#2ce6ff;margin-left:6px;">(${lq.lineQty} shirts)</span>
-              </div>
-              <div style="display:flex;gap:10px;align-items:center;">
-                <a href="${esc(lq.productUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:0.7rem;color:#2ce6ff;text-decoration:underline;">Open S&amp;S #${esc(lq.itemNumber)} &nearr;</a>
-                <strong style="color:#22f59b;">Quote: ${money(lineCustTotal)}</strong>
-              </div>
-            </div>
-            <div style="font-size:0.73rem;color:rgba(255,255,255,0.82);margin-top:4px;line-height:1.5;">${szSummary}</div>
-          </div>
+          <tr>
+            <td style="padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.1);">
+              <strong style="color:#ffffff;">${esc(row.brand)} ${esc(row.styleCode)}</strong>
+              <span style="font-size:0.68rem;color:#2ce6ff;margin-left:4px;">#${esc(row.itemNumber)}</span>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.72);">Color: <strong>${esc(row.colorName)}</strong> &bull; ${esc(row.printSpecSummary)}</div>
+            </td>
+            <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:center;font-weight:800;color:${row.isYouth ? '#2ce6ff' : '#ffe89e'};">${esc(row.sizeName)}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:center;font-weight:700;">${row.qty}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;">${money(row.baseUnitQuoted)}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;font-size:0.72rem;">${upchargeBadge}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;font-weight:700;color:#22f59b;">${money(row.finalUnitQuoted)}</td>
+            <td style="padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;font-weight:800;color:#ffffff;">${money(row.lineTotalQuoted)}</td>
+          </tr>
         `;
       }).join('');
 
       finEl.innerHTML = `
-        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-          ${lineRowsHtml || '<div style="font-size:0.78rem;color:rgba(255,255,255,0.6);">No shirt quantities entered yet.</div>'}
+        <div style="font-size:0.73rem;font-weight:700;color:#ffe89e;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">
+          Itemized Line-by-Line Customer Quote (Upcharge Built Into Base Price)
+        </div>
+        <div style="overflow-x:auto;background:rgba(6,5,14,0.68);border:1px solid rgba(255,255,255,0.18);border-radius:14px;margin-bottom:12px;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
+            <thead>
+              <tr style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);text-transform:uppercase;font-size:0.65rem;letter-spacing:0.05em;">
+                <th style="padding:8px;text-align:left;">Item / Color / Print Sizes</th>
+                <th style="padding:8px 6px;text-align:center;">Size</th>
+                <th style="padding:8px 6px;text-align:center;">Qty</th>
+                <th style="padding:8px 6px;text-align:right;">Base Price</th>
+                <th style="padding:8px 6px;text-align:right;">Size Upcharge</th>
+                <th style="padding:8px 6px;text-align:right;">Unit Price</th>
+                <th style="padding:8px;text-align:right;">Line Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemizedTableRows || '<tr><td colspan="7" style="padding:14px;text-align:center;color:rgba(255,255,255,0.55);">Enter shirt quantities in Step 1 to generate itemized lines.</td></tr>'}
+            </tbody>
+          </table>
         </div>
 
         <div class="bq-cost-ledger">
+          <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:#2ce6ff;font-weight:700;margin-bottom:2px;">
+            &#128274; Owner Internal Cost Breakdown (Hidden on Client Quote &amp; PDF)
+          </div>
           <div class="bq-ledger-row">
-            <span>1. S&amp;S Activewear Blank Shirts (${calc.totalShirts} pcs avg ${money(calc.blankAvgPerShirt)}/ea)</span>
+            <span>S&amp;S Blank Shirts (${calc.totalAdultShirts} Adult + ${calc.totalYouthShirts} Youth)</span>
             <strong>${money(calc.blanksSubtotal)}</strong>
           </div>
           <div class="bq-ledger-row">
-            <span>2. S&amp;S Blank Freight / Shipping</span>
+            <span>S&amp;S Blank Freight / Shipping</span>
             <strong>${ssShipNote}</strong>
           </div>
           <div class="bq-ledger-row">
-            <span>3. DigitalPrintWorx DTF Gangsheets (${calc.sheetSolution.sheetAssignments.length} sheet${calc.sheetSolution.sheetAssignments.length === 1 ? '' : 's'} &bull; ${money(calc.dtfCostPerShirt)}/shirt)</span>
+            <span>DigitalPrintWorx DTF Gangsheets (${calc.sheetSolution.sheetAssignments.length} sheet${calc.sheetSolution.sheetAssignments.length === 1 ? '' : 's'})</span>
             <strong>${money(calc.sheetSolution.totalDtfCost)}</strong>
           </div>
           <div class="bq-ledger-row">
-            <span>4. DigitalPrintWorx DTF Shipping</span>
-            <strong>${money(calc.dpwShippingUsd)}</strong>
-          </div>
-          <div class="bq-ledger-row">
-            <span>5. Heat Press / Labor / Folding (${calc.totalShirts} &times; ${money(state.pressLaborPerShirt)})</span>
-            <strong>${money(calc.totalPressLaborUsd)}</strong>
+            <span>DigitalPrintWorx DTF Shipping + Pressing/Handling (${calc.totalShirts} &times; ${money(state.pressLaborPerShirt)})</span>
+            <strong>${money(calc.dpwShippingUsd + calc.totalPressLaborUsd)}</strong>
           </div>
           <div class="bq-ledger-row total-cost">
-            <span>YOUR TOTAL WHOLESALE COST (${money(calc.avgCostPerShirt)} / shirt)</span>
+            <span>YOUR TRUE HARD COST (${money(calc.avgHardCostPerShirt)} avg / shirt)</span>
             <strong>${money(calc.totalHardCostUsd)}</strong>
           </div>
           <div class="bq-ledger-row quote-price">
-            <span>RECOMMENDED CUSTOMER QUOTE (${money(calc.avgQuotePerShirt)} avg / shirt)</span>
+            <span>CUSTOMER QUOTED TOTAL (Includes +${money(calc.builtInUpcharge)}/shirt built into base)</span>
             <strong>${money(calc.customerQuoteTotal)}</strong>
           </div>
           <div class="bq-ledger-row net-profit">
-            <span>YOUR ESTIMATED NET PROFIT (${calc.actualMarginPct.toFixed(1)}% Margin)</span>
+            <span>YOUR NET PROFIT ON THIS ORDER</span>
             <strong>+${money(calc.netProfitUsd)}</strong>
           </div>
         </div>
@@ -882,7 +1162,7 @@
 
     if (!sheets || sheets.length === 0) {
       canvas.width = 560;
-      canvas.height = 200;
+      canvas.height = 190;
       ctx.fillStyle = '#0c0a18';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.strokeStyle = 'rgba(255,255,255,0.18)';
@@ -894,12 +1174,11 @@
       return;
     }
 
-    // Render up to first 3 sheets side-by-side (or stacked cleanly) so even 200-shirt orders render crisply
     const maxPreviewSheets = Math.min(sheets.length, 3);
-    const pxPerIn = 14; // 27" * 14 = 378px wide per sheet
-    const pad = 26;
-    const headerH = 28;
-    const gapBetweenSheets = 22;
+    const pxPerIn = 13;
+    const pad = 22;
+    const headerH = 26;
+    const gapBetweenSheets = 20;
 
     const sheetWpx = Math.round(calc.packRes.rollWidthIn * pxPerIn);
     const maxHpx = Math.max(...sheets.slice(0, maxPreviewSheets).map((s) => Math.round(s.sheet.lengthIn * pxPerIn)));
@@ -910,13 +1189,6 @@
     ctx.fillStyle = '#0a0814';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const paletteColors = [
-      { stroke: '#f5c451', fill: 'rgba(245, 196, 81, 0.16)' },
-      { stroke: '#2ce6ff', fill: 'rgba(44, 230, 255, 0.16)' },
-      { stroke: '#ff4fa3', fill: 'rgba(255, 79, 163, 0.16)' },
-      { stroke: '#22f59b', fill: 'rgba(34, 245, 155, 0.16)' }
-    ];
-
     for (let sIdx = 0; sIdx < maxPreviewSheets; sIdx++) {
       const sa = sheets[sIdx];
       const ox = pad + sIdx * (sheetWpx + gapBetweenSheets);
@@ -924,13 +1196,11 @@
       const shW = Math.round(sa.sheet.widthIn * pxPerIn);
       const shH = Math.round(sa.sheet.lengthIn * pxPerIn);
 
-      // Sheet Title Label
       ctx.fillStyle = '#ffe89e';
-      ctx.font = '700 12px Orbitron, sans-serif';
+      ctx.font = '700 11px Orbitron, sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText(`SHEET #${sIdx + 1}: ${sa.sheet.widthIn}" × ${sa.sheet.lengthIn}" ($${sa.sheet.priceUsd.toFixed(2)})`, ox, oy - 9);
+      ctx.fillText(`SHEET #${sIdx + 1}: ${sa.sheet.widthIn}"×${sa.sheet.lengthIn}" ($${sa.sheet.priceUsd.toFixed(2)})`, ox, oy - 8);
 
-      // Transparent Film Checkerboard Base
       ctx.fillStyle = '#151226';
       ctx.fillRect(ox, oy, shW, shH);
       const sq = 10;
@@ -943,7 +1213,6 @@
         }
       }
 
-      // Free space highlight at bottom of sheet
       const usedPx = Math.min(shH, Math.round(sa.usedLinearIn * pxPerIn));
       if (shH - usedPx > 6) {
         ctx.fillStyle = 'rgba(34, 245, 155, 0.07)';
@@ -957,21 +1226,22 @@
         ctx.setLineDash([]);
         if (shH - usedPx > 22) {
           ctx.fillStyle = '#22f59b';
-          ctx.font = '600 11px Outfit, sans-serif';
+          ctx.font = '600 10px Outfit, sans-serif';
           ctx.textAlign = 'center';
-          ctx.fillText(`+${sa.freeLinearIn.toFixed(1)}" Free Film Space Left`, ox + shW / 2, oy + usedPx + (shH - usedPx) / 2 + 4);
+          ctx.fillText(`+${sa.freeLinearIn.toFixed(1)}" Free Space`, ox + shW / 2, oy + usedPx + (shH - usedPx) / 2 + 4);
         }
       }
 
-      // Draw each packed DTF graphic box
       sa.boxes.forEach((b) => {
         const bx = ox + b.x * pxPerIn;
         const by = oy + b.localY * pxPerIn;
         const bw = b.w * pxPerIn;
         const bh = b.h * pxPerIn;
-        const pal = paletteColors[b.placementIdx % paletteColors.length];
+        const isYouthBox = b.sizeGroup === 'YOUTH';
+        const strokeCol = isYouthBox ? '#2ce6ff' : '#f5c451';
+        const fillCol = isYouthBox ? 'rgba(44, 230, 255, 0.16)' : 'rgba(245, 196, 81, 0.16)';
 
-        ctx.fillStyle = pal.fill;
+        ctx.fillStyle = fillCol;
         ctx.fillRect(bx, by, bw, bh);
 
         if (b.imgElement && b.imgElement.complete && b.imgElement.naturalWidth > 0) {
@@ -979,24 +1249,23 @@
           if (b.rotated) {
             ctx.translate(bx + bw / 2, by + bh / 2);
             ctx.rotate(Math.PI / 2);
-            ctx.drawImage(b.imgElement, -bh / 2 + 1, -bw / 2 + 1, Math.max(2, bh - 2), Math.max(2, bw - 2));
+            drawContainImage(ctx, b.imgElement, -bh / 2 + 1, -bw / 2 + 1, Math.max(2, bh - 2), Math.max(2, bw - 2));
           } else {
-            ctx.drawImage(b.imgElement, bx + 1, by + 1, Math.max(2, bw - 2), Math.max(2, bh - 2));
+            drawContainImage(ctx, b.imgElement, bx + 1, by + 1, Math.max(2, bw - 2), Math.max(2, bh - 2));
           }
           ctx.restore();
-        } else if (bw > 28 && bh > 16) {
-          ctx.fillStyle = 'rgba(255,255,255,0.82)';
-          ctx.font = '600 9px Outfit, sans-serif';
+        } else if (bw > 24 && bh > 14) {
+          ctx.fillStyle = isYouthBox ? '#9ef3ff' : '#ffe89e';
+          ctx.font = '600 8.5px Outfit, sans-serif';
           ctx.textAlign = 'center';
-          ctx.fillText(`${b.origW}"×${b.origH}"`, bx + bw / 2, by + bh / 2 + 3);
+          ctx.fillText(`${isYouthBox ? 'Y ' : ''}${b.origW}"×${b.origH}"`, bx + bw / 2, by + bh / 2 + 3);
         }
 
-        ctx.strokeStyle = pal.stroke;
+        ctx.strokeStyle = strokeCol;
         ctx.lineWidth = 1;
         ctx.strokeRect(bx, by, bw, bh);
       });
 
-      // Outer Roll Border
       ctx.strokeStyle = 'rgba(245, 196, 81, 0.78)';
       ctx.lineWidth = 1.5;
       ctx.strokeRect(ox, oy, shW, shH);
@@ -1006,25 +1275,23 @@
       ctx.fillStyle = '#2ce6ff';
       ctx.font = '600 12px Outfit, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(`+ ${sheets.length - maxPreviewSheets} additional packed sheet(s) included in total above`, canvas.width / 2, canvas.height - 10);
+      ctx.fillText(`+ ${sheets.length - maxPreviewSheets} additional packed sheet(s) included in total above`, canvas.width / 2, canvas.height - 8);
     }
   }
 
-  // Export Sheet #1 (or selected sheet) as an actual 300 DPI Transparent Gangsheet PNG!
   function exportPackedGangsheet300DpiPng() {
     const calc = state.lastCalculation;
     if (!calc || !calc.sheetSolution.sheetAssignments.length) {
       alert('Add shirt quantities and upload your DTF file first to generate a 300 DPI gangsheet.');
       return;
     }
-    const hasUploadedArt = state.dtfPlacements.some((p) => p.imgElement);
+    const hasUploadedArt = state.dtfPlacements.some((p) => p.enabled !== false && p.imgElement);
     if (!hasUploadedArt) {
-      alert('Please upload your project DTF artwork file (.PNG or .SVG) in Step 2 first so we can tile the actual 300 DPI graphic onto your gangsheet!');
+      alert('Please upload your project DTF artwork file (.PNG or .SVG) in Step 2 first so we can tile your 300 DPI graphic onto the gangsheet!');
       return;
     }
 
     const sa = calc.sheetSolution.sheetAssignments[0];
-    // 300 DPI: e.g. 27" x 24" = 8100 x 7200 px (cap at 150-300 DPI safely inside browser canvas max 16384px)
     let dpi = 300;
     if (sa.sheet.lengthIn * dpi > 15800) {
       dpi = Math.floor(15800 / sa.sheet.lengthIn);
@@ -1046,9 +1313,9 @@
       if (b.rotated) {
         octx.translate(bx + bw / 2, by + bh / 2);
         octx.rotate(Math.PI / 2);
-        octx.drawImage(b.imgElement, -bh / 2, -bw / 2, bh, bw);
+        drawContainImage(octx, b.imgElement, -bh / 2, -bw / 2, bh, bw);
       } else {
-        octx.drawImage(b.imgElement, bx, by, bw, bh);
+        drawContainImage(octx, b.imgElement, bx, by, bw, bh);
       }
       octx.restore();
     });
@@ -1057,7 +1324,7 @@
       if (!blob) return;
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      const cleanName = (state.projectName || 'RetroCanopy_BulkProject').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const cleanName = (state.customer.projectName || state.customer.companyOrTeam || 'RetroCanopy_BulkProject').replace(/[^a-zA-Z0-9_-]/g, '_');
       a.href = url;
       a.download = `${cleanName}_${sa.sheet.widthIn}x${sa.sheet.lengthIn}_GangSheet_${dpi}DPI.png`;
       document.body.appendChild(a);
@@ -1070,7 +1337,7 @@
   }
 
   // =========================================================================
-  // RENDER GARMENT LINES (S&S ACTIVEWEAR TT11 / 671D9 & CE10L / 267A7)
+  // RENDER GARMENT LINES (YOUTH YXS-YXL + ADULT XS-6XL WITH UPCHARGE LABELS)
   // =========================================================================
   function renderGarmentLinesList() {
     const container = document.getElementById('bqGarmentLinesContainer');
@@ -1093,31 +1360,39 @@
         `<option value="${esc(c.name)}" ${c.name === line.colorName ? 'selected' : ''}>${esc(c.name)}</option>`
       ).join('');
 
-      const sizesGridHtml = ALL_SIZES.map((sz) => {
+      const buildSizeCell = (sz) => {
         const unitP = getBlankUnitPrice(line.styleCode, line.colorName, sz);
+        const upcharge = getLargerSizeUpcharge(line.styleCode, line.colorName, sz);
         const qtyVal = line.quantities[sz] || 0;
         const liveStock = getLiveStockBadge(line.styleCode, line.colorName, sz);
         const stockTag = liveStock !== null
-          ? `<span class="bq-stock-micro">${liveStock > 0 ? liveStock + ' stk' : '0 stk'}</span>`
+          ? `<span class="bq-stock-micro">${liveStock} stk</span>`
+          : '';
+        const upTag = upcharge > 0
+          ? `<span style="font-size:0.6rem;color:#ff9ad0;font-weight:700;">+${money(upcharge)}</span>`
           : '';
         return `
-          <div class="bq-size-cell ${qtyVal > 0 ? 'has-qty' : ''}">
-            <label class="bq-size-label">${sz}</label>
+          <div class="bq-size-cell ${qtyVal > 0 ? 'has-qty' : ''} ${isYouthSize(sz) ? 'youth-cell' : ''}">
+            <label class="bq-size-label" style="${isYouthSize(sz) ? 'color:#2ce6ff;' : ''}">${sz}</label>
             <input type="number" min="0" max="9999" step="1" class="bq-size-input" data-line-id="${line.id}" data-size-key="${sz}" value="${qtyVal || ''}" placeholder="0">
             <span class="bq-size-price">${money(unitP)}</span>
+            ${upTag}
             ${stockTag}
           </div>
         `;
-      }).join('');
+      };
+
+      const youthGridHtml = YOUTH_SIZES.map(buildSizeCell).join('');
+      const adultGridHtml = ADULT_SIZES.map(buildSizeCell).join('');
 
       return `
         <div class="bq-garment-line-card" data-line-card="${line.id}">
           <div class="bq-line-top-bar">
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;">
               <span class="bq-step-badge">#${idx + 1}</span>
-              <select class="bq-select" data-line-style="${line.id}" style="min-width:270px;font-weight:700;">
-                <option value="TT11" ${line.styleCode === 'TT11' ? 'selected' : ''}>Dri-Fit Short Sleeve — Style # TT11 (Item # 671D9)</option>
-                <option value="CE10L" ${line.styleCode === 'CE10L' ? 'selected' : ''}>Dri-Fit Long Sleeve — Style # CE10L (Item # 267A7)</option>
+              <select class="bq-select" data-line-style="${line.id}" style="min-width:290px;font-weight:700;">
+                <option value="TT11" ${line.styleCode === 'TT11' ? 'selected' : ''}>Dri-Fit Short Sleeve — TT11 (#671D9) &amp; Youth TT11Y (#683D9)</option>
+                <option value="CE10L" ${line.styleCode === 'CE10L' ? 'selected' : ''}>Dri-Fit Long Sleeve — CE10L (#267A7) &amp; Youth CE10LY (#007A7)</option>
               </select>
 
               <div style="display:flex;align-items:center;gap:7px;">
@@ -1127,28 +1402,43 @@
                 </select>
               </div>
 
-              <a href="${esc(cat.productUrl)}" target="_blank" rel="noopener noreferrer" class="mini-btn" style="padding:5px 10px;font-size:0.68rem;text-decoration:none;color:#2ce6ff;">
-                S&amp;S #${esc(cat.itemNumber)} &nearr;
+              <a href="${esc(cat.productUrl)}" target="_blank" rel="noopener noreferrer" class="mini-btn" style="padding:5px 9px;font-size:0.67rem;text-decoration:none;color:#2ce6ff;">
+                Adult #${esc(cat.itemNumber)} &nearr;
+              </a>
+              <a href="${esc(cat.youthProductUrl)}" target="_blank" rel="noopener noreferrer" class="mini-btn" style="padding:5px 9px;font-size:0.67rem;text-decoration:none;color:#9ef3ff;">
+                Youth #${esc(cat.youthItemNumber)} &nearr;
               </a>
             </div>
 
             <div style="display:flex;align-items:center;gap:10px;">
               <span class="tag-pill" id="bqLineQty_${line.id}" style="background:rgba(44,230,255,0.16);color:#2ce6ff;border:1px solid rgba(44,230,255,0.4);">0 pcs</span>
-              <strong id="bqLineSub_${line.id}" style="color:#ffe89e;font-size:0.92rem;">$0.00</strong>
+              <strong id="bqLineSub_${line.id}" style="color:#ffe89e;font-size:0.86rem;">Blanks: $0.00</strong>
               ${state.garmentLines.length > 1 ? `<button type="button" class="mini-btn" data-remove-line="${line.id}" style="padding:4px 9px;color:#ff85b3;border-color:rgba(255,79,163,0.45) !important;" title="Remove this shirt row">&times;</button>` : ''}
             </div>
           </div>
 
           <div style="font-size:0.72rem;color:rgba(255,255,255,0.68);margin:6px 0 8px;">
-            <strong>${esc(cat.fullName)}</strong> &bull; ${esc(cat.specs)}
+            <strong>${esc(cat.fullName)}</strong> &bull; ${esc(cat.specs)} (${colors.length} Official Colors)
           </div>
 
           <div class="bq-swatch-strip" title="Click any official S&amp;S color swatch to select">
             ${swatchesHtml}
           </div>
 
+          <!-- YOUTH SIZES STRIP -->
+          <div style="font-size:0.68rem;font-weight:700;color:#2ce6ff;text-transform:uppercase;letter-spacing:0.05em;margin:6px 0 4px;">
+            Youth Sizes (${esc(cat.youthStyleCode)} &bull; Item #${esc(cat.youthItemNumber)}) — Auto-Scales DTF Prints to Youth Dimensions:
+          </div>
+          <div class="bq-sizes-grid" style="grid-template-columns:repeat(5,minmax(62px,1fr));max-width:520px;margin-bottom:10px;">
+            ${youthGridHtml}
+          </div>
+
+          <!-- ADULT & EXTENDED SIZES STRIP -->
+          <div style="font-size:0.68rem;font-weight:700;color:#ffe89e;text-transform:uppercase;letter-spacing:0.05em;margin:4px 0;">
+            Adult &amp; Larger Extended Sizes (${esc(cat.styleCode)} &bull; Item #${esc(cat.itemNumber)}) — Larger Size Upcharges Shown Below:
+          </div>
           <div class="bq-sizes-grid">
-            ${sizesGridHtml}
+            ${adultGridHtml}
           </div>
         </div>
       `;
@@ -1156,84 +1446,93 @@
   }
 
   // =========================================================================
-  // RENDER DTF UPLOAD & PLACEMENTS LIST
+  // RENDER DTF PLACEMENTS (AUTO 4"x4" RIGHT BREAST POCKET & 10.5"x11.5" BACK)
   // =========================================================================
   function renderDtfPlacementsList() {
     const container = document.getElementById('bqDtfPlacementsContainer');
     if (!container) return;
 
     const presets = [
-      { label: 'Left Chest (3.5"×3.5")', w: 3.5, h: 3.5 },
-      { label: 'Sleeve / Neck (3"×3")', w: 3.0, h: 3.0 },
-      { label: 'Youth Front (8.5"×9.5")', w: 8.5, h: 9.5 },
-      { label: 'Adult Front (10.5"×11.5")', w: 10.5, h: 11.5 },
-      { label: 'Oversized Back (12"×14")', w: 12.0, h: 14.0 }
+      { label: 'Front Right Breast Pocket (4"×4" | Youth 3"×3")', loc: 'Front Right Breast Pocket', aw: 4.0, ah: 4.0, yw: 3.0, yh: 3.0 },
+      { label: 'Full Back (10.5"×11.5" | Youth 8"×9")', loc: 'Full Back', aw: 10.5, ah: 11.5, yw: 8.0, yh: 9.0 },
+      { label: 'Full Front (10.5"×11.5" | Youth 8"×9")', loc: 'Full Front', aw: 10.5, ah: 11.5, yw: 8.0, yh: 9.0 },
+      { label: 'Sleeve / Neck (3"×3" | Youth 2.25"×2.25")', loc: 'Sleeve / Back Neck', aw: 3.0, ah: 3.0, yw: 2.25, yh: 2.25 }
     ];
 
     container.innerHTML = state.dtfPlacements.map((p, idx) => {
       const previewUrl = p.autoTrimTransparent && p.trimmedDataUrl ? p.trimmedDataUrl : p.dataUrl;
       const metaInfo = p.fileName
-        ? `<div style="font-size:0.71rem;color:#22f59b;margin-top:4px;">&#10003; <strong>${esc(p.fileName)}</strong> &bull; Raw: ${p.origPxW}&times;${p.origPxH}px${p.autoTrimTransparent ? ` &rarr; Trimmed Ink: ${p.trimPxW}&times;${p.trimPxH}px` : ''}</div>`
-        : `<div style="font-size:0.71rem;color:rgba(255,255,255,0.6);margin-top:4px;">Upload your transparent 300 DPI <code>.PNG</code> or <code>.SVG</code> file to auto-detect exact print dimensions &amp; preview on gangsheet.</div>`;
+        ? `<div style="font-size:0.71rem;color:#22f59b;margin-top:4px;">&#10003; <strong>${esc(p.fileName)}</strong> &bull; Fitted cleanly to Adult <strong>${p.adultWidthIn}"&times;${p.adultHeightIn}"</strong> &amp; Youth <strong>${p.youthWidthIn}"&times;${p.youthHeightIn}"</strong></div>`
+        : `<div style="font-size:0.71rem;color:rgba(255,255,255,0.62);margin-top:4px;">Upload your transparent <code>.PNG</code> or <code>.SVG</code> file — auto-sized to <strong>${p.adultWidthIn}"&times;${p.adultHeightIn}"</strong> (Adult) &amp; <strong>${p.youthWidthIn}"&times;${p.youthHeightIn}"</strong> (Youth).</div>`;
 
       const presetButtons = presets.map((pr) =>
-        `<button type="button" class="bq-preset-chip" data-dtf-preset="${p.id}" data-pw="${pr.w}" data-ph="${pr.h}">${pr.label}</button>`
+        `<button type="button" class="bq-preset-chip" data-dtf-preset="${p.id}" data-ploc="${esc(pr.loc)}" data-aw="${pr.aw}" data-ah="${pr.ah}" data-yw="${pr.yw}" data-yh="${pr.yh}">${pr.label}</button>`
       ).join('');
 
       return `
-        <div class="bq-dtf-card">
+        <div class="bq-dtf-card" style="${p.enabled === false ? 'opacity:0.52;' : ''}">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-            <div style="display:flex;align-items:center;gap:8px;flex:1;">
-              <span class="bq-step-badge" style="background:rgba(245,196,81,0.24);color:#ffe89e;border-color:rgba(245,196,81,0.6);">DTF #${idx + 1}</span>
-              <input type="text" class="bq-input" data-dtf-label="${p.id}" value="${esc(p.locationLabel)}" placeholder="Placement (e.g. Front Chest, Full Back)" style="max-width:240px;font-weight:600;">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap;">
+              <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:0.76rem;font-weight:700;color:#22f59b;">
+                <input type="checkbox" data-dtf-enabled="${p.id}" ${p.enabled !== false ? 'checked' : ''}>
+                Include Placement #${idx + 1}
+              </label>
+              <input type="text" class="bq-input" data-dtf-label="${p.id}" value="${esc(p.locationLabel)}" placeholder="Placement Location" style="min-width:230px;font-weight:700;color:#ffe89e;">
             </div>
-            ${state.dtfPlacements.length > 1 ? `<button type="button" class="mini-btn" data-remove-dtf="${p.id}" style="padding:4px 9px;color:#ff85b3;">&times; Remove Placement</button>` : ''}
+            ${state.dtfPlacements.length > 1 ? `<button type="button" class="mini-btn" data-remove-dtf="${p.id}" style="padding:4px 9px;color:#ff85b3;">&times; Delete</button>` : ''}
           </div>
 
           <div class="bq-dtf-split">
-            <!-- Upload & Preview Box -->
             <label class="bq-upload-dropzone ${p.checkerboardBg ? 'checker-bg' : ''}" data-dropzone-id="${p.id}">
               <input type="file" accept=".png,.svg,.webp,.jpg,.jpeg,image/*" data-dtf-file="${p.id}" style="display:none;">
               ${previewUrl
                 ? `<img src="${previewUrl}" alt="Uploaded DTF Artwork" class="bq-uploaded-art-img">
                    <span class="bq-reupload-pill">&#128194; Replace DTF File</span>`
                 : `<div style="text-align:center;padding:12px;">
-                     <div style="font-size:1.5rem;margin-bottom:4px;">&#128228;</div>
-                     <div style="font-size:0.78rem;font-weight:700;color:#ffe89e;">Upload Project DTF File</div>
-                     <div style="font-size:0.68rem;color:rgba(255,255,255,0.62);margin-top:2px;">Drag &amp; Drop or Click (.PNG / .SVG)</div>
+                     <div style="font-size:1.45rem;margin-bottom:3px;">&#128228;</div>
+                     <div style="font-size:0.76rem;font-weight:700;color:#ffe89e;">Upload ${esc(p.locationLabel)} File</div>
+                     <div style="font-size:0.67rem;color:rgba(255,255,255,0.62);margin-top:2px;">Drag &amp; Drop or Click (.PNG / .SVG)</div>
                    </div>`
               }
             </label>
 
-            <!-- Dimensions & Presets -->
             <div style="display:flex;flex-direction:column;gap:8px;justify-content:space-between;">
-              <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
-                <div>
-                  <label class="bq-field-lbl">Print Width (Inches)</label>
-                  <input type="number" min="0.5" max="26.5" step="0.1" class="bq-input" data-dtf-w="${p.id}" value="${p.widthIn}" style="width:110px;font-weight:700;color:#ffe89e;">
+              <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
+                <!-- Adult Print Size -->
+                <div style="background:rgba(245,196,81,0.08);border:1px solid rgba(245,196,81,0.35);border-radius:10px;padding:7px 10px;">
+                  <div class="bq-field-lbl" style="color:#ffe89e;">Adult Print Size (XS–6XL Inches)</div>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <input type="number" min="0.5" max="26.5" step="0.1" class="bq-input" data-dtf-aw="${p.id}" value="${p.adultWidthIn}" style="width:82px;font-weight:700;color:#ffe89e;">
+                    <span>&times;</span>
+                    <input type="number" min="0.5" max="95" step="0.1" class="bq-input" data-dtf-ah="${p.id}" value="${p.adultHeightIn}" style="width:82px;font-weight:700;color:#ffe89e;">
+                    <span style="font-size:0.72rem;color:rgba(255,255,255,0.65);">in</span>
+                  </div>
                 </div>
-                <div style="padding-bottom:8px;color:rgba(255,255,255,0.5);font-weight:700;">&times;</div>
-                <div>
-                  <label class="bq-field-lbl">Print Height (Inches)</label>
-                  <input type="number" min="0.5" max="95" step="0.1" class="bq-input" data-dtf-h="${p.id}" value="${p.heightIn}" style="width:110px;font-weight:700;color:#ffe89e;">
+
+                <!-- Youth Print Size -->
+                <div style="background:rgba(44,230,255,0.08);border:1px solid rgba(44,230,255,0.35);border-radius:10px;padding:7px 10px;">
+                  <div class="bq-field-lbl" style="color:#2ce6ff;">Youth Print Size (YXS–YXL Inches)</div>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <input type="number" min="0.5" max="26.5" step="0.1" class="bq-input" data-dtf-yw="${p.id}" value="${p.youthWidthIn}" style="width:82px;font-weight:700;color:#2ce6ff;">
+                    <span>&times;</span>
+                    <input type="number" min="0.5" max="95" step="0.1" class="bq-input" data-dtf-yh="${p.id}" value="${p.youthHeightIn}" style="width:82px;font-weight:700;color:#2ce6ff;">
+                    <span style="font-size:0.72rem;color:rgba(255,255,255,0.65);">in</span>
+                  </div>
                 </div>
-                <label style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:rgba(255,255,255,0.82);padding-bottom:8px;cursor:pointer;">
-                  <input type="checkbox" data-dtf-lock="${p.id}" ${p.lockAspect ? 'checked' : ''}>
-                  Lock Ratio
+
+                <label style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:rgba(255,255,255,0.85);padding-bottom:6px;cursor:pointer;" title="Keep exact preset print dimensions (e.g. 4x4 Breast Pocket / 10.5x11.5 Full Back) when uploading artwork">
+                  <input type="checkbox" data-dtf-lockbox="${p.id}" ${p.lockToPresetBox !== false ? 'checked' : ''}>
+                  Keep Auto Box Size on Upload
                 </label>
-                <label style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:rgba(255,255,255,0.82);padding-bottom:8px;cursor:pointer;" title="Automatically crops empty transparent border around your PNG so you fit more logos per gangsheet!">
-                  <input type="checkbox" data-dtf-trim="${p.id}" ${p.autoTrimTransparent ? 'checked' : ''}>
+
+                <label style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:rgba(255,255,255,0.85);padding-bottom:6px;cursor:pointer;">
+                  <input type="checkbox" data-dtf-trim="${p.id}" ${p.autoTrimTransparent !== false ? 'checked' : ''}>
                   Auto-Trim Empty Margin
                 </label>
-                ${previewUrl ? `
-                <label style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;color:#2ce6ff;padding-bottom:8px;cursor:pointer;">
-                  <input type="checkbox" data-dtf-checker="${p.id}" ${p.checkerboardBg ? 'checked' : ''}>
-                  Transparency Grid
-                </label>` : ''}
               </div>
 
               <div>
-                <div class="bq-field-lbl" style="margin-bottom:4px;">Quick Standard Print Size Presets:</div>
+                <div class="bq-field-lbl" style="margin-bottom:4px;">Quick Placement Presets (Updates Adult &amp; Youth Print Sizes Together):</div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
                   ${presetButtons}
                 </div>
@@ -1248,7 +1547,7 @@
   }
 
   // =========================================================================
-  // LIVE SUPPLIER LOOKUP (DIGITALPRINTWORX.COM + S&S ACTIVEWEAR)
+  // LIVE SUPPLIER PRICING SYNC
   // =========================================================================
   async function syncLiveSupplierPricing(forceRefresh = false) {
     const statusBadge = document.getElementById('bqLiveSyncStatus');
@@ -1272,7 +1571,7 @@
           forceRefresh,
           ssAccountNumber: savedCreds.accountNumber || '',
           ssApiKey: savedCreds.apiKey || '',
-          styles: 'TT11,CE10L'
+          styles: 'TT11,TT11Y,CE10L,CE10LY'
         })
       });
 
@@ -1281,15 +1580,12 @@
         if (data.digitalPrintWorx && Array.isArray(data.digitalPrintWorx.sheets)) {
           dpwSheets = data.digitalPrintWorx.sheets;
         }
-        let ssStatusText = 'S&S #671D9 / #267A7 Catalog Verified';
+        let ssStatusText = 'S&S #671D9 / #683D9 / #267A7 / #007A7 Verified';
         if (data.ssActivewear && data.ssActivewear.connectedAccount && data.ssActivewear.products) {
           liveSSData = data.ssActivewear.products;
-          ssStatusText = 'S&S Live Account API Connected (Stock + Account Tier)';
+          ssStatusText = 'S&S Live Account API Connected (Live Stock + Account Tier)';
           renderGarmentLinesList();
-        } else if (data.ssActivewear && data.ssActivewear.error && savedCreds.apiKey) {
-          ssStatusText = `S&S API Warning: ${data.ssActivewear.error}`;
         }
-
         const liveCnt = (data.digitalPrintWorx && data.digitalPrintWorx.liveCount) || 0;
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         if (statusBadge) {
@@ -1299,9 +1595,9 @@
         renderLiveDpwRateStrip();
         recalculateEverything();
       }
-    } catch (err) {
+    } catch (_) {
       if (statusBadge) {
-        statusBadge.textContent = 'Using verified cached S&S + DigitalPrintWorx rates (offline fallback)';
+        statusBadge.textContent = 'Using verified S&S + DigitalPrintWorx rates (offline fallback)';
         statusBadge.style.color = '#f5c451';
       }
     } finally {
@@ -1316,13 +1612,13 @@
       <a href="${esc(s.productUrl)}" target="_blank" rel="noopener noreferrer" class="bq-rate-pill" title="Click to view on DigitalPrintWorx.com">
         <span>${esc(s.widthIn)}"&times;${esc(s.lengthIn)}"${s.builderType === 'auto' ? ' Auto' : ''}</span>
         <strong>${money(s.priceUsd)}</strong>
-        ${s.liveVerified ? '<i class="bq-live-dot" title="Live verified from DigitalPrintWorx.com"></i>' : ''}
+        ${s.liveVerified ? '<i class="bq-live-dot"></i>' : ''}
       </a>
     `).join('');
   }
 
   // =========================================================================
-  // SAVED QUOTES HISTORY, COPY CLIENT QUOTE & PRINTABLE PROPOSAL
+  // SAVED QUOTES, CLEAN LINE-BY-LINE CLIENT COPY & FULL COLOR SWATCH QUOTE PDF
   // =========================================================================
   function getSavedQuotes() {
     try {
@@ -1338,17 +1634,17 @@
     if (!el) return;
     const list = getSavedQuotes();
     if (list.length === 0) {
-      el.innerHTML = `<div style="font-size:0.75rem;color:rgba(255,255,255,0.58);">No saved bulk quotes yet. Click <strong>"Save Quote"</strong> above to store a project quote for quick recall.</div>`;
+      el.innerHTML = `<div style="font-size:0.75rem;color:rgba(255,255,255,0.58);">No saved bulk quotes yet. Click <strong>"Save Quote"</strong> above to store a project quote.</div>`;
       return;
     }
 
     el.innerHTML = list.map((q) => `
       <div class="bq-saved-quote-row">
         <div>
-          <strong style="color:#ffe89e;">${esc(q.projectName || 'Untitled Bulk Quote')}</strong>
-          <span style="font-size:0.73rem;color:#2ce6ff;margin-left:6px;">${esc(q.clientName || 'Walk-in / Custom Client')}</span>
+          <strong style="color:#ffe89e;">${esc(q.projectName || 'Custom Dri-Fit Order')}</strong>
+          <span style="font-size:0.73rem;color:#2ce6ff;margin-left:6px;">${esc(q.clientLabel || '')}</span>
           <div style="font-size:0.7rem;color:rgba(255,255,255,0.68);margin-top:2px;">
-            ${q.totalShirts} shirts &bull; Cost: ${money(q.totalHardCostUsd)} &bull; Quoted: <strong style="color:#22f59b;">${money(q.customerQuoteTotal)}</strong> (Profit: +${money(q.netProfitUsd)}) &bull; ${esc(q.savedAtFormatted)}
+            ${q.totalShirts} shirts &bull; Quoted: <strong style="color:#22f59b;">${money(q.customerQuoteTotal)}</strong> (Profit: +${money(q.netProfitUsd)}) &bull; ${esc(q.savedAtFormatted)}
           </div>
         </div>
         <div style="display:flex;gap:6px;">
@@ -1365,52 +1661,48 @@
       alert('Enter at least 1 shirt before saving a quote.');
       return;
     }
+    triggerAutoSaveCustomer();
     const list = getSavedQuotes();
     const entry = {
       quoteId: 'BQ-' + Math.floor(100000 + Math.random() * 900000),
       savedAtFormatted: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-      projectName: state.projectName || 'Custom Dri-Fit Bulk Order',
-      clientName: state.clientName || '',
-      clientContact: state.clientContact || '',
+      projectName: state.customer.projectName || state.customer.companyOrTeam || 'Custom Dri-Fit Bulk Order',
+      clientLabel: [state.customer.fullName, state.customer.companyOrTeam].filter(Boolean).join(' • '),
       totalShirts: calc.totalShirts,
       totalHardCostUsd: calc.totalHardCostUsd,
       customerQuoteTotal: calc.customerQuoteTotal,
       netProfitUsd: calc.netProfitUsd,
       snapshot: {
-        projectName: state.projectName,
-        clientName: state.clientName,
-        clientContact: state.clientContact,
+        customer: JSON.parse(JSON.stringify(state.customer)),
         ssDiscountPct: state.ssDiscountPct,
         rollWidthMode: state.rollWidthMode,
         includeAutoBuilder15: state.includeAutoBuilder15,
         gutterIn: state.gutterIn,
         extraSpoilagePrints: state.extraSpoilagePrints,
         pressLaborPerShirt: state.pressLaborPerShirt,
+        builtInUpchargePerShirt: state.builtInUpchargePerShirt,
+        extraLargeCustomAddOn: state.extraLargeCustomAddOn,
         ssShippingOverride: state.ssShippingOverride,
         dpwShippingUsd: state.dpwShippingUsd,
-        pricingMode: state.pricingMode,
-        targetMarginPct: state.targetMarginPct,
-        fixedRetailBasePrice: state.fixedRetailBasePrice,
+        includeAvailableColorsOnPdf: state.includeAvailableColorsOnPdf,
         garmentLines: JSON.parse(JSON.stringify(state.garmentLines)),
         dtfPlacements: state.dtfPlacements.map((p) => ({
           id: p.id,
+          enabled: p.enabled,
           locationLabel: p.locationLabel,
-          widthIn: p.widthIn,
-          heightIn: p.heightIn,
-          lockAspect: p.lockAspect,
-          aspectRatio: p.aspectRatio,
+          adultWidthIn: p.adultWidthIn,
+          adultHeightIn: p.adultHeightIn,
+          youthWidthIn: p.youthWidthIn,
+          youthHeightIn: p.youthHeightIn,
+          lockToPresetBox: p.lockToPresetBox,
           autoTrimTransparent: p.autoTrimTransparent,
-          fileName: p.fileName,
-          origPxW: p.origPxW,
-          origPxH: p.origPxH,
-          trimPxW: p.trimPxW,
-          trimPxH: p.trimPxH
+          fileName: p.fileName
         }))
       }
     };
     list.unshift(entry);
     try {
-      localStorage.setItem(SAVED_QUOTES_KEY, JSON.stringify(list.slice(0, 30)));
+      localStorage.setItem(SAVED_QUOTES_KEY, JSON.stringify(list.slice(0, 40)));
     } catch (_) {}
     renderSavedQuotesList();
   }
@@ -1418,105 +1710,204 @@
   function buildCleanCustomerQuoteText() {
     const calc = state.lastCalculation;
     if (!calc || calc.totalShirts === 0) return 'No items in quote yet.';
-    const proj = state.projectName || 'Custom Dri-Fit Apparel Order';
-    const client = state.clientName ? `Prepared For: ${state.clientName}${state.clientContact ? ' (' + state.clientContact + ')' : ''}\n` : '';
-    const placementsDesc = state.dtfPlacements.map((p) => `${p.locationLabel} (${p.widthIn}" × ${p.heightIn}" Full-Color DTF)`).join(' + ');
+    const c = state.customer;
+    const proj = c.projectName || c.companyOrTeam || 'Custom Performance Apparel Order';
+    const headerLines = [
+      `RETROCANOPY CUSTOM APPAREL — ITEMIZED QUOTE`,
+      `Project: ${proj}`,
+      `Date: ${new Date().toLocaleDateString()}`
+    ];
+    if (c.fullName || c.companyOrTeam) headerLines.push(`Prepared For: ${[c.fullName, c.companyOrTeam].filter(Boolean).join(' — ')}`);
+    if (c.phone || c.email) headerLines.push(`Contact: ${[c.phone, c.email].filter(Boolean).join(' • ')}`);
+    if (c.address) headerLines.push(`Address: ${c.address}`);
 
-    const linesTxt = calc.customerLineQuotes.map((lq, i) => {
-      const szBreak = lq.quotedSizes.map((s) => `${s.size}: ${s.qty} @ ${money(s.unitCustomerPrice)}`).join(', ');
-      const sub = lq.quotedSizes.reduce((a, b) => a + b.subQuote, 0);
-      return `${i + 1}. ${lq.brand} ${lq.styleCode} (${lq.styleTitle}) — Color: ${lq.colorName}\n   Sizes (${lq.lineQty} pcs): ${szBreak}\n   Line Subtotal: ${money(sub)}`;
-    }).join('\n\n');
+    const linesTxt = calc.itemizedLines.map((r) => {
+      const upTxt = r.sizeUpcharge > 0 ? ` (Base ${money(r.baseUnitQuoted)} + ${r.sizeName} Size Upcharge ${money(r.sizeUpcharge)})` : '';
+      return `Line ${r.lineNumber}: ${r.brand} ${r.styleCode} — ${r.colorName} — Size ${r.sizeName} | ${r.printSpecSummary} | Qty: ${r.qty} × ${money(r.finalUnitQuoted)}${upTxt} = ${money(r.lineTotalQuoted)}`;
+    }).join('\n');
 
     return [
-      `RETROCANOPY CUSTOM APPAREL QUOTE — ${proj.toUpperCase()}`,
-      `Date: ${new Date().toLocaleDateString()}`,
-      client ? client.trim() : null,
-      `Print Specs: ${placementsDesc}`,
-      `--------------------------------------------------`,
+      ...headerLines,
+      `----------------------------------------------------------------------`,
       linesTxt,
-      `--------------------------------------------------`,
-      `TOTAL QUANTITY: ${calc.totalShirts} Custom Performance Shirts`,
-      `QUOTED TOTAL:   ${money(calc.customerQuoteTotal)} (${money(calc.avgQuotePerShirt)} avg / shirt)`
-    ].filter(Boolean).join('\n');
+      `----------------------------------------------------------------------`,
+      `TOTAL QUANTITY: ${calc.totalShirts} Shirts (${calc.totalAdultShirts} Adult, ${calc.totalYouthShirts} Youth)`,
+      `QUOTE TOTAL:    ${money(calc.customerQuoteTotal)}`
+    ].join('\n');
   }
 
   function printCustomerQuoteSheet() {
     const calc = state.lastCalculation;
     if (!calc || calc.totalShirts === 0) {
-      alert('Add shirt quantities before printing a client quote.');
+      alert('Enter shirt quantities in Step 1 before generating the Quote PDF.');
       return;
     }
-    const proj = state.projectName || 'Custom Performance Apparel Quote';
-    const placementsHtml = state.dtfPlacements.map((p) => `
-      <div style="display:flex;align-items:center;gap:12px;border:1px solid #ddd;border-radius:8px;padding:8px 12px;">
-        ${p.dataUrl ? `<img src="${p.trimmedDataUrl || p.dataUrl}" style="width:54px;height:54px;object-fit:contain;background:#111;border-radius:6px;padding:4px;">` : ''}
+
+    const c = state.customer;
+    const quoteNumber = 'RC-Q' + String(Date.now()).slice(-6);
+    const proj = c.projectName || c.companyOrTeam || 'Custom Performance Apparel Order';
+
+    const placementsHtml = calc.activePlacements.map((p) => `
+      <div style="display:flex;align-items:center;gap:12px;border:1px solid #d1d5db;border-radius:8px;padding:9px 13px;background:#f9fafb;">
+        ${p.dataUrl ? `<img src="${p.trimmedDataUrl || p.dataUrl}" style="width:52px;height:52px;object-fit:contain;background:#111827;border-radius:6px;padding:4px;">` : ''}
         <div>
-          <strong>${esc(p.locationLabel)}</strong>
-          <div style="font-size:12px;color:#555;">${p.widthIn}" W &times; ${p.heightIn}" H &bull; Stretchable Full-Color DTF Transfer</div>
+          <strong style="font-size:13px;">${esc(p.locationLabel)}</strong>
+          <div style="font-size:12px;color:#374151;margin-top:2px;">
+            Adult Size (XS–6XL): <strong>${p.adultWidthIn}" W &times; ${p.adultHeightIn}" H</strong>
+            &nbsp;&bull;&nbsp;
+            Youth Size (YXS–YXL): <strong>${p.youthWidthIn}" W &times; ${p.youthHeightIn}" H</strong>
+          </div>
         </div>
       </div>
     `).join('');
 
-    const rowsHtml = calc.customerLineQuotes.map((lq) => {
-      const sub = lq.quotedSizes.reduce((a, b) => a + b.subQuote, 0);
-      const szList = lq.quotedSizes.map((s) => `${s.size} (${s.qty} &times; ${money(s.unitCustomerPrice)})`).join(', ');
+    // Strictly Line-by-Line Itemized Table (NO extra % markup shown — upcharge is baked into Base Price, and Larger Size Upcharges are itemized cleanly!)
+    const rowsHtml = calc.itemizedLines.map((r) => {
+      const upchargeCell = r.sizeUpcharge > 0
+        ? `<strong>+${money(r.sizeUpcharge)}</strong> <span style="font-size:11px;color:#6b7280;">(${esc(r.sizeName)})</span>`
+        : `<span style="color:#6b7280;">$0.00</span>`;
       return `
         <tr>
-          <td style="padding:10px;border-bottom:1px solid #e5e7eb;">
-            <strong>${esc(lq.brand)} ${esc(lq.styleCode)}</strong> — ${esc(lq.styleTitle)}<br>
-            <span style="font-size:12px;color:#555;">Color: <strong>${esc(lq.colorName)}</strong> &bull; S&amp;S Item #${esc(lq.itemNumber)}</span>
+          <td style="padding:8px 9px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:600;color:#4b5563;">${r.lineNumber}</td>
+          <td style="padding:8px 9px;border-bottom:1px solid #e5e7eb;">
+            <strong>${esc(r.brand)} ${esc(r.styleCode)}</strong> — ${esc(r.garmentTitle)}<br>
+            <span style="font-size:11.5px;color:#4b5563;">Color: <strong>${esc(r.colorName)}</strong> &bull; Print: ${esc(r.printSpecSummary)}</span>
           </td>
-          <td style="padding:10px;border-bottom:1px solid #e5e7eb;font-size:13px;">${szList}</td>
-          <td style="padding:10px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;">${lq.lineQty}</td>
-          <td style="padding:10px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:700;">${money(sub)}</td>
+          <td style="padding:8px 9px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;">${esc(r.sizeName)}</td>
+          <td style="padding:8px 9px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;">${r.qty}</td>
+          <td style="padding:8px 9px;border-bottom:1px solid #e5e7eb;text-align:right;">${money(r.baseUnitQuoted)}</td>
+          <td style="padding:8px 9px;border-bottom:1px solid #e5e7eb;text-align:right;">${upchargeCell}</td>
+          <td style="padding:8px 9px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:700;">${money(r.finalUnitQuoted)}</td>
+          <td style="padding:8px 9px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:800;">${money(r.lineTotalQuoted)}</td>
         </tr>
       `;
     }).join('');
 
-    const w = window.open('', '_blank', 'width=900,height=780');
+    // Build Larger Size Upcharge Schedule & Official Available Colors Section for every ordered style (or both if desired)
+    const usedParentStyles = Array.from(new Set(state.garmentLines.map((l) => l.styleCode)));
+    if (usedParentStyles.length === 0) usedParentStyles.push('TT11');
+
+    const upchargeAndColorsHtml = state.includeAvailableColorsOnPdf ? usedParentStyles.map((stCode) => {
+      const cat = SS_CATALOG[stCode] || SS_CATALOG.TT11;
+      const colors = getColorsForStyle(stCode);
+      // Sample base unit price for this style to show exact size-tier pricing reference
+      const sampleAdultBlankBase = getBlankUnitPrice(stCode, colors[0].name, 'L');
+      const sharedPerShirt = calc.totalShirts > 0
+        ? ((calc.ssShippingUsd + calc.sheetSolution.totalDtfCost + calc.dpwShippingUsd + calc.totalPressLaborUsd) / calc.totalShirts) + calc.builtInUpcharge
+        : calc.builtInUpcharge;
+      const refBasePrice = +(sampleAdultBlankBase + sharedPerShirt).toFixed(2);
+
+      const upchargePills = ['2XL', '3XL', '4XL', '5XL', '6XL'].map((sz) => {
+        const up = getLargerSizeUpcharge(stCode, colors[0].name, sz);
+        return `<span style="display:inline-block;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;padding:4px 9px;font-size:11.5px;margin-right:6px;margin-bottom:4px;"><strong>${sz}:</strong> +${money(up)} (${money(refBasePrice + up)}/ea)</span>`;
+      }).join('');
+
+      const swatchesGrid = colors.map((col) => `
+        <div style="display:inline-flex;align-items:center;gap:6px;border:1px solid #e5e7eb;border-radius:6px;padding:4px 8px;background:#ffffff;font-size:11px;">
+          <span style="width:14px;height:14px;border-radius:50%;background:${esc(col.hex)};border:1px solid #9ca3af;display:inline-block;flex-shrink:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></span>
+          <span>${esc(col.name)}</span>
+        </div>
+      `).join('');
+
+      return `
+        <div style="margin-top:20px;page-break-inside:avoid;border:1px solid #d1d5db;border-radius:10px;padding:14px 16px;">
+          <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#111827;margin-bottom:6px;">
+            ${esc(cat.brand)} ${esc(cat.styleCode)} (Adult) / ${esc(cat.youthStyleCode)} (Youth) — Available Colors &amp; Extended Size Upcharges
+          </div>
+          <div style="font-size:12px;color:#374151;margin-bottom:8px;">
+            <strong>Standard Sizes (Youth YXS–YXL &amp; Adult XS–XL):</strong> Base Unit Rate &nbsp;|&nbsp; <strong>Larger Extended Size Upcharges:</strong><br>
+            <div style="margin-top:5px;">${upchargePills}</div>
+          </div>
+          <div style="font-size:11.5px;font-weight:700;color:#374151;margin-bottom:6px;">
+            Official Colors Available (${colors.length} Colors):
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${swatchesGrid}
+          </div>
+        </div>
+      `;
+    }).join('') : '';
+
+    const w = window.open('', '_blank', 'width=980,height=840');
     if (!w) return;
-    w.document.write(`<!DOCTYPE html><html><head><title>RetroCanopy Quote — ${esc(proj)}</title>
-      <style>body{font-family:system-ui,-apple-system,sans-serif;color:#111;padding:36px;max-width:860px;margin:0 auto;} table{width:100%;border-collapse:collapse;margin-top:18px;} th{background:#111827;color:#fff;padding:10px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.06em;} @media print{.no-print{display:none;}}</style>
+    w.document.write(`<!DOCTYPE html><html><head><title>RetroCanopy Quote ${quoteNumber} — ${esc(proj)}</title>
+      <style>
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; color: #111827; padding: 32px; max-width: 920px; margin: 0 auto; line-height: 1.4; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 12.5px; }
+        th { background: #111827; color: #ffffff; padding: 9px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+        @media print { .no-print { display: none !important; } body { padding: 14px; } }
+      </style>
     </head><body>
-      <div class="no-print" style="margin-bottom:18px;text-align:right;">
-        <button onclick="window.print()" style="padding:8px 18px;background:#111827;color:#fff;border:none;border-radius:6px;font-weight:700;cursor:pointer;">Print / Save as PDF</button>
+      <div class="no-print" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;background:#f3f4f6;padding:10px 14px;border-radius:8px;">
+        <span style="font-size:13px;color:#374151;">Tip: Choose <strong>"Save as PDF"</strong> in the print dialog to send this itemized quote + color chart to your client.</span>
+        <button onclick="window.print()" style="padding:8px 18px;background:#111827;color:#fff;border:none;border-radius:6px;font-weight:700;cursor:pointer;">&#128424; Print / Save as PDF</button>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111827;padding-bottom:16px;">
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111827;padding-bottom:14px;gap:20px;">
         <div>
-          <h1 style="margin:0;font-size:24px;letter-spacing:.04em;">RETROCANOPY CUSTOM APPAREL</h1>
-          <div style="font-size:14px;color:#4b5563;margin-top:4px;">Official Bulk Order Proposal &bull; ${new Date().toLocaleDateString()}</div>
+          <h1 style="margin:0;font-size:22px;letter-spacing:.04em;">RETROCANOPY CUSTOM APPAREL</h1>
+          <div style="font-size:13px;color:#4b5563;margin-top:3px;">Itemized Custom Bulk Apparel Quote &bull; Quote #${quoteNumber} &bull; ${new Date().toLocaleDateString()}</div>
         </div>
-        <div style="text-align:right;font-size:14px;">
-          <strong>Project:</strong> ${esc(proj)}<br>
-          ${state.clientName ? `<strong>Client:</strong> ${esc(state.clientName)}<br>` : ''}
-          ${state.clientContact ? `<span>${esc(state.clientContact)}</span>` : ''}
+        <div style="text-align:right;font-size:13px;max-width:340px;">
+          <div><strong>Project:</strong> ${esc(proj)}</div>
+          ${c.fullName ? `<div><strong>Customer:</strong> ${esc(c.fullName)}</div>` : ''}
+          ${c.companyOrTeam ? `<div><strong>Organization:</strong> ${esc(c.companyOrTeam)}</div>` : ''}
+          ${(c.phone || c.email) ? `<div>${esc([c.phone, c.email].filter(Boolean).join(' • '))}</div>` : ''}
+          ${c.address ? `<div style="color:#4b5563;font-size:12px;">${esc(c.address)}</div>` : ''}
         </div>
       </div>
-      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;">${placementsHtml}</div>
+
+      ${c.notes ? `<div style="margin-top:12px;padding:8px 12px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:12.5px;"><strong>Order Notes:</strong> ${esc(c.notes)}</div>` : ''}
+
+      <div style="margin-top:14px;">
+        <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;color:#4b5563;margin-bottom:6px;">Custom Print Locations &amp; Dimensions:</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">${placementsHtml}</div>
+      </div>
+
       <table>
-        <thead><tr><th>Garment &amp; Color</th><th>Sizes &amp; Unit Pricing</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Subtotal</th></tr></thead>
+        <thead>
+          <tr>
+            <th style="width:42px;text-align:center;">#</th>
+            <th>Itemized Garment, Color &amp; Print Spec</th>
+            <th style="text-align:center;">Size</th>
+            <th style="text-align:center;">Qty</th>
+            <th style="text-align:right;">Base Cost</th>
+            <th style="text-align:right;">Size Upcharge</th>
+            <th style="text-align:right;">Unit Price</th>
+            <th style="text-align:right;">Line Total</th>
+          </tr>
+        </thead>
         <tbody>${rowsHtml}</tbody>
       </table>
-      <div style="margin-top:22px;display:flex;justify-content:flex-end;">
-        <div style="min-width:290px;background:#f9fafb;border:1px solid #d1d5db;border-radius:10px;padding:16px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Total Shirts:</span><strong>${calc.totalShirts} pcs</strong></div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>Avg Price / Shirt:</span><strong>${money(calc.avgQuotePerShirt)}</strong></div>
-          <div style="display:flex;justify-content:space-between;font-size:18px;border-top:2px solid #111827;padding-top:8px;margin-top:8px;"><strong>QUOTE TOTAL:</strong><strong>${money(calc.customerQuoteTotal)}</strong></div>
+
+      <div style="margin-top:18px;display:flex;justify-content:flex-end;">
+        <div style="min-width:310px;background:#f9fafb;border:1.5px solid #111827;border-radius:10px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;">
+            <span>Total Garment Quantity:</span>
+            <strong>${calc.totalShirts} pcs (${calc.totalAdultShirts} Adult, ${calc.totalYouthShirts} Youth)</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:18px;border-top:2px solid #111827;padding-top:8px;margin-top:8px;">
+            <strong>QUOTED TOTAL:</strong>
+            <strong>${money(calc.customerQuoteTotal)}</strong>
+          </div>
         </div>
       </div>
+
+      ${upchargeAndColorsHtml}
     </body></html>`);
     w.document.close();
   }
 
   // =========================================================================
-  // INITIALIZE UI & EVENT DELEGATION INSIDE #bulkQuoteStudioSection
+  // INITIALIZATION & EVENT LISTENERS
   // =========================================================================
   function initBulkQuoteTool() {
     const root = document.getElementById('bulkQuoteStudioSection');
     if (!root) return;
 
-    // Load saved S&S API credentials into drawer inputs if present
+    loadInitialCustomerAndRatePrefs();
+
     try {
       const savedCreds = JSON.parse(localStorage.getItem(SS_CREDS_KEY) || '{}') || {};
       const acctEl = document.getElementById('bqSsAccountInput');
@@ -1525,16 +1916,16 @@
       if (keyEl && savedCreds.apiKey) keyEl.value = savedCreds.apiKey;
     } catch (_) {}
 
+    syncTopControlsFromState();
+    syncCustomerInputsFromState();
     renderLiveDpwRateStrip();
     renderGarmentLinesList();
     renderDtfPlacementsList();
     renderSavedQuotesList();
     recalculateEverything();
 
-    // Trigger live real-time price lookup from DigitalPrintWorx.com & S&S
     syncLiveSupplierPricing(false);
 
-    // Support direct URL deep-link (?tab=bulkquote or #bulkquote)
     try {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('tab') === 'bulkquote' || window.location.hash === '#bulkquote') {
@@ -1543,7 +1934,62 @@
       }
     } catch (_) {}
 
-    // Add Shirt Row
+    // Customer Directory Controls
+    const custSel = document.getElementById('bqSavedCustomerSelect');
+    if (custSel) {
+      custSel.addEventListener('change', () => {
+        const id = custSel.value;
+        if (!id) return;
+        const found = getSavedCustomersList().find((c) => c.customerId === id);
+        if (found) {
+          state.customer = {
+            customerId: found.customerId,
+            fullName: found.fullName || '',
+            companyOrTeam: found.companyOrTeam || '',
+            email: found.email || '',
+            phone: found.phone || '',
+            address: found.address || '',
+            projectName: found.projectName || '',
+            notes: found.notes || ''
+          };
+          localStorage.setItem(ACTIVE_CUSTOMER_DRAFT_KEY, JSON.stringify(state.customer));
+          syncCustomerInputsFromState();
+        }
+      });
+    }
+
+    const newCustBtn = document.getElementById('bqNewCustomerBtn');
+    if (newCustBtn) {
+      newCustBtn.addEventListener('click', () => {
+        state.customer = {
+          customerId: '',
+          fullName: '',
+          companyOrTeam: '',
+          email: '',
+          phone: '',
+          address: '',
+          projectName: '',
+          notes: ''
+        };
+        localStorage.setItem(ACTIVE_CUSTOMER_DRAFT_KEY, JSON.stringify(state.customer));
+        syncCustomerInputsFromState();
+        const badge = document.getElementById('bqCustomerAutoSaveBadge');
+        if (badge) badge.textContent = 'Ready — New Customer (Auto-Saves as You Type)';
+      });
+    }
+
+    const delCustBtn = document.getElementById('bqDeleteCustomerBtn');
+    if (delCustBtn) {
+      delCustBtn.addEventListener('click', () => {
+        if (!state.customer.customerId) return;
+        const filtered = getSavedCustomersList().filter((c) => c.customerId !== state.customer.customerId);
+        localStorage.setItem(CUSTOMERS_CRM_KEY, JSON.stringify(filtered));
+        state.customer.customerId = '';
+        renderSavedCustomersDropdown();
+      });
+    }
+
+    // Add Garment Row
     const addLineBtn = document.getElementById('bqAddGarmentLineBtn');
     if (addLineBtn) {
       addLineBtn.addEventListener('click', () => {
@@ -1551,24 +1997,26 @@
           id: 'line_' + (lineCounter++),
           styleCode: 'TT11',
           colorName: 'White',
-          quantities: { XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0, '6XL': 0 }
+          quantities: makeEmptyQtyMap()
         });
         renderGarmentLinesList();
         recalculateEverything();
       });
     }
 
-    // Add DTF Placement
+    // Add Extra DTF Placement
     const addDtfBtn = document.getElementById('bqAddDtfPlacementBtn');
     if (addDtfBtn) {
       addDtfBtn.addEventListener('click', () => {
         state.dtfPlacements.push({
           id: 'dtf_' + (dtfCounter++),
-          locationLabel: state.dtfPlacements.length === 1 ? 'Full Back / Second Location' : `Location #${state.dtfPlacements.length + 1}`,
-          widthIn: 3.5,
-          heightIn: 3.5,
-          lockAspect: false,
-          aspectRatio: 1,
+          enabled: true,
+          locationLabel: `Sleeve / Extra Location #${state.dtfPlacements.length + 1}`,
+          adultWidthIn: 3.0,
+          adultHeightIn: 3.0,
+          youthWidthIn: 2.25,
+          youthHeightIn: 2.25,
+          lockToPresetBox: true,
           autoTrimTransparent: true,
           fileName: '',
           dataUrl: '',
@@ -1585,13 +2033,9 @@
       });
     }
 
-    // Refresh Live Supplier Prices Button
     const refreshBtn = document.getElementById('bqRefreshLivePricesBtn');
-    if (refreshBtn) {
-      refreshBtn.addEventListener('click', () => syncLiveSupplierPricing(true));
-    }
+    if (refreshBtn) refreshBtn.addEventListener('click', () => syncLiveSupplierPricing(true));
 
-    // Connect S&S Wholesale Account API Button
     const saveSsCredsBtn = document.getElementById('bqSaveSsApiBtn');
     if (saveSsCredsBtn) {
       saveSsCredsBtn.addEventListener('click', () => {
@@ -1602,13 +2046,9 @@
       });
     }
 
-    // Export 300 DPI Gangsheet PNG
     const expPngBtn = document.getElementById('bqExportGangsheetPngBtn');
-    if (expPngBtn) {
-      expPngBtn.addEventListener('click', exportPackedGangsheet300DpiPng);
-    }
+    if (expPngBtn) expPngBtn.addEventListener('click', exportPackedGangsheet300DpiPng);
 
-    // Save / Copy / Print Quote Buttons
     const saveQBtn = document.getElementById('bqSaveQuoteBtn');
     if (saveQBtn) saveQBtn.addEventListener('click', saveCurrentQuote);
 
@@ -1620,7 +2060,7 @@
           navigator.clipboard.writeText(txt).catch(() => {});
         }
         const orig = copyQBtn.innerHTML;
-        copyQBtn.innerHTML = '&#10003; Copied Client Quote!';
+        copyQBtn.innerHTML = '&#10003; Copied Itemized Quote!';
         setTimeout(() => { copyQBtn.innerHTML = orig; }, 2000);
       });
     }
@@ -1628,7 +2068,7 @@
     const printQBtn = document.getElementById('bqPrintQuoteBtn');
     if (printQBtn) printQBtn.addEventListener('click', printCustomerQuoteSheet);
 
-    // Delegated Click Events inside Studio
+    // Delegated Clicks
     root.addEventListener('click', (e) => {
       const swatchBtn = e.target.closest('[data-pick-color]');
       if (swatchBtn) {
@@ -1668,17 +2108,14 @@
       const presetBtn = e.target.closest('[data-dtf-preset]');
       if (presetBtn) {
         const id = presetBtn.getAttribute('data-dtf-preset');
-        const pw = parseFloat(presetBtn.getAttribute('data-pw'));
-        const ph = parseFloat(presetBtn.getAttribute('data-ph'));
         const p = state.dtfPlacements.find((x) => x.id === id);
-        if (p && !isNaN(pw) && !isNaN(ph)) {
-          if (p.lockAspect && p.imgElement && p.aspectRatio > 0) {
-            p.widthIn = pw;
-            p.heightIn = +(pw / p.aspectRatio).toFixed(2);
-          } else {
-            p.widthIn = pw;
-            p.heightIn = ph;
-          }
+        if (p) {
+          p.locationLabel = presetBtn.getAttribute('data-ploc') || p.locationLabel;
+          p.adultWidthIn = parseFloat(presetBtn.getAttribute('data-aw')) || p.adultWidthIn;
+          p.adultHeightIn = parseFloat(presetBtn.getAttribute('data-ah')) || p.adultHeightIn;
+          p.youthWidthIn = parseFloat(presetBtn.getAttribute('data-yw')) || p.youthWidthIn;
+          p.youthHeightIn = parseFloat(presetBtn.getAttribute('data-yh')) || p.youthHeightIn;
+          p.enabled = true;
           renderDtfPlacementsList();
           recalculateEverything();
         }
@@ -1690,8 +2127,35 @@
         const qId = loadQ.getAttribute('data-load-quote');
         const found = getSavedQuotes().find((q) => q.quoteId === qId);
         if (found && found.snapshot) {
-          Object.assign(state, JSON.parse(JSON.stringify(found.snapshot)));
+          const snap = JSON.parse(JSON.stringify(found.snapshot));
+          if (snap.customer) state.customer = snap.customer;
+          state.ssDiscountPct = snap.ssDiscountPct || 0;
+          state.rollWidthMode = snap.rollWidthMode || '27';
+          state.includeAutoBuilder15 = snap.includeAutoBuilder15 !== false;
+          state.gutterIn = snap.gutterIn != null ? snap.gutterIn : 0.25;
+          state.extraSpoilagePrints = snap.extraSpoilagePrints != null ? snap.extraSpoilagePrints : 1;
+          state.pressLaborPerShirt = snap.pressLaborPerShirt != null ? snap.pressLaborPerShirt : 1.50;
+          state.builtInUpchargePerShirt = snap.builtInUpchargePerShirt != null ? snap.builtInUpchargePerShirt : 8.00;
+          state.extraLargeCustomAddOn = snap.extraLargeCustomAddOn || 0;
+          state.ssShippingOverride = snap.ssShippingOverride || '';
+          state.dpwShippingUsd = snap.dpwShippingUsd != null ? snap.dpwShippingUsd : 9.95;
+          state.includeAvailableColorsOnPdf = snap.includeAvailableColorsOnPdf !== false;
+          if (Array.isArray(snap.garmentLines)) {
+            state.garmentLines = snap.garmentLines.map((gl) => ({
+              ...gl,
+              quantities: Object.assign(makeEmptyQtyMap(), gl.quantities || {})
+            }));
+          }
+          if (Array.isArray(snap.dtfPlacements)) {
+            state.dtfPlacements = snap.dtfPlacements.map((dp) => ({
+              ...dp,
+              dataUrl: '',
+              trimmedDataUrl: '',
+              imgElement: null
+            }));
+          }
           syncTopControlsFromState();
+          syncCustomerInputsFromState();
           renderGarmentLinesList();
           renderDtfPlacementsList();
           recalculateEverything();
@@ -1708,11 +2172,20 @@
       }
     });
 
-    // Delegated Input & Change Events
+    // Delegated Inputs
     root.addEventListener('input', (e) => {
       const t = e.target;
 
-      // Size Qty Input
+      // Auto-Save Customer Info Fields
+      if (t.id === 'bqCustFullName') { state.customer.fullName = t.value; triggerAutoSaveCustomer(); return; }
+      if (t.id === 'bqCustCompany') { state.customer.companyOrTeam = t.value; triggerAutoSaveCustomer(); return; }
+      if (t.id === 'bqCustEmail') { state.customer.email = t.value; triggerAutoSaveCustomer(); return; }
+      if (t.id === 'bqCustPhone') { state.customer.phone = t.value; triggerAutoSaveCustomer(); return; }
+      if (t.id === 'bqCustAddress') { state.customer.address = t.value; triggerAutoSaveCustomer(); return; }
+      if (t.id === 'bqCustProject') { state.customer.projectName = t.value; triggerAutoSaveCustomer(); return; }
+      if (t.id === 'bqCustNotes') { state.customer.notes = t.value; triggerAutoSaveCustomer(); return; }
+
+      // Garment Size Quantities
       if (t.hasAttribute('data-size-key')) {
         const lineId = t.getAttribute('data-line-id');
         const sz = t.getAttribute('data-size-key');
@@ -1727,12 +2200,10 @@
         return;
       }
 
-      // Project & Pricing Settings
-      if (t.id === 'bqProjectNameInput') state.projectName = t.value;
-      else if (t.id === 'bqClientNameInput') state.clientName = t.value;
-      else if (t.id === 'bqClientContactInput') state.clientContact = t.value;
-      else if (t.id === 'bqSsDiscountInput') {
+      // Cost & Built-In Upcharge Controls
+      if (t.id === 'bqSsDiscountInput') {
         state.ssDiscountPct = Math.min(80, Math.max(0, parseFloat(t.value) || 0));
+        saveOwnerRatePrefs();
         renderGarmentLinesList();
         recalculateEverything();
       } else if (t.id === 'bqGutterInput') {
@@ -1743,55 +2214,45 @@
         recalculateEverything();
       } else if (t.id === 'bqPressLaborInput') {
         state.pressLaborPerShirt = Math.max(0, parseFloat(t.value) || 0);
+        saveOwnerRatePrefs();
+        recalculateEverything();
+      } else if (t.id === 'bqBuiltInUpchargeInput') {
+        state.builtInUpchargePerShirt = Math.max(0, parseFloat(t.value) || 0);
+        saveOwnerRatePrefs();
+        recalculateEverything();
+      } else if (t.id === 'bqExtraLargeAddOnInput') {
+        state.extraLargeCustomAddOn = Math.max(0, parseFloat(t.value) || 0);
+        renderGarmentLinesList();
         recalculateEverything();
       } else if (t.id === 'bqSsShippingInput') {
         state.ssShippingOverride = t.value;
         recalculateEverything();
       } else if (t.id === 'bqDpwShippingInput') {
         state.dpwShippingUsd = Math.max(0, parseFloat(t.value) || 0);
-        recalculateEverything();
-      } else if (t.id === 'bqMarginPctInput') {
-        state.targetMarginPct = Math.min(90, Math.max(0, parseFloat(t.value) || 0));
-        recalculateEverything();
-      } else if (t.id === 'bqFixedRetailInput') {
-        state.fixedRetailBasePrice = Math.max(0, parseFloat(t.value) || 0);
+        saveOwnerRatePrefs();
         recalculateEverything();
       }
 
-      // DTF Placement Width / Height / Label
+      // DTF Placement Adult & Youth Width/Height
       if (t.hasAttribute('data-dtf-label')) {
         const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-label'));
-        if (p) {
-          p.locationLabel = t.value;
-          recalculateEverything();
-        }
-      } else if (t.hasAttribute('data-dtf-w')) {
-        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-w'));
-        if (p) {
-          const nw = Math.max(0.5, parseFloat(t.value) || 0.5);
-          p.widthIn = nw;
-          if (p.lockAspect && p.aspectRatio > 0) {
-            p.heightIn = +(nw / p.aspectRatio).toFixed(2);
-            const hEl = root.querySelector(`[data-dtf-h="${p.id}"]`);
-            if (hEl) hEl.value = p.heightIn;
-          }
-          recalculateEverything();
-        }
-      } else if (t.hasAttribute('data-dtf-h')) {
-        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-h'));
-        if (p) {
-          const nh = Math.max(0.5, parseFloat(t.value) || 0.5);
-          p.heightIn = nh;
-          if (p.lockAspect && p.aspectRatio > 0) {
-            p.widthIn = +(nh * p.aspectRatio).toFixed(2);
-            const wEl = root.querySelector(`[data-dtf-w="${p.id}"]`);
-            if (wEl) wEl.value = p.widthIn;
-          }
-          recalculateEverything();
-        }
+        if (p) { p.locationLabel = t.value; recalculateEverything(); }
+      } else if (t.hasAttribute('data-dtf-aw')) {
+        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-aw'));
+        if (p) { p.adultWidthIn = Math.max(0.5, parseFloat(t.value) || 0.5); recalculateEverything(); }
+      } else if (t.hasAttribute('data-dtf-ah')) {
+        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-ah'));
+        if (p) { p.adultHeightIn = Math.max(0.5, parseFloat(t.value) || 0.5); recalculateEverything(); }
+      } else if (t.hasAttribute('data-dtf-yw')) {
+        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-yw'));
+        if (p) { p.youthWidthIn = Math.max(0.5, parseFloat(t.value) || 0.5); recalculateEverything(); }
+      } else if (t.hasAttribute('data-dtf-yh')) {
+        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-yh'));
+        if (p) { p.youthHeightIn = Math.max(0.5, parseFloat(t.value) || 0.5); recalculateEverything(); }
       }
     });
 
+    // Delegated Changes
     root.addEventListener('change', (e) => {
       const t = e.target;
 
@@ -1822,18 +2283,23 @@
       if (t.hasAttribute('data-dtf-file')) {
         const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-file'));
         const file = t.files && t.files[0];
-        if (p && file) {
-          analyzeUploadedArtwork(file, p);
+        if (p && file) analyzeUploadedArtwork(file, p);
+        return;
+      }
+
+      if (t.hasAttribute('data-dtf-enabled')) {
+        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-enabled'));
+        if (p) {
+          p.enabled = t.checked;
+          renderDtfPlacementsList();
+          recalculateEverything();
         }
         return;
       }
 
-      if (t.hasAttribute('data-dtf-lock')) {
-        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-lock'));
-        if (p) {
-          p.lockAspect = t.checked;
-          if (p.lockAspect && p.heightIn > 0) p.aspectRatio = p.widthIn / p.heightIn;
-        }
+      if (t.hasAttribute('data-dtf-lockbox')) {
+        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-lockbox'));
+        if (p) p.lockToPresetBox = t.checked;
         return;
       }
 
@@ -1843,25 +2309,9 @@
           p.autoTrimTransparent = t.checked;
           if (p.origImgElement) {
             p.imgElement = p.autoTrimTransparent ? (p.trimmedImgElement || p.origImgElement) : p.origImgElement;
-            const useW = p.autoTrimTransparent ? p.trimPxW : p.origPxW;
-            const useH = p.autoTrimTransparent ? p.trimPxH : p.origPxH;
-            if (useW > 0 && useH > 0) {
-              p.aspectRatio = useW / useH;
-              p.widthIn = +(useW / 300).toFixed(2);
-              p.heightIn = +(useH / 300).toFixed(2);
-            }
           }
           renderDtfPlacementsList();
           recalculateEverything();
-        }
-        return;
-      }
-
-      if (t.hasAttribute('data-dtf-checker')) {
-        const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-checker'));
-        if (p) {
-          p.checkerboardBg = t.checked;
-          renderDtfPlacementsList();
         }
         return;
       }
@@ -1872,23 +2322,15 @@
       } else if (t.id === 'bqIncludeAuto15Check') {
         state.includeAutoBuilder15 = t.checked;
         recalculateEverything();
-      } else if (t.id === 'bqPricingModeSelect') {
-        state.pricingMode = t.value;
-        const mWrap = document.getElementById('bqMarginControlWrap');
-        const fWrap = document.getElementById('bqFixedRetailControlWrap');
-        if (mWrap) mWrap.style.display = state.pricingMode === 'margin' ? 'block' : 'none';
-        if (fWrap) fWrap.style.display = state.pricingMode === 'fixed' ? 'block' : 'none';
-        recalculateEverything();
+      } else if (t.id === 'bqIncludeColorsPdfCheck') {
+        state.includeAvailableColorsOnPdf = t.checked;
       }
     });
 
-    // Drag & Drop Artwork onto Dropzones
+    // Drag & Drop Artwork
     root.addEventListener('dragover', (e) => {
       const dz = e.target.closest('[data-dropzone-id]');
-      if (dz) {
-        e.preventDefault();
-        dz.classList.add('drag-hover');
-      }
+      if (dz) { e.preventDefault(); dz.classList.add('drag-hover'); }
     });
     root.addEventListener('dragleave', (e) => {
       const dz = e.target.closest('[data-dropzone-id]');
@@ -1902,9 +2344,7 @@
       const pId = dz.getAttribute('data-dropzone-id');
       const p = state.dtfPlacements.find((x) => x.id === pId);
       const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-      if (p && file) {
-        analyzeUploadedArtwork(file, p);
-      }
+      if (p && file) analyzeUploadedArtwork(file, p);
     });
   }
 
@@ -1913,25 +2353,19 @@
       const el = document.getElementById(id);
       if (el) el.value = v;
     };
-    setV('bqProjectNameInput', state.projectName || '');
-    setV('bqClientNameInput', state.clientName || '');
-    setV('bqClientContactInput', state.clientContact || '');
     setV('bqSsDiscountInput', state.ssDiscountPct || 0);
     setV('bqRollWidthSelect', state.rollWidthMode || '27');
     setV('bqGutterInput', state.gutterIn);
     setV('bqExtraPrintsInput', state.extraSpoilagePrints);
     setV('bqPressLaborInput', state.pressLaborPerShirt);
+    setV('bqBuiltInUpchargeInput', state.builtInUpchargePerShirt);
+    setV('bqExtraLargeAddOnInput', state.extraLargeCustomAddOn || 0);
     setV('bqSsShippingInput', state.ssShippingOverride);
     setV('bqDpwShippingInput', state.dpwShippingUsd);
-    setV('bqPricingModeSelect', state.pricingMode);
-    setV('bqMarginPctInput', state.targetMarginPct);
-    setV('bqFixedRetailInput', state.fixedRetailBasePrice);
     const chk = document.getElementById('bqIncludeAuto15Check');
     if (chk) chk.checked = Boolean(state.includeAutoBuilder15);
-    const mWrap = document.getElementById('bqMarginControlWrap');
-    const fWrap = document.getElementById('bqFixedRetailControlWrap');
-    if (mWrap) mWrap.style.display = state.pricingMode === 'margin' ? 'block' : 'none';
-    if (fWrap) fWrap.style.display = state.pricingMode === 'fixed' ? 'block' : 'none';
+    const pdfChk = document.getElementById('bqIncludeColorsPdfCheck');
+    if (pdfChk) pdfChk.checked = Boolean(state.includeAvailableColorsOnPdf);
   }
 
   if (document.readyState === 'loading') {

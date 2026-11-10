@@ -1489,6 +1489,10 @@
       gap: 3px;
       transition: border-color 0.15s ease, background 0.15s ease;
     }
+    .bq-size-cell.youth-cell {
+      background: rgba(10, 22, 36, 0.76);
+      border-color: rgba(44, 230, 255, 0.35);
+    }
     .bq-size-cell.has-qty {
       border-color: #22f59b;
       background: rgba(34, 245, 155, 0.1);
@@ -2271,8 +2275,8 @@
         <div class="section-header" style="align-items:flex-start;gap:14px;flex-wrap:wrap;">
           <div>
             <h2 class="section-title">Bulk Order Quoter &amp; Live DTF Gangsheet Optimizer</h2>
-            <div style="font-size:0.76rem;color:rgba(255,255,255,0.74);margin-top:4px;">
-              S&amp;S Activewear Dri-Fit Blanks (<strong>TT11 / #671D9</strong> Short Sleeve &amp; <strong>CE10L / #267A7</strong> Long Sleeve) + Real-Time <strong>DigitalPrintWorx.com</strong> Gangsheet Packing
+            <div style="font-size:0.76rem;color:rgba(255,255,255,0.76);margin-top:4px;">
+              S&amp;S Activewear Dri-Fit Adult &amp; Youth Blanks (<strong>TT11 #671D9 / TT11Y #683D9</strong> &amp; <strong>CE10L #267A7 / CE10LY #007A7</strong>) + Real-Time <strong>DigitalPrintWorx.com</strong> Gangsheet Packing
             </div>
             <div id="bqLiveSyncStatus" style="font-size:0.72rem;color:#22f59b;margin-top:5px;font-weight:600;">
               &#9679; Connecting to DigitalPrintWorx.com &amp; S&amp;S Activewear...
@@ -2346,51 +2350,96 @@
           </div>
         </div>
 
-        <!-- Client & Project Metadata Row -->
-        <div class="bq-subpanel" style="padding:12px 16px;">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;">
+        <!-- CUSTOMER INFORMATION & AUTO-SAVING DIRECTORY PANEL -->
+        <div class="bq-subpanel" style="padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <div class="bq-subpanel-title">
+                <span class="bq-step-badge" style="background:rgba(44,230,255,0.2);border-color:rgba(44,230,255,0.55);color:#2ce6ff;">CLIENT CRM</span>
+                <span>Customer Information (Auto-Saves as You Type)</span>
+              </div>
+              <span id="bqCustomerAutoSaveBadge" style="font-size:0.7rem;color:#22f59b;background:rgba(34,245,155,0.12);border:1px solid rgba(34,245,155,0.35);border-radius:999px;padding:3px 10px;font-weight:600;">
+                &#10003; Auto-Save Active
+              </span>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <select class="bq-select" id="bqSavedCustomerSelect" style="min-width:255px;font-size:0.75rem;">
+                <option value="">&#128194; Load Saved Customer (Auto-Saved Directory)...</option>
+              </select>
+              <button type="button" class="mini-btn" id="bqNewCustomerBtn" style="color:#ffe89e;border-color:rgba(245,196,81,0.5) !important;">
+                + New Customer
+              </button>
+              <button type="button" class="mini-btn" id="bqDeleteCustomerBtn" style="color:#ff85b3;border-color:rgba(255,79,163,0.4) !important;" title="Delete selected saved customer">
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
             <div>
-              <label class="bq-field-lbl">Project / Job Name</label>
-              <input type="text" class="bq-input" id="bqProjectNameInput" placeholder="e.g. Tampa Youth Athletics Summer Jerseys" style="width:100%;">
+              <label class="bq-field-lbl">Customer Full Name</label>
+              <input type="text" class="bq-input" id="bqCustFullName" placeholder="e.g. Coach Mike Davis" style="width:100%;">
             </div>
             <div>
-              <label class="bq-field-lbl">Client / Organization Name</label>
-              <input type="text" class="bq-input" id="bqClientNameInput" placeholder="e.g. Coach Mike / Wave Club" style="width:100%;">
+              <label class="bq-field-lbl">Company / Team / Organization</label>
+              <input type="text" class="bq-input" id="bqCustCompany" placeholder="e.g. Tampa Bay Wave Athletics" style="width:100%;">
             </div>
             <div>
-              <label class="bq-field-lbl">Client Phone / Email</label>
-              <input type="text" class="bq-input" id="bqClientContactInput" placeholder="e.g. (813) 555-0199 • mike@club.com" style="width:100%;">
+              <label class="bq-field-lbl">Customer Email</label>
+              <input type="email" class="bq-input" id="bqCustEmail" placeholder="e.g. mike@waveclub.com" style="width:100%;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">Customer Phone</label>
+              <input type="tel" class="bq-input" id="bqCustPhone" placeholder="e.g. (813) 555-0199" style="width:100%;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">Project / Order Title</label>
+              <input type="text" class="bq-input" id="bqCustProject" placeholder="e.g. Summer Tournament Dri-Fit Jerseys" style="width:100%;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">Shipping / Billing Address</label>
+              <input type="text" class="bq-input" id="bqCustAddress" placeholder="Street, City, State, ZIP" style="width:100%;">
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <label class="bq-field-lbl">Quote / Production Notes (Included on Quote PDF if filled)</label>
+              <input type="text" class="bq-input" id="bqCustNotes" placeholder="e.g. Front Right Breast Pocket 4&quot;&times;4&quot; + Full Back 10.5&quot;&times;11.5&quot; (Youth scaled automatically)" style="width:100%;">
             </div>
           </div>
         </div>
 
-        <!-- STEP 1: S&S ACTIVEWEAR DRI-FIT SHIRTS, OFFICIAL COLORS & SIZES -->
+        <!-- STEP 1: S&S ACTIVEWEAR DRI-FIT SHIRTS (YOUTH + ADULT), OFFICIAL COLORS & SIZES -->
         <div class="bq-subpanel">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
             <div class="bq-subpanel-title">
               <span class="bq-step-badge">STEP 1</span>
-              <span>Select S&amp;S Activewear Shirts, Official Colors &amp; Size Quantities</span>
+              <span>Select S&amp;S Activewear Shirts, Official Colors &amp; Youth / Adult Size Quantities</span>
             </div>
             <button type="button" class="vision-gold-cta-btn" id="bqAddGarmentLineBtn" style="padding:7px 14px;font-size:0.73rem;">
               + Add Another Color / Shirt Style Row
             </button>
           </div>
-          <div style="font-size:0.74rem;color:rgba(255,255,255,0.68);margin-bottom:8px;">
-            Mix &amp; match <strong>Team 365 TT11 (Item #671D9 — Dri-Fit Short Sleeve, 30 Colors)</strong> and <strong>CORE365 CE10L (Item #267A7 — Dri-Fit Long Sleeve, 16 Colors)</strong> across sizes <strong>XS–6XL</strong> with automatic extended-size pricing.
+          <div style="font-size:0.74rem;color:rgba(255,255,255,0.72);margin-bottom:8px;">
+            Includes <strong>Youth Sizes (YXS–YXL: TT11Y #683D9 &amp; CE10LY #007A7)</strong> and <strong>Adult / Extended Sizes (XS–6XL: TT11 #671D9 &amp; CE10L #267A7)</strong> with automatic larger-size upcharges (<strong>2XL–6XL</strong>) and official S&amp;S colors.
           </div>
 
           <div id="bqGarmentLinesContainer"></div>
         </div>
 
-        <!-- STEP 2: UPLOAD PROJECT DTF FILE(S) & SET PRINT DIMENSIONS -->
+        <!-- STEP 2: UPLOAD PROJECT DTF FILE(S) & AUTO PRINT DIMENSIONS -->
         <div class="bq-subpanel">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
-            <div class="bq-subpanel-title">
-              <span class="bq-step-badge">STEP 2</span>
-              <span>Upload Project DTF File(s) &amp; Print Dimensions</span>
+            <div>
+              <div class="bq-subpanel-title">
+                <span class="bq-step-badge">STEP 2</span>
+                <span>Upload Project DTF File(s) &amp; Placement Sizes (Adult + Auto-Scaled Youth)</span>
+              </div>
+              <div style="font-size:0.73rem;color:rgba(255,255,255,0.68);margin-top:3px;">
+                Pre-set to <strong>Front Right Breast Pocket: 4&quot;&times;4&quot;</strong> (Youth <strong>3&quot;&times;3&quot;</strong>) &amp; <strong>Full Back: 10.5&quot;&times;11.5&quot;</strong> (Youth <strong>8&quot;&times;9&quot;</strong>). Both Adult &amp; Youth transfers pack onto your gangsheet automatically!
+              </div>
             </div>
             <button type="button" class="mini-btn" id="bqAddDtfPlacementBtn" style="color:#ffe89e;border-color:rgba(245,196,81,0.55) !important;">
-              + Add 2nd Print Location (e.g. Back / Sleeve)
+              + Add Extra Print Location (e.g. Sleeve / Neck)
             </button>
           </div>
 
@@ -2420,7 +2469,7 @@
           </div>
         </div>
 
-        <!-- STEP 3 & 4: TWO-COLUMN LIVE GANGSHEET VISUALIZER + QUOTE & PROFIT CALCULATOR -->
+        <!-- STEP 3 & 4: TWO-COLUMN LIVE GANGSHEET VISUALIZER + ITEMIZED QUOTE CALCULATOR -->
         <div class="bq-two-col-bottom">
 
           <!-- LEFT: LIVE GANGSHEET NESTING BLUEPRINT & DIGITALPRINTWORX ORDER LIST -->
@@ -2428,7 +2477,7 @@
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
               <div class="bq-subpanel-title">
                 <span class="bq-step-badge">STEP 3</span>
-                <span>Optimal Gangsheet Layout &amp; DTF Cost</span>
+                <span>Optimal Gangsheet Layout (Adult Gold + Youth Cyan)</span>
               </div>
               <button type="button" class="mini-btn" id="bqExportGangsheetPngBtn" style="color:#ffe89e;border-color:rgba(245,196,81,0.6) !important;">
                 &#11015;&#65039; Download 300 DPI Gangsheet (.PNG)
@@ -2446,25 +2495,33 @@
             </div>
           </div>
 
-          <!-- RIGHT: OVERHEAD, MARKUP & CLIENT QUOTE SUMMARY -->
+          <!-- RIGHT: BUILT-IN BASE COSTS, SIZE UPCHARGES & LINE-BY-LINE ITEMIZED QUOTE -->
           <div class="bq-subpanel" style="margin-top:0;">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
               <div class="bq-subpanel-title">
                 <span class="bq-step-badge">STEP 4</span>
-                <span>Markup, Hard Costs &amp; Customer Quote</span>
+                <span>Itemized Quote &amp; Built-In Base Cost Controls</span>
               </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;">
                 <button type="button" class="mini-btn" id="bqSaveQuoteBtn" style="color:#22f59b;">&#128190; Save Quote</button>
-                <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#2ce6ff;">&#128203; Copy Client Quote</button>
-                <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:6px 12px;font-size:0.72rem;">&#128424; Print / PDF Quote</button>
+                <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#2ce6ff;">&#128203; Copy Itemized Quote</button>
+                <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:6px 12px;font-size:0.72rem;">&#128424; Print / Save Quote PDF</button>
               </div>
             </div>
 
-            <!-- Overhead & Pricing Strategy Controls -->
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.14);">
+            <!-- Built-In Upcharge & Overhead Controls (Baked directly into Base Unit Cost — No % Markup Displayed) -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:10px;">
               <div>
-                <label class="bq-field-lbl">Pressing / Labor ($/Shirt)</label>
+                <label class="bq-field-lbl" title="Included directly inside the customer's Base Unit Price — never shown as an extra percentage!">Built-In Base Upcharge ($/Shirt)</label>
+                <input type="number" min="0" max="200" step="0.5" class="bq-input" id="bqBuiltInUpchargeInput" value="8.00" style="width:100%;color:#22f59b;font-weight:700;">
+              </div>
+              <div>
+                <label class="bq-field-lbl">Pressing / Handling ($/Shirt)</label>
                 <input type="number" min="0" max="50" step="0.25" class="bq-input" id="bqPressLaborInput" value="1.50" style="width:100%;">
+              </div>
+              <div>
+                <label class="bq-field-lbl" title="Added on top of official S&S 2XL–6XL upcharges if desired ($0 = exact S&S size upcharges)">Extra 2XL+ Add-On ($)</label>
+                <input type="number" min="0" max="50" step="0.5" class="bq-input" id="bqExtraLargeAddOnInput" value="0.00" style="width:100%;">
               </div>
               <div>
                 <label class="bq-field-lbl">S&amp;S Shipping ($ blank=auto)</label>
@@ -2474,24 +2531,16 @@
                 <label class="bq-field-lbl">DTF Shipping ($)</label>
                 <input type="number" min="0" max="200" step="0.5" class="bq-input" id="bqDpwShippingInput" value="9.95" style="width:100%;">
               </div>
-              <div>
-                <label class="bq-field-lbl">Quote Pricing Mode</label>
-                <select class="bq-select" id="bqPricingModeSelect" style="width:100%;">
-                  <option value="margin" selected>Target Profit Margin %</option>
-                  <option value="fixed">Set Base Price / Shirt ($)</option>
-                </select>
-              </div>
-              <div id="bqMarginControlWrap">
-                <label class="bq-field-lbl">Target Margin % (50% = 2&times;)</label>
-                <input type="number" min="0" max="90" step="1" class="bq-input" id="bqMarginPctInput" value="50" style="width:100%;color:#22f59b;font-weight:700;">
-              </div>
-              <div id="bqFixedRetailControlWrap" style="display:none;">
-                <label class="bq-field-lbl">Base Shirt Price (XS–XL $)</label>
-                <input type="number" min="1" max="500" step="0.5" class="bq-input" id="bqFixedRetailInput" value="22.00" style="width:100%;color:#ffe89e;font-weight:700;">
-              </div>
             </div>
 
-            <!-- Live Itemized Financial Breakdown -->
+            <div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.14);">
+              <label style="display:inline-flex;align-items:center;gap:7px;font-size:0.74rem;color:#ffe89e;cursor:pointer;font-weight:600;">
+                <input type="checkbox" id="bqIncludeColorsPdfCheck" checked>
+                Include Official Available Color Swatches &amp; Larger-Size Upcharge Schedule on Quote PDF
+              </label>
+            </div>
+
+            <!-- Live Line-by-Line Itemized Financial Breakdown -->
             <div id="bqFinancialBreakdownBody"></div>
 
             <!-- Saved Quotes History -->
@@ -4250,6 +4299,6 @@
       });
     })();
   </script>
-  <script src="bulk_quote_tool.js?v=245"></script>
+  <script src="bulk_quote_tool.js?v=250"></script>
 </body>
 </html>
