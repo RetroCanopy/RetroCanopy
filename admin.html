@@ -1580,6 +1580,119 @@
       border-color: #22f59b;
       color: #6bffc3;
     }
+    .rc-capabilities-strip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .rc-cap-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 0.69rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffd8b5;
+      background: linear-gradient(135deg, rgba(255, 115, 20, 0.24) 0%, rgba(18, 12, 10, 0.86) 100%);
+      border: 1px solid rgba(255, 132, 36, 0.58);
+      box-shadow: 0 4px 14px rgba(255, 106, 0, 0.16), inset 0 1px 0 rgba(255, 220, 185, 0.38);
+    }
+    .bq-size-cell.print-only-cell {
+      background: linear-gradient(145deg, rgba(255, 115, 20, 0.2), rgba(18, 11, 9, 0.88));
+      border: 1.5px solid rgba(255, 136, 38, 0.65);
+      box-shadow: 0 0 14px rgba(255, 115, 20, 0.15);
+    }
+    .bq-size-cell.print-only-cell.has-qty {
+      border-color: #ff8c24;
+      background: linear-gradient(145deg, rgba(255, 122, 24, 0.34), rgba(32, 16, 8, 0.92));
+      box-shadow: 0 0 18px rgba(255, 122, 24, 0.36);
+    }
+    /* Black & Molten Orange Liquid Glass Receipt Card */
+    .bq-liquid-receipt {
+      background:
+        radial-gradient(circle at 14% 0%, rgba(255, 115, 20, 0.22), transparent 46%),
+        radial-gradient(circle at 88% 12%, rgba(255, 162, 54, 0.16), transparent 48%),
+        linear-gradient(180deg, rgba(16, 13, 14, 0.96) 0%, rgba(7, 6, 9, 0.98) 100%);
+      border: 1.5px solid rgba(255, 132, 34, 0.62);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow:
+        0 24px 56px rgba(0, 0, 0, 0.72),
+        0 0 28px rgba(255, 106, 0, 0.16),
+        inset 0 1.5px 0 rgba(255, 224, 190, 0.36);
+      margin-bottom: 16px;
+    }
+    .bq-liquid-header {
+      background:
+        radial-gradient(circle at 18% 40%, rgba(255, 106, 0, 0.32), transparent 55%),
+        radial-gradient(circle at 85% 20%, rgba(255, 166, 48, 0.22), transparent 52%),
+        linear-gradient(135deg, #16100e 0%, #09080c 60%, #1a0f08 100%);
+      border-bottom: 1.5px solid rgba(255, 136, 38, 0.58);
+      padding: 18px 20px;
+      position: relative;
+    }
+    .bq-mockup-showcase-card {
+      background:
+        radial-gradient(circle at 50% 25%, rgba(255, 122, 24, 0.16), transparent 68%),
+        linear-gradient(165deg, rgba(24, 18, 16, 0.92), rgba(10, 9, 13, 0.96));
+      border: 1px solid rgba(255, 140, 42, 0.48);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: inset 0 1px 0 rgba(255, 226, 196, 0.24);
+    }
+    /* Bottom Collapsible Gangsheet Tab / Accordion */
+    .bq-gangsheet-drawer {
+      margin-top: 16px;
+      background: linear-gradient(180deg, rgba(16, 13, 20, 0.92), rgba(8, 7, 13, 0.96));
+      border: 1.5px solid rgba(255, 136, 38, 0.52);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 215, 180, 0.22);
+    }
+    .bq-gangsheet-drawer > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: linear-gradient(90deg, rgba(255, 115, 20, 0.18), rgba(15, 12, 22, 0.85));
+      user-select: none;
+    }
+    .bq-gangsheet-drawer > summary::-webkit-details-marker {
+      display: none;
+    }
+    .bq-drawer-chevron {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      color: #ff9436;
+      font-size: 0.9rem;
+    }
+    .bq-gangsheet-drawer[open] .bq-drawer-chevron {
+      transform: rotate(180deg);
+    }
+    .bq-sheets-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .bq-single-sheet-card {
+      background: rgba(9, 8, 15, 0.92);
+      border: 1px solid rgba(255, 140, 42, 0.42);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
     .bq-size-cell.has-qty {
       border-color: #22f59b;
       background: rgba(34, 245, 155, 0.1);
@@ -2239,9 +2352,19 @@
       <!-- TOP SPATIAL GLASS HEADER CARD -->
       <header class="vision-glass vision-header-card">
         <div class="vision-header-top">
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-            <img src="assets/logo.png" alt="RetroCanopy Official Logo" style="width:44px;height:44px;object-fit:contain;border-radius:11px;">
-            <h1 class="vision-main-title">RETROCANOPY — OWNER'S HUB</h1>
+          <div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <img src="assets/logo.png" alt="RetroCanopy Official Logo" style="width:46px;height:46px;object-fit:contain;border-radius:11px;">
+              <h1 class="vision-main-title">RETROCANOPY — OWNER'S HUB</h1>
+            </div>
+            <div class="rc-capabilities-strip" aria-label="RetroCanopy Studio Capabilities">
+              <span class="rc-cap-pill">&#128085; Apparel</span>
+              <span class="rc-cap-pill">&#127760; Websites</span>
+              <span class="rc-cap-pill">&#128227; Marketing</span>
+              <span class="rc-cap-pill">&#128241; Apps</span>
+              <span class="rc-cap-pill">&#127918; Games</span>
+              <span class="rc-cap-pill">&#129482; Custom 3D Prints</span>
+            </div>
           </div>
           <button type="button" class="vision-gold-cta-btn" id="simulateTestPaidOrderBtn">+ Test $1 Order</button>
         </div>
@@ -2362,6 +2485,14 @@
         <div class="section-header" style="align-items:flex-start;gap:14px;flex-wrap:wrap;">
           <div>
             <h2 class="section-title">Bulk Order Quoter &amp; Live DTF Gangsheet Optimizer</h2>
+            <div class="rc-capabilities-strip" style="margin:6px 0 6px;">
+              <span class="rc-cap-pill">&#128085; Apparel</span>
+              <span class="rc-cap-pill">&#127760; Websites</span>
+              <span class="rc-cap-pill">&#128227; Marketing</span>
+              <span class="rc-cap-pill">&#128241; Apps</span>
+              <span class="rc-cap-pill">&#127918; Games</span>
+              <span class="rc-cap-pill">&#129482; Custom 3D Prints</span>
+            </div>
             <div style="font-size:0.76rem;color:rgba(255,255,255,0.76);margin-top:4px;">
               S&amp;S Activewear Dri-Fit Adult &amp; Youth Blanks (<strong>TT11 #671D9 / TT11Y #683D9</strong> &amp; <strong>CE10L #267A7 / CE10LY #007A7</strong>) + Real-Time <strong>DigitalPrintWorx.com</strong> Gangsheet Packing
             </div>
@@ -2507,7 +2638,7 @@
             </button>
           </div>
           <div style="font-size:0.74rem;color:rgba(255,255,255,0.72);margin-bottom:8px;">
-            Includes <strong>Youth Sizes (YXS–YXL: TT11Y #683D9 &amp; CE10LY #007A7)</strong> and <strong>Adult Sizes (XS–6XL: TT11 #671D9 &amp; CE10L #267A7)</strong> using direct S&amp;S size pricing and official S&amp;S colors.
+            Includes <strong>PRINT ONLY ($0.00 blank cost for DTF-only orders)</strong>, <strong>Youth Sizes (YXS–YXL: TT11Y #683D9 &amp; CE10LY #007A7)</strong>, and <strong>Adult Sizes (XS–6XL: TT11 #671D9 &amp; CE10L #267A7)</strong>.
           </div>
 
           <div id="bqGarmentLinesContainer"></div>
@@ -2556,120 +2687,125 @@
           </div>
         </div>
 
-        <!-- STEP 3 & 4: TWO-COLUMN LIVE GANGSHEET VISUALIZER + ITEMIZED QUOTE CALCULATOR -->
-        <div class="bq-two-col-bottom">
+        <!-- STEP 3: FULL-WIDTH BLACK & ORANGE LIQUID GLASS ITEMIZED QUOTE RECEIPT + PROJECTED ITEM PREVIEW -->
+        <div class="bq-subpanel" style="border-color:rgba(255,136,38,0.48);">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+            <div class="bq-subpanel-title">
+              <span class="bq-step-badge" style="background:rgba(255,122,24,0.22);border-color:rgba(255,140,42,0.65);color:#ffb36b;">STEP 3</span>
+              <span>Black &amp; Orange Liquid Glass Quote Receipt, Finished Item Preview, Discount &amp; Tax</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="mini-btn" id="bqSaveQuoteBtn" style="color:#22f59b;">&#128190; Save Quote</button>
+              <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#ffb36b;border-color:rgba(255,140,42,0.5) !important;">&#128203; Copy Quote</button>
+              <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:7px 15px;font-size:0.74rem;background:linear-gradient(135deg,#ff7a18,#ffb347);color:#0b0806;border-color:#ffd099;">&#128424; Official Liquid Glass Quote PDF</button>
+            </div>
+          </div>
 
-          <!-- LEFT: LIVE GANGSHEET NESTING BLUEPRINT & DIGITALPRINTWORX ORDER LIST -->
-          <div class="bq-subpanel" style="margin-top:0;">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-              <div class="bq-subpanel-title">
-                <span class="bq-step-badge">STEP 3</span>
-                <span>Optimal Gangsheet Layout (Adult Gold + Youth Cyan)</span>
+          <!-- Row A: Built-In Per-Item Base Cost & Freight Controls -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:10px;">
+            <div>
+              <label class="bq-field-lbl" title="Baked directly into each item's unit price">Built-In Base Upcharge ($/Item)</label>
+              <input type="number" min="0" max="200" step="0.5" class="bq-input" id="bqBuiltInUpchargeInput" value="8.00" style="width:100%;color:#ff9e44;font-weight:800;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">Pressing / Handling ($/Shirt)</label>
+              <input type="number" min="0" max="50" step="0.25" class="bq-input" id="bqPressLaborInput" value="1.50" style="width:100%;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">S&amp;S Shipping ($ blank=auto)</label>
+              <input type="number" min="0" max="500" step="0.5" class="bq-input" id="bqSsShippingInput" placeholder="Auto ($0 if $200+ or Print Only)" style="width:100%;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">DTF Shipping ($)</label>
+              <input type="number" min="0" max="200" step="0.5" class="bq-input" id="bqDpwShippingInput" value="9.95" style="width:100%;">
+            </div>
+          </div>
+
+          <!-- Row B: Customer Discount (% Off) + Sales Tax Toggle Button & Rate -->
+          <div style="background:rgba(14,10,12,0.84);border:1px solid rgba(255,136,38,0.42);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:grid;grid-template-columns:140px minmax(180px,1fr);gap:10px;align-items:end;">
+              <div>
+                <label class="bq-field-lbl" style="color:#6bffc3;">Discount (% Off)</label>
+                <input type="number" min="0" max="100" step="0.5" class="bq-input" id="bqDiscountPctInput" value="0" style="width:100%;color:#6bffc3;font-weight:800;">
               </div>
-              <button type="button" class="mini-btn" id="bqExportGangsheetPngBtn" style="color:#ffe89e;border-color:rgba(245,196,81,0.6) !important;">
-                &#11015;&#65039; Download 300 DPI Gangsheet (.PNG)
+              <div>
+                <label class="bq-field-lbl">Discount Label Shown on Quote (Optional)</label>
+                <input type="text" class="bq-input" id="bqDiscountLabelInput" placeholder="e.g. Bulk Team Order Discount" style="width:100%;">
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <span style="font-size:0.68rem;color:rgba(255,255,255,0.62);font-weight:600;">Quick Discount:</span>
+              <button type="button" class="bq-disc-chip" data-disc-preset="0">None (0%)</button>
+              <button type="button" class="bq-disc-chip" data-disc-preset="5">5% Off</button>
+              <button type="button" class="bq-disc-chip" data-disc-preset="10">10% Off</button>
+              <button type="button" class="bq-disc-chip" data-disc-preset="15">15% Off</button>
+              <button type="button" class="bq-disc-chip" data-disc-preset="20">20% Off</button>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(255,255,255,0.12);">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <button type="button" class="bq-tax-toggle-btn" id="bqTaxToggleBtn" aria-pressed="true">
+                  <span class="bq-tax-toggle-dot"></span>
+                  <span id="bqTaxToggleLabel">SALES TAX: INCLUDED (ON)</span>
+                </button>
+                <div style="display:inline-flex;align-items:center;gap:6px;">
+                  <label class="bq-field-lbl" style="margin:0;">Tax Rate %:</label>
+                  <input type="number" min="0" max="25" step="0.05" class="bq-input" id="bqTaxRateInput" value="7.00" style="width:82px;padding:5px 8px;font-weight:700;color:#ffe89e;">
+                </div>
+              </div>
+
+              <label style="display:inline-flex;align-items:center;gap:7px;font-size:0.72rem;color:#ffb36b;cursor:pointer;font-weight:600;">
+                <input type="checkbox" id="bqIncludeColorsPdfCheck" checked>
+                Include Official Available Color Chart on PDF
+              </label>
+            </div>
+          </div>
+
+          <!-- Live Black & Orange Liquid Glass Receipt + Projected Finished Item Picture -->
+          <div id="bqFinancialBreakdownBody"></div>
+
+          <!-- Saved Quotes History -->
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.14);">
+            <div style="font-size:0.74rem;font-weight:700;color:#ffb36b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">
+              &#128193; Saved Bulk Quotes History
+            </div>
+            <div id="bqSavedQuotesList"></div>
+          </div>
+        </div>
+
+        <!-- BOTTOM COLLAPSIBLE TAB (STEP 4): ALL PRODUCTION GANGSHEETS & MULTI-SHEET 300 DPI DOWNLOADER -->
+        <details class="bq-gangsheet-drawer" id="bqGangsheetDrawer" open>
+          <summary>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span class="bq-drawer-chevron">&#9660;</span>
+              <span class="bq-step-badge" style="background:rgba(255,122,24,0.25);border-color:rgba(255,140,42,0.7);color:#ffb36b;">GANGSHEETS TAB</span>
+              <span style="font-family:'Orbitron',sans-serif;font-size:0.86rem;font-weight:800;color:#ffffff;">
+                Production DTF Gangsheets &amp; Verified Logos
+              </span>
+              <span id="bqDrawerSummaryBadge" style="font-size:0.72rem;color:#22f59b;background:rgba(34,245,155,0.14);border:1px solid rgba(34,245,155,0.42);border-radius:999px;padding:3px 10px;font-weight:700;">
+                0 Sheets
+              </span>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;" onclick="event.stopPropagation();">
+              <button type="button" class="vision-gold-cta-btn" id="bqExportGangsheetPngBtn" style="padding:7px 14px;font-size:0.73rem;background:linear-gradient(135deg,#ff7a18,#ffb347);color:#0b0806;border-color:#ffd099;">
+                &#11015;&#65039; Download ALL Needed Gangsheets (300 DPI .PNG)
               </button>
             </div>
+          </summary>
 
-            <div id="bqGangsheetStatsLine" style="font-size:0.74rem;color:#2ce6ff;margin-bottom:10px;font-weight:600;"></div>
+          <div style="padding:16px 18px;border-top:1px solid rgba(255,136,38,0.32);">
+            <div id="bqGangsheetStatsLine" style="font-size:0.76rem;color:#ffb36b;margin-bottom:8px;font-weight:700;"></div>
+            <div id="bqLogoVerificationBar" style="margin-bottom:12px;"></div>
 
             <!-- Optimal Sheets to Order from DigitalPrintWorx -->
-            <div id="bqRecommendedSheetsBox" style="margin-bottom:12px;"></div>
+            <div id="bqRecommendedSheetsBox" style="margin-bottom:14px;"></div>
 
-            <!-- Scaled Visual Gangsheet Canvas -->
-            <div style="background:#080612;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:10px;overflow-x:auto;text-align:center;">
-              <canvas id="bqGangsheetCanvas" style="max-width:100%;height:auto;border-radius:8px;"></canvas>
-            </div>
+            <!-- Multi-Sheet Gallery Showing EVERY Single Needed Sheet & All Uploaded Logos -->
+            <div class="bq-sheets-gallery-grid" id="bqAllGangsheetsGallery"></div>
           </div>
-
-          <!-- RIGHT: OFFICIAL BRANDED RECEIPT, PER-ITEM BREAKDOWN, DISCOUNT % OFF & TAX TOGGLE -->
-          <div class="bq-subpanel" style="margin-top:0;">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-              <div class="bq-subpanel-title">
-                <span class="bq-step-badge">STEP 4</span>
-                <span>Official Itemized Quote Receipt, Discount &amp; Tax</span>
-              </div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                <button type="button" class="mini-btn" id="bqSaveQuoteBtn" style="color:#22f59b;">&#128190; Save Quote</button>
-                <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#2ce6ff;">&#128203; Copy Quote</button>
-                <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:6px 13px;font-size:0.72rem;">&#128424; Official Quote / Receipt PDF</button>
-              </div>
-            </div>
-
-            <!-- Row A: Built-In Per-Shirt Base Cost & Freight Controls -->
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:10px;">
-              <div>
-                <label class="bq-field-lbl" title="Baked directly into each item's unit price">Built-In Base Upcharge ($/Shirt)</label>
-                <input type="number" min="0" max="200" step="0.5" class="bq-input" id="bqBuiltInUpchargeInput" value="8.00" style="width:100%;color:#22f59b;font-weight:700;">
-              </div>
-              <div>
-                <label class="bq-field-lbl">Pressing / Handling ($/Shirt)</label>
-                <input type="number" min="0" max="50" step="0.25" class="bq-input" id="bqPressLaborInput" value="1.50" style="width:100%;">
-              </div>
-              <div>
-                <label class="bq-field-lbl">S&amp;S Shipping ($ blank=auto)</label>
-                <input type="number" min="0" max="500" step="0.5" class="bq-input" id="bqSsShippingInput" placeholder="Auto ($0 if $200+)" style="width:100%;">
-              </div>
-              <div>
-                <label class="bq-field-lbl">DTF Shipping ($)</label>
-                <input type="number" min="0" max="200" step="0.5" class="bq-input" id="bqDpwShippingInput" value="9.95" style="width:100%;">
-              </div>
-            </div>
-
-            <!-- Row B: Customer Discount (% Off) + Sales Tax Toggle Button & Rate -->
-            <div style="background:rgba(10,8,22,0.72);border:1px solid rgba(245,196,81,0.32);border-radius:14px;padding:11px 13px;margin-bottom:10px;display:flex;flex-direction:column;gap:10px;">
-              <div style="display:grid;grid-template-columns:125px minmax(150px,1fr);gap:10px;align-items:end;">
-                <div>
-                  <label class="bq-field-lbl" style="color:#6bffc3;">Discount (% Off)</label>
-                  <input type="number" min="0" max="100" step="0.5" class="bq-input" id="bqDiscountPctInput" value="0" style="width:100%;color:#6bffc3;font-weight:800;">
-                </div>
-                <div>
-                  <label class="bq-field-lbl">Discount Label Shown on Quote (Optional)</label>
-                  <input type="text" class="bq-input" id="bqDiscountLabelInput" placeholder="e.g. Bulk Team Order Discount" style="width:100%;">
-                </div>
-              </div>
-
-              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                <span style="font-size:0.68rem;color:rgba(255,255,255,0.62);font-weight:600;">Quick Discount:</span>
-                <button type="button" class="bq-disc-chip" data-disc-preset="0">None (0%)</button>
-                <button type="button" class="bq-disc-chip" data-disc-preset="5">5% Off</button>
-                <button type="button" class="bq-disc-chip" data-disc-preset="10">10% Off</button>
-                <button type="button" class="bq-disc-chip" data-disc-preset="15">15% Off</button>
-                <button type="button" class="bq-disc-chip" data-disc-preset="20">20% Off</button>
-              </div>
-
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(255,255,255,0.12);">
-                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-                  <button type="button" class="bq-tax-toggle-btn" id="bqTaxToggleBtn" aria-pressed="true">
-                    <span class="bq-tax-toggle-dot"></span>
-                    <span id="bqTaxToggleLabel">SALES TAX: INCLUDED (ON)</span>
-                  </button>
-                  <div style="display:inline-flex;align-items:center;gap:6px;">
-                    <label class="bq-field-lbl" style="margin:0;">Tax Rate %:</label>
-                    <input type="number" min="0" max="25" step="0.05" class="bq-input" id="bqTaxRateInput" value="7.00" style="width:82px;padding:5px 8px;font-weight:700;color:#ffe89e;">
-                  </div>
-                </div>
-
-                <label style="display:inline-flex;align-items:center;gap:7px;font-size:0.72rem;color:#ffe89e;cursor:pointer;font-weight:600;">
-                  <input type="checkbox" id="bqIncludeColorsPdfCheck" checked>
-                  Include Available Color Chart on PDF
-                </label>
-              </div>
-            </div>
-
-            <!-- Live Branded Official Receipt Preview + Overall Per-Item Breakdown -->
-            <div id="bqFinancialBreakdownBody"></div>
-
-            <!-- Saved Quotes History -->
-            <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.14);">
-              <div style="font-size:0.74rem;font-weight:700;color:#ffe89e;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">
-                &#128193; Saved Bulk Quotes History
-              </div>
-              <div id="bqSavedQuotesList"></div>
-            </div>
-          </div>
-
-        </div>
+        </details>
       </section>
 
       <!-- LOWER 3 GLASS CARDS: STORE & MASTER DTF VAULT | TRAFFIC | MEMBERS -->
@@ -4416,6 +4552,6 @@
       });
     })();
   </script>
-  <script src="bulk_quote_tool.js?v=260"></script>
+  <script src="bulk_quote_tool.js?v=270"></script>
 </body>
 </html>

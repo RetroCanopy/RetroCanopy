@@ -1,49 +1,82 @@
 /**
- * RetroCanopy Owner's Hub — Bulk Order Quoting, Branded Receipt & Live Gangsheet Studio (v3)
+ * RetroCanopy Owner's Hub — Bulk Order Quoting, Liquid Glass Receipt & Multi-Sheet Gangsheet Studio (v4)
  *
- * Features:
- *  - Auto Print Placement Sizes:
- *      • Front Right Breast Pocket: Adult 4" × 4" (Youth auto-scales to 3" × 3")
- *      • Full Back:                 Adult 10.5" × 11.5" (Youth auto-scales to 8" × 9")
- *  - Youth + Adult S&S Activewear Dri-Fit Catalog:
- *      • Youth Sizes: YXS, YS, YM, YL, YXL (Team 365 TT11Y #683D9 & CORE365 CE10LY #007A7)
- *      • Adult Sizes: XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL, 6XL (TT11 #671D9 & CE10L #267A7)
- *      • Direct S&S size pricing (no extra larger-size upcharge column — S&S handles size pricing automatically)
- *  - Official Branded Visual Itemized Receipt (On-Screen + Printable/Saveable PDF):
- *      • Features Official RetroCanopy Crest Logo (assets/logo.png)
- *      • Overall Breakdown Per Item (Order-wide per-item averages + Per-Garment/Color summary)
- *      • Complete Line-by-Line Size Itemization
- *      • Discount (% Off + custom label) displayed on receipt & PDF
- *      • Interactive Tax Toggle Button (Include Tax ON / Exclude Tax OFF) + configurable Sales Tax %
- *      • Official S&S Available Color Swatches on Quote PDF
- *  - Customer Info CRM Panel with Real-Time Auto-Save & Saved Directory
+ * Upgrades in v4:
+ *  1. Synchronous Offscreen Canvas Logo Bitmaps — 100% of uploaded logos (PNG/SVG/WEBP/JPG) appear
+ *     immediately on EVERY gangsheet preview and EVERY 300 DPI download (fixes Image decode race condition).
+ *  2. Multi-Sheet 300 DPI Downloader + Bottom Collapsible Gangsheets Tab — displays ALL gangsheets needed
+ *     for the order and downloads ALL needed 300 DPI .PNG gangsheets in one click (plus per-sheet download).
+ *  3. Projected Finished Item Picture — dynamically renders Front & Back photorealistic garment preview
+ *     (or DTF Print Proof for Print-Only orders) tinted to the exact S&S color with uploaded logos composited
+ *     directly onto the shirt, embedded on both the live receipt and Printable Quote PDF.
+ *  4. PRINT ONLY ($0.00) Size Option — dedicated $0 blank cost cell for DTF-transfer-only orders.
+ *  5. Black & Molten Orange Liquid Glass Receipt & PDF Aesthetic + Top Header Capabilities Strip:
+ *     (Apparel • Websites • Marketing • Apps • Games • Custom 3D Prints).
  */
 (function () {
   'use strict';
 
   const EDGE_LOOKUP_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-bulk-quote-lookup';
-  const SAVED_QUOTES_KEY = 'rc_owner_bulk_quotes_v3';
-  const LEGACY_QUOTES_KEY = 'rc_owner_bulk_quotes_v2';
+  const SAVED_QUOTES_KEY = 'rc_owner_bulk_quotes_v4';
+  const LEGACY_QUOTES_KEYS = ['rc_owner_bulk_quotes_v3', 'rc_owner_bulk_quotes_v2'];
   const CUSTOMERS_CRM_KEY = 'rc_owner_bulk_customers_crm_v1';
   const ACTIVE_CUSTOMER_DRAFT_KEY = 'rc_owner_bulk_active_customer_v1';
   const OWNER_RATES_PREF_KEY = 'rc_owner_bulk_rate_prefs_v2';
   const SS_CREDS_KEY = 'rc_owner_ss_api_creds_v1';
 
+  const PRINT_ONLY_KEY = 'PRINT ONLY';
   const YOUTH_SIZES = ['YXS', 'YS', 'YM', 'YL', 'YXL'];
   const ADULT_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
-  const ALL_SIZES = [...YOUTH_SIZES, ...ADULT_SIZES];
+  const ALL_SIZES = [PRINT_ONLY_KEY, ...YOUTH_SIZES, ...ADULT_SIZES];
+
+  const STUDIO_CAPABILITIES = [
+    'Apparel',
+    'Websites',
+    'Marketing',
+    'Apps',
+    'Games',
+    'Custom 3D Prints'
+  ];
 
   const YOUTH_API_SIZE_MAP = { YXS: 'XS', YS: 'S', YM: 'M', YL: 'L', YXL: 'XL' };
 
-  function getOfficialLogoUrl() {
+  function getAssetUrl(relPath) {
     try {
-      return new URL('assets/logo.png', window.location.href).href;
+      return new URL(relPath, window.location.href).href;
     } catch (_) {
-      return 'assets/logo.png';
+      return relPath;
     }
   }
 
-  // Official S&S Activewear Verified Catalog (Direct S&S Size Pricing — S&S already prices 2XL-6XL directly)
+  // Preload photorealistic blank shirt studio cutouts for Projected Finished Item Mockup
+  const blankMockupAssets = {
+    whiteFront: null,
+    whiteBack: null,
+    blackFront: null,
+    blackBack: null
+  };
+
+  function preloadBlankShirtAssets() {
+    const pairs = [
+      ['whiteFront', 'assets/blanks/ss_gildan5000_white_shirt_front.png'],
+      ['whiteBack', 'assets/blanks/ss_gildan5000_white_shirt_back.png'],
+      ['blackFront', 'assets/blanks/ss_gildan5000_black_shirt_front.png'],
+      ['blackBack', 'assets/blanks/ss_gildan5000_black_shirt_back.png']
+    ];
+    pairs.forEach(([key, rel]) => {
+      const im = new Image();
+      im.crossOrigin = 'anonymous';
+      im.onload = () => {
+        blankMockupAssets[key] = im;
+        if (state.lastCalculation) {
+          renderSummaryAndCanvas();
+        }
+      };
+      im.src = getAssetUrl(rel);
+    });
+  }
+
+  // Official S&S Activewear Verified Catalog (Direct S&S Size Pricing + PRINT ONLY $0.00)
   const SS_CATALOG = {
     TT11: {
       styleCode: 'TT11',
@@ -51,6 +84,7 @@
       itemNumber: '671D9',
       youthItemNumber: '683D9',
       brand: 'Team 365',
+      isLongSleeve: false,
       shortLabel: 'Dri-Fit Short Sleeve (Adult TT11 #671D9 / Youth TT11Y #683D9)',
       fullName: 'Team 365 Zone Performance Short Sleeve T-Shirt',
       youthFullName: 'Team 365 Youth Zone Performance Short Sleeve T-Shirt',
@@ -59,21 +93,10 @@
       youthProductUrl: 'https://www.ssactivewear.com/p/team_365/tt11y',
       standardAdultBase: 8.30,
       basePrices: {
-        YXS: 8.30,
-        YS: 8.30,
-        YM: 8.30,
-        YL: 8.30,
-        YXL: 8.30,
-        XS: 8.30,
-        S: 8.30,
-        M: 8.30,
-        L: 8.30,
-        XL: 8.30,
-        '2XL': 10.30,
-        '3XL': 14.30,
-        '4XL': 16.30,
-        '5XL': 18.30,
-        '6XL': 20.30
+        'PRINT ONLY': 0.00,
+        YXS: 8.30, YS: 8.30, YM: 8.30, YL: 8.30, YXL: 8.30,
+        XS: 8.30, S: 8.30, M: 8.30, L: 8.30, XL: 8.30,
+        '2XL': 10.30, '3XL': 14.30, '4XL': 16.30, '5XL': 18.30, '6XL': 20.30
       },
       colors: [
         { name: 'White', hex: '#FFFFFF' },
@@ -114,6 +137,7 @@
       itemNumber: '267A7',
       youthItemNumber: '007A7',
       brand: 'CORE365',
+      isLongSleeve: true,
       shortLabel: 'Dri-Fit Long Sleeve (Adult CE10L #267A7 / Youth CE10LY #007A7)',
       fullName: 'CORE365 Capital Performance Long Sleeve T-Shirt',
       youthFullName: 'CORE365 Youth Capital Performance Long Sleeve T-Shirt',
@@ -122,21 +146,10 @@
       youthProductUrl: 'https://www.ssactivewear.com/p/core365/ce10ly',
       standardAdultBase: 7.70,
       basePrices: {
-        YXS: 7.10,
-        YS: 7.10,
-        YM: 7.10,
-        YL: 7.10,
-        YXL: 7.10,
-        XS: 7.70,
-        S: 7.70,
-        M: 7.70,
-        L: 7.70,
-        XL: 7.70,
-        '2XL': 9.70,
-        '3XL': 11.70,
-        '4XL': 13.70,
-        '5XL': 17.70,
-        '6XL': 19.70
+        'PRINT ONLY': 0.00,
+        YXS: 7.10, YS: 7.10, YM: 7.10, YL: 7.10, YXL: 7.10,
+        XS: 7.70, S: 7.70, M: 7.70, L: 7.70, XL: 7.70,
+        '2XL': 9.70, '3XL': 11.70, '4XL': 13.70, '5XL': 17.70, '6XL': 19.70
       },
       colors: [
         { name: 'White', hex: '#FFFFFF' },
@@ -225,7 +238,9 @@
         fileName: '',
         dataUrl: '',
         trimmedDataUrl: '',
-        imgElement: null,
+        origCanvas: null,
+        trimmedCanvas: null,
+        renderCanvas: null,
         origPxW: 0,
         origPxH: 0,
         trimPxW: 0,
@@ -245,7 +260,9 @@
         fileName: '',
         dataUrl: '',
         trimmedDataUrl: '',
-        imgElement: null,
+        origCanvas: null,
+        trimmedCanvas: null,
+        renderCanvas: null,
         origPxW: 0,
         origPxH: 0,
         trimPxW: 0,
@@ -276,7 +293,12 @@
     return YOUTH_SIZES.includes(sz);
   }
 
+  function isPrintOnlySize(sz) {
+    return sz === PRINT_ONLY_KEY;
+  }
+
   function getBlankUnitPrice(styleCode, colorName, sizeName) {
+    if (isPrintOnlySize(sizeName)) return 0.00;
     const discMultiplier = Math.max(0, 1 - (Number(state.ssDiscountPct) || 0) / 100);
     const cat = SS_CATALOG[styleCode] || SS_CATALOG.TT11;
     const youth = isYouthSize(sizeName);
@@ -294,6 +316,7 @@
   }
 
   function getLiveStockBadge(styleCode, colorName, sizeName) {
+    if (isPrintOnlySize(sizeName)) return null;
     const cat = SS_CATALOG[styleCode] || SS_CATALOG.TT11;
     const youth = isYouthSize(sizeName);
     const apiStyleKey = youth ? cat.youthStyleCode : cat.styleCode;
@@ -464,7 +487,7 @@
   }
 
   // =========================================================================
-  // 2D SHELF GANGSHEET PACKER (MIXED ADULT + YOUTH PRINT SIZES)
+  // 2D SHELF GANGSHEET PACKER (GUARANTEES EVERY PLACEMENT LOGO IS PACKED)
   // =========================================================================
   function packRectanglesOnRoll(rollWidthIn, gutterIn, itemsToPack) {
     const edgeMargin = 0.25;
@@ -504,16 +527,18 @@
 
       for (let i = 0; i < p.count; i++) {
         instances.push({
-          placementId: p.id,
+          placementId: p.parentPlacementId,
+          packGroupId: p.id,
           placementIdx: p.placementIdx,
           sizeGroup: p.sizeGroup,
           label: p.locationLabel,
+          shortLoc: p.shortLoc,
           w: clampedW,
           h: clampedH,
           origW: w0,
           origH: h0,
           rotated,
-          imgElement: p.imgElement
+          renderSource: p.renderSource
         });
       }
     });
@@ -682,7 +707,7 @@
   }
 
   // =========================================================================
-  // UPLOADED ARTWORK ANALYZER
+  // SYNCHRONOUS CANVAS BITMAP ARTWORK ANALYZER (ZERO IMAGE DECODE RACE!)
   // =========================================================================
   function analyzeUploadedArtwork(file, placement) {
     const reader = new FileReader();
@@ -690,27 +715,44 @@
       const dataUrl = String(ev.target.result || '');
       const img = new Image();
       img.onload = () => {
-        const origW = img.naturalWidth || img.width || 1200;
-        const origH = img.naturalHeight || img.height || 1200;
+        // Handle SVGs that may report 0 naturalWidth by rasterizing at high-res 2000px
+        let origW = img.naturalWidth || img.width || 0;
+        let origH = img.naturalHeight || img.height || 0;
+        if (origW < 4 || origH < 4) {
+          origW = 2000;
+          origH = 2000;
+        }
+        // Cap internal bitmap at 3600px max edge for crisp 300 DPI without excessive RAM
+        const maxSide = 3600;
+        const hiScale = Math.min(1, maxSide / Math.max(origW, origH));
+        const hiW = Math.max(1, Math.round(origW * hiScale));
+        const hiH = Math.max(1, Math.round(origH * hiScale));
 
-        const maxScan = 1200;
-        const scale = Math.min(1, maxScan / Math.max(origW, origH));
-        const sw = Math.max(1, Math.round(origW * scale));
-        const sh = Math.max(1, Math.round(origH * scale));
-        const c = document.createElement('canvas');
-        c.width = sw;
-        c.height = sh;
-        const ctx = c.getContext('2d');
-        ctx.drawImage(img, 0, 0, sw, sh);
+        const origCanvas = document.createElement('canvas');
+        origCanvas.width = hiW;
+        origCanvas.height = hiH;
+        const origCtx = origCanvas.getContext('2d');
+        origCtx.drawImage(img, 0, 0, hiW, hiH);
+
+        // Scan alpha channel to find tight ink bounding box
+        const maxScan = 1000;
+        const scanScale = Math.min(1, maxScan / Math.max(hiW, hiH));
+        const sw = Math.max(1, Math.round(hiW * scanScale));
+        const sh = Math.max(1, Math.round(hiH * scanScale));
+        const scanCanvas = document.createElement('canvas');
+        scanCanvas.width = sw;
+        scanCanvas.height = sh;
+        const scanCtx = scanCanvas.getContext('2d');
+        scanCtx.drawImage(origCanvas, 0, 0, sw, sh);
 
         let trimX0 = 0, trimY0 = 0, trimX1 = sw - 1, trimY1 = sh - 1;
         let foundInk = false;
         try {
-          const imgData = ctx.getImageData(0, 0, sw, sh).data;
+          const imgData = scanCtx.getImageData(0, 0, sw, sh).data;
           let minX = sw, minY = sh, maxX = 0, maxY = 0;
           for (let y = 0; y < sh; y++) {
             for (let x = 0; x < sw; x++) {
-              if (imgData[(y * sw + x) * 4 + 3] > 12) {
+              if (imgData[(y * sw + x) * 4 + 3] > 10) {
                 if (x < minX) minX = x;
                 if (x > maxX) maxX = x;
                 if (y < minY) minY = y;
@@ -727,43 +769,39 @@
           }
         } catch (_) {}
 
-        const trimPxW = Math.max(1, Math.round((trimX1 - trimX0 + 1) / scale));
-        const trimPxH = Math.max(1, Math.round((trimY1 - trimY0 + 1) / scale));
+        let trimmedCanvas = origCanvas;
+        let trimmedDataUrl = origCanvas.toDataURL('image/png');
+        const trimHiX = Math.max(0, Math.floor(trimX0 / scanScale));
+        const trimHiY = Math.max(0, Math.floor(trimY0 / scanScale));
+        const trimHiW = Math.max(1, Math.min(hiW - trimHiX, Math.ceil((trimX1 - trimX0 + 1) / scanScale)));
+        const trimHiH = Math.max(1, Math.min(hiH - trimHiY, Math.ceil((trimY1 - trimY0 + 1) / scanScale)));
 
-        let trimmedDataUrl = dataUrl;
-        let trimmedImgEl = img;
         if (foundInk) {
+          const cropC = document.createElement('canvas');
+          cropC.width = trimHiW;
+          cropC.height = trimHiH;
+          cropC.getContext('2d').drawImage(origCanvas, trimHiX, trimHiY, trimHiW, trimHiH, 0, 0, trimHiW, trimHiH);
+          trimmedCanvas = cropC;
           try {
-            const cropCanvas = document.createElement('canvas');
-            const fullX0 = Math.max(0, Math.floor(trimX0 / scale));
-            const fullY0 = Math.max(0, Math.floor(trimY0 / scale));
-            const fullW = Math.min(origW - fullX0, trimPxW);
-            const fullH = Math.min(origH - fullY0, trimPxH);
-            cropCanvas.width = Math.max(1, fullW);
-            cropCanvas.height = Math.max(1, fullH);
-            cropCanvas.getContext('2d').drawImage(img, fullX0, fullY0, fullW, fullH, 0, 0, fullW, fullH);
-            trimmedDataUrl = cropCanvas.toDataURL('image/png');
-            const tImg = new Image();
-            tImg.src = trimmedDataUrl;
-            trimmedImgEl = tImg;
+            trimmedDataUrl = cropC.toDataURL('image/png');
           } catch (_) {}
         }
 
         placement.fileName = file.name;
-        placement.dataUrl = dataUrl;
+        placement.dataUrl = origCanvas.toDataURL('image/png');
         placement.trimmedDataUrl = trimmedDataUrl;
-        placement.origImgElement = img;
-        placement.trimmedImgElement = trimmedImgEl;
-        placement.imgElement = placement.autoTrimTransparent ? trimmedImgEl : img;
+        placement.origCanvas = origCanvas;
+        placement.trimmedCanvas = trimmedCanvas;
+        placement.renderCanvas = placement.autoTrimTransparent ? trimmedCanvas : origCanvas;
         placement.origPxW = origW;
         placement.origPxH = origH;
-        placement.trimPxW = trimPxW;
-        placement.trimPxH = trimPxH;
+        placement.trimPxW = Math.round(trimHiW / hiScale);
+        placement.trimPxH = Math.round(trimHiH / hiScale);
         placement.enabled = true;
 
         if (!placement.lockToPresetBox) {
-          const useW = placement.autoTrimTransparent ? trimPxW : origW;
-          const useH = placement.autoTrimTransparent ? trimPxH : origH;
+          const useW = placement.autoTrimTransparent ? placement.trimPxW : origW;
+          const useH = placement.autoTrimTransparent ? placement.trimPxH : origH;
           placement.adultWidthIn = Math.min(26, Math.max(1, +(useW / 300).toFixed(2)));
           placement.adultHeightIn = Math.min(90, Math.max(1, +(useH / 300).toFixed(2)));
           placement.youthWidthIn = +(placement.adultWidthIn * 0.76).toFixed(2);
@@ -778,23 +816,340 @@
     reader.readAsDataURL(file);
   }
 
-  function drawContainImage(ctx, img, x, y, boxW, boxH) {
-    const iw = img.naturalWidth || img.width || 1;
-    const ih = img.naturalHeight || img.height || 1;
+  // Works synchronously for <canvas> AND <img> sources without stretching
+  function drawContainSource(ctx, src, x, y, boxW, boxH) {
+    if (!src) return;
+    const iw = src.naturalWidth || src.width || 1;
+    const ih = src.naturalHeight || src.height || 1;
+    if (iw <= 0 || ih <= 0) return;
     const scale = Math.min(boxW / iw, boxH / ih);
     const dw = iw * scale;
     const dh = ih * scale;
     const dx = x + (boxW - dw) / 2;
     const dy = y + (boxH - dh) / 2;
-    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.drawImage(src, dx, dy, dw, dh);
   }
 
   // =========================================================================
-  // FULL CALCULATION: DIRECT S&S PRICING, PER-ITEM OVERALL BREAKDOWN, DISCOUNT & TAX
+  // PROJECTED FINISHED ITEM MOCKUP COMPOSITOR (FRONT & BACK OR PRINT PROOF)
+  // =========================================================================
+  function drawProceduralShirtSilhouette(ctx, cx, topY, scaleW, scaleH, hexColor, isLongSleeve, isBack) {
+    ctx.save();
+    ctx.translate(cx, topY);
+
+    // Subtle drop shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.55)';
+    ctx.shadowBlur = 16;
+    ctx.shadowOffsetY = 6;
+
+    ctx.beginPath();
+    // Neckline top-left
+    ctx.moveTo(-36 * scaleW, 8 * scaleH);
+    // Left shoulder
+    ctx.lineTo(-92 * scaleW, 24 * scaleH);
+    if (isLongSleeve) {
+      // Long left sleeve down to wrist cuff
+      ctx.lineTo(-142 * scaleW, 195 * scaleH);
+      ctx.lineTo(-112 * scaleW, 204 * scaleH);
+      ctx.lineTo(-78 * scaleW, 86 * scaleH);
+    } else {
+      // Short left sleeve
+      ctx.lineTo(-132 * scaleW, 88 * scaleH);
+      ctx.lineTo(-96 * scaleW, 108 * scaleH);
+      ctx.lineTo(-78 * scaleW, 82 * scaleH);
+    }
+    // Left torso down to hem
+    ctx.lineTo(-76 * scaleW, 252 * scaleH);
+    ctx.quadraticCurveTo(0, 262 * scaleH, 76 * scaleW, 252 * scaleH);
+    // Right torso up to armpit
+    ctx.lineTo(78 * scaleW, (isLongSleeve ? 86 : 82) * scaleH);
+    if (isLongSleeve) {
+      ctx.lineTo(112 * scaleW, 204 * scaleH);
+      ctx.lineTo(142 * scaleW, 195 * scaleH);
+    } else {
+      ctx.lineTo(96 * scaleW, 108 * scaleH);
+      ctx.lineTo(132 * scaleW, 88 * scaleH);
+    }
+    // Right shoulder back to neck
+    ctx.lineTo(92 * scaleW, 24 * scaleH);
+    ctx.lineTo(36 * scaleW, 8 * scaleH);
+    // Collar dip (deeper in front, shallower in back)
+    ctx.quadraticCurveTo(0, (isBack ? 18 : 34) * scaleH, -36 * scaleW, 8 * scaleH);
+    ctx.closePath();
+
+    ctx.fillStyle = hexColor;
+    ctx.fill();
+
+    // Remove shadow for internal shading
+    ctx.shadowColor = 'transparent';
+    ctx.clip();
+
+    // Realistic cylindrical fabric lighting gradient
+    const grad = ctx.createLinearGradient(-130 * scaleW, 0, 130 * scaleW, 0);
+    grad.addColorStop(0, 'rgba(0,0,0,0.28)');
+    grad.addColorStop(0.28, 'rgba(255,255,255,0.08)');
+    grad.addColorStop(0.5, 'rgba(255,255,255,0.14)');
+    grad.addColorStop(0.72, 'rgba(255,255,255,0.05)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.32)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(-160 * scaleW, 0, 320 * scaleW, 280 * scaleH);
+
+    // Collar rib trim
+    ctx.strokeStyle = 'rgba(128,128,128,0.38)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-38 * scaleW, 9 * scaleH);
+    ctx.quadraticCurveTo(0, (isBack ? 21 : 38) * scaleH, 38 * scaleW, 9 * scaleH);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawTintedPhotoCutout(ctx, whiteImg, blackImg, hexColor, x, y, w, h) {
+    const cleanHex = (hexColor || '#151619').toUpperCase();
+    const off = document.createElement('canvas');
+    off.width = Math.max(1, Math.round(w));
+    off.height = Math.max(1, Math.round(h));
+    const octx = off.getContext('2d');
+
+    if ((cleanHex === '#151619' || cleanHex === '#000000') && blackImg) {
+      drawContainSource(octx, blackImg, 0, 0, w, h);
+    } else if (whiteImg) {
+      // 1. Draw white shirt studio photo
+      drawContainSource(octx, whiteImg, 0, 0, w, h);
+      if (cleanHex !== '#FFFFFF') {
+        // 2. Multiply tint layer
+        const tintC = document.createElement('canvas');
+        tintC.width = off.width;
+        tintC.height = off.height;
+        const tctx = tintC.getContext('2d');
+        drawContainSource(tctx, whiteImg, 0, 0, w, h);
+        tctx.globalCompositeOperation = 'source-in';
+        tctx.fillStyle = hexColor;
+        tctx.fillRect(0, 0, off.width, off.height);
+
+        octx.globalCompositeOperation = 'multiply';
+        octx.drawImage(tintC, 0, 0);
+        // Restore alpha mask from original studio cutout
+        octx.globalCompositeOperation = 'destination-in';
+        drawContainSource(octx, whiteImg, 0, 0, w, h);
+        octx.globalCompositeOperation = 'source-over';
+      }
+    }
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.58)';
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetY = 6;
+    ctx.drawImage(off, x, y);
+    ctx.restore();
+  }
+
+  function renderProjectedFinishedItemDataUrl(calc) {
+    const W = 780;
+    const H = 370;
+    const c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext('2d');
+
+    // Molten Obsidian & Liquid Orange Studio Backdrop
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#120d0c');
+    bg.addColorStop(0.5, '#09080c');
+    bg.addColorStop(1, '#170e07');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle liquid orange ambient glow behind garments
+    const rad1 = ctx.createRadialGradient(200, 185, 15, 200, 185, 175);
+    rad1.addColorStop(0, 'rgba(255, 122, 24, 0.22)');
+    rad1.addColorStop(1, 'rgba(255, 122, 24, 0)');
+    ctx.fillStyle = rad1;
+    ctx.fillRect(0, 0, W, H);
+
+    const rad2 = ctx.createRadialGradient(580, 185, 15, 580, 185, 175);
+    rad2.addColorStop(0, 'rgba(255, 158, 68, 0.18)');
+    rad2.addColorStop(1, 'rgba(255, 158, 68, 0)');
+    ctx.fillStyle = rad2;
+    ctx.fillRect(0, 0, W, H);
+
+    // Find primary physical garment or determine if 100% PRINT ONLY
+    const firstPhysicalRow = calc.itemizedLines.find((r) => !r.isPrintOnly);
+    const activePlacements = calc.activePlacements || [];
+
+    if (!firstPhysicalRow && calc.totalPrintOnlyItems > 0) {
+      // 100% PRINT ONLY ORDER — Render Custom DTF Transfer Print Sheet Proof
+      ctx.fillStyle = '#ffb36b';
+      ctx.font = '800 13px Orbitron, Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('PROJECTED CUSTOM DTF TRANSFER PRINTS (PRINT-ONLY ORDER — $0 BLANK)', W / 2, 28);
+
+      const count = Math.max(1, activePlacements.length);
+      const cardW = Math.min(310, Math.floor((W - 60 - (count - 1) * 20) / count));
+      const cardH = 265;
+      const startX = Math.round((W - (count * cardW + (count - 1) * 20)) / 2);
+
+      activePlacements.forEach((p, idx) => {
+        const x = startX + idx * (cardW + 20);
+        const y = 48;
+        ctx.fillStyle = '#14121b';
+        ctx.fillRect(x, y, cardW, cardH);
+        ctx.strokeStyle = 'rgba(255, 136, 38, 0.65)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x, y, cardW, cardH);
+
+        if (p.renderCanvas) {
+          drawContainSource(ctx, p.renderCanvas, x + 22, y + 22, cardW - 44, cardH - 68);
+        } else {
+          ctx.strokeStyle = 'rgba(255, 179, 107, 0.45)';
+          ctx.setLineDash([5, 5]);
+          ctx.strokeRect(x + 34, y + 34, cardW - 68, cardH - 92);
+          ctx.setLineDash([]);
+          ctx.fillStyle = 'rgba(255,255,255,0.6)';
+          ctx.font = '600 12px Segoe UI, sans-serif';
+          ctx.fillText('Upload DTF Artwork in Step 2', x + cardW / 2, y + cardH / 2 - 8);
+        }
+
+        ctx.fillStyle = '#ff9e44';
+        ctx.font = '700 12px Segoe UI, sans-serif';
+        ctx.fillText(`${p.locationLabel} (${p.adultWidthIn}" × ${p.adultHeightIn}")`, x + cardW / 2, y + cardH - 16);
+      });
+
+      return c.toDataURL('image/png');
+    }
+
+    // Physical Garment Mockup (Front + Back Side-by-Side)
+    const primaryLine = firstPhysicalRow || {
+      parentStyleCode: state.garmentLines[0]?.styleCode || 'TT11',
+      brand: 'Team 365',
+      styleCode: 'TT11',
+      colorName: state.garmentLines[0]?.colorName || 'Black',
+      colorHex: getColorHex(state.garmentLines[0]?.styleCode || 'TT11', state.garmentLines[0]?.colorName || 'Black')
+    };
+    const cat = SS_CATALOG[primaryLine.parentStyleCode] || SS_CATALOG.TT11;
+    const hex = primaryLine.colorHex || '#151619';
+    const isLong = Boolean(cat.isLongSleeve);
+
+    // Top Title Banner inside Canvas
+    ctx.fillStyle = '#ffb36b';
+    ctx.font = '800 12px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(
+      `PROJECTED FINISHED GARMENT PREVIEW — ${cat.brand.toUpperCase()} ${cat.styleCode} (${primaryLine.colorName.toUpperCase()})`,
+      W / 2,
+      24
+    );
+
+    const frontCx = 200;
+    const backCx = 580;
+    const shirtW = 290;
+    const shirtH = 290;
+    const shirtTop = 38;
+
+    // Draw Front & Back Garments
+    if (!isLong && blankMockupAssets.whiteFront && blankMockupAssets.whiteBack) {
+      drawTintedPhotoCutout(ctx, blankMockupAssets.whiteFront, blankMockupAssets.blackFront, hex, frontCx - shirtW / 2, shirtTop, shirtW, shirtH);
+      drawTintedPhotoCutout(ctx, blankMockupAssets.whiteBack, blankMockupAssets.blackBack, hex, backCx - shirtW / 2, shirtTop, shirtW, shirtH);
+    } else {
+      drawProceduralShirtSilhouette(ctx, frontCx, shirtTop + 10, 1.04, 1.04, hex, isLong, false);
+      drawProceduralShirtSilhouette(ctx, backCx, shirtTop + 10, 1.04, 1.04, hex, isLong, true);
+    }
+
+    // Identify Front vs Back placements
+    const frontPlacements = [];
+    const backPlacements = [];
+    activePlacements.forEach((p, idx) => {
+      const lbl = (p.locationLabel || '').toLowerCase();
+      if (lbl.includes('back')) {
+        backPlacements.push(p);
+      } else if (lbl.includes('front') || lbl.includes('pocket') || lbl.includes('breast') || lbl.includes('chest')) {
+        frontPlacements.push(p);
+      } else if (idx === 0) {
+        frontPlacements.push(p);
+      } else {
+        backPlacements.push(p);
+      }
+    });
+
+    // Composite Front Placement(s) onto Front Shirt
+    // Adult shirt torso width ~ 19" (~145px on canvas -> ~7.6 px per inch)
+    const pxPerIn = 7.6;
+    frontPlacements.forEach((fp) => {
+      const lbl = (fp.locationLabel || '').toLowerCase();
+      const isPocket = lbl.includes('pocket') || lbl.includes('breast') || (fp.adultWidthIn <= 5.5 && fp.adultHeightIn <= 5.5);
+      const boxW = Math.min(115, Math.max(24, fp.adultWidthIn * pxPerIn));
+      const boxH = Math.min(130, Math.max(24, fp.adultHeightIn * pxPerIn));
+      // Viewer's LEFT side of front shirt = wearer's RIGHT breast pocket; wait:
+      // "Front Right Breast Pocket" on the wearer is viewer's LEFT side (frontCx - 34)!
+      const drawX = isPocket ? (frontCx - 32 - boxW / 2) : (frontCx - boxW / 2);
+      const drawY = isPocket ? (shirtTop + 86) : (shirtTop + 88);
+
+      if (fp.renderCanvas) {
+        drawContainSource(ctx, fp.renderCanvas, drawX, drawY, boxW, boxH);
+      } else {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 148, 54, 0.85)';
+        ctx.lineWidth = 1.3;
+        ctx.setLineDash([3, 3]);
+        ctx.strokeRect(drawX, drawY, boxW, boxH);
+        ctx.fillStyle = 'rgba(255, 122, 24, 0.18)';
+        ctx.fillRect(drawX, drawY, boxW, boxH);
+        ctx.restore();
+      }
+    });
+
+    // Composite Back Placement(s) onto Back Shirt
+    backPlacements.forEach((bp) => {
+      const boxW = Math.min(120, Math.max(28, bp.adultWidthIn * pxPerIn));
+      const boxH = Math.min(138, Math.max(28, bp.adultHeightIn * pxPerIn));
+      const drawX = backCx - boxW / 2;
+      const drawY = shirtTop + 76;
+
+      if (bp.renderCanvas) {
+        drawContainSource(ctx, bp.renderCanvas, drawX, drawY, boxW, boxH);
+      } else {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 148, 54, 0.85)';
+        ctx.lineWidth = 1.3;
+        ctx.setLineDash([3, 3]);
+        ctx.strokeRect(drawX, drawY, boxW, boxH);
+        ctx.fillStyle = 'rgba(255, 122, 24, 0.18)';
+        ctx.fillRect(drawX, drawY, boxW, boxH);
+        ctx.restore();
+      }
+    });
+
+    // Center Divider
+    ctx.strokeStyle = 'rgba(255, 136, 38, 0.25)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(W / 2, 42);
+    ctx.lineTo(W / 2, H - 18);
+    ctx.stroke();
+
+    // Bottom View Labels
+    ctx.fillStyle = '#ffe2c4';
+    ctx.font = '700 11.5px Segoe UI, sans-serif';
+    const frontDesc = frontPlacements.length
+      ? `FRONT VIEW • ${frontPlacements.map((p) => `${p.locationLabel} (${p.adultWidthIn}"×${p.adultHeightIn}")`).join(', ')}`
+      : 'FRONT VIEW';
+    const backDesc = backPlacements.length
+      ? `BACK VIEW • ${backPlacements.map((p) => `${p.locationLabel} (${p.adultWidthIn}"×${p.adultHeightIn}")`).join(', ')}`
+      : 'BACK VIEW';
+    ctx.fillText(frontDesc, frontCx, H - 14);
+    ctx.fillText(backDesc, backCx, H - 14);
+
+    return c.toDataURL('image/png');
+  }
+
+  // =========================================================================
+  // FULL CALCULATION: PRINT ONLY ($0), YOUTH + ADULT, DISCOUNT % OFF & TAX
   // =========================================================================
   function recalculateEverything() {
     let totalAdultShirts = 0;
     let totalYouthShirts = 0;
+    let totalPrintOnlyItems = 0;
     let blanksSubtotal = 0;
 
     const rawItems = [];
@@ -809,12 +1164,14 @@
         const q = Math.max(0, parseInt(line.quantities[sz], 10) || 0);
         if (q <= 0) return;
 
+        const printOnly = isPrintOnlySize(sz);
         const youth = isYouthSize(sz);
-        if (youth) totalYouthShirts += q;
+
+        if (printOnly) totalPrintOnlyItems += q;
+        else if (youth) totalYouthShirts += q;
         else totalAdultShirts += q;
 
-        // Direct S&S Blank Cost (S&S already prices 2XL-6XL directly)
-        const unitBlankCost = getBlankUnitPrice(line.styleCode, line.colorName, sz);
+        const unitBlankCost = printOnly ? 0.00 : getBlankUnitPrice(line.styleCode, line.colorName, sz);
         const subBlank = +(q * unitBlankCost).toFixed(2);
 
         lineQty += q;
@@ -822,16 +1179,19 @@
 
         rawItems.push({
           lineId: line.id,
-          styleCode: youth ? cat.youthStyleCode : cat.styleCode,
+          styleCode: printOnly ? 'DTF-PRINT' : (youth ? cat.youthStyleCode : cat.styleCode),
           parentStyleCode: line.styleCode,
-          itemNumber: youth ? cat.youthItemNumber : cat.itemNumber,
-          brand: cat.brand,
-          garmentTitle: youth ? cat.youthFullName : cat.fullName,
+          itemNumber: printOnly ? 'PRINT-ONLY' : (youth ? cat.youthItemNumber : cat.itemNumber),
+          brand: printOnly ? 'RetroCanopy DTF' : cat.brand,
+          garmentTitle: printOnly
+            ? 'Custom DTF Transfer Print Only (No Garment Blank — $0.00 Blank)'
+            : (youth ? cat.youthFullName : cat.fullName),
           productUrl: youth ? cat.youthProductUrl : cat.productUrl,
-          colorName: line.colorName,
-          colorHex,
+          colorName: printOnly ? 'Transfer Print Only' : line.colorName,
+          colorHex: printOnly ? '#ff7a18' : colorHex,
           sizeName: sz,
           isYouth: youth,
+          isPrintOnly: printOnly,
           qty: q,
           unitBlankCost,
           subBlank
@@ -847,49 +1207,83 @@
     });
 
     blanksSubtotal = +blanksSubtotal.toFixed(2);
-    const totalShirts = totalAdultShirts + totalYouthShirts;
+    const totalPhysicalShirts = totalAdultShirts + totalYouthShirts;
+    const totalAdultFormatPrints = totalAdultShirts + totalPrintOnlyItems;
+    const totalShirts = totalPhysicalShirts + totalPrintOnlyItems;
 
-    // 2. Build Adult + Youth DTF Packing List
+    // 2. Pack EVERY Active Placement Logo Across Adult (+ Print Only) & Youth Quantities
     const activePlacements = state.dtfPlacements.filter((p) => p.enabled !== false);
     const extraSpoilage = Math.max(0, parseInt(state.extraSpoilagePrints, 10) || 0);
     const extraYouth = totalYouthShirts > 0 ? Math.min(extraSpoilage, Math.max(1, Math.round(extraSpoilage * (totalYouthShirts / Math.max(1, totalShirts))))) : 0;
-    const extraAdult = totalAdultShirts > 0 ? extraSpoilage : 0;
+    const extraAdult = totalAdultFormatPrints > 0 ? extraSpoilage : 0;
 
     const itemsToPack = [];
+    const expectedPlacementCounts = [];
+
     activePlacements.forEach((p, pIdx) => {
-      if (totalAdultShirts > 0) {
+      const renderSrc = p.autoTrimTransparent ? (p.trimmedCanvas || p.origCanvas) : (p.origCanvas || p.trimmedCanvas);
+      let expectedForThisPlacement = 0;
+
+      if (totalAdultFormatPrints > 0) {
+        const cntA = totalAdultFormatPrints + extraAdult;
+        expectedForThisPlacement += cntA;
         itemsToPack.push({
           id: p.id + '_adult',
+          parentPlacementId: p.id,
           placementIdx: pIdx,
           sizeGroup: 'ADULT',
+          shortLoc: p.locationLabel,
           locationLabel: `${p.locationLabel} (Adult)`,
           widthIn: Math.max(0.5, Number(p.adultWidthIn) || 4),
           heightIn: Math.max(0.5, Number(p.adultHeightIn) || 4),
-          count: totalAdultShirts + extraAdult,
-          imgElement: p.imgElement
+          count: cntA,
+          renderSource: renderSrc
         });
       }
       if (totalYouthShirts > 0) {
+        const cntY = totalYouthShirts + extraYouth;
+        expectedForThisPlacement += cntY;
         itemsToPack.push({
           id: p.id + '_youth',
+          parentPlacementId: p.id,
           placementIdx: pIdx,
           sizeGroup: 'YOUTH',
+          shortLoc: p.locationLabel,
           locationLabel: `${p.locationLabel} (Youth)`,
           widthIn: Math.max(0.5, Number(p.youthWidthIn) || 3),
           heightIn: Math.max(0.5, Number(p.youthHeightIn) || 3),
-          count: totalYouthShirts + extraYouth,
-          imgElement: p.imgElement
+          count: cntY,
+          renderSource: renderSrc
         });
       }
+
+      expectedPlacementCounts.push({
+        placementId: p.id,
+        locationLabel: p.locationLabel,
+        fileName: p.fileName,
+        hasUploadedLogo: Boolean(renderSrc),
+        expectedCount: expectedForThisPlacement
+      });
     });
 
     const rollWidthNum = state.rollWidthMode === '22' ? 22 : 27;
     const packRes = packRectanglesOnRoll(rollWidthNum, Math.max(0, Number(state.gutterIn) || 0.25), itemsToPack);
     const sheetSolution = solveOptimalGangSheets(packRes.shelves, state.rollWidthMode, state.includeAutoBuilder15);
 
-    // 3. Freight, Pressing & Built-In Per-Shirt Base Upcharge
+    // Count actual packed boxes per placement across all sheets to verify 100% presence
+    const packedCountByPlacement = {};
+    sheetSolution.sheetAssignments.forEach((sa) => {
+      sa.boxes.forEach((b) => {
+        packedCountByPlacement[b.placementId] = (packedCountByPlacement[b.placementId] || 0) + 1;
+      });
+    });
+    expectedPlacementCounts.forEach((ep) => {
+      ep.packedCount = packedCountByPlacement[ep.placementId] || 0;
+    });
+
+    // 3. Freight, Pressing (Physical Shirts Only) & Built-In Per-Item Base Upcharge
     let ssShippingUsd = 0;
-    if (totalShirts > 0) {
+    if (totalPhysicalShirts > 0) {
       if (String(state.ssShippingOverride).trim() !== '') {
         ssShippingUsd = Math.max(0, Number(state.ssShippingOverride) || 0);
       } else {
@@ -902,7 +1296,8 @@
       : 0;
 
     const pressPerShirt = Math.max(0, Number(state.pressLaborPerShirt) || 0);
-    const totalPressLaborUsd = +(totalShirts * pressPerShirt).toFixed(2);
+    // Pressing labor applies to physical shirts being heat-pressed ($0 if Print-Only transfer order)
+    const totalPressLaborUsd = +(totalPhysicalShirts * pressPerShirt).toFixed(2);
 
     const totalHardCostUsd = +(
       blanksSubtotal +
@@ -916,11 +1311,14 @@
     const dtfCostPerShirt = totalShirts > 0 ? sheetSolution.totalDtfCost / totalShirts : 0;
 
     const builtInUpcharge = Math.max(0, Number(state.builtInUpchargePerShirt) || 0);
-    const sharedProductionAndBuiltInPerShirt = totalShirts > 0
-      ? ((ssShippingUsd + sheetSolution.totalDtfCost + dpwShippingUsd + totalPressLaborUsd) / totalShirts) + builtInUpcharge
+    const sharedDtfAndDpwShipPerItem = totalShirts > 0
+      ? (sheetSolution.totalDtfCost + dpwShippingUsd) / totalShirts
+      : 0;
+    const sharedSsShipAndPressPerPhysicalShirt = totalPhysicalShirts > 0
+      ? ((ssShippingUsd / totalPhysicalShirts) + pressPerShirt)
       : 0;
 
-    // 4. Build Clean Itemized Line-by-Line Rows (Direct S&S Size Cost + Built-In Production/Upcharge)
+    // 4. Build Itemized Line-by-Line Quote Rows
     let subtotalBeforeDiscount = 0;
     const itemizedLines = rawItems.map((item, idx) => {
       const printSpecSummary = activePlacements.length > 0
@@ -931,7 +1329,11 @@
           }).join(' + ')
         : 'Blank Garment Only';
 
-      const unitPriceQuoted = +(item.unitBlankCost + sharedProductionAndBuiltInPerShirt).toFixed(2);
+      const perItemOverhead = item.isPrintOnly
+        ? (sharedDtfAndDpwShipPerItem + builtInUpcharge)
+        : (sharedDtfAndDpwShipPerItem + sharedSsShipAndPressPerPhysicalShirt + builtInUpcharge);
+
+      const unitPriceQuoted = +(item.unitBlankCost + perItemOverhead).toFixed(2);
       const lineTotalQuoted = +(unitPriceQuoted * item.qty).toFixed(2);
       subtotalBeforeDiscount += lineTotalQuoted;
 
@@ -957,25 +1359,24 @@
     const taxAmountUsd = includeTax ? +(subtotalAfterDiscount * (taxRatePct / 100)).toFixed(2) : 0;
     const customerQuoteTotal = +(subtotalAfterDiscount + taxAmountUsd).toFixed(2);
 
-    // True net profit is pre-tax net revenue minus hard costs (tax collected is remitted to state)
     const netProfitUsd = +(subtotalAfterDiscount - totalHardCostUsd).toFixed(2);
 
-    // 6. Overall Per-Item Breakdown (Order-Wide + Grouped by Garment/Color Item)
+    // 6. Overall Per-Item Breakdown
     const avgItemPreDiscount = totalShirts > 0 ? +(subtotalBeforeDiscount / totalShirts).toFixed(2) : 0;
     const avgItemAfterDiscount = totalShirts > 0 ? +(subtotalAfterDiscount / totalShirts).toFixed(2) : 0;
     const avgItemAllInFinal = totalShirts > 0 ? +(customerQuoteTotal / totalShirts).toFixed(2) : 0;
 
     const groupMap = new Map();
     itemizedLines.forEach((row) => {
-      const gKey = row.lineId;
+      const gKey = row.isPrintOnly ? `${row.lineId}_printonly` : row.lineId;
       if (!groupMap.has(gKey)) {
         const cat = SS_CATALOG[row.parentStyleCode] || SS_CATALOG.TT11;
         groupMap.set(gKey, {
-          lineId: row.lineId,
-          brand: cat.brand,
-          adultStyleCode: cat.styleCode,
-          youthStyleCode: cat.youthStyleCode,
-          fullName: cat.fullName,
+          lineId: gKey,
+          isPrintOnly: row.isPrintOnly,
+          brand: row.isPrintOnly ? 'RetroCanopy DTF' : cat.brand,
+          adultStyleCode: row.isPrintOnly ? 'PRINT ONLY ($0 Blank)' : cat.styleCode,
+          youthStyleCode: row.isPrintOnly ? 'PRINT ONLY' : cat.youthStyleCode,
           colorName: row.colorName,
           colorHex: row.colorHex,
           hasAdult: false,
@@ -994,14 +1395,14 @@
     });
 
     const itemOverallGroups = Array.from(groupMap.values()).map((g) => {
-      const styleBadge = g.hasAdult && g.hasYouth
-        ? `${g.adultStyleCode} / ${g.youthStyleCode}`
-        : (g.hasYouth ? g.youthStyleCode : g.adultStyleCode);
+      const styleBadge = g.isPrintOnly
+        ? 'PRINT ONLY'
+        : (g.hasAdult && g.hasYouth
+            ? `${g.adultStyleCode} / ${g.youthStyleCode}`
+            : (g.hasYouth ? g.youthStyleCode : g.adultStyleCode));
       const groupAfterDisc = +(g.groupSubtotalPreDiscount * (1 - discountPct / 100)).toFixed(2);
       const avgPre = g.totalQty > 0 ? +(g.groupSubtotalPreDiscount / g.totalQty).toFixed(2) : 0;
       const avgAfter = g.totalQty > 0 ? +(groupAfterDisc / g.totalQty).toFixed(2) : 0;
-      const groupWithTax = includeTax ? +(groupAfterDisc * (1 + taxRatePct / 100)).toFixed(2) : groupAfterDisc;
-      const avgAllIn = g.totalQty > 0 ? +(groupWithTax / g.totalQty).toFixed(2) : 0;
 
       return {
         ...g,
@@ -1009,15 +1410,16 @@
         sizeBreakdownStr: g.sizePairs.join(', '),
         avgPerItemPreDiscount: avgPre,
         groupSubtotalAfterDiscount: groupAfterDisc,
-        avgPerItemAfterDiscount: avgAfter,
-        avgPerItemAllIn: avgAllIn
+        avgPerItemAfterDiscount: avgAfter
       };
     });
 
     state.lastCalculation = {
       totalShirts,
+      totalPhysicalShirts,
       totalAdultShirts,
       totalYouthShirts,
+      totalPrintOnlyItems,
       blanksSubtotal,
       ssShippingUsd,
       dpwShippingUsd,
@@ -1042,6 +1444,7 @@
       packRes,
       sheetSolution,
       activePlacements,
+      expectedPlacementCounts,
       itemizedLines,
       itemOverallGroups
     };
@@ -1050,7 +1453,7 @@
   }
 
   // =========================================================================
-  // RENDER BRANDED ITEMIZED RECEIPT, PER-ITEM BREAKDOWN & GANGSHEET CANVAS
+  // RENDER BLACK & ORANGE LIQUID GLASS RECEIPT + ALL GANGSHEETS GALLERY
   // =========================================================================
   function syncTaxToggleUi() {
     const btn = document.getElementById('bqTaxToggleBtn');
@@ -1086,34 +1489,71 @@
       if (el) el.textContent = val;
     };
 
-    setTxt('bqKpiTotalShirts', `${calc.totalShirts} (${calc.totalAdultShirts}A / ${calc.totalYouthShirts}Y)`);
+    const qtySummaryParts = [];
+    if (calc.totalAdultShirts > 0) qtySummaryParts.push(`${calc.totalAdultShirts}A`);
+    if (calc.totalYouthShirts > 0) qtySummaryParts.push(`${calc.totalYouthShirts}Y`);
+    if (calc.totalPrintOnlyItems > 0) qtySummaryParts.push(`${calc.totalPrintOnlyItems}P`);
+    setTxt('bqKpiTotalShirts', `${calc.totalShirts}${qtySummaryParts.length ? ` (${qtySummaryParts.join(' / ')})` : ''}`);
     setTxt('bqKpiBlanksCost', money(calc.blanksSubtotal));
     setTxt('bqKpiDtfCost', money(calc.sheetSolution.totalDtfCost));
     setTxt('bqKpiHardCostPerShirt', `${money(calc.avgHardCostPerShirt)} / ea`);
     setTxt('bqKpiQuoteTotal', money(calc.customerQuoteTotal));
     setTxt('bqKpiNetProfit', `${calc.netProfitUsd >= 0 ? '+' : ''}${money(calc.netProfitUsd)}`);
 
+    const sheetCount = calc.sheetSolution.sheetAssignments.length;
+    setTxt('bqDrawerSummaryBadge', `${sheetCount} Sheet${sheetCount === 1 ? '' : 's'} Needed • ${calc.packRes.boxes.length} Total Transfers`);
+
+    const dlAllBtn = document.getElementById('bqExportGangsheetPngBtn');
+    if (dlAllBtn && !dlAllBtn.dataset.downloading) {
+      dlAllBtn.innerHTML = `&#11015;&#65039; Download ALL Needed Gangsheets (${sheetCount} Sheet${sheetCount === 1 ? '' : 's'} &bull; 300 DPI .PNG)`;
+    }
+
     setTxt(
       'bqGangsheetStatsLine',
       calc.totalShirts > 0 && calc.activePlacements.length > 0
-        ? `${calc.packRes.boxes.length} total transfers (${calc.totalAdultShirts} Adult + ${calc.totalYouthShirts} Youth + spares) • ${calc.packRes.totalLinearIn.toFixed(1)}" linear film on ${calc.packRes.rollWidthIn}" roll • ${calc.sheetSolution.utilizationPct.toFixed(1)}% sheet fill (${calc.sheetSolution.freeRemainingLinearIn.toFixed(1)}" free film left)`
-        : 'Add shirt quantities & active placements to pack Adult (4"×4" / 10.5"×11.5") & Youth (3"×3" / 8"×9") transfers.'
+        ? `${calc.packRes.boxes.length} total transfers packed across ${sheetCount} DigitalPrintWorx sheet${sheetCount === 1 ? '' : 's'} • ${calc.packRes.totalLinearIn.toFixed(1)}" linear film on ${calc.packRes.rollWidthIn}" roll • ${calc.sheetSolution.utilizationPct.toFixed(1)}% sheet fill (${calc.sheetSolution.freeRemainingLinearIn.toFixed(1)}" free film left)`
+        : 'Add item quantities & active placements to pack all Adult, Youth & Print-Only transfers.'
     );
 
+    // Live Logo Verification Bar (Confirms every single placement's logos are on the gangsheets!)
+    const verifyBar = document.getElementById('bqLogoVerificationBar');
+    if (verifyBar) {
+      if (calc.expectedPlacementCounts.length === 0 || calc.totalShirts === 0) {
+        verifyBar.innerHTML = '';
+      } else {
+        const pills = calc.expectedPlacementCounts.map((ep) => {
+          const allPacked = ep.packedCount === ep.expectedCount && ep.expectedCount > 0;
+          const artBadge = ep.hasUploadedLogo
+            ? `<span style="color:#22f59b;font-weight:800;">&#10003; Logo Artwork Loaded (${esc(ep.fileName)})</span>`
+            : `<span style="color:#ffb36b;font-weight:700;">&#9888; Upload file in Step 2 to render artwork</span>`;
+          return `
+            <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid ${allPacked && ep.hasUploadedLogo ? 'rgba(34,245,155,0.45)' : 'rgba(255,148,54,0.45)'};font-size:0.73rem;">
+              <strong style="color:#ffffff;">${esc(ep.locationLabel)}:</strong>
+              <span style="color:#2ce6ff;font-weight:800;">${ep.packedCount}/${ep.expectedCount} on sheets</span>
+              <span>&bull;</span>
+              ${artBadge}
+            </div>
+          `;
+        }).join('');
+        verifyBar.innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap;">${pills}</div>`;
+      }
+    }
+
+    // Recommended DigitalPrintWorx Gang Sheets Box
     const recEl = document.getElementById('bqRecommendedSheetsBox');
     if (recEl) {
       if (calc.sheetSolution.chosenSheets.length === 0) {
-        recEl.innerHTML = `<div style="font-size:0.78rem;color:rgba(255,255,255,0.62);">Add shirts above to compute exact DigitalPrintWorx gangsheet sizes &amp; live pricing.</div>`;
+        recEl.innerHTML = `<div style="font-size:0.78rem;color:rgba(255,255,255,0.62);">Add items above to compute exact DigitalPrintWorx gangsheet sizes &amp; live pricing.</div>`;
       } else {
         const rowsHtml = calc.sheetSolution.chosenSheets.map((cs) => `
           <div class="bq-sheet-order-row">
             <div>
-              <strong style="color:#ffe89e;">${cs.qty} &times; ${esc(cs.sheet.label)}</strong>
+              <strong style="color:#ffb36b;">${cs.qty} &times; ${esc(cs.sheet.label)}</strong>
               <span style="font-size:0.72rem;color:rgba(255,255,255,0.68);margin-left:6px;">(${money(cs.sheet.priceUsd)} each${cs.sheet.liveVerified ? ' &bull; <span style="color:#22f59b;">LIVE</span>' : ''})</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
               <strong style="color:#22f59b;">${money(cs.subtotal)}</strong>
-              <a href="${esc(cs.sheet.productUrl)}" target="_blank" rel="noopener noreferrer" class="mini-btn" style="padding:4px 10px;font-size:0.68rem;text-decoration:none;color:#2ce6ff;">Order on DigitalPrintWorx &nearr;</a>
+              <a href="${esc(cs.sheet.productUrl)}" target="_blank" rel="noopener noreferrer" class="mini-btn" style="padding:4px 10px;font-size:0.68rem;text-decoration:none;color:#ffb36b;">Order on DigitalPrintWorx &nearr;</a>
             </div>
           </div>
         `).join('');
@@ -1121,138 +1561,160 @@
         recEl.innerHTML = `
           ${rowsHtml}
           <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;margin-top:6px;border-top:1px solid rgba(255,255,255,0.14);font-size:0.78rem;">
-            <span style="color:rgba(255,255,255,0.78);">Optimal DTF Gangsheet Total (${money(calc.dtfCostPerShirt)} / shirt):</span>
-            <strong style="font-size:0.95rem;color:#2ce6ff;">${money(calc.sheetSolution.totalDtfCost)}</strong>
+            <span style="color:rgba(255,255,255,0.78);">Optimal DTF Gangsheet Total (${money(calc.dtfCostPerShirt)} / item):</span>
+            <strong style="font-size:0.95rem;color:#ff9e44;">${money(calc.sheetSolution.totalDtfCost)}</strong>
           </div>
         `;
       }
     }
 
-    // Visually Appealing Official Branded Receipt Card + Per-Item Overall Breakdown + Private Owner Ledger
+    // Generate Projected Finished Item Picture
+    const projectedMockupUrl = renderProjectedFinishedItemDataUrl(calc);
+    calc.projectedMockupUrl = projectedMockupUrl;
+
+    // Render Black & Orange Liquid Glass Official Receipt Card + Projected Item Mockup + Private Owner Ledger
     const finEl = document.getElementById('bqFinancialBreakdownBody');
     if (finEl) {
-      const logoUrl = getOfficialLogoUrl();
+      const logoUrl = getAssetUrl('assets/logo.png');
       const c = state.customer;
       const clientHeadline = [c.fullName, c.companyOrTeam].filter(Boolean).join(' • ') || 'Valued RetroCanopy Client';
-      const projectHeadline = c.projectName || 'Custom Performance Apparel Order';
-      const ssShipNote = calc.blanksSubtotal >= 200 && String(state.ssShippingOverride).trim() === ''
-        ? 'FREE ($200+ S&S Order)'
-        : money(calc.ssShippingUsd);
+      const projectHeadline = c.projectName || 'Custom Performance Apparel & Print Order';
+      const ssShipNote = calc.totalPhysicalShirts === 0
+        ? '$0.00 (Print-Only Order)'
+        : (calc.blanksSubtotal >= 200 && String(state.ssShippingOverride).trim() === ''
+            ? 'FREE ($200+ S&S Order)'
+            : money(calc.ssShippingUsd));
+
+      const capBadgesHtml = STUDIO_CAPABILITIES.map((cap) =>
+        `<span style="display:inline-block;padding:3px 9px;border-radius:999px;font-size:0.63rem;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;background:rgba(255,122,24,0.18);border:1px solid rgba(255,140,42,0.52);color:#ffd5b0;">${esc(cap)}</span>`
+      ).join('');
 
       const overallGroupRowsHtml = calc.itemOverallGroups.map((g) => `
         <tr>
-          <td style="padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);">
             <div style="display:flex;align-items:center;gap:7px;">
               <span style="width:12px;height:12px;border-radius:50%;background:${esc(g.colorHex)};border:1px solid rgba(255,255,255,0.55);display:inline-block;flex-shrink:0;"></span>
               <strong style="color:#ffffff;">${esc(g.brand)} ${esc(g.styleBadge)}</strong>
-              <span style="color:#ffe89e;font-size:0.72rem;">&bull; ${esc(g.colorName)}</span>
+              <span style="color:#ffb36b;font-size:0.72rem;">&bull; ${esc(g.colorName)}</span>
             </div>
             <div style="font-size:0.67rem;color:rgba(255,255,255,0.62);margin-top:2px;">Sizes: ${esc(g.sizeBreakdownStr)}</div>
           </td>
-          <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-weight:800;color:#2ce6ff;">${g.totalQty} pcs</td>
-          <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:700;color:#ffe89e;">${money(calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount)} / ea</td>
-          <td style="padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:800;color:#22f59b;">${money(calc.discountPct > 0 ? g.groupSubtotalAfterDiscount : g.groupSubtotalPreDiscount)}</td>
+          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-weight:800;color:#ffb36b;">${g.totalQty} pcs</td>
+          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:700;color:#ffe2c4;">${money(calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount)} / ea</td>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:800;color:#ff9e44;">${money(calc.discountPct > 0 ? g.groupSubtotalAfterDiscount : g.groupSubtotalPreDiscount)}</td>
         </tr>
       `).join('');
 
       const itemizedTableRows = calc.itemizedLines.map((row) => `
         <tr>
-          <td style="padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);">
             <div style="display:flex;align-items:center;gap:6px;">
               <span style="width:10px;height:10px;border-radius:50%;background:${esc(row.colorHex)};border:1px solid rgba(255,255,255,0.5);display:inline-block;flex-shrink:0;"></span>
               <strong style="color:#ffffff;">${esc(row.brand)} ${esc(row.styleCode)}</strong>
-              <span style="font-size:0.67rem;color:#2ce6ff;">#${esc(row.itemNumber)}</span>
-              <span style="font-size:0.7rem;color:#ffe89e;">&bull; ${esc(row.colorName)}</span>
+              <span style="font-size:0.67rem;color:#ffb36b;">#${esc(row.itemNumber)}</span>
+              <span style="font-size:0.7rem;color:#ffd5b0;">&bull; ${esc(row.colorName)}</span>
             </div>
-            <div style="font-size:0.66rem;color:rgba(255,255,255,0.62);margin-top:1px;">${esc(row.printSpecSummary)}</div>
+            <div style="font-size:0.66rem;color:rgba(255,255,255,0.62);margin-top:1px;">${esc(row.printSpecSummary)}${row.isPrintOnly ? ' &bull; <strong style="color:#ff9e44;">$0.00 Blank Garment</strong>' : ''}</div>
           </td>
-          <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-weight:800;color:${row.isYouth ? '#2ce6ff' : '#ffe89e'};">${esc(row.sizeName)}</td>
-          <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-weight:700;">${row.qty}</td>
-          <td style="padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:700;color:#22f59b;">${money(row.unitPriceQuoted)}</td>
-          <td style="padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:800;color:#ffffff;">${money(row.lineTotalQuoted)}</td>
+          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-weight:800;color:${row.isPrintOnly ? '#ff9e44' : (row.isYouth ? '#2ce6ff' : '#ffe89e')};">${esc(row.sizeName)}</td>
+          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-weight:700;">${row.qty}</td>
+          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:700;color:#ffe2c4;">${money(row.unitPriceQuoted)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:800;color:#ffffff;">${money(row.lineTotalQuoted)}</td>
         </tr>
       `).join('');
 
       const discountRowHtml = calc.discountPct > 0 ? `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:rgba(34,245,155,0.12);border:1px solid rgba(34,245,155,0.38);border-radius:9px;color:#6bffc3;font-size:0.78rem;margin:4px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 11px;background:rgba(34,245,155,0.12);border:1px solid rgba(34,245,155,0.42);border-radius:10px;color:#6bffc3;font-size:0.79rem;margin:5px 0;">
           <span>&#127991;&#65039; <strong>${esc(calc.discountLabel)} (${calc.discountPct}% OFF)</strong></span>
           <strong>&minus;${money(calc.discountAmountUsd)}</strong>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.76rem;color:rgba(255,255,255,0.84);padding:2px 0;">
+        <div style="display:flex;justify-content:space-between;font-size:0.76rem;color:rgba(255,255,255,0.86);padding:2px 0;">
           <span>Discounted Subtotal (${money(calc.avgItemAfterDiscount)} avg / item):</span>
           <strong>${money(calc.subtotalAfterDiscount)}</strong>
         </div>
       ` : '';
 
       const taxRowHtml = calc.includeTax ? `
-        <div style="display:flex;justify-content:space-between;font-size:0.76rem;color:rgba(255,255,255,0.82);padding:3px 0;">
-          <span>Estimated Sales Tax (${calc.taxRatePct.toFixed(2)}%):</span>
+        <div style="display:flex;justify-content:space-between;font-size:0.76rem;color:rgba(255,255,255,0.84);padding:3px 0;">
+          <span>Sales Tax (${calc.taxRatePct.toFixed(2)}%):</span>
           <strong>${money(calc.taxAmountUsd)}</strong>
         </div>
       ` : `
-        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#ffb8dc;padding:3px 0;">
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#ffb36b;padding:3px 0;">
           <span>Sales Tax (Excluded / Tax-Exempt):</span>
           <strong>$0.00</strong>
         </div>
       `;
 
       finEl.innerHTML = `
-        <div class="bq-branded-receipt">
-          <!-- OFFICIAL RETROCANOPY LOGO & RECEIPT HEADER -->
-          <div class="bq-receipt-banner">
-            <div class="bq-receipt-logo-wrap">
-              <img src="${esc(logoUrl)}" alt="RetroCanopy Official Logo" class="bq-receipt-logo">
-              <div>
-                <div style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:0.95rem;letter-spacing:0.08em;color:#ffe89e;">RETROCANOPY</div>
-                <div style="font-size:0.68rem;color:#2ce6ff;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">Official Custom Apparel Quote &amp; Itemized Receipt</div>
-                <div style="font-size:0.68rem;color:rgba(255,255,255,0.72);margin-top:2px;">${esc(projectHeadline)} &bull; ${esc(clientHeadline)}</div>
+        <div class="bq-liquid-receipt">
+          <!-- BLACK & MOLTEN ORANGE LIQUID GLASS BRAND HEADER + ALL 6 SERVICES -->
+          <div class="bq-liquid-header">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:14px;">
+                <img src="${esc(logoUrl)}" alt="RetroCanopy Official Logo" style="width:62px;height:62px;object-fit:contain;background:#07060a;border:1.5px solid rgba(255,140,42,0.65);border-radius:14px;padding:5px;box-shadow:0 0 18px rgba(255,115,20,0.32);">
+                <div>
+                  <div style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.08rem;letter-spacing:0.09em;color:#ffffff;">RETROCANOPY</div>
+                  <div style="font-size:0.7rem;color:#ff9e44;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;margin-top:1px;">Official Itemized Quote &amp; Production Receipt</div>
+                  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">${capBadgesHtml}</div>
+                </div>
+              </div>
+
+              <div style="text-align:right;background:rgba(255,122,24,0.12);border:1px solid rgba(255,140,42,0.5);border-radius:14px;padding:9px 14px;">
+                <div style="font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;color:#ffd5b0;font-weight:700;">Grand Total</div>
+                <div style="font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:900;color:#ff9e44;">${money(calc.customerQuoteTotal)}</div>
+                <div style="font-size:0.69rem;color:#ffffff;font-weight:700;">${money(calc.avgItemAllInFinal)} / item overall</div>
               </div>
             </div>
-            <div style="text-align:right;">
-              <div style="font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.6);">Grand Total</div>
-              <div style="font-family:'Orbitron',sans-serif;font-size:1.22rem;font-weight:900;color:#22f59b;">${money(calc.customerQuoteTotal)}</div>
-              <div style="font-size:0.67rem;color:#ffe89e;font-weight:700;">${money(calc.avgItemAllInFinal)} / item overall</div>
+
+            <div style="margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,140,42,0.26);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:0.74rem;color:rgba(255,255,255,0.82);">
+              <span><strong>Project:</strong> ${esc(projectHeadline)}</span>
+              <span><strong>Prepared For:</strong> ${esc(clientHeadline)}</span>
             </div>
           </div>
 
-          <div style="padding:13px 15px;">
+          <div style="padding:16px 18px;">
+            <!-- PROJECTED FINISHED ITEM PREVIEW SHOWCASE -->
+            <div class="bq-mockup-showcase-card" style="margin-bottom:14px;text-align:center;">
+              <img src="${projectedMockupUrl}" alt="Projected Finished Item Preview" style="max-width:100%;height:auto;border-radius:10px;display:block;margin:0 auto;">
+            </div>
+
             <!-- OVERALL BREAKDOWN PER ITEM KPI STRIP -->
-            <div style="font-size:0.68rem;font-weight:800;color:#2ce6ff;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">
+            <div style="font-size:0.7rem;font-weight:800;color:#ff9e44;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;">
               &#128202; Overall Breakdown Per Item
             </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:7px;margin-bottom:12px;">
-              <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.13);border-radius:10px;padding:7px 9px;">
-                <div style="font-size:0.62rem;color:rgba(255,255,255,0.6);text-transform:uppercase;">Total Quantity</div>
-                <div style="font-size:0.86rem;font-weight:800;color:#ffffff;">${calc.totalShirts} Items</div>
-                <div style="font-size:0.62rem;color:#2ce6ff;">${calc.totalAdultShirts} Adult &bull; ${calc.totalYouthShirts} Youth</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin-bottom:13px;">
+              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.28);border-radius:11px;padding:8px 10px;">
+                <div style="font-size:0.62rem;color:rgba(255,255,255,0.62);text-transform:uppercase;">Total Quantity</div>
+                <div style="font-size:0.9rem;font-weight:800;color:#ffffff;">${calc.totalShirts} Items</div>
+                <div style="font-size:0.63rem;color:#ffb36b;">${calc.totalAdultShirts} Adult &bull; ${calc.totalYouthShirts} Youth${calc.totalPrintOnlyItems > 0 ? ` &bull; ${calc.totalPrintOnlyItems} Print-Only` : ''}</div>
               </div>
-              <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.13);border-radius:10px;padding:7px 9px;">
-                <div style="font-size:0.62rem;color:rgba(255,255,255,0.6);text-transform:uppercase;">Avg / Item (Base)</div>
-                <div style="font-size:0.86rem;font-weight:800;color:#ffe89e;">${money(calc.avgItemPreDiscount)}</div>
-                <div style="font-size:0.62rem;color:rgba(255,255,255,0.55);">Before discount/tax</div>
+              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.28);border-radius:11px;padding:8px 10px;">
+                <div style="font-size:0.62rem;color:rgba(255,255,255,0.62);text-transform:uppercase;">Avg / Item (Base)</div>
+                <div style="font-size:0.9rem;font-weight:800;color:#ffe2c4;">${money(calc.avgItemPreDiscount)}</div>
+                <div style="font-size:0.63rem;color:rgba(255,255,255,0.55);">Pre-discount average</div>
               </div>
-              <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.13);border-radius:10px;padding:7px 9px;">
-                <div style="font-size:0.62rem;color:rgba(255,255,255,0.6);text-transform:uppercase;">After ${calc.discountPct}% Off</div>
-                <div style="font-size:0.86rem;font-weight:800;color:#6bffc3;">${money(calc.avgItemAfterDiscount)}</div>
-                <div style="font-size:0.62rem;color:rgba(255,255,255,0.55);">Net per shirt</div>
+              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.28);border-radius:11px;padding:8px 10px;">
+                <div style="font-size:0.62rem;color:rgba(255,255,255,0.62);text-transform:uppercase;">After ${calc.discountPct}% Off</div>
+                <div style="font-size:0.9rem;font-weight:800;color:#6bffc3;">${money(calc.avgItemAfterDiscount)}</div>
+                <div style="font-size:0.63rem;color:rgba(255,255,255,0.55);">Net per item</div>
               </div>
-              <div style="background:rgba(34,245,155,0.09);border:1px solid rgba(34,245,155,0.35);border-radius:10px;padding:7px 9px;">
-                <div style="font-size:0.62rem;color:#6bffc3;text-transform:uppercase;font-weight:700;">All-In / Item</div>
-                <div style="font-size:0.88rem;font-weight:900;color:#22f59b;">${money(calc.avgItemAllInFinal)}</div>
-                <div style="font-size:0.62rem;color:rgba(255,255,255,0.68);">${calc.includeTax ? `Incl. ${calc.taxRatePct.toFixed(2)}% tax` : 'Tax excluded'}</div>
+              <div style="background:linear-gradient(135deg,rgba(255,122,24,0.22),rgba(25,14,8,0.9));border:1px solid rgba(255,148,54,0.6);border-radius:11px;padding:8px 10px;">
+                <div style="font-size:0.62rem;color:#ffd5b0;text-transform:uppercase;font-weight:800;">All-In Final / Item</div>
+                <div style="font-size:0.92rem;font-weight:900;color:#ff9e44;">${money(calc.avgItemAllInFinal)}</div>
+                <div style="font-size:0.63rem;color:#ffffff;">${calc.includeTax ? `Incl. ${calc.taxRatePct.toFixed(2)}% tax` : 'Tax excluded'}</div>
               </div>
             </div>
 
-            <!-- PER-GARMENT / COLOR OVERALL SUMMARY -->
             ${calc.itemOverallGroups.length > 0 ? `
-              <div style="overflow-x:auto;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:11px;margin-bottom:12px;">
-                <table style="width:100%;border-collapse:collapse;font-size:0.73rem;">
+              <div style="overflow-x:auto;background:rgba(255,255,255,0.03);border:1px solid rgba(255,140,42,0.26);border-radius:12px;margin-bottom:13px;">
+                <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
                   <thead>
-                    <tr style="background:rgba(44,230,255,0.1);color:#9ef3ff;text-transform:uppercase;font-size:0.62rem;letter-spacing:0.05em;">
-                      <th style="padding:6px 8px;text-align:left;">Per-Garment Overall Summary</th>
-                      <th style="padding:6px;text-align:center;">Total Qty</th>
-                      <th style="padding:6px;text-align:right;">Overall Avg / Item</th>
-                      <th style="padding:6px 8px;text-align:right;">Item Subtotal</th>
+                    <tr style="background:rgba(255,122,24,0.16);color:#ffd5b0;text-transform:uppercase;font-size:0.64rem;letter-spacing:0.05em;">
+                      <th style="padding:7px 10px;text-align:left;">Per-Item Overall Summary</th>
+                      <th style="padding:7px 6px;text-align:center;">Total Qty</th>
+                      <th style="padding:7px 6px;text-align:right;">Overall Avg / Item</th>
+                      <th style="padding:7px 10px;text-align:right;">Item Subtotal</th>
                     </tr>
                   </thead>
                   <tbody>${overallGroupRowsHtml}</tbody>
@@ -1261,52 +1723,52 @@
             ` : ''}
 
             <!-- LINE-BY-LINE ITEMIZED RECEIPT TABLE -->
-            <div style="font-size:0.68rem;font-weight:800;color:#ffe89e;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">
-              &#129534; Line-by-Line Size Itemization
+            <div style="font-size:0.7rem;font-weight:800;color:#ffb36b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">
+              &#129534; Complete Line-by-Line Size Itemization
             </div>
-            <div style="overflow-x:auto;background:rgba(6,5,14,0.72);border:1px solid rgba(255,255,255,0.16);border-radius:11px;margin-bottom:12px;">
-              <table style="width:100%;border-collapse:collapse;font-size:0.74rem;">
+            <div style="overflow-x:auto;background:rgba(6,5,10,0.82);border:1px solid rgba(255,140,42,0.28);border-radius:12px;margin-bottom:13px;">
+              <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
                 <thead>
-                  <tr style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.82);text-transform:uppercase;font-size:0.63rem;letter-spacing:0.05em;">
-                    <th style="padding:7px 8px;text-align:left;">Garment / Color / Print Spec</th>
-                    <th style="padding:7px 6px;text-align:center;">Size</th>
-                    <th style="padding:7px 6px;text-align:center;">Qty</th>
-                    <th style="padding:7px 6px;text-align:right;">Unit Price</th>
-                    <th style="padding:7px 8px;text-align:right;">Line Total</th>
+                  <tr style="background:rgba(255,255,255,0.07);color:#ffd5b0;text-transform:uppercase;font-size:0.64rem;letter-spacing:0.05em;">
+                    <th style="padding:8px 10px;text-align:left;">Garment / Print Item &amp; Placement Specs</th>
+                    <th style="padding:8px 6px;text-align:center;">Size</th>
+                    <th style="padding:8px 6px;text-align:center;">Qty</th>
+                    <th style="padding:8px 6px;text-align:right;">Unit Price</th>
+                    <th style="padding:8px 10px;text-align:right;">Line Total</th>
                   </tr>
                 </thead>
                 <tbody>
-                  ${itemizedTableRows || '<tr><td colspan="5" style="padding:14px;text-align:center;color:rgba(255,255,255,0.55);">Enter shirt quantities in Step 1 to generate itemized receipt lines.</td></tr>'}
+                  ${itemizedTableRows || '<tr><td colspan="5" style="padding:14px;text-align:center;color:rgba(255,255,255,0.55);">Enter quantities in Step 1 (Youth, Adult, or Print Only) to generate itemized lines.</td></tr>'}
                 </tbody>
               </table>
             </div>
 
             <!-- RECEIPT SUBTOTAL, DISCOUNT % OFF, SALES TAX & GRAND TOTAL -->
-            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(245,196,81,0.32);border-radius:12px;padding:10px 13px;">
-              <div style="display:flex;justify-content:space-between;font-size:0.77rem;color:rgba(255,255,255,0.86);padding:2px 0;">
-                <span>Items Subtotal (${calc.totalShirts} pcs @ ${money(calc.avgItemPreDiscount)} avg):</span>
+            <div style="background:linear-gradient(135deg,rgba(255,115,20,0.1),rgba(10,8,12,0.92));border:1.5px solid rgba(255,140,42,0.52);border-radius:14px;padding:12px 15px;">
+              <div style="display:flex;justify-content:space-between;font-size:0.79rem;color:rgba(255,255,255,0.88);padding:2px 0;">
+                <span>Items Subtotal (${calc.totalShirts} items @ ${money(calc.avgItemPreDiscount)} avg):</span>
                 <strong>${money(calc.subtotalBeforeDiscount)}</strong>
               </div>
               ${discountRowHtml}
               ${taxRowHtml}
-              <div style="display:flex;justify-content:space-between;align-items:center;border-top:1.5px solid rgba(245,196,81,0.48);margin-top:7px;padding-top:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;border-top:1.5px solid rgba(255,140,42,0.55);margin-top:8px;padding-top:9px;">
                 <div>
-                  <strong style="font-family:'Orbitron',sans-serif;font-size:0.86rem;color:#ffe89e;">TOTAL QUOTE / RECEIPT</strong>
-                  <div style="font-size:0.66rem;color:#2ce6ff;">Overall Final Per-Item Cost: <strong>${money(calc.avgItemAllInFinal)} / shirt</strong></div>
+                  <strong style="font-family:'Orbitron',sans-serif;font-size:0.9rem;color:#ffffff;">GRAND TOTAL</strong>
+                  <div style="font-size:0.68rem;color:#ffb36b;">Overall Final Per-Item Cost: <strong>${money(calc.avgItemAllInFinal)} / item</strong></div>
                 </div>
-                <strong style="font-family:'Orbitron',sans-serif;font-size:1.15rem;color:#22f59b;">${money(calc.customerQuoteTotal)}</strong>
+                <strong style="font-family:'Orbitron',sans-serif;font-size:1.25rem;color:#ff9e44;">${money(calc.customerQuoteTotal)}</strong>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- PRIVATE OWNER INTERNAL COST & PROFIT LEDGER (NEVER SHOWN TO CLIENT) -->
+        <!-- PRIVATE OWNER INTERNAL COST & PROFIT LEDGER -->
         <div class="bq-cost-ledger">
           <div style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:#2ce6ff;font-weight:700;margin-bottom:2px;">
             &#128274; Owner Internal Cost &amp; Profit Breakdown (Hidden on Client PDF)
           </div>
           <div class="bq-ledger-row">
-            <span>S&amp;S Blank Shirts (${calc.totalAdultShirts} Adult + ${calc.totalYouthShirts} Youth)</span>
+            <span>S&amp;S Blank Shirts (${calc.totalAdultShirts} Adult + ${calc.totalYouthShirts} Youth${calc.totalPrintOnlyItems > 0 ? ` • ${calc.totalPrintOnlyItems} Print-Only @ $0` : ''})</span>
             <strong>${money(calc.blanksSubtotal)}</strong>
           </div>
           <div class="bq-ledger-row">
@@ -1314,15 +1776,15 @@
             <strong>${ssShipNote}</strong>
           </div>
           <div class="bq-ledger-row">
-            <span>DigitalPrintWorx DTF Gangsheets (${calc.sheetSolution.sheetAssignments.length} sheet${calc.sheetSolution.sheetAssignments.length === 1 ? '' : 's'})</span>
+            <span>DigitalPrintWorx DTF Gangsheets (${sheetCount} sheet${sheetCount === 1 ? '' : 's'})</span>
             <strong>${money(calc.sheetSolution.totalDtfCost)}</strong>
           </div>
           <div class="bq-ledger-row">
-            <span>DigitalPrintWorx DTF Shipping + Pressing/Handling (${calc.totalShirts} &times; ${money(state.pressLaborPerShirt)})</span>
+            <span>DigitalPrintWorx DTF Shipping + Pressing/Handling (${calc.totalPhysicalShirts} physical shirts &times; ${money(state.pressLaborPerShirt)})</span>
             <strong>${money(calc.dpwShippingUsd + calc.totalPressLaborUsd)}</strong>
           </div>
           <div class="bq-ledger-row total-cost">
-            <span>YOUR TRUE HARD COST (${money(calc.avgHardCostPerShirt)} avg / shirt)</span>
+            <span>YOUR TRUE HARD COST (${money(calc.avgHardCostPerShirt)} avg / item)</span>
             <strong>${money(calc.totalHardCostUsd)}</strong>
           </div>
           <div class="bq-ledger-row quote-price">
@@ -1341,95 +1803,103 @@
       `;
     }
 
-    drawGangsheetPreviewCanvas(calc);
+    renderAllGangsheetsGallery(calc);
   }
 
-  function drawGangsheetPreviewCanvas(calc) {
-    const canvas = document.getElementById('bqGangsheetCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const sheets = calc.sheetSolution.sheetAssignments;
+  // =========================================================================
+  // RENDER EVERY SINGLE NEEDED GANGSHEET + DOWNLOAD ALL 300 DPI SHEETS
+  // =========================================================================
+  function renderAllGangsheetsGallery(calc) {
+    const gallery = document.getElementById('bqAllGangsheetsGallery');
+    if (!gallery) return;
 
-    if (!sheets || sheets.length === 0) {
-      canvas.width = 560;
-      canvas.height = 190;
-      ctx.fillStyle = '#0c0a18';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
-      ctx.strokeRect(12, 12, canvas.width - 24, canvas.height - 24);
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.font = '600 13px Outfit, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('Live 27" Gangsheet Blueprint Appears Here', canvas.width / 2, canvas.height / 2);
+    const sheets = calc.sheetSolution.sheetAssignments || [];
+    if (sheets.length === 0) {
+      gallery.innerHTML = `<div style="padding:18px;text-align:center;color:rgba(255,255,255,0.6);font-size:0.8rem;border:1px dashed rgba(255,140,42,0.35);border-radius:12px;">Enter quantities in Step 1 to generate your packed gangsheet previews.</div>`;
       return;
     }
 
-    const maxPreviewSheets = Math.min(sheets.length, 3);
-    const pxPerIn = 13;
-    const pad = 22;
-    const headerH = 26;
-    const gapBetweenSheets = 20;
+    // Build cards for ALL sheets (1 .. N, never truncated!)
+    gallery.innerHTML = sheets.map((sa, sIdx) => {
+      const byLoc = {};
+      sa.boxes.forEach((b) => {
+        const key = `${b.shortLoc} (${b.sizeGroup === 'YOUTH' ? 'Youth' : 'Adult'})`;
+        byLoc[key] = (byLoc[key] || 0) + 1;
+      });
+      const summaryStr = Object.entries(byLoc).map(([k, cnt]) => `${cnt}&times; ${esc(k)}`).join(' &bull; ');
 
-    const sheetWpx = Math.round(calc.packRes.rollWidthIn * pxPerIn);
-    const maxHpx = Math.max(...sheets.slice(0, maxPreviewSheets).map((s) => Math.round(s.sheet.lengthIn * pxPerIn)));
+      return `
+        <div class="bq-single-sheet-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+            <div>
+              <strong style="font-family:'Orbitron',sans-serif;font-size:0.78rem;color:#ffb36b;">
+                SHEET #${sIdx + 1} OF ${sheets.length} &mdash; ${sa.sheet.widthIn}" &times; ${sa.sheet.lengthIn}" (${money(sa.sheet.priceUsd)})
+              </strong>
+              <div style="font-size:0.68rem;color:rgba(255,255,255,0.72);margin-top:2px;">
+                ${sa.boxes.length} logos on this sheet: ${summaryStr}
+              </div>
+            </div>
+            <button type="button" class="mini-btn" data-download-single-sheet="${sIdx}" style="padding:5px 10px;font-size:0.69rem;color:#ff9e44;border-color:rgba(255,140,42,0.55) !important;">
+              &#11015; Sheet #${sIdx + 1} (.PNG)
+            </button>
+          </div>
+          <div style="background:#07060d;border:1px solid rgba(255,255,255,0.16);border-radius:10px;padding:8px;text-align:center;overflow-x:auto;">
+            <canvas id="bqSheetCanvas_${sIdx}" style="max-width:100%;height:auto;border-radius:6px;"></canvas>
+          </div>
+        </div>
+      `;
+    }).join('');
 
-    canvas.width = pad * 2 + maxPreviewSheets * sheetWpx + (maxPreviewSheets - 1) * gapBetweenSheets;
-    canvas.height = pad * 2 + headerH + maxHpx + (sheets.length > maxPreviewSheets ? 26 : 6);
-
-    ctx.fillStyle = '#0a0814';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    for (let sIdx = 0; sIdx < maxPreviewSheets; sIdx++) {
-      const sa = sheets[sIdx];
-      const ox = pad + sIdx * (sheetWpx + gapBetweenSheets);
-      const oy = pad + headerH;
+    // Draw EVERY sheet's boxes & uploaded logos synchronously onto its canvas
+    const pxPerIn = 11.5;
+    sheets.forEach((sa, sIdx) => {
+      const canvas = document.getElementById(`bqSheetCanvas_${sIdx}`);
+      if (!canvas) return;
       const shW = Math.round(sa.sheet.widthIn * pxPerIn);
       const shH = Math.round(sa.sheet.lengthIn * pxPerIn);
+      canvas.width = shW;
+      canvas.height = shH;
 
-      ctx.fillStyle = '#ffe89e';
-      ctx.font = '700 11px Orbitron, sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText(`SHEET #${sIdx + 1}: ${sa.sheet.widthIn}"×${sa.sheet.lengthIn}" ($${sa.sheet.priceUsd.toFixed(2)})`, ox, oy - 8);
-
-      ctx.fillStyle = '#151226';
-      ctx.fillRect(ox, oy, shW, shH);
-      const sq = 10;
-      ctx.fillStyle = '#1d1933';
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#14111f';
+      ctx.fillRect(0, 0, shW, shH);
+      const sq = 9;
+      ctx.fillStyle = '#1c182b';
       for (let cy = 0; cy < shH; cy += sq) {
         for (let cx = 0; cx < shW; cx += sq) {
           if (((cx / sq + cy / sq) | 0) % 2 === 0) {
-            ctx.fillRect(ox + cx, oy + cy, Math.min(sq, shW - cx), Math.min(sq, shH - cy));
+            ctx.fillRect(cx, cy, Math.min(sq, shW - cx), Math.min(sq, shH - cy));
           }
         }
       }
 
       const usedPx = Math.round(sa.usedLinearIn * pxPerIn);
       if (usedPx < shH - 4) {
-        ctx.fillStyle = 'rgba(34, 245, 155, 0.06)';
-        ctx.fillRect(ox, oy + usedPx, shW, shH - usedPx);
-        ctx.strokeStyle = 'rgba(34, 245, 155, 0.45)';
+        ctx.fillStyle = 'rgba(34, 245, 155, 0.05)';
+        ctx.fillRect(0, usedPx, shW, shH - usedPx);
+        ctx.strokeStyle = 'rgba(34, 245, 155, 0.42)';
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
-        ctx.moveTo(ox, oy + usedPx);
-        ctx.lineTo(ox + shW, oy + usedPx);
+        ctx.moveTo(0, usedPx);
+        ctx.lineTo(shW, usedPx);
         ctx.stroke();
         ctx.setLineDash([]);
       }
 
       sa.boxes.forEach((b) => {
-        const bx = ox + Math.round(b.x * pxPerIn);
-        const by = oy + Math.round(b.localY * pxPerIn);
+        const bx = Math.round(b.x * pxPerIn);
+        const by = Math.round(b.localY * pxPerIn);
         const bw = Math.max(4, Math.round(b.w * pxPerIn));
         const bh = Math.max(4, Math.round(b.h * pxPerIn));
 
         const isYouthBox = b.sizeGroup === 'YOUTH';
-        const strokeCol = isYouthBox ? 'rgba(44, 230, 255, 0.92)' : 'rgba(245, 196, 81, 0.92)';
-        const fillCol = isYouthBox ? 'rgba(44, 230, 255, 0.14)' : 'rgba(245, 196, 81, 0.14)';
+        const strokeCol = isYouthBox ? 'rgba(44, 230, 255, 0.92)' : 'rgba(255, 140, 42, 0.92)';
+        const fillCol = isYouthBox ? 'rgba(44, 230, 255, 0.12)' : 'rgba(255, 122, 24, 0.14)';
 
         ctx.fillStyle = fillCol;
         ctx.fillRect(bx, by, bw, bh);
 
-        if (b.imgElement) {
+        if (b.renderSource) {
           ctx.save();
           ctx.beginPath();
           ctx.rect(bx + 1, by + 1, Math.max(1, bw - 2), Math.max(1, bh - 2));
@@ -1437,14 +1907,14 @@
           if (b.rotated) {
             ctx.translate(bx + bw / 2, by + bh / 2);
             ctx.rotate(Math.PI / 2);
-            drawContainImage(ctx, b.imgElement, -bh / 2 + 1, -bw / 2 + 1, bh - 2, bw - 2);
+            drawContainSource(ctx, b.renderSource, -bh / 2 + 1, -bw / 2 + 1, bh - 2, bw - 2);
           } else {
-            drawContainImage(ctx, b.imgElement, bx + 1, by + 1, bw - 2, bh - 2);
+            drawContainSource(ctx, b.renderSource, bx + 1, by + 1, bw - 2, bh - 2);
           }
           ctx.restore();
-        } else if (bw > 28 && bh > 14) {
-          ctx.fillStyle = isYouthBox ? '#9ef3ff' : '#ffe89e';
-          ctx.font = '700 8.5px Outfit, sans-serif';
+        } else if (bw > 26 && bh > 13) {
+          ctx.fillStyle = isYouthBox ? '#9ef3ff' : '#ffd5b0';
+          ctx.font = '700 8px Segoe UI, sans-serif';
           ctx.textAlign = 'center';
           ctx.fillText(`${isYouthBox ? 'Y ' : ''}${b.origW}"×${b.origH}"`, bx + bw / 2, by + bh / 2 + 3);
         }
@@ -1453,79 +1923,118 @@
         ctx.lineWidth = 1;
         ctx.strokeRect(bx, by, bw, bh);
       });
-
-      ctx.strokeStyle = 'rgba(245, 196, 81, 0.78)';
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(ox, oy, shW, shH);
-    }
-
-    if (sheets.length > maxPreviewSheets) {
-      ctx.fillStyle = '#2ce6ff';
-      ctx.font = '600 12px Outfit, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(`+ ${sheets.length - maxPreviewSheets} additional packed sheet(s) included in total above`, canvas.width / 2, canvas.height - 8);
-    }
+    });
   }
 
-  function exportPackedGangsheet300DpiPng() {
+  function renderSingleGangsheetBlob(sa) {
+    return new Promise((resolve) => {
+      let dpi = 300;
+      if (sa.sheet.lengthIn * dpi > 15800) {
+        dpi = Math.floor(15800 / sa.sheet.lengthIn);
+      }
+      const outCanvas = document.createElement('canvas');
+      outCanvas.width = Math.round(sa.sheet.widthIn * dpi);
+      outCanvas.height = Math.round(sa.sheet.lengthIn * dpi);
+      const octx = outCanvas.getContext('2d');
+      octx.clearRect(0, 0, outCanvas.width, outCanvas.height);
+
+      sa.boxes.forEach((b) => {
+        if (!b.renderSource) return;
+        const bx = Math.round(b.x * dpi);
+        const by = Math.round(b.localY * dpi);
+        const bw = Math.round(b.w * dpi);
+        const bh = Math.round(b.h * dpi);
+        octx.save();
+        if (b.rotated) {
+          octx.translate(bx + bw / 2, by + bh / 2);
+          octx.rotate(Math.PI / 2);
+          drawContainSource(octx, b.renderSource, -bh / 2, -bw / 2, bh, bw);
+        } else {
+          drawContainSource(octx, b.renderSource, bx, by, bw, bh);
+        }
+        octx.restore();
+      });
+
+      outCanvas.toBlob((blob) => resolve({ blob, dpi }), 'image/png');
+    });
+  }
+
+  function triggerBlobDownload(blob, filename) {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1500);
+  }
+
+  async function downloadSingleSheetByIndex(sheetIndex) {
+    const calc = state.lastCalculation;
+    if (!calc || !calc.sheetSolution.sheetAssignments[sheetIndex]) return;
+    const anyArt = state.dtfPlacements.some((p) => p.enabled !== false && (p.origCanvas || p.trimmedCanvas));
+    if (!anyArt) {
+      alert('Please upload at least one DTF artwork file (.PNG or .SVG) in Step 2 first so your logos can be rendered onto the 300 DPI gangsheet!');
+      return;
+    }
+    const sheets = calc.sheetSolution.sheetAssignments;
+    const sa = sheets[sheetIndex];
+    const cleanName = (state.customer.projectName || state.customer.companyOrTeam || 'RetroCanopy_BulkOrder').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const { blob, dpi } = await renderSingleGangsheetBlob(sa);
+    triggerBlobDownload(blob, `${cleanName}_Sheet_${sheetIndex + 1}_of_${sheets.length}_${sa.sheet.widthIn}x${sa.sheet.lengthIn}_${dpi}DPI.png`);
+  }
+
+  async function exportAllPackedGangsheets300DpiPng() {
     const calc = state.lastCalculation;
     if (!calc || !calc.sheetSolution.sheetAssignments.length) {
-      alert('Add shirt quantities and upload your DTF file first to generate a 300 DPI gangsheet.');
+      alert('Add item quantities and upload your DTF file(s) first to generate 300 DPI gangsheets.');
       return;
     }
-    const hasUploadedArt = state.dtfPlacements.some((p) => p.enabled !== false && p.imgElement);
-    if (!hasUploadedArt) {
-      alert('Please upload your project DTF artwork file (.PNG or .SVG) in Step 2 first so we can tile your 300 DPI graphic onto the gangsheet!');
+    const missingArtPlacements = calc.activePlacements.filter((p) => !p.origCanvas && !p.trimmedCanvas);
+    const hasAnyArt = calc.activePlacements.some((p) => p.origCanvas || p.trimmedCanvas);
+    if (!hasAnyArt) {
+      alert('Please upload your project DTF artwork file(s) (.PNG or .SVG) in Step 2 first so we can tile all your logos onto the 300 DPI gangsheets!');
       return;
     }
-
-    const sa = calc.sheetSolution.sheetAssignments[0];
-    let dpi = 300;
-    if (sa.sheet.lengthIn * dpi > 15800) {
-      dpi = Math.floor(15800 / sa.sheet.lengthIn);
+    if (missingArtPlacements.length > 0) {
+      const names = missingArtPlacements.map((p) => p.locationLabel).join(', ');
+      const ok = confirm(`Heads up: Placement "${names}" has no uploaded file yet (its slots will be left transparent). Download all gangsheets with your uploaded logo(s) now?`);
+      if (!ok) return;
     }
 
-    const outCanvas = document.createElement('canvas');
-    outCanvas.width = Math.round(sa.sheet.widthIn * dpi);
-    outCanvas.height = Math.round(sa.sheet.lengthIn * dpi);
-    const octx = outCanvas.getContext('2d');
-    octx.clearRect(0, 0, outCanvas.width, outCanvas.height);
+    const sheets = calc.sheetSolution.sheetAssignments;
+    const btn = document.getElementById('bqExportGangsheetPngBtn');
+    const cleanName = (state.customer.projectName || state.customer.companyOrTeam || 'RetroCanopy_BulkOrder').replace(/[^a-zA-Z0-9_-]/g, '_');
 
-    sa.boxes.forEach((b) => {
-      if (!b.imgElement) return;
-      const bx = Math.round(b.x * dpi);
-      const by = Math.round(b.localY * dpi);
-      const bw = Math.round(b.w * dpi);
-      const bh = Math.round(b.h * dpi);
-      octx.save();
-      if (b.rotated) {
-        octx.translate(bx + bw / 2, by + bh / 2);
-        octx.rotate(Math.PI / 2);
-        drawContainImage(octx, b.imgElement, -bh / 2, -bw / 2, bh, bw);
-      } else {
-        drawContainImage(octx, b.imgElement, bx, by, bw, bh);
+    if (btn) btn.dataset.downloading = '1';
+
+    for (let i = 0; i < sheets.length; i++) {
+      const sa = sheets[i];
+      if (btn) {
+        btn.innerHTML = `&#9203; Rendering Sheet ${i + 1} of ${sheets.length} (${sa.sheet.widthIn}"&times;${sa.sheet.lengthIn}")...`;
       }
-      octx.restore();
-    });
+      const { blob, dpi } = await renderSingleGangsheetBlob(sa);
+      triggerBlobDownload(blob, `${cleanName}_Sheet_${i + 1}_of_${sheets.length}_${sa.sheet.widthIn}x${sa.sheet.lengthIn}_${dpi}DPI.png`);
+      if (i < sheets.length - 1) {
+        await new Promise((r) => setTimeout(r, 420));
+      }
+    }
 
-    outCanvas.toBlob((blob) => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      const cleanName = (state.customer.projectName || state.customer.companyOrTeam || 'RetroCanopy_BulkProject').replace(/[^a-zA-Z0-9_-]/g, '_');
-      a.href = url;
-      a.download = `${cleanName}_${sa.sheet.widthIn}x${sa.sheet.lengthIn}_GangSheet_${dpi}DPI.png`;
-      document.body.appendChild(a);
-      a.click();
+    if (btn) {
+      btn.innerHTML = `&#10003; Downloaded All ${sheets.length} Gangsheet${sheets.length === 1 ? '' : 's'}!`;
       setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 1000);
-    }, 'image/png');
+        delete btn.dataset.downloading;
+        renderSummaryAndCanvas();
+      }, 2600);
+    }
   }
 
   // =========================================================================
-  // RENDER GARMENT LINES (DIRECT S&S SIZE PRICING — NO EXTRA UPCHARGE BADGES)
+  // RENDER GARMENT LINES (INCLUDES PRINT ONLY $0.00 + YOUTH + ADULT SIZES)
   // =========================================================================
   function renderGarmentLinesList() {
     const container = document.getElementById('bqGarmentLinesContainer');
@@ -1549,22 +2058,27 @@
       ).join('');
 
       const buildSizeCell = (sz) => {
+        const printOnly = isPrintOnlySize(sz);
+        const youth = isYouthSize(sz);
         const unitP = getBlankUnitPrice(line.styleCode, line.colorName, sz);
         const qtyVal = line.quantities[sz] || 0;
         const liveStock = getLiveStockBadge(line.styleCode, line.colorName, sz);
         const stockTag = liveStock !== null
           ? `<span class="bq-stock-micro">${liveStock} stk</span>`
           : '';
+        const extraCls = printOnly ? 'print-only-cell' : (youth ? 'youth-cell' : '');
+        const lblColor = printOnly ? 'color:#ff9e44;' : (youth ? 'color:#2ce6ff;' : '');
         return `
-          <div class="bq-size-cell ${qtyVal > 0 ? 'has-qty' : ''} ${isYouthSize(sz) ? 'youth-cell' : ''}">
-            <label class="bq-size-label" style="${isYouthSize(sz) ? 'color:#2ce6ff;' : ''}">${sz}</label>
-            <input type="number" min="0" max="9999" step="1" class="bq-size-input" data-line-id="${line.id}" data-size-key="${sz}" value="${qtyVal || ''}" placeholder="0">
-            <span class="bq-size-price">${money(unitP)}</span>
+          <div class="bq-size-cell ${qtyVal > 0 ? 'has-qty' : ''} ${extraCls}">
+            <label class="bq-size-label" style="${lblColor}">${esc(sz)}</label>
+            <input type="number" min="0" max="9999" step="1" class="bq-size-input" data-line-id="${line.id}" data-size-key="${esc(sz)}" value="${qtyVal || ''}" placeholder="0">
+            <span class="bq-size-price" style="${printOnly ? 'color:#ffb36b;font-weight:800;' : ''}">${printOnly ? '$0.00 Blank' : money(unitP)}</span>
             ${stockTag}
           </div>
         `;
       };
 
+      const printOnlyHtml = buildSizeCell(PRINT_ONLY_KEY);
       const youthGridHtml = YOUTH_SIZES.map(buildSizeCell).join('');
       const adultGridHtml = ADULT_SIZES.map(buildSizeCell).join('');
 
@@ -1594,9 +2108,9 @@
             </div>
 
             <div style="display:flex;align-items:center;gap:10px;">
-              <span class="tag-pill" id="bqLineQty_${line.id}" style="background:rgba(44,230,255,0.16);color:#2ce6ff;border:1px solid rgba(44,230,255,0.4);">0 pcs</span>
+              <span class="tag-pill" id="bqLineQty_${line.id}" style="background:rgba(255,122,24,0.18);color:#ffb36b;border:1px solid rgba(255,140,42,0.5);">0 pcs</span>
               <strong id="bqLineSub_${line.id}" style="color:#ffe89e;font-size:0.86rem;">Blanks: $0.00</strong>
-              ${state.garmentLines.length > 1 ? `<button type="button" class="mini-btn" data-remove-line="${line.id}" style="padding:4px 9px;color:#ff85b3;border-color:rgba(255,79,163,0.45) !important;" title="Remove this shirt row">&times;</button>` : ''}
+              ${state.garmentLines.length > 1 ? `<button type="button" class="mini-btn" data-remove-line="${line.id}" style="padding:4px 9px;color:#ff85b3;border-color:rgba(255,79,163,0.45) !important;" title="Remove this row">&times;</button>` : ''}
             </div>
           </div>
 
@@ -1608,12 +2122,25 @@
             ${swatchesHtml}
           </div>
 
-          <!-- YOUTH SIZES STRIP -->
-          <div style="font-size:0.68rem;font-weight:700;color:#2ce6ff;text-transform:uppercase;letter-spacing:0.05em;margin:6px 0 4px;">
-            Youth Sizes (${esc(cat.youthStyleCode)} &bull; Item #${esc(cat.youthItemNumber)}) — Auto-Scales DTF Prints to Youth Dimensions:
-          </div>
-          <div class="bq-sizes-grid" style="grid-template-columns:repeat(5,minmax(62px,1fr));max-width:520px;margin-bottom:10px;">
-            ${youthGridHtml}
+          <!-- PRINT ONLY ($0 BLANK) + YOUTH SIZES ROW -->
+          <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;margin:8px 0 10px;">
+            <div style="min-width:145px;">
+              <div style="font-size:0.68rem;font-weight:800;color:#ff9e44;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
+                Print-Only Orders ($0 Blank):
+              </div>
+              <div style="max-width:165px;">
+                ${printOnlyHtml}
+              </div>
+            </div>
+
+            <div style="flex:1;min-width:290px;">
+              <div style="font-size:0.68rem;font-weight:700;color:#2ce6ff;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
+                Youth Sizes (${esc(cat.youthStyleCode)} &bull; Item #${esc(cat.youthItemNumber)}) — Auto-Scales DTF Prints:
+              </div>
+              <div class="bq-sizes-grid" style="grid-template-columns:repeat(5,minmax(62px,1fr));max-width:520px;">
+                ${youthGridHtml}
+              </div>
+            </div>
           </div>
 
           <!-- ADULT SIZES STRIP -->
@@ -1645,8 +2172,8 @@
     container.innerHTML = state.dtfPlacements.map((p, idx) => {
       const previewUrl = p.autoTrimTransparent && p.trimmedDataUrl ? p.trimmedDataUrl : p.dataUrl;
       const metaInfo = p.fileName
-        ? `<div style="font-size:0.71rem;color:#22f59b;margin-top:4px;">&#10003; <strong>${esc(p.fileName)}</strong> &bull; Fitted cleanly to Adult <strong>${p.adultWidthIn}"&times;${p.adultHeightIn}"</strong> &amp; Youth <strong>${p.youthWidthIn}"&times;${p.youthHeightIn}"</strong></div>`
-        : `<div style="font-size:0.71rem;color:rgba(255,255,255,0.62);margin-top:4px;">Upload your transparent <code>.PNG</code> or <code>.SVG</code> file — auto-sized to <strong>${p.adultWidthIn}"&times;${p.adultHeightIn}"</strong> (Adult) &amp; <strong>${p.youthWidthIn}"&times;${p.youthHeightIn}"</strong> (Youth).</div>`;
+        ? `<div style="font-size:0.71rem;color:#22f59b;margin-top:4px;">&#10003; <strong>${esc(p.fileName)}</strong> &bull; Active on Garment Mockup &amp; Gangsheets (Adult <strong>${p.adultWidthIn}"&times;${p.adultHeightIn}"</strong> | Youth <strong>${p.youthWidthIn}"&times;${p.youthHeightIn}"</strong>)</div>`
+        : `<div style="font-size:0.71rem;color:rgba(255,255,255,0.65);margin-top:4px;">Upload your transparent <code>.PNG</code> or <code>.SVG</code> file — auto-sized to <strong>${p.adultWidthIn}"&times;${p.adultHeightIn}"</strong> (Adult) &amp; <strong>${p.youthWidthIn}"&times;${p.youthHeightIn}"</strong> (Youth).</div>`;
 
       const presetButtons = presets.map((pr) =>
         `<button type="button" class="bq-preset-chip" data-dtf-preset="${p.id}" data-ploc="${esc(pr.loc)}" data-aw="${pr.aw}" data-ah="${pr.ah}" data-yw="${pr.yw}" data-yh="${pr.yh}">${pr.label}</button>`
@@ -1660,7 +2187,7 @@
                 <input type="checkbox" data-dtf-enabled="${p.id}" ${p.enabled !== false ? 'checked' : ''}>
                 Include Placement #${idx + 1}
               </label>
-              <input type="text" class="bq-input" data-dtf-label="${p.id}" value="${esc(p.locationLabel)}" placeholder="Placement Location" style="min-width:230px;font-weight:700;color:#ffe89e;">
+              <input type="text" class="bq-input" data-dtf-label="${p.id}" value="${esc(p.locationLabel)}" placeholder="Placement Location" style="min-width:230px;font-weight:700;color:#ffb36b;">
             </div>
             ${state.dtfPlacements.length > 1 ? `<button type="button" class="mini-btn" data-remove-dtf="${p.id}" style="padding:4px 9px;color:#ff85b3;">&times; Delete</button>` : ''}
           </div>
@@ -1673,20 +2200,20 @@
                    <span class="bq-reupload-pill">&#128194; Replace DTF File</span>`
                 : `<div style="text-align:center;padding:12px;">
                      <div style="font-size:1.45rem;margin-bottom:3px;">&#128228;</div>
-                     <div style="font-size:0.76rem;font-weight:700;color:#ffe89e;">Upload ${esc(p.locationLabel)} File</div>
-                     <div style="font-size:0.67rem;color:rgba(255,255,255,0.62);margin-top:2px;">Drag &amp; Drop or Click (.PNG / .SVG)</div>
+                     <div style="font-size:0.76rem;font-weight:700;color:#ffb36b;">Upload ${esc(p.locationLabel)} Logo</div>
+                     <div style="font-size:0.67rem;color:rgba(255,255,255,0.62);margin-top:2px;">Appears on Shirt Mockup + All Gangsheets</div>
                    </div>`
               }
             </label>
 
             <div style="display:flex;flex-direction:column;gap:8px;justify-content:space-between;">
               <div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;">
-                <div style="background:rgba(245,196,81,0.08);border:1px solid rgba(245,196,81,0.35);border-radius:10px;padding:7px 10px;">
-                  <div class="bq-field-lbl" style="color:#ffe89e;">Adult Print Size (XS–6XL Inches)</div>
+                <div style="background:rgba(255,122,24,0.1);border:1px solid rgba(255,140,42,0.42);border-radius:10px;padding:7px 10px;">
+                  <div class="bq-field-lbl" style="color:#ffb36b;">Adult / Print-Only Size (Inches)</div>
                   <div style="display:flex;align-items:center;gap:6px;">
-                    <input type="number" min="0.5" max="26.5" step="0.1" class="bq-input" data-dtf-aw="${p.id}" value="${p.adultWidthIn}" style="width:82px;font-weight:700;color:#ffe89e;">
+                    <input type="number" min="0.5" max="26.5" step="0.1" class="bq-input" data-dtf-aw="${p.id}" value="${p.adultWidthIn}" style="width:82px;font-weight:700;color:#ffb36b;">
                     <span>&times;</span>
-                    <input type="number" min="0.5" max="95" step="0.1" class="bq-input" data-dtf-ah="${p.id}" value="${p.adultHeightIn}" style="width:82px;font-weight:700;color:#ffe89e;">
+                    <input type="number" min="0.5" max="95" step="0.1" class="bq-input" data-dtf-ah="${p.id}" value="${p.adultHeightIn}" style="width:82px;font-weight:700;color:#ffb36b;">
                     <span style="font-size:0.72rem;color:rgba(255,255,255,0.65);">in</span>
                   </div>
                 </div>
@@ -1713,7 +2240,7 @@
               </div>
 
               <div>
-                <div class="bq-field-lbl" style="margin-bottom:4px;">Quick Placement Presets (Updates Adult &amp; Youth Print Sizes Together):</div>
+                <div class="bq-field-lbl" style="margin-bottom:4px;">Quick Placement Presets:</div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap;">
                   ${presetButtons}
                 </div>
@@ -1799,14 +2326,17 @@
   }
 
   // =========================================================================
-  // SAVED QUOTES, CLIENT TEXT COPY & OFFICIAL BRANDED QUOTE / RECEIPT PDF
+  // SAVED QUOTES, CLIENT TEXT COPY & BLACK/ORANGE LIQUID GLASS QUOTE PDF
   // =========================================================================
   function getSavedQuotes() {
     try {
-      const v3 = JSON.parse(localStorage.getItem(SAVED_QUOTES_KEY) || 'null');
-      if (Array.isArray(v3)) return v3;
-      const v2 = JSON.parse(localStorage.getItem(LEGACY_QUOTES_KEY) || '[]');
-      return Array.isArray(v2) ? v2 : [];
+      const v4 = JSON.parse(localStorage.getItem(SAVED_QUOTES_KEY) || 'null');
+      if (Array.isArray(v4)) return v4;
+      for (const k of LEGACY_QUOTES_KEYS) {
+        const leg = JSON.parse(localStorage.getItem(k) || 'null');
+        if (Array.isArray(leg)) return leg;
+      }
+      return [];
     } catch (_) {
       return [];
     }
@@ -1824,14 +2354,14 @@
     el.innerHTML = list.map((q) => `
       <div class="bq-saved-quote-row">
         <div>
-          <strong style="color:#ffe89e;">${esc(q.projectName || 'Custom Dri-Fit Order')}</strong>
+          <strong style="color:#ffb36b;">${esc(q.projectName || 'Custom Apparel Order')}</strong>
           <span style="font-size:0.73rem;color:#2ce6ff;margin-left:6px;">${esc(q.clientLabel || '')}</span>
           <div style="font-size:0.7rem;color:rgba(255,255,255,0.68);margin-top:2px;">
-            ${q.totalShirts} shirts &bull; Total: <strong style="color:#22f59b;">${money(q.customerQuoteTotal)}</strong> (Profit: ${q.netProfitUsd >= 0 ? '+' : ''}${money(q.netProfitUsd)}) &bull; ${esc(q.savedAtFormatted)}
+            ${q.totalShirts} items &bull; Total: <strong style="color:#22f59b;">${money(q.customerQuoteTotal)}</strong> (Profit: ${q.netProfitUsd >= 0 ? '+' : ''}${money(q.netProfitUsd)}) &bull; ${esc(q.savedAtFormatted)}
           </div>
         </div>
         <div style="display:flex;gap:6px;">
-          <button type="button" class="mini-btn" data-load-quote="${esc(q.quoteId)}" style="padding:5px 10px;font-size:0.7rem;color:#2ce6ff;">Load</button>
+          <button type="button" class="mini-btn" data-load-quote="${esc(q.quoteId)}" style="padding:5px 10px;font-size:0.7rem;color:#ffb36b;">Load</button>
           <button type="button" class="mini-btn" data-delete-quote="${esc(q.quoteId)}" style="padding:5px 9px;font-size:0.7rem;color:#ff85b3;">&times;</button>
         </div>
       </div>
@@ -1841,7 +2371,7 @@
   function saveCurrentQuote() {
     const calc = state.lastCalculation;
     if (!calc || calc.totalShirts === 0) {
-      alert('Enter at least 1 shirt before saving a quote.');
+      alert('Enter at least 1 item before saving a quote.');
       return;
     }
     triggerAutoSaveCustomer();
@@ -1849,7 +2379,7 @@
     const entry = {
       quoteId: 'BQ-' + Math.floor(100000 + Math.random() * 900000),
       savedAtFormatted: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-      projectName: state.customer.projectName || state.customer.companyOrTeam || 'Custom Dri-Fit Bulk Order',
+      projectName: state.customer.projectName || state.customer.companyOrTeam || 'Custom Bulk Order',
       clientLabel: [state.customer.fullName, state.customer.companyOrTeam].filter(Boolean).join(' • '),
       totalShirts: calc.totalShirts,
       totalHardCostUsd: calc.totalHardCostUsd,
@@ -1897,10 +2427,11 @@
     const calc = state.lastCalculation;
     if (!calc || calc.totalShirts === 0) return 'No items in quote yet.';
     const c = state.customer;
-    const proj = c.projectName || c.companyOrTeam || 'Custom Performance Apparel Order';
+    const proj = c.projectName || c.companyOrTeam || 'Custom Performance Apparel & Print Order';
     const out = [
       `======================================================================`,
-      `RETROCANOPY — OFFICIAL ITEMIZED APPAREL QUOTE & RECEIPT`,
+      `RETROCANOPY — OFFICIAL ITEMIZED QUOTE & RECEIPT`,
+      `Apparel • Websites • Marketing • Apps • Games • Custom 3D Prints`,
       `Website: https://www.retrocanopy.com`,
       `Project: ${proj}`,
       `Date:    ${new Date().toLocaleDateString()}`
@@ -1914,7 +2445,7 @@
     calc.itemOverallGroups.forEach((g) => {
       const avgUsed = calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount;
       const subUsed = calc.discountPct > 0 ? g.groupSubtotalAfterDiscount : g.groupSubtotalPreDiscount;
-      out.push(`• ${g.brand} ${g.styleBadge} (${g.colorName}) — ${g.totalQty} pcs [${g.sizeBreakdownStr}] | Overall Avg: ${money(avgUsed)}/item | Group Total: ${money(subUsed)}`);
+      out.push(`• ${g.brand} ${g.styleBadge} (${g.colorName}) — ${g.totalQty} pcs [${g.sizeBreakdownStr}] | Avg: ${money(avgUsed)}/item | Group Total: ${money(subUsed)}`);
     });
 
     out.push(`----------------------------------------------------------------------`);
@@ -1924,7 +2455,7 @@
     });
 
     out.push(`----------------------------------------------------------------------`);
-    out.push(`Items Subtotal (${calc.totalShirts} pcs @ ${money(calc.avgItemPreDiscount)}/item): ${money(calc.subtotalBeforeDiscount)}`);
+    out.push(`Items Subtotal (${calc.totalShirts} items @ ${money(calc.avgItemPreDiscount)}/item): ${money(calc.subtotalBeforeDiscount)}`);
     if (calc.discountPct > 0) {
       out.push(`Discount (${calc.discountLabel} — ${calc.discountPct}% OFF): -${money(calc.discountAmountUsd)}`);
       out.push(`Discounted Subtotal (${money(calc.avgItemAfterDiscount)}/item): ${money(calc.subtotalAfterDiscount)}`);
@@ -1942,26 +2473,31 @@
   function printCustomerQuoteSheet() {
     const calc = state.lastCalculation;
     if (!calc || calc.totalShirts === 0) {
-      alert('Enter shirt quantities in Step 1 before generating the Official Quote / Receipt PDF.');
+      alert('Enter item quantities in Step 1 before generating the Official Quote / Receipt PDF.');
       return;
     }
 
-    const logoUrl = getOfficialLogoUrl();
+    const logoUrl = getAssetUrl('assets/logo.png');
+    const projectedMockupUrl = calc.projectedMockupUrl || renderProjectedFinishedItemDataUrl(calc);
     const c = state.customer;
     const quoteNumber = 'RC-Q' + String(Date.now()).slice(-6);
     const issueDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     const validUntilDate = new Date(Date.now() + 30 * 86400000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-    const proj = c.projectName || c.companyOrTeam || 'Custom Performance Apparel Order';
+    const proj = c.projectName || c.companyOrTeam || 'Custom Performance Apparel & Print Order';
+
+    const capPillsPdf = STUDIO_CAPABILITIES.map((cap) =>
+      `<span style="display:inline-block;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;background:rgba(255,122,24,0.22);border:1px solid rgba(255,148,54,0.65);color:#ffd5b0;">${esc(cap)}</span>`
+    ).join(' ');
 
     const placementsHtml = calc.activePlacements.map((p) => `
-      <div style="display:flex;align-items:center;gap:10px;border:1px solid #e2e8f0;border-radius:10px;padding:8px 11px;background:#f8fafc;margin-bottom:6px;">
-        ${p.dataUrl ? `<img src="${p.trimmedDataUrl || p.dataUrl}" style="width:46px;height:46px;object-fit:contain;background:#0f172a;border-radius:8px;padding:4px;border:1px solid #cbd5e1;">` : ''}
+      <div style="display:flex;align-items:center;gap:10px;border:1px solid rgba(255,140,42,0.32);border-radius:10px;padding:8px 11px;background:#141118;margin-bottom:6px;">
+        ${p.dataUrl ? `<img src="${p.trimmedDataUrl || p.dataUrl}" style="width:44px;height:44px;object-fit:contain;background:#09080c;border-radius:8px;padding:4px;border:1px solid rgba(255,140,42,0.45);">` : ''}
         <div>
-          <div style="font-weight:800;font-size:12.5px;color:#0f172a;">${esc(p.locationLabel)}</div>
-          <div style="font-size:11.5px;color:#475569;margin-top:1px;">
-            Adult (XS–6XL): <strong>${p.adultWidthIn}" &times; ${p.adultHeightIn}"</strong>
+          <div style="font-weight:800;font-size:12px;color:#ffffff;">${esc(p.locationLabel)}</div>
+          <div style="font-size:11px;color:#cbd5e1;margin-top:1px;">
+            Adult / Print: <strong style="color:#ffb36b;">${p.adultWidthIn}" &times; ${p.adultHeightIn}"</strong>
             &nbsp;&bull;&nbsp;
-            Youth (YXS–YXL): <strong>${p.youthWidthIn}" &times; ${p.youthHeightIn}"</strong>
+            Youth: <strong style="color:#67e8f9;">${p.youthWidthIn}" &times; ${p.youthHeightIn}"</strong>
           </div>
         </div>
       </div>
@@ -1969,62 +2505,62 @@
 
     const overallGroupPdfRows = calc.itemOverallGroups.map((g) => `
       <tr>
-        <td style="padding:9px 11px;border-bottom:1px solid #e2e8f0;">
+        <td style="padding:9px 11px;border-bottom:1px solid rgba(255,255,255,0.1);">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span style="width:13px;height:13px;border-radius:50%;background:${esc(g.colorHex)};border:1px solid #94a3b8;display:inline-block;flex-shrink:0;"></span>
-            <strong style="color:#0f172a;">${esc(g.brand)} ${esc(g.styleBadge)}</strong>
-            <span style="color:#475569;">&mdash; ${esc(g.colorName)}</span>
+            <span style="width:13px;height:13px;border-radius:50%;background:${esc(g.colorHex)};border:1px solid rgba(255,255,255,0.6);display:inline-block;flex-shrink:0;"></span>
+            <strong style="color:#ffffff;">${esc(g.brand)} ${esc(g.styleBadge)}</strong>
+            <span style="color:#ffb36b;">&mdash; ${esc(g.colorName)}</span>
           </div>
-          <div style="font-size:11px;color:#64748b;margin-top:2px;">Size Mix: ${esc(g.sizeBreakdownStr)}</div>
+          <div style="font-size:11px;color:#94a3b8;margin-top:2px;">Sizes: ${esc(g.sizeBreakdownStr)}</div>
         </td>
-        <td style="padding:9px 10px;border-bottom:1px solid #e2e8f0;text-align:center;font-weight:800;color:#0f172a;">${g.totalQty} pcs</td>
-        <td style="padding:9px 10px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;color:#0f172a;">${money(calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount)} / item</td>
-        <td style="padding:9px 11px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:800;color:#0f172a;">${money(calc.discountPct > 0 ? g.groupSubtotalAfterDiscount : g.groupSubtotalPreDiscount)}</td>
+        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:center;font-weight:800;color:#ffb36b;">${g.totalQty} pcs</td>
+        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;font-weight:700;color:#ffe2c4;">${money(calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount)} / item</td>
+        <td style="padding:9px 11px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;font-weight:800;color:#ff9e44;">${money(calc.discountPct > 0 ? g.groupSubtotalAfterDiscount : g.groupSubtotalPreDiscount)}</td>
       </tr>
     `).join('');
 
     const rowsHtml = calc.itemizedLines.map((r, idx) => `
-      <tr style="background:${idx % 2 === 1 ? '#f8fafc' : '#ffffff'};">
-        <td style="padding:9px 10px;border-bottom:1px solid #e2e8f0;text-align:center;font-weight:700;color:#64748b;">${r.lineNumber}</td>
-        <td style="padding:9px 10px;border-bottom:1px solid #e2e8f0;">
+      <tr style="background:${idx % 2 === 1 ? 'rgba(255,255,255,0.03)' : 'transparent'};">
+        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;font-weight:700;color:#94a3b8;">${r.lineNumber}</td>
+        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);">
           <div style="display:flex;align-items:center;gap:7px;">
-            <span style="width:12px;height:12px;border-radius:50%;background:${esc(r.colorHex)};border:1px solid #94a3b8;display:inline-block;flex-shrink:0;"></span>
-            <strong style="color:#0f172a;">${esc(r.brand)} ${esc(r.styleCode)}</strong>
-            <span style="font-size:11.5px;color:#475569;">&mdash; ${esc(r.garmentTitle)}</span>
+            <span style="width:12px;height:12px;border-radius:50%;background:${esc(r.colorHex)};border:1px solid rgba(255,255,255,0.55);display:inline-block;flex-shrink:0;"></span>
+            <strong style="color:#ffffff;">${esc(r.brand)} ${esc(r.styleCode)}</strong>
+            <span style="font-size:11.5px;color:#cbd5e1;">&mdash; ${esc(r.garmentTitle)}</span>
           </div>
-          <div style="font-size:11px;color:#64748b;margin-top:2px;">
-            Color: <strong style="color:#334155;">${esc(r.colorName)}</strong> &bull; Custom Print: ${esc(r.printSpecSummary)}
+          <div style="font-size:11px;color:#94a3b8;margin-top:2px;">
+            Color: <strong style="color:#ffd5b0;">${esc(r.colorName)}</strong> &bull; Custom Print: ${esc(r.printSpecSummary)}
           </div>
         </td>
-        <td style="padding:9px 10px;border-bottom:1px solid #e2e8f0;text-align:center;font-weight:800;color:#0f172a;">
-          <span style="display:inline-block;padding:2px 8px;border-radius:6px;background:${r.isYouth ? '#e0f2fe' : '#fef3c7'};color:${r.isYouth ? '#0369a1' : '#92400e'};font-size:11.5px;">${esc(r.sizeName)}</span>
+        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;font-weight:800;">
+          <span style="display:inline-block;padding:2px 8px;border-radius:6px;background:${r.isPrintOnly ? 'rgba(255,122,24,0.25)' : (r.isYouth ? 'rgba(44,230,255,0.18)' : 'rgba(255,196,81,0.18)')};color:${r.isPrintOnly ? '#ffb36b' : (r.isYouth ? '#67e8f9' : '#ffe89e')};font-size:11px;">${esc(r.sizeName)}</span>
         </td>
-        <td style="padding:9px 10px;border-bottom:1px solid #e2e8f0;text-align:center;font-weight:800;color:#0f172a;">${r.qty}</td>
-        <td style="padding:9px 10px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:700;color:#0f172a;">${money(r.unitPriceQuoted)}</td>
-        <td style="padding:9px 11px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:800;color:#0f172a;">${money(r.lineTotalQuoted)}</td>
+        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;font-weight:800;color:#ffffff;">${r.qty}</td>
+        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:right;font-weight:700;color:#ffe2c4;">${money(r.unitPriceQuoted)}</td>
+        <td style="padding:9px 11px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:right;font-weight:800;color:#ff9e44;">${money(r.lineTotalQuoted)}</td>
       </tr>
     `).join('');
 
     const usedParentStyles = Array.from(new Set(state.garmentLines.map((l) => l.styleCode)));
     if (usedParentStyles.length === 0) usedParentStyles.push('TT11');
 
-    const colorsSectionHtml = state.includeAvailableColorsOnPdf ? usedParentStyles.map((stCode) => {
+    const colorsSectionHtml = (state.includeAvailableColorsOnPdf && calc.totalPhysicalShirts > 0) ? usedParentStyles.map((stCode) => {
       const cat = SS_CATALOG[stCode] || SS_CATALOG.TT11;
       const colors = getColorsForStyle(stCode);
       const swatchesGrid = colors.map((col) => `
-        <div style="display:inline-flex;align-items:center;gap:6px;border:1px solid #e2e8f0;border-radius:7px;padding:4px 8px;background:#ffffff;font-size:11px;color:#1e293b;">
-          <span style="width:13px;height:13px;border-radius:50%;background:${esc(col.hex)};border:1px solid #94a3b8;display:inline-block;flex-shrink:0;"></span>
+        <div style="display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,0.16);border-radius:7px;padding:4px 8px;background:#14121b;font-size:10.5px;color:#f1f5f9;">
+          <span style="width:13px;height:13px;border-radius:50%;background:${esc(col.hex)};border:1px solid rgba(255,255,255,0.5);display:inline-block;flex-shrink:0;"></span>
           <span>${esc(col.name)}</span>
         </div>
       `).join('');
 
       return `
-        <div style="margin-top:20px;page-break-inside:avoid;border:1px solid #cbd5e1;border-radius:12px;padding:14px 16px;background:#f8fafc;">
+        <div style="margin-top:20px;page-break-inside:avoid;border:1px solid rgba(255,140,42,0.4);border-radius:14px;padding:14px 16px;background:#0e0c14;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
-            <div style="font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#0f172a;">
+            <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#ffb36b;">
               &#127912; ${esc(cat.brand)} ${esc(cat.styleCode)} (Adult) / ${esc(cat.youthStyleCode)} (Youth) — Official Available Colors
             </div>
-            <span style="font-size:11px;color:#475569;font-weight:600;">${colors.length} Colors Available (YXS–6XL)</span>
+            <span style="font-size:11px;color:#cbd5e1;font-weight:600;">${colors.length} Colors Available (YXS–6XL)</span>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;">
             ${swatchesGrid}
@@ -2034,122 +2570,137 @@
     }).join('') : '';
 
     const pdfDiscountRows = calc.discountPct > 0 ? `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;margin:6px 0;background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;color:#065f46;font-size:13px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;margin:6px 0;background:rgba(34,245,155,0.14);border:1px solid rgba(34,245,155,0.5);border-radius:8px;color:#6bffc3;font-size:13px;">
         <span><strong>Discount (${esc(calc.discountLabel)} &bull; ${calc.discountPct}% OFF):</strong></span>
         <strong>&minus;${money(calc.discountAmountUsd)}</strong>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#334155;">
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#e2e8f0;">
         <span>Discounted Subtotal (${money(calc.avgItemAfterDiscount)} / item):</span>
         <strong>${money(calc.subtotalAfterDiscount)}</strong>
       </div>
     ` : '';
 
     const pdfTaxRow = calc.includeTax ? `
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#334155;">
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#e2e8f0;">
         <span>Sales Tax (${calc.taxRatePct.toFixed(2)}%):</span>
         <strong>${money(calc.taxAmountUsd)}</strong>
       </div>
     ` : `
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#64748b;">
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#ffb36b;">
         <span>Sales Tax (Excluded / Tax-Exempt):</span>
         <strong>$0.00</strong>
       </div>
     `;
 
-    const w = window.open('', '_blank', 'width=1020,height=880');
+    const w = window.open('', '_blank', 'width=1040,height=900');
     if (!w) return;
     w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>RetroCanopy Official Quote ${quoteNumber} — ${esc(proj)}</title>
       <style>
         * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #0f172a; background: #f1f5f9; padding: 24px; margin: 0; line-height: 1.42; }
-        .sheet { max-width: 920px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 36px rgba(15,23,42,0.12); border: 1px solid #cbd5e1; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #f8fafc; background: #060509; padding: 22px; margin: 0; line-height: 1.42; }
+        .sheet {
+          max-width: 940px;
+          margin: 0 auto;
+          background: linear-gradient(180deg, #110d10 0%, #08070b 100%);
+          border-radius: 20px;
+          overflow: hidden;
+          border: 1.5px solid rgba(255, 136, 38, 0.65);
+          box-shadow: 0 20px 50px rgba(0,0,0,0.75);
+        }
         table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-        th { background: #0f172a; color: #f8fafc; padding: 9px 10px; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; }
+        th { background: rgba(255, 122, 24, 0.2); color: #ffd5b0; padding: 9px 10px; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid rgba(255, 140, 42, 0.45); }
         @media print {
-          body { background: #ffffff; padding: 0; }
-          .sheet { box-shadow: none; border: none; border-radius: 0; max-width: 100%; }
+          body { background: #08070b; padding: 0; }
+          .sheet { box-shadow: none; border-radius: 0; max-width: 100%; }
           .no-print { display: none !important; }
         }
       </style>
     </head><body>
-      <div class="no-print" style="max-width:920px;margin:0 auto 14px;display:flex;justify-content:space-between;align-items:center;background:#0f172a;color:#f8fafc;padding:10px 16px;border-radius:12px;">
-        <span style="font-size:13px;">&#10024; Official Branded Quote &amp; Itemized Receipt Ready &mdash; Choose <strong>"Save as PDF"</strong> or Print for your customer.</span>
-        <button onclick="window.print()" style="padding:8px 18px;background:linear-gradient(135deg,#f5c451,#f59e0b);color:#0f172a;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-size:13px;">&#128424; Print / Save Official PDF</button>
+      <div class="no-print" style="max-width:940px;margin:0 auto 14px;display:flex;justify-content:space-between;align-items:center;background:#16100d;color:#f8fafc;padding:11px 16px;border-radius:12px;border:1px solid rgba(255,140,42,0.55);">
+        <span style="font-size:13px;">&#128293; <strong>Black &amp; Orange Liquid Glass Official Quote Ready</strong> &mdash; Choose <strong>"Save as PDF"</strong> (enable Background Graphics) or Print.</span>
+        <button onclick="window.print()" style="padding:8px 18px;background:linear-gradient(135deg,#ff7a18,#ffb347);color:#0b0806;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-size:13px;">&#128424; Print / Save Official PDF</button>
       </div>
 
       <div class="sheet">
-        <!-- LUXURY BRANDED HEADER BANNER WITH OFFICIAL RETROCANOPY LOGO -->
-        <div style="background:linear-gradient(135deg,#0b0919 0%,#1a1333 55%,#0f172a 100%);color:#ffffff;padding:24px 28px;border-bottom:4px solid #f5c451;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
-          <div style="display:flex;align-items:center;gap:16px;">
-            <div style="width:74px;height:74px;border-radius:16px;background:#090714;border:1.5px solid rgba(245,196,81,0.65);padding:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <img src="${esc(logoUrl)}" alt="RetroCanopy Logo" style="max-width:100%;max-height:100%;object-fit:contain;">
+        <!-- BLACK & MOLTEN ORANGE LIQUID GLASS HEADER + ALL 6 SERVICES -->
+        <div style="background:radial-gradient(circle at 18% 40%,rgba(255,115,20,0.34),transparent 55%),linear-gradient(135deg,#18100c 0%,#09080c 60%,#1c1008 100%);padding:24px 28px;border-bottom:2px solid #ff8c24;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div style="width:76px;height:76px;border-radius:16px;background:#07060a;border:1.5px solid rgba(255,148,54,0.75);padding:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <img src="${esc(logoUrl)}" alt="RetroCanopy Logo" style="max-width:100%;max-height:100%;object-fit:contain;">
+              </div>
+              <div>
+                <div style="font-size:25px;font-weight:900;letter-spacing:0.1em;color:#ffffff;">RETROCANOPY</div>
+                <div style="font-size:11.5px;font-weight:800;letter-spacing:0.08em;color:#ff9e44;text-transform:uppercase;margin-top:2px;">Creative Production &amp; Custom Manufacturing Studio &bull; www.retrocanopy.com</div>
+                <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">${capPillsPdf}</div>
+              </div>
             </div>
-            <div>
-              <div style="font-size:24px;font-weight:900;letter-spacing:0.1em;color:#ffe89e;">RETROCANOPY</div>
-              <div style="font-size:11.5px;font-weight:700;letter-spacing:0.08em;color:#2ce6ff;text-transform:uppercase;margin-top:2px;">Official Custom Apparel &amp; Print Studio</div>
-              <div style="font-size:12px;color:#cbd5e1;margin-top:3px;">www.retrocanopy.com &bull; Premium Performance Team &amp; Brand Merch</div>
-            </div>
-          </div>
 
-          <div style="text-align:right;background:rgba(255,255,255,0.06);border:1px solid rgba(245,196,81,0.4);border-radius:12px;padding:11px 16px;">
-            <div style="font-size:10.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#ffe89e;">Official Itemized Quote &amp; Receipt</div>
-            <div style="font-size:17px;font-weight:900;color:#ffffff;margin-top:2px;">#${quoteNumber}</div>
-            <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px;">Issued: ${issueDate} &bull; Valid Until: ${validUntilDate}</div>
+            <div style="text-align:right;background:rgba(255,122,24,0.14);border:1px solid rgba(255,148,54,0.55);border-radius:14px;padding:11px 16px;">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#ffd5b0;">Official Itemized Quote &amp; Receipt</div>
+              <div style="font-size:18px;font-weight:900;color:#ffffff;margin-top:2px;">#${quoteNumber}</div>
+              <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px;">Issued: ${issueDate} &bull; Valid Until: ${validUntilDate}</div>
+            </div>
           </div>
         </div>
 
         <div style="padding:24px 28px;">
           <!-- TWO-COLUMN CLIENT DETAILS + CUSTOM PRINT PLACEMENTS -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
-            <div style="border:1px solid #cbd5e1;border-radius:12px;padding:14px 16px;background:#f8fafc;">
-              <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#64748b;margin-bottom:6px;">Prepared For</div>
-              <div style="font-size:15px;font-weight:800;color:#0f172a;">${esc(c.fullName || c.companyOrTeam || 'Valued Customer')}</div>
-              ${c.companyOrTeam && c.fullName ? `<div style="font-size:13px;font-weight:700;color:#334155;">${esc(c.companyOrTeam)}</div>` : ''}
-              <div style="font-size:12.5px;color:#334155;margin-top:4px;"><strong>Project:</strong> ${esc(proj)}</div>
-              ${(c.phone || c.email) ? `<div style="font-size:12px;color:#475569;margin-top:3px;">${esc([c.phone, c.email].filter(Boolean).join(' • '))}</div>` : ''}
-              ${c.address ? `<div style="font-size:12px;color:#475569;margin-top:3px;">${esc(c.address)}</div>` : ''}
-              ${c.notes ? `<div style="margin-top:8px;padding:6px 9px;background:#fffbeb;border:1px solid #fde68a;border-radius:7px;font-size:11.5px;color:#92400e;"><strong>Notes:</strong> ${esc(c.notes)}</div>` : ''}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+            <div style="border:1px solid rgba(255,140,42,0.38);border-radius:14px;padding:14px 16px;background:rgba(255,255,255,0.03);">
+              <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#ffb36b;margin-bottom:6px;">Prepared For</div>
+              <div style="font-size:16px;font-weight:800;color:#ffffff;">${esc(c.fullName || c.companyOrTeam || 'Valued Customer')}</div>
+              ${c.companyOrTeam && c.fullName ? `<div style="font-size:13px;font-weight:700;color:#ffd5b0;">${esc(c.companyOrTeam)}</div>` : ''}
+              <div style="font-size:12.5px;color:#e2e8f0;margin-top:4px;"><strong>Project:</strong> ${esc(proj)}</div>
+              ${(c.phone || c.email) ? `<div style="font-size:12px;color:#cbd5e1;margin-top:3px;">${esc([c.phone, c.email].filter(Boolean).join(' • '))}</div>` : ''}
+              ${c.address ? `<div style="font-size:12px;color:#cbd5e1;margin-top:3px;">${esc(c.address)}</div>` : ''}
+              ${c.notes ? `<div style="margin-top:8px;padding:6px 9px;background:rgba(255,122,24,0.14);border:1px solid rgba(255,148,54,0.45);border-radius:7px;font-size:11.5px;color:#ffe2c4;"><strong>Notes:</strong> ${esc(c.notes)}</div>` : ''}
             </div>
 
-            <div style="border:1px solid #cbd5e1;border-radius:12px;padding:14px 16px;background:#ffffff;">
-              <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#64748b;margin-bottom:6px;">Custom Print Locations &amp; Artwork Specs</div>
-              ${placementsHtml || '<div style="font-size:12.5px;color:#64748b;">Blank Garments Only (No Print Locations Active)</div>'}
+            <div style="border:1px solid rgba(255,140,42,0.38);border-radius:14px;padding:14px 16px;background:rgba(255,255,255,0.03);">
+              <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#ffb36b;margin-bottom:6px;">Custom Print Locations &amp; Artwork Specs</div>
+              ${placementsHtml || '<div style="font-size:12.5px;color:#94a3b8;">Blank Garments Only</div>'}
             </div>
           </div>
 
+          <!-- PROJECTED FINISHED ITEM PICTURE ON RECEIPT -->
+          <div style="margin-bottom:20px;border:1.5px solid rgba(255,140,42,0.5);border-radius:14px;padding:10px;background:#0c0a0f;text-align:center;page-break-inside:avoid;">
+            <img src="${projectedMockupUrl}" alt="Projected Finished Item" style="max-width:100%;max-height:300px;object-fit:contain;border-radius:10px;display:block;margin:0 auto;">
+          </div>
+
           <!-- SECTION 1: OVERALL BREAKDOWN PER ITEM -->
-          <div style="margin-bottom:20px;">
-            <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#0f172a;margin-bottom:8px;">
+          <div style="margin-bottom:20px;page-break-inside:avoid;">
+            <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#ff9e44;margin-bottom:8px;">
               1. Overall Breakdown Per Item
             </div>
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;">
-              <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;">
-                <div style="font-size:10.5px;text-transform:uppercase;color:#64748b;font-weight:700;">Total Garments</div>
-                <div style="font-size:17px;font-weight:900;color:#0f172a;margin-top:2px;">${calc.totalShirts} Items</div>
-                <div style="font-size:11px;color:#475569;">${calc.totalAdultShirts} Adult &bull; ${calc.totalYouthShirts} Youth</div>
+              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.35);border-radius:10px;padding:10px 12px;">
+                <div style="font-size:10.5px;text-transform:uppercase;color:#cbd5e1;font-weight:700;">Total Quantity</div>
+                <div style="font-size:17px;font-weight:900;color:#ffffff;margin-top:2px;">${calc.totalShirts} Items</div>
+                <div style="font-size:11px;color:#ffb36b;">${calc.totalAdultShirts} Adult &bull; ${calc.totalYouthShirts} Youth${calc.totalPrintOnlyItems > 0 ? ` &bull; ${calc.totalPrintOnlyItems} Print` : ''}</div>
               </div>
-              <div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;">
-                <div style="font-size:10.5px;text-transform:uppercase;color:#64748b;font-weight:700;">Standard Avg / Item</div>
-                <div style="font-size:17px;font-weight:900;color:#0f172a;margin-top:2px;">${money(calc.avgItemPreDiscount)}</div>
-                <div style="font-size:11px;color:#475569;">Pre-discount average</div>
+              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.35);border-radius:10px;padding:10px 12px;">
+                <div style="font-size:10.5px;text-transform:uppercase;color:#cbd5e1;font-weight:700;">Standard Avg / Item</div>
+                <div style="font-size:17px;font-weight:900;color:#ffe2c4;margin-top:2px;">${money(calc.avgItemPreDiscount)}</div>
+                <div style="font-size:11px;color:#94a3b8;">Pre-discount average</div>
               </div>
-              <div style="background:${calc.discountPct > 0 ? '#ecfdf5' : '#f8fafc'};border:1px solid ${calc.discountPct > 0 ? '#6ee7b7' : '#cbd5e1'};border-radius:10px;padding:10px 12px;">
-                <div style="font-size:10.5px;text-transform:uppercase;color:${calc.discountPct > 0 ? '#047857' : '#64748b'};font-weight:700;">${calc.discountPct > 0 ? `Discounted (${calc.discountPct}% Off)` : 'Net Per Item'}</div>
-                <div style="font-size:17px;font-weight:900;color:${calc.discountPct > 0 ? '#065f46' : '#0f172a'};margin-top:2px;">${money(calc.avgItemAfterDiscount)}</div>
-                <div style="font-size:11px;color:#475569;">${calc.discountPct > 0 ? `You save ${money(calc.discountAmountUsd)}` : 'No promo applied'}</div>
+              <div style="background:${calc.discountPct > 0 ? 'rgba(34,245,155,0.12)' : 'rgba(255,255,255,0.04)'};border:1px solid ${calc.discountPct > 0 ? 'rgba(34,245,155,0.5)' : 'rgba(255,140,42,0.35)'};border-radius:10px;padding:10px 12px;">
+                <div style="font-size:10.5px;text-transform:uppercase;color:${calc.discountPct > 0 ? '#6bffc3' : '#cbd5e1'};font-weight:700;">${calc.discountPct > 0 ? `Discounted (${calc.discountPct}% Off)` : 'Net Per Item'}</div>
+                <div style="font-size:17px;font-weight:900;color:${calc.discountPct > 0 ? '#6bffc3' : '#ffffff'};margin-top:2px;">${money(calc.avgItemAfterDiscount)}</div>
+                <div style="font-size:11px;color:#cbd5e1;">${calc.discountPct > 0 ? `You save ${money(calc.discountAmountUsd)}` : 'Standard pricing'}</div>
               </div>
-              <div style="background:#0f172a;color:#ffffff;border-radius:10px;padding:10px 12px;border:1px solid #0f172a;">
-                <div style="font-size:10.5px;text-transform:uppercase;color:#ffe89e;font-weight:700;">All-In Final / Item</div>
-                <div style="font-size:17px;font-weight:900;color:#22f59b;margin-top:2px;">${money(calc.avgItemAllInFinal)}</div>
-                <div style="font-size:11px;color:#cbd5e1;">${calc.includeTax ? `Includes ${calc.taxRatePct.toFixed(2)}% tax` : 'Tax excluded'}</div>
+              <div style="background:linear-gradient(135deg,rgba(255,122,24,0.28),#140c08);border:1.5px solid #ff8c24;border-radius:10px;padding:10px 12px;">
+                <div style="font-size:10.5px;text-transform:uppercase;color:#ffd5b0;font-weight:800;">All-In Final / Item</div>
+                <div style="font-size:17px;font-weight:900;color:#ff9e44;margin-top:2px;">${money(calc.avgItemAllInFinal)}</div>
+                <div style="font-size:11px;color:#ffffff;">${calc.includeTax ? `Includes ${calc.taxRatePct.toFixed(2)}% tax` : 'Tax excluded'}</div>
               </div>
             </div>
 
-            <div style="border:1px solid #cbd5e1;border-radius:10px;overflow:hidden;">
+            <div style="border:1px solid rgba(255,140,42,0.35);border-radius:10px;overflow:hidden;">
               <table>
                 <thead>
                   <tr>
-                    <th>Garment Style &amp; Color Summary</th>
+                    <th>Item / Garment &amp; Color Summary</th>
                     <th style="text-align:center;width:105px;">Total Qty</th>
                     <th style="text-align:right;width:145px;">Overall Avg / Item</th>
                     <th style="text-align:right;width:135px;">Item Group Total</th>
@@ -2162,17 +2713,17 @@
 
           <!-- SECTION 2: COMPLETE LINE-BY-LINE ITEMIZED RECEIPT -->
           <div>
-            <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#0f172a;margin-bottom:8px;">
+            <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#ff9e44;margin-bottom:8px;">
               2. Complete Line-by-Line Size Itemization
             </div>
-            <div style="border:1px solid #cbd5e1;border-radius:10px;overflow:hidden;">
+            <div style="border:1px solid rgba(255,140,42,0.35);border-radius:10px;overflow:hidden;">
               <table>
                 <thead>
                   <tr>
                     <th style="width:42px;text-align:center;">#</th>
-                    <th>Itemized Garment, Official Color &amp; Custom Print Spec</th>
-                    <th style="text-align:center;width:78px;">Size</th>
-                    <th style="text-align:center;width:68px;">Qty</th>
+                    <th>Itemized Garment / Transfer Print, Color &amp; Placement Spec</th>
+                    <th style="text-align:center;width:95px;">Size</th>
+                    <th style="text-align:center;width:65px;">Qty</th>
                     <th style="text-align:right;width:110px;">Unit Price</th>
                     <th style="text-align:right;width:120px;">Line Total</th>
                   </tr>
@@ -2183,27 +2734,27 @@
           </div>
 
           <!-- TOTALS SUMMARY CARD -->
-          <div style="margin-top:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;">
-            <div style="flex:1;min-width:250px;font-size:11.5px;color:#475569;">
-              <strong style="color:#0f172a;">Included with Your RetroCanopy Custom Order:</strong><br>
-              &bull; Authentic moisture-wicking performance garments in official S&amp;S colors<br>
-              &bull; Commercial 300 DPI full-color custom transfers pressed &amp; cured in-house<br>
-              &bull; Youth artwork proportionally scaled for crisp, balanced garment fit
+          <div style="margin-top:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;page-break-inside:avoid;">
+            <div style="flex:1;min-width:250px;font-size:11.5px;color:#cbd5e1;">
+              <strong style="color:#ffb36b;">RetroCanopy Full-Stack Creative &amp; Production Partner:</strong><br>
+              &bull; Custom Apparel, Commercial DTF Transfers &amp; Precision 3D Prints<br>
+              &bull; Custom Websites, Mobile Apps, Interactive Games &amp; Growth Marketing<br>
+              &bull; Every transfer inspected &amp; pressed at full 300 DPI studio resolution
             </div>
 
-            <div style="min-width:345px;background:#f8fafc;border:1.5px solid #0f172a;border-radius:12px;padding:15px 18px;">
-              <div style="display:flex;justify-content:space-between;padding:3px 0;font-size:13px;color:#334155;">
-                <span>Items Subtotal (${calc.totalShirts} pcs):</span>
+            <div style="min-width:350px;background:linear-gradient(135deg,rgba(255,122,24,0.14),#0d0b12);border:1.5px solid #ff8c24;border-radius:14px;padding:15px 18px;">
+              <div style="display:flex;justify-content:space-between;padding:3px 0;font-size:13px;color:#e2e8f0;">
+                <span>Items Subtotal (${calc.totalShirts} items):</span>
                 <strong>${money(calc.subtotalBeforeDiscount)}</strong>
               </div>
               ${pdfDiscountRows}
               ${pdfTaxRow}
-              <div style="display:flex;justify-content:space-between;align-items:center;border-top:2px solid #0f172a;padding-top:10px;margin-top:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;border-top:2px solid #ff8c24;padding-top:10px;margin-top:8px;">
                 <div>
-                  <div style="font-size:15px;font-weight:900;color:#0f172a;">GRAND TOTAL</div>
-                  <div style="font-size:11px;color:#475569;font-weight:700;">Overall: ${money(calc.avgItemAllInFinal)} per item</div>
+                  <div style="font-size:15px;font-weight:900;color:#ffffff;">GRAND TOTAL</div>
+                  <div style="font-size:11px;color:#ffb36b;font-weight:700;">Overall: ${money(calc.avgItemAllInFinal)} per item</div>
                 </div>
-                <div style="font-size:21px;font-weight:900;color:#0f172a;">${money(calc.customerQuoteTotal)}</div>
+                <div style="font-size:22px;font-weight:900;color:#ff9e44;">${money(calc.customerQuoteTotal)}</div>
               </div>
             </div>
           </div>
@@ -2211,12 +2762,12 @@
           ${colorsSectionHtml}
 
           <!-- APPROVAL SIGNATURE & THANK YOU FOOTER -->
-          <div style="margin-top:24px;padding-top:14px;border-top:1px dashed #cbd5e1;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;font-size:11.5px;color:#64748b;">
+          <div style="margin-top:24px;padding-top:14px;border-top:1px dashed rgba(255,140,42,0.38);display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;font-size:11.5px;color:#94a3b8;">
             <div>
-              <strong style="color:#0f172a;">Thank you for choosing RetroCanopy!</strong><br>
-              Questions or ready to lock in production? Reply directly to approve your sizes &amp; artwork.
+              <strong style="color:#ffffff;">Thank you for building with RetroCanopy!</strong><br>
+              Apparel &bull; Websites &bull; Marketing &bull; Apps &bull; Games &bull; Custom 3D Prints
             </div>
-            <div style="min-width:260px;border-top:1px solid #94a3b8;padding-top:5px;text-align:center;color:#475569;">
+            <div style="min-width:260px;border-top:1px solid #ffb36b;padding-top:5px;text-align:center;color:#ffd5b0;">
               Client Approval Signature &amp; Date
             </div>
           </div>
@@ -2233,6 +2784,7 @@
     const root = document.getElementById('bulkQuoteStudioSection');
     if (!root) return;
 
+    preloadBlankShirtAssets();
     loadInitialCustomerAndRatePrefs();
 
     try {
@@ -2317,7 +2869,6 @@
       });
     }
 
-    // Tax Toggle Button
     const taxToggleBtn = document.getElementById('bqTaxToggleBtn');
     if (taxToggleBtn) {
       taxToggleBtn.addEventListener('click', () => {
@@ -2357,7 +2908,9 @@
           fileName: '',
           dataUrl: '',
           trimmedDataUrl: '',
-          imgElement: null,
+          origCanvas: null,
+          trimmedCanvas: null,
+          renderCanvas: null,
           origPxW: 0,
           origPxH: 0,
           trimPxW: 0,
@@ -2383,7 +2936,7 @@
     }
 
     const expPngBtn = document.getElementById('bqExportGangsheetPngBtn');
-    if (expPngBtn) expPngBtn.addEventListener('click', exportPackedGangsheet300DpiPng);
+    if (expPngBtn) expPngBtn.addEventListener('click', exportAllPackedGangsheets300DpiPng);
 
     const saveQBtn = document.getElementById('bqSaveQuoteBtn');
     if (saveQBtn) saveQBtn.addEventListener('click', saveCurrentQuote);
@@ -2406,6 +2959,13 @@
 
     // Delegated Clicks
     root.addEventListener('click', (e) => {
+      const singleDlBtn = e.target.closest('[data-download-single-sheet]');
+      if (singleDlBtn) {
+        const idx = parseInt(singleDlBtn.getAttribute('data-download-single-sheet'), 10);
+        if (!Number.isNaN(idx)) downloadSingleSheetByIndex(idx);
+        return;
+      }
+
       const discChip = e.target.closest('[data-disc-preset]');
       if (discChip) {
         const val = Math.min(100, Math.max(0, parseFloat(discChip.getAttribute('data-disc-preset')) || 0));
@@ -2500,7 +3060,9 @@
               ...dp,
               dataUrl: '',
               trimmedDataUrl: '',
-              imgElement: null
+              origCanvas: null,
+              trimmedCanvas: null,
+              renderCanvas: null
             }));
           }
           syncTopControlsFromState();
@@ -2658,9 +3220,7 @@
         const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-trim'));
         if (p) {
           p.autoTrimTransparent = t.checked;
-          if (p.origImgElement) {
-            p.imgElement = p.autoTrimTransparent ? (p.trimmedImgElement || p.origImgElement) : p.origImgElement;
-          }
+          p.renderCanvas = p.autoTrimTransparent ? (p.trimmedCanvas || p.origCanvas) : (p.origCanvas || p.trimmedCanvas);
           renderDtfPlacementsList();
           recalculateEverything();
         }
