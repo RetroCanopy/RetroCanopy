@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Retrocanopy — Owner's Hub</title>
-  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="icon" type="image/png" href="assets/logo.png?v=240">
+  <script src="assets/merch/store_catalog_1994.js?v=240"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1309,6 +1310,373 @@
       max-height: 680px;
     }
     /* View visibility inside Tabbed Studio */
+    body[data-layout="tabbed-studio"]:not([data-focus-pane="bulkquote"]) #bulkQuoteStudioSection {
+      display: none;
+    }
+    body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] #websiteOrdersHubSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] .owner-workspace,
+    body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] .vision-telemetry-wing {
+      display: none;
+    }
+
+    /* =====================================================================
+       BULK ORDER QUOTING & LIVE GANGSHEET STUDIO STYLES
+       ===================================================================== */
+    .bq-subpanel {
+      background: linear-gradient(155deg, rgba(16, 14, 30, 0.72), rgba(10, 8, 20, 0.84));
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 20px;
+      padding: 16px 18px;
+      margin-top: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    .bq-subpanel-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #ffe89e;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .bq-step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(44, 230, 255, 0.2);
+      border: 1px solid rgba(44, 230, 255, 0.55);
+      color: #2ce6ff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+    .bq-rates-strip {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .bq-rate-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(245, 196, 81, 0.42);
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.72rem;
+      text-decoration: none;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .bq-rate-pill:hover {
+      transform: translateY(-1px);
+      border-color: #2ce6ff;
+    }
+    .bq-rate-pill strong {
+      color: #22f59b;
+    }
+    .bq-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22f59b;
+      box-shadow: 0 0 8px #22f59b;
+      display: inline-block;
+    }
+    .bq-garment-line-card,
+    .bq-dtf-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+    .bq-line-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .bq-select,
+    .bq-input {
+      background: rgba(8, 7, 18, 0.85);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 10px;
+      padding: 7px 11px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    .bq-select:focus,
+    .bq-input:focus {
+      border-color: #2ce6ff;
+      box-shadow: 0 0 12px rgba(44, 230, 255, 0.25);
+    }
+    .bq-field-lbl {
+      display: block;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.68);
+      margin-bottom: 4px;
+    }
+    .bq-active-swatch-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .bq-swatch-strip {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.34);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 10px;
+    }
+    .bq-color-swatch {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      cursor: pointer;
+      transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+    }
+    .bq-color-swatch:hover {
+      transform: scale(1.18);
+      border-color: #ffffff;
+    }
+    .bq-color-swatch.selected {
+      transform: scale(1.22);
+      border-color: #2ce6ff;
+      box-shadow: 0 0 0 2px rgba(44, 230, 255, 0.65);
+    }
+    .bq-sizes-grid {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(62px, 1fr));
+      gap: 7px;
+    }
+    @media (max-width: 1180px) {
+      .bq-sizes-grid {
+        grid-template-columns: repeat(5, minmax(62px, 1fr));
+      }
+    }
+    @media (max-width: 620px) {
+      .bq-sizes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .bq-size-cell {
+      background: rgba(8, 7, 18, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 12px;
+      padding: 7px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .bq-size-cell.has-qty {
+      border-color: #22f59b;
+      background: rgba(34, 245, 155, 0.1);
+      box-shadow: 0 0 14px rgba(34, 245, 155, 0.14);
+    }
+    .bq-size-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .bq-size-input {
+      width: 100%;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 8px;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.86rem;
+      padding: 4px 2px;
+      outline: none;
+    }
+    .bq-size-input:focus {
+      border-color: #f5c451;
+    }
+    .bq-size-price {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #ffe89e;
+    }
+    .bq-stock-micro {
+      font-size: 0.6rem;
+      color: #2ce6ff;
+    }
+    .bq-dtf-split {
+      display: grid;
+      grid-template-columns: 200px minmax(0, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    @media (max-width: 760px) {
+      .bq-dtf-split {
+        grid-template-columns: 1fr;
+      }
+    }
+    .bq-upload-dropzone {
+      position: relative;
+      min-height: 138px;
+      border: 1.5px dashed rgba(245, 196, 81, 0.65);
+      border-radius: 14px;
+      background: rgba(8, 7, 16, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      padding: 8px;
+      transition: border-color 0.16s ease, background 0.16s ease;
+    }
+    .bq-upload-dropzone:hover,
+    .bq-upload-dropzone.drag-hover {
+      border-color: #2ce6ff;
+      background: rgba(20, 26, 46, 0.9);
+    }
+    .bq-upload-dropzone.checker-bg {
+      background-image:
+        linear-gradient(45deg, #232334 25%, transparent 25%),
+        linear-gradient(-45deg, #232334 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #232334 75%),
+        linear-gradient(-45deg, transparent 75%, #232334 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      background-color: #141421;
+    }
+    .bq-uploaded-art-img {
+      max-width: 100%;
+      max-height: 118px;
+      object-fit: contain;
+    }
+    .bq-reupload-pill {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      font-size: 0.64rem;
+      background: rgba(0, 0, 0, 0.78);
+      color: #ffe89e;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 196, 81, 0.5);
+    }
+    .bq-preset-chip {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: border-color 0.14s ease, background 0.14s ease;
+    }
+    .bq-preset-chip:hover {
+      border-color: #f5c451;
+      background: rgba(245, 196, 81, 0.18);
+    }
+    .bq-two-col-bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 14px;
+      align-items: start;
+    }
+    @media (max-width: 1120px) {
+      .bq-two-col-bottom {
+        grid-template-columns: 1fr;
+      }
+    }
+    .bq-sheet-order-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+      flex-wrap: wrap;
+    }
+    .bq-quote-item-card {
+      padding: 9px 11px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      font-size: 0.78rem;
+    }
+    .bq-cost-ledger {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: rgba(6, 5, 14, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .bq-ledger-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.79rem;
+      color: rgba(255, 255, 255, 0.85);
+      padding: 3px 0;
+    }
+    .bq-ledger-row.total-cost {
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 8px;
+      margin-top: 4px;
+      color: #2ce6ff;
+      font-weight: 700;
+    }
+    .bq-ledger-row.quote-price {
+      font-size: 0.96rem;
+      color: #ffe89e;
+      font-weight: 800;
+    }
+    .bq-ledger-row.net-profit {
+      background: rgba(34, 245, 155, 0.12);
+      border: 1px solid rgba(34, 245, 155, 0.42);
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-top: 4px;
+      color: #22f59b;
+      font-weight: 800;
+    }
+    .bq-saved-quote-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
     body[data-layout="tabbed-studio"][data-focus-pane="orders"] .owner-workspace,
     body[data-layout="tabbed-studio"][data-focus-pane="orders"] .vision-telemetry-wing {
       display: none;
@@ -1720,7 +2088,7 @@
             <span>Dashboard</span>
           </button>
 
-          <button type="button" class="vision-nav-item active" id="sideNavMerchQueue" onclick="document.getElementById('tabBtnMerchUnfulfilled').click();document.getElementById('websiteOrdersHubSection').scrollIntoView({behavior:'smooth'});">
+          <button type="button" class="vision-nav-item active" id="sideNavMerchQueue" onclick="document.querySelector('[data-focus-target=\'orders\']').click();document.getElementById('tabBtnMerchUnfulfilled').click();document.getElementById('websiteOrdersHubSection').scrollIntoView({behavior:'smooth'});">
             <span class="vision-nav-icon">&#128717;&#65039;</span>
             <span>
               Merch Queue
@@ -1728,11 +2096,19 @@
             </span>
           </button>
 
-          <button type="button" class="vision-nav-item" id="sideNavOrderHistory" onclick="document.getElementById('tabBtnMerchHistory').click();document.getElementById('websiteOrdersHubSection').scrollIntoView({behavior:'smooth'});">
+          <button type="button" class="vision-nav-item" id="sideNavOrderHistory" onclick="document.querySelector('[data-focus-target=\'orders\']').click();document.getElementById('tabBtnMerchHistory').click();document.getElementById('websiteOrdersHubSection').scrollIntoView({behavior:'smooth'});">
             <span class="vision-nav-icon">&#128338;</span>
             <span>
               Order History
               <span class="vision-nav-sub">(Completed)</span>
+            </span>
+          </button>
+
+          <button type="button" class="vision-nav-item" id="sideNavBulkQuote" style="border-color:rgba(245,196,81,0.55);background:rgba(245,196,81,0.12);" onclick="document.querySelector('[data-focus-target=\'bulkquote\']').click();document.getElementById('bulkQuoteStudioSection').scrollIntoView({behavior:'smooth'});">
+            <span class="vision-nav-icon">&#128208;</span>
+            <span>
+              Bulk Order Quoter
+              <span class="vision-nav-sub">(S&amp;S + Live DTF)</span>
             </span>
           </button>
 
@@ -1815,6 +2191,10 @@
             <span>&#128717;&#65039;</span>
             <span>Merch Orders &amp; Production Queue</span>
           </button>
+          <button type="button" class="spatial-focus-tab" data-focus-target="bulkquote" id="topFocusTabBulkQuote">
+            <span>&#128208;</span>
+            <span>Bulk Order Quoter (S&amp;S + Live DTF)</span>
+          </button>
           <button type="button" class="spatial-focus-tab" data-focus-target="vault">
             <span>&#128193;</span>
             <span>300 DPI DTF / .DST Vault &amp; Store ($1)</span>
@@ -1881,6 +2261,248 @@
         <!-- Sub-Tab 2: Checked-Off Order History -->
         <div class="tab-pane" id="pane-merch-history">
           <div id="merchHistoryList"></div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- BULK ORDER QUOTE & LIVE GANGSHEET STUDIO (S&S + DIGITALPRINTWORX)   -->
+      <!-- =================================================================== -->
+      <section class="vision-glass owner-major-section" id="bulkQuoteStudioSection">
+        <div class="section-header" style="align-items:flex-start;gap:14px;flex-wrap:wrap;">
+          <div>
+            <h2 class="section-title">Bulk Order Quoter &amp; Live DTF Gangsheet Optimizer</h2>
+            <div style="font-size:0.76rem;color:rgba(255,255,255,0.74);margin-top:4px;">
+              S&amp;S Activewear Dri-Fit Blanks (<strong>TT11 / #671D9</strong> Short Sleeve &amp; <strong>CE10L / #267A7</strong> Long Sleeve) + Real-Time <strong>DigitalPrintWorx.com</strong> Gangsheet Packing
+            </div>
+            <div id="bqLiveSyncStatus" style="font-size:0.72rem;color:#22f59b;margin-top:5px;font-weight:600;">
+              &#9679; Connecting to DigitalPrintWorx.com &amp; S&amp;S Activewear...
+            </div>
+          </div>
+
+          <!-- Top Live Executive Quote KPIs -->
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <div class="kpi-pill">
+              <div class="kpi-label">Total Shirts</div>
+              <div class="kpi-val" id="bqKpiTotalShirts">0</div>
+            </div>
+            <div class="kpi-pill">
+              <div class="kpi-label">S&amp;S Blanks</div>
+              <div class="kpi-val" id="bqKpiBlanksCost">$0.00</div>
+            </div>
+            <div class="kpi-pill">
+              <div class="kpi-label">Live DTF Cost</div>
+              <div class="kpi-val" id="bqKpiDtfCost">$0.00</div>
+            </div>
+            <div class="kpi-pill">
+              <div class="kpi-label">True Hard Cost</div>
+              <div class="kpi-val" id="bqKpiHardCostPerShirt" style="color:#2ce6ff;">$0.00 / ea</div>
+            </div>
+            <div class="kpi-pill" style="border-color:rgba(245,196,81,0.65) !important;">
+              <div class="kpi-label">Client Quote</div>
+              <div class="kpi-val" id="bqKpiQuoteTotal" style="color:#ffe89e;">$0.00</div>
+            </div>
+            <div class="kpi-pill" style="border-color:rgba(34,245,155,0.65) !important;">
+              <div class="kpi-label">Your Profit</div>
+              <div class="kpi-val" id="bqKpiNetProfit" style="color:#22f59b;">$0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live DigitalPrintWorx Sheet Rates Bar + Refresh + Optional S&S API Key Drawer -->
+        <div class="bq-subpanel" style="padding:12px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div style="font-size:0.74rem;font-weight:700;color:#ffe89e;">
+              &#9889; LIVE DIGITALPRINTWORX.COM GANGSHEET RATES (CLICK ANY SIZE TO OPEN SUPPLIER PAGE):
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="mini-btn" id="bqRefreshLivePricesBtn" style="color:#22f59b;border-color:rgba(34,245,155,0.5) !important;">
+                &#8635; Sync Live Supplier Prices
+              </button>
+              <button type="button" class="mini-btn" onclick="const d=document.getElementById('bqSsApiDrawer');d.style.display=d.style.display==='none'?'flex':'none';" style="color:#2ce6ff;">
+                &#128273; S&amp;S Wholesale API / Tier Discount
+              </button>
+            </div>
+          </div>
+
+          <div class="bq-rates-strip" id="bqLiveDpwRatesStrip"></div>
+
+          <!-- Collapsible S&S API Credentials & Account Discount Drawer -->
+          <div id="bqSsApiDrawer" style="display:none;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.14);">
+            <div>
+              <label class="bq-field-lbl">S&amp;S Account Discount % (Optional)</label>
+              <input type="number" min="0" max="80" step="0.5" class="bq-input" id="bqSsDiscountInput" value="0" style="width:140px;" title="Apply a blanket % discount off S&S public piece prices if not using API key">
+            </div>
+            <div>
+              <label class="bq-field-lbl">S&amp;S Account # (api.ssactivewear.com)</label>
+              <input type="text" class="bq-input" id="bqSsAccountInput" placeholder="e.g. 123456" style="width:165px;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">S&amp;S V2 API Key (Live Stock &amp; Contract Price)</label>
+              <input type="password" class="bq-input" id="bqSsApiKeyInput" placeholder="Paste S&amp;S API Key" style="width:230px;">
+            </div>
+            <button type="button" class="vision-gold-cta-btn" id="bqSaveSsApiBtn" style="padding:8px 16px;font-size:0.74rem;">
+              Connect S&amp;S Live API
+            </button>
+          </div>
+        </div>
+
+        <!-- Client & Project Metadata Row -->
+        <div class="bq-subpanel" style="padding:12px 16px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;">
+            <div>
+              <label class="bq-field-lbl">Project / Job Name</label>
+              <input type="text" class="bq-input" id="bqProjectNameInput" placeholder="e.g. Tampa Youth Athletics Summer Jerseys" style="width:100%;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">Client / Organization Name</label>
+              <input type="text" class="bq-input" id="bqClientNameInput" placeholder="e.g. Coach Mike / Wave Club" style="width:100%;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">Client Phone / Email</label>
+              <input type="text" class="bq-input" id="bqClientContactInput" placeholder="e.g. (813) 555-0199 • mike@club.com" style="width:100%;">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 1: S&S ACTIVEWEAR DRI-FIT SHIRTS, OFFICIAL COLORS & SIZES -->
+        <div class="bq-subpanel">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+            <div class="bq-subpanel-title">
+              <span class="bq-step-badge">STEP 1</span>
+              <span>Select S&amp;S Activewear Shirts, Official Colors &amp; Size Quantities</span>
+            </div>
+            <button type="button" class="vision-gold-cta-btn" id="bqAddGarmentLineBtn" style="padding:7px 14px;font-size:0.73rem;">
+              + Add Another Color / Shirt Style Row
+            </button>
+          </div>
+          <div style="font-size:0.74rem;color:rgba(255,255,255,0.68);margin-bottom:8px;">
+            Mix &amp; match <strong>Team 365 TT11 (Item #671D9 — Dri-Fit Short Sleeve, 30 Colors)</strong> and <strong>CORE365 CE10L (Item #267A7 — Dri-Fit Long Sleeve, 16 Colors)</strong> across sizes <strong>XS–6XL</strong> with automatic extended-size pricing.
+          </div>
+
+          <div id="bqGarmentLinesContainer"></div>
+        </div>
+
+        <!-- STEP 2: UPLOAD PROJECT DTF FILE(S) & SET PRINT DIMENSIONS -->
+        <div class="bq-subpanel">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+            <div class="bq-subpanel-title">
+              <span class="bq-step-badge">STEP 2</span>
+              <span>Upload Project DTF File(s) &amp; Print Dimensions</span>
+            </div>
+            <button type="button" class="mini-btn" id="bqAddDtfPlacementBtn" style="color:#ffe89e;border-color:rgba(245,196,81,0.55) !important;">
+              + Add 2nd Print Location (e.g. Back / Sleeve)
+            </button>
+          </div>
+
+          <div id="bqDtfPlacementsContainer"></div>
+
+          <!-- Gangsheet Packing Settings Row -->
+          <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.14);">
+            <div>
+              <label class="bq-field-lbl">DigitalPrintWorx Roll Width</label>
+              <select class="bq-select" id="bqRollWidthSelect">
+                <option value="27" selected>27" Wide Roll (DigitalPrintWorx Upload &amp; Auto-Builder)</option>
+                <option value="22">22" Wide Roll (Standard 22"&times;60" Sheet)</option>
+              </select>
+            </div>
+            <div>
+              <label class="bq-field-lbl">Cut Margin / Gutter (in)</label>
+              <input type="number" min="0" max="2" step="0.05" class="bq-input" id="bqGutterInput" value="0.25" style="width:105px;">
+            </div>
+            <div>
+              <label class="bq-field-lbl">Extra Test / Spoilage Prints</label>
+              <input type="number" min="0" max="50" step="1" class="bq-input" id="bqExtraPrintsInput" value="1" style="width:115px;" title="Adds extra spare transfers to your gangsheet in case of mis-press">
+            </div>
+            <label style="display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;color:rgba(255,255,255,0.85);padding-bottom:8px;cursor:pointer;">
+              <input type="checkbox" id="bqIncludeAuto15Check" checked>
+              Include 27"&times;15" ($7.00) Auto-Builder Tier
+            </label>
+          </div>
+        </div>
+
+        <!-- STEP 3 & 4: TWO-COLUMN LIVE GANGSHEET VISUALIZER + QUOTE & PROFIT CALCULATOR -->
+        <div class="bq-two-col-bottom">
+
+          <!-- LEFT: LIVE GANGSHEET NESTING BLUEPRINT & DIGITALPRINTWORX ORDER LIST -->
+          <div class="bq-subpanel" style="margin-top:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+              <div class="bq-subpanel-title">
+                <span class="bq-step-badge">STEP 3</span>
+                <span>Optimal Gangsheet Layout &amp; DTF Cost</span>
+              </div>
+              <button type="button" class="mini-btn" id="bqExportGangsheetPngBtn" style="color:#ffe89e;border-color:rgba(245,196,81,0.6) !important;">
+                &#11015;&#65039; Download 300 DPI Gangsheet (.PNG)
+              </button>
+            </div>
+
+            <div id="bqGangsheetStatsLine" style="font-size:0.74rem;color:#2ce6ff;margin-bottom:10px;font-weight:600;"></div>
+
+            <!-- Optimal Sheets to Order from DigitalPrintWorx -->
+            <div id="bqRecommendedSheetsBox" style="margin-bottom:12px;"></div>
+
+            <!-- Scaled Visual Gangsheet Canvas -->
+            <div style="background:#080612;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:10px;overflow-x:auto;text-align:center;">
+              <canvas id="bqGangsheetCanvas" style="max-width:100%;height:auto;border-radius:8px;"></canvas>
+            </div>
+          </div>
+
+          <!-- RIGHT: OVERHEAD, MARKUP & CLIENT QUOTE SUMMARY -->
+          <div class="bq-subpanel" style="margin-top:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+              <div class="bq-subpanel-title">
+                <span class="bq-step-badge">STEP 4</span>
+                <span>Markup, Hard Costs &amp; Customer Quote</span>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button type="button" class="mini-btn" id="bqSaveQuoteBtn" style="color:#22f59b;">&#128190; Save Quote</button>
+                <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#2ce6ff;">&#128203; Copy Client Quote</button>
+                <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:6px 12px;font-size:0.72rem;">&#128424; Print / PDF Quote</button>
+              </div>
+            </div>
+
+            <!-- Overhead & Pricing Strategy Controls -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.14);">
+              <div>
+                <label class="bq-field-lbl">Pressing / Labor ($/Shirt)</label>
+                <input type="number" min="0" max="50" step="0.25" class="bq-input" id="bqPressLaborInput" value="1.50" style="width:100%;">
+              </div>
+              <div>
+                <label class="bq-field-lbl">S&amp;S Shipping ($ blank=auto)</label>
+                <input type="number" min="0" max="500" step="0.5" class="bq-input" id="bqSsShippingInput" placeholder="Auto ($0 if $200+)" style="width:100%;">
+              </div>
+              <div>
+                <label class="bq-field-lbl">DTF Shipping ($)</label>
+                <input type="number" min="0" max="200" step="0.5" class="bq-input" id="bqDpwShippingInput" value="9.95" style="width:100%;">
+              </div>
+              <div>
+                <label class="bq-field-lbl">Quote Pricing Mode</label>
+                <select class="bq-select" id="bqPricingModeSelect" style="width:100%;">
+                  <option value="margin" selected>Target Profit Margin %</option>
+                  <option value="fixed">Set Base Price / Shirt ($)</option>
+                </select>
+              </div>
+              <div id="bqMarginControlWrap">
+                <label class="bq-field-lbl">Target Margin % (50% = 2&times;)</label>
+                <input type="number" min="0" max="90" step="1" class="bq-input" id="bqMarginPctInput" value="50" style="width:100%;color:#22f59b;font-weight:700;">
+              </div>
+              <div id="bqFixedRetailControlWrap" style="display:none;">
+                <label class="bq-field-lbl">Base Shirt Price (XS–XL $)</label>
+                <input type="number" min="1" max="500" step="0.5" class="bq-input" id="bqFixedRetailInput" value="22.00" style="width:100%;color:#ffe89e;font-weight:700;">
+              </div>
+            </div>
+
+            <!-- Live Itemized Financial Breakdown -->
+            <div id="bqFinancialBreakdownBody"></div>
+
+            <!-- Saved Quotes History -->
+            <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.14);">
+              <div style="font-size:0.74rem;font-weight:700;color:#ffe89e;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">
+                &#128193; Saved Bulk Quotes History
+              </div>
+              <div id="bqSavedQuotesList"></div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -2169,6 +2791,7 @@
           if (document.body.getAttribute('data-layout') === 'bottom-dock') {
             const map = {
               orders: 'websiteOrdersHubSection',
+              bulkquote: 'bulkQuoteStudioSection',
               vault: 'storeCatalogSection',
               botpit: 'gameAnalyticsHubSection',
               traffic: 'storeCatalogSection'
@@ -2290,6 +2913,11 @@
         }
       };
 
+      if (window.RC_STORE_1994 && window.RC_STORE_1994.CATALOG) {
+        window.RC_STORE_1994.rebuildCatalogPrices();
+        Object.assign(MASTER_PRODUCTION_CATALOG, window.RC_STORE_1994.CATALOG);
+      }
+
       const DEFAULT_CONTROLS = {
         bannerEnabled: false,
         bannerText: '🔥 RETROCANOPY $1.00 STORE TEST LIVE — WHITE & 24K GOLD HOODIE + HAT!',
@@ -2400,17 +3028,22 @@
       function normalizeMerchOrderRow(raw) {
         const orderId = raw.order_id || raw.orderId || ('RC-ORD-' + Date.now());
         const rawItems = Array.isArray(raw.items) ? raw.items : [];
-        const enrichedItems = rawItems.map((it) => {
-          const code = (it.model || it.sku || '').toUpperCase().includes('107') ? 'RC-107' : 'RC-309';
+        const enrichedItems = rawItems.filter((it) => !String(it.sku || it.model || '').startsWith('RC-TAX') && !String(it.sku || it.model || '').startsWith('RC-SHIP')).map((it) => {
+          const rawCode = String(it.model || it.sku || '').toUpperCase().trim();
+          const code = MASTER_PRODUCTION_CATALOG[rawCode]
+            ? rawCode
+            : (rawCode.includes('107') ? 'RC-107' : 'RC-309');
           const master = MASTER_PRODUCTION_CATALOG[code] || MASTER_PRODUCTION_CATALOG['RC-309'];
+          const isHat = master.category === 'hats' || code.startsWith('RC-HAT') || code === 'RC-107';
           return {
             model: code,
             title: it.title || master.title,
-            price: Number(it.price !== undefined ? it.price : 1),
+            price: Number(it.price !== undefined ? it.price : master.price || 36),
             qty: Number(it.qty || 1),
-            size: it.size || (code === 'RC-107' ? 'One Size Snapback' : 'L'),
+            size: it.size || (isHat ? 'One Size Snapback' : 'L'),
             frontPhotoUrl: it.frontPhotoUrl || master.frontPhotoUrl,
             backPhotoUrl: it.backPhotoUrl !== undefined ? it.backPhotoUrl : master.backPhotoUrl,
+            logo300DpiUrl: it.logo300DpiUrl || master.logo300DpiUrl || '',
             productionType: it.productionType || master.productionType,
             productionNotes: it.productionNotes || master.productionNotes,
             productionFiles: (Array.isArray(it.productionFiles) && it.productionFiles.length > 0)
@@ -2546,35 +3179,28 @@
         // Collect all garment photos + 300 DPI logo crest previews across every ordered item
         const previewThumbs = [];
         itemsList.forEach((it) => {
-          const isHat = String(it.model).toUpperCase() === 'RC-107';
-          if (it.frontPhotoUrl) {
-            previewThumbs.push({
-              url: it.frontPhotoUrl,
-              caption: isHat ? 'HAT MOCKUP' : 'HOODIE FRONT',
-              title: `${it.model} — Front Garment Photo`
-            });
-          }
+          const master = MASTER_PRODUCTION_CATALOG[it.model] || {};
+          const isHat = master.category === 'hats' || String(it.model).startsWith('RC-HAT') || it.model === 'RC-107';
           if (it.backPhotoUrl) {
             previewThumbs.push({
               url: it.backPhotoUrl,
-              caption: 'HOODIE BACK',
+              caption: 'GARMENT BACK',
               title: `${it.model} — Back Garment Photo`
             });
           }
-          // Add the official 300 DPI DTF / Embroidery logo artwork thumbnail for this item
-          if (isHat) {
+          if (it.frontPhotoUrl) {
             previewThumbs.push({
-              url: 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=235',
-              caption: 'HAT LOGO',
-              title: 'RC-107 Official 300 DPI 24K Gold Crown & Canopy Tree Embroidery Logo'
-            });
-          } else {
-            previewThumbs.push({
-              url: 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=235',
-              caption: 'DTF LOGO',
-              title: 'RC-309 Official 300 DPI 24K Gold Winged Valkyrie DTF Crest'
+              url: it.frontPhotoUrl,
+              caption: isHat ? 'HAT MOCKUP' : 'GARMENT FRONT',
+              title: `${it.model} — Front Garment Photo`
             });
           }
+          const logoUrl = it.logo300DpiUrl || master.logo300DpiUrl || (isHat ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=240' : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=240');
+          previewThumbs.push({
+            url: logoUrl,
+            caption: isHat ? '300DPI CREST' : '300DPI DTF',
+            title: `${it.model} Official 300-DPI Production Artwork`
+          });
         });
 
         const thumbsHtml = previewThumbs.map((t) => `
@@ -3086,67 +3712,153 @@
       // =====================================================================
       // CARD 3: STORE CATALOG ($1.00 TEST MODE), MASTER PRODUCTION FILES & CONTROLS
       // =====================================================================
+      let vaultFilterSet = 1;
+      let vaultFilterCat = 'all';
+      let vaultFilterColor = 'all';
+
+      window.__rcAdminSetVaultFilter = function (field, val) {
+        if (field === 'set') vaultFilterSet = parseInt(val, 10) || 0;
+        if (field === 'cat') vaultFilterCat = val;
+        if (field === 'color') vaultFilterColor = val;
+        renderStoreCard();
+      };
+
+      window.__rcAdminSaveMakeCosts = function () {
+        if (!window.RC_STORE_1994) return;
+        const nextCosts = {
+          hats: parseFloat(document.getElementById('mcInputHats')?.value || '18') || 18,
+          shirts: parseFloat(document.getElementById('mcInputShirts')?.value || '15') || 15,
+          hoodies: parseFloat(document.getElementById('mcInputHoodies')?.value || '25') || 25,
+          joggers: parseFloat(document.getElementById('mcInputJoggers')?.value || '26') || 26
+        };
+        window.RC_STORE_1994.saveMakeCosts(nextCosts);
+        Object.assign(MASTER_PRODUCTION_CATALOG, window.RC_STORE_1994.CATALOG);
+        renderStoreCard();
+      };
+
       function renderStoreCard() {
-        const inv = getInventory();
-        document.getElementById('merchInventoryList').innerHTML = inv.map((item) => {
-          const lowStock = item.stock <= 5;
-          const catEntry = MASTER_PRODUCTION_CATALOG[item.sku] || {};
-          const thumbUrl = catEntry.frontPhotoUrl || 'assets/logo.png';
-          const logoUrl = item.sku === 'RC-107'
-            ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=235'
-            : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=235';
-          return `
-            <div class="item-row">
-              <div style="display:flex;align-items:center;gap:8px;">
-                <a href="${escapeHtml(item.href || '#')}" title="View Live Showroom">
-                  <img src="${escapeHtml(thumbUrl)}" alt="${escapeHtml(item.name)}" style="width:46px;height:46px;object-fit:contain;border-radius:9px;background:rgba(8,7,16,0.85);border:1px solid rgba(255,255,255,0.22);padding:3px;">
-                </a>
-                <a href="${escapeHtml(logoUrl)}" target="_blank" title="View Official 300 DPI Production Logo">
-                  <img src="${escapeHtml(logoUrl)}" alt="300 DPI Logo" style="width:46px;height:46px;object-fit:contain;border-radius:9px;background:rgba(8,7,16,0.85);border:1px solid rgba(245,196,81,0.55);padding:3px;">
-                </a>
-                <div class="item-info">
-                  <div class="item-title">
-                    <a href="${escapeHtml(item.href || '#')}" style="color:#ffffff;text-decoration:none;">${escapeHtml(item.sku)} — ${escapeHtml(item.name)}</a>
-                    <span class="tag-pill tag-member">$${Number(item.price).toFixed(2)} TEST</span>
+        const STORE = window.RC_STORE_1994;
+        const mc = STORE ? STORE.getMakeCosts() : { hats: 18, shirts: 15, hoodies: 25, joggers: 26 };
+        const rp = STORE ? STORE.getRetailPrices() : { hats: 36, shirts: 30, hoodies: 50, joggers: 52 };
+
+        // 1. Inventory & 100% Return (2x Make Cost) Live Pricing Panel
+        const invEl = document.getElementById('merchInventoryList');
+        if (invEl) {
+          invEl.innerHTML = `
+            <div class="item-row" style="flex-direction:column;align-items:stretch;gap:10px;border-color:rgba(245,196,81,0.55);background:rgba(245,196,81,0.07);">
+              <div class="item-title" style="justify-content:space-between;flex-wrap:wrap;">
+                <span>&#128176; 100% RETURN PRICING ENGINE (2&times; MAKE COST) + TAX &amp; SHIPPING</span>
+                <span class="tag-pill tag-owner">7% SALES TAX &bull; $19.99 BASELINE SHIPPING</span>
+              </div>
+              <div class="item-sub">Includes S&amp;S Activewear Blanks + Digital Print Worx 15&Prime;&times;27&Prime; ($7.00) DTF Gang Sheets. Edit any Make Cost below to auto-update 2&times; Store Retail:</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px;">
+                <div style="padding:8px 10px;border-radius:10px;background:rgba(8,7,18,0.85);border:1px solid rgba(255,255,255,0.16);">
+                  <div style="font-size:0.65rem;color:#2ce6ff;font-family:'Orbitron',sans-serif;">HATS (YP #6006 + .DST)</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                    <span style="font-size:0.75rem;">Cost $</span>
+                    <input id="mcInputHats" type="number" step="0.5" value="${mc.hats}" style="width:62px;background:#080712;color:#fff;border:1px solid #f5c451;border-radius:6px;padding:3px 6px;">
+                    <span style="color:#22f59b;font-weight:800;font-size:0.8rem;">&rarr; $${rp.hats.toFixed(2)}</span>
                   </div>
-                  <div class="item-sub">${escapeHtml(item.productionType || '')} • <span style="color:${lowStock ? '#ff77aa' : '#00f59b'};">Stock: ${item.stock}</span></div>
+                </div>
+                <div style="padding:8px 10px;background:rgba(8,7,18,0.85);border-radius:10px;border:1px solid rgba(255,255,255,0.16);">
+                  <div style="font-size:0.65rem;color:#2ce6ff;font-family:'Orbitron',sans-serif;">SHIRTS (GILDAN #5000 + DTF)</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                    <span style="font-size:0.75rem;">Cost $</span>
+                    <input id="mcInputShirts" type="number" step="0.5" value="${mc.shirts}" style="width:62px;background:#080712;color:#fff;border:1px solid #f5c451;border-radius:6px;padding:3px 6px;">
+                    <span style="color:#22f59b;font-weight:800;font-size:0.8rem;">&rarr; $${rp.shirts.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div style="padding:8px 10px;background:rgba(8,7,18,0.85);border-radius:10px;border:1px solid rgba(255,255,255,0.16);">
+                  <div style="font-size:0.65rem;color:#2ce6ff;font-family:'Orbitron',sans-serif;">HOODIES (GILDAN #18500 + DTF)</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                    <span style="font-size:0.75rem;">Cost $</span>
+                    <input id="mcInputHoodies" type="number" step="0.5" value="${mc.hoodies}" style="width:62px;background:#080712;color:#fff;border:1px solid #f5c451;border-radius:6px;padding:3px 6px;">
+                    <span style="color:#22f59b;font-weight:800;font-size:0.8rem;">&rarr; $${rp.hoodies.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div style="padding:8px 10px;background:rgba(8,7,18,0.85);border-radius:10px;border:1px solid rgba(255,255,255,0.16);">
+                  <div style="font-size:0.65rem;color:#2ce6ff;font-family:'Orbitron',sans-serif;">JOGGERS (#LS16006 + DTF)</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                    <span style="font-size:0.75rem;">Cost $</span>
+                    <input id="mcInputJoggers" type="number" step="0.5" value="${mc.joggers}" style="width:62px;background:#080712;color:#fff;border:1px solid #f5c451;border-radius:6px;padding:3px 6px;">
+                    <span style="color:#22f59b;font-weight:800;font-size:0.8rem;">&rarr; $${rp.joggers.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
-              <div class="row-actions">
-                <button type="button" class="act-btn act-neutral" data-stock-sku="${escapeHtml(item.sku)}" data-stock-delta="-1">-</button>
-                <button type="button" class="act-btn act-neutral" data-stock-sku="${escapeHtml(item.sku)}" data-stock-delta="1">+</button>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+                <a href="https://digitalprintworx.com/collections/gang-sheet-builders" target="_blank" rel="noopener" class="act-btn act-neutral" style="text-decoration:none;">&#128424;&#65039; Open Digital Print Worx Gang Sheet Builder &nearr;</a>
+                <button type="button" class="act-btn act-approve" onclick="window.__rcAdminSaveMakeCosts()">Save 2&times; Return Prices</button>
               </div>
             </div>
+            <div class="item-row">
+              <div class="item-info">
+                <div class="item-title">
+                  <a href="hoodie_preview.html" style="color:#fff;text-decoration:none;">16 Active Black Edition Variants (Concepts #01, #12, #18 &amp; #19 &times; Black Hats, Shirts &amp; Hoodies)</a>
+                  <span class="tag-pill tag-member">BLACK EDITION LIVE</span>
+                </div>
+                <div class="item-sub">Hats: $${rp.hats.toFixed(2)} &bull; Shirts: $${rp.shirts.toFixed(2)} &bull; Hoodies: $${rp.hoodies.toFixed(2)} &bull; Joggers: $${rp.joggers.toFixed(2)} (+ 7% Tax &amp; $19.99 Shipping)</div>
+              </div>
+              <a href="hoodie_preview.html" class="act-btn act-approve" style="text-decoration:none;">Open Showroom &rarr;</a>
+            </div>
           `;
-        }).join('');
+        }
 
-        // Master Production Files Tab (Always accessible 1-click downloads + visual garment & 300 DPI logo previews)
+        // 2. Master Production Files Vault (All .DST + .SVG + 300-DPI DTF + 27"x15" DPW Gang Sheets + S&S Black Blanks!)
         const masterEl = document.getElementById('masterProductionFilesList');
         if (masterEl) {
-          masterEl.innerHTML = Object.values(MASTER_PRODUCTION_CATALOG).map((cat) => {
-            const isHat = cat.model === 'RC-107';
-            const logoUrl = isHat
-              ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=235'
-              : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=235';
+          const allCatalogList = (STORE && STORE.ORDERED_SKUS)
+            ? STORE.ORDERED_SKUS.map((k) => STORE.CATALOG[k]).filter(Boolean)
+            : Object.values(MASTER_PRODUCTION_CATALOG);
+          const filtered = allCatalogList.filter((c) => {
+            if (vaultFilterSet > 0 && c.setNum !== vaultFilterSet) return false;
+            if (vaultFilterCat !== 'all' && c.category !== vaultFilterCat) return false;
+            return true;
+          });
+
+          const setOptionsHtml = `<option value="0" ${vaultFilterSet === 0 ? 'selected' : ''}>All 4 Approved Concepts (#01, #12, #18, #19 — Black)</option>` +
+            (STORE ? STORE.THEMES : []).map((t) =>
+              `<option value="${t.num}" ${vaultFilterSet === t.num ? 'selected' : ''}>Concept #${String(t.num).padStart(2,'0')} — ${escapeHtml(t.title)} (Black)</option>`
+            ).join('');
+
+          const filterBarHtml = `
+            <div class="item-row" style="flex-wrap:wrap;gap:8px;background:rgba(44,230,255,0.07);border-color:rgba(44,230,255,0.4);">
+              <select onchange="window.__rcAdminSetVaultFilter('set', this.value)" style="background:#090814;color:#fff;border:1px solid #f5c451;border-radius:8px;padding:6px 10px;font-family:'Orbitron',sans-serif;font-size:0.65rem;">
+                ${setOptionsHtml}
+              </select>
+              <select onchange="window.__rcAdminSetVaultFilter('cat', this.value)" style="background:#090814;color:#fff;border:1px solid #2ce6ff;border-radius:8px;padding:6px 10px;font-family:'Orbitron',sans-serif;font-size:0.65rem;">
+                <option value="all" ${vaultFilterCat === 'all' ? 'selected' : ''}>All 4 Black Garments</option>
+                <option value="hats" ${vaultFilterCat === 'hats' ? 'selected' : ''}>Black Hats (.DST + .SVG)</option>
+                <option value="shirts" ${vaultFilterCat === 'shirts' ? 'selected' : ''}>Black Shirts (DTF + DPW Sheet)</option>
+                <option value="hoodies" ${vaultFilterCat === 'hoodies' ? 'selected' : ''}>Black Hoodies (DTF + DPW Sheet)</option>
+                <option value="joggers" ${vaultFilterCat === 'joggers' ? 'selected' : ''}>Black Joggers (Leg DTF + DPW Sheet)</option>
+              </select>
+            </div>
+          `;
+
+          masterEl.innerHTML = filterBarHtml + filtered.map((cat) => {
+            const logoUrl = cat.logo300DpiUrl || (cat.productionType === 'EMBROIDERY_DST'
+              ? 'assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png?v=240'
+              : 'assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png?v=240');
             return `
               <div class="item-row" style="flex-direction:column;align-items:stretch;gap:8px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
                   <div class="item-title">
                     <span>${escapeHtml(cat.model)} — ${escapeHtml(cat.title)}</span>
+                    <span class="tag-pill tag-owner">$${Number(cat.price || 36).toFixed(2)} (Cost: $${Number(cat.makeCost || 18).toFixed(2)})</span>
                   </div>
                   <div style="display:flex;gap:6px;align-items:center;">
                     ${cat.frontPhotoUrl ? `<a href="${escapeHtml(cat.frontPhotoUrl)}" target="_blank" title="Front Garment Photo"><img src="${escapeHtml(cat.frontPhotoUrl)}" alt="Front" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(8,7,16,0.9);border:1px solid rgba(255,255,255,0.25);padding:3px;"></a>` : ''}
                     ${cat.backPhotoUrl ? `<a href="${escapeHtml(cat.backPhotoUrl)}" target="_blank" title="Back Garment Photo"><img src="${escapeHtml(cat.backPhotoUrl)}" alt="Back" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(8,7,16,0.9);border:1px solid rgba(255,255,255,0.25);padding:3px;"></a>` : ''}
-                    <a href="${escapeHtml(logoUrl)}" target="_blank" title="300 DPI Official Crest Artwork"><img src="${escapeHtml(logoUrl)}" alt="300 DPI Crest" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(8,7,16,0.9);border:1.5px solid rgba(245,196,81,0.68);padding:3px;"></a>
+                    <a href="${escapeHtml(logoUrl)}" target="_blank" title="300 DPI Official Artwork"><img src="${escapeHtml(logoUrl)}" alt="300 DPI Crest" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:rgba(8,7,16,0.9);border:1.5px solid rgba(245,196,81,0.68);padding:3px;"></a>
                   </div>
                 </div>
                 <div class="item-sub">${escapeHtml(cat.productionNotes)}</div>
                 <div class="prod-files-grid">
-                  ${cat.productionFiles.map((f) => {
+                  ${(cat.productionFiles || []).map((f) => {
                     const isImg = /\.(png|svg)(\?|$)/i.test(f.url);
                     const thumb = isImg ? f.url : logoUrl;
                     if (f.externalBlank || /^https?:\/\//i.test(f.url)) {
-                      const gThumb = cat.frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_front.png';
+                      const gThumb = cat.heroPhotoUrl || cat.frontPhotoUrl || 'assets/logo.png';
                       return `
                         <a class="prod-dl-btn" href="${escapeHtml(f.url)}" target="_blank" rel="noopener noreferrer" style="justify-content:flex-start;border-color:rgba(245,196,81,0.65) !important;">
                           <img class="prod-dl-thumb" src="${escapeHtml(gThumb)}" alt="Blank">
@@ -3155,7 +3867,7 @@
                       `;
                     }
                     return `
-                      <a class="prod-dl-btn" href="${escapeHtml(f.url)}" download="${escapeHtml(f.filename)}" style="justify-content:flex-start;">
+                      <a class="prod-dl-btn" href="${escapeHtml(f.url)}" download="${escapeHtml(f.filename || '')}" style="justify-content:flex-start;">
                         <img class="prod-dl-thumb" src="${escapeHtml(thumb)}" alt="Logo">
                         <span>${escapeHtml(f.label)}</span>
                       </a>
@@ -3170,7 +3882,7 @@
         // Site Controls Tab
         const ctrl = getControls();
         const bannerInput = document.getElementById('dropBannerTextInput');
-        if (document.activeElement !== bannerInput) {
+        if (bannerInput && document.activeElement !== bannerInput) {
           bannerInput.value = ctrl.bannerText || '';
         }
 
@@ -3186,8 +3898,8 @@
           </div>
           <div class="item-row">
             <div class="item-info">
-              <div class="item-title">Merch Store Checkout ($1.00 Test Mode)</div>
-              <div class="item-sub">Only White Hoodie ($1) &amp; White Hat ($1) active</div>
+              <div class="item-title">Merch Store Checkout (2&times; Return + 7% Tax + $19.99 Shipping)</div>
+              <div class="item-sub">All 160 White &amp; Black Hats, Shirts &amp; Hoodies active</div>
             </div>
             <button type="button" class="toggle-pill ${ctrl.checkoutOpen ? 'on' : ''}" data-toggle-ctrl="checkoutOpen">
               ${ctrl.checkoutOpen ? 'OPEN' : 'PAUSED'}
@@ -3538,5 +4250,6 @@
       });
     })();
   </script>
+  <script src="bulk_quote_tool.js?v=245"></script>
 </body>
 </html>
