@@ -238,7 +238,7 @@
     (function () {
       const EDGE_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout';
       const params = new URLSearchParams(window.location.search);
-      const quoteId = (params.get('q') || params.get('order_id') || '').trim();
+      const quoteId = (params.get('ticket') || params.get('q') || params.get('order_id') || '').trim();
       const isSuccess = params.get('stripe_quote_success') === '1';
       const isCancel = params.get('stripe_quote_cancel') === '1';
       const sessionId = (params.get('session_id') || '').trim();
@@ -297,11 +297,14 @@
               &#10003; LIVE STRIPE PAYMENT VERIFIED
             </div>
             <div style="font-family:'Orbitron',sans-serif;font-size:0.95rem;font-weight:800;color:#ffffff;margin-top:6px;">
-              OFFICIAL ORDER NUMBER: #${esc(info.orderId || quoteId)}
+              OFFICIAL PROJECT TICKET: #${esc(info.orderId || quoteId)}
             </div>
             <p style="font-size:0.78rem;color:rgba(255,255,255,0.78);margin-top:6px;">
-              This verification receipt is locked for production accuracy and matches our fulfillment queue.
+              This verification receipt is locked for production accuracy and confirmed in the RetroCanopy Owner's Hub.
             </p>
+            <div style="margin-top:10px;">
+              <a href="quote.html?ticket=${encodeURIComponent(info.orderId || quoteId)}" style="color:#ffd089;font-size:0.8rem;font-weight:700;text-decoration:underline;">&#127915; View Full Official Project Quote Dossier &nearr;</a>
+            </div>
           </div>
           <div class="readonly-grid">
             <div class="readonly-field">

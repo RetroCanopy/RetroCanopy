@@ -1313,10 +1313,118 @@
     body[data-layout="tabbed-studio"]:not([data-focus-pane="bulkquote"]) #bulkQuoteStudioSection {
       display: none;
     }
+    body[data-layout="tabbed-studio"]:not([data-focus-pane="savedquotes"]) #savedQuotesVaultSection {
+      display: none;
+    }
     body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] #websiteOrdersHubSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] #savedQuotesVaultSection,
     body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] .owner-workspace,
     body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] .vision-telemetry-wing {
       display: none;
+    }
+    body[data-layout="tabbed-studio"][data-focus-pane="savedquotes"] #websiteOrdersHubSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="savedquotes"] #bulkQuoteStudioSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="savedquotes"] .owner-workspace,
+    body[data-layout="tabbed-studio"][data-focus-pane="savedquotes"] .vision-telemetry-wing {
+      display: none;
+    }
+
+    /* Saved Quotes Vault & Live Paid Quote Confirmation Styles */
+    .paid-quote-confirm-banner {
+      margin-bottom: 16px;
+      padding: 15px 20px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(34, 245, 155, 0.85);
+      background:
+        radial-gradient(circle at 18% 0%, rgba(34, 245, 155, 0.25), transparent 58%),
+        linear-gradient(135deg, rgba(10, 48, 34, 0.90), rgba(8, 20, 18, 0.96));
+      box-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.65),
+        0 0 28px rgba(34, 245, 155, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.32);
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sq-vault-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    @media (max-width: 640px) {
+      .sq-vault-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .sq-quote-card {
+      background:
+        linear-gradient(155deg, rgba(38, 36, 48, 0.72) 0%, rgba(14, 13, 20, 0.95) 100%);
+      border: 1.5px solid rgba(255, 138, 38, 0.45);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow:
+        0 16px 36px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.24);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+    .sq-quote-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 156, 64, 0.85);
+    }
+    .sq-quote-card.is-paid-quote {
+      border-color: rgba(34, 245, 155, 0.82);
+      background:
+        radial-gradient(circle at 90% 0%, rgba(34, 245, 155, 0.16), transparent 55%),
+        linear-gradient(155deg, rgba(16, 42, 34, 0.78) 0%, rgba(11, 18, 17, 0.96) 100%);
+      box-shadow:
+        0 16px 38px rgba(0, 0, 0, 0.6),
+        0 0 24px rgba(34, 245, 155, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+    .sq-ticket-link-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255, 122, 24, 0.25), rgba(34, 18, 8, 0.92));
+      border: 1px solid rgba(255, 150, 54, 0.82);
+      color: #ffd099;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .sq-ticket-link-pill:hover {
+      border-color: #ffffff;
+      color: #ffffff;
+    }
+    .c1-item-desc-panel {
+      margin-top: 14px;
+      background: linear-gradient(135deg, rgba(42, 34, 34, 0.56) 0%, rgba(16, 15, 21, 0.95) 100%);
+      border: 1px solid rgba(255, 142, 44, 0.48);
+      border-radius: 18px;
+      padding: 13px 16px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .c1-item-desc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .c1-item-desc-box {
+      background: rgba(9, 8, 13, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-left: 3px solid #ff8c28;
+      border-radius: 12px;
+      padding: 9px 12px;
     }
 
     /* =====================================================================
@@ -1667,13 +1775,15 @@
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
-      background: linear-gradient(135deg, rgba(64, 62, 74, 0.62) 0%, rgba(22, 21, 28, 0.94) 50%, rgba(28, 22, 24, 0.94) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.20);
+      background:
+        linear-gradient(124deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 34%, rgba(18, 17, 24, 0.93) 45%, rgba(14, 13, 19, 0.96) 76%, rgba(42, 24, 14, 0.88) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-top-color: rgba(255, 255, 255, 0.42);
       border-radius: 18px;
       padding: 16px 22px;
       box-shadow:
-        0 10px 28px rgba(0, 0, 0, 0.55),
-        inset 0 1px 0 rgba(255, 255, 255, 0.28);
+        0 12px 32px rgba(0, 0, 0, 0.62),
+        inset 0 1px 0 rgba(255, 255, 255, 0.36);
     }
     .c1-brand-lockup {
       display: flex;
@@ -2599,6 +2709,14 @@
             </span>
           </button>
 
+          <button type="button" class="vision-nav-item" id="sideNavSavedQuotes" style="border-color:rgba(34,245,155,0.48);background:rgba(34,245,155,0.09);" onclick="document.querySelector('[data-focus-target=\'savedquotes\']').click();document.getElementById('savedQuotesVaultSection').scrollIntoView({behavior:'smooth'});">
+            <span class="vision-nav-icon">&#127915;</span>
+            <span>
+              Saved Quotes Vault
+              <span class="vision-nav-sub">(Tickets &amp; Paid Status)</span>
+            </span>
+          </button>
+
           <button type="button" class="vision-nav-item" onclick="document.querySelector('[data-tab-target=\'pane-master-files\']').click();document.getElementById('storeCatalogSection').scrollIntoView({behavior:'smooth'});">
             <span class="vision-nav-icon">&#128193;</span>
             <span>DTF &amp; .DST Production Vault</span>
@@ -2692,6 +2810,11 @@
             <span>&#128208;</span>
             <span>Bulk Order Quoter (S&amp;S + Live DTF)</span>
           </button>
+          <button type="button" class="spatial-focus-tab" data-focus-target="savedquotes" id="topFocusTabSavedQuotes">
+            <span>&#127915;</span>
+            <span>Saved Quotes &amp; Paid Tracker</span>
+            <span id="savedQuotesNavCountBadge" style="padding:2px 8px;border-radius:999px;font-size:0.7rem;background:rgba(255,138,38,0.24);border:1px solid rgba(255,148,54,0.65);color:#ffd099;">0</span>
+          </button>
           <button type="button" class="spatial-focus-tab" data-focus-target="vault">
             <span>&#128193;</span>
             <span>300 DPI DTF / .DST Vault &amp; Store ($1)</span>
@@ -2712,6 +2835,58 @@
           <a href="shibuya_bot_pit.html" class="vision-quick-link">Bot Pit</a>
         </div>
       </nav>
+
+      <!-- LIVE PAID QUOTE CONFIRMATION ALERT BANNER (SHOWN AUTOMATICALLY WHEN ANY QUOTE IS PAID VIA STRIPE) -->
+      <div class="paid-quote-confirm-banner" id="paidBulkQuotesAlertBar" role="status" aria-live="polite"></div>
+
+      <!-- DEDICATED SAVED QUOTES & PAID QUOTE CONFIRMATION VAULT -->
+      <section class="vision-glass owner-major-section" id="savedQuotesVaultSection">
+        <div class="section-header" style="align-items:flex-start;gap:14px;flex-wrap:wrap;">
+          <div>
+            <h2 class="section-title">&#127915; Saved Quotes Vault &amp; Live Stripe Paid Confirmation Tracker</h2>
+            <div style="font-size:0.78rem;color:rgba(255,255,255,0.75);margin-top:4px;">
+              Every quote carries an official <strong>Project Ticket Number (#RC-TKT-...)</strong> that deep-links directly to the project studio &amp; live Concept #1 client quote. Paid quotes confirm automatically in real time!
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <div class="kpi-pill">
+              <div class="kpi-label">Saved Quotes</div>
+              <div class="kpi-val" id="sqKpiTotalCount">0</div>
+            </div>
+            <div class="kpi-pill" style="border-color:rgba(34,245,155,0.72) !important;">
+              <div class="kpi-label">Paid &amp; Confirmed</div>
+              <div class="kpi-val" id="sqKpiPaidCount" style="color:#22f59b;">0</div>
+            </div>
+            <div class="kpi-pill" style="border-color:rgba(255,148,54,0.68) !important;">
+              <div class="kpi-label">Awaiting Payment</div>
+              <div class="kpi-val" id="sqKpiPendingCount" style="color:#ffb36b;">0</div>
+            </div>
+            <div class="kpi-pill" style="border-color:rgba(34,245,155,0.72) !important;">
+              <div class="kpi-label">Paid Quote Rev</div>
+              <div class="kpi-val" id="sqKpiPaidRevenue" style="color:#22f59b;">$0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(10,9,18,0.68);border:1px solid rgba(255,255,255,0.14);">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button type="button" class="card-tab-btn active" data-sq-filter="all" id="sqFilterBtnAll">All Quotes</button>
+            <button type="button" class="card-tab-btn" data-sq-filter="paid" id="sqFilterBtnPaid" style="color:#6bffc3;">&#9989; Paid &amp; Confirmed</button>
+            <button type="button" class="card-tab-btn" data-sq-filter="pending" id="sqFilterBtnPending" style="color:#ffb36b;">&#9203; Sent / Unpaid</button>
+            <input type="search" class="bq-input" id="sqVaultSearchInput" placeholder="Search Ticket #, Client, Project, Email..." style="min-width:250px;">
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="mini-btn" id="sqRefreshCloudQuotesBtn" style="color:#22f59b;border-color:rgba(34,245,155,0.55) !important;">&#8635; Sync Live Paid Status</button>
+            <button type="button" class="vision-gold-cta-btn" id="sqCreateNewQuoteBtn" style="padding:8px 16px;font-size:0.75rem;">+ New Project Quote</button>
+          </div>
+        </div>
+
+        <div class="sq-vault-grid" id="savedQuotesVaultGrid">
+          <div class="empty-state">Loading cloud saved quotes &amp; paid confirmations...</div>
+        </div>
+      </section>
 
       <!-- MAIN PRODUCTION QUEUE GLASS PANEL -->
       <section class="vision-glass owner-major-section" id="websiteOrdersHubSection">
@@ -2978,11 +3153,14 @@
               <span>Black &amp; Orange Liquid Glass Quote Receipt, Finished Item Preview, Discount &amp; Tax</span>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button type="button" class="mini-btn" id="bqNewQuoteIdBtn" style="color:#ffd089;" title="Mint a fresh Official Quote Number &amp; Stripe QR">&#128260; New Quote #</button>
-              <button type="button" class="mini-btn" id="bqOpenStripeQuoteBtn" style="color:#2ce6ff;border-color:rgba(44,230,255,0.5) !important;" title="Sync &amp; open the Live Stripe Checkout page for this Quote">&#128179; Open Stripe Checkout</button>
-              <button type="button" class="mini-btn" id="bqSaveQuoteBtn" style="color:#22f59b;">&#128190; Save Quote</button>
-              <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#ffb36b;border-color:rgba(255,140,42,0.5) !important;">&#128203; Copy Quote</button>
-              <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:7px 15px;font-size:0.74rem;background:linear-gradient(135deg,#ff7a18,#ffb347);color:#0b0806;border-color:#ffd099;">&#128424; Official Quote PDF (w/ Stripe QR)</button>
+              <button type="button" class="mini-btn" id="bqNewQuoteIdBtn" style="color:#ffd089;" title="Mint a fresh Project Ticket Number &amp; Stripe QR">&#127915; New Ticket #</button>
+              <button type="button" class="mini-btn" id="bqSaveQuoteBtn" style="color:#22f59b;border-color:rgba(34,245,155,0.55) !important;">&#128190; Save Quote to Vault</button>
+              <button type="button" class="mini-btn" id="bqOpenSavedVaultFromStudioBtn" style="color:#9ef3ff;border-color:rgba(44,230,255,0.45) !important;">&#128193; Saved Quotes Vault</button>
+              <button type="button" class="mini-btn" id="bqSendClientQuoteLinkBtn" style="color:#ffd099;border-color:rgba(255,148,54,0.72) !important;" title="Save &amp; copy the Concept #1 Official Client Quote Link (quote.html?ticket=...) to send via Text or Email">&#128228; Copy Client Quote Link</button>
+              <button type="button" class="mini-btn" id="bqPreviewClientQuoteBtn" style="color:#ffb36b;" title="Open the live Concept #1 Client Quote page in a new tab">&#128065;&#65039; View Sent Quote</button>
+              <button type="button" class="mini-btn" id="bqOpenStripeQuoteBtn" style="color:#2ce6ff;border-color:rgba(44,230,255,0.5) !important;" title="Sync &amp; open the Live Stripe Checkout page for this Ticket">&#128179; Stripe Checkout</button>
+              <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#cbd5e1;" title="Copy plain-text summary + link">&#128203; Copy Text</button>
+              <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:7px 15px;font-size:0.74rem;background:linear-gradient(135deg,#ff7a18,#ffb347);color:#0b0806;border-color:#ffd099;">&#128424; Official Quote PDF (w/ QR)</button>
             </div>
           </div>
 
@@ -3374,11 +3552,17 @@
         btn.addEventListener('click', () => {
           const target = btn.getAttribute('data-focus-target') || 'orders';
           document.body.setAttribute('data-focus-pane', target);
-          document.querySelectorAll('[data-focus-target]').forEach((b) => b.classList.toggle('active', b === btn));
+          document.querySelectorAll('[data-focus-target]').forEach((b) =>
+            b.classList.toggle('active', b.getAttribute('data-focus-target') === target)
+          );
+          if (target === 'savedquotes' && window.RetroBulkQuoteStudio && window.RetroBulkQuoteStudio.refreshSavedQuotesVault) {
+            window.RetroBulkQuoteStudio.refreshSavedQuotesVault(true);
+          }
           if (document.body.getAttribute('data-layout') === 'bottom-dock') {
             const map = {
               orders: 'websiteOrdersHubSection',
               bulkquote: 'bulkQuoteStudioSection',
+              savedquotes: 'savedQuotesVaultSection',
               vault: 'storeCatalogSection',
               botpit: 'gameAnalyticsHubSection',
               traffic: 'storeCatalogSection'
@@ -3613,8 +3797,85 @@
       }
 
       function normalizeMerchOrderRow(raw) {
-        const orderId = raw.order_id || raw.orderId || ('RC-ORD-' + Date.now());
+        const orderId = String(raw.order_id || raw.orderId || ('RC-ORD-' + Date.now()));
         const rawItems = Array.isArray(raw.items) ? raw.items : [];
+        let parsedMeta = null;
+        if (raw.customer_notes || raw.customerNotes) {
+          try {
+            const cand = JSON.parse(String(raw.customer_notes || raw.customerNotes));
+            if (cand && typeof cand === 'object') parsedMeta = cand;
+          } catch (_) {}
+        }
+
+        const isBulkQuote = Boolean(
+          orderId.startsWith('RC-TKT-') ||
+          orderId.startsWith('RC-Q') ||
+          (parsedMeta && parsedMeta.isBulkQuote)
+        );
+
+        if (isBulkQuote) {
+          const previewImg = (parsedMeta && parsedMeta.projectedPreviewJpeg) || 'assets/blanks/ss_tt11_black_front.png';
+          const bulkItems = rawItems.length > 0 ? rawItems.map((it) => {
+            const skuStr = String(it.sku || it.styleCode || 'CUSTOM');
+            const isLong = skuStr.toUpperCase().includes('CE10L');
+            const ssUrl = it.productUrl || (isLong ? 'https://www.ssactivewear.com/p/core365/ce10l' : 'https://www.ssactivewear.com/p/team_365/tt11');
+            return {
+              model: skuStr,
+              title: it.name || it.garmentTitle || 'Custom Performance Apparel',
+              itemDescription: it.itemDescription || '',
+              printSpecs: it.printSpecs || '',
+              colorName: it.colorName || '',
+              colorHex: it.colorHex || '#18181b',
+              price: Number(it.priceUsd || it.price || 0),
+              qty: Number(it.qty || 1),
+              size: it.size || 'STD',
+              frontPhotoUrl: previewImg,
+              backPhotoUrl: '',
+              logo300DpiUrl: 'assets/logo.png',
+              productionType: 'Bulk Quote DTF Order',
+              productionNotes: it.printSpecs || '',
+              productionFiles: it.isPrintOnly ? [] : [{
+                label: `Order Blank (${skuStr}) on S&S Activewear`,
+                url: ssUrl,
+                externalBlank: true
+              }]
+            };
+          }) : [{
+            model: orderId,
+            title: (parsedMeta && parsedMeta.projectName) || 'Paid Bulk Quote Order',
+            price: Number(raw.total_paid_usd || raw.total_charged || 0),
+            qty: Number((parsedMeta && parsedMeta.totalShirts) || 1),
+            size: 'Assorted',
+            frontPhotoUrl: previewImg,
+            backPhotoUrl: '',
+            logo300DpiUrl: 'assets/logo.png',
+            productionType: 'Bulk Quote DTF Order',
+            productionNotes: '',
+            productionFiles: []
+          }];
+
+          return {
+            orderId,
+            isBulkQuote: true,
+            ticketId: orderId,
+            projectName: (parsedMeta && parsedMeta.projectName) || 'Custom Bulk Quote Order',
+            quoteMeta: parsedMeta || {},
+            stripeSessionId: raw.stripe_session_id || '',
+            customerName: raw.customer_name || raw.customerName || 'Verified Quote Client',
+            customerEmail: raw.customer_email || raw.customerEmail || 'Not Provided',
+            customerPhone: raw.customer_phone || raw.customerPhone || 'Not Provided',
+            shippingAddress: raw.shipping_address || raw.shippingAddress || 'Per Official Quote',
+            customerNotes: (parsedMeta && parsedMeta.customerNotesText) || '',
+            items: bulkItems,
+            totalPaid: Number(raw.total_paid_usd || raw.total_charged || (parsedMeta && parsedMeta.grandTotalUsd) || 0),
+            isPaid: raw.is_paid !== undefined ? Boolean(raw.is_paid) : (raw.isPaid !== false),
+            paymentStatus: raw.payment_status || raw.paymentStatus || 'PAID',
+            fulfilled: Boolean(raw.fulfilled),
+            fulfilledAt: raw.fulfilled_at || raw.fulfilledAt || null,
+            paidAt: raw.paid_at || raw.date || raw.created_at || raw.createdAt || new Date().toISOString()
+          };
+        }
+
         const enrichedItems = rawItems.filter((it) => !String(it.sku || it.model || '').startsWith('RC-TAX') && !String(it.sku || it.model || '').startsWith('RC-SHIP')).map((it) => {
           const rawCode = String(it.model || it.sku || '').toUpperCase().trim();
           const code = MASTER_PRODUCTION_CATALOG[rawCode]
@@ -3657,6 +3918,7 @@
 
         return {
           orderId,
+          isBulkQuote: false,
           customerName: raw.customer_name || raw.customerName || raw.customer || raw.username || 'Valued Customer',
           customerEmail: raw.customer_email || raw.customerEmail || 'Not Provided',
           customerPhone: raw.customer_phone || raw.customerPhone || 'Not Provided',
@@ -3746,9 +4008,129 @@
         } else {
           historyEl.innerHTML = history.map((o) => buildProductionOrderCardHtml(o)).join('');
         }
+
+        // Populate Top-of-Hub Live Paid Bulk Quote Confirmation Banner
+        const paidBulkUnfulfilled = unfulfilled.filter((o) => o.isBulkQuote);
+        const alertBar = document.getElementById('paidBulkQuotesAlertBar');
+        if (alertBar) {
+          if (paidBulkUnfulfilled.length === 0) {
+            alertBar.style.display = 'none';
+            alertBar.innerHTML = '';
+          } else {
+            alertBar.style.display = 'flex';
+            alertBar.innerHTML = paidBulkUnfulfilled.map((bq) => {
+              const paidTime = bq.paidAt ? new Date(bq.paidAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Verified Now';
+              return `
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <span style="padding:5px 12px;border-radius:999px;background:rgba(34,245,155,0.22);border:1px solid #22f59b;color:#22f59b;font-family:'Orbitron',sans-serif;font-size:0.74rem;font-weight:900;">
+                      &#10003; QUOTE PAID IN FULL
+                    </span>
+                    <strong style="color:#ffffff;font-size:0.92rem;">
+                      Ticket <span style="color:#ffd089;">#${escapeHtml(bq.orderId)}</span> &mdash; ${escapeHtml(bq.projectName || bq.customerName)}
+                    </strong>
+                    <span style="color:#6bffc3;font-weight:800;font-size:0.9rem;">$${Number(bq.totalPaid || 0).toFixed(2)} Paid via Stripe</span>
+                    <span style="font-size:0.75rem;color:rgba(255,255,255,0.72);">Client: ${escapeHtml(bq.customerName)} &bull; ${escapeHtml(paidTime)}</span>
+                  </div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button type="button" class="mini-btn" onclick="if(window.RetroBulkQuoteStudio){window.RetroBulkQuoteStudio.openTicketInStudio('${escapeHtml(bq.orderId)}');}" style="color:#ffd099;border-color:rgba(255,148,54,0.75) !important;">
+                      &#127915; Open Project Ticket #${escapeHtml(bq.orderId)}
+                    </button>
+                    <a href="quote.html?ticket=${encodeURIComponent(bq.orderId)}" target="_blank" class="mini-btn" style="color:#6bffc3;text-decoration:none;border-color:rgba(34,245,155,0.6) !important;">
+                      &#128065;&#65039; Official Paid Receipt &nearr;
+                    </a>
+                  </div>
+                </div>
+              `;
+            }).join('<hr style="border:none;border-top:1px solid rgba(34,245,155,0.25);">');
+          }
+        }
       }
 
       function buildProductionOrderCardHtml(order) {
+        if (order.isBulkQuote) {
+          const previewPhoto = (order.items && order.items[0] && order.items[0].frontPhotoUrl) || 'assets/blanks/ss_tt11_black_front.png';
+          const paidDateLbl = order.paidAt ? new Date(order.paidAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+          const linesListHtml = (order.items || []).map((it) => `
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);font-size:0.76rem;">
+              <div>
+                <strong style="color:#ffd089;">${escapeHtml(it.qty)}&times; ${escapeHtml(it.model)} (${escapeHtml(it.size)})</strong>
+                <span style="color:#ffffff;margin-left:4px;">${escapeHtml(it.colorName || '')}</span>
+                ${it.printSpecs ? `<div style="font-size:0.69rem;color:#9ef3ff;margin-top:2px;">Prints: ${escapeHtml(it.printSpecs)}</div>` : ''}
+                ${it.itemDescription ? `<div style="font-size:0.67rem;color:rgba(255,255,255,0.66);margin-top:2px;">${escapeHtml(it.itemDescription)}</div>` : ''}
+              </div>
+              <strong style="color:#22f59b;white-space:nowrap;">$${Number((it.price || 0) * (it.qty || 1)).toFixed(2)}</strong>
+            </div>
+          `).join('');
+
+          const uniqueBlankLinks = new Map();
+          (order.items || []).forEach((it) => {
+            (it.productionFiles || []).forEach((pf) => {
+              if (pf && pf.url && !uniqueBlankLinks.has(pf.url)) uniqueBlankLinks.set(pf.url, pf);
+            });
+          });
+          const blankBtnsHtml = Array.from(uniqueBlankLinks.values()).map((pf) => `
+            <a class="prod-dl-btn" href="${escapeHtml(pf.url)}" target="_blank" rel="noopener noreferrer" style="justify-content:flex-start;border-color:rgba(245,196,81,0.65) !important;">
+              <img class="prod-dl-thumb" src="assets/logo.png" alt="S&S Blank">
+              <span style="color:#ffe89e;">${escapeHtml(pf.label)} &nearr;</span>
+            </a>
+          `).join('');
+
+          return `
+            <div class="prod-order-card ${order.fulfilled ? 'is-fulfilled' : ''}" style="border-color:rgba(34,245,155,0.72) !important;">
+              <div class="vision-order-card-title">
+                <span>&#127915; PAID BULK QUOTE &mdash; ${escapeHtml(order.projectName || 'Custom Apparel Order')}</span>
+                <span class="vision-order-id-tag" style="background:rgba(34,245,155,0.2);border-color:#22f59b;color:#6bffc3;">TICKET #${escapeHtml(order.orderId)}</span>
+              </div>
+
+              <div class="vision-order-body-grid">
+                <div class="vision-garment-stage">
+                  <a href="quote.html?ticket=${encodeURIComponent(order.orderId)}" target="_blank" title="Click to open Official Concept #1 Paid Quote Dossier">
+                    <img class="vision-garment-main-img" src="${escapeHtml(previewPhoto)}" alt="Projected Finished Item">
+                  </a>
+                  <div style="font-size:0.69rem;color:#ffd089;text-align:center;margin-top:6px;font-weight:700;">
+                    Projected Finished Garment
+                  </div>
+                </div>
+
+                <div class="vision-order-details-col">
+                  <div class="vision-paid-badge" style="margin-bottom:4px;">
+                    <span>&#10003; BULK QUOTE PAID $${Number(order.totalPaid || 0).toFixed(2)} &bull; STRIPE VERIFIED${paidDateLbl ? ' (' + escapeHtml(paidDateLbl) + ')' : ''}</span>
+                  </div>
+
+                  <div class="vision-cust-block">
+                    <span class="vision-cust-label">Client &amp; Contact</span>
+                    <strong>${escapeHtml(order.customerName)}</strong>
+                    <div style="font-size:0.74rem;color:rgba(255,255,255,0.75);">${escapeHtml(order.customerPhone)} &bull; ${escapeHtml(order.customerEmail)}</div>
+                    <div style="font-size:0.73rem;color:rgba(255,255,255,0.72);margin-top:2px;">Ship / Deliver: ${escapeHtml(order.shippingAddress)}</div>
+                  </div>
+
+                  <div style="display:flex;flex-direction:column;gap:5px;max-height:185px;overflow-y:auto;">
+                    ${linesListHtml}
+                  </div>
+
+                  <div class="prod-files-grid" style="margin-top:6px;">
+                    <button type="button" class="prod-dl-btn" onclick="if(window.RetroBulkQuoteStudio){window.RetroBulkQuoteStudio.openTicketInStudio('${escapeHtml(order.orderId)}');}" style="justify-content:flex-start;cursor:pointer;border-color:rgba(255,148,54,0.85) !important;">
+                      <img class="prod-dl-thumb" src="assets/logo.png" alt="Project Ticket">
+                      <span style="color:#ffd099;font-weight:800;">&#128194; Open Project Ticket #${escapeHtml(order.orderId)} (300 DPI Gangsheets)</span>
+                    </button>
+                    <a class="prod-dl-btn" href="quote.html?ticket=${encodeURIComponent(order.orderId)}" target="_blank" style="justify-content:flex-start;border-color:rgba(34,245,155,0.65) !important;">
+                      <img class="prod-dl-thumb" src="assets/logo.png" alt="Receipt">
+                      <span style="color:#6bffc3;">&#128065;&#65039; View Official Paid Quote Receipt &nearr;</span>
+                    </a>
+                    ${blankBtnsHtml}
+                  </div>
+                </div>
+              </div>
+
+              <label class="prod-checkoff-label" title="Check off when bulk order pressing &amp; fulfillment are complete">
+                <input type="checkbox" data-toggle-merch-fulfilled="${escapeHtml(order.orderId)}" ${order.fulfilled ? 'checked' : ''}>
+                <span>${order.fulfilled ? '&#10003; Completed (In Order History)' : '&#10003; Mark Bulk Order Completed &rarr; Move to History'}</span>
+              </label>
+            </div>
+          `;
+        }
+
         const itemsList = (Array.isArray(order.items) && order.items.length > 0) ? order.items : [{
           model: 'RC-309',
           title: 'White & 24K Gold Crowned Legend Hoodie',
@@ -4837,6 +5219,6 @@
       });
     })();
   </script>
-  <script src="bulk_quote_tool.js?v=272"></script>
+  <script src="bulk_quote_tool.js?v=276"></script>
 </body>
 </html>

@@ -48,20 +48,30 @@
     }
   }
 
-  // Preload photorealistic blank shirt studio cutouts for Projected Finished Item Mockup
+  // Preload photorealistic TT11 & CE10L Dri-Fit studio cutouts + Official Logo
   const blankMockupAssets = {
-    whiteFront: null,
-    whiteBack: null,
-    blackFront: null,
-    blackBack: null
+    tt11WhiteFront: null,
+    tt11WhiteBack: null,
+    tt11BlackFront: null,
+    tt11BlackBack: null,
+    ce10lWhiteFront: null,
+    ce10lWhiteBack: null,
+    ce10lBlackFront: null,
+    ce10lBlackBack: null,
+    officialLogo: null
   };
 
   function preloadBlankShirtAssets() {
     const pairs = [
-      ['whiteFront', 'assets/blanks/ss_gildan5000_white_shirt_front.png'],
-      ['whiteBack', 'assets/blanks/ss_gildan5000_white_shirt_back.png'],
-      ['blackFront', 'assets/blanks/ss_gildan5000_black_shirt_front.png'],
-      ['blackBack', 'assets/blanks/ss_gildan5000_black_shirt_back.png']
+      ['tt11WhiteFront', 'assets/blanks/ss_tt11_white_front.png'],
+      ['tt11WhiteBack', 'assets/blanks/ss_tt11_white_back.png'],
+      ['tt11BlackFront', 'assets/blanks/ss_tt11_black_front.png'],
+      ['tt11BlackBack', 'assets/blanks/ss_tt11_black_back.png'],
+      ['ce10lWhiteFront', 'assets/blanks/ss_ce10l_white_front.png'],
+      ['ce10lWhiteBack', 'assets/blanks/ss_ce10l_white_back.png'],
+      ['ce10lBlackFront', 'assets/blanks/ss_ce10l_black_front.png'],
+      ['ce10lBlackBack', 'assets/blanks/ss_ce10l_black_back.png'],
+      ['officialLogo', 'assets/logo.png']
     ];
     pairs.forEach(([key, rel]) => {
       const im = new Image();
@@ -76,6 +86,8 @@
     });
   }
 
+  const PRINT_ONLY_DESCRIPTION = 'Commercial 300-DPI Direct-to-Film (DTF) Gangsheet Transfer Only — stretchable soft-hand polyurethane hot-peel adhesive, vibrant CMYK+W ink, press-ready at 300°F for 12s ($0.00 garment blank).';
+
   // Official S&S Activewear Verified Catalog (Direct S&S Size Pricing + PRINT ONLY $0.00)
   const SS_CATALOG = {
     TT11: {
@@ -88,7 +100,9 @@
       shortLabel: 'Dri-Fit Short Sleeve (Adult TT11 #671D9 / Youth TT11Y #683D9)',
       fullName: 'Team 365 Zone Performance Short Sleeve T-Shirt',
       youthFullName: 'Team 365 Youth Zone Performance Short Sleeve T-Shirt',
-      specs: '3.5 oz./yd², 100% Polyester Interlock • Moisture-Wicking • UPF 40+ • Cationic Dyes',
+      specs: '3.5 oz./yd² (130 gsm), 100% Polyester Sonic Heather / Interlock Dri-Fit • Moisture-Wicking • UV 40+ UPF Sun Protection • Cationic Dyes for Superior Brightness',
+      itemDescription: 'Team 365 Zone Performance Short-Sleeve Dri-Fit Crewneck (S&S Style #TT11 / Item #671D9): Lightweight 3.5 oz./yd² (130 gsm) 100% polyester interlock athletic weave with rapid moisture-wicking performance, UV 40+ UPF sun protection, athletic fit with heat-sealed neck label, and cationic dyes for fade-resistant color brilliance.',
+      youthItemDescription: 'Team 365 Youth Zone Performance Short-Sleeve Dri-Fit Crewneck (S&S Style #TT11Y / Item #683D9): Youth-proportioned 3.5 oz./yd² 100% polyester interlock moisture-wicking athletic jersey with UV 40+ UPF sun protection, tear-away/heat-sealed comfort tag, and auto-scaled youth DTF transfer sizing.',
       productUrl: 'https://www.ssactivewear.com/p/team_365/tt11',
       youthProductUrl: 'https://www.ssactivewear.com/p/team_365/tt11y',
       standardAdultBase: 8.30,
@@ -141,7 +155,9 @@
       shortLabel: 'Dri-Fit Long Sleeve (Adult CE10L #267A7 / Youth CE10LY #007A7)',
       fullName: 'CORE365 Capital Performance Long Sleeve T-Shirt',
       youthFullName: 'CORE365 Youth Capital Performance Long Sleeve T-Shirt',
-      specs: '4.0 oz./yd² (140 gsm), 100% Polyester Interlock • Moisture-Wicking • Tear-Away Label',
+      specs: '4.0 oz./yd² (135–140 gsm), 100% Polyester Interlock Dri-Fit • Moisture-Wicking & Antimicrobial • UV Protection • Tear-Away Label',
+      itemDescription: 'CORE365 Capital Performance Long-Sleeve Dri-Fit Crewneck (S&S Style #CE10L / Item #267A7): 4.0 oz./yd² (140 gsm) 100% polyester interlock performance knit with moisture-wicking & antimicrobial finish, UV protection, double-needle hemmed long sleeves, and clean tear-away neck label.',
+      youthItemDescription: 'CORE365 Youth Capital Performance Long-Sleeve Dri-Fit Crewneck (S&S Style #CE10LY / Item #007A7): Youth-sized 4.0 oz./yd² 100% polyester interlock moisture-wicking long-sleeve athletic shirt with antimicrobial finish, UV protection, and auto-scaled youth DTF transfer sizing.',
       productUrl: 'https://www.ssactivewear.com/p/core365/ce10l',
       youthProductUrl: 'https://www.ssactivewear.com/p/core365/ce10ly',
       standardAdultBase: 7.70,
@@ -277,30 +293,117 @@
   let dtfCounter = 3;
 
   const STRIPE_EDGE_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout';
-  const ACTIVE_QUOTE_ID_KEY = 'rc_active_bulk_quote_id_v5';
+  const ACTIVE_QUOTE_ID_KEY = 'rc_active_bulk_ticket_id_v6';
 
   function mintFreshQuoteId() {
-    const id = 'RC-Q' + Math.floor(100000 + Math.random() * 900000);
+    const id = 'RC-TKT-' + Math.floor(100000 + Math.random() * 900000);
     try { sessionStorage.setItem(ACTIVE_QUOTE_ID_KEY, id); } catch (_) {}
+    state.activeQuotePaidInfo = null;
     return id;
   }
 
   function getOrInitActiveQuoteId() {
     try {
       const existing = sessionStorage.getItem(ACTIVE_QUOTE_ID_KEY);
-      if (existing && /^RC-Q\d+/.test(existing)) return existing;
+      if (existing && /^(RC-TKT-\d+|RC-Q\d+)/i.test(existing)) return existing;
     } catch (_) {}
     return mintFreshQuoteId();
   }
 
   state.activeQuoteId = getOrInitActiveQuoteId();
+  state.activeQuotePaidInfo = null;
   state.stripeSyncStatus = 'ready';
+  state.cloudSavedQuotes = [];
+  state.sqVaultFilter = 'all';
+  state.sqVaultSearch = '';
   let stripeSyncTimer = null;
 
+  function getClientQuoteDossierUrl(ticketOverride) {
+    const tid = ticketOverride || state.activeQuoteId || getOrInitActiveQuoteId();
+    return `${window.location.origin}/quote.html?ticket=${encodeURIComponent(tid)}`;
+  }
+
+  function getPublicClientQuoteUrl(ticketOverride) {
+    const tid = ticketOverride || state.activeQuoteId || getOrInitActiveQuoteId();
+    const base = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? window.location.origin
+      : 'https://www.retrocanopy.com';
+    return `${base}/quote.html?ticket=${encodeURIComponent(tid)}`;
+  }
+
+  function getProjectStudioTicketUrl(ticketOverride) {
+    const tid = ticketOverride || state.activeQuoteId || getOrInitActiveQuoteId();
+    const base = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? window.location.origin
+      : 'https://www.retrocanopy.com';
+    return `${base}/admin.html?tab=bulkquote&ticket=${encodeURIComponent(tid)}`;
+  }
+
   function getQuoteStripePortalUrl(calc) {
-    const qid = state.activeQuoteId || getOrInitActiveQuoteId();
+    const tid = state.activeQuoteId || getOrInitActiveQuoteId();
     const amt = calc && calc.customerQuoteTotal > 0 ? calc.customerQuoteTotal.toFixed(2) : '0.00';
-    return `https://www.retrocanopy.com/pay_quote.html?q=${encodeURIComponent(qid)}&amt=${amt}`;
+    const base = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? window.location.origin
+      : 'https://www.retrocanopy.com';
+    return `${base}/pay_quote.html?ticket=${encodeURIComponent(tid)}&amt=${amt}`;
+  }
+
+  function buildCompactPlacementThumbDataUrl(p) {
+    const src = p.renderCanvas || p.trimmedCanvas || p.origCanvas;
+    if (!src) return p.thumbDataUrl || '';
+    try {
+      const iw = src.naturalWidth || src.width || 1;
+      const ih = src.naturalHeight || src.height || 1;
+      const maxDim = 240;
+      const sc = Math.min(1, maxDim / Math.max(iw, ih));
+      const tw = Math.max(1, Math.round(iw * sc));
+      const th = Math.max(1, Math.round(ih * sc));
+      const cv = document.createElement('canvas');
+      cv.width = tw;
+      cv.height = th;
+      cv.getContext('2d').drawImage(src, 0, 0, tw, th);
+      return cv.toDataURL('image/png');
+    } catch (_) {
+      return p.thumbDataUrl || '';
+    }
+  }
+
+  function buildCurrentProjectSnapshot() {
+    return {
+      customer: JSON.parse(JSON.stringify(state.customer)),
+      ssDiscountPct: state.ssDiscountPct,
+      rollWidthMode: state.rollWidthMode,
+      includeAutoBuilder15: state.includeAutoBuilder15,
+      gutterIn: state.gutterIn,
+      extraSpoilagePrints: state.extraSpoilagePrints,
+      pressLaborPerShirt: state.pressLaborPerShirt,
+      builtInUpchargePerShirt: state.builtInUpchargePerShirt,
+      ssShippingOverride: state.ssShippingOverride,
+      dpwShippingUsd: state.dpwShippingUsd,
+      discountPct: state.discountPct,
+      discountLabel: state.discountLabel,
+      includeTax: state.includeTax,
+      taxRatePct: state.taxRatePct,
+      includeAvailableColorsOnPdf: state.includeAvailableColorsOnPdf,
+      garmentLines: JSON.parse(JSON.stringify(state.garmentLines)),
+      dtfPlacements: state.dtfPlacements.map((p) => {
+        const thumbDataUrl = buildCompactPlacementThumbDataUrl(p);
+        p.thumbDataUrl = thumbDataUrl;
+        return {
+          id: p.id,
+          enabled: p.enabled,
+          locationLabel: p.locationLabel,
+          adultWidthIn: p.adultWidthIn,
+          adultHeightIn: p.adultHeightIn,
+          youthWidthIn: p.youthWidthIn,
+          youthHeightIn: p.youthHeightIn,
+          lockToPresetBox: p.lockToPresetBox,
+          autoTrimTransparent: p.autoTrimTransparent,
+          fileName: p.fileName,
+          thumbDataUrl
+        };
+      })
+    };
   }
 
   // =========================================================================
@@ -608,20 +711,38 @@
     return cv.toDataURL('image/png');
   }
 
-  async function syncQuoteToStripeCloudNow(calcOverride) {
+  async function syncQuoteToStripeCloudNow(calcOverride, opts = {}) {
     const calc = calcOverride || state.lastCalculation;
     if (!calc || calc.totalShirts === 0) return null;
-    const quoteId = state.activeQuoteId || getOrInitActiveQuoteId();
+    const ticketId = state.activeQuoteId || getOrInitActiveQuoteId();
     const c = state.customer;
+    const primaryStyleCode = state.garmentLines[0]?.styleCode || 'TT11';
+    const ssColors = getColorsForStyle(primaryStyleCode);
+    const activeColorNames = Array.from(new Set(state.garmentLines.map((l) => l.colorName)));
+
     const payload = {
       action: 'save_quote_for_stripe',
-      quoteId,
+      ticketId,
+      quoteId: ticketId,
+      isExplicitSave: Boolean(opts.isExplicitSave),
       projectName: c.projectName || c.companyOrTeam || 'Custom Performance Apparel & Print Order',
       customerName: [c.fullName, c.companyOrTeam].filter(Boolean).join(' — '),
+      customerCompany: c.companyOrTeam || '',
       customerEmail: c.email || '',
       customerPhone: c.phone || '',
       shippingAddress: c.address || '',
+      customerNotes: c.notes || '',
       itemizedLines: calc.itemizedLines,
+      itemOverallGroups: calc.itemOverallGroups,
+      itemDescriptions: calc.itemDescriptions,
+      availableColors: {
+        styleCode: primaryStyleCode,
+        brand: (SS_CATALOG[primaryStyleCode] || SS_CATALOG.TT11).brand,
+        selectedColors: activeColorNames,
+        colors: ssColors
+      },
+      projectedPreviewJpeg: calc.projectedPreviewJpeg || '',
+      projectSnapshot: buildCurrentProjectSnapshot(),
       subtotalBeforeDiscount: calc.subtotalBeforeDiscount,
       discountPct: calc.discountPct,
       discountLabel: calc.discountLabel,
@@ -631,6 +752,10 @@
       taxRatePct: calc.taxRatePct,
       taxAmountUsd: calc.taxAmountUsd,
       grandTotalUsd: calc.customerQuoteTotal,
+      avgItemPreDiscount: calc.avgItemPreDiscount,
+      avgItemAllInFinal: calc.avgItemAllInFinal,
+      totalHardCostUsd: calc.totalHardCostUsd,
+      netProfitUsd: calc.netProfitUsd,
       totalShirts: calc.totalShirts
     };
     try {
@@ -642,10 +767,22 @@
       const data = await res.json();
       if (res.ok && data.ok) {
         state.stripeSyncStatus = 'synced';
+        if (data.alreadyPaid) {
+          state.activeQuotePaidInfo = {
+            isPaid: true,
+            paidAt: state.activeQuotePaidInfo?.paidAt || new Date().toISOString(),
+            totalPaidUsd: calc.customerQuoteTotal
+          };
+        }
         const dotEl = document.getElementById('bqStripeQrSyncBadge');
         if (dotEl) {
-          dotEl.innerHTML = '&#9679; Live Stripe QR Synced';
+          dotEl.innerHTML = data.alreadyPaid
+            ? '&#10003; PAID IN FULL VIA STRIPE'
+            : '&#9679; Live Ticket &amp; Stripe Synced';
           dotEl.style.color = '#22f59b';
+        }
+        if (opts.isExplicitSave) {
+          fetchAndRenderSavedQuotesVault(true);
         }
         return data;
       }
@@ -1291,6 +1428,15 @@
     ctx.restore();
   }
 
+  function hexLuminance(hexColor) {
+    const h = String(hexColor || '#151619').replace('#', '');
+    if (h.length !== 6) return 0.1;
+    const r = parseInt(h.slice(0, 2), 16) / 255;
+    const g = parseInt(h.slice(2, 4), 16) / 255;
+    const b = parseInt(h.slice(4, 6), 16) / 255;
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+
   function drawTintedPhotoCutout(ctx, whiteImg, blackImg, hexColor, x, y, w, h) {
     const cleanHex = (hexColor || '#151619').toUpperCase();
     const off = document.createElement('canvas');
@@ -1301,10 +1447,10 @@
     if ((cleanHex === '#151619' || cleanHex === '#000000') && blackImg) {
       drawContainSource(octx, blackImg, 0, 0, w, h);
     } else if (whiteImg) {
-      // 1. Draw white shirt studio photo
+      // 1. Draw authentic Dri-Fit white ghost-mannequin studio photo
       drawContainSource(octx, whiteImg, 0, 0, w, h);
       if (cleanHex !== '#FFFFFF') {
-        // 2. Multiply tint layer
+        // 2. Multiply color dye pass
         const tintC = document.createElement('canvas');
         tintC.width = off.width;
         tintC.height = off.height;
@@ -1316,96 +1462,132 @@
 
         octx.globalCompositeOperation = 'multiply';
         octx.drawImage(tintC, 0, 0);
-        // Restore alpha mask from original studio cutout
+
+        // 3. Athletic Dri-Fit sheen & seam highlight recovery on darker colors
+        const lum = hexLuminance(cleanHex);
+        const sheenAlpha = lum < 0.18 ? 0.22 : (lum < 0.42 ? 0.13 : 0.06);
+        octx.globalCompositeOperation = 'screen';
+        octx.globalAlpha = sheenAlpha;
+        drawContainSource(octx, whiteImg, 0, 0, w, h);
+        octx.globalAlpha = 1.0;
+
+        // 4. Restore crisp studio alpha mask
         octx.globalCompositeOperation = 'destination-in';
         drawContainSource(octx, whiteImg, 0, 0, w, h);
         octx.globalCompositeOperation = 'source-over';
       }
     }
 
+    // Studio ground contact shadow + elevation drop shadow
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.58)';
-    ctx.shadowBlur = 18;
-    ctx.shadowOffsetY = 6;
+    const groundGrad = ctx.createRadialGradient(
+      x + w / 2, y + h - 8, 6,
+      x + w / 2, y + h - 8, w * 0.36
+    );
+    groundGrad.addColorStop(0, 'rgba(0, 0, 0, 0.55)');
+    groundGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = groundGrad;
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + h - 6, w * 0.35, 11, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.shadowColor = 'rgba(0,0,0,0.62)';
+    ctx.shadowBlur = 22;
+    ctx.shadowOffsetY = 8;
     ctx.drawImage(off, x, y);
     ctx.restore();
   }
 
+  function drawHeatPressedGraphic(ctx, artSource, x, y, boxW, boxH, isSampleFallback) {
+    if (!artSource) return;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.28)';
+    ctx.shadowBlur = 3;
+    ctx.shadowOffsetY = 1;
+    if (isSampleFallback) {
+      ctx.globalAlpha = 0.9;
+    }
+    drawContainSource(ctx, artSource, x, y, boxW, boxH);
+    ctx.restore();
+  }
+
   function renderProjectedFinishedItemDataUrl(calc) {
-    const W = 740;
-    const H = 340;
+    const W = 920;
+    const H = 430;
     const c = document.createElement('canvas');
     c.width = W;
     c.height = H;
     const ctx = c.getContext('2d');
 
-    // Clean Concept #1 Smoked Obsidian Studio Backdrop
+    // Studio Obsidian Cyclorama Backdrop matching Concept #1
     const bg = ctx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0, '#1d1c24');
-    bg.addColorStop(1, '#131218');
+    bg.addColorStop(0, '#22202b');
+    bg.addColorStop(0.58, '#15141c');
+    bg.addColorStop(1, '#0d0c12');
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    // Subtle warm studio rim behind each garment
-    const rad1 = ctx.createRadialGradient(195, 158, 12, 195, 158, 155);
-    rad1.addColorStop(0, 'rgba(255, 132, 36, 0.14)');
-    rad1.addColorStop(1, 'rgba(255, 132, 36, 0)');
-    ctx.fillStyle = rad1;
-    ctx.fillRect(0, 0, W, H);
+    // Studio Horizon Rim Line
+    const floorGrad = ctx.createLinearGradient(0, H - 72, 0, H);
+    floorGrad.addColorStop(0, 'rgba(255, 138, 38, 0.05)');
+    floorGrad.addColorStop(1, 'rgba(0, 0, 0, 0.45)');
+    ctx.fillStyle = floorGrad;
+    ctx.fillRect(0, H - 72, W, 72);
 
-    const rad2 = ctx.createRadialGradient(545, 158, 12, 545, 158, 155);
-    rad2.addColorStop(0, 'rgba(255, 132, 36, 0.14)');
-    rad2.addColorStop(1, 'rgba(255, 132, 36, 0)');
-    ctx.fillStyle = rad2;
-    ctx.fillRect(0, 0, W, H);
+    const frontCx = 242;
+    const backCx = 678;
+
+    // Warm Molten Studio Backlights Behind Front & Back Garments
+    [frontCx, backCx].forEach((cx) => {
+      const rad = ctx.createRadialGradient(cx, 192, 16, cx, 192, 195);
+      rad.addColorStop(0, 'rgba(255, 142, 44, 0.18)');
+      rad.addColorStop(0.6, 'rgba(255, 118, 24, 0.05)');
+      rad.addColorStop(1, 'rgba(255, 118, 24, 0)');
+      ctx.fillStyle = rad;
+      ctx.fillRect(0, 0, W, H);
+    });
 
     const firstPhysicalRow = calc.itemizedLines.find((r) => !r.isPrintOnly);
     const activePlacements = calc.activePlacements || [];
+    const anyCustomerArtUploaded = activePlacements.some((p) => Boolean(p.renderCanvas));
 
     if (!firstPhysicalRow && calc.totalPrintOnlyItems > 0) {
       ctx.fillStyle = '#ffb36b';
-      ctx.font = '700 12.5px Outfit, Segoe UI, sans-serif';
+      ctx.font = '700 14px Outfit, Segoe UI, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('Custom DTF Transfers Only ($0.00 Blank Garment)', W / 2, 24);
+      ctx.fillText('Custom 300-DPI DTF Transfers Only ($0.00 Blank Garment)', W / 2, 28);
 
       const count = Math.max(1, activePlacements.length);
-      const cardW = Math.min(290, Math.floor((W - 60 - (count - 1) * 20) / count));
-      const cardH = 255;
-      const startX = Math.round((W - (count * cardW + (count - 1) * 20)) / 2);
+      const cardW = Math.min(360, Math.floor((W - 80 - (count - 1) * 24) / count));
+      const cardH = 330;
+      const startX = Math.round((W - (count * cardW + (count - 1) * 24)) / 2);
 
       activePlacements.forEach((p, idx) => {
-        const x = startX + idx * (cardW + 20);
-        const y = 40;
-        ctx.fillStyle = '#100f15';
+        const x = startX + idx * (cardW + 24);
+        const y = 46;
+        ctx.fillStyle = '#111018';
         ctx.fillRect(x, y, cardW, cardH);
-        ctx.strokeStyle = 'rgba(255, 138, 38, 0.72)';
+        ctx.strokeStyle = 'rgba(255, 138, 38, 0.78)';
         ctx.lineWidth = 1.5;
         ctx.strokeRect(x, y, cardW, cardH);
 
-        if (p.renderCanvas) {
-          drawContainSource(ctx, p.renderCanvas, x + 20, y + 20, cardW - 40, cardH - 62);
-        } else {
-          ctx.strokeStyle = 'rgba(255, 179, 107, 0.45)';
-          ctx.setLineDash([5, 5]);
-          ctx.strokeRect(x + 32, y + 32, cardW - 64, cardH - 86);
-          ctx.setLineDash([]);
-          ctx.fillStyle = 'rgba(255,255,255,0.6)';
-          ctx.font = '600 12px Segoe UI, sans-serif';
-          ctx.fillText('Upload DTF Artwork in Step 2', x + cardW / 2, y + cardH / 2 - 6);
+        const src = p.renderCanvas || blankMockupAssets.officialLogo;
+        if (src) {
+          drawContainSource(ctx, src, x + 26, y + 24, cardW - 52, cardH - 72);
         }
-
         ctx.fillStyle = '#ffffff';
-        ctx.font = '700 12px Segoe UI, sans-serif';
-        ctx.fillText(`${p.locationLabel} (${p.adultWidthIn}" × ${p.adultHeightIn}")`, x + cardW / 2, y + cardH - 14);
+        ctx.font = '700 13px Outfit, Segoe UI, sans-serif';
+        ctx.fillText(`${p.locationLabel} (${p.adultWidthIn}" × ${p.adultHeightIn}")`, x + cardW / 2, y + cardH - 16);
       });
 
+      try { calc.projectedPreviewJpeg = c.toDataURL('image/jpeg', 0.84); } catch (_) {}
       return c.toDataURL('image/png');
     }
 
     const primaryLine = firstPhysicalRow || {
       parentStyleCode: state.garmentLines[0]?.styleCode || 'TT11',
-      brand: 'Team 365',
-      styleCode: 'TT11',
+      brand: (SS_CATALOG[state.garmentLines[0]?.styleCode] || SS_CATALOG.TT11).brand,
+      styleCode: state.garmentLines[0]?.styleCode || 'TT11',
       colorName: state.garmentLines[0]?.colorName || 'Black',
       colorHex: getColorHex(state.garmentLines[0]?.styleCode || 'TT11', state.garmentLines[0]?.colorName || 'Black')
     };
@@ -1413,18 +1595,21 @@
     const hex = primaryLine.colorHex || '#151619';
     const isLong = Boolean(cat.isLongSleeve);
 
-    const frontCx = 195;
-    const backCx = 545;
-    const shirtW = 276;
-    const shirtH = 276;
+    const shirtW = isLong ? 356 : 344;
+    const shirtH = isLong ? 344 : 338;
     const shirtTop = 14;
 
-    if (!isLong && blankMockupAssets.whiteFront && blankMockupAssets.whiteBack) {
-      drawTintedPhotoCutout(ctx, blankMockupAssets.whiteFront, blankMockupAssets.blackFront, hex, frontCx - shirtW / 2, shirtTop, shirtW, shirtH);
-      drawTintedPhotoCutout(ctx, blankMockupAssets.whiteBack, blankMockupAssets.blackBack, hex, backCx - shirtW / 2, shirtTop, shirtW, shirtH);
+    const whiteFrontImg = isLong ? blankMockupAssets.ce10lWhiteFront : blankMockupAssets.tt11WhiteFront;
+    const blackFrontImg = isLong ? blankMockupAssets.ce10lBlackFront : blankMockupAssets.tt11BlackFront;
+    const whiteBackImg = isLong ? blankMockupAssets.ce10lWhiteBack : blankMockupAssets.tt11WhiteBack;
+    const blackBackImg = isLong ? blankMockupAssets.ce10lBlackBack : blankMockupAssets.tt11BlackBack;
+
+    if (whiteFrontImg && whiteBackImg) {
+      drawTintedPhotoCutout(ctx, whiteFrontImg, blackFrontImg, hex, frontCx - shirtW / 2, shirtTop, shirtW, shirtH);
+      drawTintedPhotoCutout(ctx, whiteBackImg, blackBackImg, hex, backCx - shirtW / 2, shirtTop, shirtW, shirtH);
     } else {
-      drawProceduralShirtSilhouette(ctx, frontCx, shirtTop + 8, 1.0, 1.0, hex, isLong, false);
-      drawProceduralShirtSilhouette(ctx, backCx, shirtTop + 8, 1.0, 1.0, hex, isLong, true);
+      drawProceduralShirtSilhouette(ctx, frontCx, shirtTop + 12, 1.18, 1.18, hex, isLong, false);
+      drawProceduralShirtSilhouette(ctx, backCx, shirtTop + 12, 1.18, 1.18, hex, isLong, true);
     }
 
     const frontPlacements = [];
@@ -1442,63 +1627,61 @@
       }
     });
 
-    const pxPerIn = 7.4;
+    // Scale: ~20" adult chest width corresponds to ~178px torso width on 344px studio cutout (~8.9 px/in)
+    const pxPerIn = isLong ? 8.5 : 8.9;
     frontPlacements.forEach((fp) => {
       const lbl = (fp.locationLabel || '').toLowerCase();
-      const isPocket = lbl.includes('pocket') || lbl.includes('breast') || (fp.adultWidthIn <= 5.5 && fp.adultHeightIn <= 5.5);
-      const boxW = Math.min(110, Math.max(24, fp.adultWidthIn * pxPerIn));
-      const boxH = Math.min(124, Math.max(24, fp.adultHeightIn * pxPerIn));
-      // Viewer's right side on front view or wearer's right breast pocket:
-      // Note: Wearer's right breast is viewer's left (frontCx - 30); wearer's left pocket is viewer's right (frontCx + 30).
-      // Keeping wearer's right breast pocket at frontCx - 30!
-      const drawX = isPocket ? (frontCx - 30 - boxW / 2) : (frontCx - boxW / 2);
-      const drawY = shirtTop + 80;
+      const isRightBreast = lbl.includes('right') && (lbl.includes('pocket') || lbl.includes('breast') || lbl.includes('chest'));
+      const isLeftBreast = lbl.includes('left') && (lbl.includes('pocket') || lbl.includes('breast') || lbl.includes('chest'));
+      const isSmallCrest = isRightBreast || isLeftBreast || lbl.includes('pocket') || lbl.includes('breast') || (fp.adultWidthIn <= 5.5 && fp.adultHeightIn <= 5.5);
+
+      const boxW = Math.min(138, Math.max(28, fp.adultWidthIn * pxPerIn));
+      const boxH = Math.min(156, Math.max(28, fp.adultHeightIn * pxPerIn));
+      // Wearer's right breast is viewer's left (frontCx - 38); wearer's left breast is viewer's right (frontCx + 38)
+      const chestOffset = isLeftBreast ? 38 : -38;
+      const drawX = isSmallCrest ? (frontCx + chestOffset - boxW / 2) : (frontCx - boxW / 2);
+      const drawY = shirtTop + (isSmallCrest ? 92 : 96);
 
       if (fp.renderCanvas) {
-        drawContainSource(ctx, fp.renderCanvas, drawX, drawY, boxW, boxH);
-      } else {
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255, 148, 54, 0.78)';
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([3, 3]);
-        ctx.strokeRect(drawX, drawY, boxW, boxH);
-        ctx.fillStyle = 'rgba(255, 122, 24, 0.14)';
-        ctx.fillRect(drawX, drawY, boxW, boxH);
-        ctx.restore();
+        drawHeatPressedGraphic(ctx, fp.renderCanvas, drawX, drawY, boxW, boxH, false);
+      } else if (blankMockupAssets.officialLogo) {
+        drawHeatPressedGraphic(ctx, blankMockupAssets.officialLogo, drawX, drawY, boxW, boxH, true);
       }
     });
 
     backPlacements.forEach((bp) => {
-      const boxW = Math.min(116, Math.max(28, bp.adultWidthIn * pxPerIn));
-      const boxH = Math.min(132, Math.max(28, bp.adultHeightIn * pxPerIn));
+      const boxW = Math.min(142, Math.max(34, bp.adultWidthIn * pxPerIn));
+      const boxH = Math.min(162, Math.max(34, bp.adultHeightIn * pxPerIn));
       const drawX = backCx - boxW / 2;
-      const drawY = shirtTop + 70;
+      const drawY = shirtTop + 82;
 
       if (bp.renderCanvas) {
-        drawContainSource(ctx, bp.renderCanvas, drawX, drawY, boxW, boxH);
-      } else {
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255, 148, 54, 0.78)';
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([3, 3]);
-        ctx.strokeRect(drawX, drawY, boxW, boxH);
-        ctx.fillStyle = 'rgba(255, 122, 24, 0.14)';
-        ctx.fillRect(drawX, drawY, boxW, boxH);
-        ctx.restore();
+        drawHeatPressedGraphic(ctx, bp.renderCanvas, drawX, drawY, boxW, boxH, false);
+      } else if (blankMockupAssets.officialLogo) {
+        drawHeatPressedGraphic(ctx, blankMockupAssets.officialLogo, drawX, drawY, boxW, boxH, true);
       }
     });
 
-    // Clean Concept #1 Labels ("Front" & "Back" + garment subtitle)
+    // Crisp Studio Labels ("FRONT VIEW" & "BACK VIEW" + Authentic S&S Dri-Fit Spec Line)
     ctx.textAlign = 'center';
     ctx.fillStyle = '#ffffff';
-    ctx.font = '600 14px Outfit, Segoe UI, sans-serif';
-    ctx.fillText('Front', frontCx, H - 28);
-    ctx.fillText('Back', backCx, H - 28);
+    ctx.font = '700 14.5px Outfit, Segoe UI, sans-serif';
+    ctx.fillText('Front View', frontCx, H - 34);
+    ctx.fillText('Back View', backCx, H - 34);
 
-    ctx.fillStyle = 'rgba(255, 208, 158, 0.78)';
-    ctx.font = '500 11px Outfit, Segoe UI, sans-serif';
-    ctx.fillText(`${cat.brand} ${cat.styleCode} • ${primaryLine.colorName}`, W / 2, H - 9);
+    const sleeveType = isLong ? 'Long-Sleeve Dri-Fit' : 'Short-Sleeve Dri-Fit';
+    const artCaption = anyCustomerArtUploaded
+      ? 'Custom Project DTF Transfers Applied'
+      : 'Sample Crest Preview (Upload Project Art in Step 2)';
+    ctx.fillStyle = '#ffd099';
+    ctx.font = '600 12px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(`${cat.brand} ${cat.styleCode} (#${cat.itemNumber}) ${sleeveType} • ${primaryLine.colorName} • ${artCaption}`, W / 2, H - 12);
 
+    try {
+      calc.projectedPreviewJpeg = c.toDataURL('image/jpeg', 0.84);
+    } catch (_) {
+      calc.projectedPreviewJpeg = '';
+    }
     return c.toDataURL('image/png');
   }
 
@@ -1536,6 +1719,10 @@
         lineQty += q;
         lineBlankSub += subBlank;
 
+        const baseItemDesc = printOnly
+          ? PRINT_ONLY_DESCRIPTION
+          : (youth ? (cat.youthItemDescription || cat.specs) : (cat.itemDescription || cat.specs));
+
         rawItems.push({
           lineId: line.id,
           styleCode: printOnly ? 'DTF-PRINT' : (youth ? cat.youthStyleCode : cat.styleCode),
@@ -1545,6 +1732,8 @@
           garmentTitle: printOnly
             ? 'Custom DTF Transfer Print Only (No Garment Blank — $0.00 Blank)'
             : (youth ? cat.youthFullName : cat.fullName),
+          itemDescription: baseItemDesc,
+          specs: printOnly ? '300-DPI Commercial Hot-Peel DTF Gangsheet Transfer' : cat.specs,
           productUrl: youth ? cat.youthProductUrl : cat.productUrl,
           colorName: printOnly ? 'Transfer Print Only' : line.colorName,
           colorHex: printOnly ? '#ff7a18' : colorHex,
@@ -1805,7 +1994,26 @@
       activePlacements,
       expectedPlacementCounts,
       itemizedLines,
-      itemOverallGroups
+      itemOverallGroups,
+      itemDescriptions: (() => {
+        const descMap = new Map();
+        itemizedLines.forEach((r) => {
+          const dKey = r.isPrintOnly ? 'PRINT_ONLY' : `${r.styleCode}_${r.colorName}`;
+          if (!descMap.has(dKey)) {
+            descMap.set(dKey, {
+              styleCode: r.styleCode,
+              itemNumber: r.itemNumber,
+              brand: r.brand,
+              title: r.garmentTitle,
+              colorName: r.colorName,
+              colorHex: r.colorHex,
+              printSpecs: r.printSpecSummary,
+              description: r.itemDescription
+            });
+          }
+        });
+        return Array.from(descMap.values());
+      })()
     };
 
     renderSummaryAndCanvas();
@@ -1971,14 +2179,14 @@
         `;
       }).join('');
 
-      // Itemized table rows with Concept #1 glowing orange group dividers (Youth -> Adult -> Print Only)
+      // Itemized table rows with Concept #1 glowing orange group dividers + Item Descriptions
       const getTierKey = (r) => r.isPrintOnly ? 'print' : (r.isYouth ? 'youth' : 'adult');
       const itemizedTableRows = calc.itemizedLines.map((row, idx) => {
         const prev = idx > 0 ? calc.itemizedLines[idx - 1] : null;
         const needsOrangeRule = prev && (getTierKey(prev) !== getTierKey(row) || prev.lineId !== row.lineId);
         const garmentLabel = row.isPrintOnly
           ? 'Custom DTF Transfer Only'
-          : `${row.brand} ${row.styleCode} — ${row.colorName}`;
+          : `${row.brand} ${row.styleCode} (#${row.itemNumber}) — ${row.colorName}`;
         const sizeDisplay = row.isPrintOnly
           ? 'PRINT ONLY'
           : (row.isYouth ? row.sizeName.replace(/^Y/, 'Youth ') : (row.sizeName === 'S' ? 'Adult S' : row.sizeName));
@@ -1991,6 +2199,9 @@
                 <span style="width:11px;height:11px;border-radius:50%;background:${esc(row.colorHex)};border:1px solid rgba(255,255,255,0.55);display:inline-block;flex-shrink:0;"></span>
                 <strong style="color:#ffffff;">${esc(garmentLabel)}</strong>
               </div>
+              <div style="font-size:0.69rem;color:rgba(255,214,176,0.76);margin-top:2px;line-height:1.32;">
+                ${esc(row.garmentTitle)} &bull; ${esc(row.specs || '')}
+              </div>
             </td>
             <td style="color:rgba(255,255,255,0.82);font-size:0.75rem;">${esc(row.printSpecSummary || 'Blank Garment')}</td>
             <td style="text-align:center;font-weight:700;color:${row.isPrintOnly ? '#ff9d3b' : '#ffffff'};">${esc(sizeDisplay)}</td>
@@ -2000,6 +2211,22 @@
           </tr>
         `;
       }).join('');
+
+      // Item Description & Garment Specifications Cards
+      const itemDescRowsHtml = (calc.itemDescriptions || []).map((d) => `
+        <div style="padding:9px 12px;border-radius:11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,148,54,0.32);">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="display:inline-flex;align-items:center;gap:7px;font-weight:800;color:#ffd099;font-size:0.82rem;">
+              <i style="width:11px;height:11px;border-radius:50%;background:${esc(d.colorHex)};border:1px solid rgba(255,255,255,0.6);display:inline-block;"></i>
+              ${esc(d.brand)} ${esc(d.styleCode)} (Item #${esc(d.itemNumber)}) &mdash; ${esc(d.colorName)}
+            </span>
+            <span style="font-size:0.72rem;color:#9ef3ff;font-weight:700;">Prints: ${esc(d.printSpecs || 'Blank Garment')}</span>
+          </div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.84);margin-top:4px;line-height:1.42;">
+            ${esc(d.description)}
+          </div>
+        </div>
+      `).join('');
 
       // Official Available S&S Colors (3D glossy orbs matching Concept #1)
       const primaryStyleCode = state.garmentLines[0]?.styleCode || 'TT11';
@@ -2013,17 +2240,36 @@
         ></span>
       `).join('');
 
+      const clientQuoteUrl = getClientQuoteDossierUrl(quoteId);
+      const studioTicketUrl = getProjectStudioTicketUrl(quoteId);
+      const isPaidNow = Boolean(state.activeQuotePaidInfo && state.activeQuotePaidInfo.isPaid);
+      const paidBannerHtml = isPaidNow ? `
+        <div style="margin-bottom:12px;padding:12px 16px;border-radius:14px;background:linear-gradient(135deg,rgba(14,72,48,0.88),rgba(8,32,22,0.94));border:1.5px solid #22f59b;box-shadow:0 0 24px rgba(34,245,155,0.28);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span style="padding:4px 11px;border-radius:999px;background:rgba(34,245,155,0.22);border:1px solid #22f59b;color:#6bffc3;font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:900;">&#10003; QUOTE PAID IN FULL</span>
+            <strong style="color:#ffffff;font-size:0.86rem;">Stripe Payment Verified for Ticket #${esc(quoteId)}</strong>
+          </div>
+          <a href="${esc(clientQuoteUrl)}" target="_blank" style="color:#6bffc3;font-weight:800;font-size:0.78rem;text-decoration:underline;">Open Verified Client Receipt &nearr;</a>
+        </div>
+      ` : '';
+
       finEl.innerHTML = `
+        ${paidBannerHtml}
         <div class="c1-quote-sheet">
-          <!-- TIER 1: SMOKED LIQUID GLASS HEADER WITH ACTUAL LOGO -->
+          <!-- TIER 1: SMOKED LIQUID GLASS HEADER WITH ACTUAL LOGO & CLICKABLE TICKET # -->
           <div class="c1-header-banner">
             <div class="c1-brand-lockup">
               <img src="${esc(logoUrl)}" alt="RetroCanopy Official Logo" class="c1-brand-logo">
               <div class="c1-brand-wordmark">RETROCANOPY</div>
             </div>
             <div class="c1-quote-meta-right">
-              <div class="c1-quote-title">OFFICIAL QUOTE</div>
-              <div class="c1-quote-sub">#${esc(quoteId)} &bull; Issued ${esc(issueDate)}</div>
+              <div class="c1-quote-title">${isPaidNow ? 'PAID PROJECT RECEIPT' : 'OFFICIAL QUOTE'}</div>
+              <div class="c1-quote-sub" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:4px;">
+                <a href="${esc(clientQuoteUrl)}" target="_blank" rel="noopener noreferrer" title="Click to open the Concept #1 Sent Client Quote Dossier for this Project Ticket" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(255,138,38,0.2);border:1px solid #ff9436;color:#ffd099;font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:800;text-decoration:none;">
+                  &#127915; TICKET #${esc(quoteId)} &nearr;
+                </a>
+                <span>&bull; Issued ${esc(issueDate)}</span>
+              </div>
             </div>
           </div>
 
@@ -2032,20 +2278,22 @@
             ${STUDIO_CAPABILITIES.map((cap) => esc(cap)).join(' &bull; ')}
           </div>
 
-          <!-- TIER 3: FULL-WIDTH PREPARED FOR & PROJECT BAR -->
+          <!-- TIER 3: FULL-WIDTH PREPARED FOR, PROJECT & DIRECT TICKET LINK BAR -->
           <div class="c1-client-bar">
             <span><strong style="color:#ffd089;">PREPARED FOR:</strong> ${esc(clientHeadline)}</span>
             <span style="color:rgba(255,138,38,0.75);">|</span>
             <span><strong style="color:#ffd089;">PROJECT:</strong> ${esc(projectHeadline)}</span>
+            <span style="color:rgba(255,138,38,0.75);">|</span>
+            <a href="${esc(studioTicketUrl)}" style="color:#9ef3ff;font-size:0.74rem;font-weight:700;text-decoration:underline;" title="Direct Project Studio Link">Project Link: #${esc(quoteId)}</a>
             ${contactSnippet ? `<span style="color:rgba(255,138,38,0.75);">|</span><span style="font-size:0.75rem;color:rgba(255,255,255,0.8);">${esc(contactSnippet)}</span>` : ''}
           </div>
 
           <!-- TIER 4: 50/50 PROJECTED FINISHED ITEM + 2x2 OVERALL BREAKDOWN PER ITEM -->
           <div class="c1-mid-grid">
             <div class="c1-glass-card">
-              <div class="c1-section-heading">PROJECTED FINISHED ITEM</div>
+              <div class="c1-section-heading">PROJECTED FINISHED ITEM (DRI-FIT STUDIO PREVIEW)</div>
               <div style="flex:1;display:flex;align-items:center;justify-content:center;">
-                <img src="${projectedMockupUrl}" alt="Projected Finished Item Preview" style="width:100%;max-height:265px;object-fit:contain;border-radius:12px;display:block;">
+                <img src="${projectedMockupUrl}" alt="Projected Finished Item Preview" style="width:100%;max-height:285px;object-fit:contain;border-radius:12px;display:block;">
               </div>
             </div>
 
@@ -2074,6 +2322,16 @@
               ${miniGroupLines ? `<div style="display:flex;flex-direction:column;gap:5px;margin-top:10px;">${miniGroupLines}</div>` : ''}
             </div>
           </div>
+
+          <!-- TIER 4.5: ITEM DESCRIPTION & GARMENT SPECIFICATIONS -->
+          ${itemDescRowsHtml ? `
+            <div class="c1-item-desc-panel" style="margin-top:14px;padding:13px 16px;border-radius:16px;background:linear-gradient(165deg,rgba(32,30,40,0.88),rgba(17,16,22,0.95));border:1px solid rgba(255,148,54,0.42);">
+              <div class="c1-section-heading" style="margin-bottom:8px;">ITEM DESCRIPTION &amp; GARMENT SPECIFICATIONS</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                ${itemDescRowsHtml}
+              </div>
+            </div>
+          ` : ''}
 
           <!-- TIER 5: FULL LINE-BY-LINE ITEMIZED QUOTE BREAKDOWN TABLE -->
           <div class="c1-table-card">
@@ -2735,42 +2993,254 @@
     }
   }
 
-  function renderSavedQuotesList() {
-    const el = document.getElementById('bqSavedQuotesList');
-    if (!el) return;
-    const list = getSavedQuotes();
-    if (list.length === 0) {
-      el.innerHTML = `<div style="font-size:0.75rem;color:rgba(255,255,255,0.58);">No saved bulk quotes yet. Click <strong>"Save Quote"</strong> above to store a project quote.</div>`;
+  function getMergedVaultQuotes() {
+    const localList = getSavedQuotes();
+    const byId = new Map();
+
+    // 1. Seed from Supabase Cloud quotes (authoritative for live isPaid status!)
+    (state.cloudSavedQuotes || []).forEach((cq) => {
+      const id = cq.ticketId || cq.quoteId;
+      if (!id) return;
+      byId.set(id, {
+        quoteId: id,
+        ticketId: id,
+        projectName: cq.projectName || 'Custom Apparel & DTF Order',
+        clientLabel: [cq.customerName, cq.customerEmail].filter(Boolean).join(' • '),
+        customerName: cq.customerName || '',
+        customerEmail: cq.customerEmail || '',
+        customerPhone: cq.customerPhone || '',
+        totalShirts: Number(cq.totalShirts) || 0,
+        customerQuoteTotal: Number(cq.grandTotalUsd) || 0,
+        netProfitUsd: cq.netProfitUsd != null ? Number(cq.netProfitUsd) : null,
+        isPaid: Boolean(cq.isPaid),
+        paidAt: cq.paidAt || null,
+        totalPaidUsd: Number(cq.totalPaidUsd) || 0,
+        fulfilled: Boolean(cq.fulfilled),
+        projectedPreviewJpeg: cq.projectedPreviewJpeg || '',
+        savedAtIso: cq.paidAt || cq.savedAt || cq.createdAt || '',
+        savedAtFormatted: (cq.paidAt || cq.savedAt || cq.createdAt)
+          ? new Date(cq.paidAt || cq.savedAt || cq.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+          : 'Saved in Cloud',
+        snapshot: null
+      });
+    });
+
+    // 2. Merge local saved quotes (adds full local snapshot & any offline drafts)
+    localList.forEach((lq) => {
+      const id = lq.quoteId || lq.ticketId;
+      if (!id) return;
+      if (byId.has(id)) {
+        const existing = byId.get(id);
+        existing.snapshot = lq.snapshot || existing.snapshot;
+        if (existing.netProfitUsd == null && lq.netProfitUsd != null) existing.netProfitUsd = lq.netProfitUsd;
+        if (!existing.projectedPreviewJpeg && lq.projectedPreviewJpeg) existing.projectedPreviewJpeg = lq.projectedPreviewJpeg;
+      } else {
+        byId.set(id, {
+          ...lq,
+          ticketId: id,
+          isPaid: Boolean(lq.isPaid),
+          projectedPreviewJpeg: lq.projectedPreviewJpeg || ''
+        });
+      }
+    });
+
+    return Array.from(byId.values());
+  }
+
+  async function fetchAndRenderSavedQuotesVault(silent = false) {
+    const refreshBtn = document.getElementById('sqRefreshCloudQuotesBtn');
+    if (refreshBtn && !silent) {
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = 'Syncing...';
+    }
+    try {
+      const res = await fetch(STRIPE_EDGE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'list_saved_quotes' })
+      });
+      const data = await res.json();
+      if (res.ok && data && data.ok && Array.isArray(data.quotes)) {
+        state.cloudSavedQuotes = data.quotes;
+        const activeMatch = data.quotes.find((q) => (q.ticketId || q.quoteId) === state.activeQuoteId);
+        if (activeMatch && activeMatch.isPaid) {
+          const wasPaid = Boolean(state.activeQuotePaidInfo && state.activeQuotePaidInfo.isPaid);
+          state.activeQuotePaidInfo = {
+            isPaid: true,
+            paidAt: activeMatch.paidAt,
+            totalPaidUsd: activeMatch.totalPaidUsd || activeMatch.grandTotalUsd
+          };
+          if (!wasPaid && state.lastCalculation) {
+            renderSummaryAndCanvas();
+          }
+        }
+      }
+    } catch (_) {}
+    if (refreshBtn && !silent) {
+      refreshBtn.disabled = false;
+      refreshBtn.innerHTML = '&#8635; Sync Live Paid Status';
+    }
+    renderSavedQuotesList();
+    renderSavedQuotesVaultGrid();
+  }
+
+  function renderSavedQuotesVaultGrid() {
+    const grid = document.getElementById('savedQuotesVaultGrid');
+    const allQuotes = getMergedVaultQuotes();
+
+    const paidQuotes = allQuotes.filter((q) => q.isPaid);
+    const pendingQuotes = allQuotes.filter((q) => !q.isPaid);
+    const paidRev = paidQuotes.reduce((s, q) => s + (Number(q.totalPaidUsd || q.customerQuoteTotal) || 0), 0);
+
+    const setTxt = (id, v) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = v;
+    };
+    setTxt('savedQuotesNavCountBadge', paidQuotes.length > 0 ? `${allQuotes.length} • ${paidQuotes.length} PAID` : String(allQuotes.length));
+    setTxt('sqKpiTotalCount', String(allQuotes.length));
+    setTxt('sqKpiPaidCount', String(paidQuotes.length));
+    setTxt('sqKpiPendingCount', String(pendingQuotes.length));
+    setTxt('sqKpiPaidRevenue', money(paidRev));
+
+    if (!grid) return;
+
+    const qSearch = (state.sqVaultSearch || '').trim().toLowerCase();
+    const filtered = allQuotes.filter((q) => {
+      if (state.sqVaultFilter === 'paid' && !q.isPaid) return false;
+      if (state.sqVaultFilter === 'pending' && q.isPaid) return false;
+      if (qSearch) {
+        const hay = `${q.quoteId} ${q.projectName} ${q.clientLabel} ${q.customerName} ${q.customerEmail} ${q.customerPhone}`.toLowerCase();
+        if (!hay.includes(qSearch)) return false;
+      }
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column: 1 / -1;">
+          No saved quotes match the current filter.<br>
+          <span style="font-size:0.75rem;color:rgba(255,255,255,0.65);">Build a quote in the <strong>Bulk Order Quoter</strong> and click <strong>"Save Quote to Vault"</strong> or <strong>"Copy Client Quote Link"</strong> — every quote is stored here with live Stripe paid tracking!</span>
+        </div>
+      `;
       return;
     }
 
-    el.innerHTML = list.map((q) => `
-      <div class="bq-saved-quote-row">
-        <div>
-          <strong style="color:#ffb36b;">${esc(q.projectName || 'Custom Apparel Order')}</strong>
-          <span style="font-size:0.73rem;color:#2ce6ff;margin-left:6px;">${esc(q.clientLabel || '')}</span>
-          <div style="font-size:0.7rem;color:rgba(255,255,255,0.68);margin-top:2px;">
-            ${q.totalShirts} items &bull; Total: <strong style="color:#22f59b;">${money(q.customerQuoteTotal)}</strong> (Profit: ${q.netProfitUsd >= 0 ? '+' : ''}${money(q.netProfitUsd)}) &bull; ${esc(q.savedAtFormatted)}
+    grid.innerHTML = filtered.map((q) => {
+      const tid = q.ticketId || q.quoteId;
+      const clientDossierUrl = getClientQuoteDossierUrl(tid);
+      const stripePortalUrl = `${window.location.origin}/pay_quote.html?ticket=${encodeURIComponent(tid)}&amt=${(Number(q.customerQuoteTotal) || 0).toFixed(2)}`;
+      const statusBadge = q.isPaid
+        ? `<span style="padding:4px 10px;border-radius:999px;background:rgba(34,245,155,0.2);border:1px solid #22f59b;color:#6bffc3;font-family:'Orbitron',sans-serif;font-size:0.66rem;font-weight:900;">&#10003; PAID &amp; CONFIRMED</span>`
+        : `<span style="padding:4px 10px;border-radius:999px;background:rgba(255,148,54,0.18);border:1px solid rgba(255,148,54,0.68);color:#ffd099;font-family:'Orbitron',sans-serif;font-size:0.66rem;font-weight:800;">&#9203; SENT / AWAITING PAYMENT</span>`;
+
+      const thumbHtml = q.projectedPreviewJpeg
+        ? `<a href="${esc(clientDossierUrl)}" target="_blank" style="display:block;background:#121118;border-radius:12px;border:1px solid rgba(255,148,54,0.35);padding:6px;margin-bottom:8px;">
+             <img src="${esc(q.projectedPreviewJpeg)}" alt="Projected Finished Item" style="width:100%;height:142px;object-fit:contain;display:block;border-radius:8px;">
+           </a>`
+        : '';
+
+      return `
+        <div class="sq-quote-card ${q.isPaid ? 'is-paid' : ''}" style="background:rgba(12,11,18,0.9);border:1.5px solid ${q.isPaid ? 'rgba(34,245,155,0.72)' : 'rgba(255,148,54,0.45)'};border-radius:18px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+              <button type="button" class="mini-btn" data-vault-open-ticket="${esc(tid)}" title="Click to open this Project Ticket in the Bulk Quote Studio" style="padding:4px 10px;font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:800;color:#ffd099;border-color:rgba(255,148,54,0.72) !important;">
+                &#127915; #${esc(tid)}
+              </button>
+              ${statusBadge}
+            </div>
+
+            ${thumbHtml}
+
+            <div style="font-size:0.94rem;font-weight:800;color:#ffffff;line-height:1.25;">
+              ${esc(q.projectName || 'Custom Apparel Order')}
+            </div>
+            <div style="font-size:0.76rem;color:#9ef3ff;margin-top:3px;">
+              ${esc(q.clientLabel || 'Valued Client')}
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);">
+              <div>
+                <div style="font-size:0.66rem;color:rgba(255,255,255,0.62);text-transform:uppercase;">${q.totalShirts} Items &bull; ${esc(q.savedAtFormatted || '')}</div>
+                <div style="font-family:'Orbitron',sans-serif;font-size:0.98rem;font-weight:900;color:${q.isPaid ? '#22f59b' : '#ff9d3b'};margin-top:2px;">
+                  ${money(q.isPaid && q.totalPaidUsd ? q.totalPaidUsd : q.customerQuoteTotal)}
+                </div>
+              </div>
+              ${q.netProfitUsd != null ? `
+                <div style="text-align:right;">
+                  <div style="font-size:0.64rem;color:rgba(255,255,255,0.6);text-transform:uppercase;">Your Net Profit</div>
+                  <div style="font-size:0.86rem;font-weight:800;color:#22f59b;">${q.netProfitUsd >= 0 ? '+' : ''}${money(q.netProfitUsd)}</div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <div style="display:flex;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px solid rgba(255,255,255,0.1);">
+            <button type="button" class="mini-btn" data-vault-open-ticket="${esc(tid)}" style="flex:1;padding:6px 10px;font-size:0.71rem;color:#ffd099;border-color:rgba(255,148,54,0.7) !important;font-weight:700;">
+              &#128194; Open Project
+            </button>
+            <a href="${esc(clientDossierUrl)}" target="_blank" rel="noopener noreferrer" class="mini-btn" style="padding:6px 10px;font-size:0.71rem;color:#6bffc3;text-decoration:none;border-color:rgba(34,245,155,0.5) !important;">
+              &#128065;&#65039; Sent Quote &nearr;
+            </a>
+            <button type="button" class="mini-btn" data-vault-copy-link="${esc(tid)}" style="padding:6px 10px;font-size:0.71rem;color:#9ef3ff;">
+              &#128279; Copy Link
+            </button>
+            ${!q.isPaid ? `
+              <a href="${esc(stripePortalUrl)}" target="_blank" rel="noopener noreferrer" class="mini-btn" style="padding:6px 9px;font-size:0.71rem;color:#ffe89e;text-decoration:none;" title="Open Stripe Checkout">&#128179;</a>
+              <button type="button" class="mini-btn" data-vault-delete-ticket="${esc(tid)}" style="padding:6px 9px;font-size:0.71rem;color:#ff85b3;" title="Delete Saved Quote">&times;</button>
+            ` : ''}
           </div>
         </div>
-        <div style="display:flex;gap:6px;">
-          <button type="button" class="mini-btn" data-load-quote="${esc(q.quoteId)}" style="padding:5px 10px;font-size:0.7rem;color:#ffb36b;">Load</button>
-          <button type="button" class="mini-btn" data-delete-quote="${esc(q.quoteId)}" style="padding:5px 9px;font-size:0.7rem;color:#ff85b3;">&times;</button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
-  function saveCurrentQuote() {
+  function renderSavedQuotesList() {
+    const el = document.getElementById('bqSavedQuotesList');
+    if (!el) return;
+    const list = getMergedVaultQuotes();
+    if (list.length === 0) {
+      el.innerHTML = `<div style="font-size:0.75rem;color:rgba(255,255,255,0.58);">No saved bulk quotes yet. Click <strong>"Save Quote to Vault"</strong> above to store a project ticket.</div>`;
+      return;
+    }
+
+    el.innerHTML = list.slice(0, 12).map((q) => {
+      const tid = q.ticketId || q.quoteId;
+      const badge = q.isPaid
+        ? `<span style="padding:2px 8px;border-radius:999px;background:rgba(34,245,155,0.2);border:1px solid #22f59b;color:#6bffc3;font-size:0.65rem;font-weight:800;margin-left:6px;">&#10003; PAID</span>`
+        : `<span style="padding:2px 8px;border-radius:999px;background:rgba(255,148,54,0.16);border:1px solid rgba(255,148,54,0.55);color:#ffd099;font-size:0.65rem;font-weight:700;margin-left:6px;">AWAITING PAYMENT</span>`;
+      return `
+        <div class="bq-saved-quote-row">
+          <div>
+            <strong style="color:#ffd099;font-family:'Orbitron',sans-serif;font-size:0.73rem;">#${esc(tid)}</strong>
+            <strong style="color:#ffb36b;margin-left:6px;">${esc(q.projectName || 'Custom Apparel Order')}</strong>
+            <span style="font-size:0.73rem;color:#2ce6ff;margin-left:6px;">${esc(q.clientLabel || '')}</span>
+            ${badge}
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.68);margin-top:2px;">
+              ${q.totalShirts} items &bull; Total: <strong style="color:#22f59b;">${money(q.customerQuoteTotal)}</strong>${q.netProfitUsd != null ? ` (Profit: ${q.netProfitUsd >= 0 ? '+' : ''}${money(q.netProfitUsd)})` : ''} &bull; ${esc(q.savedAtFormatted || '')}
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="mini-btn" data-load-quote="${esc(tid)}" style="padding:5px 10px;font-size:0.7rem;color:#ffb36b;">&#128194; Load Ticket</button>
+            <a href="${esc(getClientQuoteDossierUrl(tid))}" target="_blank" class="mini-btn" style="padding:5px 10px;font-size:0.7rem;color:#6bffc3;text-decoration:none;">&#128065;&#65039; Quote &nearr;</a>
+            ${!q.isPaid ? `<button type="button" class="mini-btn" data-delete-quote="${esc(tid)}" style="padding:5px 9px;font-size:0.7rem;color:#ff85b3;">&times;</button>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function saveCurrentQuote() {
     const calc = state.lastCalculation;
     if (!calc || calc.totalShirts === 0) {
       alert('Enter at least 1 item before saving a quote.');
       return;
     }
     triggerAutoSaveCustomer();
-    const list = getSavedQuotes();
+    const tid = state.activeQuoteId || mintFreshQuoteId();
+    const list = getSavedQuotes().filter((q) => (q.quoteId || q.ticketId) !== tid);
     const entry = {
-      quoteId: state.activeQuoteId || mintFreshQuoteId(),
+      quoteId: tid,
+      ticketId: tid,
       savedAtFormatted: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
       projectName: state.customer.projectName || state.customer.companyOrTeam || 'Custom Bulk Order',
       clientLabel: [state.customer.fullName, state.customer.companyOrTeam].filter(Boolean).join(' • '),
@@ -2778,61 +3248,186 @@
       totalHardCostUsd: calc.totalHardCostUsd,
       customerQuoteTotal: calc.customerQuoteTotal,
       netProfitUsd: calc.netProfitUsd,
-      snapshot: {
-        customer: JSON.parse(JSON.stringify(state.customer)),
-        ssDiscountPct: state.ssDiscountPct,
-        rollWidthMode: state.rollWidthMode,
-        includeAutoBuilder15: state.includeAutoBuilder15,
-        gutterIn: state.gutterIn,
-        extraSpoilagePrints: state.extraSpoilagePrints,
-        pressLaborPerShirt: state.pressLaborPerShirt,
-        builtInUpchargePerShirt: state.builtInUpchargePerShirt,
-        ssShippingOverride: state.ssShippingOverride,
-        dpwShippingUsd: state.dpwShippingUsd,
-        discountPct: state.discountPct,
-        discountLabel: state.discountLabel,
-        includeTax: state.includeTax,
-        taxRatePct: state.taxRatePct,
-        includeAvailableColorsOnPdf: state.includeAvailableColorsOnPdf,
-        garmentLines: JSON.parse(JSON.stringify(state.garmentLines)),
-        dtfPlacements: state.dtfPlacements.map((p) => ({
-          id: p.id,
-          enabled: p.enabled,
-          locationLabel: p.locationLabel,
-          adultWidthIn: p.adultWidthIn,
-          adultHeightIn: p.adultHeightIn,
-          youthWidthIn: p.youthWidthIn,
-          youthHeightIn: p.youthHeightIn,
-          lockToPresetBox: p.lockToPresetBox,
-          autoTrimTransparent: p.autoTrimTransparent,
-          fileName: p.fileName
-        }))
-      }
+      projectedPreviewJpeg: calc.projectedPreviewJpeg || '',
+      snapshot: buildCurrentProjectSnapshot()
     };
     list.unshift(entry);
     try {
-      localStorage.setItem(SAVED_QUOTES_KEY, JSON.stringify(list.slice(0, 40)));
+      localStorage.setItem(SAVED_QUOTES_KEY, JSON.stringify(list.slice(0, 50)));
     } catch (_) {}
-    syncQuoteToStripeCloudNow(calc);
+
+    const saveBtn = document.getElementById('bqSaveQuoteBtn');
+    const prevLbl = saveBtn ? saveBtn.innerHTML : '';
+    if (saveBtn) saveBtn.innerHTML = '&#9203; Saving to Vault...';
+    await syncQuoteToStripeCloudNow(calc, { isExplicitSave: true });
+    if (saveBtn) {
+      saveBtn.innerHTML = `&#10003; Saved #${esc(tid)}!`;
+      setTimeout(() => { saveBtn.innerHTML = prevLbl; }, 2200);
+    }
     renderSavedQuotesList();
+    renderSavedQuotesVaultGrid();
   }
+
+  function applyProjectSnapshotToStudio(ticketId, snap, paidInfo = null) {
+    if (!snap) return;
+    if (ticketId) {
+      state.activeQuoteId = ticketId;
+      try { sessionStorage.setItem(ACTIVE_QUOTE_ID_KEY, ticketId); } catch (_) {}
+    }
+    state.activeQuotePaidInfo = paidInfo;
+
+    if (snap.customer) state.customer = JSON.parse(JSON.stringify(snap.customer));
+    state.ssDiscountPct = snap.ssDiscountPct || 0;
+    state.rollWidthMode = snap.rollWidthMode || '27';
+    state.includeAutoBuilder15 = snap.includeAutoBuilder15 !== false;
+    state.gutterIn = snap.gutterIn != null ? snap.gutterIn : 0.25;
+    state.extraSpoilagePrints = snap.extraSpoilagePrints != null ? snap.extraSpoilagePrints : 1;
+    state.pressLaborPerShirt = snap.pressLaborPerShirt != null ? snap.pressLaborPerShirt : 1.50;
+    state.builtInUpchargePerShirt = snap.builtInUpchargePerShirt != null ? snap.builtInUpchargePerShirt : 8.00;
+    state.ssShippingOverride = snap.ssShippingOverride || '';
+    state.dpwShippingUsd = snap.dpwShippingUsd != null ? snap.dpwShippingUsd : 9.95;
+    state.discountPct = snap.discountPct || 0;
+    state.discountLabel = snap.discountLabel || '';
+    state.includeTax = snap.includeTax !== false;
+    state.taxRatePct = snap.taxRatePct != null ? snap.taxRatePct : 7.00;
+    state.includeAvailableColorsOnPdf = snap.includeAvailableColorsOnPdf !== false;
+
+    if (Array.isArray(snap.garmentLines) && snap.garmentLines.length > 0) {
+      state.garmentLines = snap.garmentLines.map((gl) => ({
+        ...gl,
+        quantities: Object.assign(makeEmptyQtyMap(), gl.quantities || {})
+      }));
+    }
+    if (Array.isArray(snap.dtfPlacements) && snap.dtfPlacements.length > 0) {
+      state.dtfPlacements = snap.dtfPlacements.map((dp) => ({
+        ...dp,
+        dataUrl: dp.thumbDataUrl || '',
+        trimmedDataUrl: dp.thumbDataUrl || '',
+        origCanvas: null,
+        trimmedCanvas: null,
+        renderCanvas: null
+      }));
+      // Rehydrate saved placement artwork thumbnails onto canvases asynchronously!
+      state.dtfPlacements.forEach((p) => {
+        if (p.thumbDataUrl) {
+          const im = new Image();
+          im.onload = () => {
+            const cv = document.createElement('canvas');
+            cv.width = im.naturalWidth || im.width || 1;
+            cv.height = im.naturalHeight || im.height || 1;
+            cv.getContext('2d').drawImage(im, 0, 0);
+            p.origCanvas = cv;
+            p.trimmedCanvas = cv;
+            p.renderCanvas = cv;
+            renderDtfPlacementsList();
+            recalculateEverything();
+          };
+          im.src = p.thumbDataUrl;
+        }
+      });
+    }
+
+    syncTopControlsFromState();
+    syncCustomerInputsFromState();
+    renderGarmentLinesList();
+    renderDtfPlacementsList();
+    recalculateEverything();
+  }
+
+  async function openTicketInStudio(ticketId) {
+    const cleanId = String(ticketId || '').trim();
+    if (!cleanId) return;
+
+    // Switch focus tab to Bulk Order Quoter Studio
+    const focusBtn = document.querySelector('[data-focus-target="bulkquote"]');
+    if (focusBtn) focusBtn.click();
+    const studioSec = document.getElementById('bulkQuoteStudioSection');
+    if (studioSec) studioSec.scrollIntoView({ behavior: 'smooth' });
+
+    const localFound = getSavedQuotes().find((q) => (q.quoteId || q.ticketId) === cleanId);
+
+    // Always check cloud as well so live paid status & cloud-saved snapshots load from any device!
+    try {
+      const res = await fetch(STRIPE_EDGE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'get_quote_by_ticket',
+          ticketId: cleanId,
+          includeOwnerPrivate: true
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data && data.ok) {
+        const paidInfo = data.isPaid ? {
+          isPaid: true,
+          paidAt: data.paidAt,
+          totalPaidUsd: data.totalPaidUsd
+        } : null;
+        const snap = (localFound && localFound.snapshot) || (data.quoteMeta && data.quoteMeta.projectSnapshot);
+        if (snap) {
+          applyProjectSnapshotToStudio(cleanId, snap, paidInfo);
+          return;
+        }
+      }
+    } catch (_) {}
+
+    if (localFound && localFound.snapshot) {
+      applyProjectSnapshotToStudio(cleanId, localFound.snapshot, null);
+    }
+  }
+
+  async function deleteSavedTicketEverywhere(ticketId) {
+    const cleanId = String(ticketId || '').trim();
+    if (!cleanId) return;
+    const filtered = getSavedQuotes().filter((q) => (q.quoteId || q.ticketId) !== cleanId);
+    try { localStorage.setItem(SAVED_QUOTES_KEY, JSON.stringify(filtered)); } catch (_) {}
+    state.cloudSavedQuotes = (state.cloudSavedQuotes || []).filter((q) => (q.ticketId || q.quoteId) !== cleanId);
+    renderSavedQuotesList();
+    renderSavedQuotesVaultGrid();
+
+    try {
+      await fetch(STRIPE_EDGE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete_saved_quote', ticketId: cleanId })
+      });
+    } catch (_) {}
+  }
+
+  // Expose Public Studio Controller for Owner's Hub Paid Banners & Merch Queue Deep-Links
+  window.RetroBulkQuoteStudio = {
+    openTicketInStudio,
+    refreshSavedQuotesVault: fetchAndRenderSavedQuotesVault,
+    getActiveTicketId: () => state.activeQuoteId
+  };
 
   function buildCleanCustomerQuoteText() {
     const calc = state.lastCalculation;
     if (!calc || calc.totalShirts === 0) return 'No items in quote yet.';
+    const tid = state.activeQuoteId || getOrInitActiveQuoteId();
     const c = state.customer;
     const proj = c.projectName || c.companyOrTeam || 'Custom Performance Apparel & Print Order';
     const out = [
       `======================================================================`,
-      `RETROCANOPY — OFFICIAL ITEMIZED QUOTE & RECEIPT`,
+      `RETROCANOPY — OFFICIAL ITEMIZED QUOTE & PROJECT DOSSIER`,
+      `Project Ticket: #${tid}`,
+      `Official Visual Quote & Stripe Approval Link: ${getPublicClientQuoteUrl(tid)}`,
       `Apparel • Websites • Marketing • Apps • Games • Custom 3D Prints`,
-      `Website: https://www.retrocanopy.com`,
       `Project: ${proj}`,
       `Date:    ${new Date().toLocaleDateString()}`
     ];
     if (c.fullName || c.companyOrTeam) out.push(`Client:  ${[c.fullName, c.companyOrTeam].filter(Boolean).join(' — ')}`);
     if (c.phone || c.email) out.push(`Contact: ${[c.phone, c.email].filter(Boolean).join(' • ')}`);
     if (c.address) out.push(`Address: ${c.address}`);
+
+    if (calc.itemDescriptions && calc.itemDescriptions.length > 0) {
+      out.push(`----------------------------------------------------------------------`);
+      out.push(`ITEM DESCRIPTIONS & SPECIFICATIONS:`);
+      calc.itemDescriptions.forEach((d) => {
+        out.push(`• ${d.brand} ${d.styleCode} (#${d.itemNumber}) — ${d.colorName}: ${d.description}`);
+      });
+    }
 
     out.push(`----------------------------------------------------------------------`);
     out.push(`OVERALL BREAKDOWN PER ITEM:`);
@@ -2860,8 +3455,7 @@
       out.push(`Sales Tax: $0.00 (Tax Excluded / Exempt)`);
     }
     out.push(`GRAND TOTAL: ${money(calc.customerQuoteTotal)} (${money(calc.avgItemAllInFinal)} all-in avg / item)`);
-    out.push(`Quote ID:    #${state.activeQuoteId || getOrInitActiveQuoteId()}`);
-    out.push(`Pay Online (Stripe): ${getQuoteStripePortalUrl(calc)}`);
+    out.push(`View Full Quote & Pay Online (Stripe): ${getPublicClientQuoteUrl(tid)}`);
     out.push(`======================================================================`);
     return out.join('\n');
   }
@@ -2909,6 +3503,7 @@
               <i style="width:10px;height:10px;border-radius:50%;background:${esc(row.colorHex)};border:1px solid rgba(255,255,255,0.55);display:inline-block;"></i>
               <strong style="color:#ffffff;">${esc(garmentLabel)}</strong>
             </span>
+            <div style="font-size:10px;color:#ffd8b0;margin-top:2px;">${esc(row.garmentTitle)} &bull; ${esc(row.specs || '')}</div>
           </td>
           <td style="${topBorderCss}padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.09);color:#e2e8f0;font-size:11.5px;">${esc(row.printSpecSummary || 'Blank Garment')}</td>
           <td style="${topBorderCss}padding:8px 8px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;font-weight:700;color:${row.isPrintOnly ? '#ff9d3b' : '#ffffff'};">${esc(sizeDisplay)}</td>
@@ -3132,7 +3727,10 @@
           </div>
           <div style="text-align:right;">
             <div style="font-family:'Orbitron',sans-serif;font-size:19px;font-weight:800;letter-spacing:0.05em;">OFFICIAL QUOTE</div>
-            <div style="font-size:12px;color:#e2e8f0;margin-top:2px;">#${esc(quoteNumber)} &bull; Issued ${esc(issueDate)} &bull; Valid Until ${esc(validUntilDate)}</div>
+            <div style="font-size:12px;color:#e2e8f0;margin-top:3px;">
+              <a href="${esc(getPublicClientQuoteUrl(quoteNumber))}" target="_blank" style="color:#ffd099;font-weight:800;text-decoration:underline;">TICKET #${esc(quoteNumber)}</a>
+              &bull; Issued ${esc(issueDate)} &bull; Valid Until ${esc(validUntilDate)}
+            </div>
           </div>
         </div>
 
@@ -3182,6 +3780,19 @@
             ${miniGroupPdfHtml ? `<div style="margin-top:6px;">${miniGroupPdfHtml}</div>` : ''}
           </div>
         </div>
+
+        <!-- TIER 4.5: ITEM DESCRIPTION & SPECIFICATIONS -->
+        ${(calc.itemDescriptions && calc.itemDescriptions.length > 0) ? `
+          <div class="glass-box" style="margin-top:10px;">
+            <div class="sec-title" style="margin-bottom:6px;">ITEM DESCRIPTION &amp; GARMENT SPECIFICATIONS</div>
+            ${calc.itemDescriptions.map((d) => `
+              <div style="padding:7px 10px;border-radius:9px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,136,36,0.35);margin-top:5px;">
+                <div style="font-size:11.5px;font-weight:800;color:#ffd099;">${esc(d.brand)} ${esc(d.styleCode)} (Item #${esc(d.itemNumber)}) — ${esc(d.colorName)}</div>
+                <div style="font-size:10.8px;color:#e2e8f0;margin-top:2px;line-height:1.38;">${esc(d.description)}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
 
         <!-- TIER 5: LINE-BY-LINE ITEMIZED BREAKDOWN -->
         <div class="table-card">
@@ -3275,13 +3886,27 @@
     renderGarmentLinesList();
     renderDtfPlacementsList();
     renderSavedQuotesList();
+    renderSavedQuotesVaultGrid();
     recalculateEverything();
 
     syncLiveSupplierPricing(false);
+    fetchAndRenderSavedQuotesVault(true);
+
+    // Poll live paid quote confirmations every 12 seconds while Owner's Hub is open
+    setInterval(() => {
+      fetchAndRenderSavedQuotesVault(true);
+    }, 12000);
 
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('tab') === 'bulkquote' || window.location.hash === '#bulkquote') {
+      const urlTab = urlParams.get('tab');
+      const urlTicket = (urlParams.get('ticket') || urlParams.get('q') || '').trim();
+      if (urlTicket) {
+        setTimeout(() => { openTicketInStudio(urlTicket); }, 120);
+      } else if (urlTab === 'savedquotes' || window.location.hash === '#savedquotes') {
+        const sqBtn = document.querySelector('[data-focus-target="savedquotes"]');
+        if (sqBtn) sqBtn.click();
+      } else if (urlTab === 'bulkquote' || window.location.hash === '#bulkquote') {
         const focusBtn = document.querySelector('[data-focus-target="bulkquote"]');
         if (focusBtn) focusBtn.click();
       }
@@ -3436,6 +4061,123 @@
       });
     }
 
+    const openVaultFromStudioBtn = document.getElementById('bqOpenSavedVaultFromStudioBtn');
+    if (openVaultFromStudioBtn) {
+      openVaultFromStudioBtn.addEventListener('click', () => {
+        const sqTab = document.querySelector('[data-focus-target="savedquotes"]');
+        if (sqTab) sqTab.click();
+        const sqSec = document.getElementById('savedQuotesVaultSection');
+        if (sqSec) sqSec.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+
+    const sendClientLinkBtn = document.getElementById('bqSendClientQuoteLinkBtn');
+    if (sendClientLinkBtn) {
+      sendClientLinkBtn.addEventListener('click', async () => {
+        const calc = state.lastCalculation;
+        if (!calc || calc.totalShirts === 0) {
+          alert('Enter at least 1 item in Step 1 before generating a Client Quote Link.');
+          return;
+        }
+        const orig = sendClientLinkBtn.innerHTML;
+        sendClientLinkBtn.disabled = true;
+        sendClientLinkBtn.innerHTML = '&#9203; Syncing Ticket...';
+        await saveCurrentQuote();
+        const link = getPublicClientQuoteUrl(state.activeQuoteId);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(link).catch(() => {});
+        }
+        sendClientLinkBtn.disabled = false;
+        sendClientLinkBtn.innerHTML = '&#10003; Client Quote Link Copied!';
+        setTimeout(() => { sendClientLinkBtn.innerHTML = orig; }, 2500);
+      });
+    }
+
+    const previewClientQuoteBtn = document.getElementById('bqPreviewClientQuoteBtn');
+    if (previewClientQuoteBtn) {
+      previewClientQuoteBtn.addEventListener('click', async () => {
+        const calc = state.lastCalculation;
+        if (!calc || calc.totalShirts === 0) {
+          alert('Enter at least 1 item in Step 1 before previewing the Sent Client Quote.');
+          return;
+        }
+        const orig = previewClientQuoteBtn.innerHTML;
+        previewClientQuoteBtn.disabled = true;
+        previewClientQuoteBtn.innerHTML = '&#9203; Opening...';
+        await syncQuoteToStripeCloudNow(calc, { isExplicitSave: true });
+        previewClientQuoteBtn.disabled = false;
+        previewClientQuoteBtn.innerHTML = orig;
+        window.open(getClientQuoteDossierUrl(state.activeQuoteId), '_blank', 'noopener');
+      });
+    }
+
+    // Wire Dedicated Saved Quotes Vault Section Controls
+    const vaultSection = document.getElementById('savedQuotesVaultSection');
+    if (vaultSection) {
+      vaultSection.addEventListener('click', async (ev) => {
+        const filterBtn = ev.target.closest('[data-sq-filter]');
+        if (filterBtn) {
+          state.sqVaultFilter = filterBtn.getAttribute('data-sq-filter') || 'all';
+          vaultSection.querySelectorAll('[data-sq-filter]').forEach((b) => b.classList.toggle('active', b === filterBtn));
+          renderSavedQuotesVaultGrid();
+          return;
+        }
+
+        const openTktBtn = ev.target.closest('[data-vault-open-ticket]');
+        if (openTktBtn) {
+          await openTicketInStudio(openTktBtn.getAttribute('data-vault-open-ticket'));
+          return;
+        }
+
+        const copyLinkBtn = ev.target.closest('[data-vault-copy-link]');
+        if (copyLinkBtn) {
+          const tid = copyLinkBtn.getAttribute('data-vault-copy-link');
+          const url = getPublicClientQuoteUrl(tid);
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).catch(() => {});
+          }
+          const prev = copyLinkBtn.innerHTML;
+          copyLinkBtn.innerHTML = '&#10003; Copied!';
+          setTimeout(() => { copyLinkBtn.innerHTML = prev; }, 1800);
+          return;
+        }
+
+        const delTktBtn = ev.target.closest('[data-vault-delete-ticket]');
+        if (delTktBtn) {
+          const tid = delTktBtn.getAttribute('data-vault-delete-ticket');
+          if (confirm(`Delete saved quote Ticket #${tid}?`)) {
+            await deleteSavedTicketEverywhere(tid);
+          }
+          return;
+        }
+      });
+
+      const sqSearch = document.getElementById('sqVaultSearchInput');
+      if (sqSearch) {
+        sqSearch.addEventListener('input', () => {
+          state.sqVaultSearch = sqSearch.value || '';
+          renderSavedQuotesVaultGrid();
+        });
+      }
+
+      const sqRefreshBtn = document.getElementById('sqRefreshCloudQuotesBtn');
+      if (sqRefreshBtn) {
+        sqRefreshBtn.addEventListener('click', () => fetchAndRenderSavedQuotesVault(false));
+      }
+
+      const sqNewBtn = document.getElementById('sqCreateNewQuoteBtn');
+      if (sqNewBtn) {
+        sqNewBtn.addEventListener('click', () => {
+          state.activeQuoteId = mintFreshQuoteId();
+          recalculateEverything();
+          const bqTab = document.querySelector('[data-focus-target="bulkquote"]');
+          if (bqTab) bqTab.click();
+          const bqSec = document.getElementById('bulkQuoteStudioSection');
+          if (bqSec) bqSec.scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+    }
+
     const openStripeBtn = document.getElementById('bqOpenStripeQuoteBtn');
     if (openStripeBtn) {
       openStripeBtn.addEventListener('click', async () => {
@@ -3530,60 +4272,14 @@
 
       const loadQ = e.target.closest('[data-load-quote]');
       if (loadQ) {
-        const qId = loadQ.getAttribute('data-load-quote');
-        const found = getSavedQuotes().find((q) => q.quoteId === qId);
-        if (found && found.snapshot) {
-          if (found.quoteId) {
-            state.activeQuoteId = found.quoteId;
-            try { sessionStorage.setItem(ACTIVE_QUOTE_ID_KEY, found.quoteId); } catch (_) {}
-          }
-          const snap = JSON.parse(JSON.stringify(found.snapshot));
-          if (snap.customer) state.customer = snap.customer;
-          state.ssDiscountPct = snap.ssDiscountPct || 0;
-          state.rollWidthMode = snap.rollWidthMode || '27';
-          state.includeAutoBuilder15 = snap.includeAutoBuilder15 !== false;
-          state.gutterIn = snap.gutterIn != null ? snap.gutterIn : 0.25;
-          state.extraSpoilagePrints = snap.extraSpoilagePrints != null ? snap.extraSpoilagePrints : 1;
-          state.pressLaborPerShirt = snap.pressLaborPerShirt != null ? snap.pressLaborPerShirt : 1.50;
-          state.builtInUpchargePerShirt = snap.builtInUpchargePerShirt != null ? snap.builtInUpchargePerShirt : 8.00;
-          state.ssShippingOverride = snap.ssShippingOverride || '';
-          state.dpwShippingUsd = snap.dpwShippingUsd != null ? snap.dpwShippingUsd : 9.95;
-          state.discountPct = snap.discountPct || 0;
-          state.discountLabel = snap.discountLabel || '';
-          state.includeTax = snap.includeTax !== false;
-          state.taxRatePct = snap.taxRatePct != null ? snap.taxRatePct : 7.00;
-          state.includeAvailableColorsOnPdf = snap.includeAvailableColorsOnPdf !== false;
-          if (Array.isArray(snap.garmentLines)) {
-            state.garmentLines = snap.garmentLines.map((gl) => ({
-              ...gl,
-              quantities: Object.assign(makeEmptyQtyMap(), gl.quantities || {})
-            }));
-          }
-          if (Array.isArray(snap.dtfPlacements)) {
-            state.dtfPlacements = snap.dtfPlacements.map((dp) => ({
-              ...dp,
-              dataUrl: '',
-              trimmedDataUrl: '',
-              origCanvas: null,
-              trimmedCanvas: null,
-              renderCanvas: null
-            }));
-          }
-          syncTopControlsFromState();
-          syncCustomerInputsFromState();
-          renderGarmentLinesList();
-          renderDtfPlacementsList();
-          recalculateEverything();
-        }
+        openTicketInStudio(loadQ.getAttribute('data-load-quote'));
         return;
       }
 
       const delQ = e.target.closest('[data-delete-quote]');
       if (delQ) {
         const qId = delQ.getAttribute('data-delete-quote');
-        const filtered = getSavedQuotes().filter((q) => q.quoteId !== qId);
-        localStorage.setItem(SAVED_QUOTES_KEY, JSON.stringify(filtered));
-        renderSavedQuotesList();
+        deleteSavedTicketEverywhere(qId);
       }
     });
 
