@@ -1645,6 +1645,289 @@
       padding: 12px;
       box-shadow: inset 0 1px 0 rgba(255, 226, 196, 0.24);
     }
+    /* =====================================================================
+       CONCEPT #1: MOLTEN OBSIDIAN EXECUTIVE QUOTE SHEET (EXACT 1:1 LAYOUT)
+       ===================================================================== */
+    .c1-quote-sheet {
+      background:
+        radial-gradient(rgba(255, 255, 255, 0.032) 1px, transparent 1px) 0 0 / 7px 7px,
+        linear-gradient(180deg, #111016 0%, #09080c 100%);
+      border: 1.5px solid rgba(255, 134, 34, 0.82);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow:
+        0 28px 68px rgba(0, 0, 0, 0.84),
+        0 0 36px rgba(255, 106, 0, 0.24),
+        inset 0 1px 0 rgba(255, 206, 154, 0.36);
+    }
+    .c1-header-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: linear-gradient(135deg, rgba(64, 62, 74, 0.62) 0%, rgba(22, 21, 28, 0.94) 50%, rgba(28, 22, 24, 0.94) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      border-radius: 18px;
+      padding: 16px 22px;
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+    .c1-brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .c1-brand-logo {
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 12px rgba(255, 122, 24, 0.45));
+      flex-shrink: 0;
+    }
+    .c1-brand-wordmark {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.72rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      background: linear-gradient(180deg, #ffd07a 0%, #ff8c24 55%, #ff5e00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 16px rgba(255, 115, 0, 0.36));
+    }
+    .c1-quote-meta-right {
+      text-align: right;
+    }
+    .c1-quote-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.28rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #ffffff;
+    }
+    .c1-quote-sub {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.82);
+      margin-top: 3px;
+      font-weight: 500;
+    }
+    .c1-cap-pill-bar {
+      margin-top: 12px;
+      padding: 9px 18px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(255, 136, 36, 0.85);
+      background: linear-gradient(90deg, rgba(255, 112, 16, 0.16) 0%, rgba(20, 18, 25, 0.92) 50%, rgba(255, 112, 16, 0.16) 100%);
+      box-shadow:
+        0 0 18px rgba(255, 110, 16, 0.24),
+        inset 0 0 14px rgba(255, 122, 24, 0.14);
+      text-align: center;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+    .c1-client-bar {
+      margin-top: 10px;
+      padding: 9px 18px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255, 136, 36, 0.72);
+      background: linear-gradient(90deg, rgba(255, 108, 16, 0.12) 0%, rgba(18, 17, 23, 0.92) 50%, rgba(255, 108, 16, 0.12) 100%);
+      box-shadow: 0 0 14px rgba(255, 110, 16, 0.16);
+      text-align: center;
+      font-size: 0.8rem;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .c1-mid-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 980px) {
+      .c1-mid-grid,
+      .c1-bottom-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    .c1-glass-card {
+      background: linear-gradient(165deg, rgba(36, 35, 44, 0.72) 0%, rgba(18, 17, 23, 0.92) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 18px;
+      padding: 15px 16px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .c1-section-heading {
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 11px;
+    }
+    .c1-kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+    .c1-kpi-tile {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255, 128, 28, 0.24), transparent 70%),
+        linear-gradient(180deg, rgba(38, 26, 18, 0.86) 0%, rgba(20, 16, 15, 0.94) 100%);
+      border: 1.5px solid rgba(255, 138, 38, 0.84);
+      border-radius: 14px;
+      padding: 14px 10px;
+      text-align: center;
+      box-shadow:
+        0 0 16px rgba(255, 110, 16, 0.20),
+        inset 0 0 14px rgba(255, 122, 24, 0.12);
+    }
+    .c1-kpi-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #ff9d3b;
+      line-height: 1.1;
+      text-shadow: 0 0 14px rgba(255, 128, 24, 0.35);
+    }
+    .c1-kpi-lbl {
+      font-size: 0.76rem;
+      color: #e2e8f0;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    .c1-table-card {
+      margin-top: 14px;
+      background: linear-gradient(180deg, rgba(34, 33, 42, 0.68) 0%, rgba(15, 14, 20, 0.94) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 18px;
+      padding: 14px 0 6px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+    .c1-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .c1-table thead th {
+      padding: 9px 12px;
+      color: #ffffff;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: 2px solid #ff8824;
+      box-shadow: 0 2px 10px rgba(255, 122, 24, 0.28);
+      text-align: left;
+    }
+    .c1-table tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+    }
+    .c1-table tbody tr.c1-orange-divider td {
+      border-top: 1.5px solid rgba(255, 138, 38, 0.85);
+    }
+    .c1-bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.18fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .c1-orbs-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      padding: 4px 2px;
+    }
+    .c1-color-orb {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      box-shadow:
+        inset -3px -4px 6px rgba(0, 0, 0, 0.52),
+        inset 3px 3px 6px rgba(255, 255, 255, 0.42),
+        0 3px 7px rgba(0, 0, 0, 0.55);
+      cursor: default;
+      flex-shrink: 0;
+    }
+    .c1-color-orb.is-selected {
+      outline: 2px solid #ff9436;
+      outline-offset: 2px;
+      box-shadow:
+        0 0 12px rgba(255, 136, 36, 0.75),
+        inset -3px -4px 6px rgba(0, 0, 0, 0.52),
+        inset 3px 3px 6px rgba(255, 255, 255, 0.48);
+    }
+    .c1-totals-And-qr {
+      display: grid;
+      grid-template-columns: 142px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+    }
+    @media (max-width: 620px) {
+      .c1-totals-And-qr {
+        grid-template-columns: 1fr;
+      }
+    }
+    .c1-qr-box {
+      background: linear-gradient(160deg, rgba(32, 22, 16, 0.92), rgba(12, 10, 15, 0.96));
+      border: 1.5px solid rgba(255, 138, 38, 0.82);
+      border-radius: 14px;
+      padding: 9px;
+      text-align: center;
+      box-shadow: 0 0 18px rgba(255, 110, 16, 0.22);
+    }
+    .c1-qr-box img {
+      width: 112px;
+      height: 112px;
+      border-radius: 8px;
+      display: block;
+      margin: 0 auto;
+      background: #ffffff;
+    }
+    .c1-discount-pill {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 13px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(255, 138, 38, 0.85);
+      background: linear-gradient(90deg, rgba(255, 115, 16, 0.18), rgba(28, 18, 12, 0.92));
+      box-shadow: 0 0 14px rgba(255, 110, 16, 0.22);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin: 6px 0;
+    }
+    .c1-grand-pill {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1.5px solid #ff9436;
+      background: linear-gradient(90deg, rgba(255, 118, 18, 0.26), rgba(38, 20, 8, 0.95), rgba(255, 118, 18, 0.26));
+      box-shadow:
+        0 0 22px rgba(255, 106, 0, 0.36),
+        inset 0 0 14px rgba(255, 140, 42, 0.2);
+      margin-top: 8px;
+      font-size: 0.98rem;
+      font-weight: 800;
+    }
     /* Bottom Collapsible Gangsheet Tab / Accordion */
     .bq-gangsheet-drawer {
       margin-top: 16px;
@@ -2695,9 +2978,11 @@
               <span>Black &amp; Orange Liquid Glass Quote Receipt, Finished Item Preview, Discount &amp; Tax</span>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="mini-btn" id="bqNewQuoteIdBtn" style="color:#ffd089;" title="Mint a fresh Official Quote Number &amp; Stripe QR">&#128260; New Quote #</button>
+              <button type="button" class="mini-btn" id="bqOpenStripeQuoteBtn" style="color:#2ce6ff;border-color:rgba(44,230,255,0.5) !important;" title="Sync &amp; open the Live Stripe Checkout page for this Quote">&#128179; Open Stripe Checkout</button>
               <button type="button" class="mini-btn" id="bqSaveQuoteBtn" style="color:#22f59b;">&#128190; Save Quote</button>
               <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#ffb36b;border-color:rgba(255,140,42,0.5) !important;">&#128203; Copy Quote</button>
-              <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:7px 15px;font-size:0.74rem;background:linear-gradient(135deg,#ff7a18,#ffb347);color:#0b0806;border-color:#ffd099;">&#128424; Official Liquid Glass Quote PDF</button>
+              <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:7px 15px;font-size:0.74rem;background:linear-gradient(135deg,#ff7a18,#ffb347);color:#0b0806;border-color:#ffd099;">&#128424; Official Quote PDF (w/ Stripe QR)</button>
             </div>
           </div>
 
@@ -4552,6 +4837,6 @@
       });
     })();
   </script>
-  <script src="bulk_quote_tool.js?v=270"></script>
+  <script src="bulk_quote_tool.js?v=272"></script>
 </body>
 </html>

@@ -276,6 +276,392 @@
   let lineCounter = 2;
   let dtfCounter = 3;
 
+  const STRIPE_EDGE_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout';
+  const ACTIVE_QUOTE_ID_KEY = 'rc_active_bulk_quote_id_v5';
+
+  function mintFreshQuoteId() {
+    const id = 'RC-Q' + Math.floor(100000 + Math.random() * 900000);
+    try { sessionStorage.setItem(ACTIVE_QUOTE_ID_KEY, id); } catch (_) {}
+    return id;
+  }
+
+  function getOrInitActiveQuoteId() {
+    try {
+      const existing = sessionStorage.getItem(ACTIVE_QUOTE_ID_KEY);
+      if (existing && /^RC-Q\d+/.test(existing)) return existing;
+    } catch (_) {}
+    return mintFreshQuoteId();
+  }
+
+  state.activeQuoteId = getOrInitActiveQuoteId();
+  state.stripeSyncStatus = 'ready';
+  let stripeSyncTimer = null;
+
+  function getQuoteStripePortalUrl(calc) {
+    const qid = state.activeQuoteId || getOrInitActiveQuoteId();
+    const amt = calc && calc.customerQuoteTotal > 0 ? calc.customerQuoteTotal.toFixed(2) : '0.00';
+    return `https://www.retrocanopy.com/pay_quote.html?q=${encodeURIComponent(qid)}&amt=${amt}`;
+  }
+
+  // =========================================================================
+  // VERIFIED ISO/IEC 18004 QR CODE ENCODER (VERSIONS 1..10, ECC LEVEL M)
+  // =========================================================================
+  function encodeQrMatrix(text) {
+    const bytes = Array.from(new TextEncoder().encode(String(text || '')));
+    const VERSIONS_M = [
+      null,
+      { v: 1,  dcw: 16,  ecPerBlock: 10, b1: 1, c1: 16, b2: 0, c2: 0,  align: [] },
+      { v: 2,  dcw: 28,  ecPerBlock: 16, b1: 1, c1: 28, b2: 0, c2: 0,  align: [6, 18] },
+      { v: 3,  dcw: 44,  ecPerBlock: 26, b1: 1, c1: 44, b2: 0, c2: 0,  align: [6, 22] },
+      { v: 4,  dcw: 64,  ecPerBlock: 18, b1: 2, c1: 32, b2: 0, c2: 0,  align: [6, 26] },
+      { v: 5,  dcw: 86,  ecPerBlock: 24, b1: 2, c1: 43, b2: 0, c2: 0,  align: [6, 30] },
+      { v: 6,  dcw: 108, ecPerBlock: 16, b1: 4, c1: 27, b2: 0, c2: 0,  align: [6, 34] },
+      { v: 7,  dcw: 124, ecPerBlock: 18, b1: 4, c1: 31, b2: 0, c2: 0,  align: [6, 22, 38] },
+      { v: 8,  dcw: 154, ecPerBlock: 22, b1: 2, c1: 38, b2: 2, c2: 39, align: [6, 24, 42] },
+      { v: 9,  dcw: 182, ecPerBlock: 22, b1: 3, c1: 36, b2: 2, c2: 37, align: [6, 26, 46] },
+      { v: 10, dcw: 216, ecPerBlock: 26, b1: 4, c1: 43, b2: 1, c2: 44, align: [6, 28, 50] }
+    ];
+
+    let spec = VERSIONS_M[10];
+    for (let v = 1; v <= 10; v++) {
+      const lenBits = v <= 9 ? 8 : 16;
+      const maxBytes = Math.floor((VERSIONS_M[v].dcw * 8 - 4 - lenBits) / 8);
+      if (bytes.length <= maxBytes) {
+        spec = VERSIONS_M[v];
+        break;
+      }
+    }
+
+    const safeBytes = bytes.slice(0, 210);
+    const bits = [];
+    const pushBits = (val, n) => {
+      for (let i = n - 1; i >= 0; i--) bits.push((val >>> i) & 1);
+    };
+    pushBits(0b0100, 4);
+    pushBits(safeBytes.length, spec.v <= 9 ? 8 : 16);
+    for (let i = 0; i < safeBytes.length; i++) pushBits(safeBytes[i], 8);
+
+    const totalDataBits = spec.dcw * 8;
+    pushBits(0, Math.min(4, totalDataBits - bits.length));
+    while (bits.length % 8 !== 0) bits.push(0);
+
+    const dataCw = [];
+    for (let i = 0; i < bits.length; i += 8) {
+      let byte = 0;
+      for (let j = 0; j < 8; j++) byte = (byte << 1) | bits[i + j];
+      dataCw.push(byte);
+    }
+    const padBytes = [0xec, 0x11];
+    let padIdx = 0;
+    while (dataCw.length < spec.dcw) {
+      dataCw.push(padBytes[padIdx % 2]);
+      padIdx++;
+    }
+
+    const gfExp = new Uint8Array(512);
+    const gfLog = new Uint8Array(256);
+    let x = 1;
+    for (let i = 0; i < 255; i++) {
+      gfExp[i] = x;
+      gfLog[x] = i;
+      x <<= 1;
+      if (x & 0x100) x ^= 0x11d;
+    }
+    for (let i = 255; i < 512; i++) gfExp[i] = gfExp[i - 255];
+    const gfMul = (a, b) => (a === 0 || b === 0) ? 0 : gfExp[gfLog[a] + gfLog[b]];
+
+    let poly = [1];
+    for (let i = 0; i < spec.ecPerBlock; i++) {
+      const next = new Array(poly.length + 1).fill(0);
+      const root = gfExp[i];
+      for (let j = 0; j < poly.length; j++) {
+        next[j] ^= poly[j];
+        next[j + 1] ^= gfMul(poly[j], root);
+      }
+      poly = next;
+    }
+
+    const rsEncodeBlock = (dataBlock) => {
+      const ecLen = poly.length - 1;
+      const rem = new Uint8Array(ecLen);
+      for (let i = 0; i < dataBlock.length; i++) {
+        const factor = dataBlock[i] ^ rem[0];
+        for (let j = 0; j < ecLen - 1; j++) rem[j] = rem[j + 1];
+        rem[ecLen - 1] = 0;
+        if (factor !== 0) {
+          for (let j = 0; j < ecLen; j++) rem[j] ^= gfMul(poly[j + 1], factor);
+        }
+      }
+      return Array.from(rem);
+    };
+
+    const dataBlocks = [];
+    const ecBlocks = [];
+    let offset = 0;
+    for (let i = 0; i < spec.b1; i++) {
+      const blk = dataCw.slice(offset, offset + spec.c1);
+      offset += spec.c1;
+      dataBlocks.push(blk);
+      ecBlocks.push(rsEncodeBlock(blk));
+    }
+    for (let i = 0; i < spec.b2; i++) {
+      const blk = dataCw.slice(offset, offset + spec.c2);
+      offset += spec.c2;
+      dataBlocks.push(blk);
+      ecBlocks.push(rsEncodeBlock(blk));
+    }
+
+    const finalCw = [];
+    const maxDataLen = Math.max(spec.c1, spec.c2);
+    for (let c = 0; c < maxDataLen; c++) {
+      for (let b = 0; b < dataBlocks.length; b++) {
+        if (c < dataBlocks[b].length) finalCw.push(dataBlocks[b][c]);
+      }
+    }
+    for (let c = 0; c < spec.ecPerBlock; c++) {
+      for (let b = 0; b < ecBlocks.length; b++) finalCw.push(ecBlocks[b][c]);
+    }
+
+    const size = spec.v * 4 + 17;
+    const mod = Array.from({ length: size }, () => new Uint8Array(size));
+    const isFunc = Array.from({ length: size }, () => new Uint8Array(size));
+    const setFunc = (r, c, dark) => {
+      if (r < 0 || r >= size || c < 0 || c >= size) return;
+      mod[r][c] = dark ? 1 : 0;
+      isFunc[r][c] = 1;
+    };
+
+    const placeFinder = (topR, leftC) => {
+      for (let dr = -1; dr <= 7; dr++) {
+        for (let dc = -1; dc <= 7; dc++) {
+          const r = topR + dr, c = leftC + dc;
+          if (r < 0 || r >= size || c < 0 || c >= size) continue;
+          const inOuter = dr >= 0 && dr <= 6 && dc >= 0 && dc <= 6;
+          const onBorder = dr === 0 || dr === 6 || dc === 0 || dc === 6;
+          const inCore = dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4;
+          setFunc(r, c, inOuter && (onBorder || inCore));
+        }
+      }
+    };
+    placeFinder(0, 0);
+    placeFinder(0, size - 7);
+    placeFinder(size - 7, 0);
+
+    for (let i = 8; i < size - 8; i++) {
+      setFunc(6, i, i % 2 === 0);
+      setFunc(i, 6, i % 2 === 0);
+    }
+
+    const ac = spec.align;
+    for (let i = 0; i < ac.length; i++) {
+      for (let j = 0; j < ac.length; j++) {
+        if ((i === 0 && j === 0) || (i === 0 && j === ac.length - 1) || (i === ac.length - 1 && j === 0)) continue;
+        const cr = ac[i], cc = ac[j];
+        for (let dr = -2; dr <= 2; dr++) {
+          for (let dc = -2; dc <= 2; dc++) {
+            setFunc(cr + dr, cc + dc, Math.max(Math.abs(dr), Math.abs(dc)) !== 1);
+          }
+        }
+      }
+    }
+
+    setFunc(size - 8, 8, true);
+    for (let i = 0; i <= 8; i++) {
+      if (!isFunc[8][i]) setFunc(8, i, false);
+      if (!isFunc[i][8]) setFunc(i, 8, false);
+    }
+    for (let i = 0; i < 8; i++) {
+      if (!isFunc[8][size - 1 - i]) setFunc(8, size - 1 - i, false);
+      if (!isFunc[size - 1 - i][8]) setFunc(size - 1 - i, 8, false);
+    }
+    if (spec.v >= 7) {
+      let rem = spec.v << 12;
+      for (let i = 17; i >= 12; i--) {
+        if ((rem >>> i) & 1) rem ^= 0x1f25 << (i - 12);
+      }
+      const verBits = (spec.v << 12) | rem;
+      for (let i = 0; i < 18; i++) {
+        const bit = ((verBits >>> i) & 1) === 1;
+        const a = size - 11 + (i % 3);
+        const b = Math.floor(i / 3);
+        setFunc(a, b, bit);
+        setFunc(b, a, bit);
+      }
+    }
+
+    let bitIdx = 0;
+    const totalBits = finalCw.length * 8;
+    let upward = true;
+    for (let right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let vert = 0; vert < size; vert++) {
+        const r = upward ? (size - 1 - vert) : vert;
+        for (let j = 0; j < 2; j++) {
+          const c = right - j;
+          if (!isFunc[r][c]) {
+            let dark = false;
+            if (bitIdx < totalBits) {
+              dark = ((finalCw[bitIdx >>> 3] >>> (7 - (bitIdx & 7))) & 1) === 1;
+              bitIdx++;
+            }
+            mod[r][c] = dark ? 1 : 0;
+          }
+        }
+      }
+      upward = !upward;
+    }
+
+    const writeFormatBits = (mat, mask) => {
+      const data = (0b00 << 3) | mask;
+      let rem = data << 10;
+      for (let i = 14; i >= 10; i--) {
+        if ((rem >>> i) & 1) rem ^= 0x537 << (i - 10);
+      }
+      const bits15 = ((data << 10) | rem) ^ 0x5412;
+      for (let i = 0; i <= 5; i++) mat[i][8] = (bits15 >>> i) & 1;
+      mat[7][8] = (bits15 >>> 6) & 1;
+      mat[8][8] = (bits15 >>> 7) & 1;
+      mat[8][7] = (bits15 >>> 8) & 1;
+      for (let i = 9; i < 15; i++) mat[8][14 - i] = (bits15 >>> i) & 1;
+      for (let i = 0; i < 8; i++) mat[8][size - 1 - i] = (bits15 >>> i) & 1;
+      for (let i = 8; i < 15; i++) mat[size - 15 + i][8] = (bits15 >>> i) & 1;
+      mat[size - 8][8] = 1;
+    };
+
+    const maskFns = [
+      (r, c) => (r + c) % 2 === 0,
+      (r) => r % 2 === 0,
+      (_, c) => c % 3 === 0,
+      (r, c) => (r + c) % 3 === 0,
+      (r, c) => (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0,
+      (r, c) => ((r * c) % 2 + (r * c) % 3) === 0,
+      (r, c) => (((r * c) % 2 + (r * c) % 3) % 2) === 0,
+      (r, c) => (((r + c) % 2 + (r * c) % 3) % 2) === 0
+    ];
+
+    const scorePenalty = (mat) => {
+      let p = 0;
+      for (let r = 0; r < size; r++) {
+        let run = 1;
+        for (let c = 1; c < size; c++) {
+          if (mat[r][c] === mat[r][c - 1]) {
+            run++;
+            if (run === 5) p += 3;
+            else if (run > 5) p += 1;
+          } else run = 1;
+        }
+      }
+      for (let c = 0; c < size; c++) {
+        let run = 1;
+        for (let r = 1; r < size; r++) {
+          if (mat[r][c] === mat[r - 1][c]) {
+            run++;
+            if (run === 5) p += 3;
+            else if (run > 5) p += 1;
+          } else run = 1;
+        }
+      }
+      return p;
+    };
+
+    let bestMat = null;
+    let bestScore = Infinity;
+    for (let m = 0; m < 8; m++) {
+      const candidate = mod.map((row) => Uint8Array.from(row));
+      const fn = maskFns[m];
+      for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+          if (!isFunc[r][c] && fn(r, c)) candidate[r][c] ^= 1;
+        }
+      }
+      writeFormatBits(candidate, m);
+      const sc = scorePenalty(candidate);
+      if (sc < bestScore) {
+        bestScore = sc;
+        bestMat = candidate;
+      }
+    }
+    return { size, modules: bestMat };
+  }
+
+  function renderStripeQrDataUrl(url, targetPx) {
+    const qr = encodeQrMatrix(url);
+    const quiet = 4;
+    const totalModules = qr.size + quiet * 2;
+    const scale = Math.max(4, Math.floor((targetPx || 260) / totalModules));
+    const px = totalModules * scale;
+    const cv = document.createElement('canvas');
+    cv.width = px;
+    cv.height = px;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, px, px);
+    ctx.fillStyle = '#09080e';
+    for (let r = 0; r < qr.size; r++) {
+      const row = qr.modules[r];
+      for (let c = 0; c < qr.size; c++) {
+        if (row[c]) {
+          ctx.fillRect((c + quiet) * scale, (r + quiet) * scale, scale, scale);
+        }
+      }
+    }
+    return cv.toDataURL('image/png');
+  }
+
+  async function syncQuoteToStripeCloudNow(calcOverride) {
+    const calc = calcOverride || state.lastCalculation;
+    if (!calc || calc.totalShirts === 0) return null;
+    const quoteId = state.activeQuoteId || getOrInitActiveQuoteId();
+    const c = state.customer;
+    const payload = {
+      action: 'save_quote_for_stripe',
+      quoteId,
+      projectName: c.projectName || c.companyOrTeam || 'Custom Performance Apparel & Print Order',
+      customerName: [c.fullName, c.companyOrTeam].filter(Boolean).join(' — '),
+      customerEmail: c.email || '',
+      customerPhone: c.phone || '',
+      shippingAddress: c.address || '',
+      itemizedLines: calc.itemizedLines,
+      subtotalBeforeDiscount: calc.subtotalBeforeDiscount,
+      discountPct: calc.discountPct,
+      discountLabel: calc.discountLabel,
+      discountAmountUsd: calc.discountAmountUsd,
+      subtotalAfterDiscount: calc.subtotalAfterDiscount,
+      includeTax: calc.includeTax,
+      taxRatePct: calc.taxRatePct,
+      taxAmountUsd: calc.taxAmountUsd,
+      grandTotalUsd: calc.customerQuoteTotal,
+      totalShirts: calc.totalShirts
+    };
+    try {
+      const res = await fetch(STRIPE_EDGE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        state.stripeSyncStatus = 'synced';
+        const dotEl = document.getElementById('bqStripeQrSyncBadge');
+        if (dotEl) {
+          dotEl.innerHTML = '&#9679; Live Stripe QR Synced';
+          dotEl.style.color = '#22f59b';
+        }
+        return data;
+      }
+    } catch (_) {
+      state.stripeSyncStatus = 'fallback';
+    }
+    return null;
+  }
+
+  function scheduleStripeQuoteCloudSync() {
+    clearTimeout(stripeSyncTimer);
+    stripeSyncTimer = setTimeout(() => {
+      syncQuoteToStripeCloudNow();
+    }, 650);
+  }
+
   function esc(str) {
     return String(str == null ? '' : str)
       .replace(/&/g, '&amp;')
@@ -946,80 +1332,76 @@
   }
 
   function renderProjectedFinishedItemDataUrl(calc) {
-    const W = 780;
-    const H = 370;
+    const W = 740;
+    const H = 340;
     const c = document.createElement('canvas');
     c.width = W;
     c.height = H;
     const ctx = c.getContext('2d');
 
-    // Molten Obsidian & Liquid Orange Studio Backdrop
-    const bg = ctx.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0, '#120d0c');
-    bg.addColorStop(0.5, '#09080c');
-    bg.addColorStop(1, '#170e07');
+    // Clean Concept #1 Smoked Obsidian Studio Backdrop
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#1d1c24');
+    bg.addColorStop(1, '#131218');
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    // Subtle liquid orange ambient glow behind garments
-    const rad1 = ctx.createRadialGradient(200, 185, 15, 200, 185, 175);
-    rad1.addColorStop(0, 'rgba(255, 122, 24, 0.22)');
-    rad1.addColorStop(1, 'rgba(255, 122, 24, 0)');
+    // Subtle warm studio rim behind each garment
+    const rad1 = ctx.createRadialGradient(195, 158, 12, 195, 158, 155);
+    rad1.addColorStop(0, 'rgba(255, 132, 36, 0.14)');
+    rad1.addColorStop(1, 'rgba(255, 132, 36, 0)');
     ctx.fillStyle = rad1;
     ctx.fillRect(0, 0, W, H);
 
-    const rad2 = ctx.createRadialGradient(580, 185, 15, 580, 185, 175);
-    rad2.addColorStop(0, 'rgba(255, 158, 68, 0.18)');
-    rad2.addColorStop(1, 'rgba(255, 158, 68, 0)');
+    const rad2 = ctx.createRadialGradient(545, 158, 12, 545, 158, 155);
+    rad2.addColorStop(0, 'rgba(255, 132, 36, 0.14)');
+    rad2.addColorStop(1, 'rgba(255, 132, 36, 0)');
     ctx.fillStyle = rad2;
     ctx.fillRect(0, 0, W, H);
 
-    // Find primary physical garment or determine if 100% PRINT ONLY
     const firstPhysicalRow = calc.itemizedLines.find((r) => !r.isPrintOnly);
     const activePlacements = calc.activePlacements || [];
 
     if (!firstPhysicalRow && calc.totalPrintOnlyItems > 0) {
-      // 100% PRINT ONLY ORDER — Render Custom DTF Transfer Print Sheet Proof
       ctx.fillStyle = '#ffb36b';
-      ctx.font = '800 13px Orbitron, Segoe UI, sans-serif';
+      ctx.font = '700 12.5px Outfit, Segoe UI, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('PROJECTED CUSTOM DTF TRANSFER PRINTS (PRINT-ONLY ORDER — $0 BLANK)', W / 2, 28);
+      ctx.fillText('Custom DTF Transfers Only ($0.00 Blank Garment)', W / 2, 24);
 
       const count = Math.max(1, activePlacements.length);
-      const cardW = Math.min(310, Math.floor((W - 60 - (count - 1) * 20) / count));
-      const cardH = 265;
+      const cardW = Math.min(290, Math.floor((W - 60 - (count - 1) * 20) / count));
+      const cardH = 255;
       const startX = Math.round((W - (count * cardW + (count - 1) * 20)) / 2);
 
       activePlacements.forEach((p, idx) => {
         const x = startX + idx * (cardW + 20);
-        const y = 48;
-        ctx.fillStyle = '#14121b';
+        const y = 40;
+        ctx.fillStyle = '#100f15';
         ctx.fillRect(x, y, cardW, cardH);
-        ctx.strokeStyle = 'rgba(255, 136, 38, 0.65)';
+        ctx.strokeStyle = 'rgba(255, 138, 38, 0.72)';
         ctx.lineWidth = 1.5;
         ctx.strokeRect(x, y, cardW, cardH);
 
         if (p.renderCanvas) {
-          drawContainSource(ctx, p.renderCanvas, x + 22, y + 22, cardW - 44, cardH - 68);
+          drawContainSource(ctx, p.renderCanvas, x + 20, y + 20, cardW - 40, cardH - 62);
         } else {
           ctx.strokeStyle = 'rgba(255, 179, 107, 0.45)';
           ctx.setLineDash([5, 5]);
-          ctx.strokeRect(x + 34, y + 34, cardW - 68, cardH - 92);
+          ctx.strokeRect(x + 32, y + 32, cardW - 64, cardH - 86);
           ctx.setLineDash([]);
           ctx.fillStyle = 'rgba(255,255,255,0.6)';
           ctx.font = '600 12px Segoe UI, sans-serif';
-          ctx.fillText('Upload DTF Artwork in Step 2', x + cardW / 2, y + cardH / 2 - 8);
+          ctx.fillText('Upload DTF Artwork in Step 2', x + cardW / 2, y + cardH / 2 - 6);
         }
 
-        ctx.fillStyle = '#ff9e44';
+        ctx.fillStyle = '#ffffff';
         ctx.font = '700 12px Segoe UI, sans-serif';
-        ctx.fillText(`${p.locationLabel} (${p.adultWidthIn}" × ${p.adultHeightIn}")`, x + cardW / 2, y + cardH - 16);
+        ctx.fillText(`${p.locationLabel} (${p.adultWidthIn}" × ${p.adultHeightIn}")`, x + cardW / 2, y + cardH - 14);
       });
 
       return c.toDataURL('image/png');
     }
 
-    // Physical Garment Mockup (Front + Back Side-by-Side)
     const primaryLine = firstPhysicalRow || {
       parentStyleCode: state.garmentLines[0]?.styleCode || 'TT11',
       brand: 'Team 365',
@@ -1031,32 +1413,20 @@
     const hex = primaryLine.colorHex || '#151619';
     const isLong = Boolean(cat.isLongSleeve);
 
-    // Top Title Banner inside Canvas
-    ctx.fillStyle = '#ffb36b';
-    ctx.font = '800 12px Segoe UI, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(
-      `PROJECTED FINISHED GARMENT PREVIEW — ${cat.brand.toUpperCase()} ${cat.styleCode} (${primaryLine.colorName.toUpperCase()})`,
-      W / 2,
-      24
-    );
+    const frontCx = 195;
+    const backCx = 545;
+    const shirtW = 276;
+    const shirtH = 276;
+    const shirtTop = 14;
 
-    const frontCx = 200;
-    const backCx = 580;
-    const shirtW = 290;
-    const shirtH = 290;
-    const shirtTop = 38;
-
-    // Draw Front & Back Garments
     if (!isLong && blankMockupAssets.whiteFront && blankMockupAssets.whiteBack) {
       drawTintedPhotoCutout(ctx, blankMockupAssets.whiteFront, blankMockupAssets.blackFront, hex, frontCx - shirtW / 2, shirtTop, shirtW, shirtH);
       drawTintedPhotoCutout(ctx, blankMockupAssets.whiteBack, blankMockupAssets.blackBack, hex, backCx - shirtW / 2, shirtTop, shirtW, shirtH);
     } else {
-      drawProceduralShirtSilhouette(ctx, frontCx, shirtTop + 10, 1.04, 1.04, hex, isLong, false);
-      drawProceduralShirtSilhouette(ctx, backCx, shirtTop + 10, 1.04, 1.04, hex, isLong, true);
+      drawProceduralShirtSilhouette(ctx, frontCx, shirtTop + 8, 1.0, 1.0, hex, isLong, false);
+      drawProceduralShirtSilhouette(ctx, backCx, shirtTop + 8, 1.0, 1.0, hex, isLong, true);
     }
 
-    // Identify Front vs Back placements
     const frontPlacements = [];
     const backPlacements = [];
     activePlacements.forEach((p, idx) => {
@@ -1072,73 +1442,62 @@
       }
     });
 
-    // Composite Front Placement(s) onto Front Shirt
-    // Adult shirt torso width ~ 19" (~145px on canvas -> ~7.6 px per inch)
-    const pxPerIn = 7.6;
+    const pxPerIn = 7.4;
     frontPlacements.forEach((fp) => {
       const lbl = (fp.locationLabel || '').toLowerCase();
       const isPocket = lbl.includes('pocket') || lbl.includes('breast') || (fp.adultWidthIn <= 5.5 && fp.adultHeightIn <= 5.5);
-      const boxW = Math.min(115, Math.max(24, fp.adultWidthIn * pxPerIn));
-      const boxH = Math.min(130, Math.max(24, fp.adultHeightIn * pxPerIn));
-      // Viewer's LEFT side of front shirt = wearer's RIGHT breast pocket; wait:
-      // "Front Right Breast Pocket" on the wearer is viewer's LEFT side (frontCx - 34)!
-      const drawX = isPocket ? (frontCx - 32 - boxW / 2) : (frontCx - boxW / 2);
-      const drawY = isPocket ? (shirtTop + 86) : (shirtTop + 88);
+      const boxW = Math.min(110, Math.max(24, fp.adultWidthIn * pxPerIn));
+      const boxH = Math.min(124, Math.max(24, fp.adultHeightIn * pxPerIn));
+      // Viewer's right side on front view or wearer's right breast pocket:
+      // Note: Wearer's right breast is viewer's left (frontCx - 30); wearer's left pocket is viewer's right (frontCx + 30).
+      // Keeping wearer's right breast pocket at frontCx - 30!
+      const drawX = isPocket ? (frontCx - 30 - boxW / 2) : (frontCx - boxW / 2);
+      const drawY = shirtTop + 80;
 
       if (fp.renderCanvas) {
         drawContainSource(ctx, fp.renderCanvas, drawX, drawY, boxW, boxH);
       } else {
         ctx.save();
-        ctx.strokeStyle = 'rgba(255, 148, 54, 0.85)';
-        ctx.lineWidth = 1.3;
+        ctx.strokeStyle = 'rgba(255, 148, 54, 0.78)';
+        ctx.lineWidth = 1.2;
         ctx.setLineDash([3, 3]);
         ctx.strokeRect(drawX, drawY, boxW, boxH);
-        ctx.fillStyle = 'rgba(255, 122, 24, 0.18)';
+        ctx.fillStyle = 'rgba(255, 122, 24, 0.14)';
         ctx.fillRect(drawX, drawY, boxW, boxH);
         ctx.restore();
       }
     });
 
-    // Composite Back Placement(s) onto Back Shirt
     backPlacements.forEach((bp) => {
-      const boxW = Math.min(120, Math.max(28, bp.adultWidthIn * pxPerIn));
-      const boxH = Math.min(138, Math.max(28, bp.adultHeightIn * pxPerIn));
+      const boxW = Math.min(116, Math.max(28, bp.adultWidthIn * pxPerIn));
+      const boxH = Math.min(132, Math.max(28, bp.adultHeightIn * pxPerIn));
       const drawX = backCx - boxW / 2;
-      const drawY = shirtTop + 76;
+      const drawY = shirtTop + 70;
 
       if (bp.renderCanvas) {
         drawContainSource(ctx, bp.renderCanvas, drawX, drawY, boxW, boxH);
       } else {
         ctx.save();
-        ctx.strokeStyle = 'rgba(255, 148, 54, 0.85)';
-        ctx.lineWidth = 1.3;
+        ctx.strokeStyle = 'rgba(255, 148, 54, 0.78)';
+        ctx.lineWidth = 1.2;
         ctx.setLineDash([3, 3]);
         ctx.strokeRect(drawX, drawY, boxW, boxH);
-        ctx.fillStyle = 'rgba(255, 122, 24, 0.18)';
+        ctx.fillStyle = 'rgba(255, 122, 24, 0.14)';
         ctx.fillRect(drawX, drawY, boxW, boxH);
         ctx.restore();
       }
     });
 
-    // Center Divider
-    ctx.strokeStyle = 'rgba(255, 136, 38, 0.25)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(W / 2, 42);
-    ctx.lineTo(W / 2, H - 18);
-    ctx.stroke();
+    // Clean Concept #1 Labels ("Front" & "Back" + garment subtitle)
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '600 14px Outfit, Segoe UI, sans-serif';
+    ctx.fillText('Front', frontCx, H - 28);
+    ctx.fillText('Back', backCx, H - 28);
 
-    // Bottom View Labels
-    ctx.fillStyle = '#ffe2c4';
-    ctx.font = '700 11.5px Segoe UI, sans-serif';
-    const frontDesc = frontPlacements.length
-      ? `FRONT VIEW • ${frontPlacements.map((p) => `${p.locationLabel} (${p.adultWidthIn}"×${p.adultHeightIn}")`).join(', ')}`
-      : 'FRONT VIEW';
-    const backDesc = backPlacements.length
-      ? `BACK VIEW • ${backPlacements.map((p) => `${p.locationLabel} (${p.adultWidthIn}"×${p.adultHeightIn}")`).join(', ')}`
-      : 'BACK VIEW';
-    ctx.fillText(frontDesc, frontCx, H - 14);
-    ctx.fillText(backDesc, backCx, H - 14);
+    ctx.fillStyle = 'rgba(255, 208, 158, 0.78)';
+    ctx.font = '500 11px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(`${cat.brand} ${cat.styleCode} • ${primaryLine.colorName}`, W / 2, H - 9);
 
     return c.toDataURL('image/png');
   }
@@ -1568,195 +1927,229 @@
       }
     }
 
-    // Generate Projected Finished Item Picture
+    // Generate Projected Finished Item Picture + Live Stripe Checkout QR
     const projectedMockupUrl = renderProjectedFinishedItemDataUrl(calc);
     calc.projectedMockupUrl = projectedMockupUrl;
 
-    // Render Black & Orange Liquid Glass Official Receipt Card + Projected Item Mockup + Private Owner Ledger
+    const quoteId = state.activeQuoteId || getOrInitActiveQuoteId();
+    const stripePayUrl = getQuoteStripePortalUrl(calc);
+    const stripeQrDataUrl = renderStripeQrDataUrl(stripePayUrl, 260);
+    calc.stripePayUrl = stripePayUrl;
+    calc.stripeQrDataUrl = stripeQrDataUrl;
+
+    if (calc.totalShirts > 0) {
+      scheduleStripeQuoteCloudSync();
+    }
+
+    // Render EXACT Concept #1 ("Molten Obsidian Executive Sheet") + Private Owner Ledger
     const finEl = document.getElementById('bqFinancialBreakdownBody');
     if (finEl) {
       const logoUrl = getAssetUrl('assets/logo.png');
       const c = state.customer;
-      const clientHeadline = [c.fullName, c.companyOrTeam].filter(Boolean).join(' • ') || 'Valued RetroCanopy Client';
-      const projectHeadline = c.projectName || 'Custom Performance Apparel & Print Order';
+      const issueDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const clientHeadline = [c.fullName, c.companyOrTeam].filter(Boolean).join(' — ') || 'Valued Client';
+      const projectHeadline = c.projectName || 'Custom Performance Apparel & DTF Order';
+      const contactSnippet = [c.phone, c.email, c.address].filter(Boolean).join(' • ');
+
       const ssShipNote = calc.totalPhysicalShirts === 0
         ? '$0.00 (Print-Only Order)'
         : (calc.blanksSubtotal >= 200 && String(state.ssShippingOverride).trim() === ''
             ? 'FREE ($200+ S&S Order)'
             : money(calc.ssShippingUsd));
 
-      const capBadgesHtml = STUDIO_CAPABILITIES.map((cap) =>
-        `<span style="display:inline-block;padding:3px 9px;border-radius:999px;font-size:0.63rem;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;background:rgba(255,122,24,0.18);border:1px solid rgba(255,140,42,0.52);color:#ffd5b0;">${esc(cap)}</span>`
-      ).join('');
+      // Group summary mini-rows under the 2x2 KPI tiles
+      const miniGroupLines = calc.itemOverallGroups.map((g) => {
+        const avgUsed = calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount;
+        return `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:0.72rem;padding:4px 8px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);">
+            <span style="display:inline-flex;align-items:center;gap:6px;color:#f1f5f9;">
+              <i style="width:10px;height:10px;border-radius:50%;background:${esc(g.colorHex)};border:1px solid rgba(255,255,255,0.5);display:inline-block;"></i>
+              <strong>${esc(g.brand)} ${esc(g.styleBadge)}</strong> (${esc(g.colorName)})
+            </span>
+            <span style="color:#ffb36b;font-weight:700;">${g.totalQty} pcs &bull; ${money(avgUsed)}/ea</span>
+          </div>
+        `;
+      }).join('');
 
-      const overallGroupRowsHtml = calc.itemOverallGroups.map((g) => `
-        <tr>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);">
-            <div style="display:flex;align-items:center;gap:7px;">
-              <span style="width:12px;height:12px;border-radius:50%;background:${esc(g.colorHex)};border:1px solid rgba(255,255,255,0.55);display:inline-block;flex-shrink:0;"></span>
-              <strong style="color:#ffffff;">${esc(g.brand)} ${esc(g.styleBadge)}</strong>
-              <span style="color:#ffb36b;font-size:0.72rem;">&bull; ${esc(g.colorName)}</span>
-            </div>
-            <div style="font-size:0.67rem;color:rgba(255,255,255,0.62);margin-top:2px;">Sizes: ${esc(g.sizeBreakdownStr)}</div>
-          </td>
-          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-weight:800;color:#ffb36b;">${g.totalQty} pcs</td>
-          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:700;color:#ffe2c4;">${money(calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount)} / ea</td>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:800;color:#ff9e44;">${money(calc.discountPct > 0 ? g.groupSubtotalAfterDiscount : g.groupSubtotalPreDiscount)}</td>
-        </tr>
+      // Itemized table rows with Concept #1 glowing orange group dividers (Youth -> Adult -> Print Only)
+      const getTierKey = (r) => r.isPrintOnly ? 'print' : (r.isYouth ? 'youth' : 'adult');
+      const itemizedTableRows = calc.itemizedLines.map((row, idx) => {
+        const prev = idx > 0 ? calc.itemizedLines[idx - 1] : null;
+        const needsOrangeRule = prev && (getTierKey(prev) !== getTierKey(row) || prev.lineId !== row.lineId);
+        const garmentLabel = row.isPrintOnly
+          ? 'Custom DTF Transfer Only'
+          : `${row.brand} ${row.styleCode} — ${row.colorName}`;
+        const sizeDisplay = row.isPrintOnly
+          ? 'PRINT ONLY'
+          : (row.isYouth ? row.sizeName.replace(/^Y/, 'Youth ') : (row.sizeName === 'S' ? 'Adult S' : row.sizeName));
+
+        return `
+          <tr class="${needsOrangeRule ? 'c1-orange-divider' : ''}">
+            <td style="text-align:center;color:rgba(255,255,255,0.78);font-weight:600;">${row.lineNumber}</td>
+            <td>
+              <div style="display:inline-flex;align-items:center;gap:7px;">
+                <span style="width:11px;height:11px;border-radius:50%;background:${esc(row.colorHex)};border:1px solid rgba(255,255,255,0.55);display:inline-block;flex-shrink:0;"></span>
+                <strong style="color:#ffffff;">${esc(garmentLabel)}</strong>
+              </div>
+            </td>
+            <td style="color:rgba(255,255,255,0.82);font-size:0.75rem;">${esc(row.printSpecSummary || 'Blank Garment')}</td>
+            <td style="text-align:center;font-weight:700;color:${row.isPrintOnly ? '#ff9d3b' : '#ffffff'};">${esc(sizeDisplay)}</td>
+            <td style="text-align:center;font-weight:700;">${row.qty}</td>
+            <td style="text-align:right;font-weight:600;">${money(row.unitPriceQuoted)}</td>
+            <td style="text-align:right;font-weight:700;color:#ffffff;">${money(row.lineTotalQuoted)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Official Available S&S Colors (3D glossy orbs matching Concept #1)
+      const primaryStyleCode = state.garmentLines[0]?.styleCode || 'TT11';
+      const activeColorSet = new Set(state.garmentLines.map((l) => l.colorName));
+      const ssColors = getColorsForStyle(primaryStyleCode);
+      const colorOrbsHtml = ssColors.map((col) => `
+        <span
+          class="c1-color-orb ${activeColorSet.has(col.name) ? 'is-selected' : ''}"
+          style="background:radial-gradient(circle at 32% 28%, rgba(255,255,255,0.52) 0%, ${esc(col.hex)} 44%, #09080c 100%);"
+          title="${esc(col.name)}"
+        ></span>
       `).join('');
-
-      const itemizedTableRows = calc.itemizedLines.map((row) => `
-        <tr>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span style="width:10px;height:10px;border-radius:50%;background:${esc(row.colorHex)};border:1px solid rgba(255,255,255,0.5);display:inline-block;flex-shrink:0;"></span>
-              <strong style="color:#ffffff;">${esc(row.brand)} ${esc(row.styleCode)}</strong>
-              <span style="font-size:0.67rem;color:#ffb36b;">#${esc(row.itemNumber)}</span>
-              <span style="font-size:0.7rem;color:#ffd5b0;">&bull; ${esc(row.colorName)}</span>
-            </div>
-            <div style="font-size:0.66rem;color:rgba(255,255,255,0.62);margin-top:1px;">${esc(row.printSpecSummary)}${row.isPrintOnly ? ' &bull; <strong style="color:#ff9e44;">$0.00 Blank Garment</strong>' : ''}</div>
-          </td>
-          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-weight:800;color:${row.isPrintOnly ? '#ff9e44' : (row.isYouth ? '#2ce6ff' : '#ffe89e')};">${esc(row.sizeName)}</td>
-          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:center;font-weight:700;">${row.qty}</td>
-          <td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:700;color:#ffe2c4;">${money(row.unitPriceQuoted)}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;font-weight:800;color:#ffffff;">${money(row.lineTotalQuoted)}</td>
-        </tr>
-      `).join('');
-
-      const discountRowHtml = calc.discountPct > 0 ? `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 11px;background:rgba(34,245,155,0.12);border:1px solid rgba(34,245,155,0.42);border-radius:10px;color:#6bffc3;font-size:0.79rem;margin:5px 0;">
-          <span>&#127991;&#65039; <strong>${esc(calc.discountLabel)} (${calc.discountPct}% OFF)</strong></span>
-          <strong>&minus;${money(calc.discountAmountUsd)}</strong>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:0.76rem;color:rgba(255,255,255,0.86);padding:2px 0;">
-          <span>Discounted Subtotal (${money(calc.avgItemAfterDiscount)} avg / item):</span>
-          <strong>${money(calc.subtotalAfterDiscount)}</strong>
-        </div>
-      ` : '';
-
-      const taxRowHtml = calc.includeTax ? `
-        <div style="display:flex;justify-content:space-between;font-size:0.76rem;color:rgba(255,255,255,0.84);padding:3px 0;">
-          <span>Sales Tax (${calc.taxRatePct.toFixed(2)}%):</span>
-          <strong>${money(calc.taxAmountUsd)}</strong>
-        </div>
-      ` : `
-        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#ffb36b;padding:3px 0;">
-          <span>Sales Tax (Excluded / Tax-Exempt):</span>
-          <strong>$0.00</strong>
-        </div>
-      `;
 
       finEl.innerHTML = `
-        <div class="bq-liquid-receipt">
-          <!-- BLACK & MOLTEN ORANGE LIQUID GLASS BRAND HEADER + ALL 6 SERVICES -->
-          <div class="bq-liquid-header">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;">
-              <div style="display:flex;align-items:center;gap:14px;">
-                <img src="${esc(logoUrl)}" alt="RetroCanopy Official Logo" style="width:62px;height:62px;object-fit:contain;background:#07060a;border:1.5px solid rgba(255,140,42,0.65);border-radius:14px;padding:5px;box-shadow:0 0 18px rgba(255,115,20,0.32);">
-                <div>
-                  <div style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.08rem;letter-spacing:0.09em;color:#ffffff;">RETROCANOPY</div>
-                  <div style="font-size:0.7rem;color:#ff9e44;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;margin-top:1px;">Official Itemized Quote &amp; Production Receipt</div>
-                  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">${capBadgesHtml}</div>
-                </div>
-              </div>
-
-              <div style="text-align:right;background:rgba(255,122,24,0.12);border:1px solid rgba(255,140,42,0.5);border-radius:14px;padding:9px 14px;">
-                <div style="font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;color:#ffd5b0;font-weight:700;">Grand Total</div>
-                <div style="font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:900;color:#ff9e44;">${money(calc.customerQuoteTotal)}</div>
-                <div style="font-size:0.69rem;color:#ffffff;font-weight:700;">${money(calc.avgItemAllInFinal)} / item overall</div>
-              </div>
+        <div class="c1-quote-sheet">
+          <!-- TIER 1: SMOKED LIQUID GLASS HEADER WITH ACTUAL LOGO -->
+          <div class="c1-header-banner">
+            <div class="c1-brand-lockup">
+              <img src="${esc(logoUrl)}" alt="RetroCanopy Official Logo" class="c1-brand-logo">
+              <div class="c1-brand-wordmark">RETROCANOPY</div>
             </div>
-
-            <div style="margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,140,42,0.26);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:0.74rem;color:rgba(255,255,255,0.82);">
-              <span><strong>Project:</strong> ${esc(projectHeadline)}</span>
-              <span><strong>Prepared For:</strong> ${esc(clientHeadline)}</span>
+            <div class="c1-quote-meta-right">
+              <div class="c1-quote-title">OFFICIAL QUOTE</div>
+              <div class="c1-quote-sub">#${esc(quoteId)} &bull; Issued ${esc(issueDate)}</div>
             </div>
           </div>
 
-          <div style="padding:16px 18px;">
-            <!-- PROJECTED FINISHED ITEM PREVIEW SHOWCASE -->
-            <div class="bq-mockup-showcase-card" style="margin-bottom:14px;text-align:center;">
-              <img src="${projectedMockupUrl}" alt="Projected Finished Item Preview" style="max-width:100%;height:auto;border-radius:10px;display:block;margin:0 auto;">
-            </div>
+          <!-- TIER 2: FULL-WIDTH GLOWING ORANGE CAPABILITIES PILL -->
+          <div class="c1-cap-pill-bar">
+            ${STUDIO_CAPABILITIES.map((cap) => esc(cap)).join(' &bull; ')}
+          </div>
 
-            <!-- OVERALL BREAKDOWN PER ITEM KPI STRIP -->
-            <div style="font-size:0.7rem;font-weight:800;color:#ff9e44;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;">
-              &#128202; Overall Breakdown Per Item
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin-bottom:13px;">
-              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.28);border-radius:11px;padding:8px 10px;">
-                <div style="font-size:0.62rem;color:rgba(255,255,255,0.62);text-transform:uppercase;">Total Quantity</div>
-                <div style="font-size:0.9rem;font-weight:800;color:#ffffff;">${calc.totalShirts} Items</div>
-                <div style="font-size:0.63rem;color:#ffb36b;">${calc.totalAdultShirts} Adult &bull; ${calc.totalYouthShirts} Youth${calc.totalPrintOnlyItems > 0 ? ` &bull; ${calc.totalPrintOnlyItems} Print-Only` : ''}</div>
-              </div>
-              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.28);border-radius:11px;padding:8px 10px;">
-                <div style="font-size:0.62rem;color:rgba(255,255,255,0.62);text-transform:uppercase;">Avg / Item (Base)</div>
-                <div style="font-size:0.9rem;font-weight:800;color:#ffe2c4;">${money(calc.avgItemPreDiscount)}</div>
-                <div style="font-size:0.63rem;color:rgba(255,255,255,0.55);">Pre-discount average</div>
-              </div>
-              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.28);border-radius:11px;padding:8px 10px;">
-                <div style="font-size:0.62rem;color:rgba(255,255,255,0.62);text-transform:uppercase;">After ${calc.discountPct}% Off</div>
-                <div style="font-size:0.9rem;font-weight:800;color:#6bffc3;">${money(calc.avgItemAfterDiscount)}</div>
-                <div style="font-size:0.63rem;color:rgba(255,255,255,0.55);">Net per item</div>
-              </div>
-              <div style="background:linear-gradient(135deg,rgba(255,122,24,0.22),rgba(25,14,8,0.9));border:1px solid rgba(255,148,54,0.6);border-radius:11px;padding:8px 10px;">
-                <div style="font-size:0.62rem;color:#ffd5b0;text-transform:uppercase;font-weight:800;">All-In Final / Item</div>
-                <div style="font-size:0.92rem;font-weight:900;color:#ff9e44;">${money(calc.avgItemAllInFinal)}</div>
-                <div style="font-size:0.63rem;color:#ffffff;">${calc.includeTax ? `Incl. ${calc.taxRatePct.toFixed(2)}% tax` : 'Tax excluded'}</div>
+          <!-- TIER 3: FULL-WIDTH PREPARED FOR & PROJECT BAR -->
+          <div class="c1-client-bar">
+            <span><strong style="color:#ffd089;">PREPARED FOR:</strong> ${esc(clientHeadline)}</span>
+            <span style="color:rgba(255,138,38,0.75);">|</span>
+            <span><strong style="color:#ffd089;">PROJECT:</strong> ${esc(projectHeadline)}</span>
+            ${contactSnippet ? `<span style="color:rgba(255,138,38,0.75);">|</span><span style="font-size:0.75rem;color:rgba(255,255,255,0.8);">${esc(contactSnippet)}</span>` : ''}
+          </div>
+
+          <!-- TIER 4: 50/50 PROJECTED FINISHED ITEM + 2x2 OVERALL BREAKDOWN PER ITEM -->
+          <div class="c1-mid-grid">
+            <div class="c1-glass-card">
+              <div class="c1-section-heading">PROJECTED FINISHED ITEM</div>
+              <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+                <img src="${projectedMockupUrl}" alt="Projected Finished Item Preview" style="width:100%;max-height:265px;object-fit:contain;border-radius:12px;display:block;">
               </div>
             </div>
 
-            ${calc.itemOverallGroups.length > 0 ? `
-              <div style="overflow-x:auto;background:rgba(255,255,255,0.03);border:1px solid rgba(255,140,42,0.26);border-radius:12px;margin-bottom:13px;">
-                <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
-                  <thead>
-                    <tr style="background:rgba(255,122,24,0.16);color:#ffd5b0;text-transform:uppercase;font-size:0.64rem;letter-spacing:0.05em;">
-                      <th style="padding:7px 10px;text-align:left;">Per-Item Overall Summary</th>
-                      <th style="padding:7px 6px;text-align:center;">Total Qty</th>
-                      <th style="padding:7px 6px;text-align:right;">Overall Avg / Item</th>
-                      <th style="padding:7px 10px;text-align:right;">Item Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>${overallGroupRowsHtml}</tbody>
-                </table>
+            <div class="c1-glass-card">
+              <div>
+                <div class="c1-section-heading">OVERALL BREAKDOWN PER ITEM</div>
+                <div class="c1-kpi-grid">
+                  <div class="c1-kpi-tile">
+                    <div class="c1-kpi-val">${calc.totalShirts}</div>
+                    <div class="c1-kpi-lbl">Total Items</div>
+                  </div>
+                  <div class="c1-kpi-tile">
+                    <div class="c1-kpi-val">${money(calc.avgItemPreDiscount)}</div>
+                    <div class="c1-kpi-lbl">Base/Item</div>
+                  </div>
+                  <div class="c1-kpi-tile">
+                    <div class="c1-kpi-val">${calc.discountPct}%</div>
+                    <div class="c1-kpi-lbl">${calc.discountPct > 0 ? esc(calc.discountLabel || 'Discount') : 'Discount'}</div>
+                  </div>
+                  <div class="c1-kpi-tile">
+                    <div class="c1-kpi-val">${money(calc.avgItemAllInFinal)}</div>
+                    <div class="c1-kpi-lbl">Final/Item</div>
+                  </div>
+                </div>
               </div>
-            ` : ''}
-
-            <!-- LINE-BY-LINE ITEMIZED RECEIPT TABLE -->
-            <div style="font-size:0.7rem;font-weight:800;color:#ffb36b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">
-              &#129534; Complete Line-by-Line Size Itemization
+              ${miniGroupLines ? `<div style="display:flex;flex-direction:column;gap:5px;margin-top:10px;">${miniGroupLines}</div>` : ''}
             </div>
-            <div style="overflow-x:auto;background:rgba(6,5,10,0.82);border:1px solid rgba(255,140,42,0.28);border-radius:12px;margin-bottom:13px;">
-              <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
+          </div>
+
+          <!-- TIER 5: FULL LINE-BY-LINE ITEMIZED QUOTE BREAKDOWN TABLE -->
+          <div class="c1-table-card">
+            <div class="c1-section-heading" style="margin-bottom:8px;">ITEMIZED QUOTE BREAKDOWN (LINE BY LINE)</div>
+            <div style="overflow-x:auto;">
+              <table class="c1-table">
                 <thead>
-                  <tr style="background:rgba(255,255,255,0.07);color:#ffd5b0;text-transform:uppercase;font-size:0.64rem;letter-spacing:0.05em;">
-                    <th style="padding:8px 10px;text-align:left;">Garment / Print Item &amp; Placement Specs</th>
-                    <th style="padding:8px 6px;text-align:center;">Size</th>
-                    <th style="padding:8px 6px;text-align:center;">Qty</th>
-                    <th style="padding:8px 6px;text-align:right;">Unit Price</th>
-                    <th style="padding:8px 10px;text-align:right;">Line Total</th>
+                  <tr>
+                    <th style="width:52px;text-align:center;">Line</th>
+                    <th>Garment &amp; Color</th>
+                    <th>Print Specs</th>
+                    <th style="text-align:center;">Size</th>
+                    <th style="text-align:center;">Qty</th>
+                    <th style="text-align:right;">Unit Price</th>
+                    <th style="text-align:right;">Line Total</th>
                   </tr>
                 </thead>
                 <tbody>
-                  ${itemizedTableRows || '<tr><td colspan="5" style="padding:14px;text-align:center;color:rgba(255,255,255,0.55);">Enter quantities in Step 1 (Youth, Adult, or Print Only) to generate itemized lines.</td></tr>'}
+                  ${itemizedTableRows || '<tr><td colspan="7" style="padding:16px;text-align:center;color:rgba(255,255,255,0.58);">Enter quantities in Step 1 (Youth, Adult, or Print Only) to populate itemized quote lines.</td></tr>'}
                 </tbody>
               </table>
             </div>
+          </div>
 
-            <!-- RECEIPT SUBTOTAL, DISCOUNT % OFF, SALES TAX & GRAND TOTAL -->
-            <div style="background:linear-gradient(135deg,rgba(255,115,20,0.1),rgba(10,8,12,0.92));border:1.5px solid rgba(255,140,42,0.52);border-radius:14px;padding:12px 15px;">
-              <div style="display:flex;justify-content:space-between;font-size:0.79rem;color:rgba(255,255,255,0.88);padding:2px 0;">
-                <span>Items Subtotal (${calc.totalShirts} items @ ${money(calc.avgItemPreDiscount)} avg):</span>
-                <strong>${money(calc.subtotalBeforeDiscount)}</strong>
-              </div>
-              ${discountRowHtml}
-              ${taxRowHtml}
-              <div style="display:flex;justify-content:space-between;align-items:center;border-top:1.5px solid rgba(255,140,42,0.55);margin-top:8px;padding-top:9px;">
-                <div>
-                  <strong style="font-family:'Orbitron',sans-serif;font-size:0.9rem;color:#ffffff;">GRAND TOTAL</strong>
-                  <div style="font-size:0.68rem;color:#ffb36b;">Overall Final Per-Item Cost: <strong>${money(calc.avgItemAllInFinal)} / item</strong></div>
+          <!-- TIER 6: BOTTOM AVAILABLE S&S COLORS + LIVE STRIPE QR & TOTALS -->
+          <div class="c1-bottom-grid">
+            <div class="c1-glass-card">
+              <div>
+                <div class="c1-section-heading" style="margin-bottom:4px;">AVAILABLE S&amp;S COLORS</div>
+                <div style="text-align:center;font-size:0.69rem;color:rgba(255,208,158,0.78);margin-bottom:10px;">
+                  ${esc((SS_CATALOG[primaryStyleCode] || SS_CATALOG.TT11).brand)} ${esc(primaryStyleCode)} &bull; ${ssColors.length} Official Colors (Hover to Inspect)
                 </div>
-                <strong style="font-family:'Orbitron',sans-serif;font-size:1.25rem;color:#ff9e44;">${money(calc.customerQuoteTotal)}</strong>
+                <div class="c1-orbs-wrap">
+                  ${colorOrbsHtml}
+                </div>
+              </div>
+              <div style="text-align:center;font-size:0.68rem;color:rgba(255,255,255,0.56);margin-top:8px;">
+                Selected order color(s) highlighted in molten orange
+              </div>
+            </div>
+
+            <div class="c1-glass-card">
+              <div class="c1-totals-And-qr">
+                <div class="c1-qr-box">
+                  <a href="${esc(stripePayUrl)}" target="_blank" rel="noopener noreferrer" title="Scan or click to open Live Stripe Checkout for Quote #${esc(quoteId)}">
+                    <img src="${stripeQrDataUrl}" alt="Scan for Live Stripe Checkout">
+                  </a>
+                  <div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;color:#ffb36b;margin-top:6px;letter-spacing:0.05em;">
+                    SCAN TO PAY (STRIPE)
+                  </div>
+                  <div id="bqStripeQrSyncBadge" style="font-size:0.6rem;color:#22f59b;margin-top:2px;font-weight:600;">
+                    &#9679; Live Checkout Ready
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 6px;font-size:0.86rem;color:#f1f5f9;">
+                    <span>Subtotal:</span>
+                    <strong>${money(calc.subtotalBeforeDiscount)}</strong>
+                  </div>
+
+                  <div class="c1-discount-pill">
+                    <span>${calc.discountPct}% OFF ${esc(calc.discountLabel || 'Discount')}:</span>
+                    <strong style="color:#ff9d3b;">${calc.discountAmountUsd > 0 ? '&minus;' + money(calc.discountAmountUsd) : '$0.00'}</strong>
+                  </div>
+
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 6px;font-size:0.85rem;color:#f1f5f9;">
+                    <span>${calc.includeTax ? `Tax Included (${calc.taxRatePct.toFixed(2)}%):` : 'Tax Excluded:'}</span>
+                    <strong>${money(calc.taxAmountUsd)}</strong>
+                  </div>
+
+                  <div class="c1-grand-pill">
+                    <span style="color:#ffffff;font-family:'Orbitron',sans-serif;font-size:0.86rem;letter-spacing:0.04em;">GRAND TOTAL:</span>
+                    <span style="color:#ff9d3b;font-family:'Orbitron',sans-serif;font-size:1.12rem;">${money(calc.customerQuoteTotal)}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -2377,7 +2770,7 @@
     triggerAutoSaveCustomer();
     const list = getSavedQuotes();
     const entry = {
-      quoteId: 'BQ-' + Math.floor(100000 + Math.random() * 900000),
+      quoteId: state.activeQuoteId || mintFreshQuoteId(),
       savedAtFormatted: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
       projectName: state.customer.projectName || state.customer.companyOrTeam || 'Custom Bulk Order',
       clientLabel: [state.customer.fullName, state.customer.companyOrTeam].filter(Boolean).join(' • '),
@@ -2420,6 +2813,7 @@
     try {
       localStorage.setItem(SAVED_QUOTES_KEY, JSON.stringify(list.slice(0, 40)));
     } catch (_) {}
+    syncQuoteToStripeCloudNow(calc);
     renderSavedQuotesList();
   }
 
@@ -2466,6 +2860,8 @@
       out.push(`Sales Tax: $0.00 (Tax Excluded / Exempt)`);
     }
     out.push(`GRAND TOTAL: ${money(calc.customerQuoteTotal)} (${money(calc.avgItemAllInFinal)} all-in avg / item)`);
+    out.push(`Quote ID:    #${state.activeQuoteId || getOrInitActiveQuoteId()}`);
+    out.push(`Pay Online (Stripe): ${getQuoteStripePortalUrl(calc)}`);
     out.push(`======================================================================`);
     return out.join('\n');
   }
@@ -2477,298 +2873,376 @@
       return;
     }
 
+    // Immediately sync the quote to Supabase so the QR code opens Live Stripe Checkout for the exact penny amount
+    syncQuoteToStripeCloudNow(calc);
+
     const logoUrl = getAssetUrl('assets/logo.png');
     const projectedMockupUrl = calc.projectedMockupUrl || renderProjectedFinishedItemDataUrl(calc);
+    const quoteNumber = state.activeQuoteId || getOrInitActiveQuoteId();
+    const stripePayUrl = getQuoteStripePortalUrl(calc);
+    const stripeQrDataUrl = calc.stripeQrDataUrl || renderStripeQrDataUrl(stripePayUrl, 280);
+
     const c = state.customer;
-    const quoteNumber = 'RC-Q' + String(Date.now()).slice(-6);
-    const issueDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-    const validUntilDate = new Date(Date.now() + 30 * 86400000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const issueDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const validUntilDate = new Date(Date.now() + 30 * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const clientHeadline = [c.fullName, c.companyOrTeam].filter(Boolean).join(' — ') || 'Valued Client';
     const proj = c.projectName || c.companyOrTeam || 'Custom Performance Apparel & Print Order';
+    const contactLine = [c.phone, c.email, c.address].filter(Boolean).join(' • ');
 
-    const capPillsPdf = STUDIO_CAPABILITIES.map((cap) =>
-      `<span style="display:inline-block;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;background:rgba(255,122,24,0.22);border:1px solid rgba(255,148,54,0.65);color:#ffd5b0;">${esc(cap)}</span>`
-    ).join(' ');
-
-    const placementsHtml = calc.activePlacements.map((p) => `
-      <div style="display:flex;align-items:center;gap:10px;border:1px solid rgba(255,140,42,0.32);border-radius:10px;padding:8px 11px;background:#141118;margin-bottom:6px;">
-        ${p.dataUrl ? `<img src="${p.trimmedDataUrl || p.dataUrl}" style="width:44px;height:44px;object-fit:contain;background:#09080c;border-radius:8px;padding:4px;border:1px solid rgba(255,140,42,0.45);">` : ''}
-        <div>
-          <div style="font-weight:800;font-size:12px;color:#ffffff;">${esc(p.locationLabel)}</div>
-          <div style="font-size:11px;color:#cbd5e1;margin-top:1px;">
-            Adult / Print: <strong style="color:#ffb36b;">${p.adultWidthIn}" &times; ${p.adultHeightIn}"</strong>
-            &nbsp;&bull;&nbsp;
-            Youth: <strong style="color:#67e8f9;">${p.youthWidthIn}" &times; ${p.youthHeightIn}"</strong>
-          </div>
-        </div>
-      </div>
-    `).join('');
-
-    const overallGroupPdfRows = calc.itemOverallGroups.map((g) => `
-      <tr>
-        <td style="padding:9px 11px;border-bottom:1px solid rgba(255,255,255,0.1);">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="width:13px;height:13px;border-radius:50%;background:${esc(g.colorHex)};border:1px solid rgba(255,255,255,0.6);display:inline-block;flex-shrink:0;"></span>
-            <strong style="color:#ffffff;">${esc(g.brand)} ${esc(g.styleBadge)}</strong>
-            <span style="color:#ffb36b;">&mdash; ${esc(g.colorName)}</span>
-          </div>
-          <div style="font-size:11px;color:#94a3b8;margin-top:2px;">Sizes: ${esc(g.sizeBreakdownStr)}</div>
-        </td>
-        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:center;font-weight:800;color:#ffb36b;">${g.totalQty} pcs</td>
-        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;font-weight:700;color:#ffe2c4;">${money(calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount)} / item</td>
-        <td style="padding:9px 11px;border-bottom:1px solid rgba(255,255,255,0.1);text-align:right;font-weight:800;color:#ff9e44;">${money(calc.discountPct > 0 ? g.groupSubtotalAfterDiscount : g.groupSubtotalPreDiscount)}</td>
-      </tr>
-    `).join('');
-
-    const rowsHtml = calc.itemizedLines.map((r, idx) => `
-      <tr style="background:${idx % 2 === 1 ? 'rgba(255,255,255,0.03)' : 'transparent'};">
-        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;font-weight:700;color:#94a3b8;">${r.lineNumber}</td>
-        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);">
-          <div style="display:flex;align-items:center;gap:7px;">
-            <span style="width:12px;height:12px;border-radius:50%;background:${esc(r.colorHex)};border:1px solid rgba(255,255,255,0.55);display:inline-block;flex-shrink:0;"></span>
-            <strong style="color:#ffffff;">${esc(r.brand)} ${esc(r.styleCode)}</strong>
-            <span style="font-size:11.5px;color:#cbd5e1;">&mdash; ${esc(r.garmentTitle)}</span>
-          </div>
-          <div style="font-size:11px;color:#94a3b8;margin-top:2px;">
-            Color: <strong style="color:#ffd5b0;">${esc(r.colorName)}</strong> &bull; Custom Print: ${esc(r.printSpecSummary)}
-          </div>
-        </td>
-        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;font-weight:800;">
-          <span style="display:inline-block;padding:2px 8px;border-radius:6px;background:${r.isPrintOnly ? 'rgba(255,122,24,0.25)' : (r.isYouth ? 'rgba(44,230,255,0.18)' : 'rgba(255,196,81,0.18)')};color:${r.isPrintOnly ? '#ffb36b' : (r.isYouth ? '#67e8f9' : '#ffe89e')};font-size:11px;">${esc(r.sizeName)}</span>
-        </td>
-        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;font-weight:800;color:#ffffff;">${r.qty}</td>
-        <td style="padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:right;font-weight:700;color:#ffe2c4;">${money(r.unitPriceQuoted)}</td>
-        <td style="padding:9px 11px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:right;font-weight:800;color:#ff9e44;">${money(r.lineTotalQuoted)}</td>
-      </tr>
-    `).join('');
-
-    const usedParentStyles = Array.from(new Set(state.garmentLines.map((l) => l.styleCode)));
-    if (usedParentStyles.length === 0) usedParentStyles.push('TT11');
-
-    const colorsSectionHtml = (state.includeAvailableColorsOnPdf && calc.totalPhysicalShirts > 0) ? usedParentStyles.map((stCode) => {
-      const cat = SS_CATALOG[stCode] || SS_CATALOG.TT11;
-      const colors = getColorsForStyle(stCode);
-      const swatchesGrid = colors.map((col) => `
-        <div style="display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,0.16);border-radius:7px;padding:4px 8px;background:#14121b;font-size:10.5px;color:#f1f5f9;">
-          <span style="width:13px;height:13px;border-radius:50%;background:${esc(col.hex)};border:1px solid rgba(255,255,255,0.5);display:inline-block;flex-shrink:0;"></span>
-          <span>${esc(col.name)}</span>
-        </div>
-      `).join('');
+    const getTierKey = (r) => r.isPrintOnly ? 'print' : (r.isYouth ? 'youth' : 'adult');
+    const rowsHtml = calc.itemizedLines.map((row, idx) => {
+      const prev = idx > 0 ? calc.itemizedLines[idx - 1] : null;
+      const needsOrangeRule = prev && (getTierKey(prev) !== getTierKey(row) || prev.lineId !== row.lineId);
+      const topBorderCss = needsOrangeRule ? 'border-top: 1.5px solid #ff8824;' : '';
+      const garmentLabel = row.isPrintOnly
+        ? 'Custom DTF Transfer Only ($0 Blank)'
+        : `${row.brand} ${row.styleCode} — ${row.colorName}`;
+      const sizeDisplay = row.isPrintOnly
+        ? 'PRINT ONLY'
+        : (row.isYouth ? row.sizeName.replace(/^Y/, 'Youth ') : (row.sizeName === 'S' ? 'Adult S' : row.sizeName));
 
       return `
-        <div style="margin-top:20px;page-break-inside:avoid;border:1px solid rgba(255,140,42,0.4);border-radius:14px;padding:14px 16px;background:#0e0c14;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
-            <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#ffb36b;">
-              &#127912; ${esc(cat.brand)} ${esc(cat.styleCode)} (Adult) / ${esc(cat.youthStyleCode)} (Youth) — Official Available Colors
-            </div>
-            <span style="font-size:11px;color:#cbd5e1;font-weight:600;">${colors.length} Colors Available (YXS–6XL)</span>
-          </div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            ${swatchesGrid}
-          </div>
+        <tr>
+          <td style="${topBorderCss}padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;color:#cbd5e1;font-weight:600;">${row.lineNumber}</td>
+          <td style="${topBorderCss}padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.09);">
+            <span style="display:inline-flex;align-items:center;gap:7px;">
+              <i style="width:10px;height:10px;border-radius:50%;background:${esc(row.colorHex)};border:1px solid rgba(255,255,255,0.55);display:inline-block;"></i>
+              <strong style="color:#ffffff;">${esc(garmentLabel)}</strong>
+            </span>
+          </td>
+          <td style="${topBorderCss}padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.09);color:#e2e8f0;font-size:11.5px;">${esc(row.printSpecSummary || 'Blank Garment')}</td>
+          <td style="${topBorderCss}padding:8px 8px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;font-weight:700;color:${row.isPrintOnly ? '#ff9d3b' : '#ffffff'};">${esc(sizeDisplay)}</td>
+          <td style="${topBorderCss}padding:8px 8px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:center;font-weight:700;color:#ffffff;">${row.qty}</td>
+          <td style="${topBorderCss}padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:right;font-weight:600;color:#f8fafc;">${money(row.unitPriceQuoted)}</td>
+          <td style="${topBorderCss}padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.09);text-align:right;font-weight:800;color:#ffffff;">${money(row.lineTotalQuoted)}</td>
+        </tr>
+      `;
+    }).join('');
+
+    const miniGroupPdfHtml = calc.itemOverallGroups.map((g) => {
+      const avgUsed = calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount;
+      return `
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:4px 8px;border-radius:7px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);margin-top:4px;">
+          <span style="color:#f1f5f9;"><strong>${esc(g.brand)} ${esc(g.styleBadge)}</strong> (${esc(g.colorName)})</span>
+          <span style="color:#ffb36b;font-weight:700;">${g.totalQty} pcs &bull; ${money(avgUsed)}/ea</span>
         </div>
       `;
-    }).join('') : '';
+    }).join('');
 
-    const pdfDiscountRows = calc.discountPct > 0 ? `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;margin:6px 0;background:rgba(34,245,155,0.14);border:1px solid rgba(34,245,155,0.5);border-radius:8px;color:#6bffc3;font-size:13px;">
-        <span><strong>Discount (${esc(calc.discountLabel)} &bull; ${calc.discountPct}% OFF):</strong></span>
-        <strong>&minus;${money(calc.discountAmountUsd)}</strong>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#e2e8f0;">
-        <span>Discounted Subtotal (${money(calc.avgItemAfterDiscount)} / item):</span>
-        <strong>${money(calc.subtotalAfterDiscount)}</strong>
-      </div>
-    ` : '';
+    const primaryStyleCode = state.garmentLines[0]?.styleCode || 'TT11';
+    const activeColorSet = new Set(state.garmentLines.map((l) => l.colorName));
+    const ssColors = getColorsForStyle(primaryStyleCode);
+    const orbsPdfHtml = ssColors.map((col) => `
+      <span title="${esc(col.name)}" style="display:inline-block;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 32% 28%, rgba(255,255,255,0.55) 0%, ${esc(col.hex)} 45%, #09080c 100%);border:${activeColorSet.has(col.name) ? '2px solid #ff9436' : '1px solid rgba(255,255,255,0.38)'};box-shadow:inset -2px -3px 5px rgba(0,0,0,0.5);margin:2px;"></span>
+    `).join('');
 
-    const pdfTaxRow = calc.includeTax ? `
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#e2e8f0;">
-        <span>Sales Tax (${calc.taxRatePct.toFixed(2)}%):</span>
-        <strong>${money(calc.taxAmountUsd)}</strong>
-      </div>
-    ` : `
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#ffb36b;">
-        <span>Sales Tax (Excluded / Tax-Exempt):</span>
-        <strong>$0.00</strong>
-      </div>
-    `;
+    const colorNamesLegend = ssColors.map((col) => col.name).join(' • ');
 
-    const w = window.open('', '_blank', 'width=1040,height=900');
+    const w = window.open('', '_blank', 'width=1020,height=940');
     if (!w) return;
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>RetroCanopy Official Quote ${quoteNumber} — ${esc(proj)}</title>
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>RetroCanopy Official Quote #${esc(quoteNumber)} — ${esc(proj)}</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
       <style>
         * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #f8fafc; background: #060509; padding: 22px; margin: 0; line-height: 1.42; }
-        .sheet {
-          max-width: 940px;
-          margin: 0 auto;
-          background: linear-gradient(180deg, #110d10 0%, #08070b 100%);
-          border-radius: 20px;
-          overflow: hidden;
-          border: 1.5px solid rgba(255, 136, 38, 0.65);
-          box-shadow: 0 20px 50px rgba(0,0,0,0.75);
+        @page { size: letter portrait; margin: 0.28in; }
+        body {
+          font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+          color: #ffffff;
+          background: #07060a;
+          padding: 18px;
+          margin: 0;
+          line-height: 1.38;
         }
-        table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-        th { background: rgba(255, 122, 24, 0.2); color: #ffd5b0; padding: 9px 10px; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid rgba(255, 140, 42, 0.45); }
+        .sheet {
+          max-width: 880px;
+          margin: 0 auto;
+          background:
+            radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px) 0 0 / 7px 7px,
+            linear-gradient(180deg, #121118 0%, #09080c 100%);
+          border: 1.5px solid #ff8624;
+          border-radius: 22px;
+          padding: 18px 20px;
+          box-shadow: 0 0 32px rgba(255, 106, 0, 0.22);
+        }
+        .header-card {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 16px;
+          background: linear-gradient(135deg, #34323d 0%, #15141c 52%, #1d1618 100%);
+          border: 1px solid rgba(255,255,255,0.22);
+          border-radius: 16px;
+          padding: 14px 20px;
+        }
+        .brand-wordmark {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 26px;
+          font-weight: 900;
+          letter-spacing: 0.06em;
+          color: #ff9432;
+        }
+        .cap-pill {
+          margin-top: 10px;
+          padding: 8px 16px;
+          border-radius: 999px;
+          border: 1.5px solid #ff8624;
+          background: linear-gradient(90deg, rgba(255,112,16,0.16), #141219 50%, rgba(255,112,16,0.16));
+          text-align: center;
+          font-size: 12.5px;
+          font-weight: 600;
+          color: #ffffff;
+        }
+        .client-pill {
+          margin-top: 8px;
+          padding: 8px 16px;
+          border-radius: 12px;
+          border: 1.5px solid rgba(255,134,36,0.78);
+          background: #131218;
+          text-align: center;
+          font-size: 12px;
+          color: #f8fafc;
+        }
+        .mid-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+          margin-top: 12px;
+        }
+        .glass-box {
+          background: linear-gradient(165deg, #22212a 0%, #131218 100%);
+          border: 1px solid rgba(255,255,255,0.18);
+          border-radius: 16px;
+          padding: 13px 14px;
+        }
+        .sec-title {
+          text-align: center;
+          font-size: 12px;
+          font-weight: 800;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #ffffff;
+          margin-bottom: 9px;
+        }
+        .kpi-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 9px;
+        }
+        .kpi-tile {
+          background: linear-gradient(180deg, #271a12 0%, #141010 100%);
+          border: 1.5px solid #ff8824;
+          border-radius: 12px;
+          padding: 11px 8px;
+          text-align: center;
+        }
+        .kpi-val {
+          font-size: 22px;
+          font-weight: 800;
+          color: #ff9d3b;
+          line-height: 1.1;
+        }
+        .kpi-lbl {
+          font-size: 11px;
+          color: #e2e8f0;
+          margin-top: 3px;
+        }
+        .table-card {
+          margin-top: 12px;
+          background: linear-gradient(180deg, #201f28 0%, #111016 100%);
+          border: 1px solid rgba(255,255,255,0.18);
+          border-radius: 16px;
+          padding: 12px 0 4px;
+          overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        thead th {
+          padding: 8px 10px;
+          color: #ffffff;
+          font-size: 11px;
+          font-weight: 700;
+          border-top: 1px solid rgba(255,255,255,0.14);
+          border-bottom: 2px solid #ff8824;
+          text-align: left;
+        }
+        .bottom-grid {
+          display: grid;
+          grid-template-columns: ${state.includeAvailableColorsOnPdf ? '1fr 1.18fr' : '1fr'};
+          gap: 12px;
+          margin-top: 12px;
+          page-break-inside: avoid;
+        }
+        .totals-qr-split {
+          display: grid;
+          grid-template-columns: 132px 1fr;
+          gap: 12px;
+          align-items: center;
+        }
+        .qr-frame {
+          background: #17110e;
+          border: 1.5px solid #ff8824;
+          border-radius: 12px;
+          padding: 8px;
+          text-align: center;
+        }
+        .disc-pill {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 5px 12px;
+          border-radius: 999px;
+          border: 1.5px solid #ff8824;
+          background: #23160e;
+          font-size: 12px;
+          font-weight: 600;
+          margin: 5px 0;
+        }
+        .grand-pill {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 14px;
+          border-radius: 999px;
+          border: 1.5px solid #ff9436;
+          background: linear-gradient(90deg, #3a1d0a 0%, #241207 50%, #3a1d0a 100%);
+          margin-top: 7px;
+        }
         @media print {
-          body { background: #08070b; padding: 0; }
-          .sheet { box-shadow: none; border-radius: 0; max-width: 100%; }
+          body { padding: 0; background: #09080c; }
           .no-print { display: none !important; }
+          .sheet { max-width: 100%; box-shadow: none; }
         }
       </style>
     </head><body>
-      <div class="no-print" style="max-width:940px;margin:0 auto 14px;display:flex;justify-content:space-between;align-items:center;background:#16100d;color:#f8fafc;padding:11px 16px;border-radius:12px;border:1px solid rgba(255,140,42,0.55);">
-        <span style="font-size:13px;">&#128293; <strong>Black &amp; Orange Liquid Glass Official Quote Ready</strong> &mdash; Choose <strong>"Save as PDF"</strong> (enable Background Graphics) or Print.</span>
-        <button onclick="window.print()" style="padding:8px 18px;background:linear-gradient(135deg,#ff7a18,#ffb347);color:#0b0806;border:none;border-radius:8px;font-weight:900;cursor:pointer;font-size:13px;">&#128424; Print / Save Official PDF</button>
+      <div class="no-print" style="max-width:880px;margin:0 auto 12px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:#17110e;color:#f8fafc;padding:10px 16px;border-radius:12px;border:1px solid #ff8824;">
+        <span style="font-size:12.5px;">&#128293; <strong>Official Quote #${esc(quoteNumber)} Ready</strong> (Enable <em>Background Graphics</em> when saving to PDF) &bull; Live Stripe QR Embedded!</span>
+        <div style="display:flex;gap:8px;">
+          <a href="${esc(stripePayUrl)}" target="_blank" style="padding:8px 14px;background:#1f2937;color:#67e8f9;border:1px solid #2ce6ff;border-radius:8px;font-weight:700;text-decoration:none;font-size:12px;">&#128179; Test Stripe Link</a>
+          <button onclick="window.print()" style="padding:8px 18px;background:linear-gradient(135deg,#ff8c24,#ff5e00);color:#ffffff;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-size:12.5px;">&#128424; Print / Save Official PDF</button>
+        </div>
       </div>
 
       <div class="sheet">
-        <!-- BLACK & MOLTEN ORANGE LIQUID GLASS HEADER + ALL 6 SERVICES -->
-        <div style="background:radial-gradient(circle at 18% 40%,rgba(255,115,20,0.34),transparent 55%),linear-gradient(135deg,#18100c 0%,#09080c 60%,#1c1008 100%);padding:24px 28px;border-bottom:2px solid #ff8c24;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;">
-            <div style="display:flex;align-items:center;gap:16px;">
-              <div style="width:76px;height:76px;border-radius:16px;background:#07060a;border:1.5px solid rgba(255,148,54,0.75);padding:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <img src="${esc(logoUrl)}" alt="RetroCanopy Logo" style="max-width:100%;max-height:100%;object-fit:contain;">
-              </div>
-              <div>
-                <div style="font-size:25px;font-weight:900;letter-spacing:0.1em;color:#ffffff;">RETROCANOPY</div>
-                <div style="font-size:11.5px;font-weight:800;letter-spacing:0.08em;color:#ff9e44;text-transform:uppercase;margin-top:2px;">Creative Production &amp; Custom Manufacturing Studio &bull; www.retrocanopy.com</div>
-                <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">${capPillsPdf}</div>
-              </div>
-            </div>
-
-            <div style="text-align:right;background:rgba(255,122,24,0.14);border:1px solid rgba(255,148,54,0.55);border-radius:14px;padding:11px 16px;">
-              <div style="font-size:10.5px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#ffd5b0;">Official Itemized Quote &amp; Receipt</div>
-              <div style="font-size:18px;font-weight:900;color:#ffffff;margin-top:2px;">#${quoteNumber}</div>
-              <div style="font-size:11.5px;color:#cbd5e1;margin-top:2px;">Issued: ${issueDate} &bull; Valid Until: ${validUntilDate}</div>
-            </div>
+        <!-- TIER 1: HEADER -->
+        <div class="header-card">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <img src="${esc(logoUrl)}" alt="RetroCanopy Logo" style="width:62px;height:62px;object-fit:contain;">
+            <div class="brand-wordmark">RETROCANOPY</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:19px;font-weight:800;letter-spacing:0.05em;">OFFICIAL QUOTE</div>
+            <div style="font-size:12px;color:#e2e8f0;margin-top:2px;">#${esc(quoteNumber)} &bull; Issued ${esc(issueDate)} &bull; Valid Until ${esc(validUntilDate)}</div>
           </div>
         </div>
 
-        <div style="padding:24px 28px;">
-          <!-- TWO-COLUMN CLIENT DETAILS + CUSTOM PRINT PLACEMENTS -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
-            <div style="border:1px solid rgba(255,140,42,0.38);border-radius:14px;padding:14px 16px;background:rgba(255,255,255,0.03);">
-              <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#ffb36b;margin-bottom:6px;">Prepared For</div>
-              <div style="font-size:16px;font-weight:800;color:#ffffff;">${esc(c.fullName || c.companyOrTeam || 'Valued Customer')}</div>
-              ${c.companyOrTeam && c.fullName ? `<div style="font-size:13px;font-weight:700;color:#ffd5b0;">${esc(c.companyOrTeam)}</div>` : ''}
-              <div style="font-size:12.5px;color:#e2e8f0;margin-top:4px;"><strong>Project:</strong> ${esc(proj)}</div>
-              ${(c.phone || c.email) ? `<div style="font-size:12px;color:#cbd5e1;margin-top:3px;">${esc([c.phone, c.email].filter(Boolean).join(' • '))}</div>` : ''}
-              ${c.address ? `<div style="font-size:12px;color:#cbd5e1;margin-top:3px;">${esc(c.address)}</div>` : ''}
-              ${c.notes ? `<div style="margin-top:8px;padding:6px 9px;background:rgba(255,122,24,0.14);border:1px solid rgba(255,148,54,0.45);border-radius:7px;font-size:11.5px;color:#ffe2c4;"><strong>Notes:</strong> ${esc(c.notes)}</div>` : ''}
-            </div>
+        <!-- TIER 2: 6 CAPABILITIES BAR -->
+        <div class="cap-pill">
+          ${STUDIO_CAPABILITIES.map((cap) => esc(cap)).join(' &bull; ')}
+        </div>
 
-            <div style="border:1px solid rgba(255,140,42,0.38);border-radius:14px;padding:14px 16px;background:rgba(255,255,255,0.03);">
-              <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#ffb36b;margin-bottom:6px;">Custom Print Locations &amp; Artwork Specs</div>
-              ${placementsHtml || '<div style="font-size:12.5px;color:#94a3b8;">Blank Garments Only</div>'}
-            </div>
+        <!-- TIER 3: CLIENT & PROJECT BAR -->
+        <div class="client-pill">
+          <strong style="color:#ffd089;">PREPARED FOR:</strong> ${esc(clientHeadline)}
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          <strong style="color:#ffd089;">PROJECT:</strong> ${esc(proj)}
+          ${contactLine ? `&nbsp;&nbsp;|&nbsp;&nbsp;<span style="color:#cbd5e1;">${esc(contactLine)}</span>` : ''}
+          ${c.notes ? `<div style="margin-top:4px;font-size:11px;color:#ffd089;"><strong>Notes:</strong> ${esc(c.notes)}</div>` : ''}
+        </div>
+
+        <!-- TIER 4: PROJECTED FINISHED ITEM + OVERALL BREAKDOWN PER ITEM -->
+        <div class="mid-grid">
+          <div class="glass-box" style="display:flex;flex-direction:column;justify-content:space-between;">
+            <div class="sec-title">PROJECTED FINISHED ITEM</div>
+            <img src="${projectedMockupUrl}" alt="Projected Finished Item" style="width:100%;max-height:235px;object-fit:contain;border-radius:10px;display:block;margin:0 auto;">
           </div>
 
-          <!-- PROJECTED FINISHED ITEM PICTURE ON RECEIPT -->
-          <div style="margin-bottom:20px;border:1.5px solid rgba(255,140,42,0.5);border-radius:14px;padding:10px;background:#0c0a0f;text-align:center;page-break-inside:avoid;">
-            <img src="${projectedMockupUrl}" alt="Projected Finished Item" style="max-width:100%;max-height:300px;object-fit:contain;border-radius:10px;display:block;margin:0 auto;">
-          </div>
-
-          <!-- SECTION 1: OVERALL BREAKDOWN PER ITEM -->
-          <div style="margin-bottom:20px;page-break-inside:avoid;">
-            <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#ff9e44;margin-bottom:8px;">
-              1. Overall Breakdown Per Item
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;">
-              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.35);border-radius:10px;padding:10px 12px;">
-                <div style="font-size:10.5px;text-transform:uppercase;color:#cbd5e1;font-weight:700;">Total Quantity</div>
-                <div style="font-size:17px;font-weight:900;color:#ffffff;margin-top:2px;">${calc.totalShirts} Items</div>
-                <div style="font-size:11px;color:#ffb36b;">${calc.totalAdultShirts} Adult &bull; ${calc.totalYouthShirts} Youth${calc.totalPrintOnlyItems > 0 ? ` &bull; ${calc.totalPrintOnlyItems} Print` : ''}</div>
-              </div>
-              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,42,0.35);border-radius:10px;padding:10px 12px;">
-                <div style="font-size:10.5px;text-transform:uppercase;color:#cbd5e1;font-weight:700;">Standard Avg / Item</div>
-                <div style="font-size:17px;font-weight:900;color:#ffe2c4;margin-top:2px;">${money(calc.avgItemPreDiscount)}</div>
-                <div style="font-size:11px;color:#94a3b8;">Pre-discount average</div>
-              </div>
-              <div style="background:${calc.discountPct > 0 ? 'rgba(34,245,155,0.12)' : 'rgba(255,255,255,0.04)'};border:1px solid ${calc.discountPct > 0 ? 'rgba(34,245,155,0.5)' : 'rgba(255,140,42,0.35)'};border-radius:10px;padding:10px 12px;">
-                <div style="font-size:10.5px;text-transform:uppercase;color:${calc.discountPct > 0 ? '#6bffc3' : '#cbd5e1'};font-weight:700;">${calc.discountPct > 0 ? `Discounted (${calc.discountPct}% Off)` : 'Net Per Item'}</div>
-                <div style="font-size:17px;font-weight:900;color:${calc.discountPct > 0 ? '#6bffc3' : '#ffffff'};margin-top:2px;">${money(calc.avgItemAfterDiscount)}</div>
-                <div style="font-size:11px;color:#cbd5e1;">${calc.discountPct > 0 ? `You save ${money(calc.discountAmountUsd)}` : 'Standard pricing'}</div>
-              </div>
-              <div style="background:linear-gradient(135deg,rgba(255,122,24,0.28),#140c08);border:1.5px solid #ff8c24;border-radius:10px;padding:10px 12px;">
-                <div style="font-size:10.5px;text-transform:uppercase;color:#ffd5b0;font-weight:800;">All-In Final / Item</div>
-                <div style="font-size:17px;font-weight:900;color:#ff9e44;margin-top:2px;">${money(calc.avgItemAllInFinal)}</div>
-                <div style="font-size:11px;color:#ffffff;">${calc.includeTax ? `Includes ${calc.taxRatePct.toFixed(2)}% tax` : 'Tax excluded'}</div>
-              </div>
-            </div>
-
-            <div style="border:1px solid rgba(255,140,42,0.35);border-radius:10px;overflow:hidden;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Item / Garment &amp; Color Summary</th>
-                    <th style="text-align:center;width:105px;">Total Qty</th>
-                    <th style="text-align:right;width:145px;">Overall Avg / Item</th>
-                    <th style="text-align:right;width:135px;">Item Group Total</th>
-                  </tr>
-                </thead>
-                <tbody>${overallGroupPdfRows}</tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- SECTION 2: COMPLETE LINE-BY-LINE ITEMIZED RECEIPT -->
-          <div>
-            <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#ff9e44;margin-bottom:8px;">
-              2. Complete Line-by-Line Size Itemization
-            </div>
-            <div style="border:1px solid rgba(255,140,42,0.35);border-radius:10px;overflow:hidden;">
-              <table>
-                <thead>
-                  <tr>
-                    <th style="width:42px;text-align:center;">#</th>
-                    <th>Itemized Garment / Transfer Print, Color &amp; Placement Spec</th>
-                    <th style="text-align:center;width:95px;">Size</th>
-                    <th style="text-align:center;width:65px;">Qty</th>
-                    <th style="text-align:right;width:110px;">Unit Price</th>
-                    <th style="text-align:right;width:120px;">Line Total</th>
-                  </tr>
-                </thead>
-                <tbody>${rowsHtml}</tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- TOTALS SUMMARY CARD -->
-          <div style="margin-top:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;page-break-inside:avoid;">
-            <div style="flex:1;min-width:250px;font-size:11.5px;color:#cbd5e1;">
-              <strong style="color:#ffb36b;">RetroCanopy Full-Stack Creative &amp; Production Partner:</strong><br>
-              &bull; Custom Apparel, Commercial DTF Transfers &amp; Precision 3D Prints<br>
-              &bull; Custom Websites, Mobile Apps, Interactive Games &amp; Growth Marketing<br>
-              &bull; Every transfer inspected &amp; pressed at full 300 DPI studio resolution
-            </div>
-
-            <div style="min-width:350px;background:linear-gradient(135deg,rgba(255,122,24,0.14),#0d0b12);border:1.5px solid #ff8c24;border-radius:14px;padding:15px 18px;">
-              <div style="display:flex;justify-content:space-between;padding:3px 0;font-size:13px;color:#e2e8f0;">
-                <span>Items Subtotal (${calc.totalShirts} items):</span>
-                <strong>${money(calc.subtotalBeforeDiscount)}</strong>
-              </div>
-              ${pdfDiscountRows}
-              ${pdfTaxRow}
-              <div style="display:flex;justify-content:space-between;align-items:center;border-top:2px solid #ff8c24;padding-top:10px;margin-top:8px;">
-                <div>
-                  <div style="font-size:15px;font-weight:900;color:#ffffff;">GRAND TOTAL</div>
-                  <div style="font-size:11px;color:#ffb36b;font-weight:700;">Overall: ${money(calc.avgItemAllInFinal)} per item</div>
-                </div>
-                <div style="font-size:22px;font-weight:900;color:#ff9e44;">${money(calc.customerQuoteTotal)}</div>
-              </div>
-            </div>
-          </div>
-
-          ${colorsSectionHtml}
-
-          <!-- APPROVAL SIGNATURE & THANK YOU FOOTER -->
-          <div style="margin-top:24px;padding-top:14px;border-top:1px dashed rgba(255,140,42,0.38);display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;font-size:11.5px;color:#94a3b8;">
+          <div class="glass-box" style="display:flex;flex-direction:column;justify-content:space-between;">
             <div>
-              <strong style="color:#ffffff;">Thank you for building with RetroCanopy!</strong><br>
-              Apparel &bull; Websites &bull; Marketing &bull; Apps &bull; Games &bull; Custom 3D Prints
+              <div class="sec-title">OVERALL BREAKDOWN PER ITEM</div>
+              <div class="kpi-grid">
+                <div class="kpi-tile">
+                  <div class="kpi-val">${calc.totalShirts}</div>
+                  <div class="kpi-lbl">Total Items</div>
+                </div>
+                <div class="kpi-tile">
+                  <div class="kpi-val">${money(calc.avgItemPreDiscount)}</div>
+                  <div class="kpi-lbl">Base/Item</div>
+                </div>
+                <div class="kpi-tile">
+                  <div class="kpi-val">${calc.discountPct}%</div>
+                  <div class="kpi-lbl">${calc.discountPct > 0 ? esc(calc.discountLabel || 'Discount') : 'Discount'}</div>
+                </div>
+                <div class="kpi-tile">
+                  <div class="kpi-val">${money(calc.avgItemAllInFinal)}</div>
+                  <div class="kpi-lbl">Final/Item</div>
+                </div>
+              </div>
             </div>
-            <div style="min-width:260px;border-top:1px solid #ffb36b;padding-top:5px;text-align:center;color:#ffd5b0;">
-              Client Approval Signature &amp; Date
+            ${miniGroupPdfHtml ? `<div style="margin-top:6px;">${miniGroupPdfHtml}</div>` : ''}
+          </div>
+        </div>
+
+        <!-- TIER 5: LINE-BY-LINE ITEMIZED BREAKDOWN -->
+        <div class="table-card">
+          <div class="sec-title" style="margin-bottom:7px;">ITEMIZED QUOTE BREAKDOWN (LINE BY LINE)</div>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:44px;text-align:center;">Line</th>
+                <th>Garment &amp; Color</th>
+                <th>Print Specs</th>
+                <th style="text-align:center;width:86px;">Size</th>
+                <th style="text-align:center;width:54px;">Qty</th>
+                <th style="text-align:right;width:88px;">Unit Price</th>
+                <th style="text-align:right;width:96px;">Line Total</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
+
+        <!-- TIER 6: AVAILABLE S&S COLORS + LIVE STRIPE QR & GRAND TOTAL -->
+        <div class="bottom-grid">
+          ${state.includeAvailableColorsOnPdf ? `
+            <div class="glass-box">
+              <div class="sec-title" style="margin-bottom:4px;">AVAILABLE S&amp;S COLORS</div>
+              <div style="text-align:center;font-size:10.5px;color:#ffd089;margin-bottom:6px;">
+                ${esc((SS_CATALOG[primaryStyleCode] || SS_CATALOG.TT11).brand)} ${esc(primaryStyleCode)} (${ssColors.length} Official Colors)
+              </div>
+              <div style="text-align:center;line-height:1.1;">${orbsPdfHtml}</div>
+              <div style="margin-top:6px;font-size:9px;color:#94a3b8;text-align:center;line-height:1.3;">${esc(colorNamesLegend)}</div>
+            </div>
+          ` : ''}
+
+          <div class="glass-box">
+            <div class="totals-qr-split">
+              <div class="qr-frame">
+                <a href="${esc(stripePayUrl)}" target="_blank" style="text-decoration:none;">
+                  <img src="${stripeQrDataUrl}" alt="Stripe Checkout QR" style="width:104px;height:104px;border-radius:6px;display:block;margin:0 auto;background:#fff;">
+                </a>
+                <div style="font-family:'Orbitron',sans-serif;font-size:9px;font-weight:800;color:#ffb36b;margin-top:5px;letter-spacing:0.04em;">SCAN TO PAY</div>
+                <a href="${esc(stripePayUrl)}" target="_blank" style="font-size:9px;color:#67e8f9;text-decoration:underline;">Stripe Checkout &nearr;</a>
+              </div>
+
+              <div>
+                <div style="display:flex;justify-content:space-between;padding:3px 6px;font-size:13px;color:#f1f5f9;">
+                  <span>Subtotal:</span>
+                  <strong>${money(calc.subtotalBeforeDiscount)}</strong>
+                </div>
+                <div class="disc-pill">
+                  <span>${calc.discountPct}% OFF ${esc(calc.discountLabel || 'Discount')}:</span>
+                  <strong style="color:#ff9d3b;">${calc.discountAmountUsd > 0 ? '&minus;' + money(calc.discountAmountUsd) : '$0.00'}</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:3px 6px;font-size:12.5px;color:#f1f5f9;">
+                  <span>${calc.includeTax ? `Tax Included (${calc.taxRatePct.toFixed(2)}%):` : 'Tax Excluded:'}</span>
+                  <strong>${money(calc.taxAmountUsd)}</strong>
+                </div>
+                <div class="grand-pill">
+                  <span style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#ffffff;">GRAND TOTAL:</span>
+                  <span style="font-family:'Orbitron',sans-serif;font-size:17px;font-weight:900;color:#ff9d3b;">${money(calc.customerQuoteTotal)}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2954,6 +3428,32 @@
       });
     }
 
+    const newQIdBtn = document.getElementById('bqNewQuoteIdBtn');
+    if (newQIdBtn) {
+      newQIdBtn.addEventListener('click', () => {
+        state.activeQuoteId = mintFreshQuoteId();
+        recalculateEverything();
+      });
+    }
+
+    const openStripeBtn = document.getElementById('bqOpenStripeQuoteBtn');
+    if (openStripeBtn) {
+      openStripeBtn.addEventListener('click', async () => {
+        const calc = state.lastCalculation;
+        if (!calc || calc.totalShirts === 0) {
+          alert('Enter at least 1 item in Step 1 before opening Live Stripe Checkout.');
+          return;
+        }
+        const origHtml = openStripeBtn.innerHTML;
+        openStripeBtn.disabled = true;
+        openStripeBtn.innerHTML = '&#9203; Syncing Stripe...';
+        await syncQuoteToStripeCloudNow(calc);
+        openStripeBtn.disabled = false;
+        openStripeBtn.innerHTML = origHtml;
+        window.open(getQuoteStripePortalUrl(calc), '_blank', 'noopener');
+      });
+    }
+
     const printQBtn = document.getElementById('bqPrintQuoteBtn');
     if (printQBtn) printQBtn.addEventListener('click', printCustomerQuoteSheet);
 
@@ -3033,6 +3533,10 @@
         const qId = loadQ.getAttribute('data-load-quote');
         const found = getSavedQuotes().find((q) => q.quoteId === qId);
         if (found && found.snapshot) {
+          if (found.quoteId) {
+            state.activeQuoteId = found.quoteId;
+            try { sessionStorage.setItem(ACTIVE_QUOTE_ID_KEY, found.quoteId); } catch (_) {}
+          }
           const snap = JSON.parse(JSON.stringify(found.snapshot));
           if (snap.customer) state.customer = snap.customer;
           state.ssDiscountPct = snap.ssDiscountPct || 0;

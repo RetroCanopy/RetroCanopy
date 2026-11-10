@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RetroCanopy — Official Quote Stripe Checkout</title>
+  <link rel="icon" type="image/png" href="assets/logo.png?v=270">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255, 118, 20, 0.22), transparent 52%),
+        radial-gradient(circle at 85% 90%, rgba(255, 94, 0, 0.14), transparent 45%),
+        #07060a;
+      color: #ffffff;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .obsidian-sheet {
+      width: 100%;
+      max-width: 760px;
+      background:
+        radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 8px 8px,
+        linear-gradient(165deg, #121017 0%, #09080d 100%);
+      border: 1.5px solid rgba(255, 132, 32, 0.78);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.88),
+        0 0 42px rgba(255, 106, 0, 0.26),
+        inset 0 1px 0 rgba(255, 204, 150, 0.35);
+    }
+    .header-glass {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      background: linear-gradient(135deg, rgba(52, 49, 60, 0.72) 0%, rgba(18, 17, 23, 0.92) 55%, rgba(28, 22, 24, 0.92) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 18px;
+      padding: 16px 20px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-left img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 12px rgba(255, 122, 24, 0.45));
+    }
+    .brand-wordmark {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      background: linear-gradient(180deg, #ffd07b 0%, #ff8c24 55%, #ff5e00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 14px rgba(255, 115, 0, 0.35));
+    }
+    .quote-id-right {
+      text-align: right;
+    }
+    .quote-id-right h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #ffffff;
+    }
+    .quote-id-right p {
+      font-size: 0.8rem;
+      color: #ffb36b;
+      margin-top: 3px;
+      font-weight: 600;
+    }
+    .cap-pill-bar {
+      margin-top: 12px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(255, 136, 36, 0.78);
+      background: linear-gradient(90deg, rgba(255, 110, 16, 0.16), rgba(20, 16, 22, 0.92), rgba(255, 110, 16, 0.16));
+      box-shadow: 0 0 18px rgba(255, 110, 16, 0.22), inset 0 0 14px rgba(255, 122, 24, 0.12);
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #fff3e6;
+      letter-spacing: 0.02em;
+    }
+    .status-card {
+      margin-top: 16px;
+      padding: 24px 22px;
+      border-radius: 18px;
+      background: rgba(20, 19, 26, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      text-align: center;
+    }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 140, 42, 0.22);
+      border-top-color: #ff8c24;
+      margin: 0 auto 14px;
+      animation: spin 0.85s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .molten-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 13px 26px;
+      border-radius: 999px;
+      border: 1.5px solid #ffb36b;
+      background: linear-gradient(135deg, #ff9a2e 0%, #ff5500 100%);
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(255, 102, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+    .verified-banner {
+      background: linear-gradient(135deg, rgba(16, 68, 48, 0.55), rgba(12, 32, 25, 0.85));
+      border: 1.5px solid rgba(34, 245, 155, 0.68);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 24px rgba(34, 245, 155, 0.16);
+    }
+    .readonly-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+      text-align: left;
+      margin-top: 14px;
+    }
+    .readonly-field {
+      background: rgba(10, 9, 14, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 10px 13px;
+    }
+    .readonly-field span {
+      display: block;
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #ffb36b;
+    }
+    .readonly-field strong {
+      display: block;
+      font-size: 0.88rem;
+      color: #ffffff;
+      margin-top: 3px;
+      word-break: break-word;
+    }
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      text-align: left;
+      font-size: 0.8rem;
+    }
+    .items-table th {
+      padding: 9px 10px;
+      color: #ffd7b3;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1.5px solid #ff8524;
+    }
+    .items-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+      color: #f1f5f9;
+    }
+    .grand-pill {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 24px;
+      border-radius: 999px;
+      border: 1.5px solid #ff9436;
+      background: linear-gradient(90deg, rgba(255, 115, 0, 0.28), rgba(45, 20, 6, 0.92), rgba(255, 115, 0, 0.28));
+      box-shadow: 0 0 22px rgba(255, 106, 0, 0.35);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #ffd089;
+    }
+  </style>
+</head>
+<body>
+  <main class="obsidian-sheet">
+    <header class="header-glass">
+      <div class="brand-left">
+        <img src="assets/logo.png" alt="RetroCanopy Official Logo">
+        <div class="brand-wordmark">RETROCANOPY</div>
+      </div>
+      <div class="quote-id-right">
+        <h1 id="pqHeaderTitle">OFFICIAL QUOTE</h1>
+        <p id="pqQuoteIdLabel">Preparing Secure Stripe Checkout...</p>
+      </div>
+    </header>
+
+    <div class="cap-pill-bar">
+      Apparel &bull; Websites &bull; Marketing &bull; Apps &bull; Games &bull; Custom 3D Prints
+    </div>
+
+    <section class="status-card" id="pqBodyCard">
+      <div class="spinner"></div>
+      <h2 style="font-family:'Orbitron',sans-serif;font-size:1.02rem;color:#ffd089;">Connecting to Live Stripe Checkout...</h2>
+      <p style="font-size:0.84rem;color:rgba(255,255,255,0.72);margin-top:8px;">
+        Loading your itemized RetroCanopy quote so you can pay securely via Card, Apple Pay, or Google Pay.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const EDGE_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout';
+      const params = new URLSearchParams(window.location.search);
+      const quoteId = (params.get('q') || params.get('order_id') || '').trim();
+      const isSuccess = params.get('stripe_quote_success') === '1';
+      const isCancel = params.get('stripe_quote_cancel') === '1';
+      const sessionId = (params.get('session_id') || '').trim();
+      const fallbackAmt = parseFloat(params.get('amt') || '0') || 0;
+      const fallbackProj = params.get('proj') || '';
+
+      const idLbl = document.getElementById('pqQuoteIdLabel');
+      const headerTitle = document.getElementById('pqHeaderTitle');
+      const bodyCard = document.getElementById('pqBodyCard');
+
+      function esc(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+      function money(n) {
+        return '$' + (Number(n) || 0).toFixed(2);
+      }
+
+      if (quoteId && idLbl) {
+        idLbl.textContent = '#' + quoteId + ' • Official Stripe Portal';
+      }
+
+      function renderPaidVerification(info) {
+        if (headerTitle) headerTitle.textContent = 'VERIFIED RECEIPT';
+        if (idLbl) idLbl.textContent = 'Order #' + (info.orderId || quoteId) + ' • PAID IN FULL';
+        const items = Array.isArray(info.items) ? info.items : [];
+        const rowsHtml = items.length > 0 ? `
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Item &amp; Color</th>
+                <th>Size</th>
+                <th style="text-align:center;">Qty</th>
+                <th style="text-align:right;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map((it) => `
+                <tr>
+                  <td><strong>${esc(it.sku || '')}</strong> ${esc(it.name || '')}</td>
+                  <td>${esc(it.size || '')}</td>
+                  <td style="text-align:center;font-weight:700;">${Number(it.qty) || 1}</td>
+                  <td style="text-align:right;color:#ffb36b;font-weight:700;">${money(it.lineTotalUsd || ((Number(it.priceUsd) || 0) * (Number(it.qty) || 1)))}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        ` : '';
+
+        bodyCard.innerHTML = `
+          <div class="verified-banner">
+            <div style="font-family:'Orbitron',sans-serif;font-size:1.05rem;font-weight:900;color:#22f59b;">
+              &#10003; LIVE STRIPE PAYMENT VERIFIED
+            </div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.95rem;font-weight:800;color:#ffffff;margin-top:6px;">
+              OFFICIAL ORDER NUMBER: #${esc(info.orderId || quoteId)}
+            </div>
+            <p style="font-size:0.78rem;color:rgba(255,255,255,0.78);margin-top:6px;">
+              This verification receipt is locked for production accuracy and matches our fulfillment queue.
+            </p>
+          </div>
+          <div class="readonly-grid">
+            <div class="readonly-field">
+              <span>Client / Organization</span>
+              <strong>${esc(info.customerName || 'Verified Stripe Client')}</strong>
+            </div>
+            <div class="readonly-field">
+              <span>Receipt Email</span>
+              <strong>${esc(info.customerEmail || 'Sent via Stripe')}</strong>
+            </div>
+            <div class="readonly-field">
+              <span>Phone</span>
+              <strong>${esc(info.customerPhone || 'On File')}</strong>
+            </div>
+            <div class="readonly-field">
+              <span>Shipping / Fulfillment</span>
+              <strong>${esc(info.shippingAddress || 'Per Official Quote')}</strong>
+            </div>
+          </div>
+          ${rowsHtml}
+          <div>
+            <div class="grand-pill">
+              <span>AMOUNT PAID:</span>
+              <span>${money(info.amountTotalUsd || info.totalPaidUsd || fallbackAmt)}</span>
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <a href="index.html" style="color:#ffb36b;font-size:0.82rem;text-decoration:none;font-weight:700;">&larr; Return to RetroCanopy.com</a>
+          </div>
+        `;
+      }
+
+      async function launchStripeSession() {
+        if (!quoteId) {
+          bodyCard.innerHTML = `
+            <h2 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:#ff8585;">Missing Quote Number</h2>
+            <p style="font-size:0.84rem;color:rgba(255,255,255,0.72);margin-top:8px;">Please scan the QR code directly from your official RetroCanopy Quote sheet.</p>
+          `;
+          return;
+        }
+        try {
+          const res = await fetch(EDGE_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'get_or_create_quote_stripe_session',
+              quoteId,
+              fallbackAmountUsd: fallbackAmt > 0 ? fallbackAmt : undefined,
+              fallbackProjectName: fallbackProj || undefined,
+              returnBaseUrl: window.location.origin + window.location.pathname
+            })
+          });
+          const data = await res.json();
+          if (data && data.alreadyPaid && data.order) {
+            renderPaidVerification(data.order);
+            return;
+          }
+          if (!res.ok || !data.url) {
+            throw new Error(data.error || 'Could not initialize Stripe session.');
+          }
+          bodyCard.innerHTML = `
+            <div class="spinner"></div>
+            <h2 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:#ffd089;">Redirecting to Stripe Checkout (${money(data.amountTotalUsd)})...</h2>
+            <p style="font-size:0.82rem;color:rgba(255,255,255,0.72);margin-top:6px;">Quote #${esc(quoteId)} &bull; ${esc(data.projectName || '')}</p>
+            <a class="molten-btn" href="${esc(data.url)}">&#128179; Continue to Stripe Checkout (${money(data.amountTotalUsd)})</a>
+          `;
+          window.location.replace(data.url);
+        } catch (err) {
+          bodyCard.innerHTML = `
+            <h2 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:#ff9e6b;">Unable to Open Checkout Automatically</h2>
+            <p style="font-size:0.83rem;color:rgba(255,255,255,0.74);margin-top:8px;">${esc(err.message || String(err))}</p>
+            <button type="button" class="molten-btn" id="pqRetryBtn">&#8635; Try Again</button>
+          `;
+          document.getElementById('pqRetryBtn')?.addEventListener('click', launchStripeSession);
+        }
+      }
+
+      async function verifyReturn() {
+        try {
+          const res = await fetch(EDGE_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'verify_session',
+              sessionId,
+              quoteId
+            })
+          });
+          const data = await res.json();
+          if (res.ok && data.paid) {
+            renderPaidVerification(data);
+            return;
+          }
+          throw new Error(data.error || 'Payment has not settled yet.');
+        } catch (err) {
+          bodyCard.innerHTML = `
+            <h2 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:#ffd089;">Verifying Stripe Payment...</h2>
+            <p style="font-size:0.83rem;color:rgba(255,255,255,0.74);margin-top:8px;">${esc(err.message || String(err))}</p>
+            <button type="button" class="molten-btn" id="pqReverifyBtn">&#8635; Refresh Payment Status</button>
+          `;
+          document.getElementById('pqReverifyBtn')?.addEventListener('click', verifyReturn);
+        }
+      }
+
+      if (isSuccess && sessionId) {
+        verifyReturn();
+      } else if (isCancel) {
+        bodyCard.innerHTML = `
+          <h2 style="font-family:'Orbitron',sans-serif;font-size:1.02rem;color:#ffd089;">Checkout Paused — Quote #${esc(quoteId)}</h2>
+          <p style="font-size:0.84rem;color:rgba(255,255,255,0.75);margin-top:8px;">
+            Your quote is still active and ready whenever you'd like to complete payment.
+          </p>
+          <button type="button" class="molten-btn" id="pqResumeBtn">&#128179; Pay Quote #${esc(quoteId)} via Stripe</button>
+        `;
+        document.getElementById('pqResumeBtn')?.addEventListener('click', launchStripeSession);
+      } else {
+        launchStripeSession();
+      }
+    })();
+  </script>
+</body>
+</html>
