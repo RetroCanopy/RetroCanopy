@@ -2653,6 +2653,90 @@
       transform: translateY(-1px);
     }
 
+
+    /* Dynamic Poured-Resin Glossy Liquid Glass Enhancements for Concept #1 Quote */
+    @keyframes c1MoltenBreath {
+      0%, 100% { box-shadow: 0 28px 70px rgba(0,0,0,0.88), 0 0 38px rgba(255,108,12,0.32), inset 0 2px 1px rgba(255,255,255,0.46); }
+      50% { box-shadow: 0 32px 84px rgba(0,0,0,0.94), 0 0 58px rgba(255,132,26,0.52), inset 0 2px 2px rgba(255,255,255,0.62); }
+    }
+    .c1-quote-sheet {
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(34px) saturate(210%) !important;
+      -webkit-backdrop-filter: blur(34px) saturate(210%) !important;
+      animation: c1MoltenBreath 5.5s ease-in-out infinite;
+    }
+    .c1-quote-sheet::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(580px circle at var(--mx, 28%) var(--my, 18%), rgba(255, 214, 170, 0.16), transparent 58%),
+        linear-gradient(122deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 22%, transparent 42%, rgba(255,136,36,0.07) 100%);
+      z-index: 0;
+    }
+    .c1-quote-sheet > * { position: relative; z-index: 1; }
+    .c1-header-banner,
+    .c1-glass-card,
+    .c1-table-card,
+    .c1-item-desc-panel {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 110%, rgba(255, 126, 22, 0.18), transparent 62%),
+        linear-gradient(162deg, rgba(68, 64, 84, 0.80) 0%, rgba(22, 20, 30, 0.93) 48%, rgba(12, 11, 17, 0.98) 100%) !important;
+      backdrop-filter: blur(28px) saturate(200%) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.30) !important;
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.60),
+        inset 0 1.8px 1px rgba(255, 255, 255, 0.56),
+        inset 0 -1px 14px rgba(255, 118, 20, 0.14) !important;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .c1-header-banner::after,
+    .c1-glass-card::after,
+    .c1-table-card::after,
+    .c1-item-desc-panel::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -8%;
+      right: -8%;
+      height: 46%;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.045) 58%, rgba(255,255,255,0) 100%);
+      border-bottom-left-radius: 55% 32%;
+      border-bottom-right-radius: 45% 24%;
+    }
+    .c1-header-banner > *,
+    .c1-glass-card > *,
+    .c1-table-card > *,
+    .c1-item-desc-panel > * { position: relative; z-index: 1; }
+    .c1-kpi-tile,
+    .c1-cap-pill-bar,
+    .c1-discount-pill,
+    .c1-grand-pill,
+    .c1-qr-box {
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 10px 26px rgba(255, 102, 0, 0.28),
+        inset 0 1.8px 1px rgba(255, 255, 255, 0.58),
+        inset 0 -4px 12px rgba(255, 112, 16, 0.24) !important;
+    }
+    .c1-kpi-tile::before,
+    .c1-cap-pill-bar::before,
+    .c1-discount-pill::before,
+    .c1-grand-pill::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 50% 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.03) 100%);
+      border-radius: inherit;
+    }
   </style>
 </head>
 <body data-layout="tabbed-studio" data-focus-pane="orders">
@@ -3160,6 +3244,7 @@
               <button type="button" class="mini-btn" id="bqPreviewClientQuoteBtn" style="color:#ffb36b;" title="Open the live Concept #1 Client Quote page in a new tab">&#128065;&#65039; View Sent Quote</button>
               <button type="button" class="mini-btn" id="bqOpenStripeQuoteBtn" style="color:#2ce6ff;border-color:rgba(44,230,255,0.5) !important;" title="Sync &amp; open the Live Stripe Checkout page for this Ticket">&#128179; Stripe Checkout</button>
               <button type="button" class="mini-btn" id="bqCopyCustomerQuoteBtn" style="color:#cbd5e1;" title="Copy plain-text summary + link">&#128203; Copy Text</button>
+              <button type="button" class="vision-gold-cta-btn" id="bqDownloadQuoteJpgBtn" style="padding:7px 15px;font-size:0.74rem;background:linear-gradient(135deg,#ff9e38,#ff5500);color:#ffffff;border-color:#ffd7a8;box-shadow:0 0 18px rgba(255,112,16,0.45);" title="Download a high-resolution, poured-resin Glossy Liquid Glass .JPG of this entire quote to text or email">&#128444;&#65039; Glossy Quote .JPG</button>
               <button type="button" class="vision-gold-cta-btn" id="bqPrintQuoteBtn" style="padding:7px 15px;font-size:0.74rem;background:linear-gradient(135deg,#ff7a18,#ffb347);color:#0b0806;border-color:#ffd099;">&#128424; Official Quote PDF (w/ QR)</button>
             </div>
           </div>
@@ -5219,6 +5304,6 @@
       });
     })();
   </script>
-  <script src="bulk_quote_tool.js?v=276"></script>
+  <script src="bulk_quote_tool.js?v=277"></script>
 </body>
 </html>

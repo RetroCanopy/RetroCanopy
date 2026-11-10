@@ -563,6 +563,96 @@
       .no-print { display: none !important; }
       .c1-obsidian-sheet { max-width: 100%; box-shadow: none; padding: 16px; }
     }
+
+    /* Dynamic Poured-Resin Glossy Liquid Glass Surface Reflections */
+    @keyframes moltenPulseSheet {
+      0%, 100% {
+        box-shadow:
+          0 34px 95px rgba(0, 0, 0, 0.92),
+          0 0 46px rgba(255, 108, 12, 0.32),
+          inset 0 2px 1px rgba(255, 255, 255, 0.48);
+      }
+      50% {
+        box-shadow:
+          0 38px 110px rgba(0, 0, 0, 0.95),
+          0 0 68px rgba(255, 132, 24, 0.50),
+          inset 0 2px 2px rgba(255, 255, 255, 0.64);
+      }
+    }
+    .c1-obsidian-sheet {
+      overflow: hidden;
+      animation: moltenPulseSheet 5.5s ease-in-out infinite;
+    }
+    .c1-obsidian-sheet::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(640px circle at var(--mx, 30%) var(--my, 16%), rgba(255, 216, 174, 0.16), transparent 58%),
+        linear-gradient(122deg, rgba(255,255,255,0.17) 0%, rgba(255,255,255,0.04) 24%, transparent 45%);
+      z-index: 0;
+    }
+    .c1-obsidian-sheet > * { position: relative; z-index: 1; }
+    .c1-header-glass,
+    .c1-smoked-card,
+    .c1-item-desc-card,
+    .c1-table-shell {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 112%, rgba(255, 126, 22, 0.18), transparent 62%),
+        linear-gradient(162deg, rgba(68, 64, 84, 0.82) 0%, rgba(22, 20, 30, 0.93) 48%, rgba(12, 11, 17, 0.98) 100%) !important;
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.30) !important;
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.62),
+        inset 0 1.8px 1px rgba(255, 255, 255, 0.56),
+        inset 0 -1px 14px rgba(255, 118, 20, 0.14) !important;
+    }
+    .c1-header-glass::before,
+    .c1-smoked-card::before,
+    .c1-item-desc-card::before,
+    .c1-table-shell::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -8%;
+      right: -8%;
+      height: 45%;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.045) 58%, rgba(255,255,255,0) 100%);
+      border-bottom-left-radius: 55% 32%;
+      border-bottom-right-radius: 45% 24%;
+    }
+    .c1-header-glass > *,
+    .c1-smoked-card > *,
+    .c1-item-desc-card > *,
+    .c1-table-shell > * { position: relative; z-index: 1; }
+    .c1-kpi-box,
+    .c1-capabilities-pill,
+    .c1-disc-pill,
+    .c1-grand-pill,
+    .c1-qr-card {
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 10px 26px rgba(255, 102, 0, 0.28),
+        inset 0 1.8px 1px rgba(255, 255, 255, 0.58),
+        inset 0 -4px 12px rgba(255, 112, 16, 0.24) !important;
+    }
+    .c1-kpi-box::before,
+    .c1-capabilities-pill::before,
+    .c1-disc-pill::before,
+    .c1-grand-pill::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 50% 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.03) 100%);
+      border-radius: inherit;
+    }
   </style>
 </head>
 <body>
@@ -576,6 +666,7 @@
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <button type="button" class="dock-pill-btn" id="dockCopyLinkBtn">&#128279; Copy Quote Link</button>
+      <button type="button" class="dock-pill-btn" id="dockDownloadJpgBtn" style="display:none;border-color:#ff9c38;color:#ffd8a8;box-shadow:0 0 16px rgba(255,112,16,0.32);">&#128444;&#65039; Glossy Quote .JPG</button>
       <button type="button" class="dock-pill-btn" onclick="window.print()">&#128424; Print / Save PDF</button>
       <button type="button" class="dock-pill-btn primary-pay" id="dockPayStripeBtn" style="display:none;">&#128179; Pay via Stripe</button>
     </div>
@@ -784,6 +875,367 @@
         return cv.toDataURL('image/png');
       }
 
+      let loadedDossierPayload = null;
+      const dockJpgBtn = document.getElementById('dockDownloadJpgBtn');
+
+      document.addEventListener('pointermove', (ev) => {
+        const sh = document.getElementById('quoteSheetRoot');
+        if (!sh) return;
+        const r = sh.getBoundingClientRect();
+        const x = ((ev.clientX - r.left) / Math.max(1, r.width)) * 100;
+        const y = ((ev.clientY - r.top) / Math.max(1, r.height)) * 100;
+        sh.style.setProperty('--mx', `${x.toFixed(1)}%`);
+        sh.style.setProperty('--my', `${y.toFixed(1)}%`);
+      }, { passive: true });
+
+      function qRoundRect(ctx, x, y, w, h, r) {
+        const rr = Math.max(0, Math.min(r, w / 2, h / 2));
+        ctx.beginPath();
+        ctx.moveTo(x + rr, y);
+        ctx.lineTo(x + w - rr, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+        ctx.lineTo(x + w, y + h - rr);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h);
+        ctx.lineTo(x + rr, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - rr);
+        ctx.lineTo(x, y + rr);
+        ctx.quadraticCurveTo(x, y, x + rr, y);
+        ctx.closePath();
+      }
+
+      function qLiquidGlass(ctx, x, y, w, h, r, opts = {}) {
+        ctx.save();
+        ctx.shadowColor = opts.moltenGlow ? 'rgba(255, 114, 16, 0.42)' : 'rgba(0, 0, 0, 0.68)';
+        ctx.shadowBlur = opts.moltenGlow ? 30 : 22;
+        ctx.shadowOffsetY = opts.moltenGlow ? 5 : 10;
+        qRoundRect(ctx, x, y, w, h, r);
+        const bodyGrad = ctx.createLinearGradient(x, y, x + w * 0.32, y + h);
+        bodyGrad.addColorStop(0, opts.topFill || 'rgba(64, 60, 78, 0.88)');
+        bodyGrad.addColorStop(0.42, opts.midFill || 'rgba(21, 20, 29, 0.93)');
+        bodyGrad.addColorStop(1, opts.botFill || 'rgba(11, 10, 16, 0.97)');
+        ctx.fillStyle = bodyGrad;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+        qRoundRect(ctx, x, y, w, h, r);
+        ctx.clip();
+
+        const bottomGlow = ctx.createRadialGradient(x + w * 0.52, y + h * 1.06, 6, x + w * 0.52, y + h * 1.02, Math.max(w, h) * 0.72);
+        bottomGlow.addColorStop(0, opts.warmCore || 'rgba(255, 132, 28, 0.24)');
+        bottomGlow.addColorStop(0.50, 'rgba(255, 98, 10, 0.07)');
+        bottomGlow.addColorStop(1, 'rgba(255, 98, 10, 0)');
+        ctx.fillStyle = bottomGlow;
+        ctx.fillRect(x, y, w, h);
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + w, y);
+        ctx.lineTo(x + w, y + h * 0.25);
+        ctx.bezierCurveTo(x + w * 0.68, y + h * 0.14, x + w * 0.34, y + h * 0.52, x, y + h * 0.41);
+        ctx.closePath();
+        const glossGrad = ctx.createLinearGradient(x, y, x, y + h * 0.52);
+        glossGrad.addColorStop(0, 'rgba(255, 255, 255, 0.27)');
+        glossGrad.addColorStop(0.42, 'rgba(255, 255, 255, 0.085)');
+        glossGrad.addColorStop(1, 'rgba(255, 255, 255, 0.008)');
+        ctx.fillStyle = glossGrad;
+        ctx.fill();
+
+        const topLip = ctx.createLinearGradient(x, y, x + w, y);
+        topLip.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
+        topLip.addColorStop(0.24, 'rgba(255, 255, 255, 0.76)');
+        topLip.addColorStop(0.62, 'rgba(255, 226, 192, 0.44)');
+        topLip.addColorStop(1, 'rgba(255, 152, 56, 0.24)');
+        ctx.strokeStyle = topLip;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.moveTo(x + r * 0.55, y + 1.2);
+        ctx.lineTo(x + w - r * 0.55, y + 1.2);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.save();
+        qRoundRect(ctx, x, y, w, h, r);
+        if (opts.orangeBorder) {
+          const bGrad = ctx.createLinearGradient(x, y, x + w, y + h);
+          bGrad.addColorStop(0, '#ffd296');
+          bGrad.addColorStop(0.32, '#ff9228');
+          bGrad.addColorStop(0.72, '#ff5e00');
+          bGrad.addColorStop(1, '#ffb45c');
+          ctx.strokeStyle = bGrad;
+          ctx.lineWidth = opts.borderWidth || 1.9;
+        } else {
+          const bGrad = ctx.createLinearGradient(x, y, x, y + h);
+          bGrad.addColorStop(0, 'rgba(255, 255, 255, 0.52)');
+          bGrad.addColorStop(0.45, 'rgba(255, 255, 255, 0.18)');
+          bGrad.addColorStop(1, 'rgba(255, 144, 42, 0.42)');
+          ctx.strokeStyle = bGrad;
+          ctx.lineWidth = opts.borderWidth || 1.4;
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      async function downloadClientGlossyQuoteJpg() {
+        if (!loadedDossierPayload) return;
+        const prevTxt = dockJpgBtn ? dockJpgBtn.innerHTML : '';
+        if (dockJpgBtn) {
+          dockJpgBtn.disabled = true;
+          dockJpgBtn.innerHTML = '&#9203; Rendering .JPG...';
+        }
+        try {
+          const payload = loadedDossierPayload;
+          const meta = payload.quoteMeta || {};
+          const items = Array.isArray(payload.items) ? payload.items : [];
+          const resolvedTicket = payload.ticketId || ticketId;
+          const grandTotal = Number(meta.grandTotalUsd || payload.totalChargedUsd || payload.totalPaidUsd || 0);
+          const subtotalBefore = Number(meta.subtotalBeforeDiscount || grandTotal);
+          const discountPct = Number(meta.discountPct || 0);
+          const discountLabel = meta.discountLabel || 'Discount';
+          const discountAmt = Number(meta.discountAmountUsd || 0);
+          const includeTax = Boolean(meta.includeTax);
+          const taxRatePct = Number(meta.taxRatePct || 0);
+          const taxAmt = Number(meta.taxAmountUsd || 0);
+          const totalShirts = Number(meta.totalShirts || items.reduce((s, i) => s + (Number(i.qty) || 0), 0) || 1);
+          const basePerItem = Number(meta.avgItemPreDiscount || (subtotalBefore / Math.max(1, totalShirts)));
+          const finalPerItem = Number(meta.avgItemAllInFinal || (grandTotal / Math.max(1, totalShirts)));
+
+          const W = 1520, padX = 52, sheetW = W - padX * 2, innerPad = 32, contentW = sheetW - innerPad * 2;
+          const tableRowH = 66;
+          const tableCardH = 108 + Math.max(1, items.length) * tableRowH + 18;
+          const headerH = 134, capH = 54, clientH = 56, midH = 432, bottomH = 298;
+          const sheetH = innerPad + headerH + 18 + capH + 14 + clientH + 22 + midH + 20 + tableCardH + 20 + bottomH + innerPad;
+          const H = sheetH + 96;
+
+          const cv = document.createElement('canvas');
+          cv.width = W; cv.height = H;
+          const ctx = cv.getContext('2d');
+          ctx.fillStyle = '#040307';
+          ctx.fillRect(0, 0, W, H);
+          [
+            { cx: W * 0.5, cy: 110, r: 720, col: 'rgba(255, 122, 22, 0.32)' },
+            { cx: W * 0.12, cy: H * 0.42, r: 560, col: 'rgba(255, 94, 0, 0.22)' },
+            { cx: W * 0.88, cy: H * 0.76, r: 590, col: 'rgba(255, 142, 38, 0.26)' }
+          ].forEach((b) => {
+            const g = ctx.createRadialGradient(b.cx, b.cy, 18, b.cx, b.cy, b.r);
+            g.addColorStop(0, b.col); g.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+          });
+
+          const sheetX = padX, sheetY = 48;
+          ctx.save();
+          ctx.shadowColor = 'rgba(255, 110, 12, 0.58)';
+          ctx.shadowBlur = 52;
+          qRoundRect(ctx, sheetX, sheetY, sheetW, sheetH, 34);
+          const sheetBg = ctx.createLinearGradient(sheetX, sheetY, sheetX, sheetY + sheetH);
+          sheetBg.addColorStop(0, '#191724'); sheetBg.addColorStop(0.5, '#0d0c14'); sheetBg.addColorStop(1, '#08070c');
+          ctx.fillStyle = sheetBg; ctx.fill();
+          ctx.restore();
+
+          ctx.save();
+          qRoundRect(ctx, sheetX, sheetY, sheetW, sheetH, 34);
+          ctx.strokeStyle = '#ff9028'; ctx.lineWidth = 2.8; ctx.stroke();
+          ctx.restore();
+
+          let curY = sheetY + innerPad;
+          const leftX = sheetX + innerPad;
+          qLiquidGlass(ctx, leftX, curY, contentW, headerH, 24, { topFill: 'rgba(82,76,98,0.90)', borderWidth: 1.7 });
+
+          await new Promise((res) => {
+            const lg = new Image();
+            lg.crossOrigin = 'anonymous';
+            lg.onload = () => {
+              ctx.drawImage(lg, leftX + 35, curY + 28, 78, 78);
+              res();
+            };
+            lg.onerror = () => res();
+            lg.src = 'assets/logo.png';
+          });
+
+          ctx.save();
+          ctx.font = '900 44px Orbitron, Segoe UI, sans-serif';
+          ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+          const wmGrad = ctx.createLinearGradient(0, curY + 38, 0, curY + 96);
+          wmGrad.addColorStop(0, '#ffe6a3'); wmGrad.addColorStop(0.5, '#ff9428'); wmGrad.addColorStop(1, '#ff5500');
+          ctx.fillStyle = wmGrad;
+          ctx.fillText('RETROCANOPY', leftX + 142, curY + headerH / 2 + 2);
+          ctx.restore();
+
+          ctx.textAlign = 'right';
+          ctx.fillStyle = payload.isPaid ? '#6bffc3' : '#ffffff';
+          ctx.font = '800 32px Orbitron, Segoe UI, sans-serif';
+          ctx.fillText(payload.isPaid ? 'PAID PROJECT RECEIPT' : 'OFFICIAL QUOTE', leftX + contentW - 28, curY + 53);
+          ctx.fillStyle = '#ffd29e';
+          ctx.font = '700 19px Outfit, Segoe UI, sans-serif';
+          ctx.fillText(`TICKET #${resolvedTicket}`, leftX + contentW - 28, curY + 92);
+          curY += headerH + 18;
+
+          qLiquidGlass(ctx, leftX, curY, contentW, capH, 27, { topFill: 'rgba(78,42,18,0.90)', orangeBorder: true, moltenGlow: true });
+          ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff'; ctx.font = '600 20px Outfit, Segoe UI, sans-serif';
+          ctx.fillText('Apparel   •   Websites   •   Marketing   •   Apps   •   Games   •   Custom 3D Prints', leftX + contentW / 2, curY + 34);
+          curY += capH + 14;
+
+          qLiquidGlass(ctx, leftX, curY, contentW, clientH, 18, { topFill: 'rgba(52,38,30,0.88)', orangeBorder: true });
+          ctx.fillStyle = '#fff5ea'; ctx.font = '600 19px Outfit, Segoe UI, sans-serif';
+          ctx.fillText(`PREPARED FOR: ${payload.customerName || 'Valued Client'}   |   PROJECT: ${meta.projectName || 'Custom Apparel & DTF Order'}`.slice(0, 116), leftX + contentW / 2, curY + 35);
+          curY += clientH + 22;
+
+          const halfGap = 20, leftCardW = Math.floor((contentW - halfGap) * 0.52), rightCardW = contentW - halfGap - leftCardW;
+          qLiquidGlass(ctx, leftX, curY, leftCardW, midH, 24, {});
+          ctx.fillStyle = '#ffffff'; ctx.font = '800 19px Outfit, Segoe UI, sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText('PROJECTED FINISHED ITEM (TRUE SCALE)', leftX + leftCardW / 2, curY + 34);
+
+          const mockSrc = meta.projectedPreviewJpeg || 'assets/blanks/ss_tt11_black_front.png';
+          await new Promise((res) => {
+            const mi = new Image();
+            mi.crossOrigin = 'anonymous';
+            mi.onload = () => {
+              const sc = Math.min((leftCardW - 36) / (mi.naturalWidth || 1), (midH - 64) / (mi.naturalHeight || 1));
+              const dw = (mi.naturalWidth || 1) * sc, dh = (mi.naturalHeight || 1) * sc;
+              ctx.drawImage(mi, leftX + 18 + (leftCardW - 36 - dw) / 2, curY + 48 + (midH - 64 - dh) / 2, dw, dh);
+              res();
+            };
+            mi.onerror = () => res();
+            mi.src = mockSrc;
+          });
+
+          const rightX = leftX + leftCardW + halfGap;
+          qLiquidGlass(ctx, rightX, curY, rightCardW, midH, 24, {});
+          ctx.fillStyle = '#ffffff'; ctx.font = '800 19px Outfit, Segoe UI, sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText('OVERALL BREAKDOWN PER ITEM', rightX + rightCardW / 2, curY + 34);
+
+          const tileGap = 16, tileW = Math.floor((rightCardW - 44 - tileGap) / 2), tileH = 128;
+          [
+            { val: String(totalShirts), lbl: 'Total Items' },
+            { val: money(basePerItem), lbl: 'Base/Item' },
+            { val: `${discountPct}%`, lbl: discountPct > 0 ? discountLabel : 'Discount' },
+            { val: money(finalPerItem), lbl: 'Final/Item' }
+          ].forEach((k, idx) => {
+            const tx = rightX + 22 + (idx % 2) * (tileW + tileGap);
+            const ty = curY + 60 + Math.floor(idx / 2) * (tileH + tileGap);
+            qLiquidGlass(ctx, tx, ty, tileW, tileH, 18, { topFill: 'rgba(84,46,22,0.92)', orangeBorder: true, moltenGlow: true });
+            ctx.fillStyle = '#ffaa4c'; ctx.font = '800 40px Outfit, Segoe UI, sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText(k.val, tx + tileW / 2, ty + 66);
+            ctx.fillStyle = '#e2e8f0'; ctx.font = '500 17px Outfit, Segoe UI, sans-serif';
+            ctx.fillText(String(k.lbl).slice(0, 22), tx + tileW / 2, ty + 100);
+          });
+          curY += midH + 20;
+
+          qLiquidGlass(ctx, leftX, curY, contentW, tableCardH, 24, {});
+          ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff'; ctx.font = '800 19px Outfit, Segoe UI, sans-serif';
+          ctx.fillText('ITEMIZED QUOTE BREAKDOWN (LINE BY LINE)', leftX + contentW / 2, curY + 36);
+          const colX = { line: leftX + 46, garment: leftX + 98, specs: leftX + 560, size: leftX + 930, qty: leftX + 1060, unit: leftX + 1215, total: leftX + contentW - 28 };
+          ctx.font = '700 16.5px Outfit, Segoe UI, sans-serif';
+          ctx.fillText('Line', colX.line, curY + 76);
+          ctx.textAlign = 'left'; ctx.fillText('Garment & Color', colX.garment, curY + 76); ctx.fillText('Print Specs', colX.specs, curY + 76);
+          ctx.textAlign = 'center'; ctx.fillText('Size', colX.size, curY + 76); ctx.fillText('Qty', colX.qty, curY + 76);
+          ctx.textAlign = 'right'; ctx.fillText('Unit Price', colX.unit, curY + 76); ctx.fillText('Line Total', colX.total, curY + 76);
+
+          ctx.strokeStyle = '#ff8e28'; ctx.lineWidth = 2.4;
+          ctx.beginPath(); ctx.moveTo(leftX + 16, curY + 92); ctx.lineTo(leftX + contentW - 16, curY + 92); ctx.stroke();
+
+          items.forEach((it, idx) => {
+            const ry = curY + 96 + idx * tableRowH;
+            if (idx > 0) {
+              ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1;
+              ctx.beginPath(); ctx.moveTo(leftX + 18, ry); ctx.lineTo(leftX + contentW - 18, ry); ctx.stroke();
+            }
+            ctx.textAlign = 'center'; ctx.fillStyle = '#cbd5e1'; ctx.font = '600 17px Outfit, Segoe UI, sans-serif';
+            ctx.fillText(String(it.lineNumber || (idx + 1)), colX.line, ry + 36);
+            ctx.textAlign = 'left'; ctx.fillStyle = '#ffffff'; ctx.font = '700 17px Outfit, Segoe UI, sans-serif';
+            ctx.fillText(String(it.sku ? `${it.sku} — ${it.colorName || it.name || ''}` : (it.name || 'Custom Item')).slice(0, 44), colX.garment, ry + 36);
+            ctx.fillStyle = '#e2e8f0'; ctx.font = '500 15.5px Outfit, Segoe UI, sans-serif';
+            ctx.fillText(String(it.printSpecs || 'Custom DTF Print').slice(0, 38), colX.specs, ry + 36);
+            ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff'; ctx.font = '700 17px Outfit, Segoe UI, sans-serif';
+            ctx.fillText(String(it.size || 'STD'), colX.size, ry + 36);
+            ctx.fillText(String(it.qty || 1), colX.qty, ry + 36);
+            ctx.textAlign = 'right'; ctx.font = '600 17px Outfit, Segoe UI, sans-serif';
+            ctx.fillText(money(it.priceUsd), colX.unit, ry + 36);
+            ctx.font = '800 18px Outfit, Segoe UI, sans-serif'; ctx.fillStyle = '#ffd8a8';
+            ctx.fillText(money(it.lineTotalUsd || ((Number(it.priceUsd) || 0) * (Number(it.qty) || 1))), colX.total, ry + 36);
+          });
+          curY += tableCardH + 20;
+
+          const botLeftW = Math.floor((contentW - halfGap) * 0.46), botRightW = contentW - halfGap - botLeftW;
+          qLiquidGlass(ctx, leftX, curY, botLeftW, bottomH, 24, {});
+          ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff'; ctx.font = '800 18px Outfit, Segoe UI, sans-serif';
+          ctx.fillText('AVAILABLE S&S COLORS', leftX + botLeftW / 2, curY + 38);
+          const colorsList = Array.isArray(meta.availableColors) && meta.availableColors.length > 0 ? meta.availableColors : DEFAULT_COLORS;
+          const orbCols = 8, orbR = 16, orbSX = 56, orbSY = 52;
+          const gsx = leftX + (botLeftW - (orbCols - 1) * orbSX) / 2;
+          colorsList.slice(0, 24).forEach((col, i) => {
+            const ocx = gsx + (i % orbCols) * orbSX, ocy = curY + 96 + Math.floor(i / orbCols) * orbSY;
+            ctx.beginPath(); ctx.arc(ocx, ocy, orbR, 0, Math.PI * 2);
+            const og = ctx.createRadialGradient(ocx - 5, ocy - 6, 2, ocx, ocy, orbR);
+            og.addColorStop(0, '#ffffff'); og.addColorStop(0.3, col.hex); og.addColorStop(1, '#07060b');
+            ctx.fillStyle = og; ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1.2; ctx.stroke();
+          });
+
+          const botRightX = leftX + botLeftW + halfGap;
+          qLiquidGlass(ctx, botRightX, curY, botRightW, bottomH, 24, {});
+          const qrBoxX = botRightX + 24, qrBoxY = curY + 28, qrBoxW = 204, qrBoxH = bottomH - 56;
+          qLiquidGlass(ctx, qrBoxX, qrBoxY, qrBoxW, qrBoxH, 18, { topFill: 'rgba(56,34,20,0.94)', orangeBorder: true });
+          const payPortalUrl = `https://www.retrocanopy.com/pay_quote.html?q=${encodeURIComponent(resolvedTicket)}&amt=${grandTotal.toFixed(2)}`;
+          const qrDataUrl = encodeQrMatrix(payPortalUrl);
+          await new Promise((res) => {
+            const qi = new Image();
+            qi.onload = () => {
+              ctx.fillStyle = '#ffffff'; qRoundRect(ctx, qrBoxX + 22, qrBoxY + 16, 160, 160, 10); ctx.fill();
+              ctx.drawImage(qi, qrBoxX + 26, qrBoxY + 20, 152, 152);
+              res();
+            };
+            qi.onerror = () => res();
+            qi.src = qrDataUrl;
+          });
+          ctx.textAlign = 'center'; ctx.fillStyle = '#ffb36b'; ctx.font = '800 13px Orbitron, Segoe UI, sans-serif';
+          ctx.fillText('SCAN TO PAY', qrBoxX + qrBoxW / 2, qrBoxY + 198);
+
+          const totX = qrBoxX + qrBoxW + 26, totW = botRightW - (qrBoxW + 74);
+          ctx.textAlign = 'left'; ctx.fillStyle = '#f1f5f9'; ctx.font = '600 21px Outfit, Segoe UI, sans-serif';
+          ctx.fillText('Subtotal:', totX + 12, curY + 62);
+          ctx.textAlign = 'right'; ctx.font = '800 22px Outfit, Segoe UI, sans-serif';
+          ctx.fillText(money(subtotalBefore), totX + totW - 12, curY + 62);
+
+          qLiquidGlass(ctx, totX, curY + 82, totW, 50, 25, { topFill: 'rgba(80,42,18,0.90)', orangeBorder: true });
+          ctx.textAlign = 'left'; ctx.fillStyle = '#ffffff'; ctx.font = '600 18.5px Outfit, Segoe UI, sans-serif';
+          ctx.fillText(`${discountPct}% OFF ${String(discountLabel).slice(0, 18)}:`, totX + 18, curY + 113);
+          ctx.textAlign = 'right'; ctx.fillStyle = '#ffa440'; ctx.font = '800 20px Outfit, Segoe UI, sans-serif';
+          ctx.fillText(discountAmt > 0 ? `-${money(discountAmt)}` : '$0.00', totX + totW - 18, curY + 113);
+
+          ctx.textAlign = 'left'; ctx.fillStyle = '#f1f5f9'; ctx.font = '600 20px Outfit, Segoe UI, sans-serif';
+          ctx.fillText(includeTax ? `Tax Included (${taxRatePct.toFixed(2)}%):` : 'Tax Excluded:', totX + 12, curY + 168);
+          ctx.textAlign = 'right'; ctx.font = '700 20px Outfit, Segoe UI, sans-serif';
+          ctx.fillText(money(taxAmt), totX + totW - 12, curY + 168);
+
+          qLiquidGlass(ctx, totX, curY + 190, totW, 68, 34, { topFill: 'rgba(124,58,16,0.94)', orangeBorder: true, moltenGlow: true, borderWidth: 2.5 });
+          ctx.textAlign = 'left'; ctx.fillStyle = '#ffffff'; ctx.font = '800 22px Orbitron, Segoe UI, sans-serif';
+          ctx.fillText('GRAND TOTAL:', totX + 22, curY + 232);
+          ctx.textAlign = 'right'; ctx.fillStyle = '#ffb454'; ctx.font = '900 29px Orbitron, Segoe UI, sans-serif';
+          ctx.fillText(money(grandTotal), totX + totW - 22, curY + 233);
+
+          cv.toBlob((blob) => {
+            if (!blob) return;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `RetroCanopy_${resolvedTicket}_LiquidGlass.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 4000);
+          }, 'image/jpeg', 0.95);
+        } finally {
+          if (dockJpgBtn) {
+            dockJpgBtn.disabled = false;
+            dockJpgBtn.innerHTML = '&#10003; Downloaded .JPG!';
+            setTimeout(() => { dockJpgBtn.innerHTML = prevTxt; }, 2200);
+          }
+        }
+      }
+
+      dockJpgBtn?.addEventListener('click', downloadClientGlossyQuoteJpg);
+
       copyLinkBtn?.addEventListener('click', () => {
         const cleanUrl = `${window.location.origin}${window.location.pathname}?ticket=${encodeURIComponent(ticketId)}`;
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -844,6 +1296,8 @@
       ];
 
       function renderDossier(payload) {
+        loadedDossierPayload = payload;
+        if (dockJpgBtn) dockJpgBtn.style.display = 'inline-flex';
         const meta = payload.quoteMeta || {};
         const items = Array.isArray(payload.items) ? payload.items : [];
         const isPaid = Boolean(payload.isPaid);

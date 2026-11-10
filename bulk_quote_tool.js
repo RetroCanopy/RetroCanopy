@@ -58,8 +58,46 @@
     ce10lWhiteBack: null,
     ce10lBlackFront: null,
     ce10lBlackBack: null,
-    officialLogo: null
+    officialLogo: null,
+    officialLogoTrimmed: null
   };
+
+  function trimImageTransparentBoundsToCanvas(img, alphaThreshold = 26) {
+    try {
+      const iw = img.naturalWidth || img.width || 0;
+      const ih = img.naturalHeight || img.height || 0;
+      if (iw < 2 || ih < 2) return img;
+      const cv = document.createElement('canvas');
+      cv.width = iw;
+      cv.height = ih;
+      const cctx = cv.getContext('2d');
+      cctx.drawImage(img, 0, 0, iw, ih);
+      const data = cctx.getImageData(0, 0, iw, ih).data;
+      let minX = iw, minY = ih, maxX = -1, maxY = -1;
+      for (let y = 0; y < ih; y++) {
+        for (let x = 0; x < iw; x++) {
+          if (data[(y * iw + x) * 4 + 3] >= alphaThreshold) {
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+          }
+        }
+      }
+      if (maxX >= minX && maxY >= minY) {
+        const cw = Math.max(1, maxX - minX + 1);
+        const ch = Math.max(1, maxY - minY + 1);
+        const out = document.createElement('canvas');
+        out.width = cw;
+        out.height = ch;
+        out.getContext('2d').drawImage(cv, minX, minY, cw, ch, 0, 0, cw, ch);
+        return out;
+      }
+      return cv;
+    } catch (_) {
+      return img;
+    }
+  }
 
   function preloadBlankShirtAssets() {
     const pairs = [
@@ -78,6 +116,9 @@
       im.crossOrigin = 'anonymous';
       im.onload = () => {
         blankMockupAssets[key] = im;
+        if (key === 'officialLogo') {
+          blankMockupAssets.officialLogoTrimmed = trimImageTransparentBoundsToCanvas(im, 28);
+        }
         if (state.lastCalculation) {
           renderSummaryAndCanvas();
         }
@@ -1275,7 +1316,7 @@
           let minX = sw, minY = sh, maxX = 0, maxY = 0;
           for (let y = 0; y < sh; y++) {
             for (let x = 0; x < sw; x++) {
-              if (imgData[(y * sw + x) * 4 + 3] > 10) {
+              if (imgData[(y * sw + x) * 4 + 3] > 24) {
                 if (x < minX) minX = x;
                 if (x > maxX) maxX = x;
                 if (y < minY) minY = y;
@@ -1498,89 +1539,286 @@
     ctx.restore();
   }
 
-  function drawHeatPressedGraphic(ctx, artSource, x, y, boxW, boxH, isSampleFallback) {
-    if (!artSource) return;
+  function drawRoundedRectPath(ctx, x, y, w, h, r) {
+    const rr = Math.max(0, Math.min(r, w / 2, h / 2));
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.lineTo(x + w - rr, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+    ctx.lineTo(x + w, y + h - rr);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h);
+    ctx.lineTo(x + rr, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - rr);
+    ctx.lineTo(x, y + rr);
+    ctx.quadraticCurveTo(x, y, x + rr, y);
+    ctx.closePath();
+  }
+
+  // Procedural Multi-Layer Poured Liquid-Glass Panel Shader (Dynamic Curved Specular Reflection + 3D Crystal Rim)
+  function drawLiquidGlassPanel(ctx, x, y, w, h, r, opts = {}) {
     ctx.save();
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.28)';
-    ctx.shadowBlur = 3;
-    ctx.shadowOffsetY = 1;
-    if (isSampleFallback) {
-      ctx.globalAlpha = 0.9;
+
+    // 1. Deep elevation shadow + optional molten rim aura
+    ctx.shadowColor = opts.moltenGlow ? 'rgba(255, 114, 16, 0.42)' : 'rgba(0, 0, 0, 0.68)';
+    ctx.shadowBlur = opts.moltenGlow ? 30 : 22;
+    ctx.shadowOffsetY = opts.moltenGlow ? 5 : 10;
+
+    drawRoundedRectPath(ctx, x, y, w, h, r);
+    const bodyGrad = ctx.createLinearGradient(x, y, x + w * 0.32, y + h);
+    bodyGrad.addColorStop(0, opts.topFill || 'rgba(64, 60, 78, 0.88)');
+    bodyGrad.addColorStop(0.42, opts.midFill || 'rgba(21, 20, 29, 0.93)');
+    bodyGrad.addColorStop(1, opts.botFill || 'rgba(11, 10, 16, 0.97)');
+    ctx.fillStyle = bodyGrad;
+    ctx.fill();
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    // Clip internal optical caustics & wet-glass reflections
+    drawRoundedRectPath(ctx, x, y, w, h, r);
+    ctx.clip();
+
+    // 2. Subsurface warm molten-orange bottom caustic refraction + corner flare
+    const bottomGlow = ctx.createRadialGradient(
+      x + w * 0.52, y + h * 1.06, 6,
+      x + w * 0.52, y + h * 1.02, Math.max(w, h) * 0.72
+    );
+    bottomGlow.addColorStop(0, opts.warmCore || 'rgba(255, 132, 28, 0.24)');
+    bottomGlow.addColorStop(0.50, 'rgba(255, 98, 10, 0.07)');
+    bottomGlow.addColorStop(1, 'rgba(255, 98, 10, 0)');
+    ctx.fillStyle = bottomGlow;
+    ctx.fillRect(x, y, w, h);
+
+    // Subtle top-left cool crystal catchlight bloom
+    const cornerGlint = ctx.createRadialGradient(x + w * 0.14, y + 6, 2, x + w * 0.14, y + 6, Math.min(w, 320));
+    cornerGlint.addColorStop(0, 'rgba(255, 248, 238, 0.20)');
+    cornerGlint.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = cornerGlint;
+    ctx.fillRect(x, y, w, h * 0.55);
+
+    // 3. Curved Poured-Resin Upper Wet-Glass Meniscus Sweep (Dynamic S-curve reflection!)
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w, y + h * 0.25);
+    ctx.bezierCurveTo(
+      x + w * 0.68, y + h * 0.14,
+      x + w * 0.34, y + h * 0.52,
+      x, y + h * 0.41
+    );
+    ctx.closePath();
+    const glossGrad = ctx.createLinearGradient(x, y, x, y + h * 0.52);
+    glossGrad.addColorStop(0, 'rgba(255, 255, 255, 0.27)');
+    glossGrad.addColorStop(0.42, 'rgba(255, 255, 255, 0.085)');
+    glossGrad.addColorStop(1, 'rgba(255, 255, 255, 0.008)');
+    ctx.fillStyle = glossGrad;
+    ctx.fill();
+
+    // 4. Crisp Diagonal Liquid-Crystal Shimmer Band
+    const streakGrad = ctx.createLinearGradient(x + w * 0.06, y, x + w * 0.64, y + h);
+    streakGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+    streakGrad.addColorStop(0.43, 'rgba(255, 255, 255, 0)');
+    streakGrad.addColorStop(0.485, 'rgba(255, 244, 230, 0.11)');
+    streakGrad.addColorStop(0.515, 'rgba(255, 198, 140, 0.06)');
+    streakGrad.addColorStop(0.56, 'rgba(255, 255, 255, 0)');
+    streakGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = streakGrad;
+    ctx.fillRect(x, y, w, h);
+
+    // 5. Top Wet Meniscus Specular Lip + Left Vertical Crystal Thickness Edge
+    const topLip = ctx.createLinearGradient(x, y, x + w, y);
+    topLip.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
+    topLip.addColorStop(0.24, 'rgba(255, 255, 255, 0.76)');
+    topLip.addColorStop(0.62, 'rgba(255, 226, 192, 0.44)');
+    topLip.addColorStop(1, 'rgba(255, 152, 56, 0.24)');
+    ctx.strokeStyle = topLip;
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(x + r * 0.55, y + 1.2);
+    ctx.lineTo(x + w - r * 0.55, y + 1.2);
+    ctx.stroke();
+
+    const leftLip = ctx.createLinearGradient(x, y, x, y + h);
+    leftLip.addColorStop(0, 'rgba(255, 255, 255, 0.42)');
+    leftLip.addColorStop(0.5, 'rgba(255, 255, 255, 0.08)');
+    leftLip.addColorStop(1, 'rgba(255, 138, 36, 0.20)');
+    ctx.strokeStyle = leftLip;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(x + 1.2, y + r * 0.65);
+    ctx.lineTo(x + 1.2, y + h - r * 0.65);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // 6. Outer Refractive Rim Border
+    ctx.save();
+    drawRoundedRectPath(ctx, x, y, w, h, r);
+    if (opts.orangeBorder) {
+      const bGrad = ctx.createLinearGradient(x, y, x + w, y + h);
+      bGrad.addColorStop(0, '#ffd296');
+      bGrad.addColorStop(0.32, '#ff9228');
+      bGrad.addColorStop(0.72, '#ff5e00');
+      bGrad.addColorStop(1, '#ffb45c');
+      ctx.strokeStyle = bGrad;
+      ctx.lineWidth = opts.borderWidth || 1.9;
+    } else {
+      const bGrad = ctx.createLinearGradient(x, y, x, y + h);
+      bGrad.addColorStop(0, 'rgba(255, 255, 255, 0.52)');
+      bGrad.addColorStop(0.45, 'rgba(255, 255, 255, 0.18)');
+      bGrad.addColorStop(1, 'rgba(255, 144, 42, 0.42)');
+      ctx.strokeStyle = bGrad;
+      ctx.lineWidth = opts.borderWidth || 1.4;
     }
-    drawContainSource(ctx, artSource, x, y, boxW, boxH);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Draws DTF artwork at exact 1:1 physical garment scale AND blends subtle 3D shirt contour shading onto the ink!
+  function drawHeatPressedGraphic(ctx, artSource, x, y, boxW, boxH, isSampleFallback) {
+    if (!artSource || boxW < 2 || boxH < 2) return;
+    const iw = artSource.naturalWidth || artSource.width || 1;
+    const ih = artSource.naturalHeight || artSource.height || 1;
+    const sc = Math.min(boxW / iw, boxH / ih);
+    const dw = Math.max(2, Math.round(iw * sc));
+    const dh = Math.max(2, Math.round(ih * sc));
+    const dx = Math.round(x + (boxW - dw) / 2);
+    const dy = Math.round(y + (boxH - dh) / 2);
+
+    const artC = document.createElement('canvas');
+    artC.width = dw;
+    artC.height = dh;
+    const actx = artC.getContext('2d');
+    actx.drawImage(artSource, 0, 0, dw, dh);
+
+    // Blend subtle underlying Dri-Fit 3D chest/back drape luminance into the transfer so it sits naturally on the fabric
+    try {
+      const shirtPatch = ctx.getImageData(dx, dy, dw, dh);
+      const sp = shirtPatch.data;
+      const shadeC = document.createElement('canvas');
+      shadeC.width = dw;
+      shadeC.height = dh;
+      const sctx = shadeC.getContext('2d');
+      const shadeData = sctx.createImageData(dw, dh);
+      const sd = shadeData.data;
+
+      let sumLum = 0, cnt = 0;
+      for (let i = 0; i < sp.length; i += 16) {
+        sumLum += 0.299 * sp[i] + 0.587 * sp[i + 1] + 0.114 * sp[i + 2];
+        cnt++;
+      }
+      const meanLum = cnt > 0 ? sumLum / cnt : 40;
+
+      for (let i = 0; i < sp.length; i += 4) {
+        const lum = 0.299 * sp[i] + 0.587 * sp[i + 1] + 0.114 * sp[i + 2];
+        const delta = lum - meanLum;
+        if (delta < 0) {
+          sd[i] = 0; sd[i + 1] = 0; sd[i + 2] = 0;
+          sd[i + 3] = Math.min(56, Math.round(-delta * 1.12));
+        } else {
+          sd[i] = 255; sd[i + 1] = 250; sd[i + 2] = 242;
+          sd[i + 3] = Math.min(28, Math.round(delta * 0.62));
+        }
+      }
+      sctx.putImageData(shadeData, 0, 0);
+
+      actx.globalCompositeOperation = 'source-atop';
+      actx.drawImage(shadeC, 0, 0);
+      actx.globalCompositeOperation = 'source-over';
+    } catch (_) {}
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.25)';
+    ctx.shadowBlur = 2.2;
+    ctx.shadowOffsetY = 1;
+    if (isSampleFallback) ctx.globalAlpha = 0.95;
+    ctx.drawImage(artC, dx, dy, dw, dh);
     ctx.restore();
   }
 
   function renderProjectedFinishedItemDataUrl(calc) {
-    const W = 920;
-    const H = 430;
+    const W = 960;
+    const H = 456;
     const c = document.createElement('canvas');
     c.width = W;
     c.height = H;
     const ctx = c.getContext('2d');
 
-    // Studio Obsidian Cyclorama Backdrop matching Concept #1
-    const bg = ctx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0, '#22202b');
-    bg.addColorStop(0.58, '#15141c');
-    bg.addColorStop(1, '#0d0c12');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-
-    // Studio Horizon Rim Line
-    const floorGrad = ctx.createLinearGradient(0, H - 72, 0, H);
-    floorGrad.addColorStop(0, 'rgba(255, 138, 38, 0.05)');
-    floorGrad.addColorStop(1, 'rgba(0, 0, 0, 0.45)');
-    ctx.fillStyle = floorGrad;
-    ctx.fillRect(0, H - 72, W, 72);
-
-    const frontCx = 242;
-    const backCx = 678;
-
-    // Warm Molten Studio Backlights Behind Front & Back Garments
-    [frontCx, backCx].forEach((cx) => {
-      const rad = ctx.createRadialGradient(cx, 192, 16, cx, 192, 195);
-      rad.addColorStop(0, 'rgba(255, 142, 44, 0.18)');
-      rad.addColorStop(0.6, 'rgba(255, 118, 24, 0.05)');
-      rad.addColorStop(1, 'rgba(255, 118, 24, 0)');
-      ctx.fillStyle = rad;
-      ctx.fillRect(0, 0, W, H);
+    // Dynamic Glossy Smoked-Crystal Studio Stage
+    drawLiquidGlassPanel(ctx, 2, 2, W - 4, H - 4, 22, {
+      topFill: '#2c2939',
+      midFill: '#15141e',
+      botFill: '#0a090f',
+      warmCore: 'rgba(255, 134, 32, 0.28)',
+      borderWidth: 1.6
     });
+
+    const frontCx = 248;
+    const backCx = 712;
+
+    // Twin Dynamic Volumetric Molten-Amber Studio Rim Spotlights Behind Each Shirt
+    [frontCx, backCx].forEach((cx) => {
+      const spot = ctx.createRadialGradient(cx, 196, 14, cx, 196, 218);
+      spot.addColorStop(0, 'rgba(255, 156, 56, 0.28)');
+      spot.addColorStop(0.48, 'rgba(255, 112, 20, 0.10)');
+      spot.addColorStop(1, 'rgba(255, 112, 20, 0)');
+      ctx.fillStyle = spot;
+      ctx.fillRect(8, 8, W - 16, H - 16);
+    });
+
+    // Glossy Smoked-Obsidian Studio Floor Reflection Horizon
+    const floorY = H - 76;
+    const floorGrad = ctx.createLinearGradient(0, floorY, 0, H - 4);
+    floorGrad.addColorStop(0, 'rgba(255, 152, 58, 0.12)');
+    floorGrad.addColorStop(0.18, 'rgba(255, 255, 255, 0.045)');
+    floorGrad.addColorStop(1, 'rgba(5, 4, 9, 0.86)');
+    ctx.fillStyle = floorGrad;
+    ctx.fillRect(6, floorY, W - 12, H - floorY - 6);
+
+    const horizonGlow = ctx.createLinearGradient(36, floorY, W - 36, floorY);
+    horizonGlow.addColorStop(0, 'rgba(255, 136, 36, 0)');
+    horizonGlow.addColorStop(0.26, 'rgba(255, 158, 66, 0.46)');
+    horizonGlow.addColorStop(0.5, 'rgba(255, 255, 255, 0.26)');
+    horizonGlow.addColorStop(0.74, 'rgba(255, 158, 66, 0.46)');
+    horizonGlow.addColorStop(1, 'rgba(255, 136, 36, 0)');
+    ctx.strokeStyle = horizonGlow;
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(32, floorY);
+    ctx.lineTo(W - 32, floorY);
+    ctx.stroke();
 
     const firstPhysicalRow = calc.itemizedLines.find((r) => !r.isPrintOnly);
     const activePlacements = calc.activePlacements || [];
     const anyCustomerArtUploaded = activePlacements.some((p) => Boolean(p.renderCanvas));
+    const fallbackLogo = blankMockupAssets.officialLogoTrimmed || blankMockupAssets.officialLogo;
 
     if (!firstPhysicalRow && calc.totalPrintOnlyItems > 0) {
-      ctx.fillStyle = '#ffb36b';
-      ctx.font = '700 14px Outfit, Segoe UI, sans-serif';
+      ctx.fillStyle = '#ffd099';
+      ctx.font = '800 14.5px Outfit, Segoe UI, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('Custom 300-DPI DTF Transfers Only ($0.00 Blank Garment)', W / 2, 28);
+      ctx.fillText('CUSTOM 300-DPI DTF TRANSFERS ONLY ($0.00 BLANK GARMENT)', W / 2, 32);
 
       const count = Math.max(1, activePlacements.length);
-      const cardW = Math.min(360, Math.floor((W - 80 - (count - 1) * 24) / count));
-      const cardH = 330;
+      const cardW = Math.min(370, Math.floor((W - 88 - (count - 1) * 24) / count));
+      const cardH = 348;
       const startX = Math.round((W - (count * cardW + (count - 1) * 24)) / 2);
 
       activePlacements.forEach((p, idx) => {
         const x = startX + idx * (cardW + 24);
-        const y = 46;
-        ctx.fillStyle = '#111018';
-        ctx.fillRect(x, y, cardW, cardH);
-        ctx.strokeStyle = 'rgba(255, 138, 38, 0.78)';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(x, y, cardW, cardH);
-
-        const src = p.renderCanvas || blankMockupAssets.officialLogo;
+        const y = 50;
+        drawLiquidGlassPanel(ctx, x, y, cardW, cardH, 16, { orangeBorder: true, moltenGlow: false });
+        const src = p.renderCanvas || fallbackLogo;
         if (src) {
-          drawContainSource(ctx, src, x + 26, y + 24, cardW - 52, cardH - 72);
+          drawContainSource(ctx, src, x + 28, y + 24, cardW - 56, cardH - 74);
         }
         ctx.fillStyle = '#ffffff';
         ctx.font = '700 13px Outfit, Segoe UI, sans-serif';
-        ctx.fillText(`${p.locationLabel} (${p.adultWidthIn}" × ${p.adultHeightIn}")`, x + cardW / 2, y + cardH - 16);
+        ctx.fillText(`${p.locationLabel} (${p.adultWidthIn}" × ${p.adultHeightIn}" Actual Size)`, x + cardW / 2, y + cardH - 18);
       });
 
-      try { calc.projectedPreviewJpeg = c.toDataURL('image/jpeg', 0.84); } catch (_) {}
+      try { calc.projectedPreviewJpeg = c.toDataURL('image/jpeg', 0.90); } catch (_) {}
       return c.toDataURL('image/png');
     }
 
@@ -1594,10 +1832,19 @@
     const cat = SS_CATALOG[primaryLine.parentStyleCode] || SS_CATALOG.TT11;
     const hex = primaryLine.colorHex || '#151619';
     const isLong = Boolean(cat.isLongSleeve);
+    const isYouthOnlyOrder = calc.totalAdultShirts === 0 && calc.totalYouthShirts > 0;
 
-    const shirtW = isLong ? 356 : 344;
-    const shirtH = isLong ? 344 : 338;
+    // Exact 840x840 Studio Blank Geometry Calibration:
+    // Shirt HPS top y0 = 29px, bottom hem y1 = 809px (780px height = 28.5" Adult / 22.0" Youth)
+    // Visible 3D chest width across front/back = 381px (TT11) / 370px (CE10L) = ~14.8" Adult / ~11.6" Youth
+    // Exact physical garment scale: 25.8 px/inch in 840px space for Adult, 32.6 px/inch in 840px space for Youth!
+    const shirtBox = 374;
     const shirtTop = 14;
+    const imgScale = shirtBox / 840.0;
+    const hpsTopY = shirtTop + 29 * imgScale;
+    const pxPerIn = (isYouthOnlyOrder ? 32.6 : 25.8) * imgScale;
+    const maxTorsoPrintW = (isLong ? 344 : 356) * imgScale;
+    const maxTorsoPrintH = 560 * imgScale;
 
     const whiteFrontImg = isLong ? blankMockupAssets.ce10lWhiteFront : blankMockupAssets.tt11WhiteFront;
     const blackFrontImg = isLong ? blankMockupAssets.ce10lBlackFront : blankMockupAssets.tt11BlackFront;
@@ -1605,11 +1852,11 @@
     const blackBackImg = isLong ? blankMockupAssets.ce10lBlackBack : blankMockupAssets.tt11BlackBack;
 
     if (whiteFrontImg && whiteBackImg) {
-      drawTintedPhotoCutout(ctx, whiteFrontImg, blackFrontImg, hex, frontCx - shirtW / 2, shirtTop, shirtW, shirtH);
-      drawTintedPhotoCutout(ctx, whiteBackImg, blackBackImg, hex, backCx - shirtW / 2, shirtTop, shirtW, shirtH);
+      drawTintedPhotoCutout(ctx, whiteFrontImg, blackFrontImg, hex, frontCx - shirtBox / 2, shirtTop, shirtBox, shirtBox);
+      drawTintedPhotoCutout(ctx, whiteBackImg, blackBackImg, hex, backCx - shirtBox / 2, shirtTop, shirtBox, shirtBox);
     } else {
-      drawProceduralShirtSilhouette(ctx, frontCx, shirtTop + 12, 1.18, 1.18, hex, isLong, false);
-      drawProceduralShirtSilhouette(ctx, backCx, shirtTop + 12, 1.18, 1.18, hex, isLong, true);
+      drawProceduralShirtSilhouette(ctx, frontCx, shirtTop + 12, 1.24, 1.24, hex, isLong, false);
+      drawProceduralShirtSilhouette(ctx, backCx, shirtTop + 12, 1.24, 1.24, hex, isLong, true);
     }
 
     const frontPlacements = [];
@@ -1627,62 +1874,774 @@
       }
     });
 
-    // Scale: ~20" adult chest width corresponds to ~178px torso width on 344px studio cutout (~8.9 px/in)
-    const pxPerIn = isLong ? 8.5 : 8.9;
+    const frontScaleTags = [];
     frontPlacements.forEach((fp) => {
+      const wIn = Math.max(0.5, Number(isYouthOnlyOrder ? fp.youthWidthIn : fp.adultWidthIn) || 4.0);
+      const hIn = Math.max(0.5, Number(isYouthOnlyOrder ? fp.youthHeightIn : fp.adultHeightIn) || 4.0);
+      frontScaleTags.push(`${wIn}"×${hIn}"`);
+
       const lbl = (fp.locationLabel || '').toLowerCase();
-      const isRightBreast = lbl.includes('right') && (lbl.includes('pocket') || lbl.includes('breast') || lbl.includes('chest'));
-      const isLeftBreast = lbl.includes('left') && (lbl.includes('pocket') || lbl.includes('breast') || lbl.includes('chest'));
-      const isSmallCrest = isRightBreast || isLeftBreast || lbl.includes('pocket') || lbl.includes('breast') || (fp.adultWidthIn <= 5.5 && fp.adultHeightIn <= 5.5);
+      const isWearerRight = lbl.includes('wearer right') || lbl.includes('viewer left');
+      const isPocketOrCrest = lbl.includes('pocket') || lbl.includes('breast') || lbl.includes('left chest') || lbl.includes('right chest') || (wIn <= 5.5 && hIn <= 5.5 && !lbl.includes('center'));
 
-      const boxW = Math.min(138, Math.max(28, fp.adultWidthIn * pxPerIn));
-      const boxH = Math.min(156, Math.max(28, fp.adultHeightIn * pxPerIn));
-      // Wearer's right breast is viewer's left (frontCx - 38); wearer's left breast is viewer's right (frontCx + 38)
-      const chestOffset = isLeftBreast ? 38 : -38;
-      const drawX = isSmallCrest ? (frontCx + chestOffset - boxW / 2) : (frontCx - boxW / 2);
-      const drawY = shirtTop + (isSmallCrest ? 92 : 96);
+      // True 1:1 physical proportion in pixels (clamped ONLY to physical torso seam boundaries)
+      const boxW = Math.min(maxTorsoPrintW, wIn * pxPerIn);
+      const boxH = Math.min(maxTorsoPrintH, hIn * pxPerIn);
 
-      if (fp.renderCanvas) {
-        drawHeatPressedGraphic(ctx, fp.renderCanvas, drawX, drawY, boxW, boxH, false);
-      } else if (blankMockupAssets.officialLogo) {
-        drawHeatPressedGraphic(ctx, blankMockupAssets.officialLogo, drawX, drawY, boxW, boxH, true);
+      // Standard pocket center is 2.95" off sternal centerline (viewer's right matches Concept #1), 5.95" below HPS collar top
+      const pocketOffsetIn = isYouthOnlyOrder ? 2.35 : 2.95;
+      const topDownIn = isPocketOrCrest ? (isYouthOnlyOrder ? 4.75 : 5.95) : (isYouthOnlyOrder ? 4.4 : 5.4);
+      const centerX = isPocketOrCrest
+        ? (frontCx + (isWearerRight ? -1 : 1) * pocketOffsetIn * pxPerIn)
+        : frontCx;
+      const drawX = centerX - boxW / 2;
+      const drawY = hpsTopY + topDownIn * pxPerIn;
+
+      const src = fp.renderCanvas || fallbackLogo;
+      if (src) {
+        drawHeatPressedGraphic(ctx, src, drawX, drawY, boxW, boxH, !fp.renderCanvas);
       }
     });
 
+    const backScaleTags = [];
     backPlacements.forEach((bp) => {
-      const boxW = Math.min(142, Math.max(34, bp.adultWidthIn * pxPerIn));
-      const boxH = Math.min(162, Math.max(34, bp.adultHeightIn * pxPerIn));
-      const drawX = backCx - boxW / 2;
-      const drawY = shirtTop + 82;
+      const wIn = Math.max(0.5, Number(isYouthOnlyOrder ? bp.youthWidthIn : bp.adultWidthIn) || 10.5);
+      const hIn = Math.max(0.5, Number(isYouthOnlyOrder ? bp.youthHeightIn : bp.adultHeightIn) || 11.5);
+      backScaleTags.push(`${wIn}"×${hIn}"`);
 
-      if (bp.renderCanvas) {
-        drawHeatPressedGraphic(ctx, bp.renderCanvas, drawX, drawY, boxW, boxH, false);
-      } else if (blankMockupAssets.officialLogo) {
-        drawHeatPressedGraphic(ctx, blankMockupAssets.officialLogo, drawX, drawY, boxW, boxH, true);
+      const boxW = Math.min(maxTorsoPrintW, wIn * pxPerIn);
+      const boxH = Math.min(maxTorsoPrintH, hIn * pxPerIn);
+      const topDownIn = isYouthOnlyOrder ? 4.15 : 5.20;
+      const drawX = backCx - boxW / 2;
+      const drawY = hpsTopY + topDownIn * pxPerIn;
+
+      const src = bp.renderCanvas || fallbackLogo;
+      if (src) {
+        drawHeatPressedGraphic(ctx, src, drawX, drawY, boxW, boxH, !bp.renderCanvas);
       }
     });
 
-    // Crisp Studio Labels ("FRONT VIEW" & "BACK VIEW" + Authentic S&S Dri-Fit Spec Line)
+    // Glossy Studio View Labels + True Physical Scale Callouts
     ctx.textAlign = 'center';
     ctx.fillStyle = '#ffffff';
-    ctx.font = '700 14.5px Outfit, Segoe UI, sans-serif';
-    ctx.fillText('Front View', frontCx, H - 34);
-    ctx.fillText('Back View', backCx, H - 34);
+    ctx.font = '700 15px Outfit, Segoe UI, sans-serif';
+    const fTag = frontScaleTags.length ? ` (${frontScaleTags.join(' + ')})` : '';
+    const bTag = backScaleTags.length ? ` (${backScaleTags.join(' + ')})` : '';
+    ctx.fillText(`Front${fTag}`, frontCx, H - 36);
+    ctx.fillText(`Back${bTag}`, backCx, H - 36);
 
     const sleeveType = isLong ? 'Long-Sleeve Dri-Fit' : 'Short-Sleeve Dri-Fit';
-    const artCaption = anyCustomerArtUploaded
-      ? 'Custom Project DTF Transfers Applied'
-      : 'Sample Crest Preview (Upload Project Art in Step 2)';
+    const scaleLabel = isYouthOnlyOrder ? 'True Youth Garment Scale' : 'True Adult Garment Scale';
+    const artNote = anyCustomerArtUploaded ? 'Project Artwork Applied' : 'Sample Crest Shown at Exact Size';
     ctx.fillStyle = '#ffd099';
     ctx.font = '600 12px Outfit, Segoe UI, sans-serif';
-    ctx.fillText(`${cat.brand} ${cat.styleCode} (#${cat.itemNumber}) ${sleeveType} • ${primaryLine.colorName} • ${artCaption}`, W / 2, H - 12);
+    ctx.fillText(`${cat.brand} ${cat.styleCode} (#${cat.itemNumber}) ${sleeveType} • ${primaryLine.colorName} • ${scaleLabel} (${artNote})`, W / 2, H - 14);
 
     try {
-      calc.projectedPreviewJpeg = c.toDataURL('image/jpeg', 0.84);
+      calc.projectedPreviewJpeg = c.toDataURL('image/jpeg', 0.90);
     } catch (_) {
       calc.projectedPreviewJpeg = '';
     }
     return c.toDataURL('image/png');
+  }
+
+  // =========================================================================
+  // FULL DYNAMIC GLOSSY LIQUID-GLASS QUOTE .JPG GENERATOR (1520px HI-DPI)
+  // =========================================================================
+  function wrapCanvasTextLines(ctx, text, maxWidth) {
+    const words = String(text || '').split(/\s+/).filter(Boolean);
+    if (words.length === 0) return [''];
+    const lines = [];
+    let cur = words[0];
+    for (let i = 1; i < words.length; i++) {
+      const test = cur + ' ' + words[i];
+      if (ctx.measureText(test).width <= maxWidth) {
+        cur = test;
+      } else {
+        lines.push(cur);
+        cur = words[i];
+      }
+    }
+    lines.push(cur);
+    return lines;
+  }
+
+  async function renderFullGlossyQuoteJpgBlob() {
+    const calc = state.lastCalculation;
+    if (!calc || calc.totalShirts === 0) return null;
+
+    const W = 1520;
+    const padX = 52;
+    const sheetW = W - padX * 2;
+    const innerPad = 32;
+    const contentW = sheetW - innerPad * 2;
+
+    const measureC = document.createElement('canvas');
+    const mctx = measureC.getContext('2d');
+    mctx.font = '400 17px Outfit, Segoe UI, sans-serif';
+
+    const descItems = calc.itemDescriptions || [];
+    const descHeights = descItems.map((d) => {
+      const lines = wrapCanvasTextLines(mctx, d.description || '', contentW - 56);
+      return 44 + lines.length * 22 + 12;
+    });
+    const descSectionH = descItems.length > 0
+      ? 54 + descHeights.reduce((a, b) => a + b, 0) + (descItems.length - 1) * 10 + 18
+      : 0;
+
+    const rows = calc.itemizedLines || [];
+    const tableRowH = 66;
+    const tableCardH = 108 + Math.max(1, rows.length) * tableRowH + 18;
+
+    const headerH = 134;
+    const capH = 54;
+    const clientH = 56;
+    const midH = 432;
+    const bottomH = 298;
+
+    const sheetH =
+      innerPad +
+      headerH + 18 +
+      capH + 14 +
+      clientH + 22 +
+      midH +
+      (descSectionH > 0 ? 20 + descSectionH : 0) +
+      20 + tableCardH +
+      20 + bottomH +
+      innerPad;
+
+    const H = sheetH + 96;
+    const cv = document.createElement('canvas');
+    cv.width = W;
+    cv.height = H;
+    const ctx = cv.getContext('2d');
+
+    // 1. Deep Obsidian Outer Atmosphere + Dynamic Molten Caustic Blooms & Bokeh Embers
+    ctx.fillStyle = '#040307';
+    ctx.fillRect(0, 0, W, H);
+
+    const blooms = [
+      { cx: W * 0.5, cy: 110, r: 720, col: 'rgba(255, 122, 22, 0.32)' },
+      { cx: W * 0.12, cy: H * 0.42, r: 560, col: 'rgba(255, 94, 0, 0.22)' },
+      { cx: W * 0.88, cy: H * 0.76, r: 590, col: 'rgba(255, 142, 38, 0.26)' },
+      { cx: W * 0.5, cy: H - 90, r: 620, col: 'rgba(255, 108, 14, 0.22)' }
+    ];
+    blooms.forEach((b) => {
+      const g = ctx.createRadialGradient(b.cx, b.cy, 18, b.cx, b.cy, b.r);
+      g.addColorStop(0, b.col);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    });
+
+    // Subtle glowing molten bokeh orbs around perimeter for dynamic energy
+    [
+      [78, 128, 22, 0.18], [1442, 168, 28, 0.16], [64, H * 0.54, 18, 0.20],
+      [1456, H * 0.62, 24, 0.17], [190, H - 42, 16, 0.22], [1320, H - 36, 20, 0.19]
+    ].forEach(([bx, by, br, ba]) => {
+      const eg = ctx.createRadialGradient(bx, by, 1, bx, by, br);
+      eg.addColorStop(0, `rgba(255, 196, 120, ${ba})`);
+      eg.addColorStop(0.5, `rgba(255, 112, 16, ${ba * 0.55})`);
+      eg.addColorStop(1, 'rgba(255, 112, 16, 0)');
+      ctx.fillStyle = eg;
+      ctx.beginPath();
+      ctx.arc(bx, by, br, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // 2. Main Molten Obsidian Carbon-Weave Executive Sheet
+    const sheetX = padX;
+    const sheetY = 48;
+    ctx.save();
+    ctx.shadowColor = 'rgba(255, 110, 12, 0.58)';
+    ctx.shadowBlur = 52;
+    drawRoundedRectPath(ctx, sheetX, sheetY, sheetW, sheetH, 34);
+    const sheetBg = ctx.createLinearGradient(sheetX, sheetY, sheetX, sheetY + sheetH);
+    sheetBg.addColorStop(0, '#191724');
+    sheetBg.addColorStop(0.5, '#0d0c14');
+    sheetBg.addColorStop(1, '#08070c');
+    ctx.fillStyle = sheetBg;
+    ctx.fill();
+    ctx.restore();
+
+    // Carbon Micro-Dot Texture + Subsurface Caustic Flares Inside Main Sheet (visible behind smoked glass panels!)
+    ctx.save();
+    drawRoundedRectPath(ctx, sheetX, sheetY, sheetW, sheetH, 34);
+    ctx.clip();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.025)';
+    for (let py = sheetY; py < sheetY + sheetH; py += 10) {
+      for (let px = sheetX + ((py / 10) % 2) * 5; px < sheetX + sheetW; px += 10) {
+        ctx.fillRect(px, py, 2, 2);
+      }
+    }
+
+    // Internal molten caustic light pools behind the smoked glass panels so they refract dynamically
+    [
+      { cx: sheetX + sheetW * 0.25, cy: sheetY + 260, r: 380, a: 0.14 },
+      { cx: sheetX + sheetW * 0.78, cy: sheetY + 520, r: 420, a: 0.16 },
+      { cx: sheetX + sheetW * 0.65, cy: sheetY + sheetH - 180, r: 400, a: 0.16 }
+    ].forEach((pl) => {
+      const pg = ctx.createRadialGradient(pl.cx, pl.cy, 10, pl.cx, pl.cy, pl.r);
+      pg.addColorStop(0, `rgba(255, 124, 24, ${pl.a})`);
+      pg.addColorStop(1, 'rgba(255, 124, 24, 0)');
+      ctx.fillStyle = pg;
+      ctx.fillRect(sheetX, sheetY, sheetW, sheetH);
+    });
+
+    // Full-sheet poured-crystal diagonal reflection
+    ctx.beginPath();
+    ctx.moveTo(sheetX, sheetY);
+    ctx.lineTo(sheetX + sheetW, sheetY);
+    ctx.lineTo(sheetX + sheetW, sheetY + 350);
+    ctx.bezierCurveTo(sheetX + sheetW * 0.62, sheetY + 230, sheetX + sheetW * 0.32, sheetY + 540, sheetX, sheetY + 420);
+    ctx.closePath();
+    const bigSweep = ctx.createLinearGradient(sheetX, sheetY, sheetX, sheetY + 540);
+    bigSweep.addColorStop(0, 'rgba(255, 255, 255, 0.11)');
+    bigSweep.addColorStop(0.5, 'rgba(255, 255, 255, 0.03)');
+    bigSweep.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = bigSweep;
+    ctx.fill();
+    ctx.restore();
+
+    // Glowing Molten Outer Frame Rim + Top Crystal Meniscus Highlight
+    ctx.save();
+    drawRoundedRectPath(ctx, sheetX, sheetY, sheetW, sheetH, 34);
+    const frameRim = ctx.createLinearGradient(sheetX, sheetY, sheetX + sheetW, sheetY + sheetH);
+    frameRim.addColorStop(0, '#ffd89e');
+    frameRim.addColorStop(0.28, '#ff8e24');
+    frameRim.addColorStop(0.70, '#ff5a00');
+    frameRim.addColorStop(1, '#ffba6a');
+    ctx.strokeStyle = frameRim;
+    ctx.lineWidth = 2.8;
+    ctx.stroke();
+    ctx.restore();
+
+    let curY = sheetY + innerPad;
+    const leftX = sheetX + innerPad;
+    const quoteId = state.activeQuoteId || getOrInitActiveQuoteId();
+    const issueDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const c = state.customer;
+    const clientHeadline = [c.fullName, c.companyOrTeam].filter(Boolean).join(' — ') || 'Valued Client';
+    const projectHeadline = c.projectName || 'Custom Performance Apparel & DTF Order';
+
+    // 3. TIER 1: Glossy Liquid-Glass Header Card
+    drawLiquidGlassPanel(ctx, leftX, curY, contentW, headerH, 24, {
+      topFill: 'rgba(82, 76, 98, 0.90)',
+      midFill: 'rgba(24, 22, 33, 0.95)',
+      botFill: 'rgba(30, 19, 19, 0.97)',
+      warmCore: 'rgba(255, 142, 38, 0.28)',
+      borderWidth: 1.7
+    });
+
+    // Official Logo inside Glowing Molten Crystal Ring
+    const logoRingCx = leftX + 74;
+    const logoRingCy = curY + headerH / 2;
+    ctx.save();
+    ctx.shadowColor = 'rgba(255, 128, 24, 0.72)';
+    ctx.shadowBlur = 20;
+    ctx.beginPath();
+    ctx.arc(logoRingCx, logoRingCy, 47, 0, Math.PI * 2);
+    ctx.fillStyle = '#0d0b12';
+    ctx.fill();
+    ctx.strokeStyle = '#ffa040';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.restore();
+
+    if (blankMockupAssets.officialLogo) {
+      drawContainSource(ctx, blankMockupAssets.officialLogo, logoRingCx - 39, logoRingCy - 39, 78, 78);
+    }
+
+    // Metallic Molten Gold-Orange RETROCANOPY Wordmark
+    ctx.save();
+    ctx.font = '900 44px Orbitron, Segoe UI, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    const wmGrad = ctx.createLinearGradient(0, curY + 38, 0, curY + 96);
+    wmGrad.addColorStop(0, '#ffe6a3');
+    wmGrad.addColorStop(0.50, '#ff9428');
+    wmGrad.addColorStop(1, '#ff5500');
+    ctx.shadowColor = 'rgba(255, 112, 12, 0.52)';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = wmGrad;
+    ctx.fillText('RETROCANOPY', leftX + 142, logoRingCy + 2);
+    ctx.restore();
+
+    const isPaidNow = Boolean(state.activeQuotePaidInfo && state.activeQuotePaidInfo.isPaid);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = isPaidNow ? '#6bffc3' : '#ffffff';
+    ctx.font = '800 32px Orbitron, Segoe UI, sans-serif';
+    ctx.fillText(isPaidNow ? 'PAID PROJECT RECEIPT' : 'OFFICIAL QUOTE', leftX + contentW - 28, curY + 53);
+
+    ctx.fillStyle = '#ffd29e';
+    ctx.font = '700 19px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(`TICKET #${quoteId}  •  Issued ${issueDate}`, leftX + contentW - 28, curY + 92);
+
+    curY += headerH + 18;
+
+    // 4. TIER 2: Poured-Resin Capabilities Stadium Capsule
+    drawLiquidGlassPanel(ctx, leftX, curY, contentW, capH, 27, {
+      topFill: 'rgba(78, 42, 18, 0.90)',
+      midFill: 'rgba(24, 18, 22, 0.95)',
+      botFill: 'rgba(46, 23, 10, 0.96)',
+      orangeBorder: true,
+      moltenGlow: true,
+      borderWidth: 2.1
+    });
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '600 20px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(STUDIO_CAPABILITIES.join('   •   '), leftX + contentW / 2, curY + 34);
+
+    curY += capH + 14;
+
+    // 5. TIER 3: Client & Project Capsule Bar
+    drawLiquidGlassPanel(ctx, leftX, curY, contentW, clientH, 18, {
+      topFill: 'rgba(52, 38, 30, 0.88)',
+      midFill: 'rgba(18, 17, 24, 0.95)',
+      botFill: 'rgba(26, 18, 15, 0.97)',
+      orangeBorder: true,
+      borderWidth: 1.7
+    });
+    ctx.fillStyle = '#fff5ea';
+    ctx.font = '600 19px Outfit, Segoe UI, sans-serif';
+    const clientBarStr = `PREPARED FOR: ${clientHeadline}   |   PROJECT: ${projectHeadline}`;
+    ctx.fillText(clientBarStr.slice(0, 118), leftX + contentW / 2, curY + 35);
+
+    curY += clientH + 22;
+
+    // 6. TIER 4: 50/50 Projected Finished Item + 2x2 Glossy KPI Breakdown
+    const halfGap = 20;
+    const leftCardW = Math.floor((contentW - halfGap) * 0.52);
+    const rightCardW = contentW - halfGap - leftCardW;
+
+    drawLiquidGlassPanel(ctx, leftX, curY, leftCardW, midH, 24, {
+      topFill: 'rgba(58, 54, 72, 0.88)',
+      midFill: 'rgba(19, 18, 26, 0.94)',
+      botFill: 'rgba(12, 11, 17, 0.98)'
+    });
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 19px Outfit, Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('PROJECTED FINISHED ITEM (TRUE SCALE)', leftX + leftCardW / 2, curY + 34);
+
+    const mockupDataUrl = calc.projectedMockupUrl || renderProjectedFinishedItemDataUrl(calc);
+    await new Promise((resolve) => {
+      const mImg = new Image();
+      mImg.onload = () => {
+        drawContainSource(ctx, mImg, leftX + 18, curY + 48, leftCardW - 36, midH - 64);
+        resolve();
+      };
+      mImg.onerror = () => resolve();
+      mImg.src = mockupDataUrl;
+    });
+
+    const rightX = leftX + leftCardW + halfGap;
+    drawLiquidGlassPanel(ctx, rightX, curY, rightCardW, midH, 24, {
+      topFill: 'rgba(58, 54, 72, 0.88)',
+      midFill: 'rgba(19, 18, 26, 0.94)',
+      botFill: 'rgba(12, 11, 17, 0.98)'
+    });
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 19px Outfit, Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('OVERALL BREAKDOWN PER ITEM', rightX + rightCardW / 2, curY + 34);
+
+    const kpis = [
+      { val: String(calc.totalShirts), lbl: 'Total Items' },
+      { val: money(calc.avgItemPreDiscount), lbl: 'Base/Item' },
+      { val: `${calc.discountPct}%`, lbl: calc.discountPct > 0 ? (calc.discountLabel || 'Discount') : 'Discount' },
+      { val: money(calc.avgItemAllInFinal), lbl: 'Final/Item' }
+    ];
+    const tileGap = 16;
+    const tileW = Math.floor((rightCardW - 44 - tileGap) / 2);
+    const tileH = 122;
+    kpis.forEach((k, idx) => {
+      const col = idx % 2;
+      const row = Math.floor(idx / 2);
+      const tx = rightX + 22 + col * (tileW + tileGap);
+      const ty = curY + 54 + row * (tileH + tileGap);
+      drawLiquidGlassPanel(ctx, tx, ty, tileW, tileH, 18, {
+        topFill: 'rgba(84, 46, 22, 0.92)',
+        midFill: 'rgba(34, 21, 14, 0.95)',
+        botFill: 'rgba(20, 13, 11, 0.98)',
+        orangeBorder: true,
+        moltenGlow: true,
+        borderWidth: 2.0
+      });
+      ctx.fillStyle = '#ffaa4c';
+      ctx.font = '800 40px Outfit, Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(k.val, tx + tileW / 2, ty + 62);
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '500 17px Outfit, Segoe UI, sans-serif';
+      ctx.fillText(String(k.lbl).slice(0, 22), tx + tileW / 2, ty + 96);
+    });
+
+    const grpYStart = curY + 54 + tileH * 2 + tileGap + 18;
+    (calc.itemOverallGroups || []).slice(0, 2).forEach((g, gIdx) => {
+      const gy = grpYStart + gIdx * 34;
+      if (gy + 26 < curY + midH - 8) {
+        const avgUsed = calc.discountPct > 0 ? g.avgPerItemAfterDiscount : g.avgPerItemPreDiscount;
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#f1f5f9';
+        ctx.font = '600 15.5px Outfit, Segoe UI, sans-serif';
+        ctx.fillText(`${g.brand} ${g.styleBadge} (${g.colorName})`, rightX + 26, gy + 18);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#ffb36b';
+        ctx.font = '700 15.5px Outfit, Segoe UI, sans-serif';
+        ctx.fillText(`${g.totalQty} pcs • ${money(avgUsed)}/ea`, rightX + rightCardW - 26, gy + 18);
+      }
+    });
+
+    curY += midH;
+
+    // 7. TIER 4.5: Item Description & Garment Specifications Glass Panel
+    if (descSectionH > 0) {
+      curY += 20;
+      drawLiquidGlassPanel(ctx, leftX, curY, contentW, descSectionH, 22, {
+        topFill: 'rgba(56, 52, 68, 0.88)',
+        midFill: 'rgba(19, 18, 26, 0.95)',
+        botFill: 'rgba(12, 11, 17, 0.98)'
+      });
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 18px Outfit, Segoe UI, sans-serif';
+      ctx.fillText('ITEM DESCRIPTION & GARMENT SPECIFICATIONS', leftX + contentW / 2, curY + 34);
+
+      let dy = curY + 50;
+      descItems.forEach((d, idx) => {
+        const boxH = descHeights[idx];
+        drawRoundedRectPath(ctx, leftX + 20, dy, contentW - 40, boxH, 13);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 152, 56, 0.40)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#ffd099';
+        ctx.font = '800 17.5px Outfit, Segoe UI, sans-serif';
+        ctx.fillText(`${d.brand} ${d.styleCode} (Item #${d.itemNumber}) — ${d.colorName}`, leftX + 36, dy + 27);
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#9ef3ff';
+        ctx.font = '700 15.5px Outfit, Segoe UI, sans-serif';
+        ctx.fillText(`Prints: ${String(d.printSpecs || 'Blank').slice(0, 48)}`, leftX + contentW - 36, dy + 27);
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '400 16.5px Outfit, Segoe UI, sans-serif';
+        const wrapped = wrapCanvasTextLines(ctx, d.description || '', contentW - 72);
+        wrapped.forEach((ln, lIdx) => {
+          ctx.fillText(ln, leftX + 36, dy + 52 + lIdx * 22);
+        });
+        dy += boxH + 10;
+      });
+
+      curY += descSectionH;
+    }
+
+    // 8. TIER 5: Line-by-Line Itemized Table Glass Card
+    curY += 20;
+    drawLiquidGlassPanel(ctx, leftX, curY, contentW, tableCardH, 24, {
+      topFill: 'rgba(56, 52, 68, 0.88)',
+      midFill: 'rgba(18, 17, 25, 0.95)',
+      botFill: 'rgba(12, 11, 17, 0.98)'
+    });
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 19px Outfit, Segoe UI, sans-serif';
+    ctx.fillText('ITEMIZED QUOTE BREAKDOWN (LINE BY LINE)', leftX + contentW / 2, curY + 36);
+
+    const colX = {
+      line: leftX + 46,
+      garment: leftX + 98,
+      specs: leftX + 545,
+      size: leftX + 925,
+      qty: leftX + 1060,
+      unit: leftX + 1215,
+      total: leftX + contentW - 28
+    };
+
+    const thY = curY + 76;
+    ctx.font = '700 16.5px Outfit, Segoe UI, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.fillText('Line', colX.line, thY);
+    ctx.textAlign = 'left';
+    ctx.fillText('Garment & Color', colX.garment, thY);
+    ctx.fillText('Print Specs', colX.specs, thY);
+    ctx.textAlign = 'center';
+    ctx.fillText('Size', colX.size, thY);
+    ctx.fillText('Qty', colX.qty, thY);
+    ctx.textAlign = 'right';
+    ctx.fillText('Unit Price', colX.unit, thY);
+    ctx.fillText('Line Total', colX.total, thY);
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(255, 128, 24, 0.88)';
+    ctx.shadowBlur = 12;
+    ctx.strokeStyle = '#ff8e28';
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(leftX + 16, curY + 92);
+    ctx.lineTo(leftX + contentW - 16, curY + 92);
+    ctx.stroke();
+    ctx.restore();
+
+    const getTierKey = (r) => r.isPrintOnly ? 'print' : (r.isYouth ? 'youth' : 'adult');
+    rows.forEach((row, idx) => {
+      const ry = curY + 96 + idx * tableRowH;
+      const prev = idx > 0 ? rows[idx - 1] : null;
+      const needsOrange = prev && (getTierKey(prev) !== getTierKey(row) || prev.lineId !== row.lineId);
+
+      if (needsOrange) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 128, 24, 0.78)';
+        ctx.shadowBlur = 10;
+        ctx.strokeStyle = '#ff8e28';
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        ctx.moveTo(leftX + 16, ry);
+        ctx.lineTo(leftX + contentW - 16, ry);
+        ctx.stroke();
+        ctx.restore();
+      } else if (idx > 0) {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.09)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(leftX + 18, ry);
+        ctx.lineTo(leftX + contentW - 18, ry);
+        ctx.stroke();
+      }
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '600 17px Outfit, Segoe UI, sans-serif';
+      ctx.fillText(String(row.lineNumber), colX.line, ry + 32);
+
+      ctx.beginPath();
+      ctx.arc(colX.garment + 8, ry + 22, 7, 0, Math.PI * 2);
+      ctx.fillStyle = row.colorHex || '#151619';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.68)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      const gLabel = row.isPrintOnly
+        ? 'Custom DTF Transfer Only'
+        : `${row.brand} ${row.styleCode} (#${row.itemNumber}) — ${row.colorName}`;
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 17px Outfit, Segoe UI, sans-serif';
+      ctx.fillText(gLabel.slice(0, 44), colX.garment + 24, ry + 27);
+
+      ctx.fillStyle = 'rgba(255, 214, 176, 0.80)';
+      ctx.font = '400 13.5px Outfit, Segoe UI, sans-serif';
+      ctx.fillText(String(row.garmentTitle || '').slice(0, 56), colX.garment + 24, ry + 48);
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '500 15.5px Outfit, Segoe UI, sans-serif';
+      ctx.fillText(String(row.printSpecSummary || 'Blank Garment').slice(0, 40), colX.specs, ry + 34);
+
+      const szDisp = row.isPrintOnly
+        ? 'PRINT ONLY'
+        : (row.isYouth ? row.sizeName.replace(/^Y/, 'Youth ') : (row.sizeName === 'S' ? 'Adult S' : row.sizeName));
+      ctx.textAlign = 'center';
+      ctx.fillStyle = row.isPrintOnly ? '#ff9d3b' : '#ffffff';
+      ctx.font = '700 17px Outfit, Segoe UI, sans-serif';
+      ctx.fillText(szDisp, colX.size, ry + 34);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(String(row.qty), colX.qty, ry + 34);
+
+      ctx.textAlign = 'right';
+      ctx.font = '600 17px Outfit, Segoe UI, sans-serif';
+      ctx.fillText(money(row.unitPriceQuoted), colX.unit, ry + 34);
+
+      ctx.font = '800 18px Outfit, Segoe UI, sans-serif';
+      ctx.fillStyle = '#ffd8a8';
+      ctx.fillText(money(row.lineTotalQuoted), colX.total, ry + 34);
+    });
+
+    curY += tableCardH + 20;
+
+    // 9. TIER 6: Bottom Available S&S 3D Glossy Color Orbs + Live Stripe QR & Grand Total Capsule
+    const botLeftW = Math.floor((contentW - halfGap) * 0.46);
+    const botRightW = contentW - halfGap - botLeftW;
+
+    drawLiquidGlassPanel(ctx, leftX, curY, botLeftW, bottomH, 24, {
+      topFill: 'rgba(58, 54, 72, 0.88)',
+      midFill: 'rgba(19, 18, 26, 0.94)',
+      botFill: 'rgba(12, 11, 17, 0.98)'
+    });
+    const primaryStyleCode = state.garmentLines[0]?.styleCode || 'TT11';
+    const ssColors = getColorsForStyle(primaryStyleCode);
+    const activeColorSet = new Set(state.garmentLines.map((l) => l.colorName));
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 18px Outfit, Segoe UI, sans-serif';
+    ctx.fillText('AVAILABLE S&S COLORS', leftX + botLeftW / 2, curY + 34);
+    ctx.fillStyle = '#ffd099';
+    ctx.font = '500 14px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(`${(SS_CATALOG[primaryStyleCode] || SS_CATALOG.TT11).brand} ${primaryStyleCode} • ${ssColors.length} Official Colors`, leftX + botLeftW / 2, curY + 56);
+
+    const orbCols = 10;
+    const orbR = 16;
+    const orbSpacingX = 48;
+    const orbSpacingY = 50;
+    const gridStartX = leftX + (botLeftW - (orbCols - 1) * orbSpacingX) / 2;
+    const gridStartY = curY + 94;
+
+    ssColors.slice(0, 30).forEach((col, i) => {
+      const ocx = gridStartX + (i % orbCols) * orbSpacingX;
+      const ocy = gridStartY + Math.floor(i / orbCols) * orbSpacingY;
+      const isSel = activeColorSet.has(col.name);
+
+      ctx.save();
+      if (isSel) {
+        ctx.shadowColor = 'rgba(255, 142, 36, 0.95)';
+        ctx.shadowBlur = 15;
+      }
+      ctx.beginPath();
+      ctx.arc(ocx, ocy, orbR, 0, Math.PI * 2);
+      const og = ctx.createRadialGradient(ocx - 5, ocy - 6, 2, ocx, ocy, orbR);
+      og.addColorStop(0, '#ffffff');
+      og.addColorStop(0.28, col.hex);
+      og.addColorStop(0.82, col.hex);
+      og.addColorStop(1, '#07060b');
+      ctx.fillStyle = og;
+      ctx.fill();
+      ctx.lineWidth = isSel ? 2.8 : 1.2;
+      ctx.strokeStyle = isSel ? '#ffa03c' : 'rgba(255,255,255,0.45)';
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    const botRightX = leftX + botLeftW + halfGap;
+    drawLiquidGlassPanel(ctx, botRightX, curY, botRightW, bottomH, 24, {
+      topFill: 'rgba(58, 54, 72, 0.88)',
+      midFill: 'rgba(19, 18, 26, 0.94)',
+      botFill: 'rgba(12, 11, 17, 0.98)'
+    });
+
+    const qrBoxX = botRightX + 24;
+    const qrBoxY = curY + 28;
+    const qrBoxW = 204;
+    const qrBoxH = bottomH - 56;
+    drawLiquidGlassPanel(ctx, qrBoxX, qrBoxY, qrBoxW, qrBoxH, 18, {
+      topFill: 'rgba(56, 34, 20, 0.94)',
+      midFill: 'rgba(18, 14, 18, 0.97)',
+      botFill: 'rgba(12, 10, 14, 0.98)',
+      orangeBorder: true,
+      borderWidth: 1.9
+    });
+
+    const stripePayUrl = calc.stripePayUrl || getQuoteStripePortalUrl(calc);
+    const qrUrl = calc.stripeQrDataUrl || renderStripeQrDataUrl(stripePayUrl, 300);
+    await new Promise((resolve) => {
+      const qImg = new Image();
+      qImg.onload = () => {
+        ctx.fillStyle = '#ffffff';
+        drawRoundedRectPath(ctx, qrBoxX + 22, qrBoxY + 16, 160, 160, 10);
+        ctx.fill();
+        ctx.drawImage(qImg, qrBoxX + 26, qrBoxY + 20, 152, 152);
+        resolve();
+      };
+      qImg.onerror = () => resolve();
+      qImg.src = qrUrl;
+    });
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffb36b';
+    ctx.font = '800 13px Orbitron, Segoe UI, sans-serif';
+    ctx.fillText('SCAN TO PAY', qrBoxX + qrBoxW / 2, qrBoxY + 198);
+    ctx.fillStyle = '#22f59b';
+    ctx.font = '700 13px Outfit, Segoe UI, sans-serif';
+    ctx.fillText('Live Stripe Checkout', qrBoxX + qrBoxW / 2, qrBoxY + 219);
+
+    const totX = qrBoxX + qrBoxW + 26;
+    const totW = botRightW - (qrBoxW + 74);
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f1f5f9';
+    ctx.font = '600 21px Outfit, Segoe UI, sans-serif';
+    ctx.fillText('Subtotal:', totX + 12, curY + 62);
+    ctx.textAlign = 'right';
+    ctx.font = '800 22px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(money(calc.subtotalBeforeDiscount), totX + totW - 12, curY + 62);
+
+    drawLiquidGlassPanel(ctx, totX, curY + 82, totW, 50, 25, {
+      topFill: 'rgba(80, 42, 18, 0.90)',
+      midFill: 'rgba(32, 18, 12, 0.96)',
+      botFill: 'rgba(22, 13, 10, 0.98)',
+      orangeBorder: true,
+      borderWidth: 1.9
+    });
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '600 18.5px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(`${calc.discountPct}% OFF ${(calc.discountLabel || 'Discount').slice(0, 18)}:`, totX + 18, curY + 113);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ffa440';
+    ctx.font = '800 20px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(calc.discountAmountUsd > 0 ? `-${money(calc.discountAmountUsd)}` : '$0.00', totX + totW - 18, curY + 113);
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f1f5f9';
+    ctx.font = '600 20px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(calc.includeTax ? `Tax Included (${calc.taxRatePct.toFixed(2)}%):` : 'Tax Excluded:', totX + 12, curY + 168);
+    ctx.textAlign = 'right';
+    ctx.font = '700 20px Outfit, Segoe UI, sans-serif';
+    ctx.fillText(money(calc.taxAmountUsd), totX + totW - 12, curY + 168);
+
+    drawLiquidGlassPanel(ctx, totX, curY + 190, totW, 68, 34, {
+      topFill: 'rgba(124, 58, 16, 0.94)',
+      midFill: 'rgba(48, 22, 8, 0.98)',
+      botFill: 'rgba(84, 36, 10, 0.96)',
+      orangeBorder: true,
+      moltenGlow: true,
+      borderWidth: 2.5
+    });
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 22px Orbitron, Segoe UI, sans-serif';
+    ctx.fillText('GRAND TOTAL:', totX + 22, curY + 232);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ffb454';
+    ctx.font = '900 29px Orbitron, Segoe UI, sans-serif';
+    ctx.fillText(money(calc.customerQuoteTotal), totX + totW - 22, curY + 233);
+
+    return new Promise((resolve) => {
+      cv.toBlob((blob) => resolve(blob), 'image/jpeg', 0.95);
+    });
+  }
+
+  async function downloadGlossyQuoteJpg() {
+    const calc = state.lastCalculation;
+    if (!calc || calc.totalShirts === 0) {
+      alert('Enter item quantities in Step 1 before downloading the Glossy Liquid-Glass Quote .JPG.');
+      return;
+    }
+    const btn = document.getElementById('bqDownloadQuoteJpgBtn');
+    const prev = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '&#9203; Rendering Glossy .JPG...';
+    }
+    syncQuoteToStripeCloudNow(calc);
+    const blob = await renderFullGlossyQuoteJpgBlob();
+    const tid = state.activeQuoteId || getOrInitActiveQuoteId();
+    const cleanProj = (state.customer.projectName || state.customer.companyOrTeam || 'Quote').replace(/[^a-zA-Z0-9_-]/g, '_');
+    if (blob) {
+      triggerBlobDownload(blob, `RetroCanopy_${tid}_${cleanProj}_LiquidGlass.jpg`);
+    }
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '&#10003; Downloaded .JPG!';
+      setTimeout(() => { btn.innerHTML = prev; }, 2200);
+    }
   }
 
   // =========================================================================
@@ -3312,13 +4271,10 @@
         if (p.thumbDataUrl) {
           const im = new Image();
           im.onload = () => {
-            const cv = document.createElement('canvas');
-            cv.width = im.naturalWidth || im.width || 1;
-            cv.height = im.naturalHeight || im.height || 1;
-            cv.getContext('2d').drawImage(im, 0, 0);
-            p.origCanvas = cv;
-            p.trimmedCanvas = cv;
-            p.renderCanvas = cv;
+            const trimmedCv = trimImageTransparentBoundsToCanvas(im, 24);
+            p.origCanvas = trimmedCv;
+            p.trimmedCanvas = trimmedCv;
+            p.renderCanvas = trimmedCv;
             renderDtfPlacementsList();
             recalculateEverything();
           };
@@ -3399,6 +4355,7 @@
   window.RetroBulkQuoteStudio = {
     openTicketInStudio,
     refreshSavedQuotesVault: fetchAndRenderSavedQuotesVault,
+    downloadGlossyQuoteJpg,
     getActiveTicketId: () => state.activeQuoteId
   };
 
@@ -4195,6 +5152,21 @@
         window.open(getQuoteStripePortalUrl(calc), '_blank', 'noopener');
       });
     }
+
+    const dlJpgBtn = document.getElementById('bqDownloadQuoteJpgBtn');
+    if (dlJpgBtn) dlJpgBtn.addEventListener('click', downloadGlossyQuoteJpg);
+
+    // Delegated 60fps pointer-tracking wet-glass reflection for on-screen Concept #1 Quote Sheet
+    document.addEventListener('pointermove', (ev) => {
+      const sheetEl = document.querySelector('#bqFinancialSummaryBox .c1-quote-sheet');
+      if (!sheetEl) return;
+      const r = sheetEl.getBoundingClientRect();
+      if (ev.clientY < r.top - 120 || ev.clientY > r.bottom + 120) return;
+      const mx = ((ev.clientX - r.left) / Math.max(1, r.width)) * 100;
+      const my = ((ev.clientY - r.top) / Math.max(1, r.height)) * 100;
+      sheetEl.style.setProperty('--mx', `${mx.toFixed(1)}%`);
+      sheetEl.style.setProperty('--my', `${my.toFixed(1)}%`);
+    }, { passive: true });
 
     const printQBtn = document.getElementById('bqPrintQuoteBtn');
     if (printQBtn) printQBtn.addEventListener('click', printCustomerQuoteSheet);
