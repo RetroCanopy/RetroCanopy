@@ -383,10 +383,7 @@
   function getQuoteStripePortalUrl(calc) {
     const tid = state.activeQuoteId || getOrInitActiveQuoteId();
     const amt = calc && calc.customerQuoteTotal > 0 ? calc.customerQuoteTotal.toFixed(2) : '0.00';
-    const base = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? window.location.origin
-      : 'https://www.retrocanopy.com';
-    return `${base}/pay_quote.html?ticket=${encodeURIComponent(tid)}&amt=${amt}`;
+    return `${STRIPE_EDGE_URL}?q=${encodeURIComponent(tid)}&amt=${amt}`;
   }
 
   function buildCompactPlacementThumbDataUrl(p) {
@@ -4087,7 +4084,7 @@
     grid.innerHTML = filtered.map((q) => {
       const tid = q.ticketId || q.quoteId;
       const clientDossierUrl = getClientQuoteDossierUrl(tid);
-      const stripePortalUrl = `${window.location.origin}/pay_quote.html?ticket=${encodeURIComponent(tid)}&amt=${(Number(q.customerQuoteTotal) || 0).toFixed(2)}`;
+      const stripePortalUrl = `${STRIPE_EDGE_URL}?q=${encodeURIComponent(tid)}&amt=${(Number(q.customerQuoteTotal) || 0).toFixed(2)}`;
       const statusBadge = q.isPaid
         ? `<span style="padding:4px 10px;border-radius:999px;background:rgba(34,245,155,0.2);border:1px solid #22f59b;color:#6bffc3;font-family:'Orbitron',sans-serif;font-size:0.66rem;font-weight:900;">&#10003; PAID &amp; CONFIRMED</span>`
         : `<span style="padding:4px 10px;border-radius:999px;background:rgba(255,148,54,0.18);border:1px solid rgba(255,148,54,0.68);color:#ffd099;font-family:'Orbitron',sans-serif;font-size:0.66rem;font-weight:800;">&#9203; SENT / AWAITING PAYMENT</span>`;
@@ -4823,6 +4820,15 @@
   // INITIALIZATION & EVENT LISTENERS
   // =========================================================================
   function initBulkQuoteTool() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((r) => {
+          if (r && ((r.active && String(r.active.scriptURL).includes('botpit_sw')) || String(r.scope).endsWith('/'))) {
+            r.unregister().catch(() => {});
+          }
+        });
+      }).catch(() => {});
+    }
     const root = document.getElementById('bulkQuoteStudioSection');
     if (!root) return;
 

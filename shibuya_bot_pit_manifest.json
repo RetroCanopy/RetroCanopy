@@ -22,8 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "handle_links": "not-preferred",
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  }
+  "handle_links": "none"
 }

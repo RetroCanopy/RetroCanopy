@@ -707,6 +707,11 @@
 
   <script>
     (function () {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then((regs) => {
+          regs.forEach((r) => { r.unregister().catch(() => {}); });
+        }).catch(() => {});
+      }
       const EDGE_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout';
       const params = new URLSearchParams(window.location.search);
       const ticketId = (params.get('ticket') || params.get('q') || params.get('order_id') || '').trim();
@@ -1176,7 +1181,7 @@
           qLiquidGlass(ctx, botRightX, curY, botRightW, bottomH, 24, {});
           const qrBoxX = botRightX + 24, qrBoxY = curY + 28, qrBoxW = 204, qrBoxH = bottomH - 56;
           qLiquidGlass(ctx, qrBoxX, qrBoxY, qrBoxW, qrBoxH, 18, { topFill: 'rgba(56,34,20,0.94)', orangeBorder: true });
-          const payPortalUrl = `https://www.retrocanopy.com/pay_quote.html?q=${encodeURIComponent(resolvedTicket)}&amt=${grandTotal.toFixed(2)}`;
+          const payPortalUrl = `https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout?q=${encodeURIComponent(resolvedTicket)}&amt=${grandTotal.toFixed(2)}`;
           const qrDataUrl = encodeQrMatrix(payPortalUrl);
           await new Promise((res) => {
             const qi = new Image();
@@ -1445,7 +1450,7 @@
           ></span>
         `).join('');
 
-        const payPortalUrl = `https://www.retrocanopy.com/pay_quote.html?q=${encodeURIComponent(resolvedTicket)}&amt=${grandTotal.toFixed(2)}`;
+        const payPortalUrl = `https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout?q=${encodeURIComponent(resolvedTicket)}&amt=${grandTotal.toFixed(2)}`;
         const qrDataUrl = encodeQrMatrix(payPortalUrl);
 
         dynamicEl.style.padding = '0';
