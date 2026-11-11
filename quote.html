@@ -1241,6 +1241,50 @@
 
       dockJpgBtn?.addEventListener('click', downloadClientGlossyQuoteJpg);
 
+      // Same owner alert as RetroCanopy Shop orders: Email + Verizon Text/MMS (formsubmit), de-duped per ticket
+      function sendPaidQuoteOwnerAlert(v) {
+        try {
+          if (!v || !v.paid) return;
+          const tid = String(v.ticketId || v.orderId || '').trim();
+          if (!tid) return;
+          const dedupeKey = 'rc_quote_alert_sent_' + tid;
+          if (localStorage.getItem(dedupeKey)) return;
+          localStorage.setItem(dedupeKey, '1');
+
+          const ownerEmail = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
+          const meta = v.quoteMeta || {};
+          const totalFormatted = Number(v.amountTotalUsd || meta.grandTotalUsd || 0).toFixed(2);
+          const items = Array.isArray(v.items) ? v.items : [];
+          const itemsSummary = items.length
+            ? items.map((x) => `${x.qty || 1}x ${x.sku || ''} ${x.colorName || ''} (Size: ${x.size || 'STD'})`).join(', ')
+            : (v.itemsSummary || `Official Bulk Quote ${tid}`);
+          const studioUrl = `https://www.retrocanopy.com/admin.html?tab=bulkquote&ticket=${encodeURIComponent(tid)}`;
+          const quoteUrl = `https://www.retrocanopy.com/quote.html?ticket=${encodeURIComponent(tid)}`;
+
+          fetch(`https://formsubmit.co/ajax/${encodeURIComponent(ownerEmail)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+              _subject: `✅ RetroCanopy Bulk Quote PAID ${tid} ($${totalFormatted} PAID) — ${meta.projectName || 'Custom Apparel Order'}`,
+              _cc: '6562427202@vtext.com,6562427202@vzwpix.com',
+              _template: 'table',
+              '1_Ticket_And_Amount_Paid': `Ticket #${tid} — PAID $${totalFormatted} USD via Live Stripe (${v.sessionId || 'Verified'})`,
+              '2_Customer_Full_Info': [
+                `Name: ${v.customerName || 'N/A'}`,
+                `Email: ${v.customerEmail || 'N/A'}`,
+                `Phone: ${v.customerPhone || 'N/A'}`,
+                `Shipping Address: ${v.shippingAddress || 'N/A'}`
+              ].join(' | '),
+              '3_Project': meta.projectName || 'Custom Apparel & DTF Order',
+              '4_Items_Sizes_And_Qty': itemsSummary,
+              '5_Total_Items': String(meta.totalShirts || items.reduce((s, x) => s + (Number(x.qty) || 0), 0)),
+              '6_Open_Project_In_Owners_Hub': studioUrl,
+              '7_Client_Quote_Receipt': quoteUrl
+            })
+          }).catch(() => {});
+        } catch (_) {}
+      }
+
       copyLinkBtn?.addEventListener('click', () => {
         const cleanUrl = `${window.location.origin}${window.location.pathname}?ticket=${encodeURIComponent(ticketId)}`;
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1626,7 +1670,7 @@
         // If returning from Stripe Checkout success, verify payment first so cloud DB + Owner's Hub update immediately!
         if (isSuccess && sessionId) {
           try {
-            await fetch(EDGE_URL, {
+            const vRes = await fetch(EDGE_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -1636,6 +1680,8 @@
                 quoteId: ticketId
               })
             });
+            const vData = await vRes.json();
+            if (vRes.ok && vData && vData.paid) sendPaidQuoteOwnerAlert(vData);
           } catch (_) {}
         }
 
