@@ -1860,9 +1860,9 @@
     const backPlacements = [];
     activePlacements.forEach((p, idx) => {
       const lbl = (p.locationLabel || '').toLowerCase();
-      if (lbl.includes('back')) {
+      if (lbl.includes('back') || lbl.includes('yoke') || lbl.includes('shoulder')) {
         backPlacements.push(p);
-      } else if (lbl.includes('front') || lbl.includes('pocket') || lbl.includes('breast') || lbl.includes('chest')) {
+      } else if (lbl.includes('front') || lbl.includes('pocket') || lbl.includes('breast') || lbl.includes('chest') || lbl.includes('across')) {
         frontPlacements.push(p);
       } else if (idx === 0) {
         frontPlacements.push(p);
@@ -1878,16 +1878,25 @@
       frontScaleTags.push(`${wIn}"×${hIn}"`);
 
       const lbl = (fp.locationLabel || '').toLowerCase();
+      const isAcrossChest = lbl.includes('across') || lbl.includes('center chest') || lbl.includes('chest banner');
       const isWearerRight = lbl.includes('wearer right') || lbl.includes('viewer left');
-      const isPocketOrCrest = lbl.includes('pocket') || lbl.includes('breast') || lbl.includes('left chest') || lbl.includes('right chest') || (wIn <= 5.5 && hIn <= 5.5 && !lbl.includes('center'));
+      const isPocketOrCrest = !isAcrossChest && (
+        lbl.includes('pocket') ||
+        lbl.includes('breast') ||
+        lbl.includes('left chest') ||
+        lbl.includes('right chest') ||
+        (wIn <= 5.5 && hIn <= 5.5 && !lbl.includes('center') && !lbl.includes('full'))
+      );
 
       // True 1:1 physical proportion in pixels (clamped ONLY to physical torso seam boundaries)
       const boxW = Math.min(maxTorsoPrintW, wIn * pxPerIn);
       const boxH = Math.min(maxTorsoPrintH, hIn * pxPerIn);
 
-      // Standard pocket center is 2.95" off sternal centerline (viewer's right matches Concept #1), 5.95" below HPS collar top
+      // Standard pocket center is 2.95" off sternal centerline; Across the Chest is dead-center at 4.80" below HPS
       const pocketOffsetIn = isYouthOnlyOrder ? 2.35 : 2.95;
-      const topDownIn = isPocketOrCrest ? (isYouthOnlyOrder ? 4.75 : 5.95) : (isYouthOnlyOrder ? 4.4 : 5.4);
+      const topDownIn = isPocketOrCrest
+        ? (isYouthOnlyOrder ? 4.75 : 5.95)
+        : (isAcrossChest ? (isYouthOnlyOrder ? 3.85 : 4.80) : (isYouthOnlyOrder ? 4.4 : 5.4));
       const centerX = isPocketOrCrest
         ? (frontCx + (isWearerRight ? -1 : 1) * pocketOffsetIn * pxPerIn)
         : frontCx;
@@ -1900,17 +1909,35 @@
       }
     });
 
+    // Sort back placements so "Top of the Back" renders first (upper back yoke), and Full Back stacks cleanly below if both are active
+    const isTopOfBackPlacement = (bp) => {
+      const lbl = (bp.locationLabel || '').toLowerCase();
+      return lbl.includes('top') || lbl.includes('upper') || lbl.includes('yoke') || lbl.includes('neck') || lbl.includes('shoulder');
+    };
+    const sortedBackPlacements = backPlacements.slice().sort((a, b) => (isTopOfBackPlacement(b) ? 1 : 0) - (isTopOfBackPlacement(a) ? 1 : 0));
+
     const backScaleTags = [];
-    backPlacements.forEach((bp) => {
-      const wIn = Math.max(0.5, Number(isYouthOnlyOrder ? bp.youthWidthIn : bp.adultWidthIn) || 10.5);
-      const hIn = Math.max(0.5, Number(isYouthOnlyOrder ? bp.youthHeightIn : bp.adultHeightIn) || 11.5);
+    let topBackBottomY = 0;
+    sortedBackPlacements.forEach((bp) => {
+      const isTopBack = isTopOfBackPlacement(bp);
+      const wIn = Math.max(0.5, Number(isYouthOnlyOrder ? bp.youthWidthIn : bp.adultWidthIn) || (isTopBack ? 10.5 : 10.5));
+      const hIn = Math.max(0.5, Number(isYouthOnlyOrder ? bp.youthHeightIn : bp.adultHeightIn) || (isTopBack ? 4.0 : 11.5));
       backScaleTags.push(`${wIn}"×${hIn}"`);
 
       const boxW = Math.min(maxTorsoPrintW, wIn * pxPerIn);
       const boxH = Math.min(maxTorsoPrintH, hIn * pxPerIn);
-      const topDownIn = isYouthOnlyOrder ? 4.15 : 5.20;
+      // Top of the Back sits high across upper back shoulders (2.45" Adult / 1.95" Youth below HPS); Full Back sits at 5.20" Adult / 4.15" Youth
+      const defaultTopDownIn = isTopBack
+        ? (isYouthOnlyOrder ? 1.95 : 2.45)
+        : (isYouthOnlyOrder ? 4.15 : 5.20);
       const drawX = backCx - boxW / 2;
-      const drawY = hpsTopY + topDownIn * pxPerIn;
+      let drawY = hpsTopY + defaultTopDownIn * pxPerIn;
+      if (!isTopBack && topBackBottomY > 0) {
+        drawY = Math.max(drawY, topBackBottomY + 0.55 * pxPerIn);
+      }
+      if (isTopBack) {
+        topBackBottomY = Math.max(topBackBottomY, drawY + boxH);
+      }
 
       const src = bp.renderCanvas || fallbackLogo;
       if (src) {
@@ -3765,16 +3792,20 @@
   // =========================================================================
   // RENDER DTF PLACEMENTS
   // =========================================================================
+  const DTF_PLACEMENT_PRESETS = [
+    { label: 'Front Right Breast Pocket (4"×4" | Youth 3"×3")', loc: 'Front Right Breast Pocket', aw: 4.0, ah: 4.0, yw: 3.0, yh: 3.0 },
+    { label: 'Across the Chest (10.5"×4.5" | Youth 8"×3.5")', loc: 'Across the Chest', aw: 10.5, ah: 4.5, yw: 8.0, yh: 3.5 },
+    { label: 'Top of the Back (10.5"×4" | Youth 8"×3")', loc: 'Top of the Back', aw: 10.5, ah: 4.0, yw: 8.0, yh: 3.0 },
+    { label: 'Full Back (10.5"×11.5" | Youth 8"×9")', loc: 'Full Back', aw: 10.5, ah: 11.5, yw: 8.0, yh: 9.0 },
+    { label: 'Full Front (10.5"×11.5" | Youth 8"×9")', loc: 'Full Front', aw: 10.5, ah: 11.5, yw: 8.0, yh: 9.0 },
+    { label: 'Sleeve / Neck (3"×3" | Youth 2.25"×2.25")', loc: 'Sleeve / Back Neck', aw: 3.0, ah: 3.0, yw: 2.25, yh: 2.25 }
+  ];
+
   function renderDtfPlacementsList() {
     const container = document.getElementById('bqDtfPlacementsContainer');
     if (!container) return;
 
-    const presets = [
-      { label: 'Front Right Breast Pocket (4"×4" | Youth 3"×3")', loc: 'Front Right Breast Pocket', aw: 4.0, ah: 4.0, yw: 3.0, yh: 3.0 },
-      { label: 'Full Back (10.5"×11.5" | Youth 8"×9")', loc: 'Full Back', aw: 10.5, ah: 11.5, yw: 8.0, yh: 9.0 },
-      { label: 'Full Front (10.5"×11.5" | Youth 8"×9")', loc: 'Full Front', aw: 10.5, ah: 11.5, yw: 8.0, yh: 9.0 },
-      { label: 'Sleeve / Neck (3"×3" | Youth 2.25"×2.25")', loc: 'Sleeve / Back Neck', aw: 3.0, ah: 3.0, yw: 2.25, yh: 2.25 }
-    ];
+    const presets = DTF_PLACEMENT_PRESETS;
 
     container.innerHTML = state.dtfPlacements.map((p, idx) => {
       const previewUrl = p.autoTrimTransparent && p.trimmedDataUrl ? p.trimmedDataUrl : p.dataUrl;
@@ -3782,9 +3813,19 @@
         ? `<div style="font-size:0.71rem;color:#22f59b;margin-top:4px;">&#10003; <strong>${esc(p.fileName)}</strong> &bull; Active on Garment Mockup &amp; Gangsheets (Adult <strong>${p.adultWidthIn}"&times;${p.adultHeightIn}"</strong> | Youth <strong>${p.youthWidthIn}"&times;${p.youthHeightIn}"</strong>)</div>`
         : `<div style="font-size:0.71rem;color:rgba(255,255,255,0.65);margin-top:4px;">Upload your transparent <code>.PNG</code> or <code>.SVG</code> file — auto-sized to <strong>${p.adultWidthIn}"&times;${p.adultHeightIn}"</strong> (Adult) &amp; <strong>${p.youthWidthIn}"&times;${p.youthHeightIn}"</strong> (Youth).</div>`;
 
-      const presetButtons = presets.map((pr) =>
-        `<button type="button" class="bq-preset-chip" data-dtf-preset="${p.id}" data-ploc="${esc(pr.loc)}" data-aw="${pr.aw}" data-ah="${pr.ah}" data-yw="${pr.yw}" data-yh="${pr.yh}">${pr.label}</button>`
-      ).join('');
+      const presetButtons = presets.map((pr) => {
+        const isCurrent = (p.locationLabel || '').toLowerCase() === pr.loc.toLowerCase();
+        const activeStyle = isCurrent
+          ? 'background:rgba(255,136,32,0.28);border-color:#ff9e3d;color:#ffffff;box-shadow:0 0 12px rgba(255,122,20,0.35);'
+          : '';
+        return `<button type="button" class="bq-preset-chip" style="${activeStyle}" data-dtf-preset="${p.id}" data-ploc="${esc(pr.loc)}" data-aw="${pr.aw}" data-ah="${pr.ah}" data-yw="${pr.yw}" data-yh="${pr.yh}">${pr.label}</button>`;
+      }).join('');
+
+      const selectOptions = presets.map((pr) => {
+        const sel = (p.locationLabel || '').toLowerCase() === pr.loc.toLowerCase() ? 'selected' : '';
+        return `<option value="${esc(pr.loc)}" ${sel}>${esc(pr.loc)} (${pr.aw}"×${pr.ah}" | Youth ${pr.yw}"×${pr.yh}")</option>`;
+      }).join('');
+      const hasPresetMatch = presets.some((pr) => pr.loc.toLowerCase() === (p.locationLabel || '').toLowerCase());
 
       return `
         <div class="bq-dtf-card" style="${p.enabled === false ? 'opacity:0.52;' : ''}">
@@ -3794,7 +3835,11 @@
                 <input type="checkbox" data-dtf-enabled="${p.id}" ${p.enabled !== false ? 'checked' : ''}>
                 Include Placement #${idx + 1}
               </label>
-              <input type="text" class="bq-input" data-dtf-label="${p.id}" value="${esc(p.locationLabel)}" placeholder="Placement Location" style="min-width:230px;font-weight:700;color:#ffb36b;">
+              <select class="bq-select" data-dtf-preset-select="${p.id}" style="min-width:250px;font-weight:700;color:#ffd099;" title="Choose Shirt Print Placement Option">
+                ${selectOptions}
+                ${!hasPresetMatch ? `<option value="__custom__" selected>Custom: ${esc(p.locationLabel)}</option>` : `<option value="__custom__">Custom Placement Label...</option>`}
+              </select>
+              <input type="text" class="bq-input" data-dtf-label="${p.id}" value="${esc(p.locationLabel)}" placeholder="Placement Location" style="min-width:210px;font-weight:700;color:#ffb36b;">
             </div>
             ${state.dtfPlacements.length > 1 ? `<button type="button" class="mini-btn" data-remove-dtf="${p.id}" style="padding:4px 9px;color:#ff85b3;">&times; Delete</button>` : ''}
           </div>
@@ -4957,14 +5002,20 @@
     const addDtfBtn = document.getElementById('bqAddDtfPlacementBtn');
     if (addDtfBtn) {
       addDtfBtn.addEventListener('click', () => {
+        const existingLocs = new Set(state.dtfPlacements.map((x) => (x.locationLabel || '').toLowerCase()));
+        const nextPreset = !existingLocs.has('top of the back')
+          ? { loc: 'Top of the Back', aw: 10.5, ah: 4.0, yw: 8.0, yh: 3.0 }
+          : (!existingLocs.has('across the chest')
+            ? { loc: 'Across the Chest', aw: 10.5, ah: 4.5, yw: 8.0, yh: 3.5 }
+            : { loc: `Sleeve / Extra Location #${state.dtfPlacements.length + 1}`, aw: 3.0, ah: 3.0, yw: 2.25, yh: 2.25 });
         state.dtfPlacements.push({
           id: 'dtf_' + (dtfCounter++),
           enabled: true,
-          locationLabel: `Sleeve / Extra Location #${state.dtfPlacements.length + 1}`,
-          adultWidthIn: 3.0,
-          adultHeightIn: 3.0,
-          youthWidthIn: 2.25,
-          youthHeightIn: 2.25,
+          locationLabel: nextPreset.loc,
+          adultWidthIn: nextPreset.aw,
+          adultHeightIn: nextPreset.ah,
+          youthWidthIn: nextPreset.yw,
+          youthHeightIn: nextPreset.yh,
           lockToPresetBox: true,
           autoTrimTransparent: true,
           fileName: '',
@@ -5375,6 +5426,23 @@
         const p = state.dtfPlacements.find((x) => x.id === t.getAttribute('data-dtf-file'));
         const file = t.files && t.files[0];
         if (p && file) analyzeUploadedArtwork(file, p);
+        return;
+      }
+
+      if (t.hasAttribute('data-dtf-preset-select')) {
+        const id = t.getAttribute('data-dtf-preset-select');
+        const p = state.dtfPlacements.find((x) => x.id === id);
+        const found = DTF_PLACEMENT_PRESETS.find((pr) => pr.loc === t.value);
+        if (p && found) {
+          p.locationLabel = found.loc;
+          p.adultWidthIn = found.aw;
+          p.adultHeightIn = found.ah;
+          p.youthWidthIn = found.yw;
+          p.youthHeightIn = found.yh;
+          p.enabled = true;
+          renderDtfPlacementsList();
+          recalculateEverything();
+        }
         return;
       }
 
