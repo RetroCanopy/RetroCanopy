@@ -925,16 +925,16 @@
     <!-- 1. TOP STORE HEADER -->
     <header class="f14-store-header">
       <div class="f14-header-left">
-        <a href="index.html" class="f14-home-pill" aria-label="Back to Retrocanopy Home">&#8962; HOME</a>
+        <a href="index.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" class="f14-home-pill" aria-label="Back to Retrocanopy Home">&#8962; HOME</a>
       </div>
 
-      <a href="index.html" class="f14-brand-center" aria-label="Retrocanopy Home">
+      <a href="index.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" class="f14-brand-center" aria-label="Retrocanopy Home">
         <img src="assets/logo.png?v=250" alt="Retrocanopy 1994 Synthwave Tree Logo" class="f14-tree-logo">
         <div class="f14-wordmark">RETROCANOPY</div>
       </a>
 
       <div class="f14-header-right nav-right">
-        <a href="admin.html" class="f14-owner-pill" id="rcHomeAdminHubLink" aria-label="Owner Hub">
+        <a href="admin.html" class="f14-owner-pill" id="rcHomeAdminHubLink" style="display:none;" aria-label="Owner Hub">
           <span class="f14-owner-shield" aria-hidden="true">&#128737;&#65039;</span>
           <span id="rcHomeAdminHubText">OWNER HUB</span>
         </a>

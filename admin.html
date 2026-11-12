@@ -3816,22 +3816,16 @@
       }
 
       function checkAccess() {
-        const isLocalPreview = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') &&
-                               new URLSearchParams(window.location.search).get('owner_preview') === '1';
-        if (isLocalPreview) {
-          gateModal.classList.remove('open');
-          logoutBtn.style.display = 'inline-block';
-          return true;
-        }
         if (!window.RetroAuthHub) return false;
-        const loggedIn = window.RetroAuthHub.isAdminLoggedIn();
-        if (loggedIn) {
+        const ownerLoggedIn = window.RetroAuthHub.isOwnerLoggedIn && window.RetroAuthHub.isOwnerLoggedIn();
+        if (ownerLoggedIn) {
           gateModal.classList.remove('open');
           logoutBtn.style.display = 'inline-block';
           return true;
         } else {
           gateModal.classList.add('open');
           logoutBtn.style.display = 'none';
+          window.location.replace('index.html');
           return false;
         }
       }

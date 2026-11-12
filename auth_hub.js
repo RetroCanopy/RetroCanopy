@@ -853,8 +853,20 @@
   function initHomeScreenAuthUI() {
     const path = (window.location.pathname || '').toLowerCase();
     const isHomePage = path === '/' || path === '' || path.endsWith('/index.html') || path.endsWith('index.html') || path.endsWith('living_tree_interactive.html');
-    if (!isHomePage && !document.getElementById('rcHomeSignInBtn')) {
+    if (path.includes('admin')) {
+      if (!isOwnerLoggedIn()) {
+        window.location.replace('index.html');
+      }
       return;
+    }
+    if (!isHomePage) {
+      if (!isAdminLoggedIn()) {
+        window.location.replace('index.html');
+        return;
+      }
+      if (!document.getElementById('rcHomeSignInBtn')) {
+        return;
+      }
     }
 
     const styleEl = document.createElement('style');
@@ -1163,7 +1175,7 @@
       const bar = document.createElement('div');
       bar.className = 'rc-home-auth-bar';
       bar.innerHTML = `
-        <a href="admin.html" class="rc-home-admin-btn" id="rcHomeAdminHubLink">
+        <a href="admin.html" class="rc-home-admin-btn" id="rcHomeAdminHubLink" style="display:none;">
           &#128737;&#65039; <span id="rcHomeAdminHubText">OWNER HUB</span>
         </a>
         <button type="button" class="rc-home-signin-btn" id="rcHomeSignInBtn">
@@ -1272,9 +1284,9 @@
       }
       
       if (adminHubLink) {
-        adminHubLink.style.display = 'inline-flex';
+        adminHubLink.style.display = owner ? 'inline-flex' : 'none';
         if (adminHubText) {
-          adminHubText.textContent = (admin && !owner) ? 'ADMIN HUB' : 'OWNER HUB';
+          adminHubText.textContent = 'OWNER HUB';
         }
       }
       if (logoutBtn) {
