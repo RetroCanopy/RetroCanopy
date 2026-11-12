@@ -7023,7 +7023,7 @@
         </button>
 
         <div class="fs-map-viewport" id="fsMapViewport" onclick="confirmPreBattleAndLaunch()" style="cursor:pointer;" title="Click to Select Arena &amp; Start Battle!">
-          <img id="fsMapArtImg" src="assets/concept_gallery/battlebots_topdown_3d/01_arena_battle_wide.jpg" alt="Selected Arena Map Preview" />
+          <img id="fsMapArtImg" src="assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg" alt="Selected Arena Map Preview" />
           <div class="fs-map-viewport-top-overlays">
             <span class="fs-map-counter-pill" id="fsMapCounterPill">ARENA 1 OF 7 · PVP &amp; CPU READY</span>
             <span class="fs-map-hazard-pill" id="fsMapHazardPill">⚙️ CENTER RIP-SAW + CORNER FURNACES</span>
@@ -8583,7 +8583,7 @@
         title: "LVL.3 Saw-Herder Bruiser",
         badge: "⚔️ Q3 · LVL 3",
         color: "#fbbf24",
-        mapId: "map_02_lava_bridge",
+        mapId: "arena_02_lava_bridge",
         xpReward: 125,
         diamondReward: 35,
         replayXp: 60,
@@ -8599,7 +8599,7 @@
         title: "LVL.4 Gauss Rail Stalker",
         badge: "⚔️ Q4 · LVL 4",
         color: "#06b6d4",
-        mapId: "map_13_tesla_spiders",
+        mapId: "arena_13_drone_foundry",
         xpReward: 150,
         diamondReward: 45,
         replayXp: 75,
@@ -8615,7 +8615,7 @@
         title: "🔥 QUANTITY CHALLENGE · 1 VS. 3 ENEMY BOTS",
         badge: "🔥🐺 Q5 · 3-BOT SWARM",
         color: "#f97316",
-        mapId: "map_12_bomb_buggies",
+        mapId: "arena_12_scrap_kennel",
         isQuantityChallenge: true,
         enemyCount: 3,
         xpReward: 220,
@@ -8638,7 +8638,7 @@
         title: "LVL.6 Cryo-Flipper Juggler",
         badge: "⚔️ Q6 · LVL 6",
         color: "#00f5ff",
-        mapId: "map_17_cryo_drones",
+        mapId: "arena_17_cryo_lab",
         xpReward: 180,
         diamondReward: 55,
         replayXp: 90,
@@ -8654,7 +8654,7 @@
         title: "LVL.7 Smelter Executioner",
         badge: "⚔️ Q7 · LVL 7",
         color: "#fb923c",
-        mapId: "map_07_side_trenches",
+        mapId: "arena_07_smelter_trenches",
         xpReward: 210,
         diamondReward: 65,
         replayXp: 105,
@@ -8686,7 +8686,7 @@
         title: "LVL.9 Penthouse Royal Guard",
         badge: "⚔️ Q9 · LVL 9",
         color: "#eab308",
-        mapId: "map_11_sky_ledge",
+        mapId: "arena_11_sky_ledge",
         xpReward: 285,
         diamondReward: 90,
         replayXp: 140,
@@ -11268,7 +11268,16 @@
     function getActiveArenaMap() {
       const maps = window.BOTPIT_MAPS || [];
       if (!maps.length) return { id: "map_01_furnace", name: "SHIBUYA FURNACE PIT", badge: "🔥 ARENA 01", accent: "#f97316", subtitle: "4 Corner Furnace Vents · Center Saw", hazardType: "furnace", floorTint: "rgba(249,115,22,0.06)", gridColor: "rgba(249,115,22,0.14)", speedMult: 1.0, tractionMult: 1.0 };
-      const savedId = state.activeMapId || localStorage.getItem("rc_botpit_map") || maps[0].id;
+      const rawSavedId = state.activeMapId || localStorage.getItem("rc_botpit_map") || maps[0].id;
+      const mapAliases = {
+        map_02_lava_bridge: "arena_02_lava_bridge",
+        map_13_tesla_spiders: "arena_13_drone_foundry",
+        map_12_bomb_buggies: "arena_12_scrap_kennel",
+        map_17_cryo_drones: "arena_17_cryo_lab",
+        map_07_side_trenches: "arena_07_smelter_trenches",
+        map_11_sky_ledge: "arena_11_sky_ledge"
+      };
+      const savedId = mapAliases[rawSavedId] || rawSavedId;
       return maps.find(m => m.id === savedId) || maps[0];
     }
 
@@ -11382,12 +11391,14 @@
     function toggleDynamicFilter() {
       state.onlyDynamicPicks = !state.onlyDynamicPicks;
       const btn = document.getElementById("toggleDynamicBtn");
-      if (state.onlyDynamicPicks) {
-        btn.classList.add("active");
-        btn.textContent = "⭐ 5 DYNAMIC PICKS";
-      } else {
-        btn.classList.remove("active");
-        btn.textContent = "📦 ALL 30 PER SLOT (180 TOTAL)";
+      if (btn) {
+        if (state.onlyDynamicPicks) {
+          btn.classList.add("active");
+          btn.textContent = "⭐ 5 DYNAMIC PICKS";
+        } else {
+          btn.classList.remove("active");
+          btn.textContent = "📦 ALL 30 PER SLOT (180 TOTAL)";
+        }
       }
       switchShopSlot(state.activeShopSlot);
     }
@@ -11696,15 +11707,20 @@
     }
 
     window.addEventListener("storage", (e) => {
-      if (e.key === "unit17_loadout_v3" || e.key === "unit17_loadout" || e.key === "unit17_owned_v3" || e.key === "unit17_diamonds_v3") {
-        state.scrap = loadSafeDiamonds();
-        state.ownedIds = loadSafeOwned();
-        state.loadout = loadSafeLoadout();
-        updatePlayerUI();
-        if (!document.getElementById("shopModalBackdrop").classList.contains("hidden")) {
-          switchShopSlot(state.activeShopSlot);
+      if ((e.key === BOTPIT_ACCOUNTS_KEY || e.key === SITE_ACCOUNTS_KEY || e.key === BOTPIT_ACTIVE_USER_KEY) && state.loggedInUserKey && !(typeof sim !== "undefined" && sim.running)) {
+        const bpMap = getBotPitAccountsMap();
+        const rec = bpMap[state.loggedInUserKey];
+        if (rec) {
+          state.scrap = Math.max(0, Number(rec.scrap) || 0);
+          state.ownedIds = Array.isArray(rec.ownedIds) ? [...rec.ownedIds] : [];
+          state.loadout = normalizeLoadout(rec.loadout);
+          updatePlayerUI();
+          const shopBd = document.getElementById("shopModalBackdrop");
+          if (shopBd && !shopBd.classList.contains("hidden")) {
+            switchShopSlot(state.activeShopSlot);
+          }
+          setupStagingArena();
         }
-        if (!sim.running) setupStagingArena();
       }
     });
 
@@ -17812,13 +17828,13 @@
         const orderId = 'BP-ORD-' + String(Date.now()).slice(-6);
         const rec = {
           order_id: orderId,
-          user_key: state.loggedInUserKey || (state.pilotCallsign || 'pilot').toLowerCase(),
           pilot_callsign: state.pilotCallsign || 'PILOT',
-          customer_email: state.loggedInEmail || '',
+          pilot_user_key: normalizeAuthKey(state.loggedInUserKey || state.pilotCallsign || 'pilot'),
+          pilot_email: state.loggedInEmail || '',
           pack_id: pk.id,
-          pack_name: pk.name || pk.id,
+          pack_name: pk.name || pk.badge || pk.id,
           diamonds_credited: totalCredited,
-          price_usd: rawPrice,
+          amount_usd: rawPrice,
           payment_status: 'PAID',
           platform: platformLabel || 'Web',
           created_at: new Date().toISOString()
@@ -17911,6 +17927,10 @@
       cloudPollTimerId: null,
       initialSyncDone: false
     };
+
+    function normalizeAuthKey(rawKey) {
+      return String(rawKey || "").trim().replace(/^@+/, "").toLowerCase();
+    }
 
     function makePairKey(userA, userB) {
       const a = normalizeAuthKey(userA);
@@ -18126,15 +18146,19 @@
       });
 
       // Also update lastSeenAt in Supabase arcade_accounts so friends who log in right after see accurate online status
-      if (window.db) {
-        const acct = loadLocalAccountRecord(myKey);
-        if (acct && acct.progress) {
-          acct.progress.lastSeenAt = isOffline ? 0 : now;
-          acct.progress.isOnline = !isOffline;
+      const bpMap = getBotPitAccountsMap();
+      const acct = bpMap[myKey];
+      if (acct) {
+        acct.lastSeenAt = isOffline ? 0 : now;
+        acct.isOnline = !isOffline;
+        bpMap[myKey] = acct;
+        saveBotPitAccountsMap(bpMap);
+        if (window.db) {
+          const { password: _omitPwd, ...cloudSafeBp } = acct;
           window.db
             .from("arcade_accounts")
-            .update({ progress: acct.progress, updated_at: new Date().toISOString() })
-            .eq("username", myKey)
+            .update({ bot_pit_data: cloudSafeBp, updated_at: new Date().toISOString() })
+            .eq("username_key", myKey)
             .then(() => {})
             .catch(() => {});
         }
@@ -18271,21 +18295,24 @@
       const myKey = normalizeAuthKey(state.loggedInUserKey || "");
 
       // Also scan local accounts for pilot discovery
-      const localStore = loadLocalAccountsStore();
-      Object.keys(localStore).forEach(k => {
-        const rec = localStore[k];
-        const normK = normalizeAuthKey(k);
-        if (!normK) return;
-        const p = rec && rec.progress ? rec.progress : {};
-        socialState.directoryPilots.set(normK, {
-          userKey: normK,
-          callsign: (rec && rec.callsign) || p.callsign || ("@" + normK.toUpperCase()),
-          elo: Number(p.elo) || 1000,
-          botLevel: Number(p.botLevel) || 1,
-          lastSeenMs: Number(p.lastSeenAt) || 0,
-          isOnline: Boolean(p.isOnline)
+      const localBpMap = getBotPitAccountsMap();
+      const localSiteMap = getSiteAccountsMap();
+      for (const srcMap of [localSiteMap, localBpMap]) {
+        Object.keys(srcMap).forEach(k => {
+          const rec = srcMap[k];
+          const normK = normalizeAuthKey(k);
+          if (!normK || !rec) return;
+          const p = (rec.botPitData && typeof rec.botPitData === "object") ? rec.botPitData : rec;
+          socialState.directoryPilots.set(normK, {
+            userKey: normK,
+            callsign: p.pilotCallsign || rec.pilotCallsign || ("@" + String(rec.username || normK).toUpperCase()),
+            elo: Number(p.elo) || 1000,
+            botLevel: Number(p.botLevel) || 1,
+            lastSeenMs: Number(p.lastSeenAt) || Number(p.updatedAt) || 0,
+            isOnline: Boolean(p.isOnline)
+          });
         });
-      });
+      }
 
       if (!window.db) {
         renderFriendsAndSocialUI();
@@ -18297,19 +18324,23 @@
         // 1. Fetch Pilot Directory & Online status from arcade_accounts
         const { data: accountsData } = await window.db
           .from("arcade_accounts")
-          .select("username, callsign, progress, updated_at")
+          .select("username_key, username, bot_pit_data, updated_at")
           .limit(100);
 
         if (Array.isArray(accountsData)) {
           accountsData.forEach(row => {
-            const uKey = normalizeAuthKey(row.username || "");
+            const uKey = normalizeAuthKey(row.username_key || row.username || "");
             if (!uKey) return;
-            const p = row.progress && typeof row.progress === "object" ? row.progress : {};
+            let p = row.bot_pit_data;
+            if (typeof p === "string") {
+              try { p = JSON.parse(p) || {}; } catch (_) { p = {}; }
+            }
+            if (!p || typeof p !== "object") p = {};
             const updMs = row.updated_at ? new Date(row.updated_at).getTime() : 0;
-            const seenMs = Number(p.lastSeenAt) || updMs || 0;
+            const seenMs = Number(p.lastSeenAt) || Number(p.updatedAt) || updMs || 0;
             socialState.directoryPilots.set(uKey, {
               userKey: uKey,
-              callsign: row.callsign || p.callsign || ("@" + uKey.toUpperCase()),
+              callsign: p.pilotCallsign || ("@" + String(row.username || uKey).toUpperCase()),
               elo: Number(p.elo) || 1000,
               botLevel: Number(p.botLevel) || 1,
               lastSeenMs: seenMs,
@@ -19664,14 +19695,7 @@
       }, 33);
     }
 
-    try { syncModeButtonsUI(); } catch (e) { console.error(e); }
-    try { updatePlayerUI(); } catch (e) { console.error(e); }
-    try { setupStagingArena(); } catch (e) { console.error(e); }
-    try { restorePilotSessionOnBoot(); } catch (e) { console.error(e); }
-    try { initManualControlListeners(); } catch (e) { console.error(e); }
-    try { syncControlModeUI(); } catch (e) { console.error(e); }
-    try { renderTopDown3D(); } catch (e) { console.error(e); }
-    try { bootPitSpectatorAndChat(); } catch (e) { console.error(e); }
+    // Boot initialization invoked at bottom of script after all constants/modules (prevents TDZ errors).
 
 /* =========================================================================
    SHIBUYA BOT PIT — APP DOWNLOAD & INSTANT LAUNCH OVERLAY MODAL
@@ -20393,6 +20417,16 @@
       }
       bd.style.display = "flex";
     }
+
+    // Boot initialization after all modules & constants (Compliance/Moderation/Overlay) are initialized
+    try { syncModeButtonsUI(); } catch (e) { console.error(e); }
+    try { updatePlayerUI(); } catch (e) { console.error(e); }
+    try { setupStagingArena(); } catch (e) { console.error(e); }
+    try { restorePilotSessionOnBoot(); } catch (e) { console.error(e); }
+    try { initManualControlListeners(); } catch (e) { console.error(e); }
+    try { syncControlModeUI(); } catch (e) { console.error(e); }
+    try { renderTopDown3D(); } catch (e) { console.error(e); }
+    try { bootPitSpectatorAndChat(); } catch (e) { console.error(e); }
 
   </script>
 </body>

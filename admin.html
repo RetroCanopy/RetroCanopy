@@ -3843,7 +3843,7 @@
           const [merchRes, gameOrdRes, pilotsRes, friendsRes, dmsRes] = await Promise.all([
             fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?is_paid=eq.true&order=created_at.desc`, { headers }).catch(() => null),
             fetch(`${SUPABASE_REST_URL}/botpit_game_orders?order=created_at.desc`, { headers }).catch(() => null),
-            fetch(`${SUPABASE_REST_URL}/arcade_accounts?select=username_key,display_name,email,xp,best_score,bot_pit_data,updated_at&order=updated_at.desc`, { headers }).catch(() => null),
+            fetch(`${SUPABASE_REST_URL}/arcade_accounts?select=username_key,username,email,xp,best_score,tickets,bot_pit_data,updated_at&order=updated_at.desc`, { headers }).catch(() => null),
             fetch(`${SUPABASE_REST_URL}/botpit_friendships?select=pair_key,status`, { headers }).catch(() => null),
             fetch(`${SUPABASE_REST_URL}/botpit_direct_messages?select=msg_id`, { headers }).catch(() => null)
           ]);
@@ -4402,7 +4402,7 @@
         } catch (_) {}
 
         const allGameOrders = Array.from(byOrderId.values());
-        const totalGameRev = allGameOrders.reduce((s, g) => s + (Number(g.price_usd) || 0), 0);
+        const totalGameRev = allGameOrders.reduce((s, g) => s + (Number(g.amount_usd ?? g.price_usd) || 0), 0);
 
         let totalPvpWins = 0;
         let totalPvpLosses = 0;
@@ -4415,14 +4415,14 @@
           if (typeof bp === 'string') {
             try { bp = JSON.parse(bp) || {}; } catch (_) { bp = {}; }
           }
-          const wins = Number(bp.wins || 0);
-          const losses = Number(bp.losses || 0);
-          const tickets = Number(bp.tickets || 0);
-          const scrap = Number(bp.scrap || 0);
-          const xp = Math.max(Number(bp.xp || 0), Number(row.xp || 0));
-          const elo = Number(bp.elo || 1200);
-          const botLevel = Number(bp.botLevel || 1);
-          const eq = bp.equipped || {};
+          const wins = Number(bp.pvpWins ?? bp.wins ?? 0);
+          const losses = Number(bp.pvpLosses ?? bp.losses ?? 0);
+          const tickets = Math.max(Number(bp.tickets ?? 0), Number(row.tickets ?? 0));
+          const scrap = Number(bp.scrap ?? 0);
+          const xp = Math.max(Number(bp.totalXpEarned ?? bp.xp ?? 0), Number(row.xp ?? 0));
+          const elo = Number(bp.elo ?? 1000);
+          const botLevel = Number(bp.botLevel ?? 1);
+          const eq = bp.loadout || bp.equipped || {};
 
           totalPvpWins += wins;
           totalPvpLosses += losses;
@@ -4432,7 +4432,7 @@
 
           return {
             userKey: row.username_key,
-            callsign: bp.pilotCallsign || row.display_name || row.username_key,
+            callsign: bp.pilotCallsign || row.username || row.display_name || row.username_key,
             email: row.email || 'No Email',
             elo,
             wins,
@@ -4441,7 +4441,10 @@
             scrap,
             xp,
             botLevel,
-            equippedSummary: [eq.chassis, eq.weapon, eq.wheels, eq.armor, eq.botAbility, eq.weapAbility].filter(Boolean).join(' • ') || 'Starter Rig',
+            equippedSummary: [
+              eq.tire, eq.wpn1, eq.wpn2, eq.botAbil1, eq.botAbil2, eq.wpnAbil,
+              eq.chassis, eq.weapon, eq.wheels, eq.armor, eq.botAbility, eq.weapAbility
+            ].filter(Boolean).join(' • ') || 'Starter Rig',
             updatedAt: row.updated_at
           };
         });
@@ -4474,12 +4477,12 @@
                 <div class="item-info">
                   <div class="item-title">
                     <span>#${escapeHtml(g.order_id)} — ${escapeHtml(g.pack_name || g.pack_id)}</span>
-                    <span class="tag-pill tag-owner">+$${Number(g.price_usd || 0).toFixed(2)} PAID</span>
+                    <span class="tag-pill tag-owner">+$${Number(g.amount_usd ?? g.price_usd ?? 0).toFixed(2)} PAID</span>
                     <span class="tag-pill tag-admin">💎 +${Number(g.diamonds_credited || 0).toLocaleString()}</span>
                   </div>
                   <div class="item-sub">
-                    Pilot: <strong>${escapeHtml(g.pilot_callsign || g.user_key)}</strong>
-                    ${g.customer_email ? ` (${escapeHtml(g.customer_email)})` : ''}
+                    Pilot: <strong>${escapeHtml(g.pilot_callsign || g.pilot_user_key || g.user_key)}</strong>
+                    ${(g.pilot_email || g.customer_email) ? ` (${escapeHtml(g.pilot_email || g.customer_email)})` : ''}
                     • ${escapeHtml(g.platform || 'Web')} • ${escapeHtml(dt)}
                   </div>
                 </div>

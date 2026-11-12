@@ -247,12 +247,16 @@
 
       // Delete from local storage if present on this device
       try {
-        const bpMap = JSON.parse(localStorage.getItem("rc_botpit_accounts_v2") || "{}");
-        const siteMap = JSON.parse(localStorage.getItem("rc_accounts_db_v2") || "{}");
-        delete bpMap[rawUser];
-        delete siteMap[rawUser];
-        localStorage.setItem("rc_botpit_accounts_v2", JSON.stringify(bpMap));
-        localStorage.setItem("rc_accounts_db_v2", JSON.stringify(siteMap));
+        for (const storageKey of ["rc_botpit_accounts_v1", "rc_botpit_accounts_v2", "rc_accounts_db_v2"]) {
+          const mapObj = JSON.parse(localStorage.getItem(storageKey) || "{}");
+          delete mapObj[rawUser];
+          localStorage.setItem(storageKey, JSON.stringify(mapObj));
+        }
+        for (const activeKey of ["rc_botpit_active_user_v1", "rc_current_user_v2", "rc_current_user_v1"]) {
+          if ((localStorage.getItem(activeKey) || "").trim().toLowerCase() === rawUser) {
+            localStorage.removeItem(activeKey);
+          }
+        }
       } catch (_) {}
 
       // Delete from Supabase Cloud if connected
