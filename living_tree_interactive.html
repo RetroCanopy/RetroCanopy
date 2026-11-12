@@ -845,8 +845,9 @@
     const texGamerBgDesk  = texLoader.load('assets/concept_gallery/living_tree/gamer_bg_desktop.png?v=256');
     const texGamerCutMob  = texLoader.load('assets/concept_gallery/living_tree/gamer_cutout_mobile.png?v=256');
     const texGamerBgMob   = texLoader.load('assets/concept_gallery/living_tree/gamer_bg_mobile.png?v=256');
+    const texCardBots     = texLoader.load('assets/concept_gallery/living_tree/card_bots_cutout.png?v=256');
 
-    [texBgDesk, texFullDesk, texBgMob, texFullMob, texGamerCutDesk, texGamerBgDesk, texGamerCutMob, texGamerBgMob].forEach(t => {
+    [texBgDesk, texFullDesk, texBgMob, texFullMob, texGamerCutDesk, texGamerBgDesk, texGamerCutMob, texGamerBgMob, texCardBots].forEach(t => {
       t.minFilter = THREE.LinearFilter;
       t.magFilter = THREE.LinearFilter;
       t.generateMipmaps = false;
@@ -857,6 +858,7 @@
       uTexBg: { value: isMobileMode ? texBgMob : texBgDesk },
       uTexGamerCut: { value: isMobileMode ? texGamerCutMob : texGamerCutDesk },
       uTexGamerBg: { value: isMobileMode ? texGamerBgMob : texGamerBgDesk },
+      uTexCardBots: { value: texCardBots },
       uTime: { value: 0.0 },
       uTreeReveal: { value: 0.0 },
       uRoomLight: { value: 0.0 },
@@ -881,6 +883,7 @@
         uniform sampler2D uTexBg;
         uniform sampler2D uTexGamerCut;
         uniform sampler2D uTexGamerBg;
+        uniform sampler2D uTexCardBots;
         uniform float uTime;
         uniform float uTreeReveal;
         uniform float uRoomLight;
@@ -1322,6 +1325,184 @@
             }
 
             litRoomCol *= mix(1.0, scanline * phosphorPulse, inTvScreen);
+          }
+
+          // ==================================================================
+          // 2 ROBOTS ON THE RIGHT-HAND SIDE SITTING & PLAYING A CARD GAME!
+          // Rendered from RGBA cutout uTexCardBots over the clean stage floor
+          // (zero background warping!), with a 10.0s alternating card match:
+          //   0.0s - 3.5s : Studying cards & glancing across with poker-face squints
+          //   3.5s - 6.0s : Left Robot plays a winning card! (Left Happy ^ ^, Right Frustrated \ /)
+          //   6.0s - 7.4s : Next hand deal & intense card study
+          //   7.4s -10.0s : Right Robot plays a trump card! (Right Happy ^ ^, Left Frustrated \ /)
+          // ==================================================================
+          vec4 cardBox = mob
+            ? vec4(0.565, 0.945, 0.025, 0.135)
+            : vec4(0.655, 0.875, 0.145, 0.365);
+
+          if (vUv.x > cardBox.x && vUv.x < cardBox.y && vUv.y > cardBox.z && vUv.y < cardBox.w) {
+            vec2 cbUv = (vUv - cardBox.xz) / (cardBox.yw - cardBox.xz);
+            vec2 cbAspect = vec2(512.0 / 288.0, 1.0);
+
+            // Soft contact shadows on the glossy obsidian floor under Left Robot, Deck, and Right Robot
+            float shL = 1.0 - smoothstep(0.0, 0.22, length((cbUv - vec2(0.22, 0.12)) / vec2(0.18, 0.08)));
+            float shM = 1.0 - smoothstep(0.0, 0.16, length((cbUv - vec2(0.50, 0.10)) / vec2(0.13, 0.06)));
+            float shR = 1.0 - smoothstep(0.0, 0.22, length((cbUv - vec2(0.78, 0.12)) / vec2(0.18, 0.08)));
+            litRoomCol *= (1.0 - clamp(shL + shM * 0.7 + shR, 0.0, 1.0) * 0.42);
+
+            float tCard = mod(uTime + 1.8, 10.0);
+            float cStudy1 = 1.0 - smoothstep(3.35, 3.55, tCard);
+            float cPlayL  = exp(-pow((tCard - 3.65) * 4.5, 2.0));
+            float cWinL   = smoothstep(3.75, 3.95, tCard) * (1.0 - smoothstep(5.80, 6.05, tCard));
+            float cStudy2 = smoothstep(5.95, 6.18, tCard) * (1.0 - smoothstep(7.25, 7.45, tCard));
+            float cPlayR  = exp(-pow((tCard - 7.55) * 4.5, 2.0));
+            float cWinR   = smoothstep(7.65, 7.85, tCard) * (1.0 - smoothstep(9.65, 9.90, tCard));
+            float cStudy  = clamp(cStudy1 + cStudy2, 0.0, 1.0);
+
+            vec2 sampleCbUv = cbUv;
+            float mUpper = smoothstep(0.25, 0.31, cbUv.y);
+
+            if (cbUv.x < 0.41) {
+              // LEFT CARD ROBOT KINEMATICS (Hip Pivot + Neck Pivot)
+              float torsoAngL = cStudy * (0.025 + 0.020 * sin(uTime * 3.2))
+                              + cPlayL * 0.095
+                              + cWinL  * (sin(uTime * 11.5) * 0.042 - 0.015)
+                              + cWinR  * (-0.035 + sin(uTime * 22.0) * 0.048);
+              float bounceYL  = cStudy * sin(uTime * 4.0) * 0.004
+                              + cPlayL * 0.014
+                              + cWinL  * abs(sin(uTime * 11.5)) * 0.026
+                              + cWinR  * sin(uTime * 24.0) * 0.012;
+              float headAngL  = cStudy * (0.035 * sin(uTime * 2.4))
+                              + cWinL  * (sin(uTime * 11.5 + 0.7) * 0.052 - 0.025)
+                              + cWinR  * (-0.040 + sin(uTime * 28.0) * 0.068);
+
+              vec2 uShiftL = cbUv - vec2(0.0, bounceYL * mUpper);
+              vec2 uTorsoL = rotRigidAspect(uShiftL, vec2(0.155, 0.280), torsoAngL, cbAspect);
+              vec2 uHeadL  = rotRigidAspect(uTorsoL, vec2(0.165, 0.540), headAngL, cbAspect);
+              float mHeadL = smoothstep(0.52, 0.56, uTorsoL.y);
+              sampleCbUv = mix(cbUv, uTorsoL, mUpper);
+              sampleCbUv = mix(sampleCbUv, uHeadL, mHeadL * mUpper);
+            } else if (cbUv.x > 0.59) {
+              // RIGHT CARD ROBOT KINEMATICS (Mirrored: -angle leans forward toward center!)
+              float torsoAngR = cStudy * (-0.025 - 0.020 * cos(uTime * 3.4))
+                              - cPlayR * 0.095
+                              + cWinR  * (sin(uTime * 11.5) * 0.042 + 0.015)
+                              + cWinL  * (0.035 + sin(uTime * 22.0) * 0.048);
+              float bounceYR  = cStudy * cos(uTime * 4.2) * 0.004
+                              + cPlayR * 0.014
+                              + cWinR  * abs(sin(uTime * 11.5)) * 0.026
+                              + cWinL  * sin(uTime * 24.0) * 0.012;
+              float headAngR  = cStudy * (-0.035 * cos(uTime * 2.6))
+                              + cWinR  * (sin(uTime * 11.5 + 0.7) * 0.052 + 0.025)
+                              + cWinL  * (0.040 + sin(uTime * 28.0) * 0.068);
+
+              vec2 uShiftR = cbUv - vec2(0.0, bounceYR * mUpper);
+              vec2 uTorsoR = rotRigidAspect(uShiftR, vec2(0.845, 0.280), torsoAngR, cbAspect);
+              vec2 uHeadR  = rotRigidAspect(uTorsoR, vec2(0.835, 0.540), headAngR, cbAspect);
+              float mHeadR = smoothstep(0.52, 0.56, uTorsoR.y);
+              sampleCbUv = mix(cbUv, uTorsoR, mUpper);
+              sampleCbUv = mix(sampleCbUv, uHeadR, mHeadR * mUpper);
+            }
+
+            if (sampleCbUv.x > 0.002 && sampleCbUv.x < 0.998 && sampleCbUv.y > 0.002 && sampleCbUv.y < 0.998) {
+              vec4 cbSample = texture2D(uTexCardBots, sampleCbUv);
+              vec3 cbCol = cbSample.rgb;
+
+              if (cbSample.a > 0.02) {
+                // ============================================================
+                // EXPRESSIVE LED VISOR EYES FOR BOTH CARD-PLAYING ROBOTS!
+                // ============================================================
+                bool isLeftBot = sampleCbUv.x < 0.50;
+                float myHappy = isLeftBot ? cWinL : cWinR;
+                float myRage  = isLeftBot ? cWinR : cWinL;
+                float myPlay  = isLeftBot ? cPlayL : cPlayR;
+                float dirToCenter = isLeftBot ? 1.0 : -1.0;
+
+                vec2 vCtr  = isLeftBot ? vec2(0.240, 0.695) : vec2(0.760, 0.695);
+                vec2 vRad  = vec2(0.066, 0.112);
+                vec2 e1Ctr = isLeftBot ? vec2(0.222, 0.678) : vec2(0.735, 0.686);
+                vec2 e2Ctr = isLeftBot ? vec2(0.278, 0.686) : vec2(0.790, 0.678);
+                vec2 e1Rad = isLeftBot ? vec2(0.015, 0.034) : vec2(0.013, 0.032);
+                vec2 e2Rad = isLeftBot ? vec2(0.013, 0.032) : vec2(0.015, 0.034);
+
+                float inVGlass = 1.0 - smoothstep(0.70, 1.0, length((sampleCbUv - vCtr) / vRad));
+                if (inVGlass > 0.01) {
+                  float staticCyan = clamp((cbCol.g + cbCol.b) * 0.52 - cbCol.r * 0.30 - 0.08, 0.0, 1.0);
+                  cbCol = mix(cbCol, vec3(0.025, 0.055, 0.075), clamp(staticCyan * 1.65, 0.0, 1.0) * inVGlass);
+
+                  // Gaze alternates between looking down at cards (sin < 0) and looking up across at opponent (sin > 0)!
+                  float lookCycle = sin(uTime * 2.2 + (isLeftBot ? 0.0 : 1.6));
+                  float gx = cStudy * (dirToCenter * 0.35 * smoothstep(-0.2, 0.6, lookCycle))
+                           + myHappy * (0.30 * sin(uTime * 11.5))
+                           + myRage  * (sin(uTime * 32.0) * 0.95);
+                  float gy = cStudy * (-0.45 * smoothstep(0.2, -0.5, lookCycle) + 0.20 * smoothstep(-0.1, 0.6, lookCycle))
+                           + myPlay  * 0.55
+                           + myHappy * (0.35 + 0.30 * abs(sin(uTime * 11.5)))
+                           + myRage  * 0.15;
+                  vec2 gOff = vec2(gx * 0.012, gy * 0.024);
+
+                  vec2 d1 = (sampleCbUv - (e1Ctr + gOff)) / e1Rad;
+                  vec2 d2 = (sampleCbUv - (e2Ctr + gOff)) / e2Rad;
+
+                  float cBlink = naturalBlink(uTime, isLeftBot ? 3.4 : 3.9, isLeftBot ? 0.5 : 1.9) * (1.0 - myHappy) * (1.0 - myRage);
+                  float vSc = 1.0 - cBlink * 0.88 + myHappy * 0.16;
+                  d1.y /= max(0.12, vSc);
+                  d2.y /= max(0.12, vSc);
+
+                  float sh1 = 1.0 - smoothstep(0.68, 1.02, length(d1));
+                  float sh2 = 1.0 - smoothstep(0.68, 1.02, length(d2));
+
+                  // Happy ^ ^ curved joyful eyes when winning the hand!
+                  if (myHappy > 0.02) {
+                    float hArch1 = 1.0 - smoothstep(0.55, 0.88, length(vec2(d1.x * 0.85, d1.y + 0.52)));
+                    float hArch2 = 1.0 - smoothstep(0.55, 0.88, length(vec2(d2.x * 0.85, d2.y + 0.52)));
+                    sh1 *= (1.0 - hArch1 * myHappy * 0.95);
+                    sh2 *= (1.0 - hArch2 * myHappy * 0.95);
+                  }
+
+                  // Bluffing squint during study OR Angry \ / V-brows when losing the hand!
+                  float bluffSquint = cStudy * smoothstep(0.2, 0.8, lookCycle) * 0.38;
+                  if (bluffSquint > 0.01 || myRage > 0.01) {
+                    float sl = bluffSquint * 0.35 + myRage * 0.95;
+                    float cut1 = 0.72 - bluffSquint * 0.35 - myRage * 0.42 - d1.x * sl;
+                    float cut2 = 0.72 - bluffSquint * 0.35 - myRage * 0.42 + d2.x * sl;
+                    sh1 *= smoothstep(cut1 + 0.15, cut1 - 0.15, d1.y);
+                    sh2 *= smoothstep(cut2 + 0.15, cut2 - 0.15, d2.y);
+                  }
+
+                  float eTot = clamp(sh1 + sh2, 0.0, 1.0) * inVGlass;
+                  float eHal = clamp((1.0 - smoothstep(0.6, 1.65, length(d1))) + (1.0 - smoothstep(0.6, 1.65, length(d2))), 0.0, 1.0) * inVGlass;
+
+                  vec3 eCol = mix(vec3(0.55, 0.98, 1.0) * 1.15, vec3(0.45, 1.0, 0.78) * 1.35, myHappy);
+                  eCol = mix(eCol, vec3(1.0, 0.16, 0.03) * (1.35 + 0.25 * sin(uTime * 30.0)), myRage);
+
+                  cbCol += eCol * eHal * 0.28;
+                  cbCol = mix(cbCol, eCol, eTot);
+                }
+
+                // Ear-Ring Telemetry for Left & Right Card Robots
+                vec2 earCtr = isLeftBot ? vec2(0.080, 0.720) : vec2(0.928, 0.720);
+                float inEarC = 1.0 - smoothstep(0.65, 1.05, length((sampleCbUv - earCtr) / vec2(0.044, 0.084)));
+                if (inEarC > 0.01) {
+                  float earBr = clamp(cbCol.r * 0.85 - cbCol.b * 0.45, 0.0, 1.0) * inEarC;
+                  if (myRage > 0.01) {
+                    cbCol = mix(cbCol, vec3(1.0, 0.12, 0.02) * 1.35, earBr * myRage);
+                  } else if (myHappy > 0.01) {
+                    cbCol = mix(cbCol, vec3(0.45, 1.0, 0.65) * 1.30, earBr * myHappy);
+                  }
+                }
+
+                // Golden Holographic Shimmer on the Center Card Deck & Played Cards when a card is played!
+                float inCenterDeck = smoothstep(0.39, 0.42, sampleCbUv.x) * (1.0 - smoothstep(0.59, 0.62, sampleCbUv.x))
+                                   * (1.0 - smoothstep(0.22, 0.26, sampleCbUv.y));
+                if (inCenterDeck > 0.01) {
+                  float cardFlash = clamp(cPlayL + cPlayR + (cWinL + cWinR) * (0.25 + 0.20 * sin(uTime * 14.0)), 0.0, 1.0);
+                  cbCol += vec3(1.0, 0.85, 0.32) * inCenterDeck * cardFlash * 0.55;
+                }
+
+                litRoomCol = mix(litRoomCol, cbCol, cbSample.a);
+              }
+            }
           }
 
           // Vibrant Multi-Band Retro Setting Sun (strictly on the sun disc — ZERO room haze!)
