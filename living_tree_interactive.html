@@ -1704,7 +1704,7 @@
 
           vec3 finalCol = bgCol;
 
-          if (uTreeReveal > 0.005) {
+          if (uIsComingSoon < 0.5 && uTreeReveal > 0.005) {
             vec3 fullCol = texture2D(uTexFull, treeUv).rgb;
             float treeDiff = length(fullCol - bgAtTreeUv);
             float inForegroundTv = mob
@@ -1750,7 +1750,7 @@
 
     // Generate 3D Liquid Particle coordinates spelling "COMING" (left of canopy) and "SOON" (right of canopy)
     function buildComingSoonParticlePoints(targetCount) {
-      const cw = 1024, ch = 256;
+      const cw = 1024, ch = 512;
       const cvs = document.createElement('canvas');
       cvs.width = cw;
       cvs.height = ch;
@@ -1760,10 +1760,10 @@
       ctx.fillStyle = '#fff';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.font = '900 104px "Orbitron", "Arial Black", sans-serif';
-      // Left half (0..512): "COMING", Right half (512..1024): "SOON"
-      ctx.fillText('COMING', 256, 128);
-      ctx.fillText('SOON', 768, 128);
+      ctx.font = '900 148px "Orbitron", "Arial Black", sans-serif';
+      // Centered 2-line hero headline in 3D liquid particles:
+      ctx.fillText('COMING', 512, 168);
+      ctx.fillText('SOON', 512, 348);
 
       const imgData = ctx.getImageData(0, 0, cw, ch).data;
       const edgePts = [];
@@ -1800,19 +1800,15 @@
       }
 
       return out.map(([px, py, isEdge], idx) => {
-        const isLeftWord = px < 512;
-        const localX = isLeftWord ? (px / 512.0) : ((px - 512.0) / 512.0);
+        const localX = px / cw;
         const localY = 1.0 - (py / ch);
-        const jitterX = (Math.sin(idx * 12.9898) * 0.5) * 0.0025;
-        const jitterY = (Math.cos(idx * 78.233) * 0.5) * 0.0040;
+        const jitterX = (Math.sin(idx * 12.9898) * 0.5) * 0.0020;
+        const jitterY = (Math.cos(idx * 78.233) * 0.5) * 0.0028;
 
-        // Map to UV on stage:
-        // Left word "COMING": vUv.x in [0.032, 0.348], vUv.y in [0.555, 0.725]
-        // Right word "SOON":  vUv.x in [0.652, 0.918], vUv.y in [0.555, 0.725]
-        const uvX = isLeftWord
-          ? (0.032 + (localX + jitterX) * (0.348 - 0.032))
-          : (0.652 + (localX + jitterX) * (0.918 - 0.652));
-        const uvY = 0.555 + (localY + jitterY) * (0.725 - 0.555);
+        // Centered prominently across the pure black stage above the NES Robot & CRT TV:
+        // vUv.x in [0.18, 0.82], vUv.y in [0.46, 0.86]
+        const uvX = 0.18 + (localX + jitterX) * 0.64;
+        const uvY = 0.46 + (localY + jitterY) * 0.40;
 
         const wx = (uvX - 0.5) * STAGE_W_DESK;
         const wy = (uvY - 0.5) * STAGE_H_DESK;
@@ -1831,7 +1827,7 @@
       });
     }
 
-    const csTextPts = buildComingSoonParticlePoints(3200);
+    const csTextPts = buildComingSoonParticlePoints(5200);
     let csIdx = 0;
 
     for (let i = 0; i < N; i++) {
@@ -1839,7 +1835,7 @@
       let [tx, ty, tz, r, g, b, isVox] = pt;
       const seed = Math.random();
 
-      if (isVox < 0.5 && (i % 4 === 0) && csIdx < csTextPts.length) {
+      if (isVox < 0.5 && (i % 2 === 0) && csIdx < csTextPts.length) {
         const cp = csTextPts[csIdx++];
         tx = cp.wx;
         ty = cp.wy;
@@ -1962,13 +1958,8 @@
         // and center the "COMING" / "SOON" 3D liquid particle words across the middle of the portrait stage!
         if (mob) {
           if (isTextVox) {
-            if (basePos.x < 0.0) {
-              basePos.x = (basePos.x + 3.68) * 1.32;
-              basePos.y = (basePos.y - 0.89) * 1.15 + 0.62;
-            } else {
-              basePos.x = (basePos.x - 3.38) * 1.32;
-              basePos.y = (basePos.y - 0.89) * 1.15 - 0.48;
-            }
+            basePos.x = basePos.x * 0.74;
+            basePos.y = (basePos.y - 1.05) * 1.12 + 0.85;
           } else {
             basePos = vec3(basePos.x * 0.78 + 0.03, basePos.y * 0.78 + 3.05, basePos.z * 0.78);
           }
@@ -2031,7 +2022,7 @@
 
         float treeBranchCrossfade = isTextVox
           ? (uIsComingSoon * 0.98)
-          : (isOrbitVox ? (0.98 * orbitDepthAlpha) : (1.0 - smoothstep(0.58, 0.96, uTreeReveal)));
+          : ((1.0 - uIsComingSoon) * (isOrbitVox ? (0.98 * orbitDepthAlpha) : (1.0 - smoothstep(0.58, 0.96, uTreeReveal))));
 
         vAlpha = enterVis * settleAlpha * treeBranchCrossfade;
 
