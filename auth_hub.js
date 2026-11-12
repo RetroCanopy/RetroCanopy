@@ -852,12 +852,8 @@
   // =========================================================================
   function initHomeScreenAuthUI() {
     const path = (window.location.pathname || '').toLowerCase();
-    const isHomePage = path === '/' || path === '' || path.endsWith('/index.html') || path.endsWith('index.html');
-    if (!isHomePage) {
-      const hasBotPitLogin = Boolean(localStorage.getItem('rc_botpit_active_user_v1'));
-      if (!path.includes('admin') && !path.includes('shibuya_bot_pit') && !isAdminLoggedIn() && !getCurrentUser() && !hasBotPitLogin) {
-        window.location.replace('index.html');
-      }
+    const isHomePage = path === '/' || path === '' || path.endsWith('/index.html') || path.endsWith('index.html') || path.endsWith('living_tree_interactive.html');
+    if (!isHomePage && !document.getElementById('rcHomeSignInBtn')) {
       return;
     }
 
@@ -1163,17 +1159,19 @@
     `;
     document.head.appendChild(styleEl);
 
-    const bar = document.createElement('div');
-    bar.className = 'rc-home-auth-bar';
-    bar.innerHTML = `
-      <a href="admin.html" class="rc-home-admin-btn" id="rcHomeAdminHubLink" style="display:none;">
-        &#128737;&#65039; <span id="rcHomeAdminHubText">OWNER / ADMIN HUB</span>
-      </a>
-      <button type="button" class="rc-home-signin-btn" id="rcHomeSignInBtn">
-        &#128100; <span id="rcHomeSignInLabel">SIGN IN</span>
-      </button>
-    `;
-    document.body.appendChild(bar);
+    if (!document.getElementById('rcHomeSignInBtn')) {
+      const bar = document.createElement('div');
+      bar.className = 'rc-home-auth-bar';
+      bar.innerHTML = `
+        <a href="admin.html" class="rc-home-admin-btn" id="rcHomeAdminHubLink">
+          &#128737;&#65039; <span id="rcHomeAdminHubText">OWNER HUB</span>
+        </a>
+        <button type="button" class="rc-home-signin-btn" id="rcHomeSignInBtn">
+          &#128100; <span id="rcHomeSignInLabel">SIGN IN</span>
+        </button>
+      `;
+      document.body.appendChild(bar);
+    }
 
     const backdrop = document.createElement('div');
     backdrop.className = 'rc-clean-auth-backdrop';
@@ -1274,9 +1272,9 @@
       }
       
       if (adminHubLink) {
-        adminHubLink.style.display = admin ? 'inline-flex' : 'none';
+        adminHubLink.style.display = 'inline-flex';
         if (adminHubText) {
-          adminHubText.textContent = owner ? 'OWNER HUB' : 'ADMIN HUB';
+          adminHubText.textContent = (admin && !owner) ? 'ADMIN HUB' : 'OWNER HUB';
         }
       }
       if (logoutBtn) {

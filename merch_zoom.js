@@ -213,7 +213,11 @@
       activeSide = 'front';
       panX = 0;
       panY = 0;
-      syncZoomContent();
+      if (typeof window.rcCustomZoomSide === 'function') {
+        window.rcCustomZoomSide('front');
+      } else {
+        syncZoomContent();
+      }
       applyTransform(true);
     });
 
@@ -221,7 +225,11 @@
       activeSide = 'back';
       panX = 0;
       panY = 0;
-      syncZoomContent();
+      if (typeof window.rcCustomZoomSide === 'function') {
+        window.rcCustomZoomSide('back');
+      } else {
+        syncZoomContent();
+      }
       applyTransform(true);
     });
 
@@ -277,6 +285,10 @@
 
     // Prev / Next Item Stepping while inside Zoom Inspector
     function stepInsideZoom(dir) {
+      if (typeof window.rcCustomZoomStep === 'function') {
+        window.rcCustomZoomStep(dir);
+        return;
+      }
       if (typeof window.stepHoodie === 'function') window.stepHoodie(dir);
       else if (typeof window.stepItem === 'function') window.stepItem(dir);
       else if (typeof window.stepMat === 'function') window.stepMat(dir);
@@ -360,7 +372,7 @@
         model: 'RC-107',
         title: 'White & 24K Gold Crowned Valkyrie Snapback',
         role: 'Headwear',
-        price: 1,
+        price: 36,
         winOnly: false,
         tier6Only: false,
         img: 'assets/merch/hat_tier6_valkyrie.png?v=200',
@@ -393,7 +405,7 @@
         model: 'RC-309',
         title: 'White & 24K Gold Crowned Legend Hoodie',
         role: 'Outerwear',
-        price: 1,
+        price: 50,
         winOnly: false,
         tier6Only: false,
         img: 'assets/merch/hoodie_tier6_2f_back.png?v=200',
@@ -423,6 +435,11 @@
         ]
       }
     };
+
+    if (window.RC_STORE_1994 && window.RC_STORE_1994.CATALOG) {
+      window.RC_STORE_1994.rebuildCatalogPrices();
+      Object.assign(masterCatalog, window.RC_STORE_1994.CATALOG);
+    }
 
     const productCatalogNotes = {
       'RC-101': {
@@ -1343,8 +1360,18 @@
 
     function getCartItems() {
       try {
+        if (window.RC_STORE_1994) window.RC_STORE_1994.rebuildCatalogPrices();
         const parsed = JSON.parse(sessionStorage.getItem('rc_shop_cart_items_v1') || '[]');
-        return Array.isArray(parsed) ? parsed : [];
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map((it) => {
+          const cat = (window.RC_STORE_1994 && window.RC_STORE_1994.CATALOG[it.model]) || masterCatalog[it.model];
+          if (cat && Number(cat.price) > 0) {
+            it.price = Number(cat.price);
+          } else if (!it.price || Number(it.price) <= 1) {
+            it.price = String(it.model || '').startsWith('RC-HAT') ? 36 : (String(it.model || '').startsWith('RC-TEE') ? 30 : 50);
+          }
+          return it;
+        });
       } catch (_) {
         return [];
       }
@@ -1356,24 +1383,37 @@
       setShopBagCount(totalQty);
     }
 
-    function addItemToCartByCode(code, qtyDelta = 1) {
-      const entry = masterCatalog[code] || {
+    let rcWantsShipping = sessionStorage.getItem('rc_wants_shipping_v1') !== '0';
+    function setWantsShippingPref(val) {
+      rcWantsShipping = Boolean(val);
+      sessionStorage.setItem('rc_wants_shipping_v1', rcWantsShipping ? '1' : '0');
+      renderStoreCouponDockAndCheckout();
+    }
+
+    function addItemToCartByCode(code, qtyDelta = 1, explicitSize = '') {
+      if (window.RC_STORE_1994) window.RC_STORE_1994.rebuildCatalogPrices();
+      const entry = (window.RC_STORE_1994 && window.RC_STORE_1994.CATALOG[code]) || masterCatalog[code] || {
         model: code,
-        title: (document.getElementById('hudTitle')?.textContent || 'Retrocanopy Vault Piece').trim(),
-        price: 32,
-        img: 'assets/merch/hat_front_floating.png?v=200'
+        title: (document.getElementById('hudTitle')?.textContent || 'Retrocanopy Apparel').trim(),
+        price: 36,
+        img: 'assets/merch/store_1994/hat_01_black.webp?v=240'
       };
-      // $1.00 Test Mode: RC-309 & RC-107 open for direct purchase & order tracking
+      const isHat = entry.category === 'hats' || String(code).startsWith('RC-HAT') || code === 'RC-107';
+      const chosenSize = explicitSize || (isHat ? 'One Size Snapback' : (document.getElementById('rcCustSizeSelect')?.value || 'L'));
+      const lineKey = `${entry.model}__${chosenSize}`;
       const items = getCartItems();
-      const existing = items.find((it) => it.model === entry.model);
+      const existing = items.find((it) => (it.lineKey || `${it.model}__${it.size || 'L'}`) === lineKey);
       if (existing) {
         existing.qty = Math.max(1, (existing.qty || 1) + qtyDelta);
+        existing.price = entry.price;
       } else {
         items.push({
+          lineKey: lineKey,
           model: entry.model,
           title: entry.title,
+          size: chosenSize,
           price: entry.price,
-          img: entry.img,
+          img: entry.heroPhotoUrl || entry.img || entry.frontPhotoUrl,
           qty: Math.max(1, qtyDelta)
         });
       }
@@ -1427,8 +1467,10 @@
             sizeSelectEl.value = activeSizeBtn.getAttribute('data-size') || 'S';
           }
         }
+        const cardSize = buyBtn.getAttribute('data-size-val') ||
+                         cardEl?.querySelector('.f14-size-pill.active')?.getAttribute('data-size') || '';
         setTimeout(() => {
-          addItemToCartByCode(activeCode, 1);
+          addItemToCartByCode(activeCode, 1, cardSize);
           openStoreCheckoutModal();
         }, 15);
       });
@@ -1561,7 +1603,7 @@
       <div class="rc-checkout-modal" onclick="event.stopPropagation()">
         <div class="rc-checkout-top">
           <div>
-            <div class="rc-checkout-title" id="rcCheckoutHeaderTitle">&#128717;&#65039; RETROCANOPY STORE CHECKOUT ($1.00 TEST MODE)</div>
+            <div class="rc-checkout-title" id="rcCheckoutHeaderTitle">&#128717;&#65039; RETROCANOPY OFFICIAL STORE CHECKOUT (EST. 1994)</div>
             <div class="rc-checkout-sub" id="rcCheckoutHeaderSub">Orders are sent to the <strong>Owner's Hub Production Queue AFTER PAYMENT</strong> with Customer Info, Item Photos &amp; DTF / Embroidery Production Files.</div>
           </div>
           <button type="button" class="rc-checkout-close-btn" id="rcCheckoutCloseBtn">Close &#10005;</button>
@@ -1598,13 +1640,10 @@
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                 <div>
-                  <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#ffae00;margin-bottom:3px;">HOODIE SIZE (RC-309)</label>
-                  <select id="rcCustSizeSelect" style="width:100%;background:rgba(5,4,14,0.95);border:1.5px solid rgba(255,174,0,0.55);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.72rem;padding:8px 10px;border-radius:9px;outline:none;">
-                    <option value="S">Small (S)</option>
-                    <option value="M">Medium (M)</option>
-                    <option value="L" selected>Large (L)</option>
-                    <option value="XL">X-Large (XL)</option>
-                    <option value="2XL">2X-Large (2XL)</option>
+                  <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#ffae00;margin-bottom:3px;">DELIVERY METHOD *</label>
+                  <select id="rcDeliveryMethodSelect" style="width:100%;background:rgba(5,4,14,0.95);border:1.5px solid rgba(255,174,0,0.55);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.68rem;padding:8px 10px;border-radius:9px;outline:none;">
+                    <option value="ship" selected>&#128666; Standard Shipping ($19.99)</option>
+                    <option value="pickup">&#128205; Local Pickup / No Shipping ($0.00)</option>
                   </select>
                 </div>
                 <div>
@@ -1626,13 +1665,18 @@
             <div class="rc-bag-items-list" id="rcBagItemsList"></div>
             <div class="rc-summary-lines" id="rcSummaryLines"></div>
             <button type="button" class="rc-complete-checkout-btn" id="rcCompleteCheckoutBtn">
-              &#128179; PAY WITH STRIPE ($1.00) &bull; LIVE CHECKOUT
+              &#128179; PAY WITH STRIPE &bull; LIVE CHECKOUT
             </button>
           </div>
         </div>
       </div>
     `;
     document.body.appendChild(checkoutBackdropEl);
+    const delivSelEl = document.getElementById('rcDeliveryMethodSelect');
+    if (delivSelEl) {
+      delivSelEl.value = rcWantsShipping ? 'ship' : 'pickup';
+      delivSelEl.addEventListener('change', () => setWantsShippingPref(delivSelEl.value === 'ship'));
+    }
 
     // Pre-fill saved customer info if available
     try {
@@ -1671,7 +1715,7 @@
         verView.innerHTML = '';
       }
       if (editGrid) editGrid.style.display = '';
-      if (hdrTitle) hdrTitle.innerHTML = '&#128717;&#65039; RETROCANOPY STORE CHECKOUT ($1.00 TEST MODE)';
+      if (hdrTitle) hdrTitle.innerHTML = '&#128717;&#65039; RETROCANOPY OFFICIAL STORE CHECKOUT (EST. 1994)';
       if (hdrSub) hdrSub.innerHTML = 'Orders are sent to the <strong>Owner\'s Hub Production Queue AFTER PAYMENT</strong> with Customer Info, Item Photos &amp; DTF / Embroidery Production Files.';
     }
 
@@ -1822,8 +1866,16 @@
                     <span style="font-family:'Orbitron',sans-serif;color:#00f0ff;font-weight:800;">#${safeEsc(ordId)}</span>
                   </div>
                   <div class="rc-summary-row">
+                    <span>Merchandise Subtotal:</span>
+                    <span>$${Number(paidOrder.subtotal || 0).toFixed(2)}</span>
+                  </div>
+                  <div class="rc-summary-row">
+                    <span>Sales Tax (7%):</span>
+                    <span>$${Number(paidOrder.taxUsd !== undefined ? paidOrder.taxUsd : ((paidOrder.subtotal || 0) * 0.07)).toFixed(2)}</span>
+                  </div>
+                  <div class="rc-summary-row">
                     <span>Shipping:</span>
-                    <span style="color:#00f59b;font-weight:800;">FREE ($0.00)</span>
+                    <span style="color:#00f59b;font-weight:800;">${Number(paidOrder.shipping || 0) > 0 ? ('$' + Number(paidOrder.shipping).toFixed(2) + ' Standard') : 'Local Pickup ($0.00)'}</span>
                   </div>
                   <div class="rc-summary-row total-row">
                     <span>TOTAL AMOUNT PAID (STRIPE):</span>
@@ -2068,25 +2120,36 @@
             })
           }).catch(() => {});
 
-          // Build Blank Garment Supplier Links (S&S Activewear) for every ordered item
-          const hasHoodie = orderItemsArr.some((x) => String(x.model || '').toUpperCase() !== 'RC-107');
-          const hasHat = orderItemsArr.some((x) => String(x.model || '').toUpperCase() === 'RC-107');
-          const blankSupplierLinks = [
-            hasHoodie ? '• Blank Hoodie (RC-309): Gildan Item #18500 (Heavy Blend 8.0 oz. White) — https://www.ssactivewear.com/p/gildan/18500' : '',
-            hasHat ? '• Blank Hat (RC-107): YP Classics (Yupoong) Item #6006 (5-Panel Snapback White) — https://www.ssactivewear.com/p/yp_classics/6006' : ''
-          ].filter(Boolean).join('\n');
-
-          const dtfLinksBlock = hasHoodie ? [
-            '• Front Chest Crest DTF (300 DPI PNG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Front_Crest_DTF_300DPI.png',
-            '• Full Back 24K Emblem DTF (300 DPI PNG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Back_Emblem_DTF_300DPI.png',
-            '• Full Combined Gang Sheet DTF (300 DPI PNG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC309_Hoodie_Full_GangSheet_DTF_300DPI.png'
-          ].join('\n') : 'N/A (No Hoodie in this order — see Embroidery Files below)';
-
-          const embroideryLinksBlock = hasHat ? [
-            '• Tajima 3D Puff Stitch File (.DST): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst',
-            '• Vector Embroidery Path & Thread Spec (.SVG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_Embroidery_Spec.svg',
-            '• 300 DPI Transparent Emblem Artwork (.PNG): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_Embroidery_300DPI.png'
-          ].join('\n') : '• Reference Hat .DST (if needed): https://cdn.jsdelivr.net/gh/RetroCanopy/RetroCanopy@main/assets/production/RC107_Hat_Valkyrie_3D_Puff.dst';
+          // Dynamic Blank Garment Supplier Links (S&S Activewear) + Digital Print Worx Gang Sheet Builder + .DST/.SVG/300-DPI DTF Links for ALL 162 SKUs!
+          const originBase = (window.location.origin && window.location.origin.startsWith('http'))
+            ? window.location.origin
+            : 'https://www.retrocanopy.com';
+          const blankLines = [];
+          const dtfLines = [];
+          const embLines = [];
+          orderItemsArr.forEach((x, idx) => {
+            const catItem = (window.RC_STORE_1994 && window.RC_STORE_1994.CATALOG[x.model]) || masterCatalog[x.model] || x;
+            const pFiles = Array.isArray(catItem.productionFiles) ? catItem.productionFiles : (Array.isArray(x.productionFiles) ? x.productionFiles : []);
+            if (catItem.ssBlankUrl) {
+              blankLines.push(`• Item #${idx + 1} (${x.model} • Size ${x.size || 'L'} ×${x.qty || 1}): ${catItem.ssBlankLabel || 'S&S Blank'} — ${catItem.ssBlankUrl}`);
+            }
+            if (catItem.dpwBuilderUrl) {
+              blankLines.push(`  ↳ Order 15"x27" ($7.00) DTF Gang Sheet: ${catItem.dpwBuilderUrl}`);
+            }
+            pFiles.forEach((pf) => {
+              if (pf.externalBlank) return;
+              const cleanRel = String(pf.url || '').split('?')[0];
+              const fullLink = `${originBase}/${cleanRel}`;
+              if (catItem.productionType === 'EMBROIDERY_DST') {
+                embLines.push(`• [${x.model}] ${pf.label}: ${fullLink}`);
+              } else {
+                dtfLines.push(`• [${x.model}] ${pf.label}: ${fullLink}`);
+              }
+            });
+          });
+          const blankSupplierLinks = blankLines.join('\n') || 'See Owner\'s Hub Production Queue';
+          const dtfLinksBlock = dtfLines.length > 0 ? dtfLines.join('\n') : 'N/A (Embroidery-only order)';
+          const embroideryLinksBlock = embLines.length > 0 ? embLines.join('\n') : 'N/A (DTF-only order)';
 
           // 4B. Instant Production Email + Spectrum SMS/MMS Alert with Blank Supplier Links, DTF Files, Embroidery Files, Customer Info, Amount Paid & Item Pictures
           const emailPayload = {
@@ -2296,56 +2359,58 @@
       if (bagListEl) {
         bagListEl.innerHTML = '';
         if (items.length === 0) {
-          const kickerEl = document.getElementById('hudKicker') || document.querySelector('.hud-kicker');
-          const curCode = (kickerEl ? kickerEl.textContent.trim() : lastModelCode) || 'RC-309';
-          const curEntry = masterCatalog[curCode] || masterCatalog['RC-309'];
           const emptyDiv = document.createElement('div');
           emptyDiv.style.cssText = 'padding:16px;text-align:center;color:rgba(255,255,255,0.75);font-size:0.82rem;display:flex;flex-direction:column;gap:8px;align-items:center;';
           emptyDiv.innerHTML = `
-            <div>Your bag is empty. Add the $1.00 test items below:</div>
+            <div>Your bag is currently empty. Select any Black Hat ($36), Tee ($30), or Hoodie ($50) from Concepts #01, #12, #18, or #19, or quick-add Set #01 below:</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
-              <button type="button" id="rcQuickAddHoodieBtn" style="padding:8px 14px;border-radius:999px;border:1px solid #00f0ff;background:rgba(0,240,255,0.16);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.64rem;font-weight:800;cursor:pointer;">
-                + Add White Hoodie (RC-309 &bull; $1.00)
+              <button type="button" id="rcQuickAddHoodieBtn" style="padding:8px 14px;border-radius:999px;border:1px solid #00f0ff;background:rgba(0,240,255,0.16);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;cursor:pointer;">
+                + Black Hoodie #01 ($50.00)
               </button>
-              <button type="button" id="rcQuickAddHatBtn" style="padding:8px 14px;border-radius:999px;border:1px solid #ffae00;background:rgba(255,174,0,0.16);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.64rem;font-weight:800;cursor:pointer;">
-                + Add White Hat (RC-107 &bull; $1.00)
+              <button type="button" id="rcQuickAddHatBtn" style="padding:8px 14px;border-radius:999px;border:1px solid #ffae00;background:rgba(255,174,0,0.16);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;cursor:pointer;">
+                + Black Hat #01 ($36.00)
+              </button>
+              <button type="button" id="rcQuickAddTeeBtn" style="padding:8px 14px;border-radius:999px;border:1px solid #00f59b;background:rgba(0,245,155,0.16);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;cursor:pointer;">
+                + Black Tee #01 ($30.00)
               </button>
             </div>
           `;
           bagListEl.appendChild(emptyDiv);
           setTimeout(() => {
-            const hBtn = document.getElementById('rcQuickAddHoodieBtn');
-            const cBtn = document.getElementById('rcQuickAddHatBtn');
-            if (hBtn) hBtn.addEventListener('click', () => addItemToCartByCode('RC-309', 1));
-            if (cBtn) cBtn.addEventListener('click', () => addItemToCartByCode('RC-107', 1));
+            document.getElementById('rcQuickAddHoodieBtn')?.addEventListener('click', () => addItemToCartByCode('RC-HOD-01-BLK', 1, 'L'));
+            document.getElementById('rcQuickAddHatBtn')?.addEventListener('click', () => addItemToCartByCode('RC-HAT-01-BLK', 1, 'One Size Snapback'));
+            document.getElementById('rcQuickAddTeeBtn')?.addEventListener('click', () => addItemToCartByCode('RC-TEE-01-BLK', 1, 'L'));
+            document.getElementById('rcQuickAddJogBtn')?.addEventListener('click', () => addItemToCartByCode('RC-JOG-01-BLK', 1, 'L'));
           }, 0);
         } else {
           items.forEach((it) => {
-            const catItem = masterCatalog[it.model] || it;
+            const catItem = (window.RC_STORE_1994 && window.RC_STORE_1994.CATALOG[it.model]) || masterCatalog[it.model] || it;
+            const itemSize = it.size || (catItem.category === 'hats' ? 'One Size Snapback' : 'L');
+            const lKey = it.lineKey || `${it.model}__${itemSize}`;
             const fileBadge = catItem.productionType === 'EMBROIDERY_DST'
-              ? '<span style="color:#ffae00;font-size:0.64rem;">&#129525; Includes .DST + .SVG Embroidery Files</span>'
-              : '<span style="color:#00f0ff;font-size:0.64rem;">&#128424;&#65039; Includes 300 DPI Front &amp; Back DTF Files</span>';
+              ? '<span style="color:#ffae00;font-size:0.62rem;">&#129525; S&amp;S #6006 + .DST &amp; .SVG Embroidery</span>'
+              : '<span style="color:#00f0ff;font-size:0.62rem;">&#128424;&#65039; S&amp;S Blank + 300-DPI DPW Gang Sheet</span>';
             const row = document.createElement('div');
             row.className = 'rc-bag-item-row';
             row.innerHTML = `
-              <img class="rc-bag-item-img" src="${it.img}" alt="${it.title}">
+              <img class="rc-bag-item-img" src="${it.img || catItem.heroPhotoUrl}" alt="${it.title}">
               <div class="rc-bag-item-info">
-                <div class="rc-bag-item-code">${it.model} &bull; $${Number(it.price).toFixed(2)} each</div>
+                <div class="rc-bag-item-code">${it.model} &bull; SIZE: ${itemSize} &bull; $${Number(it.price).toFixed(2)}</div>
                 <div class="rc-bag-item-title">${it.title}</div>
                 <div>${fileBadge}</div>
               </div>
               <div class="rc-bag-item-controls">
-                <button type="button" class="rc-qty-btn" data-act="dec" data-code="${it.model}">&minus;</button>
+                <button type="button" class="rc-qty-btn" data-act="dec" data-lkey="${lKey}">&minus;</button>
                 <span style="font-family:'Orbitron',sans-serif;font-size:0.75rem;font-weight:800;min-width:18px;text-align:center;">${it.qty}</span>
-                <button type="button" class="rc-qty-btn" data-act="inc" data-code="${it.model}">+</button>
+                <button type="button" class="rc-qty-btn" data-act="inc" data-lkey="${lKey}">+</button>
               </div>
             `;
             row.querySelectorAll('.rc-qty-btn').forEach((b) => {
               b.addEventListener('click', () => {
                 const act = b.getAttribute('data-act');
-                const code = b.getAttribute('data-code');
+                const lk = b.getAttribute('data-lkey');
                 const curItems = getCartItems();
-                const idx = curItems.findIndex((x) => x.model === code);
+                const idx = curItems.findIndex((x) => (x.lineKey || `${x.model}__${x.size || 'L'}`) === lk);
                 if (idx !== -1) {
                   if (act === 'inc') curItems[idx].qty++;
                   else curItems[idx].qty--;
@@ -2360,23 +2425,33 @@
         }
       }
 
-      const subtotal = items.reduce((sum, it) => sum + Number(it.price || 1) * (it.qty || 1), 0);
-      const shipping = 0; // $0.00 Test Shipping so items are strictly $1.00 each
-      const finalTotal = Math.round((subtotal + shipping) * 100) / 100;
+      const taxRate = (window.RC_STORE_1994 && window.RC_STORE_1994.SALES_TAX_RATE) || 0.07;
+      const baseShipRate = (window.RC_STORE_1994 && window.RC_STORE_1994.BASELINE_SHIPPING_USD) || 19.99;
+      const subtotal = Math.round(items.reduce((sum, it) => sum + Number(it.price || 30) * (it.qty || 1), 0) * 100) / 100;
+      const salesTax = items.length > 0 ? Math.round(subtotal * taxRate * 100) / 100 : 0;
+      const shipping = (items.length > 0 && rcWantsShipping) ? baseShipRate : 0;
+      const finalTotal = Math.round((subtotal + salesTax + shipping) * 100) / 100;
+
+      const delivSelSync = document.getElementById('rcDeliveryMethodSelect');
+      if (delivSelSync) delivSelSync.value = rcWantsShipping ? 'ship' : 'pickup';
 
       if (summaryLinesEl) {
         summaryLinesEl.innerHTML = `
           <div class="rc-summary-row">
-            <span>Merchandise Subtotal ($1.00 Test Pricing):</span>
-            <span>${formatMoney(subtotal)}</span>
+            <span>Merchandise Subtotal:</span>
+            <span>$${subtotal.toFixed(2)}</span>
           </div>
           <div class="rc-summary-row">
-            <span>Test Mode Shipping:</span>
-            <span style="color:#00f59b;font-weight:800;">FREE ($0.00)</span>
+            <span>Sales Tax (7.0%):</span>
+            <span>$${salesTax.toFixed(2)}</span>
+          </div>
+          <div class="rc-summary-row">
+            <span>${rcWantsShipping ? 'Baseline Shipping:' : 'Local Pickup (No Shipping):'}</span>
+            <span style="color:${rcWantsShipping ? '#ffd478' : '#00f59b'};font-weight:800;">$${shipping.toFixed(2)}</span>
           </div>
           <div class="rc-summary-row total-row">
             <span>TOTAL PAID AT CHECKOUT:</span>
-            <span>${formatMoney(finalTotal)}</span>
+            <span>$${finalTotal.toFixed(2)}</span>
           </div>
         `;
       }
@@ -2420,21 +2495,53 @@
           const now = new Date();
           const orderId = 'RC-ORD-' + String(now.getTime()).slice(-6);
           const enrichedItems = items.map((it) => {
-            const cat = masterCatalog[it.model] || {};
-            const isHat = it.model === 'RC-107';
+            const cat = (window.RC_STORE_1994 && window.RC_STORE_1994.CATALOG[it.model]) || masterCatalog[it.model] || {};
+            const isHat = cat.category === 'hats' || String(it.model).startsWith('RC-HAT') || it.model === 'RC-107';
             return {
               model: it.model,
               title: cat.title || it.title,
-              price: Number(it.price || 1),
+              price: Number(it.price || cat.price || 36),
               qty: it.qty || 1,
-              size: isHat ? 'One Size Snapback' : selectedHoodieSize,
-              frontPhotoUrl: cat.frontPhotoUrl || 'assets/merch/hoodie_tier6_2f_front.png',
+              size: it.size || (isHat ? 'One Size Snapback' : 'L'),
+              color: cat.color || '',
+              category: cat.category || '',
+              frontPhotoUrl: cat.frontPhotoUrl || it.img || '',
               backPhotoUrl: cat.backPhotoUrl || '',
+              logo300DpiUrl: cat.logo300DpiUrl || '',
+              ssBlankLabel: cat.ssBlankLabel || '',
+              ssBlankUrl: cat.ssBlankUrl || '',
+              dpwBuilderUrl: cat.dpwBuilderUrl || '',
               productionType: cat.productionType || (isHat ? 'EMBROIDERY_DST' : 'DTF_PRINT'),
               productionNotes: cat.productionNotes || '',
               productionFiles: Array.isArray(cat.productionFiles) ? cat.productionFiles : []
             };
           });
+
+          const stripeLineItems = enrichedItems.map((x) => ({
+            sku: x.model,
+            name: `${x.title} (Size: ${x.size})`,
+            size: x.size,
+            qty: x.qty,
+            priceUsd: x.price
+          }));
+          if (salesTax > 0) {
+            stripeLineItems.push({
+              sku: 'RC-TAX-7PCT',
+              name: 'Sales Tax (7.0%)',
+              size: 'Tax',
+              qty: 1,
+              priceUsd: salesTax
+            });
+          }
+          if (shipping > 0) {
+            stripeLineItems.push({
+              sku: 'RC-SHIP-BASE',
+              name: 'Standard Baseline Shipping',
+              size: 'Shipping',
+              qty: 1,
+              priceUsd: shipping
+            });
+          }
 
           const pendingOrder = {
             orderId: orderId,
@@ -2442,13 +2549,15 @@
             customerName: custName,
             customerEmail: custEmail,
             customerPhone: custPhone || 'N/A',
-            shippingAddress: custAddress,
+            shippingAddress: rcWantsShipping ? custAddress : `${custAddress} (LOCAL PICKUP — $0.00 SHIPPING)`,
             customerNotes: custNotes,
             item: enrichedItems.map((x) => `${x.qty}x ${x.title} (${x.size})`).join(', '),
             items: enrichedItems,
             subtotal: subtotal,
+            taxUsd: salesTax,
             discountAmt: 0,
-            shipping: 0,
+            shipping: shipping,
+            wantsShipping: rcWantsShipping,
             total: finalTotal,
             totalPaid: finalTotal,
             paymentStatus: 'AWAITING_STRIPE',
@@ -2475,16 +2584,10 @@
                 customerName: custName,
                 customerEmail: custEmail,
                 customerPhone: custPhone,
-                shippingAddress: custAddress,
+                shippingAddress: pendingOrder.shippingAddress,
                 customerNotes: custNotes,
                 returnBaseUrl: returnBaseUrl,
-                items: enrichedItems.map((x) => ({
-                  sku: x.model,
-                  name: x.title,
-                  size: x.size,
-                  qty: x.qty,
-                  priceUsd: x.price
-                }))
+                items: stripeLineItems
               })
             });
 

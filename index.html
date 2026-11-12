@@ -1,455 +1,1120 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Retrocanopy - Official Brand &amp; Synthwave Apparel">
-    <title>Retrocanopy</title>
-    <link rel="preload" href="assets/retrocanopy_intro_video.mp4?v=220" as="video" type="video/mp4">
-    <link rel="preload" href="assets/intro_theme.mp3?v=220" as="audio" type="audio/mpeg">
-    <link rel="icon" type="image/png" href="assets/logo.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bungee&family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,700&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&family=Press+Start+2P&family=Righteous&family=Russo+One&family=Rye&family=Space+Grotesk:wght@500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=241">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Retrocanopy — Official Sanctuary, Merch Showroom, Bot Pit &amp; Studio</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: #000000;
+    font-family: 'Outfit', sans-serif;
+    color: #f4efe6;
+    user-select: none;
+  }
+
+  #webgl-container {
+    position: fixed; inset: 0; z-index: 1;
+  }
+
+  /* Dynamic Room Illumination Wash — stays completely dark until the Tree appears! */
+  #room-light-wash {
+    position: fixed; inset: 0; z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    mix-blend-mode: screen;
+  }
+
+  /* 3D Stage-Locked Interactive Overlay Layer (tracks the 1376x768 Concept 29 stage 1:1) */
+  #stage-overlay-root {
+    position: fixed;
+    left: 0; top: 0;
+    width: 1376px; height: 768px;
+    transform-origin: 0 0;
+    z-index: 6;
+    pointer-events: none;
+    --room-light: 0;
+  }
+
+  /* Interactive Stage Hotspots locked to Concept 29 geometry — NO illuminated hover box! */
+  .stage-hotspot {
+    position: absolute;
+    pointer-events: auto;
+    cursor: pointer;
+    border-radius: 14px;
+    text-decoration: none;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    outline: none !important;
+  }
+  .stage-hotspot:hover,
+  .stage-hotspot:focus {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    outline: none !important;
+  }
+  .stage-hotspot .hotspot-pill {
+    position: absolute;
+    left: 50%; bottom: 10px;
+    transform: translateX(-50%) translateY(4px);
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(6, 6, 10, 0.88);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 200, 92, 0.52);
+    color: #ffe4a4;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    pointer-events: none;
+  }
+  .stage-hotspot:hover .hotspot-pill {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* 1. Left Monolith: Nerdy Misfits */
+  .hs-nerdy {
+    left: 6.4%; top: 14.0%; width: 19.2%; height: 32.5%;
+  }
+  /* 2. Left Terrace: Shibuya 3D Bot Pit */
+  .hs-botpit {
+    left: 2.8%; top: 47.5%; width: 22.0%; height: 22.5%;
+  }
+  /* 3. Inner-Left Terrace: Synth the Owl Butler (Stationary!) */
+  .hs-synth {
+    left: 25.2%; top: 46.8%; width: 7.4%; height: 20.5%;
+  }
+  /* 4. Inner-Right Terrace: Official Retrocanopy Hoodie ($50) */
+  .hs-hoodie {
+    left: 67.2%; top: 43.5%; width: 11.4%; height: 23.5%;
+  }
+  /* 5. Outer-Right Terrace: We Build & Create Studio Screen */
+  .hs-studio {
+    left: 79.4%; top: 46.8%; width: 18.0%; height: 20.5%;
+  }
+  /* 6. Right Monolith: Deaf Hammer Productions */
+  .hs-deafhammer {
+    left: 76.2%; top: 14.0%; width: 18.2%; height: 32.0%;
+  }
+
+  /* Synth Owl Speech Bubble */
+  .synth-speech-bubble {
+    position: absolute;
+    left: 28.9%; top: 36.5%;
+    transform: translate(-50%, -100%) scale(0.92);
+    width: 240px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: rgba(8, 9, 15, 0.92);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 202, 95, 0.55);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.85), 0 0 22px rgba(255, 185, 60, 0.22);
+    color: #f8eedc;
+    font-size: 11.5px;
+    line-height: 1.42;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 15;
+  }
+  .synth-speech-bubble.is-visible {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+  .synth-speech-bubble strong {
+    display: block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: #ffcf68;
+    margin-bottom: 3px;
+  }
+
+  /* ==========================================================================
+     HUD OVERLAY (Minimalist Top Bar Only — Completely Dark Until Tree Appears!)
+     ========================================================================== */
+  .hud-overlay {
+    position: fixed; inset: 0; z-index: 10;
+    pointer-events: none;
+    display: flex; flex-direction: column; justify-content: flex-start;
+    padding: 18px 28px;
+    opacity: 0;
+    filter: brightness(0.2);
+    transition: opacity 1.1s ease, filter 1.1s ease;
+  }
+  .hud-overlay.is-lit {
+    opacity: 1;
+    filter: brightness(1);
+  }
+
+  .top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .brand-lockup {
+    display: flex; align-items: center; gap: 12px;
+    pointer-events: auto; cursor: pointer;
+    padding: 7px 16px 7px 11px;
+    border-radius: 999px;
+    background: rgba(6, 7, 12, 0.65);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 195, 85, 0.24);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .brand-lockup:hover {
+    border-color: rgba(255, 205, 95, 0.55);
+    transform: translateY(-1px);
+  }
+  .brand-lockup img {
+    width: 34px; height: 34px; object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(255, 185, 65, 0.5));
+  }
+  .brand-lockup .wordmark {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800; font-size: 0.98rem; letter-spacing: 0.16em;
+    color: #fff6e5;
+  }
+  .brand-lockup .sub {
+    display: block; font-size: 0.58rem; letter-spacing: 0.20em;
+    color: rgba(255, 205, 115, 0.78); text-transform: uppercase;
+  }
+
+  .top-actions {
+    display: flex; gap: 10px; pointer-events: auto; align-items: center; flex-wrap: wrap;
+  }
+  .glass-pill-btn {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(8, 9, 15, 0.65);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(244, 239, 230, 0.85);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.73rem; font-weight: 500; letter-spacing: 0.11em;
+    text-transform: uppercase;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.22s ease;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .glass-pill-btn:hover {
+    color: #ffe39e;
+    border-color: rgba(255, 198, 88, 0.45);
+    background: rgba(20, 16, 12, 0.78);
+  }
+  .glass-pill-btn.owner-btn {
+    border-color: rgba(240, 198, 116, 0.42);
+    color: #ffe29e;
+  }
+  .eq-bars {
+    display: inline-flex; align-items: flex-end; gap: 2px; height: 11px;
+  }
+  .eq-bars i {
+    width: 2px; background: #ffca58; border-radius: 1px;
+    display: block; height: 3px;
+    transition: height 0.2s ease;
+  }
+  .glass-pill-btn.playing .eq-bars i:nth-child(1) { animation: eqBounce 0.6s ease-in-out infinite alternate; }
+  .glass-pill-btn.playing .eq-bars i:nth-child(2) { animation: eqBounce 0.45s ease-in-out 0.15s infinite alternate; }
+  .glass-pill-btn.playing .eq-bars i:nth-child(3) { animation: eqBounce 0.7s ease-in-out 0.3s infinite alternate; }
+  @keyframes eqBounce { 0% { height: 3px; } 100% { height: 11px; } }
+
+  /* ==========================================================================
+     WE BUILD & CREATE STUDIO INTERACTIVE MODAL
+     ========================================================================== */
+  .studio-modal-backdrop {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(3, 4, 8, 0.86);
+    backdrop-filter: blur(16px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .studio-modal-backdrop.is-open { display: flex; }
+  .studio-modal-card {
+    position: relative;
+    width: min(980px, 95vw);
+    background: linear-gradient(180deg, rgba(14, 13, 20, 0.96), rgba(7, 7, 12, 0.98));
+    border: 1px solid rgba(255, 198, 90, 0.48);
+    border-radius: 24px;
+    padding: 28px 30px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.95), 0 0 40px rgba(255, 175, 55, 0.16);
+  }
+  .studio-close-btn {
+    position: absolute; top: 16px; right: 20px;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 200, 90, 0.35);
+    color: #ffe29e; font-size: 1.2rem; cursor: pointer;
+  }
+  .studio-modal-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.05rem; letter-spacing: 0.14em;
+    color: #ffd67c; text-align: center; margin-bottom: 20px;
+  }
+  .studio-pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .studio-pillar {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 195, 85, 0.22);
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .studio-pillar:hover {
+    border-color: rgba(255, 205, 95, 0.65);
+    background: rgba(255, 190, 65, 0.08);
+    transform: translateY(-2px);
+  }
+  .studio-pillar h4 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem; color: #ffe3a0; margin-bottom: 6px; letter-spacing: 0.08em;
+  }
+  .studio-pillar p {
+    font-size: 0.76rem; color: rgba(235, 228, 215, 0.75); line-height: 1.38;
+  }
+  .studio-form {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .studio-input, .studio-select {
+    flex: 1 1 180px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: rgba(6, 7, 12, 0.9);
+    border: 1px solid rgba(255, 195, 85, 0.32);
+    color: #fff; font-family: 'Outfit', sans-serif; font-size: 0.86rem;
+  }
+  .studio-submit {
+    padding: 11px 22px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #d8891c, #8f4e06);
+    border: 1px solid #ffd57a;
+    color: #fff; font-family: 'Orbitron', sans-serif;
+    font-size: 0.76rem; font-weight: 700; letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+  .studio-confirm {
+    margin-top: 10px; text-align: center; color: #ffd67c; font-size: 0.85rem;
+  }
+</style>
 </head>
+<body>
 
-<body class="cinema-intro-active">
-    <!-- Preloaded HTML5 Audio Tracks -->
-    <audio id="intro-title-audio" src="assets/intro_theme.mp3?v=220" playsinline webkit-playsinline preload="auto"></audio>
-    <audio id="syn-journey-audio" src="assets/syn_journey.wav?v=93" playsinline webkit-playsinline preload="none"></audio>
-    <audio id="cup-boom-audio" src="assets/cup_boom.wav?v=36" playsinline webkit-playsinline preload="auto"></audio>
-    <audio id="lofi-loop-audio" src="assets/dearly_beloved.mp3?v=80" loop playsinline webkit-playsinline preload="none"></audio>
-    <audio id="type-tick-audio" src="assets/type_tick.wav?v=36" playsinline webkit-playsinline preload="none"></audio>
+<audio id="bg-music-audio" src="assets/dearly_beloved.mp3" loop preload="auto"></audio>
 
-    <!-- Full-screen subtle electric lightning flash placeholder -->
-    <div class="sabotage-screen-flash" id="sabotage-screen-flash" aria-hidden="true"></div>
+<div id="room-light-wash"></div>
+<div id="webgl-container"></div>
 
-    <!-- High-Production Movie Studio Intro Atmosphere & Widescreen Letterbox Stage -->
-    <div class="cinema-intro-fx" id="cinema-intro-fx" aria-hidden="true">
-        <video id="rc-cinema-intro-video" class="rc-cinema-intro-video" src="assets/retrocanopy_intro_video.mp4?v=220" autoplay muted playsinline webkit-playsinline preload="auto"></video>
-        <div class="cinema-letterbox cinema-letterbox-top"></div>
-        <div class="cinema-letterbox cinema-letterbox-bottom"></div>
+<!-- 1:1 Stage-Locked Concept 29 Interactive Layer -->
+<div id="stage-overlay-root">
+  <!-- 1. Left Monolith: Nerdy Misfits -->
+  <a href="https://nerdymisfits.com" target="_blank" rel="noopener" class="stage-hotspot hs-nerdy" title="Visit NerdyMisfits.com">
+    <span class="hotspot-pill">Visit NerdyMisfits.com &nearr;</span>
+  </a>
+
+  <!-- 2. Left Terrace: Shibuya 3D Bot Pit -->
+  <a href="shibuya_bot_pit.html" class="stage-hotspot hs-botpit" title="Play Shibuya 3D Arena Bot Pit">
+    <span class="hotspot-pill">Enter Shibuya 3D Bot Pit &rarr;</span>
+  </a>
+
+  <!-- 3. Inner-Left Terrace: Synth the Owl Butler (Stationary) -->
+  <div class="stage-hotspot hs-synth" onclick="triggerSynthGreeting()" title="Speak with Synth the Owl Butler">
+    <span class="hotspot-pill">Speak with Synth</span>
+  </div>
+  <div class="synth-speech-bubble" id="synthBubble">
+    <strong>SYNTH &bull; SANCTUARY BUTLER</strong>
+    <span id="synthBubbleText">Welcome to the Sanctuary, friend. Explore our Black Edition Hoodies, enter the Shibuya Bot Pit, or start a custom project!</span>
+  </div>
+
+  <!-- 4. Inner-Right Terrace: Official Retrocanopy Hoodie ($50) -->
+  <a href="hoodie_preview.html" class="stage-hotspot hs-hoodie" title="Shop Official Black Edition Hoodies ($50)">
+    <span class="hotspot-pill">Official Merch Showroom &rarr;</span>
+  </a>
+
+  <!-- 5. Outer-Right Terrace: We Build & Create Studio Screen -->
+  <div class="stage-hotspot hs-studio" onclick="openStudioModal()" title="We Build Websites, Apps, Games, Apparel &amp; 3D Prints">
+    <span class="hotspot-pill">Start a Custom Project &rarr;</span>
+  </div>
+
+  <!-- 6. Right Monolith: Deaf Hammer Productions -->
+  <a href="https://deafhammer.com" target="_blank" rel="noopener" class="stage-hotspot hs-deafhammer" title="Visit DeafHammer.com">
+    <span class="hotspot-pill">Visit DeafHammer.com &nearr;</span>
+  </a>
+</div>
+
+<!-- HUD Overlay (Minimalist Top Bar Only — Completely Dark Until Tree Illuminates Room) -->
+<div class="hud-overlay" id="hudOverlay">
+  <div class="top-bar">
+    <div class="brand-lockup" onclick="replaySwoopIntro()" title="Replay Sanctuary Intro">
+      <img src="assets/logo.png" alt="Retrocanopy Logo">
+      <div>
+        <span class="wordmark">RETROCANOPY</span>
+      </div>
     </div>
-    <script>
-        (function () {
-            var v = document.getElementById('rc-cinema-intro-video');
-            var a = document.getElementById('intro-title-audio');
-            var navEntries = (window.performance && performance.getEntriesByType) ? performance.getEntriesByType('navigation') : [];
-            var navType = navEntries.length > 0 ? navEntries[0].type : ((window.performance && performance.navigation && performance.navigation.type === 1) ? 'reload' : 'navigate');
-            var isReload = navType === 'reload';
-            var isBackForward = navType === 'back_forward';
-            var fromInternal = false;
-            var isLoggedIn = false;
-            try {
-                fromInternal = sessionStorage.getItem('rc_from_internal') === '1';
-                var isAdminFlag = localStorage.getItem('rc_is_admin_v1') === 'true';
-                var adminEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim().toLowerCase();
-                var adminDb = JSON.parse(localStorage.getItem('rc_admin_accounts_v2') || '{}') || {};
-                var isOwnerEmail = adminEmail === 'josephcole001.ai@gmail.com' || adminEmail === 'josephcole001.a1@gmail.com';
-                isLoggedIn = Boolean(isAdminFlag && adminEmail && (isOwnerEmail || (adminDb[adminEmail] && adminDb[adminEmail].status === 'Approved' && !adminDb[adminEmail].deleted)));
-                if (!isLoggedIn) {
-                    localStorage.removeItem('rc_is_admin_v1');
-                    localStorage.removeItem('rc_current_admin_email_v1');
-                    localStorage.removeItem('rc_current_user_v1');
-                }
-            } catch (_) {}
-            try {
-                // Consume rc_from_internal immediately so it never sticks across reloads or future navigations!
-                sessionStorage.removeItem('rc_from_internal');
-            } catch (_) {}
-            var skipIntro = !isReload && fromInternal;
-            if (skipIntro) {
-                window.__rcSkipIntroOnLoad = true;
-                if (v) {
-                    try {
-                        v.pause();
-                        v.muted = true;
-                        v.removeAttribute('autoplay');
-                    } catch (_) {}
-                }
-                if (a) {
-                    try {
-                        a.pause();
-                        a.muted = true;
-                        a.volume = 0;
-                        a.removeAttribute('autoplay');
-                    } catch (_) {}
-                }
-                if (document.body) {
-                    document.body.classList.remove('cinema-intro-active');
-                }
-                return;
-            }
-
-            window.__rcSkipIntroOnLoad = false;
-            if (v) {
-                v.muted = true;
-                var targetRate = 1.0;
-                try {
-                    v.defaultPlaybackRate = targetRate;
-                    v.playbackRate = targetRate;
-                } catch (_) {}
-                v.addEventListener('loadedmetadata', function () {
-                    try { v.playbackRate = targetRate; } catch (_) {}
-                });
-                v.addEventListener('playing', function () {
-                    window.__rcIntroVideoPlayingStartMs = performance.now();
-                    try { v.playbackRate = targetRate; } catch (_) {}
-                });
-                v.play().catch(function () {});
-            }
-        })();
-    </script>
-
-    <main class="hero-container cinematic-center" id="hero-container">
-        <div class="logo-container" id="logo-container">
-            <img src="assets/logo.png?v=236" alt="Retrocanopy Logo" class="brand-logo-image logo-evo-hd">
-        </div>
-        <h1 class="brand-name" aria-label="RETROCANOPY">
-            <span class="brand-text-base">RETROCAN</span><span class="flicker-letter sabotaged" id="flicker-o">O<span class="o-hit-spark" id="o-hit-spark" aria-hidden="true"></span><span class="o-shockwave-ring" id="o-shockwave-ring" aria-hidden="true"></span></span><span class="brand-text-base">PY</span>
-        </h1>
-        <div class="cinema-studio-tagline" id="cinema-studio-tagline" aria-hidden="true">
-            <div class="tagline-row tagline-row-primary">
-                <span class="tagline-rule"></span>
-                <span class="tagline-text">Fun. Upbeat. Charity. Kindness.</span>
-                <span class="tagline-rule"></span>
-            </div>
-            <div class="tagline-row tagline-row-secondary">
-                <span class="tagline-subtext">A place for Culture &amp; Good Vibes</span>
-            </div>
-        </div>
-    </main>
-
-    <!-- Kingdom Hearts Background Music Toggle Pill & Track Selector (appears once intro completes) -->
-    <div class="kh-music-widget" id="kh-music-widget">
-        <button type="button" class="lofi-music-btn" id="lofi-music-btn" aria-label="Toggle Kingdom Hearts Background Music">
-            <span class="lofi-eq" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span id="lofi-music-label">DEARLY BELOVED</span>
-            <span class="kh-music-caret" aria-hidden="true">&#9662;</span>
-        </button>
-        <div class="kh-track-menu" id="kh-track-menu" role="menu" aria-label="Select Kingdom Hearts Song">
-            <button type="button" class="kh-track-option active" data-kh-track="0">Dearly Beloved</button>
-            <button type="button" class="kh-track-option" data-kh-track="1">Sanctuary</button>
-            <button type="button" class="kh-track-option" data-kh-track="2">Sunset</button>
-            <button type="button" class="kh-track-option" data-kh-track="off">Music: Off</button>
-        </div>
+    <div class="top-actions">
+      <button type="button" class="glass-pill-btn" id="musicToggleBtn" onclick="toggleSanctuaryMusic()">
+        <span class="eq-bars"><i></i><i></i><i></i></span>
+        <span id="musicBtnLabel">DEARLY BELOVED</span>
+      </button>
+      <button type="button" class="glass-pill-btn" onclick="replaySwoopIntro()">Replay Intro</button>
+      <a href="hoodie_preview.html" class="glass-pill-btn">Merch Store &rarr;</a>
+      <a href="admin.html" class="glass-pill-btn owner-btn" id="rcHomeAdminHubLink" title="Owner Command Center">🛡️ <span id="rcHomeAdminHubText">OWNER HUB</span></a>
+      <button type="button" class="glass-pill-btn" id="rcHomeSignInBtn" title="Sign In or Create Account">👤 <span id="rcHomeSignInLabel">SIGN IN</span></button>
     </div>
+  </div>
+</div>
 
-    <!-- Tap For Audio Prompt (appears when browser requires a screen tap to unlock audio, then disappears immediately) -->
-    <button type="button" class="tap-for-audio-prompt" id="tap-for-audio-prompt" aria-label="Tap for Audio">
-        <span class="tap-audio-icon" aria-hidden="true">&#128266;</span>
-        <span class="tap-audio-text">TAP FOR AUDIO</span>
-    </button>
-
-    <!-- Skip Intro Button for quick navigation -->
-    <button type="button" class="skip-intro-btn" id="skip-intro-btn" aria-label="Skip Intro">SKIP INTRO &#9197;</button>
-
-    <!-- 3D HOME SCREEN DEPTH BACKDROP (3D STAGE SHADOWBOX DIORAMA + LOGO DIMMER) -->
-    <div class="stage-3d-home-backdrop" id="stage-3d-home-backdrop" aria-hidden="true">
-        <div class="stage-3d-backdrop-sanctuary"></div>
-        <div class="stage-3d-backdrop-blue-glow"></div>
-        <div class="stage-3d-backdrop-vignette"></div>
-        <div class="stage-3d-logo-dimmer"></div>
+<!-- We Build & Create Studio Modal -->
+<div class="studio-modal-backdrop" id="studioModal" onclick="if(event.target.id==='studioModal')closeStudioModal()">
+  <div class="studio-modal-card">
+    <button type="button" class="studio-close-btn" onclick="closeStudioModal()">&times;</button>
+    <h3 class="studio-modal-title">RETROCANOPY STUDIO &mdash; WE BUILD &amp; CREATE</h3>
+    <div class="studio-pillars">
+      <div class="studio-pillar" onclick="selectStudioService('Custom Website')">
+        <h4>WEBSITES</h4>
+        <p>Custom Brand Sites, 3D WebGL Stages &amp; E-Commerce Storefronts</p>
+      </div>
+      <div class="studio-pillar" onclick="selectStudioService('Mobile / Web App')">
+        <h4>APPS</h4>
+        <p>iOS, Android &amp; Full-Stack Web Applications Built to Scale</p>
+      </div>
+      <div class="studio-pillar" onclick="selectStudioService('Custom Arcade / Web Game')">
+        <h4>GAMES</h4>
+        <p>Custom 3D &amp; HTML5 Arcade Games, Bot Pit Arenas &amp; Leaderboards</p>
+      </div>
+      <div class="studio-pillar" onclick="selectStudioService('Custom 3D Prints')">
+        <h4>3D PRINTS</h4>
+        <p>Custom Figures, Props, Keychains, Prototypes &amp; Multi-Color Prints</p>
+      </div>
+      <div class="studio-pillar" onclick="selectStudioService('Custom Apparel & Merch')">
+        <h4>CUSTOM APPAREL</h4>
+        <p>Custom Hoodies, Snapback Hats, Tees, DTF &amp; 3D Puff Embroidery</p>
+      </div>
     </div>
+    <form class="studio-form" onsubmit="submitStudioQuote(event)">
+      <input type="text" class="studio-input" id="studioName" placeholder="Your Name / Brand" required>
+      <input type="text" class="studio-input" id="studioContact" placeholder="Email or Phone" required>
+      <select class="studio-select" id="studioService">
+        <option value="Custom Website">Custom Website</option>
+        <option value="Mobile / Web App">Mobile / Web App</option>
+        <option value="Custom Arcade / Web Game">Custom Arcade / Web Game</option>
+        <option value="Custom 3D Prints">Custom 3D Prints</option>
+        <option value="Custom Apparel & Merch">Custom Apparel &amp; Merch</option>
+        <option value="Full Custom Project">Full Custom Project (Multiple Services)</option>
+      </select>
+      <button type="submit" class="studio-submit">START PROJECT &rarr;</button>
+    </form>
+    <div class="studio-confirm" id="studioConfirm"></div>
+  </div>
+</div>
 
-    <!-- CONCEPT 1 & 3A: GLOSSY 3D NEON-CYAN & MAGENTA PERSPECTIVE GRID STAGE FLOOR (WITH MIRROR REFLECTIONS) -->
-    <div class="stage-3d-neon-grid-floor" id="stage-3d-neon-grid-floor" aria-hidden="true">
-        <div class="stage-3d-horizon-glow"></div>
-        <div class="stage-3d-grid-plane"></div>
-        <div class="stage-3d-mirror-sheen"></div>
-        <div class="stage-3d-diorama-floor-reflection" id="stage-3d-diorama-reflection"></div>
-    </div>
+<!-- Precomputed 14,000-Cube 1:1 Pixel-Aligned 3D Solid Square Point Targets -->
+<script src="assets/concept_gallery/living_tree/morph_targets_data.js?v=20"></script>
 
-    <!-- FULL-SCREEN HOLOGRAM OWL BUTLER ("SYN") 8-SCENE CINEMATIC GAMING CULTURE SHIFT JOURNEY -->
-    <section class="holo-butler-journey-stage pitch-black-opening" id="holo-butler-journey-stage" data-mood="nostalgia" aria-label="Gaming Culture Shift Journey with Syn the Hologram Owl Butler">
-        <!-- 8 Widescreen 16-Bit Scene Illustrations with Cinematic Ken-Burns Pan/Zoom + Live Neon Flicker & Moving CRT Gameplay -->
-        <div class="holo-era-backdrop-slides" id="holo-era-slides" aria-hidden="true">
-            <div class="holo-era-slide" data-era-slide="0" style="background-image: url('assets/eras/scene1_golden_arcade.jpg?v=236');">
-                <div class="era-neon-glow-layer neon-flicker-arcade" style="background-image: url('assets/eras/scene1_neon_glow.png?v=236');"></div>
-                <canvas class="era-crt-game-canvas" data-era-crt-canvas="1" style="-webkit-mask-image: url('assets/eras/scene1_crt_mask.png?v=236'); mask-image: url('assets/eras/scene1_crt_mask.png?v=236');"></canvas>
-            </div>
-            <div class="holo-era-slide" data-era-slide="1" style="background-image: url('assets/eras/scene2_rental_friday.jpg?v=236');">
-                <div class="era-neon-glow-layer neon-flicker-rental" style="background-image: url('assets/eras/scene2_neon_glow.png?v=236');"></div>
-                <canvas class="era-crt-game-canvas" data-era-crt-canvas="2" style="-webkit-mask-image: url('assets/eras/scene2_crt_mask.png?v=236'); mask-image: url('assets/eras/scene2_crt_mask.png?v=236');"></canvas>
-            </div>
-            <div class="holo-era-slide" data-era-slide="2" style="background-image: url('assets/eras/scene3_lan_culture.jpg?v=236');">
-                <div class="era-neon-glow-layer neon-flicker-lan" style="background-image: url('assets/eras/scene3_neon_glow.png?v=236');"></div>
-                <canvas class="era-crt-game-canvas" data-era-crt-canvas="3" style="-webkit-mask-image: url('assets/eras/scene3_crt_mask.png?v=236'); mask-image: url('assets/eras/scene3_crt_mask.png?v=236');"></canvas>
-            </div>
-            <div class="holo-era-slide" data-era-slide="3" style="background-image: url('assets/eras/scene4_midnight_tournament.jpg?v=236');">
-                <div class="era-neon-glow-layer neon-flicker-tourney" style="background-image: url('assets/eras/scene4_neon_glow.png?v=236');"></div>
-                <canvas class="era-crt-game-canvas" data-era-crt-canvas="4" style="-webkit-mask-image: url('assets/eras/scene4_crt_mask.png?v=236'); mask-image: url('assets/eras/scene4_crt_mask.png?v=236');"></canvas>
-            </div>
-            <div class="holo-era-slide" data-era-slide="4" style="background-image: url('assets/eras/scene5_shuttered_arcade.jpg?v=236');">
-                <canvas class="shuttered-arcade-static-canvas" id="shuttered-arcade-static-canvas" aria-hidden="true"></canvas>
-            </div>
-            <div class="holo-era-slide" data-era-slide="5" style="background-image: url('assets/eras/scene6_corporate_static.jpg?v=236');">
-                <canvas class="tv-pile-static-canvas" id="tv-pile-static-canvas" aria-hidden="true"></canvas>
-            </div>
-            <div class="holo-era-slide" data-era-slide="6" style="background-image: url('assets/eras/scene7_creator_loft.jpg?v=236');">
-                <div class="era-neon-glow-layer neon-flicker-loft" style="background-image: url('assets/eras/scene7_neon_glow.png?v=236');"></div>
-                <canvas class="era-crt-game-canvas" data-era-crt-canvas="7" style="-webkit-mask-image: url('assets/eras/scene7_crt_mask.png?v=236'); mask-image: url('assets/eras/scene7_crt_mask.png?v=236');"></canvas>
-            </div>
-            <div class="holo-era-slide" data-era-slide="7" style="background-image: url('assets/eras/scene8_retrocanopy_sanctuary.jpg?v=236');">
-                <div class="era-tree-blue-glow-layer" style="background-image: url('assets/eras/scene8_tree_blue_glow.png?v=236');"></div>
-                <canvas class="era-tree-magic-canvas" data-era-tree-canvas="8" style="-webkit-mask-image: url('assets/eras/scene8_tree_blue_glow.png?v=236'); mask-image: url('assets/eras/scene8_tree_blue_glow.png?v=236');"></canvas>
-                <canvas class="era-crt-game-canvas" data-era-crt-canvas="8" style="-webkit-mask-image: url('assets/eras/scene8_crt_mask.png?v=236'); mask-image: url('assets/eras/scene8_crt_mask.png?v=236');"></canvas>
-            </div>
-            <!-- Act-Reactive Emotional Color Grading & Anamorphic Light Wash inside the Cinema Frame -->
-            <div class="holo-emotional-color-grade" aria-hidden="true"></div>
-            <div class="holo-crt-scanline-overlay" aria-hidden="true"></div>
-        </div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
 
-        <!-- Full-Screen Transparent Atmospheric Particle, Full-Screen Rain & Firefly Canvas Overlay -->
-        <canvas class="holo-era-canvas" id="holo-era-canvas"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-        <!-- Dramatic Act Transition & Projector Flash Overlay -->
-        <div class="holo-dramatic-flash" id="holo-dramatic-flash" aria-hidden="true"></div>
+// Synth Owl Butler Interactive Greeting (Owl remains 100% stationary!)
+const SYNTH_LINES = [
+  'Welcome to the Sanctuary, friend! Check out our Bot Pit crew playing 8-bit NES on the vintage CRT TV beside me!',
+  'Click our Sovereign 24K Gold Hoodie ($50) on the right terrace to explore the full 1994 Merch Showroom!',
+  'Ready for battle? Click the Bot Pit robots on the left terrace to launch the Shibuya 3D Arena!',
+  'Need a custom Website, App, Game, or 3D Print? Click our Studio glass screen on the right terrace!'
+];
+let synthLineIdx = 0;
+let synthBubbleTimer = null;
+window.triggerSynthGreeting = function() {
+  const bubble = document.getElementById('synthBubble');
+  const textEl = document.getElementById('synthBubbleText');
+  if (!bubble || !textEl) return;
+  textEl.textContent = SYNTH_LINES[synthLineIdx % SYNTH_LINES.length];
+  synthLineIdx++;
+  bubble.classList.add('is-visible');
+  if (synthBubbleTimer) clearTimeout(synthBubbleTimer);
+  synthBubbleTimer = setTimeout(() => bubble.classList.remove('is-visible'), 5500);
+};
 
-        <!-- Opening Black-Screen Large White Typing Greeting ("Hello Friend... I am Synth") -->
-        <div class="synth-opening-greeting" id="synth-opening-greeting" aria-live="polite">
-            <div class="synth-greeting-line">
-                <span class="synth-greeting-text" id="synth-greeting-text"></span><span class="synth-greeting-cursor" aria-hidden="true"></span>
-            </div>
-        </div>
+// Studio Modal Controls
+window.openStudioModal = function(serviceName) {
+  if (serviceName) {
+    const sel = document.getElementById('studioService');
+    if (sel) sel.value = serviceName;
+  }
+  document.getElementById('studioModal').classList.add('is-open');
+};
+window.closeStudioModal = function() {
+  document.getElementById('studioModal').classList.remove('is-open');
+};
+window.selectStudioService = function(serviceName) {
+  const sel = document.getElementById('studioService');
+  if (sel) sel.value = serviceName;
+  document.getElementById('studioName').focus();
+};
+window.submitStudioQuote = function(ev) {
+  ev.preventDefault();
+  const name = document.getElementById('studioName').value;
+  const svc = document.getElementById('studioService').value;
+  document.getElementById('studioConfirm').textContent = `Thank you, ${name}! Your ${svc} inquiry has been logged in the Sanctuary Studio.`;
+  ev.target.reset();
+};
 
-        <!-- 2.39:1 Widescreen Theatrical Cinema Letterbox Bars -->
-        <div class="holo-cinema-bar holo-cinema-bar-top" aria-hidden="true"></div>
-        <div class="holo-cinema-bar holo-cinema-bar-bottom" aria-hidden="true"></div>
+// Background Music Toggle
+window.toggleSanctuaryMusic = function() {
+  const audio = document.getElementById('bg-music-audio');
+  const btn = document.getElementById('musicToggleBtn');
+  if (!audio) return;
+  if (audio.paused) {
+    audio.volume = 0.45;
+    audio.play().then(() => btn.classList.add('playing')).catch(() => {});
+  } else {
+    audio.pause();
+    btn.classList.remove('playing');
+  }
+};
 
-        <!-- Stationary Left-Side 3D Vector Wireframe Owl Butler Actor ("SYNTH") with Wings Wide Open -->
-        <div class="holo-owl-actor" id="actor-owl-butler">
-            <!-- Fancy Steampunk Type Writing Sign Above Synth ("Coming Soon 11/14") -->
-            <div class="synth-steampunk-coming-soon" id="synth-steampunk-coming-soon" aria-live="polite">
-                <div class="steampunk-plaque-frame">
-                    <span class="steampunk-rivet rivet-tl" aria-hidden="true"></span>
-                    <span class="steampunk-rivet rivet-tr" aria-hidden="true"></span>
-                    <span class="steampunk-rivet rivet-bl" aria-hidden="true"></span>
-                    <span class="steampunk-rivet rivet-br" aria-hidden="true"></span>
-                    <div class="steampunk-ornament-row" aria-hidden="true">
-                        <span class="steampunk-filigree">&#9552;&#9552;&#9672;</span>
-                        <span class="steampunk-gear-icon">&#9881;</span>
-                        <span class="steampunk-filigree">&#9672;&#9552;&#9552;</span>
-                    </div>
-                    <div class="steampunk-coming-title">Coming Soon</div>
-                    <div class="steampunk-coming-date">11 / 14</div>
-                    <div class="steampunk-ornament-bottom" aria-hidden="true">&#10087; &#9472;&#9472;&#9472; &#9670; &#9472;&#9472;&#9472; &#10087;</div>
-                </div>
-            </div>
-            <div class="holo-owl-beam-cone" aria-hidden="true"></div>
-            <div class="holo-owl-scan-laser" aria-hidden="true"></div>
-            <div class="holo-owl-sprite-wrap">
-                <img src="assets/friends/owl3_wings_open.png?v=236" alt="Synth Arms Down on Cane" class="owl-frame frame-idle active" decoding="async">
-                <img src="assets/friends/owl3_welcome.png?v=236" alt="Synth Arm Out Welcoming" class="owl-frame frame-talk1" decoding="async">
-                <img src="assets/friends/owl3_welcome.png?v=236" alt="Synth Arm Out Welcoming" class="owl-frame frame-talk2" decoding="async">
-                <!-- True RGB Horizontal Scan-Slice Glitch Layers (no rubbery skewing) -->
-                <img src="assets/friends/owl3_wings_open.png?v=236" alt="" aria-hidden="true" class="owl-glitch-slice owl-glitch-slice-cyan" decoding="async">
-                <img src="assets/friends/owl3_wings_open.png?v=236" alt="" aria-hidden="true" class="owl-glitch-slice owl-glitch-slice-magenta" decoding="async">
-            </div>
-            <div class="holo-owl-emitter-ring" aria-hidden="true"></div>
-            <div class="holo-owl-floor-light" aria-hidden="true"></div>
-            <div class="member-nameplate holo-owl-nameplate"><span>SYNTH</span></div>
-        </div>
-    </section>
+// ============================================================================
+// THREE.JS CONCEPT 29 EXTENDED PEDESTAL STAGE + PITCH-BLACK-TO-LIGHT ENGINE
+// ============================================================================
+const data = window.__RC_MORPH_DATA;
+const N = data.count;
+const targets = data.targets;
 
-    <!-- CONCEPT #14 EXACT 3D LIQUID GLASS HOME STAGE -->
-    <section id="rc-home-shop-scroller" class="rc-home-shop-scroller rc-fresh14-home-stage" aria-label="Retrocanopy 3D Liquid Glass Showroom, Shibuya Bot Pit, Studio, and Partner Showcase">
-        <!-- Outer 3D Smoked-Glass Bezel Rim -->
-        <div class="rc-f14-outer-bezel" aria-hidden="true"></div>
+const container = document.getElementById('webgl-container');
+const stageOverlayRoot = document.getElementById('stage-overlay-root');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
 
-        <!-- Polished Obsidian & Slate Floor with Molten-Orange & Cyan Caustics -->
-        <div class="rc-f14-obsidian-floor" aria-hidden="true">
-            <div class="rc-f14-floor-horizon"></div>
-            <div class="rc-f14-floor-caustics-orange"></div>
-            <div class="rc-f14-floor-caustics-cyan-left"></div>
-            <div class="rc-f14-floor-caustics-cyan-right"></div>
-        </div>
+const STAGE_W = 11.874122;
+const STAGE_H = 6.627417;
+const STAGE_ASPECT = STAGE_W / STAGE_H;
 
-        <!-- Center 3-Column 3D Perspective Stage -->
-        <div class="rc-f14-main-stage">
-            <!-- LEFT WING: 3D Perspective-Angled Smoked-Cyan Liquid Glass Slab (Shibuya 3D Arena Bot Pit) -->
-            <div class="rc-f14-left-wing-col">
-                <a class="rc-f14-botpit-glass-slab" href="shibuya_bot_pit.html" onclick="window.__openBotPitAppOverlay(event)" draggable="false" aria-label="Play Shibuya 3D Arena Bot Pit">
-                    <span class="rc-f14-slab-edge-left" aria-hidden="true"></span>
-                    <span class="rc-f14-slab-sheen" aria-hidden="true"></span>
-                    <div class="rc-f14-botpit-inner-frame">
-                        <img class="rc-f14-botpit-img" src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg" alt="Shibuya 3D Arena Bot Pit" loading="eager" decoding="async" draggable="false" />
-                        <div class="rc-f14-botpit-title-overlay">
-                            <div class="rc-f14-botpit-line-top">SHIBUYA 3D ARENA</div>
-                            <div class="rc-f14-botpit-line-main"><span class="bot-cyan">BOT</span> <span class="pit-pink">PIT</span></div>
-                        </div>
-                    </div>
-                </a>
-            </div>
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+function getBaseCameraZ() {
+  const aspect = window.innerWidth / window.innerHeight;
+  if (aspect < STAGE_ASPECT) {
+    return 8.0 * Math.min(1.34, STAGE_ASPECT / Math.max(0.72, aspect));
+  }
+  return 8.0;
+}
+camera.position.set(0, 0.0, getBaseCameraZ());
 
-            <!-- CENTERPIECE: Concept #1 — 3-Tiered Molten-Orange Liquid Glass Stand with 1-by-1 Molten-Gold Light-Bloom Shop Cycler -->
-            <div class="rc-f14-center-pedestal-col">
-                <div class="rc-f14-pedestal-showcase rc-c1-centerpiece-showcase" id="rc-c1-centerpiece-cycler">
-                    <div class="rc-c1-stage-box">
-                        <!-- Warm Volumetric 24K Molten-Gold Light-Bloom Aura + Shimmering Golden Bokeh Embers -->
-                        <div class="rc-c1-molten-aura" id="rc-c1-molten-aura" aria-hidden="true"></div>
-                        <canvas class="rc-c1-ember-canvas" id="rc-c1-ember-canvas" width="460" height="440" aria-hidden="true"></canvas>
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.NoToneMapping;
+container.appendChild(renderer.domElement);
 
-                        <!-- Clean Unbaked 3-Tiered Molten-Orange Liquid Glass Stand -->
-                        <img class="rc-f14-pedestal-composite-img rc-f14-pedestal-stand-layer rc-c1-stand-img" id="rc-c1-stand-img" src="assets/ui/fresh14_centerpiece_clean_stand.png?v=236" alt="3-Tiered Molten-Orange Liquid Glass Pedestal" loading="eager" decoding="async" draggable="false" />
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  0.20,
+  0.42,
+  0.83
+);
+composer.addPass(bloomPass);
 
-                        <!-- Live Dynamic Top-Disc Reflection & Contact Shadow -->
-                        <div class="rc-c1-top-disc-refl-mask" id="rc-c1-refl-stack" aria-hidden="true">
-                            <img class="rc-c1-refl-slide is-active" data-c1-idx="0" src="assets/ui/c1_items/c1_hoodie_back.png?v=236" alt="" draggable="false" />
-                            <img class="rc-c1-refl-slide" data-c1-idx="1" src="assets/ui/c1_items/c1_valkyrie_hat.png?v=236" alt="" draggable="false" />
-                        </div>
-                        <div class="rc-c1-contact-shadow" aria-hidden="true"></div>
+// ============================================================================
+// 1. CONCEPT 29 STAGE SHADER (PITCH-BLACK ROOM -> TREE LIGHT + LIFELIKE ROBOTS)
+// ============================================================================
+const texLoader = new THREE.TextureLoader();
+const texBg = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_bg_only.jpg?v=250');
+texBg.minFilter = THREE.LinearFilter;
+texBg.magFilter = THREE.LinearFilter;
 
-                        <!-- Single Central Levitating & Gold-Phasing Hero Shop Item Stack (1 Best Hero View Per Item) -->
-                        <a class="rc-c1-hover-item-link" id="rc-c1-item-link" href="hoodie_preview.html?filter=all&amp;side=back" aria-label="Shop White &amp; Gold Hoodie — $160" title="White &amp; Gold Hoodie — $160">
-                            <span class="rc-c1-hover-float-wrap" id="rc-c1-slides-stack">
-                                <img class="rc-c1-item-slide is-active" data-c1-idx="0" src="assets/ui/c1_items/c1_hoodie_back.png?v=236" alt="White &amp; 24K Gold Hoodie" loading="eager" decoding="async" draggable="false" />
-                                <img class="rc-c1-item-slide" data-c1-idx="1" src="assets/ui/c1_items/c1_valkyrie_hat.png?v=236" alt="White &amp; 24K Gold Valkyrie Snapback Hat" loading="eager" decoding="async" draggable="false" />
-                            </span>
-                        </a>
+const texFullTree = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_tree.jpg?v=250');
+texFullTree.minFilter = THREE.LinearFilter;
+texFullTree.magFilter = THREE.LinearFilter;
 
-                        <!-- Pedestal Base Click Hotspot -->
-                        <a class="rc-f14-hotspot rc-c1-pedestal-base-link" id="rc-c1-pedestal-link" href="hoodie_preview.html?filter=all&amp;side=back" aria-label="Enter Retrocanopy Merch Store" title="Enter Retrocanopy Merch Store"></a>
+const stageUniforms = {
+  uTexFull: { value: texFullTree },
+  uTexBg: { value: texBg },
+  uTime: { value: 0 },
+  uTreeReveal: { value: 0.0 },
+  uRoomLight: { value: 0.0 },
+  uMouse3D: { value: new THREE.Vector3(999, 999, 0) }
+};
 
-                        <!-- 3D Smoked-Obsidian & Molten-Amber Plaque Pill + Glowing Amber Phase Dots -->
-                        <div class="rc-c1-plaque-wrap">
-                            <div class="rc-c1-glass-plaque" id="rc-c1-glass-plaque">
-                                <a class="rc-c1-plaque-title-link" id="rc-c1-plaque-link" href="hoodie_preview.html?filter=all&amp;side=back">
-                                    <span class="rc-c1-plaque-text" id="rc-c1-plaque-text">WHITE &amp; GOLD HOODIE &bull; $160</span>
-                                </a>
-                                <div class="rc-c1-phase-dots" id="rc-c1-phase-dots" role="tablist" aria-label="Select Shop Item">
-                                    <button type="button" class="rc-c1-phase-dot is-active" data-c1-dot="0" aria-label="White &amp; Gold Hoodie" aria-selected="true"></button>
-                                    <button type="button" class="rc-c1-phase-dot" data-c1-dot="1" aria-label="White &amp; Gold Hat" aria-selected="false"></button>
-                                </div>
-                            </div>
-                            <div class="rc-c1-plaque-floor-refl" aria-hidden="true"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+const stageGeo = new THREE.PlaneGeometry(STAGE_W, STAGE_H, 1, 1);
+const stageMat = new THREE.ShaderMaterial({
+  uniforms: stageUniforms,
+  transparent: false,
+  depthWrite: false,
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D uTexFull;
+    uniform sampler2D uTexBg;
+    uniform float uTime;
+    uniform float uTreeReveal;
+    uniform float uRoomLight;
+    uniform vec3 uMouse3D;
+    varying vec2 vUv;
 
-            <!-- RIGHT WING: 3D Perspective-Angled Smoked-Cyan Liquid Glass Tower (Single Phasing Hologram Cycler) -->
-            <div class="rc-f14-right-wing-col">
-                <div class="rc-concept7-tokens-showcase rc-holo-pedestal-showcase rc-f14-studio-glass-tower" id="rc-hero-studio-marquee" role="group" aria-label="We Build and Create: Websites, Apps, Games, Custom Apparel, and Custom 3D Prints — Start a Project">
-                    <span class="rc-f14-slab-edge-right" aria-hidden="true"></span>
-                    <span class="rc-f14-slab-sheen" aria-hidden="true"></span>
-                    <div class="rc-c7-header rc-holo-header rc-f14-tower-header">
-                        <span class="rc-holo-header-dot" aria-hidden="true"></span>
-                        <span>WE BUILD &amp; CREATE</span>
-                        <span class="rc-holo-header-dot" aria-hidden="true"></span>
-                    </div>
+    // Aspect-corrected 2D rigid rotation around an exact anatomical joint pivot
+    vec2 rotRigid(vec2 uv, vec2 pivot, float angle) {
+      vec2 aspect = vec2(1408.0 / 768.0, 1.0);
+      vec2 d = (uv - pivot) * aspect;
+      float c = cos(angle);
+      float s = sin(angle);
+      vec2 r = vec2(d.x * c - d.y * s, d.x * s + d.y * c);
+      return pivot + r / aspect;
+    }
 
-                    <!-- Single Central Hologram Projector Cycling & Phasing One-by-One -->
-                    <div class="rc-f14-holo-single-cycler" id="rc-f14-holo-cycler">
-                        <button type="button" class="rc-c7-token-item rc-holo-projector-unit rc-f14-holo-stage-btn" id="rc-f14-active-holo-btn" data-service="Custom Website" aria-label="Custom Websites — Start a Project">
-                            <span class="rc-holo-projection-well rc-f14-hero-projection-well" id="rc-f14-hero-well">
-                                <span class="rc-holo-beam-cone rc-f14-hero-beam" aria-hidden="true"></span>
-                                <span class="rc-holo-scan-laser rc-f14-hero-laser" aria-hidden="true"></span>
-                                <span class="rc-holo-proj-stage rc-f14-holo-slides-stack">
-                                    <img class="rc-f14-holo-slide is-active" data-holo-idx="0" data-label="WEBSITES" data-sub="Custom Sites &amp; 3D Storefronts" data-service="Custom Website" src="assets/misfits/holo_proj_websites.png?v=236" alt="Custom Websites Hologram" loading="eager" decoding="async" draggable="false" />
-                                    <img class="rc-f14-holo-slide" data-holo-idx="1" data-label="APPS" data-sub="iOS, Android &amp; Full-Stack Web Apps" data-service="Mobile / Web App" src="assets/misfits/holo_proj_apps.png?v=236" alt="Mobile and Web Apps Hologram" loading="eager" decoding="async" draggable="false" />
-                                    <img class="rc-f14-holo-slide" data-holo-idx="2" data-label="GAMES" data-sub="Custom Arcade &amp; Interactive Games" data-service="Custom Arcade / Web Game" src="assets/misfits/holo_proj_games.png?v=236" alt="Custom Games Hologram" loading="eager" decoding="async" draggable="false" />
-                                    <img class="rc-f14-holo-slide" data-holo-idx="3" data-label="CUSTOM APPAREL" data-sub="Hats, Hoodies &amp; Streetwear Drops" data-service="Custom Apparel & Merch" src="assets/misfits/holo_proj_apparel.png?v=236" alt="Custom Apparel Hologram" loading="eager" decoding="async" draggable="false" />
-                                    <img class="rc-f14-holo-slide" data-holo-idx="4" data-label="3D PRINTS" data-sub="Custom Figures, Props &amp; Prototypes" data-service="Custom 3D Prints" src="assets/misfits/holo_proj_3dprints.png?v=241" alt="Custom 3D Prints Hologram" loading="eager" decoding="async" draggable="false" />
-                                </span>
-                                <span class="rc-holo-emitter-ring rc-f14-hero-emitter" id="rc-f14-hero-emitter" aria-hidden="true"></span>
-                                <span class="rc-holo-floor-glow rc-f14-hero-floor-glow" aria-hidden="true"></span>
-                            </span>
+    // Soft elliptical mask for a robot head or limb
+    float partMask(vec2 uv, vec2 center, vec2 radii) {
+      vec2 d = (uv - center) / radii;
+      return 1.0 - smoothstep(0.62, 1.0, length(d));
+    }
 
-                            <span class="rc-f14-holo-readout" id="rc-f14-holo-readout">
-                                <span class="rc-c7-token-label rc-holo-label rc-f14-cycler-title" id="rc-f14-cycler-title">WEBSITES</span>
-                                <span class="rc-f14-cycler-sub" id="rc-f14-cycler-sub">Custom Sites &amp; 3D Storefronts</span>
-                            </span>
-                        </button>
+    // Natural staggered eyelid blink (returns 1.0 during a brief 140ms blink every period)
+    float naturalBlink(float t, float period, float offset) {
+      float m = mod(t + offset, period);
+      return smoothstep(0.0, 0.06, m) * (1.0 - smoothstep(0.08, 0.15, m));
+    }
 
-                        <div class="rc-f14-holo-dots" role="tablist" aria-label="Select Hologram Service">
-                            <button type="button" class="rc-f14-holo-dot is-active" data-holo-dot="0" aria-label="Show Websites Hologram" aria-selected="true"></button>
-                            <button type="button" class="rc-f14-holo-dot" data-holo-dot="1" aria-label="Show Apps Hologram" aria-selected="false"></button>
-                            <button type="button" class="rc-f14-holo-dot" data-holo-dot="2" aria-label="Show Games Hologram" aria-selected="false"></button>
-                            <button type="button" class="rc-f14-holo-dot" data-holo-dot="3" aria-label="Show Custom Apparel Hologram" aria-selected="false"></button>
-                            <button type="button" class="rc-f14-holo-dot" data-holo-dot="4" aria-label="Show Custom 3D Prints Hologram" aria-selected="false"></button>
-                        </div>
-                    </div>
+    void main() {
+      vec2 worldXY = vec2((vUv.x - 0.5) * 11.874122, (vUv.y - 0.5) * 6.627417);
 
-                    <button type="button" class="rc-c7-start-btn rc-holo-start-btn rc-f14-start-btn" data-service="Full Custom Project" aria-label="Start a Project">
-                        START A PROJECT <span class="rc-c7-bolt">&#9889;</span>
-                    </button>
-                </div>
-            </div>
-        </div>
+      // ======================================================================
+      // SMOOTH, CINEMATIC 60FPS LIFELIKE ROBOT KINEMATICS (OWL 100% STATIONARY)
+      // ======================================================================
+      vec2 sampleUv = vUv;
+      float eyeBlinkDim = 0.0;
+      float eyeGlowPulse = 0.0;
 
-        <!-- Concept #07 Exact: 1984 Bent-Neon & Smoked-Glass Corner Marquees with 3D-Lit Mascots & Neon Floor Reflections -->
-        <div class="rc-misfits-banner-row rc-f14-bottom-pods-row rc-c07-neon-corners-row" id="rc-misfits-banner-row">
-            <a class="rc-misfits-feature-link rc-partner-misfits rc-f14-corner-pod rc-c07-neon-pod pod-left" href="https://nerdymisfits.com" target="_blank" rel="noopener" aria-label="Visit NerdyMisfits.com">
-                <img class="rc-f14-c4-pod-stage-img rc-c07-marquee-stage-img" src="assets/ui/c07_exact_left_nerdy.png?v=236" alt="Nerdy Misfits 3D Neon Marquee" loading="eager" decoding="async" draggable="false" />
-            </a>
+      // Strictly left of Synth the Owl (vUv.x < 0.250): animate the 5 robots smoothly!
+      if (vUv.x < 0.250 && vUv.y > 0.175 && vUv.y < 0.500) {
+        // 1. Bot 1 (Far Left): Head center (0.058, 0.440), Neck pivot (0.0589, 0.4089)
+        float mHead1 = partMask(vUv, vec2(0.0582, 0.442), vec2(0.024, 0.042));
+        float mBody1 = partMask(vUv, vec2(0.0582, 0.365), vec2(0.025, 0.055)) * (1.0 - mHead1);
+        float ang1 = sin(uTime * 1.35 + 0.4) * 0.042 + sin(uTime * 0.62) * 0.018;
+        float breath1 = sin(uTime * 1.9 + 0.2) * 0.0014;
 
-            <a class="rc-misfits-feature-link rc-partner-deafhammer rc-f14-corner-pod rc-c07-neon-pod pod-right" href="https://deafhammer.com" target="_blank" rel="noopener" aria-label="Visit DeafHammer.com">
-                <img class="rc-f14-c4-pod-stage-img rc-c07-marquee-stage-img" src="assets/ui/c07_exact_right_deafhammer.png?v=236" alt="Deaf Hammer Productions 3D Neon Marquee" loading="eager" decoding="async" draggable="false" />
-            </a>
-        </div>
-    </section>
+        // 2. Bot 2 (Second from Left): Head center (0.100, 0.448), Neck pivot (0.1001, 0.4167), Waving Arm (0.119, 0.406)
+        float mHead2 = partMask(vUv, vec2(0.1001, 0.448), vec2(0.021, 0.038));
+        float mArm2  = partMask(vUv, vec2(0.1195, 0.406), vec2(0.016, 0.028)) * (1.0 - mHead2);
+        float mBody2 = partMask(vUv, vec2(0.1001, 0.372), vec2(0.022, 0.052)) * (1.0 - mHead2);
+        float ang2 = sin(uTime * 1.55 + 1.7) * 0.038;
+        float armAng2 = sin(uTime * 2.4) * 0.075;
+        float breath2 = sin(uTime * 2.05 + 1.3) * 0.0013;
 
-    <!-- Retrocanopy Studio ("We Build Websites, Apps, Games & Custom Apparel") Interactive Modal -->
-    <div class="rc-web-studio-modal-backdrop" id="rc-web-studio-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="rc-web-studio-modal-title">
-        <div class="rc-web-studio-modal-card">
-            <button type="button" class="rc-web-studio-close-btn" id="rc-web-studio-close-btn" aria-label="Close Studio Modal">&times;</button>
-            <div class="rc-web-studio-header-banner">
-                <span class="rc-web-studio-title" id="rc-web-studio-modal-title">RETROCANOPY STUDIO &mdash; WEBSITES &bull; APPS &bull; GAMES &bull; CUSTOM APPAREL &bull; 3D PRINTS</span>
-            </div>
-            <div class="rc-web-studio-pillars-grid">
-                <div class="rc-web-studio-pillar-card pillar-cyan">
-                    <div class="rc-pillar-icon" aria-hidden="true">&#127760;</div>
-                    <h3 class="rc-pillar-heading">WEBSITES</h3>
-                    <p class="rc-pillar-desc">Custom Brand Sites, E-Commerce Storefronts, 3D Stages &amp; 24/7 Management</p>
-                </div>
-                <div class="rc-web-studio-pillar-card pillar-gold">
-                    <div class="rc-pillar-icon" aria-hidden="true">&#128241;</div>
-                    <h3 class="rc-pillar-heading">APPS</h3>
-                    <p class="rc-pillar-desc">iOS, Android &amp; Full-Stack Web Applications Built &amp; Managed to Scale</p>
-                </div>
-                <div class="rc-web-studio-pillar-card pillar-magenta">
-                    <div class="rc-pillar-icon" aria-hidden="true">&#127918;</div>
-                    <h3 class="rc-pillar-heading">GAMES</h3>
-                    <p class="rc-pillar-desc">Custom HTML5 Arcade Games, Gamified Experiences &amp; Ticket Reward Systems</p>
-                </div>
-                <div class="rc-web-studio-pillar-card pillar-emerald">
-                    <div class="rc-pillar-icon" aria-hidden="true">&#128085;</div>
-                    <h3 class="rc-pillar-heading">CUSTOM APPAREL</h3>
-                    <p class="rc-pillar-desc">Custom Hats, Hoodies, Tees, Embroidery, Streetwear &amp; Brand Merch Drops</p>
-                </div>
-                <div class="rc-web-studio-pillar-card pillar-gold">
-                    <div class="rc-pillar-icon" aria-hidden="true">&#128424;&#65039;</div>
-                    <h3 class="rc-pillar-heading">3D PRINTS</h3>
-                    <p class="rc-pillar-desc">Custom Figures, Props, Keychains, Signs, Prototypes &amp; Multi-Color Prints</p>
-                </div>
-            </div>
-            <form class="rc-web-studio-quote-bar" id="rc-web-studio-quote-form">
-                <input type="text" class="rc-studio-input" id="rc-studio-name" placeholder="Your Name / Brand" required />
-                <input type="text" class="rc-studio-input" id="rc-studio-contact" placeholder="Email or Phone" required />
-                <select class="rc-studio-select" id="rc-studio-service" aria-label="Select Service Type">
-                    <option value="Custom Website">Custom Website</option>
-                    <option value="Mobile / Web App">Mobile / Web App</option>
-                    <option value="Custom Arcade / Web Game">Custom Arcade / Web Game</option>
-                    <option value="Custom Apparel & Merch">Custom Apparel &amp; Merch</option>
-                    <option value="Custom 3D Prints">Custom 3D Prints</option>
-                    <option value="Full Custom Project">Full Custom Project (Multiple Services)</option>
-                </select>
-                <button type="submit" class="rc-studio-submit-btn">INSERT IDEA / HIRE US &#9889;</button>
-            </form>
-            <div class="rc-studio-confirm-msg" id="rc-studio-confirm-msg" aria-live="polite"></div>
-        </div>
-    </div>
+        // 3. Bot 3 (Third from Left): Head center (0.158, 0.450), Neck pivot (0.1584, 0.4167)
+        float mHead3 = partMask(vUv, vec2(0.1584, 0.450), vec2(0.024, 0.042));
+        float mBody3 = partMask(vUv, vec2(0.1584, 0.372), vec2(0.024, 0.052)) * (1.0 - mHead3);
+        float ang3 = sin(uTime * 1.22 + 3.1) * 0.044 + cos(uTime * 0.75) * 0.016;
+        float breath3 = sin(uTime * 1.80 + 2.5) * 0.0014;
 
-    <!-- Stage container (crew characters and section tabs removed; Synth owl butler & login preserved) -->
-    <div id="crew-stage" class="crew-stage" aria-hidden="true"></div>
+        // 4. Bot 4 (Back Right): Head center (0.222, 0.448), Neck pivot (0.2223, 0.4167)
+        float mHead4 = partMask(vUv, vec2(0.2223, 0.448), vec2(0.023, 0.040));
+        float ang4 = sin(uTime * 1.42 + 4.5) * 0.036;
+        float breath4 = sin(uTime * 1.95 + 3.8) * 0.0012;
 
-    <script src="script.js?v=241"></script>
-    <script src="auth_hub.js?v=236"></script>
+        // 5. NES Gamer Robot (Foreground): Head center (0.201, 0.380), Neck pivot (0.2003, 0.3333), Controller hands (0.215, 0.298)
+        float mGamerHead  = partMask(vUv, vec2(0.2010, 0.380), vec2(0.033, 0.054));
+        float mGamerHands = partMask(vUv, vec2(0.2150, 0.298), vec2(0.034, 0.034)) * (1.0 - mGamerHead);
+        float mGamerBody  = partMask(vUv, vec2(0.2003, 0.275), vec2(0.036, 0.068)) * (1.0 - mGamerHead);
+        // Gamer Robot leans into the game and looks slightly up/down at the CRT screen smoothly
+        float angGamer = sin(uTime * 1.85) * 0.045 + sin(uTime * 0.82) * 0.022;
+        float handsAng = sin(uTime * 4.2) * 0.052 + cos(uTime * 2.7) * 0.028;
+        float breathGamer = sin(uTime * 2.35) * 0.0016;
+
+        // Apply smooth rigid-body rotations & breathing
+        vec2 uv1 = rotRigid(vUv - vec2(0.0, breath1), vec2(0.0589, 0.4089), ang1);
+        vec2 uv2 = rotRigid(vUv - vec2(0.0, breath2), vec2(0.1001, 0.4167), ang2);
+        vec2 uv2Arm = rotRigid(vUv - vec2(0.0, breath2), vec2(0.1094, 0.4036), armAng2);
+        vec2 uv3 = rotRigid(vUv - vec2(0.0, breath3), vec2(0.1584, 0.4167), ang3);
+        vec2 uv4 = rotRigid(vUv - vec2(0.0, breath4), vec2(0.2223, 0.4167), ang4);
+        vec2 uvG = rotRigid(vUv - vec2(0.0, breathGamer), vec2(0.2003, 0.3333), angGamer);
+        vec2 uvGHands = rotRigid(vUv - vec2(0.0, breathGamer * 0.6), vec2(0.1960, 0.2943), handsAng);
+
+        sampleUv = vUv;
+        sampleUv = mix(sampleUv, vUv - vec2(0.0, breath1), mBody1);
+        sampleUv = mix(sampleUv, uv1, mHead1);
+        sampleUv = mix(sampleUv, vUv - vec2(0.0, breath2), mBody2);
+        sampleUv = mix(sampleUv, uv2Arm, mArm2);
+        sampleUv = mix(sampleUv, uv2, mHead2);
+        sampleUv = mix(sampleUv, vUv - vec2(0.0, breath3), mBody3);
+        sampleUv = mix(sampleUv, uv3, mHead3);
+        sampleUv = mix(sampleUv, uv4, mHead4);
+        sampleUv = mix(sampleUv, vUv - vec2(0.0, breathGamer), mGamerBody);
+        sampleUv = mix(sampleUv, uvGHands, mGamerHands);
+        sampleUv = mix(sampleUv, uvG, mGamerHead);
+
+        // Lifelike staggered eyelid blinks & LED eye glow on the robots' visors
+        float b1 = naturalBlink(uTime, 4.3, 0.7) * partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012));
+        float b3 = naturalBlink(uTime, 3.8, 2.1) * partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012));
+        float b4 = naturalBlink(uTime, 4.9, 1.4) * partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012));
+        float bG = naturalBlink(uTime, 3.4, 0.2) * partMask(sampleUv, vec2(0.2152, 0.3840), vec2(0.016, 0.014));
+        eyeBlinkDim = clamp(b1 + b3 + b4 + bG, 0.0, 1.0);
+
+        float gMask = partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012))
+                    + partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012))
+                    + partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012))
+                    + partMask(sampleUv, vec2(0.2152, 0.3840), vec2(0.016, 0.014));
+        eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.12 + 0.10 * sin(uTime * 3.2));
+      }
+
+      vec3 litRoomCol = texture2D(uTexBg, sampleUv).rgb;
+
+      // Apply robot eye blinks & lifelike cyan visor luminescence
+      if (eyeBlinkDim > 0.001 || eyeGlowPulse > 0.001) {
+        float visorCyan = clamp((litRoomCol.g + litRoomCol.b) * 0.6 - litRoomCol.r * 0.4, 0.0, 1.0);
+        litRoomCol *= (1.0 - eyeBlinkDim * 0.88);
+        litRoomCol += vec3(0.10, 0.85, 1.0) * visorCyan * eyeGlowPulse * (1.0 - eyeBlinkDim);
+      }
+
+      // Live 60fps 8-bit CRT Television Screen gameplay animation & scanline glow!
+      float inTvScreen = smoothstep(0.318, 0.323, vUv.x) * (1.0 - smoothstep(0.358, 0.363, vUv.x))
+                       * smoothstep(0.292, 0.298, vUv.y) * (1.0 - smoothstep(0.390, 0.396, vUv.y));
+      if (inTvScreen > 0.01) {
+        float scanline = 0.93 + 0.07 * sin(vUv.y * 680.0 - uTime * 18.0);
+        float phosphorPulse = 1.05 + 0.04 * sin(uTime * 6.0);
+        // Smoothly animate an 8-bit hero sprite jumping across the CRT screen
+        vec2 tvUv = (vUv - vec2(0.320, 0.295)) / vec2(0.040, 0.098);
+        float spriteX = 0.28 + 0.44 * (0.5 + 0.5 * sin(uTime * 2.2));
+        float spriteY = 0.36 + 0.28 * abs(sin(uTime * 4.4));
+        float spriteBox = step(abs(tvUv.x - spriteX), 0.075) * step(abs(tvUv.y - spriteY), 0.095);
+        litRoomCol = mix(litRoomCol, vec3(1.0, 0.86, 0.32), spriteBox * inTvScreen * 0.65);
+        litRoomCol *= mix(1.0, scanline * phosphorPulse, inTvScreen);
+      }
+
+      // Vibrant Multi-Band Retro Setting Sun radiance (24K Gold crown -> Fiery Coral -> Electric Magenta base)
+      vec2 sunCenter = vec2(0.0, 0.52);
+      float distSun = length(worldXY - sunCenter);
+      float sunCorona = exp(-max(0.0, distSun - 1.55) * 1.35) * smoothstep(-0.65, -0.15, worldXY.y);
+      float sunVertMix = clamp((vUv.y - 0.38) / 0.52, 0.0, 1.0);
+      vec3 vibrantSunTint = mix(vec3(0.88, 0.18, 0.65), vec3(1.0, 0.68, 0.15), sunVertMix);
+      float sunBreath = (0.09 + 0.05 * sin(uTime * 1.25)) * uRoomLight;
+      litRoomCol += vibrantSunTint * sunCorona * sunBreath;
+      if (distSun < 1.92 && worldXY.y > -0.60) {
+        float sunLuma = dot(litRoomCol, vec3(0.299, 0.587, 0.114));
+        litRoomCol = mix(vec3(sunLuma), litRoomCol, 1.22) * (1.0 + (0.05 + 0.04 * sin(uTime * 1.25)) * uRoomLight);
+      }
+
+      // ======================================================================
+      // PITCH-BLACK ROOM DURING PARTICLE SWOOP -> ILLUMINATE WHEN TREE FORMS
+      // ======================================================================
+      vec3 darkSilhouette = vec3(0.0);
+
+      // Radial golden light wave expanding outward from the Tree center (0.0, 0.05) as uRoomLight goes 0 -> 1
+      float distFromTree = length(vec2(worldXY.x * 0.22, (worldXY.y - 0.05) * 0.30));
+      float localRoomLight = smoothstep(0.0, 1.0, (uRoomLight * 1.55) - distFromTree * 0.48);
+
+      // Warm golden light surge crest as the light wave sweeps across the pedestals & terraces
+      float lightWaveCrest = smoothstep(0.05, 0.45, localRoomLight) * (1.0 - smoothstep(0.55, 0.98, localRoomLight));
+      vec3 bgCol = mix(darkSilhouette, litRoomCol, localRoomLight)
+                 + litRoomCol * vec3(0.55, 0.38, 0.12) * lightWaveCrest * 0.45;
+
+      // Centerpiece Tree (ZERO waviness / ZERO UV warping — rock-solid sculpture!)
+      float inCenterColumn = smoothstep(-2.4, -1.7, worldXY.x) * (1.0 - smoothstep(1.7, 2.4, worldXY.x));
+      vec2 treeUv = vUv;
+      vec3 bgAtTreeUv = texture2D(uTexBg, treeUv).rgb;
+
+      // Subtle cursor illumination on tree branches without any UV waviness
+      float distMouse = distance(worldXY, uMouse3D.xy);
+      float cursorGlow = 0.0;
+      if (distMouse < 0.34 && vUv.y > 0.30 && inCenterColumn > 0.1) {
+        float push = (0.34 - distMouse) / 0.34;
+        cursorGlow = push * push * 0.28;
+      }
+
+      // Flowing Bioluminescent Molten-Gold Sap Wave travelling upward from pedestal through trunk & branches
+      float sapPhase = worldXY.y * 2.6 - abs(worldXY.x) * 1.1 - uTime * 1.35;
+      float sapWave = pow(0.5 + 0.5 * sin(sapPhase), 3.6);
+
+      float organicNoise = sin(worldXY.x * 5.0 + uTime * 2.0) * cos(worldXY.y * 5.0 - uTime * 1.8) * 0.06;
+      float heightFactor = clamp((vUv.y - 0.30) / 0.60, 0.0, 1.0);
+
+      vec3 finalCol = bgCol;
+
+      if (uTreeReveal > 0.005) {
+        vec3 fullCol = texture2D(uTexFull, treeUv).rgb;
+        float treeDiff = length(fullCol - bgAtTreeUv);
+        // Keep foreground CRT TV and stationary Owl cleanly in front of distant tree cubes
+        float inForegroundTv = smoothstep(0.275, 0.285, vUv.x) * (1.0 - smoothstep(0.412, 0.422, vUv.x))
+                             * (1.0 - smoothstep(0.415, 0.428, vUv.y));
+        float isTreePixel = smoothstep(0.03, 0.15, treeDiff) * smoothstep(0.28, 0.33, vUv.y) * inCenterColumn * (1.0 - inForegroundTv);
+        vec3 livingTreeCol = fullCol * (1.0 + sapWave * 0.20 * isTreePixel)
+                           + vec3(0.98, 0.74, 0.25) * cursorGlow * isTreePixel;
+        float revealMask = smoothstep(0.0, 1.0, (uTreeReveal * 1.35) - heightFactor * 0.32 + organicNoise);
+        finalCol = mix(finalCol, livingTreeCol, isTreePixel * revealMask);
+      }
+
+      gl_FragColor = vec4(finalCol, 1.0);
+    }
+  `
+});
+const heroStageMesh = new THREE.Mesh(stageGeo, stageMat);
+heroStageMesh.position.set(0, 0, -0.02);
+scene.add(heroStageMesh);
+
+// ============================================================================
+// 2. 14,000 SMOOTH SOLID 3D SQUARE CUBES & PARTICLES
+// ============================================================================
+const totalVerts = N;
+const geom = new THREE.BufferGeometry();
+
+const posStart = new Float32Array(totalVerts * 3);
+const posTarget = new Float32Array(totalVerts * 3);
+const colStart = new Float32Array(totalVerts * 3);
+const colTarget = new Float32Array(totalVerts * 3);
+const aPhase = new Float32Array(totalVerts);
+const aIsVoxel = new Float32Array(totalVerts);
+const aRimFactor = new Float32Array(totalVerts);
+
+function computeRimFactor(tx, ty, tz, isVox) {
+  const radial = Math.sqrt(tx * tx * 0.75 + ty * ty * 0.55 + tz * tz * 0.65);
+  const edgeBoost = Math.min(1.0, Math.max(0.0, (radial - 0.50) / 1.45));
+  const depthEdge = Math.min(1.0, Math.abs(tz) * 1.4);
+  return Math.min(1.0, edgeBoost * 0.65 + depthEdge * 0.35 + (isVox > 0.5 ? 0.35 : 0.0));
+}
+
+for (let i = 0; i < N; i++) {
+  const pt = targets[0].pts[i];
+  const [tx, ty, tz, r, g, b, isVox] = pt;
+  const seed = Math.random();
+
+  posStart[i * 3] = tx;
+  posStart[i * 3 + 1] = ty;
+  posStart[i * 3 + 2] = tz;
+  posTarget[i * 3] = tx;
+  posTarget[i * 3 + 1] = ty;
+  posTarget[i * 3 + 2] = tz;
+
+  colStart[i * 3] = r / 255;
+  colStart[i * 3 + 1] = g / 255;
+  colStart[i * 3 + 2] = b / 255;
+  colTarget[i * 3] = r / 255;
+  colTarget[i * 3 + 1] = g / 255;
+  colTarget[i * 3 + 2] = b / 255;
+
+  aPhase[i] = seed;
+  aIsVoxel[i] = isVox;
+  aRimFactor[i] = computeRimFactor(tx, ty, tz, isVox);
+}
+
+geom.setAttribute('position', new THREE.BufferAttribute(posStart, 3));
+geom.setAttribute('aTarget', new THREE.BufferAttribute(posTarget, 3));
+geom.setAttribute('aColorStart', new THREE.BufferAttribute(colStart, 3));
+geom.setAttribute('aColorTarget', new THREE.BufferAttribute(colTarget, 3));
+geom.setAttribute('aPhase', new THREE.BufferAttribute(aPhase, 1));
+geom.setAttribute('aIsVoxel', new THREE.BufferAttribute(aIsVoxel, 1));
+geom.setAttribute('aRimFactor', new THREE.BufferAttribute(aRimFactor, 1));
+
+const uniforms = {
+  uTime: { value: 0 },
+  uIntroProgress: { value: 0 },
+  uMorphProgress: { value: 1 },
+  uMouse3D: { value: new THREE.Vector3(999, 999, 0) },
+  uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+  uRimGlowStrength: { value: 0.95 },
+  uLiquidPulseStrength: { value: 0.80 },
+  uTreeReveal: { value: 0.0 },
+  uIsTreeTarget: { value: 1.0 }
+};
+
+const vertexShader = `
+  uniform float uTime;
+  uniform float uIntroProgress;
+  uniform float uMorphProgress;
+  uniform vec3 uMouse3D;
+  uniform float uPixelRatio;
+  uniform float uRimGlowStrength;
+  uniform float uLiquidPulseStrength;
+  uniform float uTreeReveal;
+  uniform float uIsTreeTarget;
+
+  attribute vec3 aTarget;
+  attribute vec3 aColorStart;
+  attribute vec3 aColorTarget;
+  attribute float aPhase;
+  attribute float aIsVoxel;
+  attribute float aRimFactor;
+
+  varying vec3 vColor;
+  varying float vIsVoxel;
+  varying float vAlpha;
+  varying float vLumBoost;
+
+  vec3 smoothOrbitDrift(vec3 p, float t) {
+    float wx = sin(p.y * 1.4 + t * 0.75 + aPhase * 6.2831) * 0.11;
+    float wy = cos(p.x * 1.4 + t * 0.68 + aPhase * 6.2831) * 0.10;
+    float wz = sin(p.x * 1.2 - t * 0.62 + aPhase * 6.2831) * 0.09;
+    return vec3(wx, wy, wz);
+  }
+
+  void main() {
+    vIsVoxel = aIsVoxel;
+
+    float m = smoothstep(0.0, 1.0, uMorphProgress);
+    vec3 basePos = mix(position, aTarget, m);
+    vec3 baseCol = mix(aColorStart, aColorTarget, m);
+
+    // ACT 1 & ACT 2 MOVIE INTRO: Swoop into the pitch-black room as a golden stream, stop at center pedestal, and form the tree!
+    float pDelay = aPhase * 0.36 + clamp((basePos.y + 1.5) / 4.5, 0.0, 1.0) * 0.28;
+    float localIntro = clamp((uIntroProgress - pDelay * 0.55) / (1.0 - 0.55 * 0.66), 0.0, 1.0);
+    float introEase = smoothstep(0.0, 1.0, localIntro);
+
+    if (uIntroProgress < 0.999) {
+      float streamT = clamp(uIntroProgress * 1.35 - aPhase * 0.55, 0.0, 1.0);
+      vec3 swoopOrigin = vec3(-5.8, -1.85, 4.2);
+      vec3 swoopMid1   = vec3( 2.8, -0.75, 1.8);
+      vec3 swoopMid2   = vec3(-2.1,  0.35, -0.6);
+      vec3 swoopCenter = vec3( 0.0, -1.15, 0.0);
+
+      float u = 1.0 - streamT;
+      vec3 riverPos = u*u*u * swoopOrigin
+                    + 3.0*u*u*streamT * swoopMid1
+                    + 3.0*u*streamT*streamT * swoopMid2
+                    + streamT*streamT*streamT * swoopCenter;
+
+      vec3 ribbonOffset = vec3(
+        sin(aPhase * 40.0 + uTime * 1.4) * 0.24,
+        cos(aPhase * 32.0 - uTime * 1.2) * 0.18,
+        sin(aPhase * 28.0 + uTime * 1.1) * 0.24
+      );
+      vec3 swoopPos = riverPos + ribbonOffset;
+      basePos = mix(swoopPos, basePos, introEase);
+    }
+
+    // Ultra-smooth floating drift for the surrounding 3D square cubes (zero jitter on the tree trunk)
+    float motionAmp = aIsVoxel > 0.5 ? 0.045 : 0.004;
+    vec3 liveOffset = smoothOrbitDrift(basePos, uTime) * motionAmp;
+
+    // Travelling Bioluminescent Liquid Sap / Light Wave
+    float wavePhase = basePos.y * 2.0 - length(basePos.xz) * 1.0 - uTime * 0.85 + aPhase * 1.8;
+    float liquidPulse = pow(0.5 + 0.5 * sin(wavePhase), 3.6) * uLiquidPulseStrength;
+
+    float rimGlow = aRimFactor * uRimGlowStrength;
+    float totalLum = rimGlow + liquidPulse + (1.0 - introEase) * 0.75;
+    vLumBoost = totalLum;
+
+    baseCol = baseCol * (0.94 + totalLum * 0.28);
+    basePos += liveOffset;
+
+    // Gentle cursor repulsion on floating 3D squares only
+    float distMouse = distance(basePos.xy, uMouse3D.xy);
+    if (distMouse < 0.34 && aIsVoxel > 0.5) {
+      vec2 pushDir = normalize(basePos.xy - uMouse3D.xy + vec2(0.0001));
+      float pushAmt = (0.34 - distMouse) / 0.34;
+      basePos.xy += pushDir * pushAmt * pushAmt * 0.12;
+      vLumBoost += pushAmt * 0.45;
+    }
+
+    vColor = baseCol;
+
+    float enterVis = smoothstep(0.0, 0.12, uIntroProgress - aPhase * 0.18);
+    float settleAlpha = mix(0.92, 0.99, clamp(totalLum * 0.5, 0.0, 1.0));
+
+    float treeBranchCrossfade = aIsVoxel > 0.5
+      ? 0.94
+      : (1.0 - smoothstep(0.58, 0.96, uTreeReveal));
+
+    vAlpha = enterVis * settleAlpha * treeBranchCrossfade;
+
+    vec4 mvPosition = modelViewMatrix * vec4(basePos, 1.0);
+    gl_Position = projectionMatrix * mvPosition;
+
+    // Smooth, steady 3D square size (no shimmer jitter)
+    float baseSize = aIsVoxel > 0.5
+      ? (6.8 + fract(aPhase * 17.0) * 3.8)
+      : (3.0 + fract(aPhase * 13.0) * 0.85);
+    gl_PointSize = baseSize * uPixelRatio * (5.5 / -mvPosition.z);
+  }
+`;
+
+const fragmentShader = `
+  varying vec3 vColor;
+  varying float vIsVoxel;
+  varying float vAlpha;
+  varying float vLumBoost;
+
+  void main() {
+    if (vAlpha <= 0.01) discard;
+    vec2 uv = gl_PointCoord * 2.0 - 1.0;
+
+    // Crisp, smooth beveled 3D square SDF (solid 3D cube face, not hollow)
+    vec2 q = abs(uv) - vec2(0.68);
+    float sdf = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - 0.16;
+    if (sdf > 0.03) discard;
+
+    float cubeMask = 1.0 - smoothstep(-0.05, 0.03, sdf);
+
+    // Smooth 3D cube normal with beveled edges
+    vec3 normal = normalize(vec3(
+      uv.x * 0.95,
+      -uv.y * 0.95,
+      sqrt(max(0.22, 1.0 - dot(uv, uv) * 0.65))
+    ));
+
+    vec3 lightDir = normalize(vec3(-0.45, 0.60, 0.66));
+    float diff = max(0.0, dot(normal, lightDir));
+    vec3 halfVec = normalize(lightDir + vec3(0.0, 0.0, 1.0));
+    float spec = pow(max(0.0, dot(normal, halfVec)), 22.0);
+
+    // 3D top-left bevel highlight & bottom-right shadow for tactile 3D square depth
+    float bevelRim = smoothstep(-0.26, -0.03, sdf) * (1.0 - smoothstep(-0.02, 0.03, sdf));
+    float topHighlight = clamp((-uv.y + uv.x * 0.5) * 0.5 + 0.5, 0.0, 1.0);
+
+    float faceShade = 0.68 + diff * 0.42;
+    vec3 col = vColor * faceShade
+             + vColor * bevelRim * (0.42 + topHighlight * 0.35 + vLumBoost * 0.22)
+             + (vColor * 0.55 + vec3(0.48, 0.38, 0.22)) * spec * (0.48 + vLumBoost * 0.20);
+
+    float alpha = cubeMask * vAlpha * 0.95;
+    gl_FragColor = vec4(col, alpha);
+  }
+`;
+
+const material = new THREE.ShaderMaterial({
+  uniforms,
+  vertexShader,
+  fragmentShader,
+  transparent: true,
+  depthWrite: false,
+  blending: THREE.NormalBlending
+});
+
+const pointsMesh = new THREE.Points(geom, material);
+scene.add(pointsMesh);
+
+let introStartTime = performance.now();
+const INTRO_DURATION_MS = 7200;
+let isIntroComplete = false;
+
+const hudOverlay = document.getElementById('hudOverlay');
+const roomLightWash = document.getElementById('room-light-wash');
+
+window.replaySwoopIntro = function() {
+  isIntroComplete = false;
+  hudOverlay.classList.remove('is-lit');
+  stageUniforms.uTreeReveal.value = 0.0;
+  stageUniforms.uRoomLight.value = 0.0;
+  uniforms.uTreeReveal.value = 0.0;
+  stageOverlayRoot.style.setProperty('--room-light', '0');
+  introStartTime = performance.now();
+};
+
+const _tl = new THREE.Vector3(-STAGE_W * 0.5, STAGE_H * 0.5, -0.02);
+const _br = new THREE.Vector3(STAGE_W * 0.5, -STAGE_H * 0.5, -0.02);
+function syncStageOverlayTransform() {
+  camera.updateMatrixWorld();
+  const p1 = _tl.clone().project(camera);
+  const p2 = _br.clone().project(camera);
+  const x1 = (p1.x * 0.5 + 0.5) * window.innerWidth;
+  const y1 = (-p1.y * 0.5 + 0.5) * window.innerHeight;
+  const x2 = (p2.x * 0.5 + 0.5) * window.innerWidth;
+  const y2 = (-p2.y * 0.5 + 0.5) * window.innerHeight;
+  const sx = (x2 - x1) / 1376.0;
+  const sy = (y2 - y1) / 768.0;
+  stageOverlayRoot.style.transform = `translate3d(${x1.toFixed(2)}px, ${y1.toFixed(2)}px, 0) scale(${sx.toFixed(5)}, ${sy.toFixed(5)})`;
+}
+
+let targetCamX = 0, targetCamY = 0.0;
+window.addEventListener('pointermove', (e) => {
+  const nx = (e.clientX / window.innerWidth) * 2 - 1;
+  const ny = -(e.clientY / window.innerHeight) * 2 + 1;
+  const mVec = new THREE.Vector3(nx * (STAGE_W * 0.45), ny * (STAGE_H * 0.45), 0);
+  uniforms.uMouse3D.value.copy(mVec);
+  stageUniforms.uMouse3D.value.copy(mVec);
+  targetCamX = nx * 0.14;
+  targetCamY = ny * 0.08;
+});
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.position.z = getBaseCameraZ();
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);
+  syncStageOverlayTransform();
+});
+
+function animate(now) {
+  requestAnimationFrame(animate);
+  const tSec = now * 0.001;
+  uniforms.uTime.value = tSec;
+  stageUniforms.uTime.value = tSec;
+
+  const introElapsed = now - introStartTime;
+  const introProg = Math.min(1.0, introElapsed / INTRO_DURATION_MS);
+  uniforms.uIntroProgress.value = introProg;
+
+  // ==========================================================================
+  // PITCH-BLACK ROOM DURING PARTICLE SWOOP -> ILLUMINATE WHEN TREE COMES TO LIFE
+  // ==========================================================================
+  const targetSculptReveal = THREE.MathUtils.smoothstep(introProg, 0.58, 0.95);
+  stageUniforms.uTreeReveal.value += (targetSculptReveal - stageUniforms.uTreeReveal.value) * 0.14;
+  uniforms.uTreeReveal.value = stageUniforms.uTreeReveal.value;
+
+  const targetRoomLight = THREE.MathUtils.smoothstep(introProg, 0.58, 0.95);
+  stageUniforms.uRoomLight.value += (targetRoomLight - stageUniforms.uRoomLight.value) * 0.10;
+  const rl = stageUniforms.uRoomLight.value;
+  stageOverlayRoot.style.setProperty('--room-light', rl.toFixed(3));
+
+  if (rl > 0.02 && introProg < 0.98) {
+    const surge = Math.sin(rl * Math.PI) * 0.28;
+    roomLightWash.style.opacity = '1';
+    roomLightWash.style.background = `radial-gradient(circle at 50% 46%, rgba(255, 195, 75, ${surge}), rgba(255, 85, 145, ${surge * 0.4}) 42%, transparent 72%)`;
+  } else {
+    roomLightWash.style.opacity = '0';
+  }
+
+  if (introProg >= 0.62 && !isIntroComplete) {
+    isIntroComplete = true;
+    hudOverlay.classList.add('is-lit');
+  }
+
+  camera.position.x += (targetCamX - camera.position.x) * 0.04;
+  camera.position.y += (targetCamY - camera.position.y) * 0.04;
+  camera.lookAt(0, 0.0, 0);
+
+  syncStageOverlayTransform();
+  composer.render();
+}
+syncStageOverlayTransform();
+requestAnimationFrame(animate);
+</script>
+<script src="auth_hub.js?v=250" defer></script>
 </body>
-
 </html>

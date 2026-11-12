@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Retrocanopy — Official Merch Showroom | Liquid Glass Vault</title>
-  <link rel="icon" type="image/png" href="assets/logo.png">
+  <title>Retrocanopy (EST. 1994) — Official Merch Showroom | Black Edition Capsule (#01, #12, #18, #19)</title>
+  <link rel="icon" type="image/png" href="assets/logo.png?v=250">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="merch_minimal.css?v=232">
-  <link rel="stylesheet" href="merch_zoom.css?v=232">
-  <script src="merch_zoom.js?v=232" defer></script>
+  <link rel="stylesheet" href="merch_minimal.css?v=250">
+  <link rel="stylesheet" href="merch_zoom.css?v=250">
+  <script src="assets/merch/store_catalog_1994.js?v=250"></script>
+  <script src="auth_hub.js?v=250" defer></script>
+  <script src="merch_zoom.js?v=250" defer></script>
   <style>
+
     :root {
       --bg-dark: #05060a;
       --molten-orange: #ff7b00;
@@ -664,16 +667,253 @@
       }
     }
 
+  
+
+    /* ── STAGE 4 UPGRADE: 4-CATEGORY GRID, COLLECTION #01-#20 BAR & BLACK/WHITE TOGGLES ── */
+    .f14-cards-grid {
+      grid-template-columns: repeat(3, minmax(260px, 380px));
+      gap: clamp(12px, 1.35vw, 20px);
+      max-width: 1260px;
+    }
+    @media (max-width: 1120px) {
+      .f14-cards-grid { grid-template-columns: repeat(2, minmax(250px, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .f14-cards-grid { grid-template-columns: 1fr; }
+    }
+    .f14-cards-grid.single-card-mode {
+      grid-template-columns: minmax(300px, 480px);
+    }
+
+    .f14-collection-bar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 2px auto 10px;
+      padding: 8px 14px;
+      width: 100%;
+      max-width: 1260px;
+      border-radius: 18px;
+      background: rgba(10, 12, 19, 0.88);
+      border: 1.5px solid rgba(255, 165, 65, 0.38);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.72);
+    }
+    .f14-col-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .f14-step-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(255, 180, 70, 0.55);
+      background: rgba(20, 24, 36, 0.92);
+      color: #ffdf9a;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .f14-step-btn:hover {
+      background: rgba(175, 98, 18, 0.82);
+      color: #fff;
+    }
+    .f14-set-select {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1.5px solid #ffbe48;
+      background: rgba(8, 10, 16, 0.96);
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 800;
+      outline: none;
+      cursor: pointer;
+    }
+    .f14-global-color-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .f14-global-color-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      color: #d2bda1;
+      letter-spacing: 0.08em;
+    }
+
+    /* Stacked 3D Pedestal + Floating Garment Composite Inside Well */
+    .f14-pedestal-well {
+      height: clamp(235px, 31vh, 315px);
+    }
+    .f14-pedestal-base-plate {
+      position: absolute;
+      bottom: -4%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 86%;
+      max-height: 44%;
+      object-fit: contain;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.95;
+    }
+    .f14-garment-float-img {
+      position: relative;
+      z-index: 3;
+      width: 78%;
+      height: 80%;
+      margin-bottom: 11%;
+      object-fit: contain;
+      display: block;
+      animation: f14StoreItemHover 3.4s ease-in-out infinite;
+      filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.9));
+      transition: transform 0.28s ease;
+    }
+    .f14-pedestal-well:hover .f14-garment-float-img {
+      transform: scale(1.05);
+    }
+
+    /* Top-Left Black / White Swatch Toggle on Every Card */
+    .f14-color-toggle-group {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 6;
+      display: inline-flex;
+      gap: 4px;
+      background: rgba(8, 10, 16, 0.88);
+      border: 1px solid rgba(255, 175, 70, 0.42);
+      border-radius: 999px;
+      padding: 3px;
+      backdrop-filter: blur(8px);
+    }
+    .f14-swatch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #b8c4d8;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.55rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .f14-swatch-btn.active {
+      background: rgba(255, 165, 45, 0.24);
+      border-color: #ffbe48;
+      color: #fff;
+    }
+    .f14-swatch-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .f14-product-title {
+      font-size: clamp(0.98rem, 1.15vw, 1.16rem);
+      min-height: 2.4em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .f14-onesize-badge {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(16, 20, 30, 0.88);
+      border: 1.5px solid #ffbe48;
+      color: #ffe39f;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .f14-showroom-inner-frame {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+    }
+    .f14-stage-arrow {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 190, 72, 0.72);
+      background: radial-gradient(circle at 35% 30%, rgba(255, 175, 55, 0.28), rgba(10, 12, 20, 0.94));
+      color: #ffe39f;
+      font-size: 1.45rem;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      z-index: 25;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 18px rgba(255, 165, 45, 0.28);
+      transition: all 0.18s ease;
+    }
+    .f14-stage-arrow:hover {
+      background: linear-gradient(135deg, #ffae2b, #e8660c);
+      color: #09080f;
+      transform: scale(1.08);
+      box-shadow: 0 0 26px rgba(255, 175, 55, 0.75);
+    }
+    .f14-card-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 190, 72, 0.62);
+      background: rgba(8, 10, 18, 0.88);
+      color: #ffe39f;
+      font-size: 1.05rem;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 12;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.75);
+      transition: all 0.18s ease;
+    }
+    .f14-card-arrow.prev { left: 10px; }
+    .f14-card-arrow.next { right: 10px; }
+    .f14-card-arrow:hover {
+      background: rgba(255, 165, 45, 0.92);
+      color: #08070e;
+      border-color: #fff;
+      transform: translateY(-50%) scale(1.1);
+    }
+    @media (max-width: 820px) {
+      .f14-stage-arrow {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body class="rc-fresh14-store-body">
 
   <!-- Hidden state hooks used by merch_zoom.js for 2K Zoom Inspector & Active SKU -->
   <div style="display:none;" aria-hidden="true">
-    <img id="hatImg" src="assets/merch/hat_tier6_valkyrie.png?v=232" alt="">
-    <span id="hudKicker" class="hud-kicker">RC-107</span>
-    <span id="hudTitle" class="hud-title">White &amp; Gold Hat</span>
-    <span id="hudPrice" class="hud-price" data-orig-price="1">$85.00</span>
+    <img id="hatImg" src="assets/merch/store_1994/hoodie_01_black_back.webp?v=250" alt="">
+    <span id="hudKicker" class="hud-kicker">RC-HOD-01-BLK</span>
+    <span id="hudTitle" class="hud-title">Black Hoodie #01 — Sovereign 24K Gold Sanctuary</span>
+    <span id="hudPrice" class="hud-price" data-orig-price="50">$50.00</span>
     <div id="hudSpecs" class="hud-specs"></div>
   </div>
 
@@ -689,15 +929,19 @@
       </div>
 
       <a href="index.html" class="f14-brand-center" aria-label="Retrocanopy Home">
-        <img src="assets/logo.png?v=232" alt="Retrocanopy 1984 Synthwave Tree Logo" class="f14-tree-logo">
+        <img src="assets/logo.png?v=250" alt="Retrocanopy 1994 Synthwave Tree Logo" class="f14-tree-logo">
         <div class="f14-wordmark">RETROCANOPY</div>
       </a>
 
       <div class="f14-header-right nav-right">
-        <a href="admin.html" class="f14-owner-pill" aria-label="Owner Hub">
+        <a href="admin.html" class="f14-owner-pill" id="rcHomeAdminHubLink" aria-label="Owner Hub">
           <span class="f14-owner-shield" aria-hidden="true">&#128737;&#65039;</span>
-          <span>OWNER HUB</span>
+          <span id="rcHomeAdminHubText">OWNER HUB</span>
         </a>
+        <button type="button" class="f14-owner-pill" id="rcHomeSignInBtn" style="cursor:pointer;" aria-label="Sign In">
+          <span aria-hidden="true">&#128100;</span>
+          <span id="rcHomeSignInLabel">SIGN IN</span>
+        </button>
         <button type="button" class="f14-cart-pill" id="bagBtn" aria-label="Open Shopping Bag &amp; Stripe Checkout">
           <span class="f14-cart-icon" aria-hidden="true">&#128722;</span>
           <span class="f14-cart-count-badge" id="bagCountBadge">0</span>
@@ -705,166 +949,331 @@
       </div>
     </header>
 
-    <!-- 2. TOP FILTER PILL ROW (ALL | HATS | HOODIES | VAULT) -->
+    <!-- 2. TOP CATEGORY FILTER PILL ROW (ALL | HATS | SHIRTS | HOODIES | JOGGERS) -->
     <div class="f14-filter-bar-wrap top-filter-wrap">
       <nav class="f14-filter-bar" aria-label="Product Category Filter Top">
         <button type="button" class="f14-filter-pill active" data-filter="all">ALL</button>
         <button type="button" class="f14-filter-pill" data-filter="hats">HATS</button>
+        <button type="button" class="f14-filter-pill" data-filter="shirts">SHIRTS</button>
         <button type="button" class="f14-filter-pill" data-filter="hoodies">HOODIES</button>
-        <button type="button" class="f14-filter-pill" data-filter="vault">VAULT</button>
       </nav>
     </div>
 
-    <!-- 3. CENTER 2-CARD 3D PEDESTAL SHOWROOM GRID -->
+    <!-- 2B. CURATED 4-CONCEPT SELECTOR BAR (#01, #12, #18, #19 • BLACK EDITION ONLY) -->
+    <div class="f14-collection-bar">
+      <div class="f14-col-nav" style="width:100%;justify-content:center;gap:10px;">
+        <button type="button" class="f14-step-btn" onclick="stepStoreSet(-1)">&#8592; PREV</button>
+        <div id="f14ConceptPills" style="display:inline-flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+          <button type="button" class="f14-filter-pill active" data-set-pill="1" onclick="setStoreSet(1)">#01 SOVEREIGN SANCTUARY</button>
+          <button type="button" class="f14-filter-pill" data-set-pill="12" onclick="setStoreSet(12)">#12 ROYAL DIAMOND 19|94</button>
+          <button type="button" class="f14-filter-pill" data-set-pill="18" onclick="setStoreSet(18)">#18 WORLDWIDE ORBITAL</button>
+          <button type="button" class="f14-filter-pill" data-set-pill="19" onclick="setStoreSet(19)">#19 ARCHITECTURAL 1994</button>
+        </div>
+        <button type="button" class="f14-step-btn" onclick="stepStoreSet(1)">NEXT &#8594;</button>
+      </div>
+    </div>
+
+    <!-- 3. CENTER 4-CARD 3D PEDESTAL SHOWROOM GRID (HAT, SHIRT, HOODIE, JOGGERS — ALL BLACK) -->
     <main class="f14-showroom-inner-frame">
+      <button type="button" class="f14-stage-arrow prev" onclick="stepStoreSet(-1)" title="Previous Design Set" aria-label="Previous Design Set">&#10094;</button>
       <div class="f14-cards-grid" id="f14CardsGrid">
 
-        <!-- LEFT CARD: WHITE & GOLD HAT (RC-107) ON 3-TIERED MOLTEN-ORANGE GLASS PEDESTAL -->
+        <!-- CARD 1: SNAPBACK HAT (BLACK • 3D PUFF EMBROIDERY) -->
         <article class="f14-product-card" data-product-card="hats" id="f14CardHat">
-          <div class="f14-pedestal-well" onclick="openF14Zoom('RC-107', 'White & Gold Hat', 'assets/merch/hat_tier6_valkyrie.png?v=232')" title="Click to inspect in 2K HD">
-            <img class="f14-pedestal-img" src="assets/ui/fresh14_store_hat_pedestal.png?v=232" alt="White &amp; Gold Snapback Hat on 3-Tiered Molten-Orange Liquid Glass Pedestal" draggable="false">
+          <div class="f14-pedestal-well" onclick="zoomCard('hats')" title="Click to inspect in 2K HD">
+            <button type="button" class="f14-card-arrow prev" onclick="event.stopPropagation(); stepStoreSet(-1);" title="Previous Design" aria-label="Previous Design">&#10094;</button>
+            <button type="button" class="f14-card-arrow next" onclick="event.stopPropagation(); stepStoreSet(1);" title="Next Design" aria-label="Next Design">&#10095;</button>
+            <img class="f14-pedestal-base-plate" src="assets/ui/fresh14_pedestal_3d.png?v=250" alt="" draggable="false">
+            <img class="f14-garment-float-img" id="img_hats" src="assets/merch/store_1994/hat_01_black.webp?v=250" alt="Black Snapback Hat" draggable="false">
           </div>
           <div class="f14-card-meta">
-            <h2 class="f14-product-title">White &amp; Gold Hat</h2>
-            <div class="f14-product-price">$85.00</div>
-            <div class="f14-size-row" role="group" aria-label="Select Hat Size">
-              <button type="button" class="f14-size-pill active" data-size="S">S</button>
-              <button type="button" class="f14-size-pill" data-size="M">M</button>
-              <button type="button" class="f14-size-pill" data-size="L">L</button>
-              <button type="button" class="f14-size-pill" data-size="XL">XL</button>
+            <h2 class="f14-product-title" id="title_hats">Black Hat #01</h2>
+            <div class="f14-product-price" id="price_hats">$36.00</div>
+            <div class="f14-size-row" role="group" aria-label="Hat Fit">
+              <span class="f14-onesize-badge" data-selected-size="One Size Snapback">ONE SIZE SNAPBACK</span>
             </div>
-            <button type="button" class="f14-add-bag-btn hud-buy-btn" data-model-code="RC-107">ADD TO BAG</button>
+            <button type="button" class="f14-add-bag-btn hud-buy-btn" id="buy_hats" data-model-code="RC-HAT-01-BLK" data-size-val="One Size Snapback">ADD TO BAG</button>
           </div>
         </article>
 
-        <!-- RIGHT CARD: WHITE & GOLD HOODIE (RC-309) ON 3-TIERED MOLTEN-ORANGE GLASS PEDESTAL -->
-        <article class="f14-product-card" data-product-card="hoodies" id="f14CardHoodie">
-          <div class="f14-pedestal-well" onclick="openF14Zoom('RC-309', 'White & Gold Hoodie', window.__f14HoodieBackActive ? 'assets/merch/hoodie_tier6_2f_back.png?v=232' : 'assets/merch/hoodie_tier6_2f_front.png?v=232')" title="Click to inspect in 2K HD">
+        <!-- CARD 2: HEAVY COTTON T-SHIRT (BLACK • FRONT + FULL-BACK DTF) -->
+        <article class="f14-product-card" data-product-card="shirts" id="f14CardShirt">
+          <div class="f14-pedestal-well" onclick="zoomCard('shirts')" title="Click to inspect in 2K HD">
+            <button type="button" class="f14-card-arrow prev" onclick="event.stopPropagation(); stepStoreSet(-1);" title="Previous Design" aria-label="Previous Design">&#10094;</button>
+            <button type="button" class="f14-card-arrow next" onclick="event.stopPropagation(); stepStoreSet(1);" title="Next Design" aria-label="Next Design">&#10095;</button>
             <div class="f14-view-toggle-group" onclick="event.stopPropagation()">
-              <button type="button" class="f14-view-toggle-btn active" id="f14HoodieFrontBtn" onclick="setF14HoodieSide('front')">FRONT</button>
-              <button type="button" class="f14-view-toggle-btn" id="f14HoodieBackBtn" onclick="setF14HoodieSide('back')">BACK</button>
+              <button type="button" class="f14-view-toggle-btn active" id="side_shirts_back" onclick="setCardSide('shirts','back')">BACK</button>
+              <button type="button" class="f14-view-toggle-btn" id="side_shirts_front" onclick="setCardSide('shirts','front')">FRONT</button>
             </div>
-            <img class="f14-pedestal-img" id="f14HoodiePedestalImg" src="assets/ui/fresh14_store_hoodie_pedestal.png?v=232" alt="White &amp; Gold Pullover Hoodie on 3-Tiered Molten-Orange Liquid Glass Pedestal" draggable="false">
+            <img class="f14-pedestal-base-plate" src="assets/ui/fresh14_pedestal_3d.png?v=250" alt="" draggable="false">
+            <img class="f14-garment-float-img" id="img_shirts" src="assets/merch/store_1994/shirt_01_black_back.webp?v=250" alt="Black Heavy Cotton Shirt" draggable="false">
           </div>
           <div class="f14-card-meta">
-            <h2 class="f14-product-title">White &amp; Gold Hoodie</h2>
-            <div class="f14-product-price">$160.00</div>
-            <div class="f14-size-row" role="group" aria-label="Select Hoodie Size">
-              <button type="button" class="f14-size-pill active" data-size="S">S</button>
+            <h2 class="f14-product-title" id="title_shirts">Black Tee #01</h2>
+            <div class="f14-product-price" id="price_shirts">$30.00</div>
+            <div class="f14-size-row" role="group" aria-label="Select Shirt Size">
+              <button type="button" class="f14-size-pill" data-size="S">S</button>
               <button type="button" class="f14-size-pill" data-size="M">M</button>
-              <button type="button" class="f14-size-pill" data-size="L">L</button>
+              <button type="button" class="f14-size-pill active" data-size="L">L</button>
               <button type="button" class="f14-size-pill" data-size="XL">XL</button>
+              <button type="button" class="f14-size-pill" data-size="2XL">2X</button>
             </div>
-            <button type="button" class="f14-add-bag-btn hud-buy-btn" data-model-code="RC-309">ADD TO BAG</button>
+            <button type="button" class="f14-add-bag-btn hud-buy-btn" id="buy_shirts" data-model-code="RC-TEE-01-BLK" data-size-val="L">ADD TO BAG</button>
+          </div>
+        </article>
+
+        <!-- CARD 3: PULLOVER HOODIE (BLACK • FRONT + FULL-BACK DTF) -->
+        <article class="f14-product-card" data-product-card="hoodies" id="f14CardHoodie">
+          <div class="f14-pedestal-well" onclick="zoomCard('hoodies')" title="Click to inspect in 2K HD">
+            <button type="button" class="f14-card-arrow prev" onclick="event.stopPropagation(); stepStoreSet(-1);" title="Previous Design" aria-label="Previous Design">&#10094;</button>
+            <button type="button" class="f14-card-arrow next" onclick="event.stopPropagation(); stepStoreSet(1);" title="Next Design" aria-label="Next Design">&#10095;</button>
+            <div class="f14-view-toggle-group" onclick="event.stopPropagation()">
+              <button type="button" class="f14-view-toggle-btn active" id="side_hoodies_back" onclick="setCardSide('hoodies','back')">BACK</button>
+              <button type="button" class="f14-view-toggle-btn" id="side_hoodies_front" onclick="setCardSide('hoodies','front')">FRONT</button>
+            </div>
+            <img class="f14-pedestal-base-plate" src="assets/ui/fresh14_pedestal_3d.png?v=250" alt="" draggable="false">
+            <img class="f14-garment-float-img" id="img_hoodies" src="assets/merch/store_1994/hoodie_01_black_back.webp?v=250" alt="Black Pullover Hoodie" draggable="false">
+          </div>
+          <div class="f14-card-meta">
+            <h2 class="f14-product-title" id="title_hoodies">Black Hoodie #01</h2>
+            <div class="f14-product-price" id="price_hoodies">$50.00</div>
+            <div class="f14-size-row" role="group" aria-label="Select Hoodie Size">
+              <button type="button" class="f14-size-pill" data-size="S">S</button>
+              <button type="button" class="f14-size-pill" data-size="M">M</button>
+              <button type="button" class="f14-size-pill active" data-size="L">L</button>
+              <button type="button" class="f14-size-pill" data-size="XL">XL</button>
+              <button type="button" class="f14-size-pill" data-size="2XL">2X</button>
+            </div>
+            <button type="button" class="f14-add-bag-btn hud-buy-btn" id="buy_hoodies" data-model-code="RC-HOD-01-BLK" data-size-val="L">ADD TO BAG</button>
           </div>
         </article>
 
       </div>
+      <button type="button" class="f14-stage-arrow next" onclick="stepStoreSet(1)" title="Next Design Set" aria-label="Next Design Set">&#10095;</button>
     </main>
 
-    <!-- 4. BOTTOM FILTER PILL ROW (ALL | HATS | HOODIES | VAULT) -->
+    <!-- 4. BOTTOM CATEGORY FILTER PILL ROW -->
     <div class="f14-filter-bar-wrap bottom-filter-wrap">
       <nav class="f14-filter-bar" aria-label="Product Category Filter Bottom">
         <button type="button" class="f14-filter-pill active" data-filter="all">ALL</button>
         <button type="button" class="f14-filter-pill" data-filter="hats">HATS</button>
+        <button type="button" class="f14-filter-pill" data-filter="shirts">SHIRTS</button>
         <button type="button" class="f14-filter-pill" data-filter="hoodies">HOODIES</button>
-        <button type="button" class="f14-filter-pill" data-filter="vault">VAULT</button>
       </nav>
     </div>
   </div>
 
   <script>
-    // 1. Size Pill Selection per Card
+    const STORE = window.RC_STORE_1994;
+    const VALID_SETS = [1, 12, 18, 19];
+    const state = {
+      setNum: 1,
+      filter: 'all',
+      sides: { shirts: 'back', hoodies: 'back' }
+    };
+
+    // Size Pill Selection per Card
     document.querySelectorAll('.f14-product-card').forEach((card) => {
+      const buyBtn = card.querySelector('.f14-add-bag-btn');
       const pills = card.querySelectorAll('.f14-size-pill');
       pills.forEach((pill) => {
         pill.addEventListener('click', () => {
           pills.forEach((p) => p.classList.remove('active'));
           pill.classList.add('active');
+          if (buyBtn) buyBtn.setAttribute('data-size-val', pill.getAttribute('data-size') || 'L');
         });
       });
     });
 
-    // 2. Top & Bottom Filter Pill Sync (ALL | HATS | HOODIES | VAULT)
-    const allFilterPills = document.querySelectorAll('.f14-filter-pill');
-    const cardsGrid = document.getElementById('f14CardsGrid');
-    const cardHat = document.getElementById('f14CardHat');
-    const cardHoodie = document.getElementById('f14CardHoodie');
+    let activeZoomCat = 'hoodies';
+
+    function withCacheBust(url) {
+      if (!url) return '';
+      const base = String(url).split('?')[0];
+      return `${base}?v=250`;
+    }
+
+    function renderAllCards() {
+      if (!STORE) return;
+      STORE.rebuildCatalogPrices();
+
+      document.querySelectorAll('[data-set-pill]').forEach((btn) => {
+        btn.classList.toggle('active', parseInt(btn.getAttribute('data-set-pill'), 10) === state.setNum);
+      });
+
+      ['hats', 'shirts', 'hoodies'].forEach((cat) => {
+        const sku = STORE.getSkuFor(cat, state.setNum);
+        const item = STORE.CATALOG[sku];
+        if (!item) return;
+
+        const imgEl = document.getElementById(`img_${cat}`);
+        const titleEl = document.getElementById(`title_${cat}`);
+        const priceEl = document.getElementById(`price_${cat}`);
+        const buyBtn = document.getElementById(`buy_${cat}`);
+
+        let photoUrl = item.heroPhotoUrl;
+        if (cat === 'shirts' || cat === 'hoodies') {
+          photoUrl = (state.sides[cat] === 'front') ? item.frontPhotoUrl : item.backPhotoUrl;
+          document.getElementById(`side_${cat}_back`)?.classList.toggle('active', state.sides[cat] === 'back');
+          document.getElementById(`side_${cat}_front`)?.classList.toggle('active', state.sides[cat] === 'front');
+        }
+        photoUrl = withCacheBust(photoUrl);
+
+        if (imgEl) imgEl.src = photoUrl;
+        if (titleEl) titleEl.textContent = item.title;
+        if (priceEl) priceEl.textContent = `$${Number(item.price).toFixed(2)}`;
+        if (buyBtn) buyBtn.setAttribute('data-model-code', sku);
+      });
+
+      // Keep hidden HUD state & open 2K Zoom Modal synced when stepping arrows!
+      const syncCat = (state.filter !== 'all' && ['hats', 'shirts', 'hoodies'].includes(state.filter))
+        ? state.filter
+        : (activeZoomCat || 'hoodies');
+      const syncSku = STORE.getSkuFor(syncCat, state.setNum);
+      const syncItem = STORE.CATALOG[syncSku];
+      if (syncItem) {
+        const activeUrl = withCacheBust((syncCat === 'shirts' || syncCat === 'hoodies')
+          ? ((state.sides[syncCat] === 'front') ? syncItem.frontPhotoUrl : syncItem.backPhotoUrl)
+          : syncItem.frontPhotoUrl);
+        const hatImgEl = document.getElementById('hatImg');
+        const kickerEl = document.getElementById('hudKicker');
+        const titleEl = document.getElementById('hudTitle');
+        const priceEl = document.getElementById('hudPrice');
+        if (hatImgEl) hatImgEl.src = activeUrl;
+        if (kickerEl) kickerEl.textContent = `${syncItem.model} • $${Number(syncItem.price).toFixed(2)}`;
+        if (titleEl) titleEl.textContent = syncItem.title;
+        if (priceEl) priceEl.textContent = `$${Number(syncItem.price).toFixed(2)}`;
+
+        const zoomOverlay = document.getElementById('rcZoomOverlay');
+        if (zoomOverlay && zoomOverlay.classList.contains('open')) {
+          zoomCard(syncCat);
+        }
+      }
+    }
+
+    function setStoreSet(n) {
+      state.setNum = VALID_SETS.includes(n) ? n : 1;
+      renderAllCards();
+    }
+
+    function stepStoreSet(dir) {
+      const idx = VALID_SETS.indexOf(state.setNum);
+      const nextIdx = (idx + dir + VALID_SETS.length) % VALID_SETS.length;
+      setStoreSet(VALID_SETS[nextIdx]);
+    }
+    window.stepItem = stepStoreSet;
+
+    function setCardSide(cat, side) {
+      state.sides[cat] = side;
+      renderAllCards();
+    }
 
     function applyF14Filter(filterKey) {
-      allFilterPills.forEach((btn) => {
-        btn.classList.toggle('active', btn.getAttribute('data-filter') === filterKey);
+      const valid = ['all', 'hats', 'shirts', 'hoodies'];
+      const f = valid.includes(filterKey) ? filterKey : 'all';
+      state.filter = f;
+      document.querySelectorAll('.f14-filter-pill[data-filter]').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === f);
       });
-      if (filterKey === 'hats') {
-        cardHat.style.display = 'flex';
-        cardHoodie.style.display = 'none';
-        cardsGrid.classList.add('single-card-mode');
-      } else if (filterKey === 'hoodies') {
-        cardHat.style.display = 'none';
-        cardHoodie.style.display = 'flex';
-        cardsGrid.classList.add('single-card-mode');
-      } else {
-        cardHat.style.display = 'flex';
-        cardHoodie.style.display = 'flex';
-        cardsGrid.classList.remove('single-card-mode');
-      }
+      const grid = document.getElementById('f14CardsGrid');
+      const map = {
+        hats: document.getElementById('f14CardHat'),
+        shirts: document.getElementById('f14CardShirt'),
+        hoodies: document.getElementById('f14CardHoodie')
+      };
+      Object.entries(map).forEach(([k, el]) => {
+        if (el) el.style.display = (f === 'all' || f === k) ? 'flex' : 'none';
+      });
+      if (grid) grid.classList.toggle('single-card-mode', f !== 'all');
     }
 
-    allFilterPills.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        applyF14Filter(btn.getAttribute('data-filter') || 'all');
-      });
+    document.querySelectorAll('.f14-filter-pill[data-filter]').forEach((btn) => {
+      btn.addEventListener('click', () => applyF14Filter(btn.getAttribute('data-filter') || 'all'));
     });
 
-    // 3. Hoodie Front / Back Pedestal Toggle
-    window.__f14HoodieBackActive = false;
-    function setF14HoodieSide(side) {
-      window.__f14HoodieBackActive = (side === 'back');
-      const imgEl = document.getElementById('f14HoodiePedestalImg');
-      const fBtn = document.getElementById('f14HoodieFrontBtn');
-      const bBtn = document.getElementById('f14HoodieBackBtn');
-      if (imgEl) {
-        imgEl.src = window.__f14HoodieBackActive
-          ? 'assets/ui/fresh14_store_hoodie_back_pedestal.png?v=232'
-          : 'assets/ui/fresh14_store_hoodie_pedestal.png?v=232';
-      }
-      if (fBtn) fBtn.classList.toggle('active', !window.__f14HoodieBackActive);
-      if (bBtn) bBtn.classList.toggle('active', window.__f14HoodieBackActive);
-    }
+    function zoomCard(cat) {
+      if (!STORE) return;
+      activeZoomCat = cat || activeZoomCat || 'hoodies';
+      const sku = STORE.getSkuFor(activeZoomCat, state.setNum);
+      const item = STORE.CATALOG[sku];
+      if (!item) return;
+      const activeUrl = withCacheBust((activeZoomCat === 'shirts' || activeZoomCat === 'hoodies')
+        ? ((state.sides[activeZoomCat] === 'front') ? item.frontPhotoUrl : item.backPhotoUrl)
+        : item.frontPhotoUrl);
 
-    // 4. 2K HD Zoom Inspector Trigger for Either Card
-    function openF14Zoom(code, title, rawImgUrl) {
       const hatImgEl = document.getElementById('hatImg');
       const kickerEl = document.getElementById('hudKicker');
       const titleEl = document.getElementById('hudTitle');
-      if (hatImgEl) hatImgEl.src = rawImgUrl;
-      if (kickerEl) kickerEl.textContent = code;
-      if (titleEl) titleEl.textContent = title;
+      if (hatImgEl) hatImgEl.src = activeUrl;
+      if (kickerEl) kickerEl.textContent = `${item.model} • $${Number(item.price).toFixed(2)}`;
+      if (titleEl) titleEl.textContent = item.title;
+
       const zoomOverlay = document.getElementById('rcZoomOverlay');
       const zoomImg = document.getElementById('rcZoomImg');
       const zoomKicker = document.getElementById('rcZoomKicker');
       const zoomTitle = document.getElementById('rcZoomTitle');
+      const sideGroup = document.getElementById('rcSideGroup');
+      const btnFront = document.getElementById('rcBtnFront');
+      const btnBack = document.getElementById('rcBtnBack');
+      const btnPrev = document.getElementById('rcZoomPrev');
+      const btnNext = document.getElementById('rcZoomNext');
+
       if (zoomOverlay && zoomImg) {
-        if (zoomKicker) zoomKicker.textContent = code;
-        if (zoomTitle) zoomTitle.textContent = title;
-        zoomImg.src = rawImgUrl.indexOf('?') !== -1 ? rawImgUrl + '&hd=2k' : rawImgUrl + '?hd=2k';
+        if (btnPrev) btnPrev.style.display = 'flex';
+        if (btnNext) btnNext.style.display = 'flex';
+        if (zoomKicker) zoomKicker.textContent = `${item.model} • $${Number(item.price).toFixed(2)}`;
+        if (zoomTitle) zoomTitle.textContent = item.title;
+        zoomImg.src = activeUrl;
+        if (sideGroup && btnFront && btnBack) {
+          if (item.backPhotoUrl) {
+            sideGroup.style.display = 'inline-flex';
+            const isFront = state.sides[activeZoomCat] === 'front';
+            btnFront.classList.toggle('active', isFront);
+            btnBack.classList.toggle('active', !isFront);
+          } else {
+            sideGroup.style.display = 'none';
+          }
+        }
         zoomOverlay.classList.add('open');
       }
     }
 
-    // 5. Apply ?filter= and ?side= deep-link query params from Home Centerpiece
-    (function applyInitialUrlState() {
+    window.rcCustomZoomStep = function(dir) {
+      stepStoreSet(dir);
+    };
+
+    window.rcCustomZoomSide = function(side) {
+      if (activeZoomCat === 'shirts' || activeZoomCat === 'hoodies') {
+        setCardSide(activeZoomCat, side);
+      }
+    };
+
+    // Keyboard Left / Right arrow support on the showroom
+    window.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+      if (e.key === 'ArrowLeft') {
+        stepStoreSet(-1);
+      } else if (e.key === 'ArrowRight') {
+        stepStoreSet(1);
+      }
+    });
+
+    (function initFromQuery() {
       try {
         const sp = new URLSearchParams(window.location.search);
         const qFilter = sp.get('filter');
+        const qSet = parseInt(sp.get('set') || '1', 10);
         const qSide = sp.get('side');
-        if (qFilter && ['all', 'hats', 'hoodies', 'vault'].indexOf(qFilter) !== -1) {
-          applyF14Filter(qFilter);
+        if (VALID_SETS.includes(qSet)) state.setNum = qSet;
+        if (qSide === 'front' || qSide === 'back') {
+          state.sides.shirts = qSide;
+          state.sides.hoodies = qSide;
         }
-        if (qSide === 'back' || qSide === 'front') {
-          setF14HoodieSide(qSide);
-        }
-      } catch (_) {}
+        applyF14Filter(qFilter || 'all');
+        renderAllCards();
+      } catch (_) {
+        renderAllCards();
+      }
     })();
   </script>
 </body>
