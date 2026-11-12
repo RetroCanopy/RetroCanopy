@@ -1504,6 +1504,24 @@
         vec3 basePos = mix(position, aTarget, m);
         vec3 baseCol = mix(aColorStart, aColorTarget, m);
 
+        // Smooth 3D orbital rotation of the small voxel square particles around the Living Tree!
+        float orbitDepthAlpha = 1.0;
+        if (aIsVoxel > 0.5) {
+          float rawR = length(basePos.xz);
+          float minCanopyR = mix(0.52, 1.38, smoothstep(-0.65, 0.45, basePos.y)) * (0.68 + 0.62 * fract(aPhase * 19.3));
+          float orbitR = max(rawR, minCanopyR);
+          float startTheta = atan(basePos.z, basePos.x) + aPhase * 6.2831853;
+          float orbitSpeed = 0.38 + fract(aPhase * 7.13) * 0.26;
+          float theta = startTheta + uTime * orbitSpeed;
+
+          basePos.x = cos(theta) * orbitR;
+          basePos.z = sin(theta) * (orbitR * 0.58);
+          basePos.y += sin(uTime * 1.15 + aPhase * 12.566) * 0.065;
+
+          // Subtle 3D depth shading as particles pass behind the tree canopy (z < 0) vs in front (z > 0)
+          orbitDepthAlpha = mix(0.38, 1.0, smoothstep(-0.55, 0.25, sin(theta)));
+        }
+
         // On Mobile Concept 04, map the Tree target to the top of the spiral staircase (0.03, 3.05)!
         if (mob) {
           basePos = vec3(basePos.x * 0.78 + 0.03, basePos.y * 0.78 + 3.05, basePos.z * 0.78);
@@ -1536,7 +1554,7 @@
           basePos = mix(swoopPos, basePos, introEase);
         }
 
-        float motionAmp = aIsVoxel > 0.5 ? 0.045 : 0.004;
+        float motionAmp = aIsVoxel > 0.5 ? 0.035 : 0.004;
         vec3 liveOffset = smoothOrbitDrift(basePos, uTime) * motionAmp;
 
         float wavePhase = basePos.y * 2.0 - length(basePos.xz) * 1.0 - uTime * 0.85 + aPhase * 1.8;
@@ -1563,7 +1581,7 @@
         float settleAlpha = mix(0.92, 0.99, clamp(totalLum * 0.5, 0.0, 1.0));
 
         float treeBranchCrossfade = aIsVoxel > 0.5
-          ? 0.94
+          ? (0.96 * orbitDepthAlpha)
           : (1.0 - smoothstep(0.58, 0.96, uTreeReveal));
 
         vAlpha = enterVis * settleAlpha * treeBranchCrossfade;
