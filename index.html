@@ -1053,7 +1053,7 @@
             }
           }
 
-          vec3 litRoomCol = texture2D(uTexBg, sampleUv).rgb;
+          vec3 litRoomCol = (uIsComingSoon > 0.5) ? vec3(0.0) : texture2D(uTexBg, sampleUv).rgb;
 
           if (eyeBlinkDim > 0.001 || eyeGlowPulse > 0.001) {
             float visorCyan = clamp((litRoomCol.g + litRoomCol.b) * 0.6 - litRoomCol.r * 0.4, 0.0, 1.0);
@@ -1079,9 +1079,11 @@
             float boxInterior = smoothstep(0.0, 0.04, boxUv.x) * (1.0 - smoothstep(0.96, 1.0, boxUv.x))
                               * smoothstep(0.18, 0.28, boxUv.y) * (1.0 - smoothstep(0.95, 1.0, boxUv.y));
 
-            // 1. Place the un-warped clean gold stair background plate behind the Gamer Robot!
-            vec3 cleanPlateCol = texture2D(uTexGamerBg, boxUv).rgb;
-            litRoomCol = mix(litRoomCol, cleanPlateCol, boxInterior);
+            // 1. Place the un-warped clean gold stair background plate behind the Gamer Robot (Full Sanctuary mode only; Coming Soon is pure black!)
+            if (uIsComingSoon < 0.5) {
+              vec3 cleanPlateCol = texture2D(uTexGamerBg, boxUv).rgb;
+              litRoomCol = mix(litRoomCol, cleanPlateCol, boxInterior);
+            }
 
             // 2. Compute Smooth, Weighted Full-Body & Head Kinematics for the Gamer Robot Cutout:
             float torsoAng = inPlay1  * (0.018 + 0.012 * sin(uTime * 3.2) - jumpEffort * 0.022)
@@ -1303,7 +1305,7 @@
             : vec4(0.318, 0.363, 0.292, 0.396);
           float inTvScreen = smoothstep(tvBounds.x, tvBounds.x + 0.005, vUv.x) * (1.0 - smoothstep(tvBounds.y - 0.005, tvBounds.y, vUv.x))
                            * smoothstep(tvBounds.z, tvBounds.z + 0.006, vUv.y) * (1.0 - smoothstep(tvBounds.w - 0.006, tvBounds.w, vUv.y));
-          if (inTvScreen > 0.01) {
+          if (uIsComingSoon < 0.5 && inTvScreen > 0.01) {
             float scanline = 0.93 + 0.07 * sin(vUv.y * 680.0 - uTime * 18.0);
             float phosphorPulse = 1.05 + 0.04 * sin(uTime * 6.0);
             vec2 tvUv = (vUv - vec2(tvBounds.x, tvBounds.z)) / vec2(tvBounds.y - tvBounds.x, tvBounds.w - tvBounds.z);
@@ -1650,7 +1652,7 @@
           vec2 sunCenter = mob ? vec2(0.03, 3.35) : vec2(0.0, 0.52);
           float distSun = length(worldXY - sunCenter);
           float sunMinY = mob ? 1.85 : -0.65;
-          if (distSun < 1.88 && worldXY.y > sunMinY) {
+          if (uIsComingSoon < 0.5 && distSun < 1.88 && worldXY.y > sunMinY) {
             float sunLuma = dot(litRoomCol, vec3(0.299, 0.587, 0.114));
             if (sunLuma > 0.18) {
               litRoomCol = mix(vec3(sunLuma), litRoomCol, 1.24) * (1.0 + (0.04 + 0.03 * sin(uTime * 1.25)) * uRoomLight);
@@ -1701,57 +1703,30 @@
           if (uTreeReveal > 0.005) {
             vec3 fullCol = texture2D(uTexFull, treeUv).rgb;
             float treeDiff = length(fullCol - bgAtTreeUv);
-            float inForegroundTv = mob
+            float inForegroundTv = (uIsComingSoon > 0.5 || mob)
               ? 0.0
               : (smoothstep(0.275, 0.285, vUv.x) * (1.0 - smoothstep(0.412, 0.422, vUv.x)) * (1.0 - smoothstep(0.415, 0.428, vUv.y)));
             float isTreePixel = smoothstep(0.03, 0.15, treeDiff) * smoothstep(treeMinUvY, treeMinUvY + 0.035, vUv.y) * inCenterColumn * (1.0 - inForegroundTv);
+            if (uIsComingSoon > 0.5) {
+              // On Pure Black Coming Soon mode, exclude any faint sunset rim or pedestal disc edge so ONLY the Golden Living Tree appears!
+              if (!mob) {
+                float pedSide = (1.0 - smoothstep(0.325, 0.342, vUv.y)) * smoothstep(0.042, 0.056, abs(vUv.x - 0.500));
+                float rSun = length((vUv - vec2(0.500, 0.625)) / vec2(0.190, 0.338));
+                float sunRim = smoothstep(0.95, 0.98, rSun) * (1.0 - smoothstep(1.02, 1.05, rSun)) * (1.0 - smoothstep(0.18, 0.32, treeDiff));
+                isTreePixel *= (1.0 - pedSide) * (1.0 - sunRim);
+              } else {
+                float lowStripes = (1.0 - smoothstep(0.740, 0.765, vUv.y)) * smoothstep(0.038, 0.055, abs(vUv.x - 0.500));
+                float tLuma = dot(fullCol, vec3(0.299, 0.587, 0.114));
+                float purpStripe = smoothstep(0.02, 0.08, fullCol.b - fullCol.g) * (1.0 - smoothstep(0.35, 0.55, tLuma));
+                float rSun = length((vUv - vec2(0.500, 0.785)) / vec2(0.268, 0.152));
+                float sunRim = smoothstep(0.95, 0.98, rSun) * (1.0 - smoothstep(1.02, 1.05, rSun)) * (1.0 - smoothstep(0.18, 0.32, treeDiff));
+                isTreePixel *= (1.0 - lowStripes) * (1.0 - purpStripe) * (1.0 - sunRim);
+              }
+            }
             vec3 livingTreeCol = fullCol * (1.0 + sapWave * 0.20 * isTreePixel)
                                + vec3(0.98, 0.74, 0.25) * cursorGlow * isTreePixel;
             float revealMask = smoothstep(0.0, 1.0, (uTreeReveal * 1.35) - heightFactor * 0.32 + organicNoise);
             finalCol = mix(finalCol, livingTreeCol, isTreePixel * revealMask);
-          }
-
-          // ==================================================================
-          // COMING SOON SCREEN MASK:
-          // Keep ONLY the current Living Tree + Sunset + Golden Pedestal +
-          // the Robot playing the NES + NES Console + 8-Bit CRT TV + Grid Floor!
-          // ==================================================================
-          if (uIsComingSoon > 0.5) {
-            vec3 obsidianSky = vec3(0.012, 0.018, 0.028) * localRoomLight;
-            if (!mob) {
-              float dSun = length((vUv - vec2(0.50, 0.615)) / vec2(0.220, 0.360));
-              float mSun = 1.0 - smoothstep(0.88, 1.03, dSun);
-              float cutOwl    = (1.0 - smoothstep(0.312, 0.326, vUv.x)) * smoothstep(0.32, 0.35, vUv.y) * (1.0 - smoothstep(0.53, 0.56, vUv.y));
-              float cutHoodie = smoothstep(0.660, 0.678, vUv.x) * (1.0 - smoothstep(0.57, 0.61, vUv.y));
-              float cutRSteps = smoothstep(0.580, 0.605, vUv.x) * smoothstep(0.21, 0.23, vUv.y) * (1.0 - smoothstep(0.37, 0.40, vUv.y));
-              mSun *= (1.0 - clamp(cutOwl + cutHoodie + cutRSteps, 0.0, 1.0));
-
-              float dPed = length((vUv - vec2(0.50, 0.212)) / vec2(0.158, 0.095));
-              float mPed = (1.0 - smoothstep(0.85, 1.04, dPed)) * (1.0 - cutRSteps);
-              float mTrunk = smoothstep(0.43, 0.46, vUv.x) * (1.0 - smoothstep(0.54, 0.57, vUv.x)) * smoothstep(0.20, 0.24, vUv.y) * (1.0 - smoothstep(0.45, 0.50, vUv.y));
-              float mTv    = smoothstep(0.302, 0.310, vUv.x) * (1.0 - smoothstep(0.412, 0.422, vUv.x)) * smoothstep(0.22, 0.24, vUv.y) * (1.0 - smoothstep(0.415, 0.426, vUv.y));
-              float mNes   = smoothstep(0.272, 0.282, vUv.x) * (1.0 - smoothstep(0.365, 0.375, vUv.x)) * smoothstep(0.18, 0.20, vUv.y) * (1.0 - smoothstep(0.260, 0.272, vUv.y));
-              float mStep  = smoothstep(0.12, 0.16, vUv.x) * (1.0 - smoothstep(0.295, 0.308, vUv.x)) * smoothstep(0.17, 0.19, vUv.y) * (1.0 - smoothstep(0.270, 0.295, vUv.y));
-              float mGamer = smoothstep(gBox.x - 0.01, gBox.x + 0.005, vUv.x) * (1.0 - smoothstep(gBox.y - 0.005, gBox.y + 0.01, vUv.x))
-                           * smoothstep(gBox.z - 0.01, gBox.z + 0.005, vUv.y) * (1.0 - smoothstep(gBox.w - 0.005, gBox.w + 0.01, vUv.y));
-              float mFloor = 1.0 - smoothstep(0.185, 0.215, vUv.y);
-
-              float keepCS = clamp(mSun + mPed + mTrunk + mTv + mNes + mStep + mGamer + mFloor, 0.0, 1.0);
-              finalCol = mix(obsidianSky, finalCol, keepCS);
-
-              float farFloor = (1.0 - smoothstep(0.18, 0.27, vUv.x) * (1.0 - smoothstep(0.65, 0.74, vUv.x))) * mFloor;
-              float fLuma = dot(finalCol, vec3(0.299, 0.587, 0.114));
-              finalCol = mix(finalCol, vec3(fLuma) * vec3(0.35, 0.28, 0.38), farFloor * 0.88);
-            } else {
-              // Mobile Concept 04 Coming Soon Mask: Keep Top Tree/Sun, Spiral Staircase, Floor, Gamer Robot, NES & CRT TV!
-              float cutNerdy  = (1.0 - smoothstep(0.24, 0.28, vUv.x)) * smoothstep(0.36, 0.39, vUv.y) * (1.0 - smoothstep(0.60, 0.63, vUv.y));
-              float cutDeaf   = smoothstep(0.71, 0.74, vUv.x) * smoothstep(0.32, 0.35, vUv.y) * (1.0 - smoothstep(0.61, 0.64, vUv.y));
-              float cutMidR   = smoothstep(0.49, 0.53, vUv.x) * smoothstep(0.30, 0.33, vUv.y) * (1.0 - smoothstep(0.46, 0.49, vUv.y));
-              float cutSpecM  = (1.0 - smoothstep(0.51, 0.54, vUv.x)) * smoothstep(0.185, 0.205, vUv.y) * (1.0 - smoothstep(0.30, 0.33, vUv.y));
-              float mGamerM   = step(gBox.x, vUv.x) * step(vUv.x, gBox.y) * step(gBox.z, vUv.y) * step(vUv.y, gBox.w);
-              float cutTotM   = clamp(cutNerdy + cutDeaf + cutMidR + cutSpecM * (1.0 - mGamerM), 0.0, 1.0);
-              finalCol = mix(finalCol, obsidianSky, cutTotM);
-            }
           }
 
           gl_FragColor = vec4(finalCol, 1.0);
