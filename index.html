@@ -1488,35 +1488,41 @@
       varying float vIsVoxel;
       varying float vAlpha;
       varying float vLumBoost;
+      varying float vPhase;
+      varying float vTime;
 
       vec3 smoothOrbitDrift(vec3 p, float t) {
-        float wx = sin(p.y * 1.4 + t * 0.75 + aPhase * 6.2831) * 0.11;
-        float wy = cos(p.x * 1.4 + t * 0.68 + aPhase * 6.2831) * 0.10;
-        float wz = sin(p.x * 1.2 - t * 0.62 + aPhase * 6.2831) * 0.09;
+        float wx = sin(p.y * 1.6 + t * 0.95 + aPhase * 6.2831) * 0.13;
+        float wy = cos(p.x * 1.5 + t * 0.85 + aPhase * 6.2831) * 0.11;
+        float wz = sin(p.x * 1.3 - t * 0.78 + aPhase * 6.2831) * 0.11;
         return vec3(wx, wy, wz);
       }
 
       void main() {
         vIsVoxel = aIsVoxel;
+        vPhase = aPhase;
+        vTime = uTime;
         bool mob = uIsMobile > 0.5;
 
         float m = smoothstep(0.0, 1.0, uMorphProgress);
         vec3 basePos = mix(position, aTarget, m);
         vec3 baseCol = mix(aColorStart, aColorTarget, m);
 
-        // Smooth 3D orbital rotation of the small voxel square particles around the Living Tree!
+        // Smooth 3D liquid-vortex orbital rotation of the floating particles around the Living Tree!
         float orbitDepthAlpha = 1.0;
         if (aIsVoxel > 0.5) {
           float rawR = length(basePos.xz);
-          float minCanopyR = mix(0.52, 1.38, smoothstep(-0.65, 0.45, basePos.y)) * (0.68 + 0.62 * fract(aPhase * 19.3));
-          float orbitR = max(rawR, minCanopyR);
+          float minCanopyR = mix(0.52, 1.40, smoothstep(-0.65, 0.45, basePos.y)) * (0.68 + 0.62 * fract(aPhase * 19.3));
+          // Subtle radial breathing wave like a living liquid current
+          float radialWave = 1.0 + 0.06 * sin(uTime * 1.6 + aPhase * 18.85 + basePos.y * 2.2);
+          float orbitR = max(rawR, minCanopyR) * radialWave;
           float startTheta = atan(basePos.z, basePos.x) + aPhase * 6.2831853;
           float orbitSpeed = 0.38 + fract(aPhase * 7.13) * 0.26;
           float theta = startTheta + uTime * orbitSpeed;
 
           basePos.x = cos(theta) * orbitR;
           basePos.z = sin(theta) * (orbitR * 0.58);
-          basePos.y += sin(uTime * 1.15 + aPhase * 12.566) * 0.065;
+          basePos.y += sin(uTime * 1.35 + aPhase * 12.566 + theta * 1.5) * 0.085;
 
           // Subtle 3D depth shading as particles pass behind the tree canopy (z < 0) vs in front (z > 0)
           orbitDepthAlpha = mix(0.38, 1.0, smoothstep(-0.55, 0.25, sin(theta)));
@@ -1554,7 +1560,7 @@
           basePos = mix(swoopPos, basePos, introEase);
         }
 
-        float motionAmp = aIsVoxel > 0.5 ? 0.035 : 0.004;
+        float motionAmp = aIsVoxel > 0.5 ? 0.045 : 0.004;
         vec3 liveOffset = smoothOrbitDrift(basePos, uTime) * motionAmp;
 
         float wavePhase = basePos.y * 2.0 - length(basePos.xz) * 1.0 - uTime * 0.85 + aPhase * 1.8;
@@ -1581,7 +1587,7 @@
         float settleAlpha = mix(0.92, 0.99, clamp(totalLum * 0.5, 0.0, 1.0));
 
         float treeBranchCrossfade = aIsVoxel > 0.5
-          ? (0.96 * orbitDepthAlpha)
+          ? (0.98 * orbitDepthAlpha)
           : (1.0 - smoothstep(0.58, 0.96, uTreeReveal));
 
         vAlpha = enterVis * settleAlpha * treeBranchCrossfade;
@@ -1589,8 +1595,10 @@
         vec4 mvPosition = modelViewMatrix * vec4(basePos, 1.0);
         gl_Position = projectionMatrix * mvPosition;
 
+        // Subtle surface-tension pulse in droplet size
+        float liquidBreath = 1.0 + 0.09 * sin(uTime * 2.8 + aPhase * 25.13);
         float baseSize = aIsVoxel > 0.5
-          ? (6.8 + fract(aPhase * 17.0) * 3.8)
+          ? (8.2 + fract(aPhase * 17.0) * 4.6) * liquidBreath
           : (3.0 + fract(aPhase * 13.0) * 0.85);
         gl_PointSize = baseSize * uPixelRatio * (5.5 / -mvPosition.z);
       }
@@ -1601,37 +1609,76 @@
       varying float vIsVoxel;
       varying float vAlpha;
       varying float vLumBoost;
+      varying float vPhase;
+      varying float vTime;
 
       void main() {
         if (vAlpha <= 0.01) discard;
         vec2 uv = gl_PointCoord * 2.0 - 1.0;
 
-        vec2 q = abs(uv) - vec2(0.68);
-        float sdf = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - 0.16;
-        if (sdf > 0.03) discard;
+        // Slow 2D rotation + organic surface-tension liquid wobble for each droplet
+        float rotAng = vTime * (0.55 + fract(vPhase * 5.3) * 0.45) + vPhase * 6.2831853;
+        float cR = cos(rotAng);
+        float sR = sin(rotAng);
+        vec2 rUv = vec2(uv.x * cR - uv.y * sR, uv.x * sR + uv.y * cR);
 
-        float cubeMask = 1.0 - smoothstep(-0.05, 0.03, sdf);
+        float polarAng = atan(rUv.y, rUv.x);
+        float surfaceWobble = sin(polarAng * 2.0 + vTime * 3.2 + vPhase * 12.56) * 0.065
+                            + cos(polarAng * 3.0 - vTime * 2.4 + vPhase * 18.85) * 0.042;
+        vec2 wUv = rUv * (1.0 + surfaceWobble);
 
+        // Soft 3D liquid cushion / molten droplet SDF (blends rounded cube and organic liquid sphere)
+        vec2 q = abs(wUv) - vec2(0.42);
+        float boxSdf = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - 0.38;
+        float sphereSdf = length(wUv) - 0.84;
+        float sdf = mix(sphereSdf, boxSdf, 0.42);
+        if (sdf > 0.04) discard;
+
+        float dropletMask = 1.0 - smoothstep(-0.06, 0.04, sdf);
+
+        // 3D Curved Liquid Meniscus Normal with internal rippling wave perturbation
+        float r2 = clamp(dot(uv, uv), 0.0, 0.98);
+        vec2 ripple = vec2(
+          sin(uv.y * 4.2 + vTime * 3.6 + vPhase * 15.7),
+          cos(uv.x * 4.2 - vTime * 3.1 + vPhase * 11.3)
+        ) * 0.11;
         vec3 normal = normalize(vec3(
-          uv.x * 0.95,
-          -uv.y * 0.95,
-          sqrt(max(0.22, 1.0 - dot(uv, uv) * 0.65))
+          uv.x * 1.05 + ripple.x,
+          -uv.y * 1.05 + ripple.y,
+          sqrt(max(0.06, 1.0 - r2 * 0.92))
         ));
 
-        vec3 lightDir = normalize(vec3(-0.45, 0.60, 0.66));
-        float diff = max(0.0, dot(normal, lightDir));
-        vec3 halfVec = normalize(lightDir + vec3(0.0, 0.0, 1.0));
-        float spec = pow(max(0.0, dot(normal, halfVec)), 22.0);
+        // Primary top-left studio light + secondary warm bottom-right bounce light
+        vec3 lightDir1 = normalize(vec3(-0.48, 0.62, 0.62));
+        vec3 lightDir2 = normalize(vec3( 0.52, -0.55, 0.65));
+        vec3 viewDir   = vec3(0.0, 0.0, 1.0);
 
-        float bevelRim = smoothstep(-0.26, -0.03, sdf) * (1.0 - smoothstep(-0.02, 0.03, sdf));
-        float topHighlight = clamp((-uv.y + uv.x * 0.5) * 0.5 + 0.5, 0.0, 1.0);
+        float diff1 = max(0.0, dot(normal, lightDir1));
+        vec3 half1  = normalize(lightDir1 + viewDir);
+        vec3 half2  = normalize(lightDir2 + viewDir);
 
-        float faceShade = 0.68 + diff * 0.42;
-        vec3 col = vColor * faceShade
-                 + vColor * bevelRim * (0.42 + topHighlight * 0.35 + vLumBoost * 0.22)
-                 + (vColor * 0.55 + vec3(0.48, 0.38, 0.22)) * spec * (0.48 + vLumBoost * 0.20);
+        // Razor-sharp wet-coat primary specular + soft secondary rim reflection
+        float specWet  = pow(max(0.0, dot(normal, half1)), 56.0);
+        float specCoat = pow(max(0.0, dot(normal, half1)), 14.0);
+        float specRim2 = pow(max(0.0, dot(normal, half2)), 24.0);
 
-        float alpha = cubeMask * vAlpha * 0.95;
+        // Schlick Fresnel 3D liquid meniscus rim + internal refractive subsurface caustic (bottom-right)
+        float fresnel = pow(1.0 - clamp(normal.z, 0.0, 1.0), 2.8);
+        vec2 causticCenter = vec2(0.26, 0.28) + ripple * 0.6;
+        float internalCaustic = exp(-dot(uv - causticCenter, uv - causticCenter) * 4.8);
+
+        // Rich deep liquid core + glowing subsurface caustic + wet-coat reflections
+        vec3 deepLiquidCore = pow(max(vColor, vec3(0.01)), vec3(1.18)) * (0.48 + diff1 * 0.55);
+        vec3 causticGlow    = (vColor * 1.35 + vec3(0.35, 0.24, 0.08)) * internalCaustic * (0.65 + vLumBoost * 0.25);
+        vec3 fresnelRimCol  = (vColor * 0.85 + vec3(0.45, 0.35, 0.18)) * fresnel * (0.75 + vLumBoost * 0.28);
+        vec3 wetHighlight   = (vec3(1.0, 0.97, 0.90) + vColor * 0.35) * (specWet * 1.35 + specCoat * 0.32)
+                            + (vColor * 0.7 + vec3(0.55, 0.40, 0.18)) * specRim2 * 0.45;
+
+        vec3 col = deepLiquidCore + causticGlow + fresnelRimCol + wetHighlight;
+
+        // Translucent liquid glass/metal alpha (slightly more solid at the Fresnel meniscus rim & specular hotspot)
+        float liquidAlpha = clamp(0.78 + fresnel * 0.20 + specWet * 0.25, 0.0, 1.0);
+        float alpha = dropletMask * vAlpha * liquidAlpha;
         gl_FragColor = vec4(col, alpha);
       }
     `;
