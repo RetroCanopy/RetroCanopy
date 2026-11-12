@@ -1062,34 +1062,31 @@
             vec3 cleanPlateCol = texture2D(uTexGamerBg, boxUv).rgb;
             litRoomCol = mix(litRoomCol, cleanPlateCol, boxInterior);
 
-            // 2. Compute Full-Body & Head Kinematics for the Gamer Robot Cutout:
-            //    - Torso Lean Angle (+ leans forward toward TV, - rocks back)
-            float torsoAng = inPlay1  * (0.022 + 0.018 * sin(uTime * 4.5) - jumpEffort * 0.032)
-                           + inHappy  * (sin(uTime * 11.5) * 0.038 - 0.015)
-                           + inClimax * (0.046 + sin(uTime * 14.0) * 0.016 - jumpEffort * 0.036)
-                           - inShock  * 0.052
-                           + inRage   * (-0.024 + sin(uTime * 22.0) * 0.044)
-                           + inSlump  * 0.048
-                           + inRecover* (0.018 + startMash * 0.028);
+            // 2. Compute Smooth, Weighted Full-Body & Head Kinematics for the Gamer Robot Cutout:
+            float torsoAng = inPlay1  * (0.018 + 0.012 * sin(uTime * 3.2) - jumpEffort * 0.022)
+                           + inHappy  * (sin(uTime * 6.0) * 0.025 - 0.010)
+                           + inClimax * (0.034 + sin(uTime * 6.5) * 0.012 - jumpEffort * 0.025)
+                           - inShock  * 0.035
+                           + inRage   * (-0.018 + sin(uTime * 9.5) * 0.026)
+                           + inSlump  * 0.036
+                           + inRecover* (0.014 + startMash * 0.020);
 
-            //    - Vertical Body Bounce (happy victory hops, jump yanks, rage heave, defeated slump!)
-            float bounceScale = mob ? 0.0010 : 0.0018;
-            float bodyBounceY = (inPlay   * (sin(uTime * 7.5) * 0.7 + jumpEffort * 2.4 + inClimax * sin(uTime * 16.0) * 0.8)
-                               + inHappy  * (abs(sin(uTime * 11.5)) * 3.2)
-                               + inShock  * 1.8
-                               + inRage   * (sin(uTime * 24.0) * 1.9)
-                               - inSlump  * 2.1
-                               + startMash* 1.8) * bounceScale;
+            float bounceScale = mob ? 0.0007 : 0.0012;
+            float bodyBounceY = (inPlay   * (sin(uTime * 4.5) * 0.6 + jumpEffort * 1.6 + inClimax * sin(uTime * 7.5) * 0.6)
+                               + inHappy  * (0.5 + 0.5 * sin(uTime * 6.0)) * 2.2
+                               + inShock  * 1.2
+                               + inRage   * (sin(uTime * 9.5) * 1.1)
+                               - inSlump  * 1.5
+                               + startMash* 1.2) * bounceScale;
 
-            float bodyShiftX = (inPlay * (0.6 + inClimax * 0.8) - inShock * 1.2 + inRage * cos(uTime * 20.0) * 0.9) * bounceScale * 0.7;
+            float bodyShiftX = (inPlay * (0.5 + inClimax * 0.6) - inShock * 0.8 + inRage * cos(uTime * 9.5) * 0.5) * bounceScale * 0.6;
 
-            //    - Extra Head Tilt at Neck Joint (+ nods down, - tilts back)
-            float headExtraAng = inPlay   * (sin(uTime * 8.0) * 0.022 - jumpEffort * 0.042)
-                               + inHappy  * (sin(uTime * 11.5 + 0.8) * 0.048 - 0.025)
-                               - inShock  * 0.055
-                               + inRage   * (-0.035 + sin(uTime * 28.0) * 0.062)
-                               + inSlump  * 0.065
-                               + inRecover* (sin(uTime * 18.0) * 0.035 * (1.0 - smoothstep(11.0, 11.2, tC)));
+            float headExtraAng = inPlay   * (sin(uTime * 4.5) * 0.016 - jumpEffort * 0.028)
+                               + inHappy  * (sin(uTime * 6.0 + 0.6) * 0.030 - 0.015)
+                               - inShock  * 0.038
+                               + inRage   * (-0.022 + sin(uTime * 11.0) * 0.034)
+                               + inSlump  * 0.045
+                               + inRecover* (sin(uTime * 8.0) * 0.022 * (1.0 - smoothstep(11.0, 11.2, tC)));
 
             // Pivots in stage UV coordinates:
             vec2 hipPivot  = mob ? vec2(0.3550, 0.1160) : vec2(0.1945, 0.2700);
@@ -1329,19 +1326,10 @@
 
           // ==================================================================
           // 2 ROBOTS ON THE RIGHT-HAND SIDE SITTING & PLAYING A CARD GAME!
-          // Rendered from RGBA cutout uTexCardBots over the clean stage floor
-          // (zero background warping!), with a 12.0s turn-by-turn card match
-          // where each robot physically reaches down to PICK UP a card from
-          // the draw deck, lifts it into its hand, and reaches out to PUT DOWN
-          // a card onto the center floor pile!
-          //   0.0s - 1.5s : Left Robot reaches down to deck & PICKS UP a card!
-          //   1.5s - 2.5s : Left Robot inspects drawn card & glances across
-          //   2.5s - 3.8s : Left Robot reaches out & PUTS DOWN a card onto the pile!
-          //   3.8s - 6.0s : Left Robot celebrates (^ ^), Right Robot reacts (\ /)
-          //   6.0s - 7.5s : Right Robot reaches down to deck & PICKS UP a card!
-          //   7.5s - 8.5s : Right Robot inspects drawn card & plots move
-          //   8.5s - 9.8s : Right Robot reaches out & PUTS DOWN a card onto the pile!
-          //   9.8s -12.0s : Right Robot celebrates (^ ^), Left Robot reacts (\ /)
+          // Clean, weighted, zero-warp 2.5D upper-body & head kinematics
+          // (no internal chest/arm shearing!) paired with a sleek, perspective-
+          // matched golden card gliding smoothly from the draw deck into each
+          // robot's hand and down onto the center played-card pile!
           // ==================================================================
           vec4 cardBox = mob
             ? vec4(0.565, 0.945, 0.025, 0.135)
@@ -1359,120 +1347,78 @@
 
             float tCard = mod(uTime + 1.2, 12.0);
 
-            // Left Robot Turn Phases (0.0s - 6.0s):
-            // 1. Reach & Pick Up Card from Deck (0.15s - 1.45s)
-            float lReachDeck = smoothstep(0.10, 0.55, tCard) * (1.0 - smoothstep(0.65, 1.25, tCard));
-            float lDrawProg  = clamp((tCard - 0.50) / 0.90, 0.0, 1.0);
-            float lDrawVis   = smoothstep(0.45, 0.60, tCard) * (1.0 - smoothstep(1.25, 1.42, tCard));
-            // 2. Inspect Card (1.4s - 2.5s)
-            float lStudy     = smoothstep(1.30, 1.55, tCard) * (1.0 - smoothstep(2.40, 2.60, tCard));
-            // 3. Reach & Put Down Card onto Floor Pile (2.50s - 3.70s)
-            float lPutReach  = smoothstep(2.45, 2.95, tCard) * (1.0 - smoothstep(3.15, 3.65, tCard));
-            float lPutProg   = smoothstep(0.0, 1.0, clamp((tCard - 2.50) / 0.68, 0.0, 1.0));
-            float lPutVis    = smoothstep(2.45, 2.58, tCard) * (1.0 - smoothstep(5.75, 5.98, tCard));
-            // 4. Win / Celebrate (3.70s - 6.00s)
-            float cWinL      = smoothstep(3.55, 3.80, tCard) * (1.0 - smoothstep(5.75, 5.98, tCard));
+            // Smooth, overlapping cubic-eased turn phases (12.0s cycle):
+            // Turn 1 (Left Robot: 0.0s - 6.0s)
+            float lReachDeck = smoothstep(0.15, 0.65, tCard) * (1.0 - smoothstep(0.85, 1.40, tCard));
+            float lDrawProg  = smoothstep(0.35, 1.35, tCard);
+            float lDrawVis   = smoothstep(0.32, 0.52, tCard) * (1.0 - smoothstep(1.22, 1.42, tCard));
+            float lStudy     = smoothstep(1.30, 1.65, tCard) * (1.0 - smoothstep(2.35, 2.65, tCard));
+            float lPutReach  = smoothstep(2.45, 2.95, tCard) * (1.0 - smoothstep(3.20, 3.70, tCard));
+            float lPutProg   = smoothstep(2.55, 3.40, tCard);
+            float lPutVis    = smoothstep(2.50, 2.70, tCard) * (1.0 - smoothstep(5.65, 5.95, tCard));
+            float cWinL      = smoothstep(3.55, 3.90, tCard) * (1.0 - smoothstep(5.60, 5.95, tCard));
 
-            // Right Robot Turn Phases (6.0s - 12.0s):
-            // 1. Reach & Pick Up Card from Deck (6.15s - 7.45s)
-            float rReachDeck = smoothstep(6.10, 6.55, tCard) * (1.0 - smoothstep(6.65, 7.25, tCard));
-            float rDrawProg  = clamp((tCard - 6.50) / 0.90, 0.0, 1.0);
-            float rDrawVis   = smoothstep(6.45, 6.60, tCard) * (1.0 - smoothstep(7.25, 7.42, tCard));
-            // 2. Inspect Card (7.4s - 8.5s)
-            float rStudy     = smoothstep(7.30, 7.55, tCard) * (1.0 - smoothstep(8.40, 8.60, tCard));
-            // 3. Reach & Put Down Card onto Floor Pile (8.50s - 9.70s)
-            float rPutReach  = smoothstep(8.45, 8.95, tCard) * (1.0 - smoothstep(9.15, 9.65, tCard));
-            float rPutProg   = smoothstep(0.0, 1.0, clamp((tCard - 8.50) / 0.68, 0.0, 1.0));
-            float rPutVis    = smoothstep(8.45, 8.58, tCard) * (1.0 - smoothstep(11.75, 11.98, tCard));
-            // 4. Win / Celebrate (9.70s - 12.00s)
-            float cWinR      = smoothstep(9.55, 9.80, tCard) * (1.0 - smoothstep(11.75, 11.98, tCard));
+            // Turn 2 (Right Robot: 6.0s - 12.0s)
+            float rReachDeck = smoothstep(6.15, 6.65, tCard) * (1.0 - smoothstep(6.85, 7.40, tCard));
+            float rDrawProg  = smoothstep(6.35, 7.35, tCard);
+            float rDrawVis   = smoothstep(6.32, 6.52, tCard) * (1.0 - smoothstep(7.22, 7.42, tCard));
+            float rStudy     = smoothstep(7.30, 7.65, tCard) * (1.0 - smoothstep(8.35, 8.65, tCard));
+            float rPutReach  = smoothstep(8.45, 8.95, tCard) * (1.0 - smoothstep(9.20, 9.70, tCard));
+            float rPutProg   = smoothstep(8.55, 9.40, tCard);
+            float rPutVis    = smoothstep(8.50, 8.70, tCard) * (1.0 - smoothstep(11.65, 11.95, tCard));
+            float cWinR      = smoothstep(9.55, 9.90, tCard) * (1.0 - smoothstep(11.60, 11.95, tCard));
 
             float cStudy = clamp(lStudy + rStudy, 0.0, 1.0);
 
             vec2 sampleCbUv = cbUv;
-            float mUpper = smoothstep(0.25, 0.31, cbUv.y);
+            // Clean hip split below the forearms & cards (0.25..0.30) so the entire upper body & card fan stay 100% rigid!
+            float mUpper = smoothstep(0.25, 0.30, cbUv.y);
 
-            if (cbUv.x < 0.43) {
-              // ==============================================================
-              // LEFT CARD ROBOT: TORSO, HEAD, AND ARTICULATED ARM/HAND REACH!
-              // ==============================================================
-              float torsoAngL = (lReachDeck * 0.115 + lPutReach * 0.135)
-                              + lStudy * (0.030 + 0.018 * sin(uTime * 5.0))
-                              + cWinL  * (sin(uTime * 11.5) * 0.042 - 0.015)
-                              + cWinR  * (-0.035 + sin(uTime * 22.0) * 0.045);
+            if (cbUv.x < 0.42) {
+              // LEFT CARD ROBOT: Smooth, unified rigid upper-body lean + clean neck nod
+              float torsoAngL = (lReachDeck * 0.048 + lPutReach * 0.056)
+                              + lStudy * (0.016 + 0.010 * sin(uTime * 3.0))
+                              + cWinL  * (sin(uTime * 5.8) * 0.024 - 0.008)
+                              + cWinR  * (-0.018 + sin(uTime * 9.0) * 0.022);
 
-              float bounceYL  = (lReachDeck * -0.014 + lPutReach * -0.016)
-                              + cWinL  * abs(sin(uTime * 11.5)) * 0.026
-                              + cWinR  * sin(uTime * 24.0) * 0.012;
+              float bounceYL  = (lReachDeck * -0.005 + lPutReach * -0.006)
+                              + cWinL  * (0.5 + 0.5 * sin(uTime * 5.8)) * 0.014
+                              - cWinR  * 0.006;
 
-              // Head tilts down to look at deck/pile when picking up & putting down cards!
-              float headAngL  = (lReachDeck * 0.085 + lPutReach * 0.095)
-                              + lStudy * (0.045 * sin(uTime * 4.5))
-                              + cWinL  * (sin(uTime * 11.5 + 0.7) * 0.052 - 0.025)
-                              + cWinR  * (-0.040 + sin(uTime * 28.0) * 0.065);
-
-              // Articulated Arm + Hand + Card Fan pivoting at Left Shoulder (0.115, 0.465):
-              // +armAngL swings the arm & cards DOWN toward the deck/floor pile!
-              // -armAngL lifts the newly picked-up card UP to the visor!
-              float liftInspectL = smoothstep(0.95, 1.35, tCard) * (1.0 - smoothstep(1.85, 2.25, tCard));
-              float armAngL   = lReachDeck * 0.24
-                              - liftInspectL * 0.11
-                              + lPutReach * 0.28
-                              + lStudy * sin(uTime * 10.0) * 0.045
-                              - cWinL * abs(sin(uTime * 11.5)) * 0.10;
-              vec2 armShiftL  = vec2((lReachDeck * 0.026 + lPutReach * 0.034), -(lReachDeck * 0.022 + lPutReach * 0.028));
+              float headAngL  = (lReachDeck * 0.042 + lPutReach * 0.048)
+                              + lStudy * (0.022 * sin(uTime * 2.8))
+                              + cWinL  * (sin(uTime * 5.8 + 0.6) * 0.028 - 0.012)
+                              + cWinR  * (0.022 + sin(uTime * 10.5) * 0.032);
 
               vec2 uShiftL = cbUv - vec2(0.0, bounceYL * mUpper);
               vec2 uTorsoL = rotRigidAspect(uShiftL, vec2(0.155, 0.280), torsoAngL, cbAspect);
               vec2 uHeadL  = rotRigidAspect(uTorsoL, vec2(0.165, 0.540), headAngL, cbAspect);
-              vec2 uArmL   = rotRigidAspect(uTorsoL - armShiftL, vec2(0.115, 0.465), armAngL, cbAspect);
-
-              float mHeadL = smoothstep(0.525, 0.565, uTorsoL.y);
-              float mArmL  = smoothstep(0.11, 0.16, uTorsoL.x) * (1.0 - smoothstep(0.38, 0.42, uTorsoL.x))
-                           * smoothstep(0.31, 0.35, uTorsoL.y) * (1.0 - smoothstep(0.51, 0.545, uTorsoL.y));
+              float mHeadL = smoothstep(0.525, 0.560, uTorsoL.y);
 
               sampleCbUv = mix(cbUv, uTorsoL, mUpper);
-              sampleCbUv = mix(sampleCbUv, uArmL, mArmL * mUpper);
               sampleCbUv = mix(sampleCbUv, uHeadL, mHeadL * mUpper);
-            } else if (cbUv.x > 0.57) {
-              // ==============================================================
-              // RIGHT CARD ROBOT: TORSO, HEAD, AND ARTICULATED ARM/HAND REACH!
-              // ==============================================================
-              float torsoAngR = -(rReachDeck * 0.115 + rPutReach * 0.135)
-                              - rStudy * (0.030 + 0.018 * cos(uTime * 5.0))
-                              + cWinR  * (sin(uTime * 11.5) * 0.042 + 0.015)
-                              + cWinL  * (0.035 + sin(uTime * 22.0) * 0.045);
+            } else if (cbUv.x > 0.58) {
+              // RIGHT CARD ROBOT: Smooth, unified rigid upper-body lean + clean neck nod
+              float torsoAngR = -(rReachDeck * 0.048 + rPutReach * 0.056)
+                              - rStudy * (0.016 + 0.010 * cos(uTime * 3.0))
+                              + cWinR  * (sin(uTime * 5.8) * 0.024 + 0.008)
+                              + cWinL  * (0.018 + sin(uTime * 9.0) * 0.022);
 
-              float bounceYR  = (rReachDeck * -0.014 + rPutReach * -0.016)
-                              + cWinR  * abs(sin(uTime * 11.5)) * 0.026
-                              + cWinL  * sin(uTime * 24.0) * 0.012;
+              float bounceYR  = (rReachDeck * -0.005 + rPutReach * -0.006)
+                              + cWinR  * (0.5 + 0.5 * sin(uTime * 5.8)) * 0.014
+                              - cWinL  * 0.006;
 
-              float headAngR  = -(rReachDeck * 0.085 + rPutReach * 0.095)
-                              - rStudy * (0.045 * cos(uTime * 4.5))
-                              + cWinR  * (sin(uTime * 11.5 + 0.7) * 0.052 + 0.025)
-                              + cWinL  * (0.040 + sin(uTime * 28.0) * 0.065);
-
-              // Articulated Arm + Hand + Card Fan pivoting at Right Shoulder (0.885, 0.465):
-              // -armAngR swings the arm & cards DOWN toward the center deck/floor pile!
-              float liftInspectR = smoothstep(6.95, 7.35, tCard) * (1.0 - smoothstep(7.85, 8.25, tCard));
-              float armAngR   = -rReachDeck * 0.24
-                              + liftInspectR * 0.11
-                              - rPutReach * 0.28
-                              + rStudy * cos(uTime * 10.0) * 0.045
-                              + cWinR * abs(sin(uTime * 11.5)) * 0.10;
-              vec2 armShiftR  = vec2(-(rReachDeck * 0.026 + rPutReach * 0.034), -(rReachDeck * 0.022 + rPutReach * 0.028));
+              float headAngR  = -(rReachDeck * 0.042 + rPutReach * 0.048)
+                              - rStudy * (0.022 * cos(uTime * 2.8))
+                              + cWinR  * (sin(uTime * 5.8 + 0.6) * 0.028 + 0.012)
+                              + cWinL  * (-0.022 + sin(uTime * 10.5) * 0.032);
 
               vec2 uShiftR = cbUv - vec2(0.0, bounceYR * mUpper);
               vec2 uTorsoR = rotRigidAspect(uShiftR, vec2(0.845, 0.280), torsoAngR, cbAspect);
               vec2 uHeadR  = rotRigidAspect(uTorsoR, vec2(0.835, 0.540), headAngR, cbAspect);
-              vec2 uArmR   = rotRigidAspect(uTorsoR - armShiftR, vec2(0.885, 0.465), armAngR, cbAspect);
-
-              float mHeadR = smoothstep(0.525, 0.565, uTorsoR.y);
-              float mArmR  = smoothstep(0.58, 0.62, uTorsoR.x) * (1.0 - smoothstep(0.84, 0.89, uTorsoR.x))
-                           * smoothstep(0.31, 0.35, uTorsoR.y) * (1.0 - smoothstep(0.51, 0.545, uTorsoR.y));
+              float mHeadR = smoothstep(0.525, 0.560, uTorsoR.y);
 
               sampleCbUv = mix(cbUv, uTorsoR, mUpper);
-              sampleCbUv = mix(sampleCbUv, uArmR, mArmR * mUpper);
               sampleCbUv = mix(sampleCbUv, uHeadR, mHeadR * mUpper);
             }
 
@@ -1499,23 +1445,22 @@
                   float staticCyan = clamp((cbCol.g + cbCol.b) * 0.52 - cbCol.r * 0.30 - 0.08, 0.0, 1.0);
                   cbCol = mix(cbCol, vec3(0.025, 0.055, 0.075), clamp(staticCyan * 1.65, 0.0, 1.0) * inVGlass);
 
-                  // Eyes track down to the deck when picking up/putting down a card, then look across!
-                  float lookCycle = sin(uTime * 2.6 + (isLeftBot ? 0.0 : 1.6));
-                  float gx = myReach * (dirToCenter * 0.55)
-                           + cStudy  * (dirToCenter * 0.35 * smoothstep(-0.2, 0.6, lookCycle))
-                           + myHappy * (0.30 * sin(uTime * 11.5))
-                           + myRage  * (sin(uTime * 32.0) * 0.95);
-                  float gy = -myReach * 0.75
-                           + cStudy  * (-0.45 * smoothstep(0.2, -0.5, lookCycle) + 0.20 * smoothstep(-0.1, 0.6, lookCycle))
-                           + myHappy * (0.35 + 0.30 * abs(sin(uTime * 11.5)))
-                           + myRage  * 0.15;
+                  float lookCycle = sin(uTime * 2.2 + (isLeftBot ? 0.0 : 1.6));
+                  float gx = myReach * (dirToCenter * 0.45)
+                           + cStudy  * (dirToCenter * 0.30 * smoothstep(-0.2, 0.6, lookCycle))
+                           + myHappy * (0.22 * sin(uTime * 5.8))
+                           + myRage  * (sin(uTime * 12.0) * 0.45);
+                  float gy = -myReach * 0.65
+                           + cStudy  * (-0.40 * smoothstep(0.2, -0.5, lookCycle) + 0.18 * smoothstep(-0.1, 0.6, lookCycle))
+                           + myHappy * (0.28 + 0.20 * (0.5 + 0.5 * sin(uTime * 5.8)))
+                           - myRage  * 0.15;
                   vec2 gOff = vec2(gx * 0.012, gy * 0.024);
 
                   vec2 d1 = (sampleCbUv - (e1Ctr + gOff)) / e1Rad;
                   vec2 d2 = (sampleCbUv - (e2Ctr + gOff)) / e2Rad;
 
                   float cBlink = naturalBlink(uTime, isLeftBot ? 3.4 : 3.9, isLeftBot ? 0.5 : 1.9) * (1.0 - myHappy) * (1.0 - myRage);
-                  float vSc = 1.0 - cBlink * 0.88 + myHappy * 0.16;
+                  float vSc = 1.0 - cBlink * 0.88 + myHappy * 0.14;
                   d1.y /= max(0.12, vSc);
                   d2.y /= max(0.12, vSc);
 
@@ -1529,11 +1474,11 @@
                     sh2 *= (1.0 - hArch2 * myHappy * 0.95);
                   }
 
-                  float bluffSquint = cStudy * smoothstep(0.2, 0.8, lookCycle) * 0.38;
+                  float bluffSquint = cStudy * smoothstep(0.2, 0.8, lookCycle) * 0.35;
                   if (bluffSquint > 0.01 || myRage > 0.01) {
-                    float sl = bluffSquint * 0.35 + myRage * 0.95;
-                    float cut1 = 0.72 - bluffSquint * 0.35 - myRage * 0.42 - d1.x * sl;
-                    float cut2 = 0.72 - bluffSquint * 0.35 - myRage * 0.42 + d2.x * sl;
+                    float sl = bluffSquint * 0.35 + myRage * 0.90;
+                    float cut1 = 0.72 - bluffSquint * 0.32 - myRage * 0.40 - d1.x * sl;
+                    float cut2 = 0.72 - bluffSquint * 0.32 - myRage * 0.40 + d2.x * sl;
                     sh1 *= smoothstep(cut1 + 0.15, cut1 - 0.15, d1.y);
                     sh2 *= smoothstep(cut2 + 0.15, cut2 - 0.15, d2.y);
                   }
@@ -1541,120 +1486,95 @@
                   float eTot = clamp(sh1 + sh2, 0.0, 1.0) * inVGlass;
                   float eHal = clamp((1.0 - smoothstep(0.6, 1.65, length(d1))) + (1.0 - smoothstep(0.6, 1.65, length(d2))), 0.0, 1.0) * inVGlass;
 
-                  vec3 eCol = mix(vec3(0.55, 0.98, 1.0) * 1.15, vec3(0.45, 1.0, 0.78) * 1.35, myHappy);
-                  eCol = mix(eCol, vec3(1.0, 0.16, 0.03) * (1.35 + 0.25 * sin(uTime * 30.0)), myRage);
+                  vec3 eCol = mix(vec3(0.55, 0.98, 1.0) * 1.15, vec3(0.45, 1.0, 0.78) * 1.30, myHappy);
+                  eCol = mix(eCol, vec3(1.0, 0.18, 0.04) * 1.35, myRage);
 
                   cbCol += eCol * eHal * 0.28;
                   cbCol = mix(cbCol, eCol, eTot);
                 }
 
-                vec2 earCtr = isLeftBot ? vec2(0.080, 0.720) : vec2(0.928, 0.720);
-                float inEarC = 1.0 - smoothstep(0.65, 1.05, length((sampleCbUv - earCtr) / vec2(0.044, 0.084)));
-                if (inEarC > 0.01) {
-                  float earBr = clamp(cbCol.r * 0.85 - cbCol.b * 0.45, 0.0, 1.0) * inEarC;
-                  if (myRage > 0.01) {
-                    cbCol = mix(cbCol, vec3(1.0, 0.12, 0.02) * 1.35, earBr * myRage);
-                  } else if (myHappy > 0.01) {
-                    cbCol = mix(cbCol, vec3(0.45, 1.0, 0.65) * 1.30, earBr * myHappy);
-                  }
-                }
+                // Subtle golden card-fan highlight when picking up or selecting a card
+                float inLeftFan  = smoothstep(0.24, 0.28, sampleCbUv.x) * (1.0 - smoothstep(0.35, 0.38, sampleCbUv.x))
+                                 * smoothstep(0.36, 0.40, sampleCbUv.y) * (1.0 - smoothstep(0.50, 0.54, sampleCbUv.y));
+                float inRightFan = smoothstep(0.62, 0.65, sampleCbUv.x) * (1.0 - smoothstep(0.72, 0.76, sampleCbUv.x))
+                                 * smoothstep(0.36, 0.40, sampleCbUv.y) * (1.0 - smoothstep(0.50, 0.54, sampleCbUv.y));
+                float fanGlow = inLeftFan * (lStudy + lPutReach) + inRightFan * (rStudy + rPutReach);
+                cbCol += vec3(1.0, 0.85, 0.35) * fanGlow * (0.18 + 0.12 * sin(uTime * 6.0));
 
                 litRoomCol = mix(litRoomCol, cbCol, cbSample.a);
               }
             }
 
             // ================================================================
-            // LIVE 3D MOVING PLAYING CARDS:
-            // 1. Card being PICKED UP from the center Draw Deck (0.505, 0.215)
-            //    and lifted into Left or Right Robot's hand!
-            // 2. Card being PUT DOWN from Left or Right Robot's hand onto the
-            //    center floor pile (0.505, 0.105) where it lands in 3D perspective!
+            // SLEEK, PERSPECTIVE-MATCHED 3D CARD PICK-UP & PUT-DOWN GLIDE
+            // Properly scaled to match the golden deck & played cards on the floor!
             // ================================================================
             float activeCardVis = max(max(lDrawVis, rDrawVis), max(lPutVis, rPutVis));
             if (activeCardVis > 0.01) {
-              vec2 deckTopPos  = vec2(0.505, 0.212);
-              vec2 pilePosL    = vec2(0.488, 0.108);
-              vec2 pilePosR    = vec2(0.522, 0.106);
-              vec2 handPosL    = vec2(0.312, 0.435);
-              vec2 handPosR    = vec2(0.688, 0.435);
+              vec2 deckTopPos = vec2(0.504, 0.206);
+              vec2 pilePosL   = vec2(0.486, 0.104);
+              vec2 pilePosR   = vec2(0.524, 0.102);
+              vec2 handEdgeL  = vec2(0.338, 0.422);
+              vec2 handEdgeR  = vec2(0.662, 0.422);
 
               vec2 cardCenter  = deckTopPos;
               float cardAngle  = 0.0;
-              float cardPitch  = 0.36; // 0.34 = flat on floor/deck, 0.92 = upright in hand
-              vec3  emblemTint = vec3(0.25, 0.95, 1.0);
+              float cardPitch  = 0.34;
+              vec3  emblemTint = vec3(0.35, 0.92, 0.85);
               float cardAlpha  = 0.0;
 
               if (lDrawVis > 0.01) {
-                // Left Robot picking up a card from the deck into its hand
-                float p = smoothstep(0.0, 1.0, lDrawProg);
-                cardCenter = mix(deckTopPos, handPosL, p) + vec2(0.0, sin(p * 3.14159) * 0.065);
-                cardAngle  = mix(-0.08, 0.38, p);
-                cardPitch  = mix(0.36, 0.90, p);
-                emblemTint = vec3(1.0, 0.82, 0.28);
+                float p = lDrawProg;
+                cardCenter = mix(deckTopPos, handEdgeL, p) + vec2(0.0, sin(p * 3.14159) * 0.038);
+                cardAngle  = mix(-0.05, 0.32, p);
+                cardPitch  = mix(0.34, 0.82, p);
+                emblemTint = vec3(0.95, 0.78, 0.28);
                 cardAlpha  = lDrawVis;
               } else if (lPutVis > 0.01) {
-                // Left Robot putting down a card from its hand onto the floor pile
                 float p = lPutProg;
-                cardCenter = mix(handPosL, pilePosL, p) + vec2(0.0, sin(p * 3.14159) * 0.075);
-                cardAngle  = mix(0.35, -0.14, p);
-                cardPitch  = mix(0.88, 0.34, p);
-                emblemTint = vec3(0.20, 0.96, 0.88);
+                cardCenter = mix(handEdgeL, pilePosL, p) + vec2(0.0, sin(p * 3.14159) * 0.042);
+                cardAngle  = mix(0.32, -0.12, p);
+                cardPitch  = mix(0.82, 0.32, p);
+                emblemTint = vec3(0.30, 0.92, 0.82);
                 cardAlpha  = lPutVis;
               } else if (rDrawVis > 0.01) {
-                // Right Robot picking up a card from the deck into its hand
-                float p = smoothstep(0.0, 1.0, rDrawProg);
-                cardCenter = mix(deckTopPos, handPosR, p) + vec2(0.0, sin(p * 3.14159) * 0.065);
-                cardAngle  = mix(0.08, -0.38, p);
-                cardPitch  = mix(0.36, 0.90, p);
-                emblemTint = vec3(1.0, 0.82, 0.28);
+                float p = rDrawProg;
+                cardCenter = mix(deckTopPos, handEdgeR, p) + vec2(0.0, sin(p * 3.14159) * 0.038);
+                cardAngle  = mix(0.05, -0.32, p);
+                cardPitch  = mix(0.34, 0.82, p);
+                emblemTint = vec3(0.95, 0.78, 0.28);
                 cardAlpha  = rDrawVis;
               } else if (rPutVis > 0.01) {
-                // Right Robot putting down a card from its hand onto the floor pile
                 float p = rPutProg;
-                cardCenter = mix(handPosR, pilePosR, p) + vec2(0.0, sin(p * 3.14159) * 0.075);
-                cardAngle  = mix(-0.35, 0.16, p);
-                cardPitch  = mix(0.88, 0.34, p);
-                emblemTint = vec3(1.0, 0.42, 0.85);
+                cardCenter = mix(handEdgeR, pilePosR, p) + vec2(0.0, sin(p * 3.14159) * 0.042);
+                cardAngle  = mix(-0.32, 0.14, p);
+                cardPitch  = mix(0.82, 0.32, p);
+                emblemTint = vec3(0.95, 0.55, 0.78);
                 cardAlpha  = rPutVis;
               }
 
-              // Render the 3D-foreshortened golden & holographic playing card at cardCenter
               vec2 dCard = (cbUv - cardCenter) * cbAspect;
               float cA = cos(cardAngle);
               float sA = sin(cardAngle);
               vec2 rCard = vec2(dCard.x * cA - dCard.y * sA, dCard.x * sA + dCard.y * cA);
-              // 3D pitch foreshortening + perspective trapezoid
               rCard.y /= max(0.28, cardPitch);
-              rCard.x /= max(0.65, 1.0 - rCard.y * (1.0 - cardPitch) * 3.2);
+              rCard.x /= max(0.72, 1.0 - rCard.y * (1.0 - cardPitch) * 2.4);
 
-              vec2 lc = rCard / vec2(0.048, 0.066);
-              if (abs(lc.x) < 1.35 && abs(lc.y) < 1.35) {
-                // Soft drop shadow beneath the moving card
-                vec2 shUv = (rCard - vec2(0.004, -0.008)) / vec2(0.052, 0.070);
-                float shSdf = length(max(abs(shUv) - vec2(0.82), 0.0)) - 0.16;
-                float cardShadow = (1.0 - smoothstep(-0.08, 0.22, shSdf)) * cardAlpha * 0.45;
-                litRoomCol *= (1.0 - cardShadow);
-
-                // Crisp rounded rectangle SDF for the playing card
+              // Exact scale matching the real golden cards in the robot's hand (0.028 x 0.038)
+              vec2 lc = rCard / vec2(0.028, 0.038);
+              if (abs(lc.x) < 1.25 && abs(lc.y) < 1.25) {
                 vec2 qC = abs(lc) - vec2(0.82);
                 float cSdf = length(max(qC, 0.0)) + min(max(qC.x, qC.y), 0.0) - 0.14;
-                if (cSdf < 0.05) {
-                  float cMask = (1.0 - smoothstep(-0.05, 0.05, cSdf)) * cardAlpha;
-                  float borderMask = smoothstep(-0.24, -0.14, cSdf);
-                  float innerRing  = smoothstep(0.58, 0.64, max(abs(lc.x), abs(lc.y))) * (1.0 - smoothstep(0.70, 0.76, max(abs(lc.x), abs(lc.y))));
-                  // Diamond holographic center emblem
-                  float diamond = 1.0 - smoothstep(0.28, 0.36, abs(lc.x) + abs(lc.y) * 0.85);
-                  float foilSheen = 0.5 + 0.5 * sin((lc.x + lc.y) * 4.5 - uTime * 8.0);
+                if (cSdf < 0.06) {
+                  float cMask = (1.0 - smoothstep(-0.06, 0.06, cSdf)) * cardAlpha * 0.94;
+                  float borderMask = smoothstep(-0.26, -0.12, cSdf);
+                  float diamond = 1.0 - smoothstep(0.24, 0.36, abs(lc.x) + abs(lc.y) * 0.85);
+                  float foil = 0.5 + 0.5 * sin((lc.x + lc.y) * 3.5 - uTime * 5.0);
 
-                  vec3 cardFace = vec3(0.08, 0.13, 0.16);
-                  vec3 goldRim  = vec3(1.0, 0.85, 0.38) * (0.95 + 0.25 * foilSheen);
-                  vec3 cardCol  = mix(cardFace, emblemTint * (0.85 + 0.35 * foilSheen), clamp(innerRing * 0.75 + diamond * 0.90, 0.0, 1.0));
+                  vec3 cardFace = vec3(0.14, 0.16, 0.14);
+                  vec3 goldRim  = vec3(0.96, 0.82, 0.42) * (0.90 + 0.20 * foil);
+                  vec3 cardCol  = mix(cardFace, emblemTint * (0.75 + 0.25 * foil), diamond * 0.75);
                   cardCol       = mix(cardCol, goldRim, borderMask);
-
-                  // Landing flash when the card slaps down onto the table pile (lPutProg or rPutProg near 1.0)
-                  float slapFlash = exp(-pow((lPutProg - 0.96) * 14.0, 2.0)) * lPutVis
-                                  + exp(-pow((rPutProg - 0.96) * 14.0, 2.0)) * rPutVis;
-                  cardCol += vec3(1.0, 0.92, 0.55) * slapFlash * 0.75;
 
                   litRoomCol = mix(litRoomCol, cardCol, cMask);
                 }
