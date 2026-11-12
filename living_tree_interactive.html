@@ -837,14 +837,14 @@
     composer.addPass(bloomPass);
 
     const texLoader = new THREE.TextureLoader();
-    const texBgDesk       = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_bg_only.jpg?v=255');
-    const texFullDesk     = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_tree.jpg?v=255');
-    const texBgMob        = texLoader.load('assets/concept_gallery/living_tree/mobile04_stage_bg_only.jpg?v=255');
-    const texFullMob      = texLoader.load('assets/concept_gallery/living_tree/mobile04_stage_tree.jpg?v=255');
-    const texGamerCutDesk = texLoader.load('assets/concept_gallery/living_tree/gamer_cutout_desktop.png?v=255');
-    const texGamerBgDesk  = texLoader.load('assets/concept_gallery/living_tree/gamer_bg_desktop.png?v=255');
-    const texGamerCutMob  = texLoader.load('assets/concept_gallery/living_tree/gamer_cutout_mobile.png?v=255');
-    const texGamerBgMob   = texLoader.load('assets/concept_gallery/living_tree/gamer_bg_mobile.png?v=255');
+    const texBgDesk       = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_bg_only.jpg?v=256');
+    const texFullDesk     = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_tree.jpg?v=256');
+    const texBgMob        = texLoader.load('assets/concept_gallery/living_tree/mobile04_stage_bg_only.jpg?v=256');
+    const texFullMob      = texLoader.load('assets/concept_gallery/living_tree/mobile04_stage_tree.jpg?v=256');
+    const texGamerCutDesk = texLoader.load('assets/concept_gallery/living_tree/gamer_cutout_desktop.png?v=256');
+    const texGamerBgDesk  = texLoader.load('assets/concept_gallery/living_tree/gamer_bg_desktop.png?v=256');
+    const texGamerCutMob  = texLoader.load('assets/concept_gallery/living_tree/gamer_cutout_mobile.png?v=256');
+    const texGamerBgMob   = texLoader.load('assets/concept_gallery/living_tree/gamer_bg_mobile.png?v=256');
 
     [texBgDesk, texFullDesk, texBgMob, texFullMob, texGamerCutDesk, texGamerBgDesk, texGamerCutMob, texGamerBgMob].forEach(t => {
       t.minFilter = THREE.LinearFilter;
