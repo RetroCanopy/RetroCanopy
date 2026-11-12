@@ -1073,33 +1073,33 @@
             litRoomCol *= mix(1.0, scanline * phosphorPulse, inTvScreen);
           }
 
-          // Vibrant Multi-Band Retro Setting Sun radiance
+          // Vibrant Multi-Band Retro Setting Sun (strictly on the sun disc — ZERO room haze!)
           vec2 sunCenter = mob ? vec2(0.03, 3.35) : vec2(0.0, 0.52);
           float distSun = length(worldXY - sunCenter);
           float sunMinY = mob ? 1.85 : -0.65;
-          float sunCorona = exp(-max(0.0, distSun - 1.55) * 1.35) * smoothstep(sunMinY, sunMinY + 0.50, worldXY.y);
-          float sunVertMix = mob
-            ? clamp((vUv.y - 0.66) / 0.26, 0.0, 1.0)
-            : clamp((vUv.y - 0.38) / 0.52, 0.0, 1.0);
-          vec3 vibrantSunTint = mix(vec3(0.88, 0.18, 0.65), vec3(1.0, 0.68, 0.15), sunVertMix);
-          float sunBreath = (0.09 + 0.05 * sin(uTime * 1.25)) * uRoomLight;
-          litRoomCol += vibrantSunTint * sunCorona * sunBreath;
-          if (distSun < 1.92 && worldXY.y > sunMinY) {
+          if (distSun < 1.88 && worldXY.y > sunMinY) {
             float sunLuma = dot(litRoomCol, vec3(0.299, 0.587, 0.114));
-            litRoomCol = mix(vec3(sunLuma), litRoomCol, 1.22) * (1.0 + (0.05 + 0.04 * sin(uTime * 1.25)) * uRoomLight);
+            if (sunLuma > 0.18) {
+              litRoomCol = mix(vec3(sunLuma), litRoomCol, 1.24) * (1.0 + (0.04 + 0.03 * sin(uTime * 1.25)) * uRoomLight);
+            }
           }
 
-          // Pitch-Black Room During Particle Swoop -> Golden Light Wave Cascades From Tree!
+          // Crisp deep-black contrast so the obsidian room never looks hazy or washed out
+          litRoomCol = clamp(pow(max(litRoomCol, vec3(0.0)), vec3(1.05)) * 1.04, 0.0, 1.0);
+
+          // Pitch-Black Room During Particle Swoop -> Golden Light Wave Cascades From Tree to 100% Clear Room!
           vec3 darkSilhouette = vec3(0.0);
 
           vec2 treeOrigin = mob ? vec2(0.03, 3.15) : vec2(0.0, 0.05);
-          vec2 distScale  = mob ? vec2(0.24, 0.16) : vec2(0.22, 0.30);
+          vec2 distScale  = mob ? vec2(0.22, 0.14) : vec2(0.20, 0.26);
           float distFromTree = length((worldXY - treeOrigin) * distScale);
-          float localRoomLight = smoothstep(0.0, 1.0, (uRoomLight * 1.62) - distFromTree * 0.48);
+          float localRoomLight = smoothstep(0.0, 1.0, (uRoomLight * 2.15) - distFromTree * 0.42);
 
-          float lightWaveCrest = smoothstep(0.05, 0.45, localRoomLight) * (1.0 - smoothstep(0.55, 0.98, localRoomLight));
+          // Transient wave crest that disappears completely (0.0) once uRoomLight reaches 1.0
+          float waveActive = 1.0 - smoothstep(0.82, 0.98, uRoomLight);
+          float lightWaveCrest = smoothstep(0.05, 0.45, localRoomLight) * (1.0 - smoothstep(0.55, 0.95, localRoomLight)) * waveActive;
           vec3 bgCol = mix(darkSilhouette, litRoomCol, localRoomLight)
-                     + litRoomCol * vec3(0.55, 0.38, 0.12) * lightWaveCrest * 0.45;
+                     + litRoomCol * vec3(0.45, 0.30, 0.10) * lightWaveCrest * 0.30;
 
           float inCenterColumn = mob
             ? (smoothstep(-2.45, -1.85, worldXY.x) * (1.0 - smoothstep(1.85, 2.45, worldXY.x)))
@@ -1500,14 +1500,7 @@
       const rl = stageUniforms.uRoomLight.value;
       stageOverlayRoot.style.setProperty('--room-light', rl.toFixed(3));
 
-      if (rl > 0.02 && introProg < 0.98) {
-        const surge = Math.sin(rl * Math.PI) * 0.28;
-        const gradCenter = isMobileMode ? '50% 24%' : '50% 46%';
-        roomLightWash.style.opacity = '1';
-        roomLightWash.style.background = `radial-gradient(circle at ${gradCenter}, rgba(255, 195, 75, ${surge}), rgba(255, 85, 145, ${surge * 0.4}) 42%, transparent 72%)`;
-      } else {
-        roomLightWash.style.opacity = '0';
-      }
+      roomLightWash.style.opacity = '0';
 
       if (introProg >= 0.62 && !isIntroComplete) {
         isIntroComplete = true;
@@ -1519,7 +1512,7 @@
       camera.lookAt(0, 0.0, 0);
 
       syncStageOverlayTransform();
-      composer.render();
+      renderer.render(scene, camera);
     }
     syncStageOverlayTransform();
     requestAnimationFrame(animate);
