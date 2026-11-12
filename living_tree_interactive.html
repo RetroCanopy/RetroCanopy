@@ -912,47 +912,107 @@
           vec2 sampleUv = vUv;
           float eyeBlinkDim = 0.0;
           float eyeGlowPulse = 0.0;
+          vec2 gamerHeadUv = vUv;
+          float gamerHeadMask = 0.0;
+
+          // ==================================================================
+          // 9.0-SECOND DRAMATIC NES GAMEPLAY & FRUSTRATION STORY CYCLE
+          //   0.0s - 3.4s : Locked-in flow ("Really Into It" — leaning in, jump yanks)
+          //   3.4s - 5.2s : Boss speed-up climax (frantic button mashing, edge of seat)
+          //   5.2s - 5.65s: BAM! Hit on screen -> Shock recoil backward!
+          //   5.65s- 6.80s: FRUSTRATED TANTRUM! Head-throw & rapid shake, controller rattle, fiery red visor!
+          //   6.80s- 7.75s: Defeated slump & heavy sigh looking down at controller
+          //   7.75s- 9.00s: Shake it off, determined nod, smash START & lean back in!
+          // ==================================================================
+          float tC = mod(uTime, 9.0);
+          float inPlay    = 1.0 - smoothstep(5.12, 5.24, tC);
+          float inClimax  = smoothstep(3.2, 3.6, tC) * inPlay;
+          float inShock   = smoothstep(5.16, 5.26, tC) * (1.0 - smoothstep(5.55, 5.72, tC));
+          float inRage    = smoothstep(5.55, 5.75, tC) * (1.0 - smoothstep(6.70, 6.90, tC));
+          float inSlump   = smoothstep(6.75, 6.98, tC) * (1.0 - smoothstep(7.65, 7.90, tC));
+          float inRecover = smoothstep(7.70, 7.95, tC) * (1.0 - smoothstep(8.80, 8.98, tC));
+          float inFrustrated = clamp(inShock + inRage + inSlump * 0.75, 0.0, 1.0);
+
+          // Synchronized "Body-English" Jump Yanks when the 8-bit character jumps on the CRT!
+          float jump1 = exp(-pow((tC - 1.15) * 5.5, 2.0));
+          float jump2 = exp(-pow((tC - 2.45) * 5.5, 2.0));
+          float jump3 = exp(-pow((tC - 3.75) * 6.5, 2.0));
+          float jump4 = exp(-pow((tC - 4.45) * 7.0, 2.0));
+          float jump5 = exp(-pow((tC - 4.95) * 7.5, 2.0));
+          float jumpEffort = clamp(jump1 + jump2 + jump3 + jump4 + jump5, 0.0, 1.0);
+          float startMash  = exp(-pow((tC - 8.35) * 6.5, 2.0));
+
+          // Torso lean angle (+ leans forward toward TV, - recoils backward)
+          float gamerTorsoAng = inPlay * (0.032 + 0.048 * (tC / 5.2) + inClimax * 0.025 + sin(uTime * 9.5) * 0.010 + jumpEffort * 0.028)
+                              - inShock * 0.082
+                              + inRage * (-0.035 + sin(uTime * 20.0) * 0.028)
+                              + inSlump * 0.055
+                              + inRecover * (0.025 + startMash * 0.035);
+
+          // Head angle relative to torso (+ tilts forward/down, - throws head back)
+          float gamerHeadExtraAng = inPlay * (sin(uTime * 6.5) * 0.028 + inClimax * sin(uTime * 15.0) * 0.026 - jumpEffort * 0.065)
+                                  - inShock * 0.095
+                                  + inRage * (-0.075 + sin(uTime * 28.0) * 0.085)
+                                  + inSlump * (0.092 + sin(uTime * 4.0) * 0.015)
+                                  + inRecover * (sin(uTime * 18.0) * 0.045 * (1.0 - smoothstep(8.1, 8.3, tC)) + startMash * 0.055);
+
+          // Controller & Hands angle (- yanks controller UP, + drops controller DOWN)
+          float gamerHandsExtraAng = inPlay * (-0.025 + sin(uTime * 22.0) * 0.038 + inClimax * sin(uTime * 32.0) * 0.048 - jumpEffort * 0.135)
+                                   - inShock * 0.155
+                                   + inRage * (-0.085 + sin(uTime * 25.0) * 0.125)
+                                   + inSlump * (0.095 + sin(uTime * 5.0) * 0.015)
+                                   - startMash * 0.115;
+
+          // Spectator robots react when Gamer Robot wipes out!
+          float spectatorReact = clamp(inShock + inRage * 0.85, 0.0, 1.0);
 
           if (!mob) {
             // ================================================================
             // DESKTOP CONCEPT 29: 5 ROBOTS ON LEFT TERRACE (OWL STATIONARY)
             // ================================================================
-            if (vUv.x < 0.250 && vUv.y > 0.175 && vUv.y < 0.500) {
+            if (vUv.x < 0.258 && vUv.y > 0.175 && vUv.y < 0.500) {
               float mHead1 = partMask(vUv, vec2(0.0582, 0.442), vec2(0.024, 0.042));
               float mBody1 = partMask(vUv, vec2(0.0582, 0.365), vec2(0.025, 0.055)) * (1.0 - mHead1);
-              float ang1 = sin(uTime * 1.35 + 0.4) * 0.042 + sin(uTime * 0.62) * 0.018;
+              float ang1 = sin(uTime * 1.35 + 0.4) * 0.042 + sin(uTime * 0.62) * 0.018 + spectatorReact * sin(uTime * 14.0) * 0.035;
               float breath1 = sin(uTime * 1.9 + 0.2) * 0.0014;
 
               float mHead2 = partMask(vUv, vec2(0.1001, 0.448), vec2(0.021, 0.038));
               float mArm2  = partMask(vUv, vec2(0.1195, 0.406), vec2(0.016, 0.028)) * (1.0 - mHead2);
               float mBody2 = partMask(vUv, vec2(0.1001, 0.372), vec2(0.022, 0.052)) * (1.0 - mHead2);
-              float ang2 = sin(uTime * 1.55 + 1.7) * 0.038;
-              float armAng2 = sin(uTime * 2.4) * 0.075;
+              float ang2 = sin(uTime * 1.55 + 1.7) * 0.038 - spectatorReact * 0.045;
+              float armAng2 = sin(uTime * 2.4) * 0.075 - spectatorReact * (0.09 + 0.06 * sin(uTime * 16.0));
               float breath2 = sin(uTime * 2.05 + 1.3) * 0.0013;
 
               float mHead3 = partMask(vUv, vec2(0.1584, 0.450), vec2(0.024, 0.042));
               float mBody3 = partMask(vUv, vec2(0.1584, 0.372), vec2(0.024, 0.052)) * (1.0 - mHead3);
-              float ang3 = sin(uTime * 1.22 + 3.1) * 0.044 + cos(uTime * 0.75) * 0.016;
+              float ang3 = sin(uTime * 1.22 + 3.1) * 0.044 + cos(uTime * 0.75) * 0.016 + spectatorReact * 0.048;
               float breath3 = sin(uTime * 1.80 + 2.5) * 0.0014;
 
               float mHead4 = partMask(vUv, vec2(0.2223, 0.448), vec2(0.023, 0.040));
-              float ang4 = sin(uTime * 1.42 + 4.5) * 0.036;
+              float ang4 = sin(uTime * 1.42 + 4.5) * 0.036 + spectatorReact * sin(uTime * 18.0) * 0.045;
               float breath4 = sin(uTime * 1.95 + 3.8) * 0.0012;
 
-              float mGamerHead  = partMask(vUv, vec2(0.2010, 0.380), vec2(0.033, 0.054));
-              float mGamerHands = partMask(vUv, vec2(0.2150, 0.298), vec2(0.034, 0.034)) * (1.0 - mGamerHead);
-              float mGamerBody  = partMask(vUv, vec2(0.2003, 0.275), vec2(0.036, 0.068)) * (1.0 - mGamerHead);
-              float angGamer = sin(uTime * 1.85) * 0.045 + sin(uTime * 0.82) * 0.022;
-              float handsAng = sin(uTime * 4.2) * 0.052 + cos(uTime * 2.7) * 0.028;
-              float breathGamer = sin(uTime * 2.35) * 0.0016;
+              float mGamerHead  = partMask(vUv, vec2(0.1985, 0.380), vec2(0.032, 0.046));
+              float mGamerHands = partMask(vUv, vec2(0.2120, 0.306), vec2(0.035, 0.027)) * (1.0 - mGamerHead);
+              float mGamerBody  = partMask(vUv, vec2(0.1965, 0.300), vec2(0.028, 0.050)) * (1.0 - mGamerHead);
+
+              float breathGamer = sin(uTime * 3.2) * 0.0016
+                                + inClimax * sin(uTime * 14.0) * 0.0022
+                                + jumpEffort * 0.0042
+                                + inRage * sin(uTime * 22.0) * 0.0032
+                                - inSlump * 0.0035;
+              float mashJitterX = (inPlay * sin(uTime * 28.0) * 0.0012 * (1.0 + inClimax) + inRage * cos(uTime * 26.0) * 0.0022);
 
               vec2 uv1 = rotRigidAspect(vUv - vec2(0.0, breath1), vec2(0.0589, 0.4089), ang1, aspectVec);
               vec2 uv2 = rotRigidAspect(vUv - vec2(0.0, breath2), vec2(0.1001, 0.4167), ang2, aspectVec);
               vec2 uv2Arm = rotRigidAspect(vUv - vec2(0.0, breath2), vec2(0.1094, 0.4036), armAng2, aspectVec);
               vec2 uv3 = rotRigidAspect(vUv - vec2(0.0, breath3), vec2(0.1584, 0.4167), ang3, aspectVec);
               vec2 uv4 = rotRigidAspect(vUv - vec2(0.0, breath4), vec2(0.2223, 0.4167), ang4, aspectVec);
-              vec2 uvG = rotRigidAspect(vUv - vec2(0.0, breathGamer), vec2(0.2003, 0.3333), angGamer, aspectVec);
-              vec2 uvGHands = rotRigidAspect(vUv - vec2(0.0, breathGamer * 0.6), vec2(0.1960, 0.2943), handsAng, aspectVec);
+
+              // Hierarchical Gamer Robot kinematics: Hip Lean -> Neck Head Motion & Shoulder/Controller Motion
+              vec2 uvGTorso = rotRigidAspect(vUv - vec2(0.0, breathGamer), vec2(0.1940, 0.2680), gamerTorsoAng, aspectVec);
+              vec2 uvG      = rotRigidAspect(uvGTorso, vec2(0.1960, 0.3420), gamerHeadExtraAng, aspectVec);
+              vec2 uvGHands = rotRigidAspect(uvGTorso - vec2(mashJitterX, breathGamer * 0.35), vec2(0.1880, 0.3100), gamerHandsExtraAng, aspectVec);
 
               sampleUv = vUv;
               sampleUv = mix(sampleUv, vUv - vec2(0.0, breath1), mBody1);
@@ -963,63 +1023,72 @@
               sampleUv = mix(sampleUv, vUv - vec2(0.0, breath3), mBody3);
               sampleUv = mix(sampleUv, uv3, mHead3);
               sampleUv = mix(sampleUv, uv4, mHead4);
-              sampleUv = mix(sampleUv, vUv - vec2(0.0, breathGamer), mGamerBody);
+              sampleUv = mix(sampleUv, uvGTorso, mGamerBody);
               sampleUv = mix(sampleUv, uvGHands, mGamerHands);
               sampleUv = mix(sampleUv, uvG, mGamerHead);
+
+              gamerHeadUv = uvG;
+              gamerHeadMask = mGamerHead;
 
               float b1 = naturalBlink(uTime, 4.3, 0.7) * partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012));
               float b3 = naturalBlink(uTime, 3.8, 2.1) * partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012));
               float b4 = naturalBlink(uTime, 4.9, 1.4) * partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012));
-              float bG = naturalBlink(uTime, 3.4, 0.2) * partMask(sampleUv, vec2(0.2152, 0.3840), vec2(0.016, 0.014));
+              float bG = naturalBlink(uTime, 2.6, 0.2) * (1.0 - inRage) * partMask(sampleUv, vec2(0.2130, 0.3750), vec2(0.016, 0.014));
               eyeBlinkDim = clamp(b1 + b3 + b4 + bG, 0.0, 1.0);
 
               float gMask = partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012))
                           + partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012))
                           + partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012))
-                          + partMask(sampleUv, vec2(0.2152, 0.3840), vec2(0.016, 0.014));
-              eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.12 + 0.10 * sin(uTime * 3.2));
+                          + partMask(sampleUv, vec2(0.2130, 0.3750), vec2(0.016, 0.014));
+              eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.14 + 0.12 * sin(uTime * 4.2));
             }
           } else {
             // ================================================================
             // MOBILE CONCEPT 04: 5 ROBOTS AT BASE OF SPIRAL STAIRCASE
-            // (Strictly left of Synth the Owl: vUv.x < 0.408, vUv.y in 0.08..0.30)
+            // (Strictly left of Synth the Owl: vUv.x < 0.468, Owl at x>0.400, y>0.185)
             // ================================================================
-            if (vUv.x < 0.445 && vUv.y > 0.080 && vUv.y < 0.295 && !(vUv.x > 0.402 && vUv.y > 0.185)) {
+            if (vUv.x < 0.468 && vUv.y > 0.080 && vUv.y < 0.295 && !(vUv.x > 0.400 && vUv.y > 0.185)) {
               float mHead1 = partMask(vUv, vec2(0.0729, 0.2355), vec2(0.044, 0.025));
               float mBody1 = partMask(vUv, vec2(0.0729, 0.1920), vec2(0.045, 0.032)) * (1.0 - mHead1);
-              float ang1 = sin(uTime * 1.35 + 0.4) * 0.042 + sin(uTime * 0.62) * 0.018;
+              float ang1 = sin(uTime * 1.35 + 0.4) * 0.042 + sin(uTime * 0.62) * 0.018 + spectatorReact * sin(uTime * 14.0) * 0.035;
               float breath1 = sin(uTime * 1.9 + 0.2) * 0.0010;
 
               float mHead2 = partMask(vUv, vec2(0.1302, 0.2573), vec2(0.038, 0.022));
               float mArm2  = partMask(vUv, vec2(0.1719, 0.2340), vec2(0.028, 0.018)) * (1.0 - mHead2);
               float mBody2 = partMask(vUv, vec2(0.1302, 0.2120), vec2(0.038, 0.030)) * (1.0 - mHead2);
-              float ang2 = sin(uTime * 1.55 + 1.7) * 0.038;
-              float armAng2 = sin(uTime * 2.4) * 0.075;
+              float ang2 = sin(uTime * 1.55 + 1.7) * 0.038 - spectatorReact * 0.045;
+              float armAng2 = sin(uTime * 2.4) * 0.075 - spectatorReact * (0.09 + 0.06 * sin(uTime * 16.0));
               float breath2 = sin(uTime * 2.05 + 1.3) * 0.0009;
 
               float mHead3 = partMask(vUv, vec2(0.2422, 0.2442), vec2(0.044, 0.025));
               float mBody3 = partMask(vUv, vec2(0.2422, 0.2000), vec2(0.044, 0.030)) * (1.0 - mHead3);
-              float ang3 = sin(uTime * 1.22 + 3.1) * 0.044 + cos(uTime * 0.75) * 0.016;
+              float ang3 = sin(uTime * 1.22 + 3.1) * 0.044 + cos(uTime * 0.75) * 0.016 + spectatorReact * 0.048;
               float breath3 = sin(uTime * 1.80 + 2.5) * 0.0010;
 
               float mHead4 = partMask(vUv, vec2(0.3464, 0.2602), vec2(0.042, 0.024));
-              float ang4 = sin(uTime * 1.42 + 4.5) * 0.036;
+              float ang4 = sin(uTime * 1.42 + 4.5) * 0.036 + spectatorReact * sin(uTime * 18.0) * 0.045;
               float breath4 = sin(uTime * 1.95 + 3.8) * 0.0009;
 
-              float mGamerHead  = partMask(vUv, vec2(0.3711, 0.1730), vec2(0.058, 0.032));
-              float mGamerHands = partMask(vUv, vec2(0.4010, 0.1337), vec2(0.056, 0.022)) * (1.0 - mGamerHead);
-              float mGamerBody  = partMask(vUv, vec2(0.3672, 0.1180), vec2(0.060, 0.038)) * (1.0 - mGamerHead);
-              float angGamer = sin(uTime * 1.85) * 0.045 + sin(uTime * 0.82) * 0.022;
-              float handsAng = sin(uTime * 4.2) * 0.052 + cos(uTime * 2.7) * 0.028;
-              float breathGamer = sin(uTime * 2.35) * 0.0011;
+              float mGamerHead  = partMask(vUv, vec2(0.3620, 0.1740), vec2(0.054, 0.028));
+              float mGamerHands = partMask(vUv, vec2(0.3880, 0.1320), vec2(0.056, 0.018)) * (1.0 - mGamerHead);
+              float mGamerBody  = partMask(vUv, vec2(0.3580, 0.1300), vec2(0.046, 0.028)) * (1.0 - mGamerHead);
+
+              float breathGamer = sin(uTime * 3.2) * 0.0010
+                                + inClimax * sin(uTime * 14.0) * 0.0014
+                                + jumpEffort * 0.0026
+                                + inRage * sin(uTime * 22.0) * 0.0020
+                                - inSlump * 0.0022;
+              float mashJitterX = (inPlay * sin(uTime * 28.0) * 0.0018 * (1.0 + inClimax) + inRage * cos(uTime * 26.0) * 0.0032);
 
               vec2 uv1 = rotRigidAspect(vUv - vec2(0.0, breath1), vec2(0.0755, 0.2180), ang1, aspectVec);
               vec2 uv2 = rotRigidAspect(vUv - vec2(0.0, breath2), vec2(0.1302, 0.2427), ang2, aspectVec);
               vec2 uv2Arm = rotRigidAspect(vUv - vec2(0.0, breath2), vec2(0.1510, 0.2311), armAng2, aspectVec);
               vec2 uv3 = rotRigidAspect(vUv - vec2(0.0, breath3), vec2(0.2422, 0.2267), ang3, aspectVec);
               vec2 uv4 = rotRigidAspect(vUv - vec2(0.0, breath4), vec2(0.3464, 0.2442), ang4, aspectVec);
-              vec2 uvG = rotRigidAspect(vUv - vec2(0.0, breathGamer), vec2(0.3672, 0.1526), angGamer, aspectVec);
-              vec2 uvGHands = rotRigidAspect(vUv - vec2(0.0, breathGamer * 0.6), vec2(0.3750, 0.1308), handsAng, aspectVec);
+
+              vec2 uvGTorso = rotRigidAspect(vUv - vec2(0.0, breathGamer), vec2(0.3550, 0.1140), gamerTorsoAng, aspectVec);
+              vec2 uvG      = rotRigidAspect(uvGTorso, vec2(0.3580, 0.1510), gamerHeadExtraAng, aspectVec);
+              vec2 uvGHands = rotRigidAspect(uvGTorso - vec2(mashJitterX, breathGamer * 0.35), vec2(0.3480, 0.1360), gamerHandsExtraAng, aspectVec);
 
               sampleUv = vUv;
               sampleUv = mix(sampleUv, vUv - vec2(0.0, breath1), mBody1);
@@ -1030,21 +1099,24 @@
               sampleUv = mix(sampleUv, vUv - vec2(0.0, breath3), mBody3);
               sampleUv = mix(sampleUv, uv3, mHead3);
               sampleUv = mix(sampleUv, uv4, mHead4);
-              sampleUv = mix(sampleUv, vUv - vec2(0.0, breathGamer), mGamerBody);
+              sampleUv = mix(sampleUv, uvGTorso, mGamerBody);
               sampleUv = mix(sampleUv, uvGHands, mGamerHands);
               sampleUv = mix(sampleUv, uvG, mGamerHead);
+
+              gamerHeadUv = uvG;
+              gamerHeadMask = mGamerHead;
 
               float b1 = naturalBlink(uTime, 4.3, 0.7) * partMask(sampleUv, vec2(0.0807, 0.2326), vec2(0.025, 0.008));
               float b3 = naturalBlink(uTime, 3.8, 2.1) * partMask(sampleUv, vec2(0.2500, 0.2427), vec2(0.025, 0.008));
               float b4 = naturalBlink(uTime, 4.9, 1.4) * partMask(sampleUv, vec2(0.3438, 0.2587), vec2(0.024, 0.008));
-              float bG = naturalBlink(uTime, 3.4, 0.2) * partMask(sampleUv, vec2(0.3880, 0.1701), vec2(0.028, 0.009));
+              float bG = naturalBlink(uTime, 2.6, 0.2) * (1.0 - inRage) * partMask(sampleUv, vec2(0.3880, 0.1705), vec2(0.028, 0.009));
               eyeBlinkDim = clamp(b1 + b3 + b4 + bG, 0.0, 1.0);
 
               float gMask = partMask(sampleUv, vec2(0.0807, 0.2326), vec2(0.025, 0.008))
                           + partMask(sampleUv, vec2(0.2500, 0.2427), vec2(0.025, 0.008))
                           + partMask(sampleUv, vec2(0.3438, 0.2587), vec2(0.024, 0.008))
-                          + partMask(sampleUv, vec2(0.3880, 0.1701), vec2(0.028, 0.009));
-              eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.12 + 0.10 * sin(uTime * 3.2));
+                          + partMask(sampleUv, vec2(0.3880, 0.1705), vec2(0.028, 0.009));
+              eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.14 + 0.12 * sin(uTime * 4.2));
             }
           }
 
@@ -1056,7 +1128,67 @@
             litRoomCol += vec3(0.10, 0.85, 1.0) * visorCyan * eyeGlowPulse * (1.0 - eyeBlinkDim);
           }
 
-          // Live 60fps 8-bit CRT Television Screen gameplay animation & scanline glow (Desktop & Mobile Concept 4)
+          // ==================================================================
+          // GAMER ROBOT EXPRESSIVE VISOR, ANGRY V-BROWS, EAR-RING & RAGE SPARKS
+          // ==================================================================
+          if (gamerHeadMask > 0.05) {
+            vec2 visorCenter = mob ? vec2(0.3880, 0.1705) : vec2(0.2130, 0.3750);
+            vec2 visorRadii  = mob ? vec2(0.0240, 0.0125) : vec2(0.0145, 0.0195);
+            vec2 earCenter   = mob ? vec2(0.3320, 0.1700) : vec2(0.1790, 0.3760);
+            vec2 earRadii    = mob ? vec2(0.0155, 0.0105) : vec2(0.0090, 0.0170);
+
+            vec2 vLocal = (gamerHeadUv - visorCenter) / visorRadii;
+            float inVisor = 1.0 - smoothstep(0.65, 1.05, length(vLocal));
+            float inEar   = 1.0 - smoothstep(0.60, 1.05, length((gamerHeadUv - earCenter) / earRadii));
+
+            // Detect bright LED eye pixels inside the visor
+            float eyeBright = clamp((litRoomCol.g + litRoomCol.b) * 0.55 - 0.12, 0.0, 1.0) * inVisor;
+
+            // 1. Determined / Angry Slanted Eyelids (V-brows that furrow deeper during climax & rage!)
+            float browIntensity = clamp(inClimax * 0.55 + jumpEffort * 0.45 + inFrustrated * 1.15, 0.0, 1.0);
+            if (browIntensity > 0.01 && inVisor > 0.05) {
+              // V-slope toward the center of the visor (vLocal.x = 0)
+              float browLineY = 0.48 - browIntensity * 0.42 - (0.38 - abs(vLocal.x)) * (0.35 + inFrustrated * 0.55);
+              float browMask = smoothstep(browLineY - 0.08, browLineY + 0.08, vLocal.y);
+              litRoomCol *= (1.0 - browMask * eyeBright * 0.92);
+            }
+
+            // 2. Fiery Red-Orange Frustration Visor & Ear-Ring Shift when he loses!
+            if (inFrustrated > 0.01) {
+              float ragePulse = 0.78 + 0.22 * sin(uTime * 28.0);
+              vec3 rageRed = vec3(1.0, 0.14, 0.03) * ragePulse;
+              // Recolor cyan LED eyes to blazing crimson-orange
+              litRoomCol = mix(litRoomCol, rageRed * 1.45, clamp(eyeBright * inFrustrated * 1.35, 0.0, 1.0));
+              // Add warm crimson backlight across the black visor glass
+              litRoomCol += vec3(0.42, 0.04, 0.01) * inVisor * inFrustrated * ragePulse * 0.55;
+              // Ear-ring blazes warning red
+              float earGlow = clamp(litRoomCol.r * 0.8 - litRoomCol.b * 0.4, 0.0, 1.0) * inEar;
+              litRoomCol += vec3(0.95, 0.10, 0.02) * earGlow * inFrustrated * ragePulse * 0.90;
+            } else if (inPlay > 0.01) {
+              // Focused electric cyan eye boost on jumps & climax
+              float focusBoost = jumpEffort * 0.55 + inClimax * (0.25 + 0.20 * sin(uTime * 16.0));
+              litRoomCol += vec3(0.15, 0.92, 1.0) * eyeBright * focusBoost;
+            }
+          }
+
+          // 3. Holographic Pixel Frustration Sparks / Overheat Bolts above Gamer Robot's Helmet during Tantrum!
+          if (inRage > 0.02) {
+            vec2 crownCenter = mob ? vec2(0.366, 0.206) : vec2(0.202, 0.432);
+            vec2 crownSpan   = mob ? vec2(0.036, 0.018) : vec2(0.022, 0.026);
+            vec2 cUv = (vUv - crownCenter) / crownSpan;
+            if (abs(cUv.x) < 1.1 && abs(cUv.y) < 1.1) {
+              float rise = fract(uTime * 3.8);
+              float s1 = step(abs(cUv.x + 0.48 + sin(uTime * 24.0) * 0.08), 0.10) * step(abs(cUv.y - (-0.4 + rise * 0.9)), 0.24);
+              float s2 = step(abs(cUv.x - 0.02), 0.11) * step(abs(cUv.y - (-0.2 + fract(rise + 0.35) * 0.95)), 0.28);
+              float s3 = step(abs(cUv.x - 0.50 + cos(uTime * 24.0) * 0.08), 0.10) * step(abs(cUv.y - (-0.4 + fract(rise + 0.7) * 0.9)), 0.24);
+              float sparkMask = clamp(s1 + s2 + s3, 0.0, 1.0) * inRage;
+              litRoomCol = mix(litRoomCol, vec3(1.0, 0.26, 0.06), sparkMask * 0.92);
+            }
+          }
+
+          // ==================================================================
+          // SYNCHRONIZED 60FPS 8-BIT CRT TELEVISION SCREEN GAMEPLAY & WIPEOUT
+          // ==================================================================
           vec4 tvBounds = mob
             ? vec4(0.740, 0.852, 0.155, 0.233)
             : vec4(0.318, 0.363, 0.292, 0.396);
@@ -1066,10 +1198,34 @@
             float scanline = 0.93 + 0.07 * sin(vUv.y * 680.0 - uTime * 18.0);
             float phosphorPulse = 1.05 + 0.04 * sin(uTime * 6.0);
             vec2 tvUv = (vUv - vec2(tvBounds.x, tvBounds.z)) / vec2(tvBounds.y - tvBounds.x, tvBounds.w - tvBounds.z);
-            float spriteX = 0.28 + 0.44 * (0.5 + 0.5 * sin(uTime * 2.2));
-            float spriteY = 0.36 + 0.28 * abs(sin(uTime * 4.4));
-            float spriteBox = step(abs(tvUv.x - spriteX), 0.075) * step(abs(tvUv.y - spriteY), 0.095);
-            litRoomCol = mix(litRoomCol, vec3(1.0, 0.86, 0.32), spriteBox * inTvScreen * 0.65);
+
+            if (inPlay > 0.01) {
+              // Hero sprite jumps in exact sync with Gamer Robot's controller yanks!
+              float heroX = 0.26 + 0.08 * sin(uTime * 3.5);
+              float heroY = 0.28 + jumpEffort * 0.38 - (1.0 - inPlay) * 0.25;
+              float heroBox = step(abs(tvUv.x - heroX), 0.065) * step(abs(tvUv.y - heroY), 0.085);
+
+              // Scrolling red fireball / enemy obstacle
+              float enemySpeed = 1.2 + inClimax * 1.1;
+              float enemyX = 1.0 - fract(uTime * enemySpeed) * 1.15;
+              float enemyBox = step(abs(tvUv.x - enemyX), 0.055) * step(abs(tvUv.y - 0.27), 0.065);
+
+              litRoomCol = mix(litRoomCol, vec3(1.0, 0.88, 0.28), heroBox * inTvScreen * 0.78);
+              litRoomCol = mix(litRoomCol, vec3(1.0, 0.22, 0.12), enemyBox * inTvScreen * 0.75);
+            } else if (inShock > 0.01 || inRage > 0.01 || inSlump > 0.01) {
+              // Impact flash -> Red 8-bit GAME OVER wipeout screen while Gamer Robot rages!
+              float hitFlash = inShock * (0.5 + 0.5 * sin(uTime * 45.0));
+              float fallY = clamp(0.45 - (tC - 5.2) * 0.55, -0.2, 0.5);
+              float deadSprite = step(abs(tvUv.x - 0.30), 0.07) * step(abs(tvUv.y - fallY), 0.08) * step(0.0, fallY);
+              float gameOverBar = step(abs(tvUv.x - 0.50), 0.34) * step(abs(tvUv.y - 0.54), 0.075) * step(0.3, sin(uTime * 16.0));
+              litRoomCol = mix(litRoomCol, vec3(0.85, 0.10, 0.06), inTvScreen * (0.32 + hitFlash * 0.45));
+              litRoomCol = mix(litRoomCol, vec3(1.0, 0.92, 0.80), (deadSprite + gameOverBar) * inTvScreen * 0.85);
+            } else {
+              // READY / START flash as Gamer Robot mashes Start to jump back in!
+              float readyBar = step(abs(tvUv.x - 0.50), 0.28) * step(abs(tvUv.y - 0.52), 0.065) * startMash;
+              litRoomCol = mix(litRoomCol, vec3(0.25, 1.0, 0.65), readyBar * inTvScreen * 0.75);
+            }
+
             litRoomCol *= mix(1.0, scanline * phosphorPulse, inTvScreen);
           }
 
