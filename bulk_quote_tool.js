@@ -17,8 +17,8 @@
   'use strict';
 
   const EDGE_LOOKUP_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-bulk-quote-lookup';
-  const SAVED_QUOTES_KEY = 'rc_owner_bulk_quotes_v4';
-  const LEGACY_QUOTES_KEYS = ['rc_owner_bulk_quotes_v3', 'rc_owner_bulk_quotes_v2'];
+  const SAVED_QUOTES_KEY = 'rc_owner_bulk_quotes_v5';
+  const LEGACY_QUOTES_KEYS = ['rc_owner_bulk_quotes_v4', 'rc_owner_bulk_quotes_v3', 'rc_owner_bulk_quotes_v2'];
   const CUSTOMERS_CRM_KEY = 'rc_owner_bulk_customers_crm_v1';
   const ACTIVE_CUSTOMER_DRAFT_KEY = 'rc_owner_bulk_active_customer_v1';
   const OWNER_RATES_PREF_KEY = 'rc_owner_bulk_rate_prefs_v2';
@@ -335,24 +335,56 @@
 
   const STRIPE_EDGE_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout';
   const ACTIVE_QUOTE_ID_KEY = 'rc_active_bulk_ticket_id_v6';
+  const DELETED_QUOTES_KEY = 'rc_bulk_deleted_quote_ids_v1';
+
+  function getDeletedQuoteIds() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(DELETED_QUOTES_KEY) || '[]');
+      return new Set(Array.isArray(raw) ? raw : []);
+    } catch (_) {
+      return new Set();
+    }
+  }
+
+  function markQuoteIdDeleted(id) {
+    if (!id) return;
+    try {
+      const set = getDeletedQuoteIds();
+      set.add(id);
+      localStorage.setItem(DELETED_QUOTES_KEY, JSON.stringify(Array.from(set).slice(-250)));
+    } catch (_) {}
+  }
+
+  function unmarkQuoteIdDeleted(id) {
+    if (!id) return;
+    try {
+      const set = getDeletedQuoteIds();
+      if (set.has(id)) {
+        set.delete(id);
+        localStorage.setItem(DELETED_QUOTES_KEY, JSON.stringify(Array.from(set)));
+      }
+    } catch (_) {}
+  }
 
   function mintFreshQuoteId() {
     const id = 'RC-TKT-' + Math.floor(100000 + Math.random() * 900000);
     try { sessionStorage.setItem(ACTIVE_QUOTE_ID_KEY, id); } catch (_) {}
     state.activeQuotePaidInfo = null;
+    state.isCurrentTicketSavedInVault = false;
     return id;
   }
 
   function getOrInitActiveQuoteId() {
     try {
       const existing = sessionStorage.getItem(ACTIVE_QUOTE_ID_KEY);
-      if (existing && /^(RC-TKT-\d+|RC-Q\d+)/i.test(existing)) return existing;
+      if (existing && /^(RC-TKT-\d+|RC-Q\d+)/i.test(existing) && !getDeletedQuoteIds().has(existing)) return existing;
     } catch (_) {}
     return mintFreshQuoteId();
   }
 
   state.activeQuoteId = getOrInitActiveQuoteId();
   state.activeQuotePaidInfo = null;
+  state.isCurrentTicketSavedInVault = false;
   state.stripeSyncStatus = 'ready';
   state.cloudSavedQuotes = [];
   state.sqVaultFilter = 'all';
@@ -3128,7 +3160,7 @@
     calc.stripePayUrl = stripePayUrl;
     calc.stripeQrDataUrl = stripeQrDataUrl;
 
-    if (calc.totalShirts > 0) {
+    if (calc.totalShirts > 0 && state.isCurrentTicketSavedInVault) {
       scheduleStripeQuoteCloudSync();
     }
 
@@ -3982,12 +4014,8 @@
   // =========================================================================
   function getSavedQuotes() {
     try {
-      const v4 = JSON.parse(localStorage.getItem(SAVED_QUOTES_KEY) || 'null');
-      if (Array.isArray(v4)) return v4;
-      for (const k of LEGACY_QUOTES_KEYS) {
-        const leg = JSON.parse(localStorage.getItem(k) || 'null');
-        if (Array.isArray(leg)) return leg;
-      }
+      const v5 = JSON.parse(localStorage.getItem(SAVED_QUOTES_KEY) || 'null');
+      if (Array.isArray(v5)) return v5;
       return [];
     } catch (_) {
       return [];
@@ -3995,13 +4023,14 @@
   }
 
   function getMergedVaultQuotes() {
-    const localList = getSavedQuotes();
+    const deletedSet = getDeletedQuoteIds();
+    const localList = getSavedQuotes().filter((lq) => !deletedSet.has(lq.quoteId || lq.ticketId));
     const byId = new Map();
 
     // 1. Seed from Supabase Cloud quotes (authoritative for live isPaid status!)
     (state.cloudSavedQuotes || []).forEach((cq) => {
       const id = cq.ticketId || cq.quoteId;
-      if (!id) return;
+      if (!id || (!cq.isPaid && deletedSet.has(id))) return;
       byId.set(id, {
         quoteId: id,
         ticketId: id,
@@ -4238,6 +4267,8 @@
     }
     triggerAutoSaveCustomer();
     const tid = state.activeQuoteId || mintFreshQuoteId();
+    state.isCurrentTicketSavedInVault = true;
+    unmarkQuoteIdDeleted(tid);
     const list = getSavedQuotes().filter((q) => (q.quoteId || q.ticketId) !== tid);
     const entry = {
       quoteId: tid,
@@ -4276,6 +4307,7 @@
       try { sessionStorage.setItem(ACTIVE_QUOTE_ID_KEY, ticketId); } catch (_) {}
     }
     state.activeQuotePaidInfo = paidInfo;
+    state.isCurrentTicketSavedInVault = true;
 
     if (snap.customer) state.customer = JSON.parse(JSON.stringify(snap.customer));
     state.ssDiscountPct = snap.ssDiscountPct || 0;
@@ -4378,8 +4410,22 @@
   async function deleteSavedTicketEverywhere(ticketId) {
     const cleanId = String(ticketId || '').trim();
     if (!cleanId) return;
+    clearTimeout(stripeSyncTimer);
+    markQuoteIdDeleted(cleanId);
+    if (state.activeQuoteId === cleanId) {
+      state.isCurrentTicketSavedInVault = false;
+      state.activeQuoteId = mintFreshQuoteId();
+    }
     const filtered = getSavedQuotes().filter((q) => (q.quoteId || q.ticketId) !== cleanId);
-    try { localStorage.setItem(SAVED_QUOTES_KEY, JSON.stringify(filtered)); } catch (_) {}
+    try {
+      localStorage.setItem(SAVED_QUOTES_KEY, JSON.stringify(filtered));
+      LEGACY_QUOTES_KEYS.forEach((k) => {
+        const leg = JSON.parse(localStorage.getItem(k) || 'null');
+        if (Array.isArray(leg)) {
+          localStorage.setItem(k, JSON.stringify(leg.filter((q) => (q.quoteId || q.ticketId) !== cleanId)));
+        }
+      });
+    } catch (_) {}
     state.cloudSavedQuotes = (state.cloudSavedQuotes || []).filter((q) => (q.ticketId || q.quoteId) !== cleanId);
     renderSavedQuotesList();
     renderSavedQuotesVaultGrid();
@@ -5118,6 +5164,8 @@
         const orig = previewClientQuoteBtn.innerHTML;
         previewClientQuoteBtn.disabled = true;
         previewClientQuoteBtn.innerHTML = '&#9203; Opening...';
+        state.isCurrentTicketSavedInVault = true;
+        unmarkQuoteIdDeleted(state.activeQuoteId);
         await syncQuoteToStripeCloudNow(calc, { isExplicitSave: true });
         previewClientQuoteBtn.disabled = false;
         previewClientQuoteBtn.innerHTML = orig;
