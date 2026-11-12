@@ -124,6 +124,34 @@
       .hs-studio { left: 79.4%; top: 46.8%; width: 18.0%; height: 20.5%; }
       .hs-deafhammer { left: 76.2%; top: 14.0%; width: 18.2%; height: 32.0%; }
 
+      /* Mobile Concept 04 (Cascading Spiral Pedestal Terraces 768x1376) Hotspot Positions */
+      body.is-mobile-concept04 #stage-overlay-root {
+        width: 768px;
+        height: 1376px;
+      }
+      body.is-mobile-concept04 .hs-nerdy {
+        left: 3.2%; top: 39.2%; width: 25.0%; height: 17.5%;
+      }
+      body.is-mobile-concept04 .hs-deafhammer {
+        left: 72.8%; top: 39.6%; width: 24.0%; height: 15.6%;
+      }
+      body.is-mobile-concept04 .hs-hoodie {
+        left: 50.0%; top: 54.0%; width: 16.8%; height: 13.8%;
+      }
+      body.is-mobile-concept04 .hs-studio {
+        left: 68.2%; top: 56.8%; width: 28.8%; height: 10.6%;
+      }
+      body.is-mobile-concept04 .hs-synth {
+        left: 41.0%; top: 70.4%; width: 12.2%; height: 10.8%;
+      }
+      body.is-mobile-concept04 .hs-botpit {
+        left: 2.0%; top: 71.8%; width: 45.5%; height: 19.8%;
+      }
+      body.is-mobile-concept04 .synth-speech-bubble {
+        left: 47.1%; top: 69.5%;
+        width: 220px;
+      }
+
       .synth-speech-bubble {
         position: absolute;
         left: 28.9%; top: 36.5%;
@@ -180,9 +208,34 @@
         gap: 12px;
       }
       @media (max-width: 768px) {
+        .hud-overlay {
+          padding: 10px 10px;
+        }
         .top-bar {
           padding-right: 0;
-          padding-top: 32px;
+          padding-top: 0;
+          gap: 6px;
+          justify-content: flex-start;
+        }
+        .brand-lockup {
+          padding: 4px 10px 4px 7px;
+          gap: 7px;
+        }
+        .brand-lockup img {
+          width: 22px; height: 22px;
+        }
+        .brand-lockup .wordmark {
+          font-size: 0.72rem;
+          letter-spacing: 0.12em;
+        }
+        .top-actions {
+          gap: 5px;
+        }
+        .glass-pill-btn {
+          padding: 5px 9px;
+          font-size: 0.56rem;
+          letter-spacing: 0.06em;
+          gap: 4px;
         }
       }
       .brand-lockup {
@@ -728,15 +781,40 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000);
 
-    const STAGE_W = 11.874122;
-    const STAGE_H = 6.627417;
-    const STAGE_ASPECT = STAGE_W / STAGE_H;
+    const STAGE_W_DESK = 11.874122;
+    const STAGE_H_DESK = 6.627417;
+    const STAGE_W_MOB  = 6.627417;
+    const STAGE_H_MOB  = 11.874122;
+
+    function isMobilePortraitViewport() {
+      return (window.innerWidth / Math.max(1, window.innerHeight)) < 0.92;
+    }
+
+    let isMobileMode = isMobilePortraitViewport();
+    if (document.body) {
+      document.body.classList.toggle('is-mobile-concept04', isMobileMode);
+    }
+
+    function getActiveStageDims() {
+      return isMobileMode
+        ? { w: STAGE_W_MOB, h: STAGE_H_MOB, pxW: 768.0, pxH: 1376.0 }
+        : { w: STAGE_W_DESK, h: STAGE_H_DESK, pxW: 1376.0, pxH: 768.0 };
+    }
 
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
     function getBaseCameraZ() {
-      const aspect = window.innerWidth / window.innerHeight;
-      if (aspect < STAGE_ASPECT) {
-        return 8.0 * Math.min(1.34, STAGE_ASPECT / Math.max(0.72, aspect));
+      const aspect = window.innerWidth / Math.max(1, window.innerHeight);
+      const dims = getActiveStageDims();
+      const stageAspect = dims.w / dims.h;
+      const halfFovRad = (45 * 0.5) * Math.PI / 180.0;
+      const zForHeight = (dims.h * 0.5) / Math.tan(halfFovRad);
+      const zForWidth  = (dims.w * 0.5) / (Math.tan(halfFovRad) * aspect);
+      if (isMobileMode) {
+        // Fit Mobile Concept 4 (9:16 vertical stage) cleanly on any phone screen
+        return Math.max(zForHeight * 0.98, zForWidth * 0.98);
+      }
+      if (aspect < stageAspect) {
+        return 8.0 * Math.min(1.34, stageAspect / Math.max(0.72, aspect));
       }
       return 8.0;
     }
@@ -759,24 +837,33 @@
     composer.addPass(bloomPass);
 
     const texLoader = new THREE.TextureLoader();
-    const texBg = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_bg_only.jpg?v=250');
-    texBg.minFilter = THREE.LinearFilter;
-    texBg.magFilter = THREE.LinearFilter;
+    const texBgDesk = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_bg_only.jpg?v=252');
+    texBgDesk.minFilter = THREE.LinearFilter;
+    texBgDesk.magFilter = THREE.LinearFilter;
 
-    const texFullTree = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_tree.jpg?v=250');
-    texFullTree.minFilter = THREE.LinearFilter;
-    texFullTree.magFilter = THREE.LinearFilter;
+    const texFullDesk = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_tree.jpg?v=252');
+    texFullDesk.minFilter = THREE.LinearFilter;
+    texFullDesk.magFilter = THREE.LinearFilter;
+
+    const texBgMob = texLoader.load('assets/concept_gallery/living_tree/mobile04_stage_bg_only.jpg?v=252');
+    texBgMob.minFilter = THREE.LinearFilter;
+    texBgMob.magFilter = THREE.LinearFilter;
+
+    const texFullMob = texLoader.load('assets/concept_gallery/living_tree/mobile04_stage_tree.jpg?v=252');
+    texFullMob.minFilter = THREE.LinearFilter;
+    texFullMob.magFilter = THREE.LinearFilter;
 
     const stageUniforms = {
-      uTexFull: { value: texFullTree },
-      uTexBg: { value: texBg },
+      uTexFull: { value: isMobileMode ? texFullMob : texFullDesk },
+      uTexBg: { value: isMobileMode ? texBgMob : texBgDesk },
       uTime: { value: 0 },
       uTreeReveal: { value: 0.0 },
       uRoomLight: { value: 0.0 },
+      uIsMobile: { value: isMobileMode ? 1.0 : 0.0 },
       uMouse3D: { value: new THREE.Vector3(999, 999, 0) }
     };
 
-    const stageGeo = new THREE.PlaneGeometry(STAGE_W, STAGE_H, 1, 1);
+    const stageGeo = new THREE.PlaneGeometry(1.0, 1.0, 1, 1);
     const stageMat = new THREE.ShaderMaterial({
       uniforms: stageUniforms,
       transparent: false,
@@ -794,11 +881,11 @@
         uniform float uTime;
         uniform float uTreeReveal;
         uniform float uRoomLight;
+        uniform float uIsMobile;
         uniform vec3 uMouse3D;
         varying vec2 vUv;
 
-        vec2 rotRigid(vec2 uv, vec2 pivot, float angle) {
-          vec2 aspect = vec2(1408.0 / 768.0, 1.0);
+        vec2 rotRigidAspect(vec2 uv, vec2 pivot, float angle, vec2 aspect) {
           vec2 d = (uv - pivot) * aspect;
           float c = cos(angle);
           float s = sin(angle);
@@ -817,73 +904,148 @@
         }
 
         void main() {
-          vec2 worldXY = vec2((vUv.x - 0.5) * 11.874122, (vUv.y - 0.5) * 6.627417);
+          bool mob = uIsMobile > 0.5;
+          vec2 stageDims = mob ? vec2(6.627417, 11.874122) : vec2(11.874122, 6.627417);
+          vec2 aspectVec = mob ? vec2(768.0 / 1376.0, 1.0) : vec2(1408.0 / 768.0, 1.0);
+          vec2 worldXY = vec2((vUv.x - 0.5) * stageDims.x, (vUv.y - 0.5) * stageDims.y);
 
           vec2 sampleUv = vUv;
           float eyeBlinkDim = 0.0;
           float eyeGlowPulse = 0.0;
 
-          if (vUv.x < 0.250 && vUv.y > 0.175 && vUv.y < 0.500) {
-            float mHead1 = partMask(vUv, vec2(0.0582, 0.442), vec2(0.024, 0.042));
-            float mBody1 = partMask(vUv, vec2(0.0582, 0.365), vec2(0.025, 0.055)) * (1.0 - mHead1);
-            float ang1 = sin(uTime * 1.35 + 0.4) * 0.042 + sin(uTime * 0.62) * 0.018;
-            float breath1 = sin(uTime * 1.9 + 0.2) * 0.0014;
+          if (!mob) {
+            // ================================================================
+            // DESKTOP CONCEPT 29: 5 ROBOTS ON LEFT TERRACE (OWL STATIONARY)
+            // ================================================================
+            if (vUv.x < 0.250 && vUv.y > 0.175 && vUv.y < 0.500) {
+              float mHead1 = partMask(vUv, vec2(0.0582, 0.442), vec2(0.024, 0.042));
+              float mBody1 = partMask(vUv, vec2(0.0582, 0.365), vec2(0.025, 0.055)) * (1.0 - mHead1);
+              float ang1 = sin(uTime * 1.35 + 0.4) * 0.042 + sin(uTime * 0.62) * 0.018;
+              float breath1 = sin(uTime * 1.9 + 0.2) * 0.0014;
 
-            float mHead2 = partMask(vUv, vec2(0.1001, 0.448), vec2(0.021, 0.038));
-            float mArm2  = partMask(vUv, vec2(0.1195, 0.406), vec2(0.016, 0.028)) * (1.0 - mHead2);
-            float mBody2 = partMask(vUv, vec2(0.1001, 0.372), vec2(0.022, 0.052)) * (1.0 - mHead2);
-            float ang2 = sin(uTime * 1.55 + 1.7) * 0.038;
-            float armAng2 = sin(uTime * 2.4) * 0.075;
-            float breath2 = sin(uTime * 2.05 + 1.3) * 0.0013;
+              float mHead2 = partMask(vUv, vec2(0.1001, 0.448), vec2(0.021, 0.038));
+              float mArm2  = partMask(vUv, vec2(0.1195, 0.406), vec2(0.016, 0.028)) * (1.0 - mHead2);
+              float mBody2 = partMask(vUv, vec2(0.1001, 0.372), vec2(0.022, 0.052)) * (1.0 - mHead2);
+              float ang2 = sin(uTime * 1.55 + 1.7) * 0.038;
+              float armAng2 = sin(uTime * 2.4) * 0.075;
+              float breath2 = sin(uTime * 2.05 + 1.3) * 0.0013;
 
-            float mHead3 = partMask(vUv, vec2(0.1584, 0.450), vec2(0.024, 0.042));
-            float mBody3 = partMask(vUv, vec2(0.1584, 0.372), vec2(0.024, 0.052)) * (1.0 - mHead3);
-            float ang3 = sin(uTime * 1.22 + 3.1) * 0.044 + cos(uTime * 0.75) * 0.016;
-            float breath3 = sin(uTime * 1.80 + 2.5) * 0.0014;
+              float mHead3 = partMask(vUv, vec2(0.1584, 0.450), vec2(0.024, 0.042));
+              float mBody3 = partMask(vUv, vec2(0.1584, 0.372), vec2(0.024, 0.052)) * (1.0 - mHead3);
+              float ang3 = sin(uTime * 1.22 + 3.1) * 0.044 + cos(uTime * 0.75) * 0.016;
+              float breath3 = sin(uTime * 1.80 + 2.5) * 0.0014;
 
-            float mHead4 = partMask(vUv, vec2(0.2223, 0.448), vec2(0.023, 0.040));
-            float ang4 = sin(uTime * 1.42 + 4.5) * 0.036;
-            float breath4 = sin(uTime * 1.95 + 3.8) * 0.0012;
+              float mHead4 = partMask(vUv, vec2(0.2223, 0.448), vec2(0.023, 0.040));
+              float ang4 = sin(uTime * 1.42 + 4.5) * 0.036;
+              float breath4 = sin(uTime * 1.95 + 3.8) * 0.0012;
 
-            float mGamerHead  = partMask(vUv, vec2(0.2010, 0.380), vec2(0.033, 0.054));
-            float mGamerHands = partMask(vUv, vec2(0.2150, 0.298), vec2(0.034, 0.034)) * (1.0 - mGamerHead);
-            float mGamerBody  = partMask(vUv, vec2(0.2003, 0.275), vec2(0.036, 0.068)) * (1.0 - mGamerHead);
-            float angGamer = sin(uTime * 1.85) * 0.045 + sin(uTime * 0.82) * 0.022;
-            float handsAng = sin(uTime * 4.2) * 0.052 + cos(uTime * 2.7) * 0.028;
-            float breathGamer = sin(uTime * 2.35) * 0.0016;
+              float mGamerHead  = partMask(vUv, vec2(0.2010, 0.380), vec2(0.033, 0.054));
+              float mGamerHands = partMask(vUv, vec2(0.2150, 0.298), vec2(0.034, 0.034)) * (1.0 - mGamerHead);
+              float mGamerBody  = partMask(vUv, vec2(0.2003, 0.275), vec2(0.036, 0.068)) * (1.0 - mGamerHead);
+              float angGamer = sin(uTime * 1.85) * 0.045 + sin(uTime * 0.82) * 0.022;
+              float handsAng = sin(uTime * 4.2) * 0.052 + cos(uTime * 2.7) * 0.028;
+              float breathGamer = sin(uTime * 2.35) * 0.0016;
 
-            vec2 uv1 = rotRigid(vUv - vec2(0.0, breath1), vec2(0.0589, 0.4089), ang1);
-            vec2 uv2 = rotRigid(vUv - vec2(0.0, breath2), vec2(0.1001, 0.4167), ang2);
-            vec2 uv2Arm = rotRigid(vUv - vec2(0.0, breath2), vec2(0.1094, 0.4036), armAng2);
-            vec2 uv3 = rotRigid(vUv - vec2(0.0, breath3), vec2(0.1584, 0.4167), ang3);
-            vec2 uv4 = rotRigid(vUv - vec2(0.0, breath4), vec2(0.2223, 0.4167), ang4);
-            vec2 uvG = rotRigid(vUv - vec2(0.0, breathGamer), vec2(0.2003, 0.3333), angGamer);
-            vec2 uvGHands = rotRigid(vUv - vec2(0.0, breathGamer * 0.6), vec2(0.1960, 0.2943), handsAng);
+              vec2 uv1 = rotRigidAspect(vUv - vec2(0.0, breath1), vec2(0.0589, 0.4089), ang1, aspectVec);
+              vec2 uv2 = rotRigidAspect(vUv - vec2(0.0, breath2), vec2(0.1001, 0.4167), ang2, aspectVec);
+              vec2 uv2Arm = rotRigidAspect(vUv - vec2(0.0, breath2), vec2(0.1094, 0.4036), armAng2, aspectVec);
+              vec2 uv3 = rotRigidAspect(vUv - vec2(0.0, breath3), vec2(0.1584, 0.4167), ang3, aspectVec);
+              vec2 uv4 = rotRigidAspect(vUv - vec2(0.0, breath4), vec2(0.2223, 0.4167), ang4, aspectVec);
+              vec2 uvG = rotRigidAspect(vUv - vec2(0.0, breathGamer), vec2(0.2003, 0.3333), angGamer, aspectVec);
+              vec2 uvGHands = rotRigidAspect(vUv - vec2(0.0, breathGamer * 0.6), vec2(0.1960, 0.2943), handsAng, aspectVec);
 
-            sampleUv = vUv;
-            sampleUv = mix(sampleUv, vUv - vec2(0.0, breath1), mBody1);
-            sampleUv = mix(sampleUv, uv1, mHead1);
-            sampleUv = mix(sampleUv, vUv - vec2(0.0, breath2), mBody2);
-            sampleUv = mix(sampleUv, uv2Arm, mArm2);
-            sampleUv = mix(sampleUv, uv2, mHead2);
-            sampleUv = mix(sampleUv, vUv - vec2(0.0, breath3), mBody3);
-            sampleUv = mix(sampleUv, uv3, mHead3);
-            sampleUv = mix(sampleUv, uv4, mHead4);
-            sampleUv = mix(sampleUv, vUv - vec2(0.0, breathGamer), mGamerBody);
-            sampleUv = mix(sampleUv, uvGHands, mGamerHands);
-            sampleUv = mix(sampleUv, uvG, mGamerHead);
+              sampleUv = vUv;
+              sampleUv = mix(sampleUv, vUv - vec2(0.0, breath1), mBody1);
+              sampleUv = mix(sampleUv, uv1, mHead1);
+              sampleUv = mix(sampleUv, vUv - vec2(0.0, breath2), mBody2);
+              sampleUv = mix(sampleUv, uv2Arm, mArm2);
+              sampleUv = mix(sampleUv, uv2, mHead2);
+              sampleUv = mix(sampleUv, vUv - vec2(0.0, breath3), mBody3);
+              sampleUv = mix(sampleUv, uv3, mHead3);
+              sampleUv = mix(sampleUv, uv4, mHead4);
+              sampleUv = mix(sampleUv, vUv - vec2(0.0, breathGamer), mGamerBody);
+              sampleUv = mix(sampleUv, uvGHands, mGamerHands);
+              sampleUv = mix(sampleUv, uvG, mGamerHead);
 
-            float b1 = naturalBlink(uTime, 4.3, 0.7) * partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012));
-            float b3 = naturalBlink(uTime, 3.8, 2.1) * partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012));
-            float b4 = naturalBlink(uTime, 4.9, 1.4) * partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012));
-            float bG = naturalBlink(uTime, 3.4, 0.2) * partMask(sampleUv, vec2(0.2152, 0.3840), vec2(0.016, 0.014));
-            eyeBlinkDim = clamp(b1 + b3 + b4 + bG, 0.0, 1.0);
+              float b1 = naturalBlink(uTime, 4.3, 0.7) * partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012));
+              float b3 = naturalBlink(uTime, 3.8, 2.1) * partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012));
+              float b4 = naturalBlink(uTime, 4.9, 1.4) * partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012));
+              float bG = naturalBlink(uTime, 3.4, 0.2) * partMask(sampleUv, vec2(0.2152, 0.3840), vec2(0.016, 0.014));
+              eyeBlinkDim = clamp(b1 + b3 + b4 + bG, 0.0, 1.0);
 
-            float gMask = partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012))
-                        + partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012))
-                        + partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012))
-                        + partMask(sampleUv, vec2(0.2152, 0.3840), vec2(0.016, 0.014));
-            eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.12 + 0.10 * sin(uTime * 3.2));
+              float gMask = partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012))
+                          + partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012))
+                          + partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012))
+                          + partMask(sampleUv, vec2(0.2152, 0.3840), vec2(0.016, 0.014));
+              eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.12 + 0.10 * sin(uTime * 3.2));
+            }
+          } else {
+            // ================================================================
+            // MOBILE CONCEPT 04: 5 ROBOTS AT BASE OF SPIRAL STAIRCASE
+            // (Strictly left of Synth the Owl: vUv.x < 0.408, vUv.y in 0.08..0.30)
+            // ================================================================
+            if (vUv.x < 0.445 && vUv.y > 0.080 && vUv.y < 0.295 && !(vUv.x > 0.402 && vUv.y > 0.185)) {
+              float mHead1 = partMask(vUv, vec2(0.0729, 0.2355), vec2(0.044, 0.025));
+              float mBody1 = partMask(vUv, vec2(0.0729, 0.1920), vec2(0.045, 0.032)) * (1.0 - mHead1);
+              float ang1 = sin(uTime * 1.35 + 0.4) * 0.042 + sin(uTime * 0.62) * 0.018;
+              float breath1 = sin(uTime * 1.9 + 0.2) * 0.0010;
+
+              float mHead2 = partMask(vUv, vec2(0.1302, 0.2573), vec2(0.038, 0.022));
+              float mArm2  = partMask(vUv, vec2(0.1719, 0.2340), vec2(0.028, 0.018)) * (1.0 - mHead2);
+              float mBody2 = partMask(vUv, vec2(0.1302, 0.2120), vec2(0.038, 0.030)) * (1.0 - mHead2);
+              float ang2 = sin(uTime * 1.55 + 1.7) * 0.038;
+              float armAng2 = sin(uTime * 2.4) * 0.075;
+              float breath2 = sin(uTime * 2.05 + 1.3) * 0.0009;
+
+              float mHead3 = partMask(vUv, vec2(0.2422, 0.2442), vec2(0.044, 0.025));
+              float mBody3 = partMask(vUv, vec2(0.2422, 0.2000), vec2(0.044, 0.030)) * (1.0 - mHead3);
+              float ang3 = sin(uTime * 1.22 + 3.1) * 0.044 + cos(uTime * 0.75) * 0.016;
+              float breath3 = sin(uTime * 1.80 + 2.5) * 0.0010;
+
+              float mHead4 = partMask(vUv, vec2(0.3464, 0.2602), vec2(0.042, 0.024));
+              float ang4 = sin(uTime * 1.42 + 4.5) * 0.036;
+              float breath4 = sin(uTime * 1.95 + 3.8) * 0.0009;
+
+              float mGamerHead  = partMask(vUv, vec2(0.3711, 0.1730), vec2(0.058, 0.032));
+              float mGamerHands = partMask(vUv, vec2(0.4010, 0.1337), vec2(0.056, 0.022)) * (1.0 - mGamerHead);
+              float mGamerBody  = partMask(vUv, vec2(0.3672, 0.1180), vec2(0.060, 0.038)) * (1.0 - mGamerHead);
+              float angGamer = sin(uTime * 1.85) * 0.045 + sin(uTime * 0.82) * 0.022;
+              float handsAng = sin(uTime * 4.2) * 0.052 + cos(uTime * 2.7) * 0.028;
+              float breathGamer = sin(uTime * 2.35) * 0.0011;
+
+              vec2 uv1 = rotRigidAspect(vUv - vec2(0.0, breath1), vec2(0.0755, 0.2180), ang1, aspectVec);
+              vec2 uv2 = rotRigidAspect(vUv - vec2(0.0, breath2), vec2(0.1302, 0.2427), ang2, aspectVec);
+              vec2 uv2Arm = rotRigidAspect(vUv - vec2(0.0, breath2), vec2(0.1510, 0.2311), armAng2, aspectVec);
+              vec2 uv3 = rotRigidAspect(vUv - vec2(0.0, breath3), vec2(0.2422, 0.2267), ang3, aspectVec);
+              vec2 uv4 = rotRigidAspect(vUv - vec2(0.0, breath4), vec2(0.3464, 0.2442), ang4, aspectVec);
+              vec2 uvG = rotRigidAspect(vUv - vec2(0.0, breathGamer), vec2(0.3672, 0.1526), angGamer, aspectVec);
+              vec2 uvGHands = rotRigidAspect(vUv - vec2(0.0, breathGamer * 0.6), vec2(0.3750, 0.1308), handsAng, aspectVec);
+
+              sampleUv = vUv;
+              sampleUv = mix(sampleUv, vUv - vec2(0.0, breath1), mBody1);
+              sampleUv = mix(sampleUv, uv1, mHead1);
+              sampleUv = mix(sampleUv, vUv - vec2(0.0, breath2), mBody2);
+              sampleUv = mix(sampleUv, uv2Arm, mArm2);
+              sampleUv = mix(sampleUv, uv2, mHead2);
+              sampleUv = mix(sampleUv, vUv - vec2(0.0, breath3), mBody3);
+              sampleUv = mix(sampleUv, uv3, mHead3);
+              sampleUv = mix(sampleUv, uv4, mHead4);
+              sampleUv = mix(sampleUv, vUv - vec2(0.0, breathGamer), mGamerBody);
+              sampleUv = mix(sampleUv, uvGHands, mGamerHands);
+              sampleUv = mix(sampleUv, uvG, mGamerHead);
+
+              float b1 = naturalBlink(uTime, 4.3, 0.7) * partMask(sampleUv, vec2(0.0807, 0.2326), vec2(0.025, 0.008));
+              float b3 = naturalBlink(uTime, 3.8, 2.1) * partMask(sampleUv, vec2(0.2500, 0.2427), vec2(0.025, 0.008));
+              float b4 = naturalBlink(uTime, 4.9, 1.4) * partMask(sampleUv, vec2(0.3438, 0.2587), vec2(0.024, 0.008));
+              float bG = naturalBlink(uTime, 3.4, 0.2) * partMask(sampleUv, vec2(0.3880, 0.1701), vec2(0.028, 0.009));
+              eyeBlinkDim = clamp(b1 + b3 + b4 + bG, 0.0, 1.0);
+
+              float gMask = partMask(sampleUv, vec2(0.0807, 0.2326), vec2(0.025, 0.008))
+                          + partMask(sampleUv, vec2(0.2500, 0.2427), vec2(0.025, 0.008))
+                          + partMask(sampleUv, vec2(0.3438, 0.2587), vec2(0.024, 0.008))
+                          + partMask(sampleUv, vec2(0.3880, 0.1701), vec2(0.028, 0.009));
+              eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.12 + 0.10 * sin(uTime * 3.2));
+            }
           }
 
           vec3 litRoomCol = texture2D(uTexBg, sampleUv).rgb;
@@ -894,12 +1056,16 @@
             litRoomCol += vec3(0.10, 0.85, 1.0) * visorCyan * eyeGlowPulse * (1.0 - eyeBlinkDim);
           }
 
-          float inTvScreen = smoothstep(0.318, 0.323, vUv.x) * (1.0 - smoothstep(0.358, 0.363, vUv.x))
-                           * smoothstep(0.292, 0.298, vUv.y) * (1.0 - smoothstep(0.390, 0.396, vUv.y));
+          // Live 60fps 8-bit CRT Television Screen gameplay animation & scanline glow (Desktop & Mobile Concept 4)
+          vec4 tvBounds = mob
+            ? vec4(0.740, 0.852, 0.155, 0.233)
+            : vec4(0.318, 0.363, 0.292, 0.396);
+          float inTvScreen = smoothstep(tvBounds.x, tvBounds.x + 0.005, vUv.x) * (1.0 - smoothstep(tvBounds.y - 0.005, tvBounds.y, vUv.x))
+                           * smoothstep(tvBounds.z, tvBounds.z + 0.006, vUv.y) * (1.0 - smoothstep(tvBounds.w - 0.006, tvBounds.w, vUv.y));
           if (inTvScreen > 0.01) {
             float scanline = 0.93 + 0.07 * sin(vUv.y * 680.0 - uTime * 18.0);
             float phosphorPulse = 1.05 + 0.04 * sin(uTime * 6.0);
-            vec2 tvUv = (vUv - vec2(0.320, 0.295)) / vec2(0.040, 0.098);
+            vec2 tvUv = (vUv - vec2(tvBounds.x, tvBounds.z)) / vec2(tvBounds.y - tvBounds.x, tvBounds.w - tvBounds.z);
             float spriteX = 0.28 + 0.44 * (0.5 + 0.5 * sin(uTime * 2.2));
             float spriteY = 0.36 + 0.28 * abs(sin(uTime * 4.4));
             float spriteBox = step(abs(tvUv.x - spriteX), 0.075) * step(abs(tvUv.y - spriteY), 0.095);
@@ -907,34 +1073,44 @@
             litRoomCol *= mix(1.0, scanline * phosphorPulse, inTvScreen);
           }
 
-          vec2 sunCenter = vec2(0.0, 0.52);
+          // Vibrant Multi-Band Retro Setting Sun radiance
+          vec2 sunCenter = mob ? vec2(0.03, 3.35) : vec2(0.0, 0.52);
           float distSun = length(worldXY - sunCenter);
-          float sunCorona = exp(-max(0.0, distSun - 1.55) * 1.35) * smoothstep(-0.65, -0.15, worldXY.y);
-          float sunVertMix = clamp((vUv.y - 0.38) / 0.52, 0.0, 1.0);
+          float sunMinY = mob ? 1.85 : -0.65;
+          float sunCorona = exp(-max(0.0, distSun - 1.55) * 1.35) * smoothstep(sunMinY, sunMinY + 0.50, worldXY.y);
+          float sunVertMix = mob
+            ? clamp((vUv.y - 0.66) / 0.26, 0.0, 1.0)
+            : clamp((vUv.y - 0.38) / 0.52, 0.0, 1.0);
           vec3 vibrantSunTint = mix(vec3(0.88, 0.18, 0.65), vec3(1.0, 0.68, 0.15), sunVertMix);
           float sunBreath = (0.09 + 0.05 * sin(uTime * 1.25)) * uRoomLight;
           litRoomCol += vibrantSunTint * sunCorona * sunBreath;
-          if (distSun < 1.92 && worldXY.y > -0.60) {
+          if (distSun < 1.92 && worldXY.y > sunMinY) {
             float sunLuma = dot(litRoomCol, vec3(0.299, 0.587, 0.114));
             litRoomCol = mix(vec3(sunLuma), litRoomCol, 1.22) * (1.0 + (0.05 + 0.04 * sin(uTime * 1.25)) * uRoomLight);
           }
 
+          // Pitch-Black Room During Particle Swoop -> Golden Light Wave Cascades From Tree!
           vec3 darkSilhouette = vec3(0.0);
 
-          float distFromTree = length(vec2(worldXY.x * 0.22, (worldXY.y - 0.05) * 0.30));
-          float localRoomLight = smoothstep(0.0, 1.0, (uRoomLight * 1.55) - distFromTree * 0.48);
+          vec2 treeOrigin = mob ? vec2(0.03, 3.15) : vec2(0.0, 0.05);
+          vec2 distScale  = mob ? vec2(0.24, 0.16) : vec2(0.22, 0.30);
+          float distFromTree = length((worldXY - treeOrigin) * distScale);
+          float localRoomLight = smoothstep(0.0, 1.0, (uRoomLight * 1.62) - distFromTree * 0.48);
 
           float lightWaveCrest = smoothstep(0.05, 0.45, localRoomLight) * (1.0 - smoothstep(0.55, 0.98, localRoomLight));
           vec3 bgCol = mix(darkSilhouette, litRoomCol, localRoomLight)
                      + litRoomCol * vec3(0.55, 0.38, 0.12) * lightWaveCrest * 0.45;
 
-          float inCenterColumn = smoothstep(-2.4, -1.7, worldXY.x) * (1.0 - smoothstep(1.7, 2.4, worldXY.x));
+          float inCenterColumn = mob
+            ? (smoothstep(-2.45, -1.85, worldXY.x) * (1.0 - smoothstep(1.85, 2.45, worldXY.x)))
+            : (smoothstep(-2.4, -1.7, worldXY.x) * (1.0 - smoothstep(1.7, 2.4, worldXY.x)));
           vec2 treeUv = vUv;
           vec3 bgAtTreeUv = texture2D(uTexBg, treeUv).rgb;
 
+          float treeMinUvY = mob ? 0.655 : 0.28;
           float distMouse = distance(worldXY, uMouse3D.xy);
           float cursorGlow = 0.0;
-          if (distMouse < 0.34 && vUv.y > 0.30 && inCenterColumn > 0.1) {
+          if (distMouse < 0.34 && vUv.y > treeMinUvY && inCenterColumn > 0.1) {
             float push = (0.34 - distMouse) / 0.34;
             cursorGlow = push * push * 0.28;
           }
@@ -943,16 +1119,19 @@
           float sapWave = pow(0.5 + 0.5 * sin(sapPhase), 3.6);
 
           float organicNoise = sin(worldXY.x * 5.0 + uTime * 2.0) * cos(worldXY.y * 5.0 - uTime * 1.8) * 0.06;
-          float heightFactor = clamp((vUv.y - 0.30) / 0.60, 0.0, 1.0);
+          float heightFactor = mob
+            ? clamp((vUv.y - 0.66) / 0.26, 0.0, 1.0)
+            : clamp((vUv.y - 0.30) / 0.60, 0.0, 1.0);
 
           vec3 finalCol = bgCol;
 
           if (uTreeReveal > 0.005) {
             vec3 fullCol = texture2D(uTexFull, treeUv).rgb;
             float treeDiff = length(fullCol - bgAtTreeUv);
-            float inForegroundTv = smoothstep(0.275, 0.285, vUv.x) * (1.0 - smoothstep(0.412, 0.422, vUv.x))
-                                 * (1.0 - smoothstep(0.415, 0.428, vUv.y));
-            float isTreePixel = smoothstep(0.03, 0.15, treeDiff) * smoothstep(0.28, 0.33, vUv.y) * inCenterColumn * (1.0 - inForegroundTv);
+            float inForegroundTv = mob
+              ? 0.0
+              : (smoothstep(0.275, 0.285, vUv.x) * (1.0 - smoothstep(0.412, 0.422, vUv.x)) * (1.0 - smoothstep(0.415, 0.428, vUv.y)));
+            float isTreePixel = smoothstep(0.03, 0.15, treeDiff) * smoothstep(treeMinUvY, treeMinUvY + 0.035, vUv.y) * inCenterColumn * (1.0 - inForegroundTv);
             vec3 livingTreeCol = fullCol * (1.0 + sapWave * 0.20 * isTreePixel)
                                + vec3(0.98, 0.74, 0.25) * cursorGlow * isTreePixel;
             float revealMask = smoothstep(0.0, 1.0, (uTreeReveal * 1.35) - heightFactor * 0.32 + organicNoise);
@@ -965,6 +1144,11 @@
     });
     const heroStageMesh = new THREE.Mesh(stageGeo, stageMat);
     heroStageMesh.position.set(0, 0, -0.02);
+    function updateStageMeshScale() {
+      const dims = getActiveStageDims();
+      heroStageMesh.scale.set(dims.w, dims.h, 1.0);
+    }
+    updateStageMeshScale();
     scene.add(heroStageMesh);
 
     const totalVerts = N;
@@ -1026,6 +1210,7 @@
       uRimGlowStrength: { value: 0.95 },
       uLiquidPulseStrength: { value: 0.80 },
       uTreeReveal: { value: 0.0 },
+      uIsMobile: { value: isMobileMode ? 1.0 : 0.0 },
       uIsTreeTarget: { value: 1.0 }
     };
 
@@ -1038,6 +1223,7 @@
       uniform float uRimGlowStrength;
       uniform float uLiquidPulseStrength;
       uniform float uTreeReveal;
+      uniform float uIsMobile;
       uniform float uIsTreeTarget;
 
       attribute vec3 aTarget;
@@ -1061,21 +1247,28 @@
 
       void main() {
         vIsVoxel = aIsVoxel;
+        bool mob = uIsMobile > 0.5;
 
         float m = smoothstep(0.0, 1.0, uMorphProgress);
         vec3 basePos = mix(position, aTarget, m);
         vec3 baseCol = mix(aColorStart, aColorTarget, m);
 
-        float pDelay = aPhase * 0.36 + clamp((basePos.y + 1.5) / 4.5, 0.0, 1.0) * 0.28;
+        // On Mobile Concept 04, map the Tree target to the top of the spiral staircase (0.03, 3.05)!
+        if (mob) {
+          basePos = vec3(basePos.x * 0.78 + 0.03, basePos.y * 0.78 + 3.05, basePos.z * 0.78);
+        }
+
+        float pDelay = aPhase * 0.36 + clamp((aTarget.y + 1.5) / 4.5, 0.0, 1.0) * 0.28;
         float localIntro = clamp((uIntroProgress - pDelay * 0.55) / (1.0 - 0.55 * 0.66), 0.0, 1.0);
         float introEase = smoothstep(0.0, 1.0, localIntro);
 
         if (uIntroProgress < 0.999) {
           float streamT = clamp(uIntroProgress * 1.35 - aPhase * 0.55, 0.0, 1.0);
-          vec3 swoopOrigin = vec3(-5.8, -1.85, 4.2);
-          vec3 swoopMid1   = vec3( 2.8, -0.75, 1.8);
-          vec3 swoopMid2   = vec3(-2.1,  0.35, -0.6);
-          vec3 swoopCenter = vec3( 0.0, -1.15, 0.0);
+          // On Mobile Concept 04, swoop up the S-curve of the golden spiral staircase into the top pedestal!
+          vec3 swoopOrigin = mob ? vec3( 0.8, -4.8, 3.2) : vec3(-5.8, -1.85, 4.2);
+          vec3 swoopMid1   = mob ? vec3(-1.7, -1.6, 1.6) : vec3( 2.8, -0.75, 1.8);
+          vec3 swoopMid2   = mob ? vec3( 1.6,  0.8, 0.5) : vec3(-2.1,  0.35, -0.6);
+          vec3 swoopCenter = mob ? vec3( 0.03, 2.05, 0.0) : vec3( 0.0, -1.15, 0.0);
 
           float u = 1.0 - streamT;
           vec3 riverPos = u*u*u * swoopOrigin
@@ -1084,9 +1277,9 @@
                         + streamT*streamT*streamT * swoopCenter;
 
           vec3 ribbonOffset = vec3(
-            sin(aPhase * 40.0 + uTime * 1.4) * 0.24,
+            sin(aPhase * 40.0 + uTime * 1.4) * 0.22,
             cos(aPhase * 32.0 - uTime * 1.2) * 0.18,
-            sin(aPhase * 28.0 + uTime * 1.1) * 0.24
+            sin(aPhase * 28.0 + uTime * 1.1) * 0.22
           );
           vec3 swoopPos = riverPos + ribbonOffset;
           basePos = mix(swoopPos, basePos, introEase);
@@ -1227,41 +1420,57 @@
       bodyObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     }
 
-    const _tl = new THREE.Vector3(-STAGE_W * 0.5, STAGE_H * 0.5, -0.02);
-    const _br = new THREE.Vector3(STAGE_W * 0.5, -STAGE_H * 0.5, -0.02);
     function syncStageOverlayTransform() {
+      const dims = getActiveStageDims();
+      const tl = new THREE.Vector3(-dims.w * 0.5, dims.h * 0.5, -0.02);
+      const br = new THREE.Vector3(dims.w * 0.5, -dims.h * 0.5, -0.02);
       camera.updateMatrixWorld();
-      const p1 = _tl.clone().project(camera);
-      const p2 = _br.clone().project(camera);
+      const p1 = tl.project(camera);
+      const p2 = br.project(camera);
       const x1 = (p1.x * 0.5 + 0.5) * window.innerWidth;
       const y1 = (-p1.y * 0.5 + 0.5) * window.innerHeight;
       const x2 = (p2.x * 0.5 + 0.5) * window.innerWidth;
       const y2 = (-p2.y * 0.5 + 0.5) * window.innerHeight;
-      const sx = (x2 - x1) / 1376.0;
-      const sy = (y2 - y1) / 768.0;
+      const sx = (x2 - x1) / dims.pxW;
+      const sy = (y2 - y1) / dims.pxH;
       stageOverlayRoot.style.transform = `translate3d(${x1.toFixed(2)}px, ${y1.toFixed(2)}px, 0) scale(${sx.toFixed(5)}, ${sy.toFixed(5)})`;
     }
 
     let targetCamX = 0, targetCamY = 0.0;
     window.addEventListener('pointermove', (e) => {
       if (!isConcept29StageActive()) return;
+      const dims = getActiveStageDims();
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = -(e.clientY / window.innerHeight) * 2 + 1;
-      const mVec = new THREE.Vector3(nx * (STAGE_W * 0.45), ny * (STAGE_H * 0.45), 0);
+      const mVec = new THREE.Vector3(nx * (dims.w * 0.45), ny * (dims.h * 0.45), 0);
       uniforms.uMouse3D.value.copy(mVec);
       stageUniforms.uMouse3D.value.copy(mVec);
-      targetCamX = nx * 0.14;
-      targetCamY = ny * 0.08;
+      targetCamX = nx * (isMobileMode ? 0.06 : 0.14);
+      targetCamY = ny * (isMobileMode ? 0.05 : 0.08);
     });
 
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
+    function applyViewportMode() {
+      const nextMob = isMobilePortraitViewport();
+      if (nextMob !== isMobileMode) {
+        isMobileMode = nextMob;
+        if (document.body) {
+          document.body.classList.toggle('is-mobile-concept04', isMobileMode);
+        }
+        stageUniforms.uIsMobile.value = isMobileMode ? 1.0 : 0.0;
+        uniforms.uIsMobile.value = isMobileMode ? 1.0 : 0.0;
+        stageUniforms.uTexBg.value = isMobileMode ? texBgMob : texBgDesk;
+        stageUniforms.uTexFull.value = isMobileMode ? texFullMob : texFullDesk;
+        updateStageMeshScale();
+      }
+      camera.aspect = window.innerWidth / Math.max(1, window.innerHeight);
       camera.position.z = getBaseCameraZ();
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
       composer.setSize(window.innerWidth, window.innerHeight);
       syncStageOverlayTransform();
-    });
+    }
+
+    window.addEventListener('resize', applyViewportMode);
 
     function animate(now) {
       requestAnimationFrame(animate);
@@ -1270,6 +1479,7 @@
 
       if (!wasStageUnlocked) {
         wasStageUnlocked = true;
+        applyViewportMode();
         window.replaySwoopIntro();
       }
 
@@ -1292,8 +1502,9 @@
 
       if (rl > 0.02 && introProg < 0.98) {
         const surge = Math.sin(rl * Math.PI) * 0.28;
+        const gradCenter = isMobileMode ? '50% 24%' : '50% 46%';
         roomLightWash.style.opacity = '1';
-        roomLightWash.style.background = `radial-gradient(circle at 50% 46%, rgba(255, 195, 75, ${surge}), rgba(255, 85, 145, ${surge * 0.4}) 42%, transparent 72%)`;
+        roomLightWash.style.background = `radial-gradient(circle at ${gradCenter}, rgba(255, 195, 75, ${surge}), rgba(255, 85, 145, ${surge * 0.4}) 42%, transparent 72%)`;
       } else {
         roomLightWash.style.opacity = '0';
       }
