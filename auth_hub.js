@@ -852,15 +852,40 @@
   // =========================================================================
   function initHomeScreenAuthUI() {
     const path = (window.location.pathname || '').toLowerCase();
+    const search = (window.location.search || '').toLowerCase();
     const isHomePage = path === '/' || path === '' || path.endsWith('/index.html') || path.endsWith('index.html') || path.endsWith('living_tree_interactive.html');
     if (path.includes('admin')) {
       if (!isOwnerLoggedIn()) {
+        try {
+          sessionStorage.removeItem('rc_from_internal');
+          sessionStorage.setItem('rc_bounced_unauth', '1');
+        } catch (_) {}
         window.location.replace('index.html');
       }
       return;
     }
+    const isPrivacyPage = path.endsWith('/privacy.html') || path.endsWith('privacy.html');
+    const isNativeOrAppMode = (() => {
+      try {
+        if (search.includes('app=1') || search.includes('play=1')) return true;
+        if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) return true;
+        if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
+        if (window.navigator && window.navigator.standalone === true) return true;
+        if ((document.referrer || '').toLowerCase().startsWith('android-app://')) return true;
+        if (/;\s*wv\)/i.test(navigator.userAgent || '')) return true;
+      } catch (_) {}
+      return false;
+    })();
+    const isPublicBotPitApp = (path.endsWith('/shibuya_bot_pit.html') || path.endsWith('shibuya_bot_pit.html')) && isNativeOrAppMode;
+    if (isPrivacyPage || isPublicBotPitApp) {
+      return;
+    }
     if (!isHomePage) {
       if (!isAdminLoggedIn()) {
+        try {
+          sessionStorage.removeItem('rc_from_internal');
+          sessionStorage.setItem('rc_bounced_unauth', '1');
+        } catch (_) {}
         window.location.replace('index.html');
         return;
       }
@@ -1472,10 +1497,14 @@
     });
 
     updateTopPill();
-    const isIntroCurrentlyPlaying = Boolean(document.body && document.body.classList.contains('cinema-intro-active'));
-    if (!isIntroCurrentlyPlaying && isAdminLoggedIn() && typeof window.__rcUnlockFullSiteForAdmin === 'function') {
+    const hasAnyLogin = Boolean(
+      isAdminLoggedIn() ||
+      (localStorage.getItem('rc_current_user_v2') || '').trim() ||
+      (localStorage.getItem('rc_botpit_active_user_v1') || '').trim()
+    );
+    if (hasAnyLogin && typeof window.__rcUnlockFullSiteForAdmin === 'function') {
       window.__rcUnlockFullSiteForAdmin();
-    } else if (!isAdminLoggedIn() && typeof window.__rcLockSiteToTeaserMode === 'function' && document.body && document.body.classList.contains('rc-logged-in-home')) {
+    } else if (!hasAnyLogin && typeof window.__rcLockSiteToTeaserMode === 'function' && document.body && document.body.classList.contains('rc-logged-in-home')) {
       window.__rcLockSiteToTeaserMode();
     }
   }

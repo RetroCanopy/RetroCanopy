@@ -216,7 +216,12 @@ function initGamerIntro() {
             const isAdminFlag = localStorage.getItem('rc_is_admin_v1') === 'true';
             const adminEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim().toLowerCase();
             const adminDb = JSON.parse(localStorage.getItem('rc_admin_accounts_v2') || '{}') || {};
-            const isApprovedAdmin = Boolean(isAdminFlag && adminEmail && adminDb[adminEmail] && adminDb[adminEmail].status === 'Approved' && !adminDb[adminEmail].deleted);
+            const isOwnerEmail = adminEmail === 'josephcole001.ai@gmail.com' || adminEmail === 'josephcole001.a1@gmail.com';
+            const isApprovedAdmin = Boolean(
+                isAdminFlag &&
+                adminEmail &&
+                (isOwnerEmail || (adminDb[adminEmail] && adminDb[adminEmail].status === 'Approved' && !adminDb[adminEmail].deleted))
+            );
             if (!isApprovedAdmin) {
                 localStorage.removeItem('rc_is_admin_v1');
                 localStorage.removeItem('rc_current_admin_email_v1');
@@ -227,7 +232,19 @@ function initGamerIntro() {
             return false;
         }
     }
-    let TEASER_COMING_SOON_MODE = !isAdminSiteUnlocked();
+    function isAnyUserLoggedIn() {
+        try {
+            if (isAdminSiteUnlocked()) return true;
+            const hasPilotUser = Boolean(
+                (localStorage.getItem('rc_current_user_v2') || '').trim() ||
+                (localStorage.getItem('rc_botpit_active_user_v1') || '').trim()
+            );
+            return hasPilotUser;
+        } catch (_) {
+            return false;
+        }
+    }
+    let TEASER_COMING_SOON_MODE = !isAnyUserLoggedIn();
     const IS_LOCAL_DEV_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
     const fullPrologueSteps = [
@@ -882,8 +899,9 @@ function initGamerIntro() {
     const navType = navEntries.length > 0 ? navEntries[0].type : ((window.performance && performance.navigation && performance.navigation.type === 1) ? 'reload' : 'navigate');
     const isReload = navType === 'reload';
     const isBackForward = navType === 'back_forward';
-    const cameFromInternalPage = Boolean(window.__rcSkipIntroOnLoad);
+    const cameFromInternalPage = Boolean(isAnyUserLoggedIn() || window.__rcSkipIntroOnLoad);
     if (cameFromInternalPage) {
+        window.__rcIsLoggedIn = isAnyUserLoggedIn();
         window.__rcSkipIntroOnLoad = true;
         sequenceComplete = true;
         inPrologue = false;
@@ -3865,12 +3883,26 @@ function initGamerIntro() {
     }
 
     window.__rcUnlockFullSiteForAdmin = function () {
+        window.__rcIsLoggedIn = true;
+        window.__rcSkipIntroOnLoad = true;
+        window.__rcComingSoonPreview = false;
         TEASER_COMING_SOON_MODE = false;
         syncTeaserModePrologueState();
+        if (document.body) {
+            document.body.classList.remove('rc-coming-soon-preview');
+        }
+        if (heroContainer) {
+            heroContainer.classList.add('no-transition');
+        }
         skipEntireIntro();
+        if (typeof window.completeSwoopIntroImmediately === 'function') {
+            window.completeSwoopIntroImmediately();
+        }
     };
 
     window.__rcLockSiteToTeaserMode = function () {
+        window.__rcIsLoggedIn = false;
+        window.__rcSkipIntroOnLoad = false;
         TEASER_COMING_SOON_MODE = true;
         syncTeaserModePrologueState();
         friendsOnlyOrder.forEach((id) => {
@@ -4048,16 +4080,19 @@ function initGamerIntro() {
     let lastTime = null;
     state = cameFromInternalPage ? 'GREETING' : 'LOGO_ZOOM_OUT';
 
-    // Detect browser Reload vs. Returning to Home from another internal page:
-    // - Reloading the site (F5 / Ctrl+R) ALWAYS triggers the full intro animation!
-    // - Going back to the Home page from inside the site skips the intro!
-    if (!isReload && cameFromInternalPage) {
+    // Whenever someone is logged in, NEVER play the intro video or queue any intro animation (even on Reload).
+    if (isAnyUserLoggedIn() || window.__rcSkipIntroOnLoad || (!isReload && cameFromInternalPage)) {
         sessionStorage.removeItem('rc_from_internal');
+        window.__rcSkipIntroOnLoad = true;
+        window.__rcIsLoggedIn = isAnyUserLoggedIn();
         if (heroContainer) {
             heroContainer.classList.add('no-transition');
         }
         state = 'GREETING';
         skipEntireIntro();
+        if (typeof window.completeSwoopIntroImmediately === 'function') {
+            window.completeSwoopIntroImmediately();
+        }
         return;
     }
     if (isReload) {
@@ -4304,10 +4339,25 @@ function initGamerIntro() {
 
         if (introVideoEl) {
             try {
+                introVideoEl.classList.remove('video-fade-out');
                 introVideoEl.muted = true;
                 introVideoEl.defaultPlaybackRate = rate;
                 introVideoEl.playbackRate = rate;
+                if (introVideoEl.paused) {
+                    introVideoEl.play().catch(() => {});
+                }
             } catch (_) {}
+
+            if (!introVideoEl._playRetryBound) {
+                introVideoEl._playRetryBound = true;
+                const retryPlay = () => {
+                    if (!sequenceComplete && !window.__rcSkipIntroOnLoad && introVideoEl.paused) {
+                        try { introVideoEl.play().catch(() => {}); } catch (_) {}
+                    }
+                };
+                introVideoEl.addEventListener('loadeddata', retryPlay);
+                introVideoEl.addEventListener('canplay', retryPlay);
+            }
 
             if (!introVideoEl._endedBound) {
                 introVideoEl._endedBound = true;
@@ -4329,7 +4379,7 @@ function initGamerIntro() {
             }, holdMs);
         };
 
-        if (introVideoEl && !introVideoEl.paused && introVideoEl.readyState >= 3) {
+        if (introVideoEl && !introVideoEl.paused) {
             armSafetyTimer();
         } else if (introVideoEl) {
             introVideoEl.addEventListener('playing', armSafetyTimer, { once: true });
@@ -4516,6 +4566,7 @@ function initGamerIntro() {
     }
 
     window.addEventListener('keydown', (e) => {
+        if (isAnyUserLoggedIn() || window.__rcIsLoggedIn) return;
         const isF5 = (e.key === 'F5' || e.code === 'F5');
         const isCtrlR = ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'r' || e.key === 'R'));
         if (isF5 || isCtrlR) {
@@ -4540,6 +4591,10 @@ function initSubpageLofiMusic() {
         const curPath = (window.location.pathname || '').toLowerCase();
         const hasPilotLogin = Boolean(localStorage.getItem('rc_current_user_v2') || localStorage.getItem('rc_botpit_active_user_v1'));
         if (localStorage.getItem('rc_is_admin_v1') !== 'true' && !hasPilotLogin && !curPath.includes('shibuya_bot_pit')) {
+            try {
+                sessionStorage.removeItem('rc_from_internal');
+                sessionStorage.setItem('rc_bounced_unauth', '1');
+            } catch (_) {}
             window.location.replace('index.html');
             return;
         }
@@ -4677,18 +4732,60 @@ function initHomeShopScroller() {
     // =========================================================================
     window.RC_CENTERPIECE_SHOP_ITEMS = [
         {
-            id: 'rc-309',
-            plaque: 'WHITE & GOLD HOODIE • $160',
-            aria: 'White & Gold Hoodie — $160',
-            sprite: 'assets/ui/c1_items/c1_hoodie_back.png?v=233',
-            href: 'hoodie_preview.html?filter=all&side=back'
+            id: 'rc-hod-01-blk',
+            plaque: 'BLACK HOODIE #01 • $50',
+            aria: 'Black Hoodie #01 (Sovereign Sanctuary Back) — $50',
+            sprite: 'assets/merch/store_1994/hoodie_01_black_back.webp?v=247',
+            href: 'hoodie_preview.html?set=1&filter=hoodies&side=back'
         },
         {
-            id: 'rc-107',
-            plaque: 'WHITE & GOLD HAT • $85',
-            aria: 'White & Gold Valkyrie Hat — $85',
-            sprite: 'assets/ui/c1_items/c1_valkyrie_hat.png?v=233',
-            href: 'hat_preview.html?filter=all&focus=hat'
+            id: 'rc-hat-01-blk',
+            plaque: 'BLACK SNAPBACK #01 • $36',
+            aria: 'Black Snapback Hat #01 (3D Puff Gold) — $36',
+            sprite: 'assets/merch/store_1994/hat_01_black.webp?v=247',
+            href: 'hat_preview.html?set=1&filter=hats'
+        },
+        {
+            id: 'rc-hod-12-blk',
+            plaque: 'BLACK HOODIE #12 • $50',
+            aria: 'Black Hoodie #12 (Royal Rope-Diamond 19|94 Back) — $50',
+            sprite: 'assets/merch/store_1994/hoodie_12_black_back.webp?v=247',
+            href: 'hoodie_preview.html?set=12&filter=hoodies&side=back'
+        },
+        {
+            id: 'rc-hat-12-blk',
+            plaque: 'BLACK SNAPBACK #12 • $36',
+            aria: 'Black Snapback Hat #12 (Royal Diamond 19|94) — $36',
+            sprite: 'assets/merch/store_1994/hat_12_black.webp?v=247',
+            href: 'hat_preview.html?set=12&filter=hats'
+        },
+        {
+            id: 'rc-tee-18-blk',
+            plaque: 'BLACK TEE #18 • $30',
+            aria: 'Black Heavy Cotton Tee #18 (Worldwide Orbital Studio Back) — $30',
+            sprite: 'assets/merch/store_1994/shirt_18_black_back.webp?v=247',
+            href: 'hoodie_preview.html?set=18&filter=shirts&side=back'
+        },
+        {
+            id: 'rc-jog-18-blk',
+            plaque: 'BLACK JOGGERS #18 • $52',
+            aria: 'Black 10 oz. Heavyweight Joggers #18 (Worldwide Orbital Leg DTF) — $52',
+            sprite: 'assets/merch/store_1994/jogger_18_black_front.webp?v=247',
+            href: 'hoodie_preview.html?set=18&filter=joggers'
+        },
+        {
+            id: 'rc-hod-19-blk',
+            plaque: 'BLACK HOODIE #19 • $50',
+            aria: 'Black Hoodie #19 (Swiss-Grid Architectural 1994 Back) — $50',
+            sprite: 'assets/merch/store_1994/hoodie_19_black_back.webp?v=247',
+            href: 'hoodie_preview.html?set=19&filter=hoodies&side=back'
+        },
+        {
+            id: 'rc-hat-19-blk',
+            plaque: 'BLACK SNAPBACK #19 • $36',
+            aria: 'Black Snapback Hat #19 (12-Point Gold Compass Sunburst) — $36',
+            sprite: 'assets/merch/store_1994/hat_19_black.webp?v=247',
+            href: 'hat_preview.html?set=19&filter=hats'
         }
     ];
 
@@ -5056,19 +5153,15 @@ function initHomeShopScroller() {
     if (!track || !viewport) return;
 
     const shopCatalog = [
-        // Simplified Store ($1.00 Test Mode): Only White & 24K Gold Crowned Hoodie (RC-309) and White & 24K Gold Valkyrie Hat (RC-107)
-        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200', href: 'hoodie_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front - $1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_front.png?v=200', href: 'hoodie_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200', href: 'hoodie_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front - $1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_front.png?v=200', href: 'hoodie_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc05', title: 'White & 24K Gold Crowned Hoodie ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'CROWNED HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_back.png?v=200', href: 'hoodie_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc01', title: 'White & 24K Gold Hoodie (Front - $1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'ARCADE HOODIE ($1)', winOnly: false, img: 'assets/merch/hoodie_tier6_2f_front.png?v=200', href: 'hoodie_preview.html?idx=0&v=206' },
-        { styleClass: 'rc-game-style-arc09', title: 'White & 24K Gold Valkyrie Hat ($1.00)', titleTop: 'WHITE & 24K GOLD', titleMain: 'VALKYRIE HAT ($1)', winOnly: false, img: 'assets/merch/hat_tier6_valkyrie.png?v=200', href: 'hat_preview.html?idx=0&v=206' }
+        // Curated Black Edition Capsule (Concepts #01, #12, #18, #19)
+        { styleClass: 'rc-game-style-arc05', title: 'Black Hoodie #01 — Sovereign Sanctuary ($50)', titleTop: 'BLACK EDITION #01', titleMain: 'SOVEREIGN HOODIE ($50)', winOnly: false, img: 'assets/merch/store_1994/hoodie_01_black_back.webp?v=247', href: 'hoodie_preview.html?set=1&filter=hoodies&side=back' },
+        { styleClass: 'rc-game-style-arc09', title: 'Black Snapback Hat #01 ($36)', titleTop: 'BLACK EDITION #01', titleMain: 'SOVEREIGN HAT ($36)', winOnly: false, img: 'assets/merch/store_1994/hat_01_black.webp?v=247', href: 'hat_preview.html?set=1&filter=hats' },
+        { styleClass: 'rc-game-style-arc01', title: 'Black Hoodie #12 — Royal Diamond 19|94 ($50)', titleTop: 'BLACK EDITION #12', titleMain: 'ROYAL 19|94 HOODIE ($50)', winOnly: false, img: 'assets/merch/store_1994/hoodie_12_black_back.webp?v=247', href: 'hoodie_preview.html?set=12&filter=hoodies&side=back' },
+        { styleClass: 'rc-game-style-arc09', title: 'Black Snapback Hat #12 ($36)', titleTop: 'BLACK EDITION #12', titleMain: 'ROYAL 19|94 HAT ($36)', winOnly: false, img: 'assets/merch/store_1994/hat_12_black.webp?v=247', href: 'hat_preview.html?set=12&filter=hats' },
+        { styleClass: 'rc-game-style-arc05', title: 'Black Tee #18 — Worldwide Orbital ($30)', titleTop: 'BLACK EDITION #18', titleMain: 'ORBITAL TEE ($30)', winOnly: false, img: 'assets/merch/store_1994/shirt_18_black_back.webp?v=247', href: 'hoodie_preview.html?set=18&filter=shirts&side=back' },
+        { styleClass: 'rc-game-style-arc09', title: 'Black Joggers #18 — Worldwide Orbital ($52)', titleTop: 'BLACK EDITION #18', titleMain: 'ORBITAL JOGGERS ($52)', winOnly: false, img: 'assets/merch/store_1994/jogger_18_black_front.webp?v=247', href: 'hoodie_preview.html?set=18&filter=joggers' },
+        { styleClass: 'rc-game-style-arc01', title: 'Black Hoodie #19 — Architectural 1994 ($50)', titleTop: 'BLACK EDITION #19', titleMain: 'ARCHITECTURAL HOODIE ($50)', winOnly: false, img: 'assets/merch/store_1994/hoodie_19_black_back.webp?v=247', href: 'hoodie_preview.html?set=19&filter=hoodies&side=back' },
+        { styleClass: 'rc-game-style-arc09', title: 'Black Snapback Hat #19 ($36)', titleTop: 'BLACK EDITION #19', titleMain: 'ARCHITECTURAL HAT ($36)', winOnly: false, img: 'assets/merch/store_1994/hat_19_black.webp?v=247', href: 'hat_preview.html?set=19&filter=hats' }
     ];
 
     function toCarouselThumb(rawUrl) {

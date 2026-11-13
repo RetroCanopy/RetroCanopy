@@ -42,11 +42,11 @@ Golden Tickets (🎟️) are earned strictly 1 at a time (+1 🎟️ per Live Pv
 ---
 
 ## 3. App Review Demo Account (Paste into "App Review Information")
-Give Apple/Google reviewers these credentials so they can test immediately:
-- **Username**: `REVIEWER`
-- **Password**: `pilot123`
+Before submitting in Google Play Console, register a real test Pilot account in the game (or use an existing non-owner test account) and paste its live credentials into Play Console's **App access** section:
+- **Username**: `REVIEWER` *(create this account in-game via the Login modal before submitting)*
+- **Passcode**: *(your chosen 6+ character passcode for the `REVIEWER` Pilot account)*
 - **Reviewer Notes**:
-  > "Log in with Username `REVIEWER` and Password `pilot123` (or create any new callsign in 1 click). You can switch between 🤖 SIMULATED and 🎮 CONTROLLED combat in the top bar, customize the 6-slot BattleBot in the Garage, battle in Quests 1-10 or Live PvP, test the profanity-filtered chat with 🚩 Report and 🚫 Block buttons, and test permanent account deletion via the 🗑️ DELETE ACCOUNT button in the top bar."
+  > "Log in with Username `REVIEWER` and the passcode provided above (or create any new callsign in 1 click). You can switch between 🤖 SIMULATED and 🎮 CONTROLLED combat in the top bar, customize the 6-slot BattleBot in the Garage, battle in Quests 1-10 or Live PvP, test the profanity-filtered chat with 🚩 Report and 🚫 Block buttons, and test permanent account deletion via `⚙️ ACCOUNT` -> `🗑️ Permanently Delete Account & Cloud Data` in the top bar."
 
 ---
 
@@ -69,12 +69,12 @@ All required dimensions have been exported and verified in `store_assets/`:
 
 ---
 
-## 6. In-App Purchase Product IDs (When Enabling Real-Money Diamond Packs)
-Create these 5 **Consumable** In-App Purchase products in App Store Connect & Google Play Console:
-| In-Game Pack ID | Store Product ID | Type | Price | Diamonds Credited |
+## 6. Direct Google Play Billing Product IDs (Consumable In-App Products)
+Create these exact 5 **One-time consumable** products in **Google Play Console -> Monetize -> Products -> In-app products** (do **not** add a `com.retrocanopy.shibuyabotpit.` prefix — enter the exact Product ID strings shown below so `@capgo/native-purchases` and the `verify-play-purchase` Edge Function match):
+| In-Game Pack ID | Google Play Product ID | Type | Price | Diamonds Credited |
 | :--- | :--- | :--- | :--- | :--- |
-| `pack_starter` | `com.retrocanopy.shibuyabotpit.pack_starter` | Consumable | \$0.99 | 500 💎 |
-| `pack_pit_fighter` | `com.retrocanopy.shibuyabotpit.pack_pit_fighter` | Consumable | \$2.99 | 1,650 💎 (1,500 + 150) |
-| `pack_champion_crate` | `com.retrocanopy.shibuyabotpit.pack_champion_crate` | Consumable | \$4.99 | 4,200 💎 (3,500 + 700) |
-| `pack_shibuya_king` | `com.retrocanopy.shibuyabotpit.pack_shibuya_king` | Consumable | \$9.99 | 10,000 💎 (8,000 + 2,000) |
-| `pack_founders_vault` | `com.retrocanopy.shibuyabotpit.pack_founders_vault` | Consumable | \$19.99 | 25,000 💎 (20,000 + 5,000) |
+| `pack_starter` | `pack_starter` | Consumable (Consume in-app via server) | \$1.99 | 1,000 💎 |
+| `pack_pit_fighter` | `pack_pit_fighter` | Consumable (Consume in-app via server) | \$2.99 | 1,650 💎 (1,500 + 150) |
+| `pack_champion_crate` | `pack_champion_crate` | Consumable (Consume in-app via server) | \$4.99 | 4,200 💎 (3,500 + 700) |
+| `pack_shibuya_king` | `pack_shibuya_king` | Consumable (Consume in-app via server) | \$9.99 | 10,000 💎 (8,000 + 2,000) |
+| `pack_founders_vault` | `pack_founders_vault` | Consumable (Consume in-app via server) | \$19.99 | 25,000 💎 (20,000 + 5,000) |

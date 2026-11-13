@@ -335,7 +335,7 @@
 
   const STRIPE_EDGE_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout';
   const ACTIVE_QUOTE_ID_KEY = 'rc_active_bulk_ticket_id_v6';
-  const DELETED_QUOTES_KEY = 'rc_bulk_deleted_quote_ids_v1';
+  const DELETED_QUOTES_KEY = 'rc_bulk_deleted_quote_ids_v2';
 
   function getDeletedQuoteIds() {
     try {
@@ -4014,9 +4014,26 @@
   // =========================================================================
   function getSavedQuotes() {
     try {
-      const v5 = JSON.parse(localStorage.getItem(SAVED_QUOTES_KEY) || 'null');
-      if (Array.isArray(v5)) return v5;
-      return [];
+      const merged = new Map();
+      const allKeys = [SAVED_QUOTES_KEY, ...LEGACY_QUOTES_KEYS];
+      for (const k of allKeys) {
+        const arr = JSON.parse(localStorage.getItem(k) || 'null');
+        if (Array.isArray(arr)) {
+          for (const item of arr) {
+            if (!item || typeof item !== 'object') continue;
+            const id = item.quoteId || item.ticketId;
+            if (!id) continue;
+            if (!merged.has(id)) {
+              merged.set(id, item);
+            } else {
+              const existing = merged.get(id);
+              if (!existing.snapshot && item.snapshot) existing.snapshot = item.snapshot;
+              if (!existing.projectedPreviewJpeg && item.projectedPreviewJpeg) existing.projectedPreviewJpeg = item.projectedPreviewJpeg;
+            }
+          }
+        }
+      }
+      return Array.from(merged.values());
     } catch (_) {
       return [];
     }

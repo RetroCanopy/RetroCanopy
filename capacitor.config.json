@@ -1,11 +1,14 @@
 {
   "appId": "com.retrocanopy.shibuyabotpit",
   "appName": "Shibuya Bot Pit",
-  "webDir": ".",
-  "bundledWebRuntime": false,
+  "webDir": "app_shell",
   "server": {
     "url": "https://retrocanopy.com/shibuya_bot_pit.html?app=1",
+    "androidScheme": "https",
     "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false
   },
   "plugins": {
     "SplashScreen": {

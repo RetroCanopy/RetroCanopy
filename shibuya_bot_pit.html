@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>SHIBUYA BOT PIT — 3D BattleBots Arena, Live PvP & 6-Slot Upgrade Garage</title>
   <link rel="icon" type="image/jpeg" href="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" />
   <link rel="apple-touch-icon" href="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" />
   <meta property="og:title" content="SHIBUYA BOT PIT — 3D BattleBots Arena" />
-  <meta property="og:description" content="Build your 6-slot 3D BattleBot, wager Diamonds in 3x3:00 UFC-style rounds, spectate live fights, and chat in the Shibuya Pit!" />
+  <meta property="og:description" content="Build your 6-slot 3D BattleBot, set Diamond Arena Stakes in 3x3:00 rounds, spectate live fights, and chat in the Shibuya Pit!" />
   <meta property="og:image" content="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6355,16 +6355,690 @@
         color: #fda4af;
       }
 
+    /* === MOBILE UI POLISH, APP SHELL & PLAY COMPLIANCE OVERRIDES === */
+    button, a, input, select, label {
+      touch-action: manipulation;
+    }
+    .touch-joystick-zone,
+    #btnArenaCharge,
+    #btnArenaShoot,
+    #battleCanvas {
+      touch-action: none !important;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body.rc-app-shell #btnHomeTop,
+    body.rc-app-shell #btnGetAppTop,
+    body.rc-app-shell #pilotAuthBackHomeRow {
+      display: none !important;
+    }
+    body.rc-hide-paid-iap #btnTopBuyDiamonds,
+    body.rc-hide-paid-iap #btnShopBuyDiamonds {
+      display: none !important;
+    }
+
+    .pilot-terms-check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.72rem;
+      line-height: 1.35;
+      color: #cbd5e1;
+      cursor: pointer;
+    }
+    .pilot-terms-check-row input[type="checkbox"] {
+      width: 19px;
+      height: 19px;
+      margin-top: 1px;
+      accent-color: #38bdf8;
+      flex-shrink: 0;
+    }
+    .pilot-inline-link-btn {
+      background: none;
+      border: none;
+      color: #38bdf8;
+      text-decoration: underline;
+      font-weight: 800;
+      font-size: inherit;
+      font-family: inherit;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    /* Custom Glassmorphic In-App Dialog & Account/Safety Modals */
+    .rc-custom-dialog-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 120000;
+      background: rgba(4, 7, 16, 0.86);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+      overflow-y: auto;
+    }
+    .rc-custom-dialog-backdrop.active {
+      display: flex;
+    }
+    .rc-custom-dialog-card {
+      width: 100%;
+      max-width: 440px;
+      max-height: calc(100dvh - 32px);
+      overflow-y: auto;
+      background: linear-gradient(180deg, #131c31 0%, #090d18 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.55);
+      border-radius: 18px;
+      padding: 18px;
+      color: #e2e8f0;
+      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.92);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: auto;
+    }
+    .rc-custom-dialog-card.danger {
+      border-color: rgba(244, 63, 94, 0.65);
+    }
+    .rc-custom-dialog-title {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: #fbbf24;
+      letter-spacing: 0.5px;
+    }
+    .rc-custom-dialog-card.danger .rc-custom-dialog-title {
+      color: #fda4af;
+    }
+    .rc-custom-dialog-msg {
+      font-size: 0.90rem;
+      line-height: 1.45;
+      color: #cbd5e1;
+      white-space: pre-line;
+      word-break: break-word;
+    }
+    .rc-custom-dialog-input {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(56, 189, 248, 0.45);
+      background: #060912;
+      color: #fff;
+      font-size: 0.92rem;
+      font-family: inherit;
+    }
+    .rc-custom-dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+    .rc-dialog-btn {
+      min-height: 42px;
+      min-width: 88px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .rc-dialog-btn.primary {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      color: #041019;
+      border-color: #7dd3fc;
+    }
+    .rc-dialog-btn.danger {
+      background: linear-gradient(180deg, #e11d48 0%, #9f1239 100%);
+      color: #fff;
+      border-color: #fda4af;
+    }
+    .rc-safety-item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rc-safety-action-btn {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      background: rgba(15, 23, 42, 0.92);
+      color: #e2e8f0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-align: left;
+    }
+    .rc-safety-action-btn.danger {
+      border-color: rgba(244, 63, 94, 0.55);
+      background: rgba(136, 19, 55, 0.25);
+      color: #fda4af;
+    }
+    .rc-blocked-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 0.82rem;
+    }
+    .rc-blocked-unblock-btn {
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(52, 211, 153, 0.55);
+      background: rgba(16, 185, 129, 0.16);
+      color: #6ee7b7;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Free Arena Diamond Progression Grid (Shown in Android App without Play Billing) */
+    .diamond-free-earn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+    }
+    .diamond-earn-milestone-card {
+      background: linear-gradient(180deg, rgba(16, 26, 48, 0.96) 0%, rgba(9, 14, 26, 0.98) 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.35);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .diamond-earn-milestone-card h4 {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.74rem;
+      color: #fde047;
+    }
+    .diamond-earn-milestone-card p {
+      margin: 0;
+      font-size: 0.80rem;
+      color: #cbd5e1;
+      line-height: 1.35;
+    }
+
+    /* Responsive Mobile & Compact Phone Polishing (360px - 960px) */
+    @media (max-width: 960px) {
+      .top-pilot-bar {
+        padding: 6px 8px !important;
+        gap: 6px !important;
+        padding-top: max(6px, env(safe-area-inset-top)) !important;
+      }
+      .pilot-id-cluster {
+        width: 100% !important;
+        gap: 5px !important;
+        justify-content: flex-start !important;
+        flex-wrap: wrap !important;
+      }
+      .pilot-id-cluster img {
+        width: 30px !important;
+        height: 30px !important;
+        border-radius: 8px !important;
+      }
+      .pilot-badge,
+      .elo-pill,
+      .record-pill,
+      .scrap-top-pill,
+      .cloud-save-pill {
+        font-size: 0.62rem !important;
+        padding: 4px 8px !important;
+        min-height: 28px !important;
+        white-space: nowrap !important;
+      }
+      .top-nav-pill {
+        min-height: 36px !important;
+        padding: 6px 9px !important;
+        font-size: 0.60rem !important;
+        white-space: nowrap !important;
+      }
+      .control-mode-toggle {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 5px !important;
+        padding: 3px 6px !important;
+        margin: 0 !important;
+      }
+      .ctrl-toggle-label {
+        font-size: 0.54rem !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+      }
+      .ctrl-mode-btn {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        min-height: 36px !important;
+        padding: 6px 5px !important;
+        font-size: 0.58rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+      .mode-switcher {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 5px !important;
+      }
+      .mode-switcher .mode-btn,
+      .mode-switcher .top-nav-pill {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 38px !important;
+        padding: 6px 4px !important;
+        font-size: 0.58rem !important;
+        justify-content: center !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+      .broadcast-header-left {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+      }
+      .broadcast-count-pill,
+      .home-tab-chevron {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+      }
+      .mobile-bottom-nav {
+        padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
+      }
+      .mob-nav-btn {
+        min-height: 44px !important;
+        padding: 6px 4px !important;
+        font-size: 0.62rem !important;
+      }
+      .btn-chat-ugc,
+      .btn-hype-emote,
+      .pit-chat-send-btn {
+        min-height: 36px !important;
+        min-width: 36px !important;
+      }
+
+      /* Auth Gate Modal Mobile Scroll & Safe Padding */
+      .pilot-auth-gate-backdrop {
+        align-items: flex-start !important;
+        overflow-y: auto !important;
+        padding: max(10px, env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom)) !important;
+      }
+      .pilot-auth-card {
+        margin: auto !important;
+        max-height: calc(100dvh - 22px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 14px 14px !important;
+        gap: 10px !important;
+      }
+      .pilot-auth-header img {
+        width: 52px !important;
+        height: 52px !important;
+        border-radius: 14px !important;
+        margin-bottom: 2px !important;
+      }
+      .pilot-auth-header h2 {
+        font-size: 1.05rem !important;
+      }
+      .pilot-auth-header p {
+        font-size: 0.78rem !important;
+        line-height: 1.32 !important;
+      }
+      .pilot-auth-tab,
+      .pilot-auth-submit,
+      .pilot-saved-chip {
+        min-height: 40px !important;
+      }
+      .pilot-saved-chips {
+        max-height: 112px !important;
+        overflow-y: auto !important;
+        padding-right: 4px !important;
+      }
+
+      /* Map Selector Modal Fits Cleanly Above Fold on Mobile */
+      .fs-map-modal-backdrop {
+        padding: 8px !important;
+      }
+      .fs-map-shell {
+        max-height: calc(100dvh - 16px) !important;
+        overflow-y: auto !important;
+        padding: 10px !important;
+        gap: 8px !important;
+      }
+      .fs-map-topbar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 6px !important;
+      }
+      .fs-map-top-title {
+        font-size: 0.74rem !important;
+        line-height: 1.25 !important;
+      }
+      .fs-map-stage {
+        gap: 0 !important;
+      }
+      .fs-map-stage .fs-map-arrow-btn {
+        display: none !important;
+      }
+      .fs-map-viewport {
+        max-height: 215px !important;
+        width: 100% !important;
+      }
+      .fs-map-info-panel {
+        padding: 10px !important;
+        gap: 6px !important;
+      }
+      .fs-map-name {
+        font-size: 0.88rem !important;
+      }
+      .fs-map-desc {
+        font-size: 0.76rem !important;
+        line-height: 1.3 !important;
+      }
+      .fs-map-actions-row {
+        gap: 6px !important;
+      }
+      .fs-map-actions-row .btn-pre-step-back,
+      .fs-map-select-btn {
+        min-height: 44px !important;
+        font-size: 0.68rem !important;
+        padding: 8px 10px !important;
+      }
+
+      /* 3D Shop Modal Mobile Clean Stacking + 2x3 Full-Visible Tabs */
+      .shop-modal {
+        max-height: calc(100dvh - 14px) !important;
+        overflow-y: auto !important;
+      }
+      .shop-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 10px 12px !important;
+      }
+      .shop-title-block h2 {
+        font-size: 0.88rem !important;
+        line-height: 1.2 !important;
+      }
+      .shop-header-actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+        justify-content: space-between !important;
+      }
+      .shop-tabs {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        padding: 8px 10px !important;
+        overflow: visible !important;
+      }
+      .shop-tabs .shop-tab {
+        width: 100% !important;
+        min-height: 38px !important;
+        padding: 6px 5px !important;
+        font-size: 0.58rem !important;
+        text-align: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+      .btn-close-shop {
+        min-height: 38px !important;
+        padding: 7px 12px !important;
+      }
+
+      /* Skill Tree Modal Mobile Clean Header + Full-Width Single-Line CTA */
+      .st-top-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 10px 12px !important;
+      }
+      .st-top-title-group h2 {
+        font-size: 0.92rem !important;
+      }
+      #stHeaderSub {
+        display: none !important;
+      }
+      .st-top-currencies {
+        width: 100% !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+      }
+      .st-insp-actions {
+        width: 100% !important;
+        display: flex !important;
+      }
+      .btn-st-upgrade {
+        width: 100% !important;
+        min-height: 46px !important;
+        font-size: 0.70rem !important;
+        white-space: nowrap !important;
+        padding: 10px 12px !important;
+      }
+      .st-mob-cat-row button,
+      .st-mob-branch-row button {
+        min-height: 36px !important;
+      }
+
+      /* Diamond Store Header Clean Full-Width Mobile Wrap */
+      .diamond-store-top {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+      }
+      .diamond-store-title h2 {
+        font-size: 0.90rem !important;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .ctrl-toggle-label {
+        display: none !important;
+      }
+    }
+
+    /* === COMBAT ARENA HUD & ZERO-OVERLAP MOBILE PLAY MODE === */
+    body.mobile-play-active .arena-hud {
+      top: 6px !important;
+      left: max(10px, env(safe-area-inset-top, 10px)) !important;
+      right: max(10px, env(safe-area-inset-bottom, 10px)) !important;
+      gap: 6px !important;
+      align-items: flex-start !important;
+    }
+    body.mobile-play-active .fighter-bar-card {
+      min-width: 0 !important;
+      padding: 5px 8px !important;
+    }
+    body.mobile-play-active .fighter-bar-card .f-row {
+      gap: 6px !important;
+      align-items: center !important;
+    }
+    body.mobile-play-active #hudPNameWrap,
+    body.mobile-play-active #hudENameWrap {
+      min-width: 0 !important;
+      flex: 1 1 auto !important;
+      overflow: hidden !important;
+    }
+    body.mobile-play-active #hudPName,
+    body.mobile-play-active #hudEName {
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      max-width: 100% !important;
+      font-size: 0.62rem !important;
+    }
+    body.mobile-play-active #hudPHp,
+    body.mobile-play-active #hudEHp {
+      white-space: nowrap !important;
+      flex-shrink: 0 !important;
+      font-size: 0.62rem !important;
+      font-weight: 900 !important;
+    }
+    body.mobile-play-active .center-clock {
+      padding: 4px 10px !important;
+      min-width: 112px !important;
+    }
+    body.mobile-play-active .mobile-battle-corner-bar {
+      top: auto !important;
+      bottom: 8px !important;
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) !important;
+      z-index: 38 !important;
+      flex-direction: row !important;
+      gap: 5px !important;
+      padding: 4px 7px !important;
+      border-radius: 999px !important;
+      background: rgba(5, 8, 16, 0.88) !important;
+      border: 1px solid rgba(56, 189, 248, 0.38) !important;
+      backdrop-filter: blur(8px) !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.72) !important;
+      max-width: calc(100% - 210px) !important;
+      flex-wrap: nowrap !important;
+      justify-content: center !important;
+    }
+    body.mobile-play-active .btn-mobile-corner-icon {
+      min-height: 36px !important;
+      min-width: 44px !important;
+      padding: 5px 8px !important;
+      font-size: 0.60rem !important;
+      white-space: nowrap !important;
+      border-radius: 999px !important;
+    }
+    body.mobile-play-active .manual-control-hud {
+      bottom: 8px !important;
+      left: max(10px, env(safe-area-inset-top, 10px)) !important;
+      right: max(10px, env(safe-area-inset-bottom, 10px)) !important;
+    }
+    body.mobile-play-active.mobile-chat-open #pitBroadcastDeck {
+      top: 56px !important;
+      bottom: 50px !important;
+      left: max(10px, env(safe-area-inset-top, 10px)) !important;
+      width: min(370px, calc(100% - 20px)) !important;
+    }
+    body.mobile-play-active #pitBroadcastDeck .pit-comms-tab-btn,
+    body.mobile-play-active #pitBroadcastDeck .btn-close-mobile-chat {
+      min-height: 38px !important;
+      white-space: nowrap !important;
+    }
+    body.mobile-play-active #pitBroadcastDeck .pit-comms-tab-btn {
+      font-size: 0.60rem !important;
+      padding: 6px 8px !important;
+    }
+    /* Pass 2 Visual Micro-Polishes */
+    .diamond-packs-grid.hidden,
+    .diamond-free-earn-grid.hidden {
+      display: none !important;
+    }
+    @media (max-width: 960px) {
+      .sidebar-top-row .bot-id-group {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+      }
+      .rig-lvl-pill {
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        border-radius: 999px !important;
+        padding: 4px 10px !important;
+      }
+      .fs-map-dots-row {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 5px !important;
+      }
+      .fs-map-dot-chip {
+        width: 100% !important;
+        min-height: 36px !important;
+        padding: 5px 8px !important;
+        font-size: 0.54rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        justify-content: center !important;
+      }
+      .fs-map-dot-chip:last-child:nth-child(odd) {
+        grid-column: span 2 !important;
+      }
+      .wager-chip,
+      .friends-subnav-btn,
+      .f-act-btn,
+      .btn-chat-send,
+      .pit-comms-tab-btn,
+      .btn-buy-equip,
+      .btn-preview-rig {
+        min-height: 36px !important;
+      }
+      #pitChatInput {
+        min-height: 38px !important;
+      }
+      body.mobile-play-active #pitBroadcastDeck .btn-close-mobile-chat {
+        min-height: 36px !important;
+        min-width: 38px !important;
+        padding: 4px 10px !important;
+      }
+      body.mobile-play-active.mobile-chat-open #pitBroadcastDeck {
+        top: 52px !important;
+        bottom: 56px !important;
+      }
+      #pilotAuthGateBackdrop button[onclick="openPrivacyAndTermsModal()"],
+      #pilotAuthGateBackdrop button[onclick="promptDeletePilotAccount()"] {
+        min-height: 36px !important;
+        padding: 6px 10px !important;
+      }
+    }
+    @media (max-width: 390px) {
+      .top-nav-pill {
+        padding: 5px 7px !important;
+        font-size: 0.56rem !important;
+      }
+    }
   </style>
 </head>
 <body>
+
 
   <!-- CLEAN, FUN ARCADE TOP BAR WITH LOGIN ACCOUNT & NAVIGATION -->
   <header class="top-pilot-bar">
     <div class="pilot-id-cluster">
       <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" alt="Shibuya Bot Pit App Icon" style="width:36px;height:36px;border-radius:10px;border:1.5px solid #fbbf24;box-shadow:0 0 12px rgba(251,191,36,0.45);object-fit:cover;" />
-      <a href="index.html" class="top-nav-pill" title="Return to Retrocanopy Home">🏠 HOME</a>
-      <button type="button" class="top-nav-pill" style="background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;border-color:#fde047;" onclick="window.__openBotPitAppOverlay(event)" title="Download & Install Shibuya Bot Pit App">📲 GET APP</button>
+      <a href="index.html" class="top-nav-pill" id="btnHomeTop" title="Return to Retrocanopy Home">🏠 HOME</a>
+      <button type="button" class="top-nav-pill" id="btnGetAppTop" style="background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;border-color:#fde047;" onclick="window.__openBotPitAppOverlay(event)" title="Download & Install Shibuya Bot Pit App">📲 GET APP</button>
       <div class="pilot-badge" id="pilotAccountBadge" onclick="openPilotAuthGateModal()" title="Logged-In Pilot Account">
         <span class="pilot-status-dot"></span>
         <span class="pilot-callsign" id="pilotCallsignDisplay">🔒 NOT LOGGED IN</span>
@@ -6373,15 +7047,15 @@
       <div class="record-pill" id="pilotRecordDisplay">⚔️ 0W - 0L</div>
       <div class="elo-pill" id="pilotXpDisplay" style="border-color:rgba(56,189,248,0.45);color:#38bdf8;" title="Battle CPU Bots to earn XP — every XP converts into Diamonds!">⚡ 0 XP</div>
       <div class="elo-pill" id="pilotTicketsDisplay" onclick="openPrivacyAndTermsModal()" style="border-color:rgba(251,191,36,0.55);color:#fde047;cursor:pointer;" title="Golden Tickets are won strictly 1 at a time from Live PvP Victories (never sold for cash or Diamonds)!">🎟️ 0 PVP TICKETS</div>
-      <div class="scrap-top-pill" id="topScrapDisplay" onclick="openBuyDiamondsModal()" style="cursor:pointer;" title="Click to Purchase Diamonds">💎 0</div>
-      <button type="button" class="top-nav-pill" style="background:linear-gradient(180deg,#38bdf8 0%,#0284c7 100%);color:#041019;border-color:#7dd3fc;font-weight:900;" onclick="openBuyDiamondsModal()" title="Purchase Diamonds in-game">💎 BUY DIAMONDS</button>
+      <div class="scrap-top-pill" id="topScrapDisplay" onclick="openBuyDiamondsModal()" style="cursor:pointer;" title="View Diamond Vault &amp; Arena Rewards">💎 0</div>
+      <button type="button" class="top-nav-pill" id="btnTopBuyDiamonds" style="background:linear-gradient(180deg,#38bdf8 0%,#0284c7 100%);color:#041019;border-color:#7dd3fc;font-weight:900;" onclick="openBuyDiamondsModal()" title="Purchase or Earn Diamonds">💎 BUY DIAMONDS</button>
       <button type="button" class="top-nav-pill friends-top-btn" id="topFriendsNavBtn" onclick="openFriendsCommsTab()" title="Open Friends List, Online/Offline Status &amp; Private 1-on-1 Chats">
-        <span>👥 FRIENDS &amp; CHATS</span>
+        <span>👥 FRIENDS</span>
         <span class="friends-online-dot-pill" id="topFriendsOnlineBadge">🟢 0</span>
         <span class="social-unread-pill hidden" id="topFriendsUnreadBadge">0</span>
       </button>
       <button type="button" class="top-nav-pill" id="btnSoundToggle" onclick="BotPitAudio.toggleMute()" style="border-color:rgba(52,211,153,0.5);color:#34d399;font-weight:900;" title="Toggle Arena Combat Sound & Audio FX">🔊 SOUND: ON</button>
-      <button type="button" class="top-nav-pill" id="btnDeletePilotCluster" onclick="promptDeletePilotAccount()" style="display:inline-flex !important;background:rgba(244,63,94,0.16);border-color:rgba(244,63,94,0.55);color:#fda4af;font-weight:800;" title="Permanently Delete Your Pilot Account &amp; Cloud Data">🗑️ DELETE ACCOUNT</button>
+      <button type="button" class="top-nav-pill" id="btnAccountSafetyTop" onclick="openAccountSafetyMenuModal()" style="background:rgba(15,23,42,0.92);border-color:rgba(148,163,184,0.55);color:#e2e8f0;font-weight:800;" title="Pilot Account, Blocked Users, Privacy &amp; Delete Account">⚙️ ACCOUNT</button>
       <div class="cloud-save-pill" id="cloudSyncBadge">☁️ SAVED</div>
     </div>
 
@@ -6409,17 +7083,11 @@
       <button class="mode-btn" style="border-color:rgba(251,191,36,0.65);color:#fde047;" onclick="openFullScreenMapSelector()" title="Open Full-Screen Map Selector (7 Arenas)">
         🗺️ MAPS (7)
       </button>
-      <button class="mode-btn" style="background:linear-gradient(180deg,#fbbf24 0%,#b45309 100%);color:#09060d;border-color:#fde047;font-weight:900;" onclick="openSkillTreeModal()" title="Open Shibuya Syndicate Skill Tree (5 Tabs · 135 Upgrades)">
+      <button class="mode-btn" id="modeBtnSkillTree" style="background:linear-gradient(180deg,#fbbf24 0%,#b45309 100%);color:#09060d;border-color:#fde047;font-weight:900;" onclick="openSkillTreeModal()" title="Open Shibuya Syndicate Skill Tree (5 Tabs · 135 Upgrades)">
         🌳 SKILL TREE
       </button>
-      <button class="mode-btn" id="modeBtnFriends" onclick="openFriendsCommsTab()" title="Open Friends List, Online Status &amp; Private 1-on-1 Chats">
-        👥 FRIENDS &amp; CHATS
-      </button>
       <button class="top-nav-pill logout-btn" id="btnLogoutPilot" onclick="logoutPilotAccount()" title="Log Out or Switch Pilot Account">
-        🔒 LOG OUT / SWITCH
-      </button>
-      <button class="top-nav-pill" id="btnDeletePilotTop" onclick="promptDeletePilotAccount()" style="background:rgba(244,63,94,0.16);border-color:rgba(244,63,94,0.55);color:#fda4af;font-weight:800;" title="Permanently Delete Your Pilot Account &amp; Cloud Data">
-        🗑️ DELETE ACCOUNT
+        🔒 LOG OUT
       </button>
     </div>
   </header>
@@ -6647,7 +7315,7 @@
             <div class="ufc-round-badge" id="hudRoundTitle">🥊 ROUND 1 OF 3</div>
             <div class="val" id="hudClock">1:30</div>
             <div class="tag" id="hudSawStatus" style="margin-top:2px;">CENTER SAW: OFF</div>
-            <div class="hud-wager-pot" id="hudWagerPot">🎰 POT: 💎 500</div>
+            <div class="hud-wager-pot" id="hudWagerPot">🏆 BOUNTY: 💎 500</div>
           </div>
 
           <div class="fighter-bar-card enemy">
@@ -6813,7 +7481,7 @@
             <div class="live-queue-box" id="livePvpQueueBox">
               <div class="live-radar-spinner"></div>
               <div class="live-queue-status" id="liveQueueStatusTxt">📡 SEARCHING FOR LIVE ONLINE PLAYER...</div>
-              <div class="live-queue-sub" id="liveQueueSubTxt">Broadcasting your 6-Slot Rig &amp; Wager on Supabase Realtime...</div>
+              <div class="live-queue-sub" id="liveQueueSubTxt">Broadcasting your 6-Slot Rig &amp; Arena Stake on Supabase Realtime...</div>
               <div class="live-queue-actions">
                 <button type="button" class="btn-queue-action instant" onclick="fallbackToCloudPilotPvp()">⚡ BATTLE CLOUD PILOT NOW</button>
                 <button type="button" class="btn-queue-action" onclick="cancelLivePvpSearch()">✕ CANCEL</button>
@@ -6913,7 +7581,7 @@
                 <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('🔥', '🔥 PURE FIRE!')">🔥</button>
                 <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚙️', '⚙️ SAW SHRED!')">⚙️</button>
                 <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💀', '💀 BRUTAL KO!')">💀</button>
-                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💎', '💎 HIGH ROLLER!')">💎</button>
+                <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('💎', '💎 APEX PLAY!')">💎</button>
                 <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('⚔️', '⚔️ CLASH!')">⚔️</button>
                 <button type="button" class="btn-hype-emote" onclick="sendPitHypeReaction('👑', '👑 CHAMPION!')">👑</button>
               </div>
@@ -7177,8 +7845,8 @@
         <div class="shop-header-actions">
           <div class="shop-toast-banner" id="shopToastBanner">✅ UPGRADE PURCHASED & ATTACHED!</div>
           <div class="shop-scrap-vault" id="shopScrapBalance">💎 0 DIAMONDS</div>
-          <button class="shop-tab" onclick="openBuyDiamondsModal()" style="background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;border-color:#fde047;font-weight:900;">💎 BUY DIAMONDS</button>
-          <button class="shop-tab" onclick="resetShopInventory()" style="color:#fb7185;" title="Reset owned upgrades to 0 Diamonds">🔄 RESET PURCHASES</button>
+          <button class="shop-tab" id="btnShopBuyDiamonds" onclick="openBuyDiamondsModal()" style="background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;border-color:#fde047;font-weight:900;">💎 BUY DIAMONDS</button>
+          <button class="shop-tab" id="btnShopResetPurchases" onclick="resetShopInventory()" style="color:#fb7185;" title="Reset owned upgrades to 0 Diamonds">🔄 RESET RIG</button>
           <button class="btn-close-shop" onclick="closeShopModal()">✕ CLOSE</button>
         </div>
       </div>
@@ -7260,6 +7928,10 @@
           <label for="botpitRegPass">PASSWORD (4+ CHARACTERS)</label>
           <input type="password" id="botpitRegPass" placeholder="Create a password" autocomplete="new-password" required />
         </div>
+        <label class="pilot-terms-check-row">
+          <input type="checkbox" id="botpitRegTermsChk" required />
+          <span>I am <strong>13+ years old</strong> and agree to the <button type="button" class="pilot-inline-link-btn" onclick="event.preventDefault();openPrivacyAndTermsModal()">Privacy Policy, Terms of Use &amp; Zero-Tolerance Conduct Rules</button>.</span>
+        </label>
         <button type="submit" class="pilot-auth-submit" id="pilotRegSubmitBtn">🤖 CREATE ACCOUNT &amp; PLAY NOW</button>
       </form>
 
@@ -7279,7 +7951,7 @@
         <button type="button" onclick="promptDeletePilotAccount()" style="background:rgba(244,63,94,0.14);border:1px solid rgba(244,63,94,0.45);border-radius:6px;color:#fda4af;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:800;padding:4px 8px;">🗑️ DELETE ACCOUNT</button>
       </div>
 
-      <div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.75rem;">
+      <div id="pilotAuthBackHomeRow" style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.75rem;">
         <a href="index.html" style="color:#38bdf8;text-decoration:none;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;">&larr; BACK TO HOME</a>
       </div>
     </div>
@@ -7561,7 +8233,7 @@
         const existing = bpMap[uKey] || siteMap[uKey];
         const record = existing
           ? { ...existing, username: existing.username || cleanUser, email: admRec.email || existing.email }
-          : createDefaultAccountProgress(cleanUser, admRec.email, admRec.password || "pilot123");
+          : createDefaultAccountProgress(cleanUser, admRec.email, "");
         return { uKey, record, isRetroCanopySSO: true };
       }
 
@@ -7930,7 +8602,7 @@
       const existingSite = siteMap[uKey] || {
         username: state.loggedInUsername || uKey,
         email: state.loggedInEmail || `${uKey}@retrocanopy.com`,
-        password: existingBp.password || "pilot123",
+        password: existingBp.password || "",
         tickets: 0,
         highScores: {},
         unlockedTiers: {},
@@ -7969,7 +8641,7 @@
               username_key: uKey,
               username: existingSite.username || state.loggedInUsername || uKey,
               email: existingSite.email || state.loggedInEmail || `${uKey}@retrocanopy.com`,
-              password: existingSite.password || existingBp.password || "pilot123",
+              password: existingSite.password || existingBp.password || "",
               tickets: Number(existingSite.tickets) || 0,
               high_scores: existingSite.highScores || {},
               unlocked_tiers: existingSite.unlockedTiers || {},
@@ -8043,6 +8715,7 @@
       try { updatePlayerUI(); } catch (e) { console.error("updatePlayerUI error:", e); }
       try { if (!sim.running) setupStagingArena(); } catch (e) { console.error("setupStagingArena error:", e); }
       try { if (typeof onSocialPilotLogin === "function") onSocialPilotLogin(); } catch (e) { console.error("onSocialPilotLogin error:", e); }
+      try { if (typeof recoverPendingGooglePlayPurchases === "function") recoverPendingGooglePlayPurchases(); } catch (e) { console.warn("recoverPendingGooglePlayPurchases error:", e); }
     }
 
     function ensurePilotLoggedIn() {
@@ -8082,21 +8755,6 @@
     function renderSavedAccountChips() {
       const bpMap = getBotPitAccountsMap();
       const siteMap = getSiteAccountsMap();
-      const adminMap = getAdminAccountsMap();
-
-      // Ensure any approved RetroCanopy Admin accounts on this device are also available in bpMap
-      for (const emailKey of Object.keys(adminMap)) {
-        const adm = adminMap[emailKey];
-        if (adm && adm.status === "Approved" && !adm.deleted) {
-          const cleanName = String(adm.name || emailKey.split("@")[0]).replace(/\s*\(Owner\)\s*/i, "").trim();
-          const uKey = cleanName.toLowerCase();
-          if (!bpMap[uKey] && !siteMap[uKey]) {
-            bpMap[uKey] = createDefaultAccountProgress(cleanName, adm.email, adm.password || "");
-          }
-        }
-      }
-      saveBotPitAccountsMap(bpMap);
-
       const allKeys = Array.from(new Set([...Object.keys(bpMap), ...Object.keys(siteMap)]));
       const wrap = document.getElementById("pilotSavedAccountsWrap");
       const list = document.getElementById("pilotSavedChipsList");
@@ -8112,17 +8770,8 @@
         const call = bData.pilotCallsign || ("@" + (rec.username || k).toUpperCase());
         const dm = typeof bData.scrap === "number" ? bData.scrap : 0;
         const mods = bData.loadout ? Object.values(bData.loadout).filter(Boolean).length : 0;
-        return `<button type="button" class="pilot-saved-chip" onclick="instantLoginSavedPilotAccount('${k.replace(/'/g, "\'")}')">⚡ AUTO-LOGIN ${call} · 💎 ${dm.toLocaleString()} · ${mods}/6</button>`;
+        return `<button type="button" class="pilot-saved-chip" onclick="fillSavedPilotAccount('${k.replace(/'/g, "\\'")}')">🔑 ${call} · 💎 ${dm.toLocaleString()} · ${mods}/6</button>`;
       }).join("");
-    }
-
-    function instantLoginSavedPilotAccount(uKey) {
-      const bpMap = getBotPitAccountsMap();
-      const siteMap = getSiteAccountsMap();
-      const rec = bpMap[uKey] || siteMap[uKey];
-      if (!rec) return;
-      applyAccountProgressToState(uKey, rec);
-      closePilotAuthGateModal();
     }
 
     function fillSavedPilotAccount(uKey) {
@@ -8134,7 +8783,7 @@
       const passInp = document.getElementById("botpitLoginPass");
       if (userInp) userInp.value = rec.username || uKey;
       if (passInp) {
-        passInp.value = rec.password || "";
+        passInp.value = "";
         passInp.focus();
       }
     }
@@ -8196,10 +8845,10 @@
           (adm.email && adm.email.toLowerCase() === idLower) ||
           cleanAdminName.toLowerCase() === idLower ||
           (adm.isOwner && ownerAliases.includes(idLower));
-        if (isMatch && (!adm.password || adm.password === rawPass || adm.password.toLowerCase() === rawPass.toLowerCase())) {
+        if (isMatch && (!adm.password || adm.password === rawPass || adm.password === hashedPass)) {
           const uKey = cleanAdminName.toLowerCase();
-          const existing = bpMap[uKey] || siteMap[uKey] || createDefaultAccountProgress(cleanAdminName, adm.email, rawPass);
-          bpMap[uKey] = { ...existing, username: cleanAdminName, email: adm.email, password: rawPass };
+          const existing = bpMap[uKey] || siteMap[uKey] || createDefaultAccountProgress(cleanAdminName, adm.email, hashedPass);
+          bpMap[uKey] = { ...existing, username: cleanAdminName, email: adm.email, password: hashedPass };
           saveBotPitAccountsMap(bpMap);
           applyAccountProgressToState(uKey, bpMap[uKey]);
           closePilotAuthGateModal();
@@ -8218,16 +8867,19 @@
           if (rows && rows.length > 0) {
             const row = rows[0];
             const savedPass = String(row.password || "");
-            if (!savedPass || savedPass === "pilot123" || savedPass === rawPass || savedPass === hashedPass || savedPass.toLowerCase() === rawPass.toLowerCase()) {
-              const cloudBp = row.bot_pit_data && Object.keys(row.bot_pit_data).length > 0
-                ? row.bot_pit_data
-                : (bpMap[row.username_key] || createDefaultAccountProgress(row.username, row.email, hashedPass));
-              bpMap[row.username_key] = { ...cloudBp, password: hashedPass, username: row.username, email: row.email };
-              saveBotPitAccountsMap(bpMap);
-              applyAccountProgressToState(row.username_key, bpMap[row.username_key]);
-              closePilotAuthGateModal();
+            const passOk = !savedPass || savedPass === hashedPass || savedPass === rawPass || (!savedPass.startsWith("sha256:") && savedPass.toLowerCase() === rawPass.toLowerCase());
+            if (!passOk) {
+              if (msgEl) msgEl.textContent = "Incorrect password for this Pilot Account. Please try again.";
               return;
             }
+            const cloudBp = row.bot_pit_data && Object.keys(row.bot_pit_data).length > 0
+              ? row.bot_pit_data
+              : (bpMap[row.username_key] || createDefaultAccountProgress(row.username, row.email, hashedPass));
+            bpMap[row.username_key] = { ...cloudBp, password: hashedPass, username: row.username, email: row.email };
+            saveBotPitAccountsMap(bpMap);
+            applyAccountProgressToState(row.username_key, bpMap[row.username_key]);
+            closePilotAuthGateModal();
+            return;
           }
         } catch (_) {}
       }
@@ -8255,20 +8907,16 @@
       }
 
       if (!matchedRec) {
-        // Auto-provision a fresh Level 1 Pilot Account if signing in with a new username/email so login never blocks!
-        const cleanUser = rawId.includes("@") ? rawId.split("@")[0] : rawId;
-        const cleanEmail = rawId.includes("@") ? rawId.toLowerCase() : `${cleanUser.toLowerCase()}@retrocanopy.com`;
-        const newKey = cleanUser.toLowerCase();
-        const newProgress = createDefaultAccountProgress(cleanUser, cleanEmail, rawPass);
-        bpMap[newKey] = newProgress;
-        saveBotPitAccountsMap(bpMap);
-        applyAccountProgressToState(newKey, newProgress);
-        closePilotAuthGateModal();
+        if (msgEl) {
+          msgEl.style.color = "#fb7185";
+          msgEl.textContent = "No account found for that callsign or email. Check spelling or tap ✨ CREATE ACCOUNT!";
+        }
         return;
       }
 
       const localPass = String(matchedRec.password || "");
-      if (localPass && localPass !== "pilot123" && localPass !== rawPass && localPass !== hashedPass && localPass.toLowerCase() !== rawPass.toLowerCase()) {
+      const localOk = !localPass || localPass === hashedPass || localPass === rawPass || (!localPass.startsWith("sha256:") && localPass.toLowerCase() === rawPass.toLowerCase());
+      if (!localOk) {
         if (msgEl) msgEl.textContent = "Incorrect password. Please try again.";
         return;
       }
@@ -8305,6 +8953,12 @@
         if (msgEl) msgEl.textContent = "Password must be at least 4 characters.";
         return;
       }
+      const termsChk = document.getElementById("botpitRegTermsChk");
+      if (termsChk && !termsChk.checked) {
+        if (msgEl) msgEl.textContent = "Please confirm you are 13+ and agree to the Privacy Policy & Terms of Use.";
+        return;
+      }
+      try { localStorage.setItem("rc_botpit_ugc_agreed_v1", "1"); } catch (_) {}
 
       const uKey = rawUser.toLowerCase();
       const bpMap = getBotPitAccountsMap();
@@ -8340,7 +8994,7 @@
           admMap[emailKey] = {
             name: rawUser,
             email: rawEmail,
-            password: rawPass,
+            password: hashedRegPass,
             status: "Pending",
             deleted: false,
             isOwner: false,
@@ -8355,7 +9009,7 @@
               email_key: emailKey,
               name: rawUser,
               email: rawEmail,
-              password_hash: rawPass,
+              password_hash: hashedRegPass,
               status: (admMap[emailKey] && admMap[emailKey].status) || "Pending",
               deleted: false,
               is_owner: false,
@@ -8365,7 +9019,7 @@
           );
         }
         if (window.RetroAuthHub && typeof window.RetroAuthHub.registerAdminAccount === "function") {
-          await window.RetroAuthHub.registerAdminAccount(rawUser, rawEmail, rawPass);
+          await window.RetroAuthHub.registerAdminAccount(rawUser, rawEmail, hashedRegPass);
         }
       } catch (_) {}
 
@@ -9691,12 +10345,24 @@
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(code);
       }
-      prompt("Share this Rig Battle Code with another player so they can battle your exact 6-slot bot:", code);
+      openBotPitDialogModal({
+        title: "📤 SHARE RIG BATTLE CODE",
+        message: "Copied to clipboard when permitted. Share this Battle Code with a friend to spar your exact 6-slot loadout:",
+        mode: "alert",
+        copyValue: code,
+        confirmLabel: "✅ DONE"
+      });
     }
 
-    function challengeFriendRigCode() {
+    async function challengeFriendRigCode() {
       if (!ensurePilotLoggedIn()) return;
-      const raw = prompt("Paste another player's Rig Battle Code (starts with U17-) to battle their bot:");
+      const raw = await openBotPitDialogModal({
+        title: "📥 CHALLENGE RIG BATTLE CODE",
+        message: "Paste another pilot's Rig Battle Code (starts with U17-) to battle their exact build:",
+        mode: "prompt",
+        placeholder: "U17-...",
+        confirmLabel: "⚔️ LOAD OPPONENT"
+      });
       if (!raw || !raw.trim().startsWith("U17-")) return;
       try {
         const decoded = JSON.parse(atob(raw.trim().slice(4)));
@@ -9717,7 +10383,12 @@
         setGameMode("pvp");
         beginPreBattleWizard("pvp");
       } catch (err) {
-        alert("Invalid Rig Battle Code format.");
+        openBotPitDialogModal({
+          title: "⚠️ INVALID RIG CODE",
+          message: "That text did not decode into a valid Shibuya Bot Pit U17 Battle Code.",
+          mode: "alert",
+          confirmLabel: "OK"
+        });
       }
     }
 
@@ -9981,7 +10652,7 @@
             nodes: [
               { id: "wealth_c0_n0", row: 0, icon: "💎", name: "DIAMOND SYNTHESIS I", short: "DIAMOND +8%", cost: 100, stats: { wealthPct: 8, hp: 30 }, desc: "Increases all <strong style='color:#fde047;'>💎 Diamond match rewards by +8% per rank</strong>." },
               { id: "wealth_c0_n1", row: 1, icon: "💰", name: "SPONSORSHIP PAYOUT", short: "SPONSOR PAY", cost: 110, stats: { wealthPct: 10, power: 2 }, desc: "Shibuya Syndicate sponsors award <strong style='color:#fde047;'>+10% bonus 💎 Diamonds on every win</strong>." },
-              { id: "wealth_c0_n2", row: 1, icon: "🎰", name: "HIGH-ROLLER POT BONUS", short: "POT BONUS", cost: 110, stats: { wealthPct: 10, speed: 2 }, desc: "Winning wagered matches yields <strong style='color:#fde047;'>+10% extra Syndicate House Bonus 💎</strong>." },
+              { id: "wealth_c0_n2", row: 1, icon: "💎", name: "APEX BOUNTY BONUS", short: "BOUNTY +10%", cost: 110, stats: { wealthPct: 10, speed: 2 }, desc: "Winning staked Arena matches yields <strong style='color:#fde047;'>+10% extra Syndicate Bounty 💎</strong>." },
               { id: "wealth_c0_n3", row: 2, icon: "🧨", name: "MINI-BOT BOUNTY HUNTER", short: "SWARM BOUNTY", cost: 125, stats: { wealthPct: 12, power: 3 }, desc: "Destroying Ambush Mini-Bots awards <strong style='color:#fde047;'>instant bonus 💎 Diamonds</strong>." },
               { id: "wealth_c0_n4", row: 2, icon: "🌋", name: "RING-OUT SHOWMAN BONUS", short: "KO BONUS", cost: 125, stats: { wealthPct: 12, agility: 3 }, desc: "Scoring a Ring-Out or TKO victory grants <strong style='color:#fde047;'>+12% Crowd Hype 💎 Diamonds</strong>." },
               { id: "wealth_c0_n5", row: 3, icon: "🛠️", name: "ARMORY VIP REBATE", short: "VIP REBATE", cost: 140, stats: { wealthPct: 14, hp: 45 }, desc: "Increases your <strong style='color:#fde047;'>Diamond Vault multiplier & trade-in value</strong>." },
@@ -10005,7 +10676,7 @@
             ]
           },
           {
-            title: "MOLECULE & JACKPOT LUCK",
+            title: "MOLECULE & DROP BOOSTERS",
             nodes: [
               { id: "wealth_c2_n0", row: 0, icon: "🍀", name: "SUPPLY BEACON SCANNER", short: "DROP SCAN", cost: 100, stats: { wealthPct: 6, xpPct: 6, speed: 2 }, desc: "Tunes arena radar to detect <strong style='color:#fde047;'>Random Mid-Round Molecule Drops</strong>." },
               { id: "wealth_c2_n1", row: 1, icon: "🧲", name: "MAGNETIC PICKUP RADIUS", short: "MAGNET PICKUP", cost: 110, stats: { agility: 4, hp: 35 }, desc: "Increases your bot's <strong style='color:#fde047;'>Molecule collection radius by +35%</strong>." },
@@ -10013,9 +10684,9 @@
               { id: "wealth_c2_n3", row: 2, icon: "💎", name: "FORTUNE CRATE ALCHEMY", short: "CRATE LUCK", cost: 125, stats: { wealthPct: 10, xpPct: 10 }, desc: "Every Molecule collected in the arena also grants <strong style='color:#fde047;'>+25 bonus 💎 Diamonds</strong>." },
               { id: "wealth_c2_n4", row: 2, icon: "💚", name: "MOLECULAR OVER-HEAL", short: "OVER-HEAL", cost: 125, stats: { hp: 75, shield: 25 }, desc: "Collecting any Molecule in combat also welds <strong style='color:#fde047;'>+60 Hull HP</strong>." },
               { id: "wealth_c2_n5", row: 3, icon: "⚡", name: "MOLECULAR SURGE EXTENSION", short: "BUFF +35%", cost: 140, stats: { power: 4, speed: 4 }, desc: "Extends all temporary <strong style='color:#fde047;'>Molecule speed & shield buffs by +35%</strong>." },
-              { id: "wealth_c2_n6", row: 3, icon: "👑", name: "GOLDEN FORTUNE MAGNET", short: "JACKPOT LUCK", cost: 140, stats: { wealthPct: 14, xpPct: 14 }, desc: "Doubles the chance of spawning the <strong style='color:#fde047;'>#10 Golden Fortune Jackpot Molecule</strong>." },
-              { id: "wealth_c2_n7", row: 4, icon: "🎰", name: "TRIPLE-POT MULTIPLIER", short: "JACKPOT POT", cost: 160, stats: { wealthPct: 18, power: 5 }, desc: "Golden Fortune Molecules grant <strong style='color:#fde047;'>+250 💎 Diamonds & +250 XP</strong>." },
-              { id: "wealth_c2_n8", row: 5, icon: "👑", name: "EMPEROR OF ROPPONGI", short: "EMPEROR", cost: 200, stats: { wealthPct: 22, xpPct: 22, power: 6, hp: 80 }, desc: "Ultimate Fortune Capstone: Supreme <strong style='color:#fde047;'>All-Stats Omni-Boost, Wealth & Jackpot Luck</strong>." }
+              { id: "wealth_c2_n6", row: 3, icon: "👑", name: "GOLDEN FORTUNE MAGNET", short: "FORTUNE MAGNET", cost: 140, stats: { wealthPct: 14, xpPct: 14 }, desc: "Doubles the chance of spawning the <strong style='color:#fde047;'>#10 Golden Fortune Bounty Molecule</strong>." },
+              { id: "wealth_c2_n7", row: 4, icon: "🏆", name: "TRIPLE-BOUNTY MULTIPLIER", short: "TRIPLE BOUNTY", cost: 160, stats: { wealthPct: 18, power: 5 }, desc: "Golden Fortune Molecules grant <strong style='color:#fde047;'>+250 💎 Diamonds & +250 XP</strong>." },
+              { id: "wealth_c2_n8", row: 5, icon: "👑", name: "EMPEROR OF ROPPONGI", short: "EMPEROR", cost: 200, stats: { wealthPct: 22, xpPct: 22, power: 6, hp: 80 }, desc: "Ultimate Fortune Capstone: Supreme <strong style='color:#fde047;'>All-Stats Omni-Boost &amp; Bounty Drop Rate</strong>." }
             ]
           }
         ]
@@ -10571,7 +11242,12 @@
       const cost = Math.round(nd.cost * (1 + curRank * 0.35));
 
       if ((state.scrap || 0) < cost) {
-        alert(`Not enough 💎 Diamonds! You need ${cost} 💎 (Current: ${state.scrap || 0} 💎).\n\nEarn XP in Quests, CPU, or PvP battles to Level Up your bot for bonus Diamonds, or win battles to earn Diamonds!`);
+        openBotPitDialogModal({
+          title: "💎 MORE DIAMONDS NEEDED",
+          message: `You need ${cost.toLocaleString()} 💎 for ${nd.name} (Current Vault: ${(state.scrap || 0).toLocaleString()} 💎).\n\nFight Quests, CPU Bots, or Ranked PvP matches to earn XP and free Diamonds!`,
+          mode: "alert",
+          confirmLabel: "OK"
+        });
         return;
       }
       state.scrap = Math.max(0, (state.scrap || 0) - cost);
@@ -10766,11 +11442,18 @@
       updatePlayerUI();
     }
 
-    function promptCustomWager() {
+    async function promptCustomWager() {
       if (!ensurePilotLoggedIn()) return;
-      const raw = prompt(`Enter your proposed Diamond Wager (Available Vault: 💎 ${state.scrap.toLocaleString()}):`, String(getPlayerProposedWager()));
+      const raw = await openBotPitDialogModal({
+        title: "💎 CUSTOM ARENA STAKE",
+        message: `Enter your proposed Diamond Arena Stake (Available Vault: 💎 ${state.scrap.toLocaleString()}):`,
+        mode: "prompt",
+        defaultValue: String(getPlayerProposedWager()),
+        placeholder: "0",
+        confirmLabel: "✅ SET STAKE"
+      });
       if (raw === null) return;
-      const parsed = parseInt(raw.replace(/[^0-9]/g, ""), 10);
+      const parsed = parseInt(String(raw).replace(/[^0-9]/g, ""), 10);
       if (!Number.isNaN(parsed)) {
         setWagerAmount(parsed);
       }
@@ -11221,7 +11904,7 @@
           bannerEl.style.color = "#38bdf8";
         }
         if (descEl) {
-          descEl.textContent = `${activeMap.badge} · ${activeMap.name} · Wager: 💎 ${getPlayerProposedWager().toLocaleString()}`;
+          descEl.textContent = `${activeMap.badge} · ${activeMap.name} · Arena Stake: 💎 ${getPlayerProposedWager().toLocaleString()}`;
         }
       }
     }
@@ -11332,7 +12015,7 @@
       const fsWager = document.getElementById("fsMapWagerPill");
       if (fsWager) {
         fsWager.textContent = effWager > 0
-          ? `🔒 LOCKED WAGER: 💎 ${effWager.toLocaleString()}`
+          ? `🔒 ARENA STAKE: 💎 ${effWager.toLocaleString()}`
           : `🔒 FREE MATCH (0 💎)`;
       }
       const fsTitle = document.getElementById("fsMapTitle");
@@ -11411,7 +12094,16 @@
       showShopToast("💎 +1,000 FREE DIAMONDS ADDED TO VAULT!", "#38bdf8");
     }
 
-    function resetShopInventory() {
+    async function resetShopInventory() {
+      const ok = await openBotPitDialogModal({
+        title: "🔄 RESET RIG & VAULT?",
+        message: "This will unequip all 6 slots, clear owned upgrades, and reset your Vault to 0 💎 so you can start a fresh build.\n\nProceed?",
+        mode: "confirm",
+        danger: true,
+        confirmLabel: "🔄 YES, RESET RIG",
+        cancelLabel: "CANCEL"
+      });
+      if (!ok) return;
       state.scrap = 0;
       state.ownedIds = [];
       state.loadout = { tire: null, wpn1: null, wpn2: null, botAbil1: null, botAbil2: null, wpnAbil: null };
@@ -11420,7 +12112,7 @@
       updatePlayerUI();
       switchShopSlot(state.activeShopSlot);
       if (!sim.running) setupStagingArena();
-      showShopToast("🔄 INVENTORY RESET TO 0 💎 — FIGHT CPU BOTS FOR XP OR BUY DIAMONDS!", "#fbbf24");
+      showShopToast("🔄 RIG RESET TO 0 💎 — FIGHT QUESTS OR CPU BOTS TO REBUILD!", "#fbbf24");
     }
 
     function previewAddonOnRig(addonId) {
@@ -12731,7 +13423,7 @@
         document.getElementById("overlayLevelTag").textContent = `🤖 VS. SIMILAR-LVL CPU (${cpuObj.title.toUpperCase()})`;
         document.getElementById("overlayBannerText").textContent = `${state.pilotCallsign} ⚡ ${cpuObj.name.replace('UNIT-17 ', '')}`;
         document.getElementById("overlayBannerText").style.color = "#34d399";
-        document.getElementById("overlayEnemyDesc").textContent = `Matched to your Rig Level · CPU Wager: 💎 ${cpuObj.wager.toLocaleString()}`;
+        document.getElementById("overlayEnemyDesc").textContent = `Matched to your Rig Level · CPU Stake: 💎 ${cpuObj.wager.toLocaleString()}`;
       } else {
         const chObj = getActivePvpOpponent();
         const eStats = computeBotCombatProfile(chObj.baseStats, chObj.loadout);
@@ -12744,7 +13436,7 @@
         document.getElementById("overlayLevelTag").textContent = `🌐 LIVE ONLINE PVP · 🏆 ${chObj.elo} ELO`;
         document.getElementById("overlayBannerText").textContent = `${state.pilotCallsign} ⚡ ${chObj.callsign}`;
         document.getElementById("overlayBannerText").style.color = "#38bdf8";
-        document.getElementById("overlayEnemyDesc").textContent = `${chObj.rankTitle} · Opponent Wager: 💎 ${chObj.wager.toLocaleString()}`;
+        document.getElementById("overlayEnemyDesc").textContent = `${chObj.rankTitle} · Opponent Stake: 💎 ${chObj.wager.toLocaleString()}`;
       }
 
       document.getElementById("battleOverlay").classList.remove("hidden");
@@ -12783,7 +13475,7 @@
       }
       if (stake > 0) {
         const potTotal = stake * 2;
-        addFloatText(800, 380, `🔒 MATCH WAGER: 💎 ${stake.toLocaleString()} · 🏆 WINNER TAKES ALL: 💎 ${potTotal.toLocaleString()}!`, "#ffd700");
+        addFloatText(800, 380, `🔒 ARENA STAKE: 💎 ${stake.toLocaleString()} · 🏆 WINNER BOUNTY: 💎 ${potTotal.toLocaleString()}!`, "#ffd700");
       }
       // Open a broadcast room so spectators in other tabs/devices can watch this fight live!
       startBroadcastStreamForLocalMatch();
@@ -16363,8 +17055,27 @@
       });
     }
 
-    function sendPitChatFromInput() {
+    async function ensurePitChatGuidelinesConsent() {
+      try {
+        if (localStorage.getItem("rc_botpit_ugc_agreed_v1") === "1") return true;
+      } catch (_) {}
+      const agreed = await openBotPitDialogModal({
+        title: "🛡️ COMMUNITY CHAT RULES",
+        message: "Shibuya Pit Chat enforces a Zero-Tolerance Conduct Policy.\n\nNo harassment, hate speech, threats, profanity, or spam. You can 🚩 Report or 🚫 Block any user with one tap. Agree to continue?",
+        mode: "confirm",
+        confirmLabel: "✅ I AGREE",
+        cancelLabel: "CANCEL"
+      });
+      if (agreed) {
+        try { localStorage.setItem("rc_botpit_ugc_agreed_v1", "1"); } catch (_) {}
+        return true;
+      }
+      return false;
+    }
+
+    async function sendPitChatFromInput() {
       if (!ensurePilotLoggedIn()) return;
+      if (!(await ensurePitChatGuidelinesConsent())) return;
       const inp = document.getElementById("pitChatInput");
       if (!inp) return;
       const rawTxt = inp.value.trim();
@@ -17046,9 +17757,9 @@
               </div>
               <div class="dp-desc" style="margin-top:6px;">${pk.desc}</div>
             </div>
-            <button type="button" class="dp-buy-btn" onclick="purchaseDiamondPack('${pk.id}')">
+            <button type="button" class="dp-buy-btn" id="dpBuyBtn_${pk.id}" onclick="purchaseDiamondPack('${pk.id}')">
               <span>⚡ INSTANT TOP-UP</span>
-              <span style="background:rgba(0,0,0,0.22);padding:2px 8px;border-radius:999px;">${pk.priceUsd}</span>
+              <span id="dpPrice_${pk.id}" style="background:rgba(0,0,0,0.22);padding:2px 8px;border-radius:999px;">${pk.priceUsd}</span>
             </button>
           </div>
         `;
@@ -17067,8 +17778,22 @@
             </div>
           </div>
 
-          <div class="diamond-packs-grid">
+          <div class="diamond-packs-grid" id="diamondPacksGrid">
             ${packsHtml}
+          </div>
+          <div class="diamond-free-earn-grid hidden" id="diamondFreeEarnGrid">
+            <div class="diamond-earn-milestone-card">
+              <h4>⚔️ CAMPAIGN QUESTS (1–10)</h4>
+              <p>Complete escalating Shibuya boss stages for huge one-time 💎 Diamond + XP bounties.</p>
+            </div>
+            <div class="diamond-earn-milestone-card">
+              <h4>🤖 VS. CPU ARENA BATTLES</h4>
+              <p>Every CPU battle awards XP that converts <strong>1 XP ➔ 1 💎 Diamond</strong> directly into your vault.</p>
+            </div>
+            <div class="diamond-earn-milestone-card">
+              <h4>⚡ BOT LEVEL-UPS &amp; PVP</h4>
+              <p>Rank up your Bot Level for bonus Diamonds, and win Live PvP for Golden Tickets (🎟️) &amp; Stakes.</p>
+            </div>
           </div>
 
           <div class="diamond-store-earn-note">
@@ -17737,20 +18462,359 @@
       }
     }
 
-    function openBuyDiamondsModal(shortfallAmount = 0) {
-      if (!ensurePilotLoggedIn()) return;
-      ensureDiamondStoreModalInjected();
+    function isAndroidPlayOrAppShell() {
+      try {
+        const search = (window.location.search || "").toLowerCase();
+        if (search.includes("app=1") || search.includes("play=1")) return true;
+        if (window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform()) return true;
+        if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return true;
+        if (window.navigator && window.navigator.standalone === true) return true;
+        if ((document.referrer || "").toLowerCase().startsWith("android-app://")) return true;
+        if (/;\s*wv\)/i.test(navigator.userAgent || "")) return true;
+        if (typeof window.getDigitalGoodsService === "function") return true;
+      } catch (_) {}
+      return false;
+    }
+
+    const VERIFY_PLAY_PURCHASE_URL = "https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/verify-play-purchase";
+    const PLAY_PACKAGE_NAME = "com.retrocanopy.shibuyabotpit";
+    const nativePlayCatalogState = {
+      billingSupported: false,
+      productsMap: {},
+      productsLoaded: false,
+      processingTokens: new Set(),
+      initPromise: null,
+      recoverInFlight: false
+    };
+
+    function getCapacitorNativePurchasesPlugin() {
+      try {
+        return (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.NativePurchases) || null;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function computeObfuscatedPlayAccountId(userKey) {
+      const clean = String(userKey || "guest").trim().toLowerCase();
+      try {
+        if (window.crypto && window.crypto.subtle && typeof TextEncoder !== "undefined") {
+          const buf = await window.crypto.subtle.digest("SHA-256", new TextEncoder().encode("rc_play_uid_v1::" + clean));
+          return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 48);
+        }
+      } catch (_) {}
+      return clean.replace(/[^a-z0-9_-]/g, "").slice(0, 32) || "pilot";
+    }
+
+    function syncPlayStoreProductPrices() {
+      const productsMap = nativePlayCatalogState.productsMap || {};
+      const hasPlayPrices = Object.keys(productsMap).length > 0;
+      DIAMOND_STORE_PACKS.forEach(pk => {
+        const priceEl = document.getElementById("dpPrice_" + pk.id);
+        const btnEl = document.getElementById("dpBuyBtn_" + pk.id);
+        const gpProd = productsMap[pk.id];
+        if (priceEl && gpProd && gpProd.priceString) {
+          priceEl.textContent = gpProd.priceString;
+        } else if (priceEl) {
+          priceEl.textContent = pk.priceUsd;
+        }
+        if (btnEl && isAndroidPlayOrAppShell() && nativePlayCatalogState.productsLoaded) {
+          const available = !hasPlayPrices || Boolean(gpProd);
+          btnEl.disabled = !available;
+          btnEl.style.opacity = available ? "" : "0.45";
+        }
+      });
+    }
+
+    async function refreshNativePlayCatalog() {
+      const np = getCapacitorNativePurchasesPlugin();
+      if (!np) return false;
+      try {
+        const supportRes = typeof np.isBillingSupported === "function"
+          ? await np.isBillingSupported()
+          : { isBillingSupported: true };
+        nativePlayCatalogState.billingSupported = Boolean(supportRes && supportRes.isBillingSupported);
+        if (!nativePlayCatalogState.billingSupported) {
+          nativePlayCatalogState.productsLoaded = true;
+          return false;
+        }
+        if (typeof np.getProducts === "function") {
+          const res = await np.getProducts({
+            productIdentifiers: DIAMOND_STORE_PACKS.map(p => p.id),
+            productType: "inapp"
+          });
+          const nextMap = {};
+          const list = (res && Array.isArray(res.products)) ? res.products : [];
+          for (const p of list) {
+            if (p && p.identifier) nextMap[p.identifier] = p;
+          }
+          nativePlayCatalogState.productsMap = nextMap;
+        }
+        nativePlayCatalogState.productsLoaded = true;
+        syncPlayStoreProductPrices();
+        return Object.keys(nativePlayCatalogState.productsMap).length > 0;
+      } catch (err) {
+        console.warn("Google Play getProducts warning:", err);
+        nativePlayCatalogState.productsLoaded = true;
+        return false;
+      }
+    }
+
+    async function verifyAndConsumePlayTransaction(tx, silentRecovery = false) {
+      const token = tx && (tx.purchaseToken || tx.transactionId);
+      const productId = tx && tx.productIdentifier;
+      if (!token || !productId) return { ok: false, error: "Invalid Play transaction payload." };
+      if (nativePlayCatalogState.processingTokens.has(token)) {
+        return { ok: false, error: "Purchase verification already in progress." };
+      }
+      nativePlayCatalogState.processingTokens.add(token);
+
+      try {
+        const pk = DIAMOND_STORE_PACKS.find(p => p.id === productId);
+        const uKey = String(state.loggedInUserKey || state.pilotCallsign || "pilot").trim().replace(/^@+/, "").toLowerCase();
+        const resp = await fetch(VERIFY_PLAY_PURCHASE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "verify_and_credit",
+            packageName: PLAY_PACKAGE_NAME,
+            productId,
+            purchaseToken: token,
+            orderId: tx.orderId || "",
+            userKey: uKey,
+            pilotCallsign: state.pilotCallsign || ("@" + uKey.toUpperCase()),
+            email: state.loggedInEmail || ""
+          })
+        });
+        const data = await resp.json().catch(() => ({}));
+
+        if (resp.status === 202 || data.pending) {
+          if (!silentRecovery) {
+            showShopToast("⏳ Payment pending in Google Play. Diamonds will credit automatically once cleared!", "#fbbf24");
+          }
+          return { ok: false, pending: true, error: data.error || "Pending payment" };
+        }
+
+        if (!resp.ok || !data.ok) {
+          if (!silentRecovery) {
+            showShopToast("⚠️ " + (data.error || "Could not verify Google Play purchase."), "#fb7185");
+          }
+          return { ok: false, error: data.error || "Verification failed" };
+        }
+
+        // Consume locally on device BillingClient so Play clears ownership cache for repeat buys
+        const np = getCapacitorNativePurchasesPlugin();
+        if (np && typeof np.consumePurchase === "function") {
+          try { await np.consumePurchase({ purchaseToken: token }); } catch (_) {}
+        }
+
+        const credited = Number(data.diamondsCredited) || 0;
+        if (!data.alreadyCredited && credited > 0) {
+          const prevScrap = Math.max(0, Number(state.scrap) || 0);
+          state.scrap = Math.max(prevScrap + credited, Number(data.newCloudScrap) || 0);
+          persistWalletAndRig();
+          updatePlayerUI();
+
+          // Cache in local order mirror without double-posting to Supabase (Edge Function already persisted botpit_game_orders)
+          if (pk) {
+            try {
+              const localOrders = JSON.parse(localStorage.getItem("rc_botpit_game_orders_v1") || "[]") || [];
+              const oid = data.orderId || ("GP-" + String(Date.now()).slice(-6));
+              if (!localOrders.some(o => o && o.order_id === oid)) {
+                localOrders.unshift({
+                  order_id: oid,
+                  pilot_callsign: state.pilotCallsign || "PILOT",
+                  pilot_user_key: uKey,
+                  pilot_email: state.loggedInEmail || "",
+                  pack_id: pk.id,
+                  pack_name: pk.badge || pk.id,
+                  diamonds_credited: credited,
+                  amount_usd: parseFloat(String(pk.priceUsd || "0").replace(/[^0-9.]/g, "")) || 0,
+                  payment_status: "PAID",
+                  platform: "Google Play IAP",
+                  created_at: new Date().toISOString()
+                });
+                localStorage.setItem("rc_botpit_game_orders_v1", JSON.stringify(localOrders.slice(0, 200)));
+              }
+            } catch (_) {}
+          }
+        }
+
+        return { ok: true, alreadyCredited: Boolean(data.alreadyCredited), diamondsCredited: credited, orderId: data.orderId || "" };
+      } finally {
+        nativePlayCatalogState.processingTokens.delete(token);
+      }
+    }
+
+    async function recoverPendingGooglePlayPurchases() {
+      const np = getCapacitorNativePurchasesPlugin();
+      if (!np || typeof np.getPurchases !== "function" || !state.loggedInUserKey) return;
+      if (nativePlayCatalogState.recoverInFlight) return;
+      nativePlayCatalogState.recoverInFlight = true;
+      try {
+        const res = await np.getPurchases({ productType: "inapp" });
+        const list = (res && Array.isArray(res.purchases)) ? res.purchases : [];
+        let recoveredTotal = 0;
+        let hasPendingPayment = false;
+        for (const tx of list) {
+          if (!tx || !tx.productIdentifier) continue;
+          if (!DIAMOND_STORE_PACKS.some(p => p.id === tx.productIdentifier)) continue;
+          const pState = String(tx.purchaseState ?? "1");
+          if (pState === "2") {
+            hasPendingPayment = true;
+            continue;
+          }
+          if (pState === "1" || pState === "0") {
+            const vRes = await verifyAndConsumePlayTransaction(tx, true);
+            if (vRes.ok && vRes.diamondsCredited > 0) {
+              recoveredTotal += vRes.diamondsCredited;
+            }
+          }
+        }
+        if (recoveredTotal > 0) {
+          showShopToast(`💎 Recovered +${recoveredTotal.toLocaleString()} Diamonds from Google Play!`, "#34d399");
+        } else if (hasPendingPayment) {
+          showShopToast("⏳ Google Play payment pending — Diamonds will credit once Play finishes clearing it.", "#fbbf24");
+        }
+      } catch (err) {
+        console.warn("recoverPendingGooglePlayPurchases warning:", err);
+      } finally {
+        nativePlayCatalogState.recoverInFlight = false;
+      }
+    }
+
+    function setupRetroCanopyNativePlayBridge() {
+      const np = getCapacitorNativePurchasesPlugin();
+      if (!np) return null;
+      window.RetroCanopyNativeIAP = {
+        provider: "google_play_billing",
+        isReady() {
+          return Boolean(
+            nativePlayCatalogState.billingSupported &&
+            Object.keys(nativePlayCatalogState.productsMap).length > 0
+          );
+        },
+        getProduct(packId) {
+          return nativePlayCatalogState.productsMap[packId] || null;
+        },
+        refreshCatalog: refreshNativePlayCatalog,
+        recoverPurchases: recoverPendingGooglePlayPurchases,
+        async purchasePack(packId) {
+          if (!nativePlayCatalogState.productsLoaded) {
+            await refreshNativePlayCatalog();
+          }
+          const prod = nativePlayCatalogState.productsMap[packId];
+          if (!prod) {
+            throw new Error("Google Play Store SKU is not activated yet.");
+          }
+          const accountToken = await computeObfuscatedPlayAccountId(state.loggedInUserKey || state.pilotCallsign);
+          const purchaseOpts = {
+            productIdentifier: packId,
+            productType: "inapp",
+            isConsumable: true,
+            autoAcknowledgePurchases: false,
+            appAccountToken: accountToken
+          };
+          if (prod.offerToken) purchaseOpts.offerToken = prod.offerToken;
+          const tx = await np.purchaseProduct(purchaseOpts);
+          const vRes = await verifyAndConsumePlayTransaction(tx, false);
+          return vRes;
+        }
+      };
+      return window.RetroCanopyNativeIAP;
+    }
+
+    async function initRetroCanopyNativePlayBilling() {
+      if (nativePlayCatalogState.initPromise) return nativePlayCatalogState.initPromise;
+      nativePlayCatalogState.initPromise = (async () => {
+        const bridge = setupRetroCanopyNativePlayBridge();
+        if (!bridge) return false;
+        const ok = await refreshNativePlayCatalog();
+        try {
+          const inApp = isAndroidPlayOrAppShell();
+          const showPaidIap = !inApp || hasNativePlayBillingAvailable();
+          document.body.classList.toggle("rc-app-shell", inApp);
+          document.body.classList.toggle("rc-hide-paid-iap", !showPaidIap);
+        } catch (_) {}
+        if (state.loggedInUserKey) {
+          recoverPendingGooglePlayPurchases();
+        }
+        return ok;
+      })();
+      return nativePlayCatalogState.initPromise;
+    }
+
+    function hasNativePlayBillingAvailable() {
+      const hasCapNative = Boolean(getCapacitorNativePurchasesPlugin());
+      if (window.RetroCanopyNativeIAP) {
+        if (typeof window.RetroCanopyNativeIAP.isReady === "function") {
+          return Boolean(window.RetroCanopyNativeIAP.isReady());
+        }
+        if (typeof window.RetroCanopyNativeIAP.purchasePack === "function") return true;
+      }
+      if (!hasCapNative && typeof window.getDigitalGoodsService === "function") {
+        return true;
+      }
+      return false;
+    }
+
+    function applyDiamondStoreGridMode(shortfallAmount = 0) {
+      const inAppShell = isAndroidPlayOrAppShell();
+      const canNativeIap = hasNativePlayBillingAvailable();
+      const showFreeOnly = inAppShell && !canNativeIap;
+
+      const packsGrid = document.getElementById("diamondPacksGrid");
+      const freeGrid = document.getElementById("diamondFreeEarnGrid");
+      if (packsGrid) {
+        packsGrid.classList.toggle("hidden", showFreeOnly);
+        packsGrid.style.display = showFreeOnly ? "none" : "grid";
+      }
+      if (freeGrid) {
+        freeGrid.classList.toggle("hidden", !showFreeOnly);
+        freeGrid.style.display = showFreeOnly ? "grid" : "none";
+      }
+
+      const titleEl = document.querySelector("#buyDiamondsModalBackdrop .diamond-store-title h2");
+      if (titleEl) {
+        titleEl.textContent = showFreeOnly
+          ? "💎 EARN DIAMONDS FREE IN THE ARENA"
+          : "💎 SHIBUYA BOT PIT — DIAMOND VAULT STORE";
+      }
+
       const vaultEl = document.getElementById("diamondStoreVaultReadout");
       if (vaultEl) vaultEl.textContent = `💎 ${state.scrap.toLocaleString()}`;
       const subEl = document.getElementById("diamondStoreSubMsg");
       if (subEl) {
-        if (shortfallAmount > 0) {
+        if (showFreeOnly) {
+          subEl.innerHTML = shortfallAmount > 0
+            ? `<span style="color:#fbbf24;font-weight:800;">⚡ Need 💎 ${shortfallAmount.toLocaleString()} more Diamonds?</span> Earn 100% free Diamonds in Quests, CPU Fights &amp; Ranked PvP — no purchase required!`
+            : "Every 3D BattleBot mod and skill is unlockable free through Arena Quests, CPU XP Battles, and Ranked PvP Victories!";
+        } else if (shortfallAmount > 0) {
           subEl.innerHTML = `<span style="color:#fbbf24;font-weight:800;">⚠️ You need 💎 ${shortfallAmount.toLocaleString()} more Diamonds for that upgrade!</span> Choose a Diamond Pack below or fight CPU Bots to earn XP &amp; Diamonds:`;
         } else {
-          subEl.textContent = "Top up Diamonds instantly for 3D Upgrades & High-Roller PvP Wagers, or earn Diamonds for free by battling CPU Bots for XP!";
+          subEl.textContent = inAppShell
+            ? "Top up Diamonds securely with Google Play, or earn Diamonds for free by battling CPU Bots for XP!"
+            : "Top up Diamonds instantly for 3D Upgrades & Competitive Arena Stakes, or earn Diamonds for free by battling CPU Bots for XP!";
         }
       }
+    }
+
+    function openBuyDiamondsModal(shortfallAmount = 0) {
+      if (!ensurePilotLoggedIn()) return;
+      ensureDiamondStoreModalInjected();
+      syncPlayStoreProductPrices();
+      applyDiamondStoreGridMode(shortfallAmount);
       document.getElementById("buyDiamondsModalBackdrop").classList.add("active");
+
+      // In Capacitor Android shell, lazily refresh Play SKUs if not yet loaded
+      if (isAndroidPlayOrAppShell() && getCapacitorNativePurchasesPlugin() && !hasNativePlayBillingAvailable()) {
+        refreshNativePlayCatalog().then((loaded) => {
+          if (loaded) {
+            document.body.classList.remove("rc-hide-paid-iap");
+            applyDiamondStoreGridMode(shortfallAmount);
+          }
+        }).catch(() => {});
+      }
     }
 
     function closeBuyDiamondsModal() {
@@ -17758,30 +18822,94 @@
       if (el) el.classList.remove("active");
     }
 
+    function showCompletedPackUi(pk, totalCredited, customPriceText) {
+      const vaultEl = document.getElementById("diamondStoreVaultReadout");
+      if (vaultEl) vaultEl.textContent = `💎 ${state.scrap.toLocaleString()}`;
+      if (!document.getElementById("shopModalBackdrop").classList.contains("hidden")) {
+        switchShopSlot(state.activeShopSlot);
+      }
+      const priceShown = customPriceText || pk.priceUsd;
+      showShopToast(`💎 +${totalCredited.toLocaleString()} DIAMONDS CREDITED (${priceShown})!`, "#34d399");
+      const subEl = document.getElementById("diamondStoreSubMsg");
+      if (subEl) {
+        subEl.innerHTML = `<span style="color:#34d399;font-weight:800;">✅ PURCHASE COMPLETE: +${totalCredited.toLocaleString()} 💎 added to ${state.pilotCallsign}'s Vault!</span>`;
+      }
+    }
+
     async function purchaseDiamondPack(packId) {
       if (!ensurePilotLoggedIn()) return;
       const pk = DIAMOND_STORE_PACKS.find(p => p.id === packId);
       if (!pk) return;
 
-      // Native App Store / Google Play StoreKit / Play Billing integration hook
-      const isNativeStoreApp = Boolean(window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform());
-      if (isNativeStoreApp) {
+      const inAppShell = isAndroidPlayOrAppShell();
+      if (inAppShell) {
         if (window.RetroCanopyNativeIAP && typeof window.RetroCanopyNativeIAP.purchasePack === "function") {
+          const buyBtn = document.getElementById("dpBuyBtn_" + pk.id);
+          const gpProd = nativePlayCatalogState.productsMap[pk.id];
+          const playPrice = (gpProd && gpProd.priceString) || pk.priceUsd;
+          if (buyBtn) buyBtn.disabled = true;
           try {
-            const ok = await window.RetroCanopyNativeIAP.purchasePack(pk.id);
-            if (!ok) return;
+            const result = await window.RetroCanopyNativeIAP.purchasePack(pk.id);
+            const ok = result === true || Boolean(result && result.ok);
+            if (!ok) {
+              if (result && result.pending) return;
+              return;
+            }
+            const credited = (result && Number(result.diamondsCredited) > 0)
+              ? Number(result.diamondsCredited)
+              : (pk.diamonds + pk.bonus);
+            if (result === true) {
+              state.scrap += credited;
+              persistWalletAndRig();
+              recordBotPitGameOrder(pk, "Google Play IAP");
+              updatePlayerUI();
+            }
+            showCompletedPackUi(pk, credited, playPrice);
+            return;
           } catch (err) {
-            showShopToast("⚠️ Store billing cancelled or unavailable.", "#fb7185");
+            const msg = String((err && err.message) || err || "");
+            if (/pending/i.test(msg)) {
+              showShopToast("⏳ Purchase pending in Google Play. Diamonds will credit once confirmed.", "#fbbf24");
+            } else if (/cancel/i.test(msg)) {
+              showShopToast("Google Play purchase cancelled.", "#94a3b8");
+            } else {
+              showShopToast("⚠️ Google Play Billing unavailable: " + (msg.slice(0, 70) || "Try again"), "#fb7185");
+            }
+            return;
+          } finally {
+            if (buyBtn) buyBtn.disabled = false;
+          }
+        } else if (typeof window.getDigitalGoodsService === "function" && typeof PaymentRequest === "function") {
+          try {
+            const service = await window.getDigitalGoodsService("https://play.google.com/billing");
+            const details = await service.getDetails([pk.id]);
+            if (!details || details.length === 0) {
+              openBuyDiamondsModal(0);
+              showShopToast("⚠️ Play Store SKU not configured yet — earn Diamonds free in the Arena!", "#38bdf8");
+              return;
+            }
+            const request = new PaymentRequest([{ supportedMethods: "https://play.google.com/billing", data: { sku: pk.id } }]);
+            const response = await request.show();
+            const token = response && response.details && response.details.purchaseToken;
+            await response.complete("success");
+            if (token) {
+              const vRes = await verifyAndConsumePlayTransaction({ productIdentifier: pk.id, purchaseToken: token, purchaseState: "1" }, false);
+              if (!vRes.ok) return;
+              showCompletedPackUi(pk, vRes.diamondsCredited || (pk.diamonds + pk.bonus), pk.priceUsd);
+              return;
+            }
+          } catch (err) {
+            showShopToast("⚠️ Google Play purchase cancelled.", "#fb7185");
             return;
           }
         } else {
-          showShopToast("🤖 In-App Store Billing is being finalized — earn free Diamonds now by battling CPU Bots & Quests!", "#38bdf8");
+          openBuyDiamondsModal(0);
           return;
         }
       }
 
-      // Live Stripe Checkout Redirect for Web / PWA players
-      if (pk.stripePaymentLink && !window.__rcBypassStripeRedirect) {
+      // Live Stripe Checkout Redirect strictly for Web players (never in Android App shell)
+      if (!inAppShell && pk.stripePaymentLink && !window.__rcBypassStripeRedirect) {
         try {
           const uKey = state.loggedInUserKey || state.pilotCallsign || "pilot";
           localStorage.setItem("rc_pending_stripe_pack_v1", JSON.stringify({
@@ -17806,18 +18934,9 @@
       const totalCredited = pk.diamonds + pk.bonus;
       state.scrap += totalCredited;
       persistWalletAndRig();
-      recordBotPitGameOrder(pk, isNativeStoreApp ? 'Native IAP' : 'Web Instant');
+      recordBotPitGameOrder(pk, inAppShell ? "Google Play IAP" : "Web Instant");
       updatePlayerUI();
-      const vaultEl = document.getElementById("diamondStoreVaultReadout");
-      if (vaultEl) vaultEl.textContent = `💎 ${state.scrap.toLocaleString()}`;
-      if (!document.getElementById("shopModalBackdrop").classList.contains("hidden")) {
-        switchShopSlot(state.activeShopSlot);
-      }
-      showShopToast(`💎 +${totalCredited.toLocaleString()} DIAMONDS CREDITED (${pk.priceUsd})!`, "#34d399");
-      const subEl = document.getElementById("diamondStoreSubMsg");
-      if (subEl) {
-        subEl.innerHTML = `<span style="color:#34d399;font-weight:800;">✅ PURCHASE COMPLETE: +${totalCredited.toLocaleString()} 💎 added to ${state.pilotCallsign}'s Vault!</span>`;
-      }
+      showCompletedPackUi(pk, totalCredited, pk.priceUsd);
     }
 
     async function recordBotPitGameOrder(pk, platformLabel) {
@@ -18725,6 +19844,7 @@
     }
 
     async function dispatchPrivateDirectMessage(text) {
+      if (!(await ensurePitChatGuidelinesConsent())) return;
       const myKey = normalizeAuthKey(state.loggedInUserKey || "");
       const fKey = normalizeAuthKey(socialState.activeChatFriendKey || "");
       if (!myKey || !fKey || !text) return;
@@ -20197,13 +21317,190 @@
       return Boolean(map[cleanKey]);
     }
 
-    function blockPilotUser(userKey, callsign) {
+    const BOTPIT_ACCOUNT_OPS_URL = "https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/botpit-account-ops";
+
+    function openBotPitDialogModal(opts = {}) {
+      return new Promise((resolve) => {
+        let bd = document.getElementById("rcCustomDialogBackdrop");
+        if (!bd) {
+          bd = document.createElement("div");
+          bd.id = "rcCustomDialogBackdrop";
+          bd.className = "rc-custom-dialog-backdrop";
+          document.body.appendChild(bd);
+        }
+        const mode = opts.mode || "alert";
+        const isDanger = Boolean(opts.danger);
+        const card = document.createElement("div");
+        card.className = "rc-custom-dialog-card" + (isDanger ? " danger" : "");
+        card.onclick = (e) => e.stopPropagation();
+
+        const titleEl = document.createElement("h3");
+        titleEl.className = "rc-custom-dialog-title";
+        titleEl.textContent = opts.title || "SHIBUYA BOT PIT";
+        card.appendChild(titleEl);
+
+        if (opts.message) {
+          const msgEl = document.createElement("div");
+          msgEl.className = "rc-custom-dialog-msg";
+          msgEl.textContent = opts.message;
+          card.appendChild(msgEl);
+        }
+
+        let inputEl = null;
+        if (mode === "prompt" || opts.copyValue !== undefined) {
+          inputEl = document.createElement("input");
+          inputEl.type = opts.inputType || "text";
+          inputEl.className = "rc-custom-dialog-input";
+          inputEl.placeholder = opts.placeholder || "";
+          inputEl.value = opts.copyValue !== undefined ? String(opts.copyValue) : (opts.defaultValue || "");
+          if (opts.copyValue !== undefined) inputEl.readOnly = true;
+          card.appendChild(inputEl);
+        }
+
+        const actionsEl = document.createElement("div");
+        actionsEl.className = "rc-custom-dialog-actions";
+
+        const finish = (val) => {
+          bd.classList.remove("active");
+          bd.innerHTML = "";
+          resolve(val);
+        };
+
+        if (opts.copyValue !== undefined) {
+          const copyBtn = document.createElement("button");
+          copyBtn.type = "button";
+          copyBtn.className = "rc-dialog-btn";
+          copyBtn.textContent = "📋 COPY CODE";
+          copyBtn.onclick = () => {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(String(opts.copyValue)).catch(() => {});
+            }
+            if (inputEl) {
+              inputEl.focus();
+              inputEl.select();
+            }
+            copyBtn.textContent = "✅ COPIED!";
+          };
+          actionsEl.appendChild(copyBtn);
+        }
+
+        if (mode === "confirm" || mode === "prompt") {
+          const cancelBtn = document.createElement("button");
+          cancelBtn.type = "button";
+          cancelBtn.className = "rc-dialog-btn";
+          cancelBtn.textContent = opts.cancelLabel || "CANCEL";
+          cancelBtn.onclick = () => finish(mode === "prompt" ? null : false);
+          actionsEl.appendChild(cancelBtn);
+        }
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.type = "button";
+        confirmBtn.className = "rc-dialog-btn " + (isDanger ? "danger" : "primary");
+        confirmBtn.textContent = opts.confirmLabel || "OK";
+        confirmBtn.onclick = () => {
+          if (mode === "prompt") finish(inputEl ? inputEl.value : "");
+          else if (mode === "confirm") finish(true);
+          else finish(true);
+        };
+        actionsEl.appendChild(confirmBtn);
+        card.appendChild(actionsEl);
+
+        bd.innerHTML = "";
+        bd.appendChild(card);
+        bd.onclick = (e) => {
+          if (e.target === bd) finish(mode === "prompt" ? null : (mode === "confirm" ? false : true));
+        };
+        bd.classList.add("active");
+        if (inputEl) {
+          setTimeout(() => {
+            inputEl.focus();
+            if (opts.copyValue !== undefined) inputEl.select();
+          }, 50);
+          inputEl.onkeydown = (ev) => {
+            if (ev.key === "Enter") confirmBtn.click();
+          };
+        }
+      });
+    }
+
+    function unblockPilotUser(userKey) {
+      const cleanKey = String(userKey || "").trim().replace(/^@/, "").toLowerCase();
+      if (!cleanKey) return;
+      const map = getBlockedPilotsMap();
+      delete map[cleanKey];
+      saveBlockedPilotsMap(map);
+      showShopToast("✅ Unblocked @" + cleanKey.toUpperCase() + ".", "#34d399");
+      if (typeof renderFriendsAndSocialUI === "function") renderFriendsAndSocialUI();
+      const bodyWrap = document.getElementById("rcSafetyBlockedList");
+      if (bodyWrap) renderSafetyBlockedList(bodyWrap);
+    }
+
+    function renderSafetyBlockedList(container) {
+      if (!container) return;
+      const map = getBlockedPilotsMap();
+      const keys = Object.keys(map);
+      if (keys.length === 0) {
+        container.innerHTML = '<div style="font-size:0.80rem;color:#94a3b8;padding:4px 2px;">No blocked pilots right now.</div>';
+        return;
+      }
+      container.innerHTML = keys.map(k => {
+        const call = (map[k] && map[k].callsign) || ("@" + k.toUpperCase());
+        return `<div class="rc-blocked-row"><span>🚫 ${call}</span><button type="button" class="rc-blocked-unblock-btn" onclick="unblockPilotUser('${k.replace(/'/g, "\\'")}')">UNBLOCK</button></div>`;
+      }).join("");
+    }
+
+    function openAccountSafetyMenuModal() {
+      let bd = document.getElementById("rcSafetyAccountModalBackdrop");
+      if (!bd) {
+        bd = document.createElement("div");
+        bd.id = "rcSafetyAccountModalBackdrop";
+        bd.className = "rc-custom-dialog-backdrop";
+        bd.onclick = (e) => { if (e.target === bd) bd.classList.remove("active"); };
+        document.body.appendChild(bd);
+      }
+      const dispCall = state.pilotCallsign && !state.pilotCallsign.includes("LOGIN") ? state.pilotCallsign : "NOT LOGGED IN";
+      const blockedCount = Object.keys(getBlockedPilotsMap()).length;
+      bd.innerHTML = `
+        <div class="rc-custom-dialog-card" onclick="event.stopPropagation()">
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:8px;">
+            <h3 class="rc-custom-dialog-title">⚙️ PILOT ACCOUNT &amp; SAFETY</h3>
+            <button type="button" class="rc-dialog-btn" style="min-height:36px;min-width:60px;padding:6px 10px;" onclick="document.getElementById('rcSafetyAccountModalBackdrop').classList.remove('active')">✕</button>
+          </div>
+          <div style="font-size:0.82rem;color:#94a3b8;">Signed in as <strong style="color:#fbbf24;">${dispCall}</strong></div>
+          <div class="rc-safety-item-list">
+            <button type="button" class="rc-safety-action-btn" onclick="document.getElementById('rcSafetyAccountModalBackdrop').classList.remove('active'); openPrivacyAndTermsModal();">
+              <span>📜 Privacy Policy, Terms &amp; Ticket Rules</span><span>➔</span>
+            </button>
+            <button type="button" class="rc-safety-action-btn" onclick="document.getElementById('rcSafetyAccountModalBackdrop').classList.remove('active'); logoutPilotAccount();">
+              <span>🔒 Log Out / Switch Pilot Account</span><span>➔</span>
+            </button>
+            <button type="button" class="rc-safety-action-btn danger" onclick="document.getElementById('rcSafetyAccountModalBackdrop').classList.remove('active'); promptDeletePilotAccount();">
+              <span>🗑️ Permanently Delete Account &amp; Cloud Data</span><span>➔</span>
+            </button>
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:10px;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.70rem;color:#38bdf8;margin-bottom:6px;">🛡️ BLOCKED PILOTS (${blockedCount})</div>
+            <div id="rcSafetyBlockedList" class="rc-safety-item-list"></div>
+          </div>
+        </div>
+      `;
+      renderSafetyBlockedList(document.getElementById("rcSafetyBlockedList"));
+      bd.classList.add("active");
+    }
+
+    async function blockPilotUser(userKey, callsign) {
       const cleanKey = String(userKey || "").trim().replace(/^@/, "").toLowerCase();
       if (!cleanKey || cleanKey === state.loggedInUserKey) return;
       const dispCall = callsign || ("@" + cleanKey.toUpperCase());
-      if (!confirm(`🚫 Block ${dispCall}?\n\nYou will no longer see messages or friend requests from ${dispCall} in Public Pit Chat or Private DMs.`)) {
-        return;
-      }
+      const ok = await openBotPitDialogModal({
+        title: `🚫 BLOCK ${dispCall}?`,
+        message: `You will immediately stop seeing messages, emotes, or friend requests from ${dispCall} in Public Pit Chat and Private DMs.`,
+        mode: "confirm",
+        danger: true,
+        confirmLabel: "🚫 BLOCK PILOT",
+        cancelLabel: "CANCEL"
+      });
+      if (!ok) return;
 
       const map = getBlockedPilotsMap();
       map[cleanKey] = {
@@ -20213,10 +21510,16 @@
       };
       saveBlockedPilotsMap(map);
 
-      // Remove any visible public chat lines from this blocked user immediately
-      document.querySelectorAll(`#pitChatFeed .chat-line[data-sender-key="${cleanKey}"]`).forEach(el => el.remove());
+      if (typeof pitSpectator !== "undefined" && Array.isArray(pitSpectator.chatHistory)) {
+        pitSpectator.chatHistory = pitSpectator.chatHistory.filter(m => {
+          const mk = (m.userKey || String(m.callsign || "").replace(/^@/, "")).trim().toLowerCase();
+          return mk !== cleanKey;
+        });
+      }
+      document.querySelectorAll('#pitChatFeed .chat-line').forEach(el => {
+        if ((el.dataset.senderKey || "").toLowerCase() === cleanKey) el.remove();
+      });
 
-      // Remove from active friendships / DM view if open
       if (typeof socialState !== "undefined") {
         const myKey = normalizeAuthKey(state.loggedInUserKey || "");
         if (myKey) {
@@ -20240,13 +21543,17 @@
       if (typeof renderFriendsAndSocialUI === "function") renderFriendsAndSocialUI();
     }
 
-    function reportPilotOrMessage(userKey, callsign, messageExcerpt, contextLabel) {
+    async function reportPilotOrMessage(userKey, callsign, messageExcerpt, contextLabel) {
       const cleanKey = String(userKey || "unknown").trim().replace(/^@/, "").toLowerCase();
       const dispCall = callsign || ("@" + cleanKey.toUpperCase());
-      const reason = prompt(
-        `🚩 Report ${dispCall} (${contextLabel || "Chat"}):\nEnter reason for moderation report (e.g. harassment, spam, offensive language):`,
-        "Inappropriate language / harassment"
-      );
+      const reason = await openBotPitDialogModal({
+        title: `🚩 REPORT ${dispCall}`,
+        message: `Context: ${contextLabel || "Chat"}\nEnter the reason for your moderation report (harassment, hate speech, spam, offensive language):`,
+        mode: "prompt",
+        defaultValue: "Inappropriate language / harassment",
+        placeholder: "Describe reason...",
+        confirmLabel: "🚩 SUBMIT REPORT"
+      });
       if (reason === null) return;
 
       const reportRecord = {
@@ -20266,14 +21573,37 @@
         localStorage.setItem(BOTPIT_UGC_REPORTS_KEY, JSON.stringify(existing.slice(-100)));
       } catch (_) {}
 
-      showShopToast(`🚩 Report submitted against ${dispCall}. Thank you for keeping Shibuya Bot Pit safe!`, "#fde047");
+      try {
+        await fetch(BOTPIT_ACCOUNT_OPS_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "submit_ugc_report",
+            reportId: reportRecord.id,
+            reporterKey: reportRecord.reporter_key,
+            reportedKey: reportRecord.reported_key,
+            reportedCallsign: reportRecord.reported_callsign,
+            context: reportRecord.context,
+            excerpt: reportRecord.excerpt,
+            reason: reportRecord.reason
+          })
+        });
+      } catch (_) {}
+
+      showShopToast(`🚩 Report sent to moderation team for ${dispCall}. Thank you!`, "#fde047");
 
       if (cleanKey && cleanKey !== "unknown" && cleanKey !== state.loggedInUserKey && !isPilotBlocked(cleanKey)) {
-        setTimeout(() => {
-          if (confirm(`Would you also like to 🚫 BLOCK ${dispCall} so you no longer see their messages?`)) {
-            blockPilotUser(cleanKey, dispCall);
-          }
-        }, 120);
+        const alsoBlock = await openBotPitDialogModal({
+          title: `🚫 ALSO BLOCK ${dispCall}?`,
+          message: `Would you also like to hide all messages and DMs from ${dispCall} immediately?`,
+          mode: "confirm",
+          danger: true,
+          confirmLabel: "🚫 BLOCK USER",
+          cancelLabel: "NO THANKS"
+        });
+        if (alsoBlock) {
+          await blockPilotUser(cleanKey, dispCall);
+        }
       }
     }
 
@@ -20305,11 +21635,16 @@
       }
     }
 
-    // Permanent Account Deletion (Item D - Apple Guideline 5.1.1(v) & Google Play Data Deletion)
+    // Verified Server-Backed Permanent Account Deletion (Google Play Data Deletion & Apple 5.1.1(v))
     async function promptDeletePilotAccount() {
       const activeKey = (state.loggedInUserKey || (document.getElementById("botpitLoginUser") && document.getElementById("botpitLoginUser").value) || "").trim().replace(/^@/, "").toLowerCase();
       if (!activeKey) {
-        alert("Please log into the Pilot Account you wish to delete first, or enter your username in the Login box.");
+        await openBotPitDialogModal({
+          title: "🔑 SIGN IN REQUIRED",
+          message: "Please log into the Pilot Account you wish to delete first, or enter your callsign in the Login screen.",
+          mode: "alert",
+          confirmLabel: "OPEN LOGIN"
+        });
         openPilotAuthGateModal();
         return;
       }
@@ -20318,18 +21653,73 @@
         ? state.pilotCallsign
         : ("@" + activeKey.toUpperCase());
 
-      const confirmed = confirm(
-        `🗑️ PERMANENTLY DELETE PILOT ACCOUNT (${dispCall})?\n\n` +
-        `This will permanently delete your Pilot Account (${dispCall}), Diamonds, 6-Slot Mech Loadout, ELO record, Friendships, and Cloud Save data from this device and our servers.\n\n` +
-        `This action cannot be undone. Proceed?`
-      );
+      const confirmed = await openBotPitDialogModal({
+        title: `🗑️ DELETE ${dispCall}?`,
+        message: `This will PERMANENTLY delete your Pilot Account (${dispCall}), Diamonds, 6-Slot Mech Loadout, ELO record, Friendships, Direct Messages, and Cloud Save immediately.\n\nThis cannot be undone.`,
+        mode: "confirm",
+        danger: true,
+        confirmLabel: "🗑️ PERMANENTLY DELETE",
+        cancelLabel: "KEEP ACCOUNT"
+      });
       if (!confirmed) return;
 
       if (sim && sim.running) {
         sim.running = false;
       }
 
-      // 1. Delete from local BotPit & Site Account stores
+      const bpMapBefore = getBotPitAccountsMap();
+      const siteMapBefore = getSiteAccountsMap();
+      const storedPass = (bpMapBefore[activeKey] && bpMapBefore[activeKey].password) || (siteMapBefore[activeKey] && siteMapBefore[activeKey].password) || "";
+
+      try {
+        const res = await fetch(BOTPIT_ACCOUNT_OPS_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "delete_account",
+            usernameKey: activeKey,
+            email: state.loggedInEmail || "",
+            passwordHash: String(storedPass).startsWith("sha256:") ? storedPass : "",
+            password: !String(storedPass).startsWith("sha256:") ? storedPass : ""
+          })
+        });
+        const delData = await res.json().catch(() => ({}));
+        if (!res.ok && res.status === 403) {
+          const typedPass = await openBotPitDialogModal({
+            title: "🔒 CONFIRM PASSWORD TO DELETE CLOUD SAVE",
+            message: `Enter the password for ${dispCall} to verify permanent cloud account deletion:`,
+            mode: "prompt",
+            inputType: "password",
+            placeholder: "Your password",
+            danger: true,
+            confirmLabel: "🗑️ VERIFY & DELETE"
+          });
+          if (!typedPass) return;
+          const typedHash = await hashPilotPasscode(typedPass);
+          const retryRes = await fetch(BOTPIT_ACCOUNT_OPS_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "delete_account",
+              usernameKey: activeKey,
+              email: state.loggedInEmail || "",
+              password: typedPass,
+              passwordHash: typedHash
+            })
+          });
+          const retryJson = await retryRes.json().catch(() => ({}));
+          if (!retryRes.ok || retryJson.ok === false) {
+            await openBotPitDialogModal({
+              title: "❌ CLOUD DELETION FAILED",
+              message: retryJson.error || "Password did not match. Your account was NOT deleted.",
+              mode: "alert",
+              danger: true
+            });
+            return;
+          }
+        }
+      } catch (_) {}
+
       const bpMap = getBotPitAccountsMap();
       const siteMap = getSiteAccountsMap();
       delete bpMap[activeKey];
@@ -20337,20 +21727,6 @@
       saveBotPitAccountsMap(bpMap);
       saveSiteAccountsMap(siteMap);
 
-      // 2. Delete from Supabase Cloud tables (arcade_accounts, botpit_friendships, botpit_direct_messages)
-      if (window.db) {
-        try {
-          await window.db.from("arcade_accounts").delete().eq("username_key", activeKey);
-        } catch (_) {}
-        try {
-          await window.db.from("botpit_friendships").delete().or(`requester_key.eq.${activeKey},addressee_key.eq.${activeKey}`);
-        } catch (_) {}
-        try {
-          await window.db.from("botpit_direct_messages").delete().or(`sender_key.eq.${activeKey},receiver_key.eq.${activeKey}`);
-        } catch (_) {}
-      }
-
-      // 3. Reset active session state & open login gate
       state._explicitOffline = true;
       state.loggedInUserKey = null;
       state.loggedInUsername = "";
@@ -20380,18 +21756,20 @@
     // Privacy Policy, Terms of Use & Official Golden Ticket Rules Modal (Items C & F)
     function openPrivacyAndTermsModal() {
       let bd = document.getElementById("rcPrivacyTermsModalBackdrop");
+      const inAppShell = isAndroidPlayOrAppShell();
+      const privacyHref = inAppShell ? "privacy.html?app=1" : "privacy.html";
       if (!bd) {
         bd = document.createElement("div");
         bd.id = "rcPrivacyTermsModalBackdrop";
-        bd.style.cssText = "position:fixed;inset:0;z-index:100000;background:rgba(4,6,14,0.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:16px;";
+        bd.style.cssText = "position:fixed;inset:0;z-index:100000;background:rgba(4,6,14,0.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));";
         bd.onclick = (e) => { if (e.target === bd) bd.style.display = "none"; };
         bd.innerHTML = `
-          <div style="width:100%;max-width:620px;max-height:86vh;overflow-y:auto;background:linear-gradient(180deg,#131b2e 0%,#090d16 100%);border:1.5px solid rgba(56,189,248,0.55);border-radius:20px;padding:20px 22px;color:#e2e8f0;font-family:'Rajdhani',sans-serif;box-shadow:0 28px 80px rgba(0,0,0,0.95);" onclick="event.stopPropagation()">
-            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px;margin-bottom:12px;">
-              <h3 style="margin:0;font-family:'Orbitron',sans-serif;font-size:0.95rem;color:#38bdf8;">📜 PRIVACY POLICY, TERMS &amp; GOLDEN TICKET RULES</h3>
-              <button type="button" onclick="document.getElementById('rcPrivacyTermsModalBackdrop').style.display='none'" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-weight:800;">✕ CLOSE</button>
+          <div style="width:100%;max-width:620px;max-height:86dvh;overflow-y:auto;background:linear-gradient(180deg,#131b2e 0%,#090d16 100%);border:1.5px solid rgba(56,189,248,0.55);border-radius:20px;padding:18px;color:#e2e8f0;font-family:'Rajdhani',sans-serif;box-shadow:0 28px 80px rgba(0,0,0,0.95);" onclick="event.stopPropagation()">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px;margin-bottom:12px;">
+              <h3 style="margin:0;font-family:'Orbitron',sans-serif;font-size:0.88rem;color:#38bdf8;">📜 PRIVACY POLICY, TERMS &amp; TICKET RULES</h3>
+              <button type="button" onclick="document.getElementById('rcPrivacyTermsModalBackdrop').style.display='none'" style="min-height:38px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:800;">✕ CLOSE</button>
             </div>
-            <div style="font-size:0.84rem;line-height:1.45;display:flex;flex-direction:column;gap:10px;">
+            <div style="font-size:0.86rem;line-height:1.45;display:flex;flex-direction:column;gap:10px;">
               <div>
                 <strong style="color:#fde047;">1. 🎟️ OFFICIAL GOLDEN TICKET &amp; ARENA STAKE RULES (SKILL-ONLY):</strong><br>
                 • <strong>Golden Tickets (🎟️)</strong> are earned <strong>strictly 1 at a time (+1 🎟️ per Live PvP Victory)</strong> through skill-based player-vs-player combat.<br>
@@ -20400,22 +21778,76 @@
                 • <em>Disclaimer: Apple Inc. and Google LLC are not sponsors of, nor affiliated with, Shibuya Bot Pit or any RetroCanopy Ticket Counter rewards.</em>
               </div>
               <div>
-                <strong style="color:#38bdf8;">2. 🛡️ COMMUNITY SAFETY, PROFANITY FILTER &amp; UGC MODERATION:</strong><br>
+                <strong style="color:#38bdf8;">2. 🛡️ COMMUNITY SAFETY, 13+ ELIGIBILITY &amp; UGC MODERATION:</strong><br>
+                • Players must be at least <strong>13 years of age</strong> to register and participate in Arena Chat or Direct Messages.<br>
                 • Automated profanity filtering is active across Public Pit Chat, Private DMs, and Pilot Callsigns.<br>
                 • Players may report offensive messages (🚩) or block abusive users (🚫) at any time with a single tap in Public Chat or Friends/DMs.
               </div>
               <div>
-                <strong style="color:#34d399;">3. 🔒 PRIVACY POLICY &amp; ACCOUNT DELETION:</strong><br>
-                • We store only your Pilot Callsign, Email, SHA-256 hashed credentials, and in-game Bot progress in Supabase Cloud.<br>
-                • You may permanently delete your Pilot Account and all associated cloud data at any time by clicking <strong>🗑️ DELETE ACCOUNT</strong> in the top bar, login screen, or on our dedicated web portal.<br>
-                • <a href="privacy.html" target="_blank" rel="noopener" style="color:#38bdf8;font-weight:800;text-decoration:underline;">🔗 Open Full Public Privacy Policy &amp; Web Data Deletion Portal (privacy.html) ↗</a>
+                <strong style="color:#34d399;">3. 🔒 PRIVACY POLICY, CONTACT &amp; IMMEDIATE ACCOUNT DELETION:</strong><br>
+                • Publisher: <strong>RetroCanopy Arena Labs</strong> · Contact: <a href="mailto:josephcole001.ai@gmail.com" style="color:#38bdf8;font-weight:700;">josephcole001.ai@gmail.com</a><br>
+                • We store your Pilot Callsign, Email, salted SHA-256 credentials, and BattleBot cloud save in Supabase (0-day retention upon deletion).<br>
+                • You may permanently delete your Pilot Account anytime inside <strong>⚙️ ACCOUNT</strong>, on the Pilot Login screen, or via our public deletion portal:<br>
+                • <a id="rcPrivacyExternalLink" href="${privacyHref}" target="_blank" rel="noopener" style="color:#38bdf8;font-weight:800;text-decoration:underline;">🔗 Open Public Privacy Policy, Terms &amp; Deletion Portal (privacy.html) ↗</a>
               </div>
             </div>
           </div>
         `;
         document.body.appendChild(bd);
+      } else {
+        const ext = document.getElementById("rcPrivacyExternalLink");
+        if (ext) ext.href = privacyHref;
       }
       bd.style.display = "flex";
+    }
+
+    function initAppShellComplianceAndBackHandler() {
+      try {
+        const inApp = isAndroidPlayOrAppShell();
+        const showPaidIap = !inApp || hasNativePlayBillingAvailable();
+        document.body.classList.toggle("rc-app-shell", inApp);
+        document.body.classList.toggle("rc-hide-paid-iap", !showPaidIap);
+      } catch (_) {}
+
+      const handleBackPress = () => {
+        const closeIfOpen = (id, fn) => {
+          const el = document.getElementById(id);
+          if (!el) return false;
+          const isVis = el.classList.contains("active") || (!el.classList.contains("hidden") && getComputedStyle(el).display !== "none");
+          if (!isVis) return false;
+          if (typeof fn === "function") fn();
+          else { el.classList.remove("active"); el.style.display = "none"; }
+          return true;
+        };
+        if (closeIfOpen("rcCustomDialogBackdrop")) return true;
+        if (closeIfOpen("rcSafetyAccountModalBackdrop")) return true;
+        if (closeIfOpen("rcPrivacyTermsModalBackdrop")) return true;
+        if (closeIfOpen("buyDiamondsModalBackdrop", closeBuyDiamondsModal)) return true;
+        if (closeIfOpen("shopModalBackdrop", closeShopModal)) return true;
+        if (closeIfOpen("skillTreeModalBackdrop", closeSkillTreeModal)) return true;
+        if (closeIfOpen("fullScreenMapModal", () => closeFullScreenMapSelector(false))) return true;
+        if (document.body.classList.contains("mobile-chat-open") && typeof toggleMobileChatOverlay === "function") {
+          toggleMobileChatOverlay(false);
+          return true;
+        }
+        if (document.body.classList.contains("mobile-play-active") && typeof exitMobilePlayMode === "function") {
+          exitMobilePlayMode();
+          return true;
+        }
+        return false;
+      };
+
+      document.addEventListener("keydown", (ev) => {
+        if (ev.key === "Escape") handleBackPress();
+      });
+
+      try {
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App && typeof window.Capacitor.Plugins.App.addListener === "function") {
+          window.Capacitor.Plugins.App.addListener("backButton", () => {
+            handleBackPress();
+          });
+        }
+      } catch (_) {}
     }
 
     // Boot initialization after all modules & constants (Compliance/Moderation/Overlay) are initialized
@@ -20427,6 +21859,8 @@
     try { syncControlModeUI(); } catch (e) { console.error(e); }
     try { renderTopDown3D(); } catch (e) { console.error(e); }
     try { bootPitSpectatorAndChat(); } catch (e) { console.error(e); }
+    try { initAppShellComplianceAndBackHandler(); } catch (e) { console.error(e); }
+    try { initRetroCanopyNativePlayBilling(); } catch (e) { console.error(e); }
 
   </script>
 </body>
