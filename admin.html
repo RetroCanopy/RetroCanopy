@@ -1316,6 +1316,16 @@
     body[data-layout="tabbed-studio"]:not([data-focus-pane="savedquotes"]) #savedQuotesVaultSection {
       display: none;
     }
+    body[data-layout="tabbed-studio"]:not([data-focus-pane="projectrequests"]) #projectRequestsHubSection {
+      display: none;
+    }
+    body[data-layout="tabbed-studio"][data-focus-pane="projectrequests"] #websiteOrdersHubSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="projectrequests"] #bulkQuoteStudioSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="projectrequests"] #savedQuotesVaultSection,
+    body[data-layout="tabbed-studio"][data-focus-pane="projectrequests"] .owner-workspace,
+    body[data-layout="tabbed-studio"][data-focus-pane="projectrequests"] .vision-telemetry-wing {
+      display: none;
+    }
     body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] #websiteOrdersHubSection,
     body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] #savedQuotesVaultSection,
     body[data-layout="tabbed-studio"][data-focus-pane="bulkquote"] .owner-workspace,
@@ -2890,6 +2900,11 @@
             <span>&#128717;&#65039;</span>
             <span>Merch Orders &amp; Production Queue</span>
           </button>
+          <button type="button" class="spatial-focus-tab" data-focus-target="projectrequests" id="topFocusTabProjectRequests">
+            <span>&#128640;</span>
+            <span>Project Requests</span>
+            <span id="projectReqNavCountBadge" style="padding:2px 8px;border-radius:999px;font-size:0.7rem;background:rgba(44,230,255,0.22);border:1px solid rgba(44,230,255,0.75);color:#2ce6ff;">0</span>
+          </button>
           <button type="button" class="spatial-focus-tab" data-focus-target="bulkquote" id="topFocusTabBulkQuote">
             <span>&#128208;</span>
             <span>Bulk Order Quoter (S&amp;S + Live DTF)</span>
@@ -2922,6 +2937,54 @@
 
       <!-- LIVE PAID QUOTE CONFIRMATION ALERT BANNER (SHOWN AUTOMATICALLY WHEN ANY QUOTE IS PAID VIA STRIPE) -->
       <div class="paid-quote-confirm-banner" id="paidBulkQuotesAlertBar" role="status" aria-live="polite"></div>
+
+      <!-- LIVE STUDIO PROJECT REQUEST ALERT BANNER (SHOWN WHEN NEW "START A PROJECT" REQUESTS ARRIVE) -->
+      <div class="paid-quote-confirm-banner" id="liveProjectRequestsAlertBar" role="status" aria-live="polite" style="border-color:rgba(44,230,255,0.85);background:radial-gradient(circle at 18% 0%, rgba(44,230,255,0.24), transparent 58%), linear-gradient(135deg, rgba(10,34,52,0.92), rgba(8,16,28,0.96));box-shadow:0 18px 44px rgba(0,0,0,0.65), 0 0 28px rgba(44,230,255,0.22);"></div>
+
+      <!-- DEDICATED STUDIO PROJECT REQUESTS ("START A PROJECT") HUB -->
+      <section class="vision-glass owner-major-section" id="projectRequestsHubSection">
+        <div class="section-header" style="align-items:flex-start;gap:14px;flex-wrap:wrap;">
+          <div>
+            <h2 class="section-title">&#128640; Studio Project Requests ("Start a Project" Inquiries)</h2>
+            <div style="font-size:0.78rem;color:rgba(255,255,255,0.75);margin-top:4px;">
+              Every <strong>Start a Project</strong> request from the website is pushed directly to your phone via <strong>ntfy.sh + Email/SMS</strong> and synced here in real time. Click <strong>Open in Project Quoter</strong> to pre-fill a quote in 1 click!
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <div class="kpi-pill" style="border-color:rgba(44,230,255,0.72) !important;">
+              <div class="kpi-label">New Requests</div>
+              <div class="kpi-val" id="prKpiOpenCount" style="color:#2ce6ff;">0</div>
+            </div>
+            <div class="kpi-pill" style="border-color:rgba(34,245,155,0.72) !important;">
+              <div class="kpi-label">Contacted / Done</div>
+              <div class="kpi-val" id="prKpiDoneCount" style="color:#22f59b;">0</div>
+            </div>
+            <div class="kpi-pill">
+              <div class="kpi-label">Total Inquiries</div>
+              <div class="kpi-val" id="prKpiTotalCount">0</div>
+            </div>
+            <button type="button" class="mini-btn" id="prRefreshCloudBtn" style="color:#2ce6ff;border-color:rgba(44,230,255,0.55) !important;">&#8635; Sync Live Requests</button>
+          </div>
+        </div>
+
+        <div class="card-tabs" style="margin-top:12px;">
+          <button type="button" class="card-tab-btn active" data-tab-target="pane-projreq-open" id="tabBtnProjReqOpen">
+            &#128640; New / Open Project Requests (0)
+          </button>
+          <button type="button" class="card-tab-btn" data-tab-target="pane-projreq-done" id="tabBtnProjReqDone">
+            &#9989; Contacted / Completed (0)
+          </button>
+        </div>
+
+        <div class="tab-pane active" id="pane-projreq-open">
+          <div class="sq-vault-grid" id="projectRequestsOpenGrid"></div>
+        </div>
+
+        <div class="tab-pane" id="pane-projreq-done">
+          <div class="sq-vault-grid" id="projectRequestsDoneGrid"></div>
+        </div>
+      </section>
 
       <!-- DEDICATED SAVED QUOTES & PAID QUOTE CONFIRMATION VAULT -->
       <section class="vision-glass owner-major-section" id="savedQuotesVaultSection">
@@ -3007,6 +3070,9 @@
           <button type="button" class="card-tab-btn" data-tab-target="pane-merch-history" id="tabBtnMerchHistory">
             Order History (Checked Off) (0)
           </button>
+          <button type="button" class="card-tab-btn" data-tab-target="pane-merch-projreq" id="tabBtnMerchProjReq" style="color:#2ce6ff;">
+            &#128640; Studio Project Requests (0)
+          </button>
         </div>
 
         <!-- Sub-Tab 1: Unchecked Orders (Still Needs To Be Done) -->
@@ -3017,6 +3083,11 @@
         <!-- Sub-Tab 2: Checked-Off Order History -->
         <div class="tab-pane" id="pane-merch-history">
           <div id="merchHistoryList"></div>
+        </div>
+
+        <!-- Sub-Tab 3: Studio Project Requests -->
+        <div class="tab-pane" id="pane-merch-projreq">
+          <div class="sq-vault-grid" id="merchInlineProjReqList"></div>
         </div>
       </section>
 
@@ -3617,10 +3688,13 @@
 
       let selectedTrafficPeriod = 'day';
       let cloudPaidMerchOrders = [];
+      let cloudProjectRequests = [];
       let cloudGameOrders = [];
       let cloudPilots = [];
       let cloudFriendshipsCount = 0;
       let cloudMessagesCount = 0;
+      let seenProjectReqIds = new Set();
+      let initialProjReqSyncDone = false;
 
       // Lock in Layout 1 (Tabbed Focus Studio) + Interactive Optical Glass Specular Glint
       document.body.setAttribute('data-layout', 'tabbed-studio');
@@ -3655,6 +3729,7 @@
           if (document.body.getAttribute('data-layout') === 'bottom-dock') {
             const map = {
               orders: 'websiteOrdersHubSection',
+              projectrequests: 'projectRequestsHubSection',
               bulkquote: 'bulkQuoteStudioSection',
               savedquotes: 'savedQuotesVaultSection',
               vault: 'storeCatalogSection',
@@ -3849,8 +3924,9 @@
         };
 
         try {
-          const [merchRes, gameOrdRes, pilotsRes, friendsRes, dmsRes] = await Promise.all([
+          const [merchRes, projReqRes, gameOrdRes, pilotsRes, friendsRes, dmsRes] = await Promise.all([
             fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?is_paid=eq.true&order=created_at.desc`, { headers }).catch(() => null),
+            fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?payment_status=eq.PROJECT_REQUEST&order=created_at.desc`, { headers }).catch(() => null),
             fetch(`${SUPABASE_REST_URL}/botpit_game_orders?order=created_at.desc`, { headers }).catch(() => null),
             fetch(`${SUPABASE_REST_URL}/arcade_accounts?select=username_key,username,email,xp,best_score,tickets,bot_pit_data,updated_at&order=updated_at.desc`, { headers }).catch(() => null),
             fetch(`${SUPABASE_REST_URL}/botpit_friendships?select=pair_key,status`, { headers }).catch(() => null),
@@ -3861,6 +3937,12 @@
             const rows = await merchRes.json();
             if (Array.isArray(rows)) {
               cloudPaidMerchOrders = rows.map(normalizeMerchOrderRow);
+            }
+          }
+          if (projReqRes && projReqRes.ok) {
+            const rows = await projReqRes.json();
+            if (Array.isArray(rows)) {
+              cloudProjectRequests = rows.map(normalizeProjectRequestRow);
             }
           }
           if (gameOrdRes && gameOrdRes.ok) {
@@ -4974,10 +5056,354 @@
           await fetchCloudMerchAndGameData();
         }
         renderWebsiteMerchOrdersHub();
+        renderProjectRequestsHub();
         renderGameOrdersAndAnalyticsHub();
         renderTrafficCard();
         renderMembersCard();
         renderStoreCard();
+      }
+
+      // =====================================================================
+      // STUDIO PROJECT REQUESTS ("START A PROJECT") ENGINE & RENDERER
+      // =====================================================================
+      function normalizeProjectRequestRow(raw) {
+        if (!raw) return null;
+        let parsedNotes = null;
+        const rawNotesStr = raw.customer_notes || raw.customerNotes || '';
+        if (rawNotesStr && String(rawNotesStr).trim().startsWith('{')) {
+          try {
+            parsedNotes = JSON.parse(String(rawNotesStr));
+          } catch (_) {}
+        }
+        const reqId = String(
+          raw.requestId ||
+          raw.id ||
+          raw.order_id ||
+          raw.orderId ||
+          (parsedNotes && parsedNotes.requestId) ||
+          ('RC-PROJ-' + String(Date.now()).slice(-6))
+        );
+        const name = String(
+          raw.name ||
+          raw.customer_name ||
+          raw.customerName ||
+          (parsedNotes && parsedNotes.name) ||
+          'Prospective Client'
+        ).trim();
+        const contact = String(
+          raw.contact ||
+          (parsedNotes && parsedNotes.contact) ||
+          raw.customer_email ||
+          raw.customer_phone ||
+          raw.email ||
+          raw.phone ||
+          'Not Provided'
+        ).trim();
+        const email = String(
+          raw.email ||
+          (parsedNotes && parsedNotes.email) ||
+          (raw.customer_email && raw.customer_email !== 'Not Provided' ? raw.customer_email : '') ||
+          (contact.includes('@') ? contact : '')
+        ).trim();
+        const phone = String(
+          raw.phone ||
+          (parsedNotes && parsedNotes.phone) ||
+          (raw.customer_phone && raw.customer_phone !== 'Not Provided' && !String(raw.customer_phone).includes('@') ? raw.customer_phone : '') ||
+          (!contact.includes('@') ? contact : '')
+        ).trim();
+        const firstItem = Array.isArray(raw.items) && raw.items[0] ? raw.items[0] : null;
+        const service = String(
+          raw.service ||
+          (parsedNotes && parsedNotes.service) ||
+          (firstItem && firstItem.title) ||
+          'Custom Studio Project'
+        ).trim();
+        const notes = String(
+          raw.notes !== undefined
+            ? raw.notes
+            : ((parsedNotes && parsedNotes.notes !== undefined)
+                ? parsedNotes.notes
+                : (firstItem && firstItem.notes ? firstItem.notes : (!parsedNotes ? rawNotesStr : '')))
+        ).trim();
+        const fulfilled = Boolean(raw.fulfilled || raw.status === 'COMPLETED' || raw.status === 'CONTACTED');
+        const createdAt = raw.createdAt || raw.date || raw.timestamp || (parsedNotes && parsedNotes.createdAt) || raw.paid_at || raw.created_at || new Date().toISOString();
+
+        return {
+          requestId: reqId,
+          name,
+          contact,
+          email,
+          phone,
+          service,
+          notes,
+          fulfilled,
+          fulfilledAt: raw.fulfilled_at || raw.fulfilledAt || null,
+          createdAt
+        };
+      }
+
+      function getMergedProjectRequests() {
+        const byKey = new Map();
+        cloudProjectRequests.forEach((r) => {
+          if (r && r.requestId) byKey.set(String(r.requestId), r);
+        });
+        try {
+          const localList = JSON.parse(localStorage.getItem('rc_studio_inquiries_v1') || '[]') || [];
+          localList.forEach((raw) => {
+            const norm = normalizeProjectRequestRow(raw);
+            if (!norm) return;
+            const key = String(norm.requestId || (norm.name + '|' + norm.contact + '|' + norm.service));
+            if (!byKey.has(key)) {
+              byKey.set(key, norm);
+            } else {
+              const existing = byKey.get(key);
+              if (norm.fulfilled && !existing.fulfilled) {
+                existing.fulfilled = true;
+              }
+            }
+          });
+        } catch (_) {}
+        return Array.from(byKey.values()).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      }
+
+      function buildProjectRequestCardHtml(req) {
+        const timeStr = req.createdAt
+          ? new Date(req.createdAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+          : 'Just Now';
+        const cleanPhone = String(req.phone || '').replace(/[^0-9+]/g, '');
+        const hasEmail = Boolean(req.email && req.email.includes('@'));
+        const hasPhone = Boolean(cleanPhone && cleanPhone.length >= 7);
+
+        return `
+          <div class="sq-quote-card ${req.fulfilled ? 'is-paid-quote' : ''}" style="border-color:${req.fulfilled ? 'rgba(34,245,155,0.68)' : 'rgba(44,230,255,0.75)'};">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <span class="sq-ticket-link-pill" style="border-color:rgba(44,230,255,0.85);color:#2ce6ff;background:rgba(44,230,255,0.14);">
+                    &#128640; #${escapeHtml(req.requestId)}
+                  </span>
+                  <span style="padding:3px 10px;border-radius:999px;font-size:0.7rem;font-weight:800;background:${req.fulfilled ? 'rgba(34,245,155,0.18)' : 'rgba(245,196,81,0.2)'};border:1px solid ${req.fulfilled ? '#22f59b' : '#f5c451'};color:${req.fulfilled ? '#22f59b' : '#ffe89e'};">
+                    ${req.fulfilled ? '&#10003; CONTACTED / COMPLETED' : '&#9889; NEW PROJECT REQUEST'}
+                  </span>
+                </div>
+                <div style="font-size:1.05rem;font-weight:800;color:#ffffff;margin-top:8px;">
+                  ${escapeHtml(req.name)}
+                </div>
+                <div style="font-size:0.76rem;color:rgba(255,255,255,0.68);margin-top:2px;">
+                  Submitted: ${escapeHtml(timeStr)}
+                </div>
+              </div>
+
+              <div style="text-align:right;">
+                <span style="display:inline-block;padding:5px 12px;border-radius:10px;background:rgba(255,138,38,0.18);border:1px solid rgba(255,148,54,0.75);color:#ffd099;font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:800;">
+                  ${escapeHtml(req.service)}
+                </span>
+              </div>
+            </div>
+
+            <div style="padding:10px 12px;border-radius:12px;background:rgba(8,7,16,0.78);border:1px solid rgba(255,255,255,0.14);font-size:0.82rem;display:flex;flex-direction:column;gap:6px;">
+              <div>
+                <strong style="color:#ffd089;">Contact Info:</strong>
+                <span style="color:#ffffff;margin-left:6px;">${escapeHtml(req.contact || req.email || req.phone || 'Not Provided')}</span>
+              </div>
+              ${req.notes ? `
+                <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:6px;color:rgba(255,255,255,0.9);line-height:1.45;">
+                  <strong style="color:#2ce6ff;">Project Details / Notes:</strong><br>
+                  ${escapeHtml(req.notes)}
+                </div>
+              ` : ''}
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px;">
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                ${hasPhone ? `
+                  <a href="tel:${escapeHtml(cleanPhone)}" class="mini-btn" style="text-decoration:none;color:#22f59b;border-color:rgba(34,245,155,0.55) !important;">&#128222; Call</a>
+                  <a href="sms:${escapeHtml(cleanPhone)}" class="mini-btn" style="text-decoration:none;color:#2ce6ff;border-color:rgba(44,230,255,0.55) !important;">&#128172; Text</a>
+                ` : ''}
+                ${hasEmail ? `
+                  <a href="mailto:${escapeHtml(req.email)}?subject=${encodeURIComponent('RetroCanopy Studio — Your ' + req.service + ' Project (#' + req.requestId + ')')}" class="mini-btn" style="text-decoration:none;color:#ffe89e;border-color:rgba(245,196,81,0.55) !important;">&#9993;&#65039; Email</a>
+                ` : ''}
+                <button type="button" class="mini-btn" data-open-projreq-quoter="${escapeHtml(req.requestId)}" style="color:#ffd099;border-color:rgba(255,148,54,0.75) !important;">
+                  &#128208; Open in Project Quoter
+                </button>
+              </div>
+
+              <button type="button" class="mini-btn" data-toggle-projreq-done="${escapeHtml(req.requestId)}" data-next-state="${req.fulfilled ? '0' : '1'}" style="color:${req.fulfilled ? '#ffb36b' : '#22f59b'};border-color:${req.fulfilled ? 'rgba(255,179,107,0.55)' : 'rgba(34,245,155,0.65)'} !important;">
+                ${req.fulfilled ? '&#8634; Reopen Request' : '&#10003; Mark Contacted / Done'}
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderProjectRequestsHub() {
+        const allReqs = getMergedProjectRequests();
+        const openReqs = allReqs.filter((r) => !r.fulfilled);
+        const doneReqs = allReqs.filter((r) => r.fulfilled);
+
+        // Fire browser notification if a brand-new project request arrived after initial load
+        if (initialProjReqSyncDone) {
+          openReqs.forEach((r) => {
+            if (!seenProjectReqIds.has(r.requestId)) {
+              seenProjectReqIds.add(r.requestId);
+              if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+                try {
+                  new Notification(`🚀 New Project Request: ${r.service}`, {
+                    body: `${r.name} (${r.contact}) — Ticket #${r.requestId}`,
+                    icon: 'assets/logo.png'
+                  });
+                } catch (_) {}
+              }
+            }
+          });
+        } else {
+          allReqs.forEach((r) => seenProjectReqIds.add(r.requestId));
+          initialProjReqSyncDone = true;
+        }
+
+        const navBadge = document.getElementById('projectReqNavCountBadge');
+        if (navBadge) navBadge.textContent = String(openReqs.length);
+
+        const kpiOpen = document.getElementById('prKpiOpenCount');
+        const kpiDone = document.getElementById('prKpiDoneCount');
+        const kpiTotal = document.getElementById('prKpiTotalCount');
+        if (kpiOpen) kpiOpen.textContent = String(openReqs.length);
+        if (kpiDone) kpiDone.textContent = String(doneReqs.length);
+        if (kpiTotal) kpiTotal.textContent = String(allReqs.length);
+
+        const tabOpen = document.getElementById('tabBtnProjReqOpen');
+        const tabDone = document.getElementById('tabBtnProjReqDone');
+        const tabInline = document.getElementById('tabBtnMerchProjReq');
+        if (tabOpen) tabOpen.textContent = `🚀 New / Open Project Requests (${openReqs.length})`;
+        if (tabDone) tabDone.textContent = `✅ Contacted / Completed (${doneReqs.length})`;
+        if (tabInline) tabInline.textContent = `🚀 Studio Project Requests (${openReqs.length})`;
+
+        const openGrid = document.getElementById('projectRequestsOpenGrid');
+        const doneGrid = document.getElementById('projectRequestsDoneGrid');
+        const inlineGrid = document.getElementById('merchInlineProjReqList');
+
+        const emptyOpenHtml = `
+          <div class="empty-state" style="grid-column:1/-1;">
+            No open "Start a Project" requests waiting right now.<br>
+            <span style="font-size:0.72rem;color:rgba(255,255,255,0.64);">When anyone submits the "Start a Project" form on the website, their request is pushed to your phone via ntfy.sh + Email/SMS and appears here automatically.</span>
+          </div>
+        `;
+        const openCardsHtml = openReqs.length === 0 ? emptyOpenHtml : openReqs.map(buildProjectRequestCardHtml).join('');
+
+        if (openGrid) openGrid.innerHTML = openCardsHtml;
+        if (inlineGrid) inlineGrid.innerHTML = allReqs.length === 0 ? emptyOpenHtml : allReqs.map(buildProjectRequestCardHtml).join('');
+        if (doneGrid) {
+          doneGrid.innerHTML = doneReqs.length === 0
+            ? `<div class="empty-state" style="grid-column:1/-1;">No completed project requests yet.</div>`
+            : doneReqs.map(buildProjectRequestCardHtml).join('');
+        }
+
+        const alertBar = document.getElementById('liveProjectRequestsAlertBar');
+        if (alertBar) {
+          if (openReqs.length === 0) {
+            alertBar.style.display = 'none';
+            alertBar.innerHTML = '';
+          } else {
+            alertBar.style.display = 'flex';
+            alertBar.innerHTML = openReqs.slice(0, 3).map((req) => `
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                  <span style="padding:5px 12px;border-radius:999px;background:rgba(44,230,255,0.22);border:1px solid #2ce6ff;color:#2ce6ff;font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:900;">
+                    &#128640; NEW PROJECT REQUEST
+                  </span>
+                  <strong style="color:#ffffff;font-size:0.9rem;">
+                    #${escapeHtml(req.requestId)} &mdash; ${escapeHtml(req.name)} (<span style="color:#ffd089;">${escapeHtml(req.service)}</span>)
+                  </strong>
+                  <span style="color:rgba(255,255,255,0.85);font-size:0.82rem;">Contact: <strong>${escapeHtml(req.contact)}</strong></span>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button type="button" class="mini-btn" onclick="document.getElementById('topFocusTabProjectRequests').click();" style="color:#2ce6ff;border-color:#2ce6ff !important;">
+                    View Request &rarr;
+                  </button>
+                  <button type="button" class="mini-btn" data-open-projreq-quoter="${escapeHtml(req.requestId)}" style="color:#ffd099;border-color:rgba(255,148,54,0.8) !important;">
+                    &#128208; Open in Quoter
+                  </button>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+      }
+
+      async function toggleProjectRequestStatus(requestId, markDone) {
+        const nowIso = markDone ? new Date().toISOString() : null;
+        try {
+          const list = JSON.parse(localStorage.getItem('rc_studio_inquiries_v1') || '[]') || [];
+          list.forEach((item) => {
+            const id = String(item.requestId || item.id || '');
+            if (id === String(requestId)) {
+              item.fulfilled = markDone;
+              item.status = markDone ? 'COMPLETED' : 'NEW';
+              item.fulfilledAt = nowIso;
+            }
+          });
+          localStorage.setItem('rc_studio_inquiries_v1', JSON.stringify(list));
+        } catch (_) {}
+
+        cloudProjectRequests.forEach((item) => {
+          if (String(item.requestId) === String(requestId)) {
+            item.fulfilled = markDone;
+            item.fulfilledAt = nowIso;
+          }
+        });
+
+        try {
+          await fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?order_id=eq.${encodeURIComponent(requestId)}`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              fulfilled: markDone,
+              fulfilled_at: nowIso
+            })
+          });
+        } catch (_) {}
+
+        renderProjectRequestsHub();
+      }
+
+      function openProjectRequestInQuoter(requestId) {
+        const req = getMergedProjectRequests().find((r) => String(r.requestId) === String(requestId));
+        if (!req) return;
+        const quoterTab = document.getElementById('topFocusTabBulkQuote');
+        if (quoterTab) quoterTab.click();
+
+        const nameInput = document.getElementById('bqCustFullName');
+        const compInput = document.getElementById('bqCustCompany');
+        const emailInput = document.getElementById('bqCustEmail');
+        const phoneInput = document.getElementById('bqCustPhone');
+        const notesInput = document.getElementById('bqCustNotes');
+
+        if (nameInput) {
+          nameInput.value = req.name || '';
+          nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (compInput) {
+          compInput.value = `${req.service} (#${req.requestId})`;
+          compInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (emailInput && req.email) {
+          emailInput.value = req.email;
+          emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (phoneInput && req.phone) {
+          phoneInput.value = req.phone;
+          phoneInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (notesInput) {
+          notesInput.value = `[Project Request #${req.requestId} — ${req.service}] ${req.notes || ''}`.trim();
+          notesInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        const studioSec = document.getElementById('bulkQuoteStudioSection');
+        if (studioSec) studioSec.scrollIntoView({ behavior: 'smooth' });
       }
 
       // =====================================================================
@@ -5039,7 +5465,27 @@
           renderStoreCard();
           return;
         }
+
+        const toggleProjReqBtn = e.target.closest('[data-toggle-projreq-done]');
+        if (toggleProjReqBtn) {
+          const reqId = toggleProjReqBtn.getAttribute('data-toggle-projreq-done');
+          const markDone = toggleProjReqBtn.getAttribute('data-next-state') === '1';
+          await toggleProjectRequestStatus(reqId, markDone);
+          return;
+        }
+
+        const openQuoterBtn = e.target.closest('[data-open-projreq-quoter]');
+        if (openQuoterBtn) {
+          const reqId = openQuoterBtn.getAttribute('data-open-projreq-quoter');
+          openProjectRequestInQuoter(reqId);
+          return;
+        }
       });
+
+      const prRefreshCloudBtn = document.getElementById('prRefreshCloudBtn');
+      if (prRefreshCloudBtn) {
+        prRefreshCloudBtn.addEventListener('click', () => renderAllCards(true));
+      }
 
       // Simulate a $1.00 Paid Customer Order (with both White Hoodie & White Hat) to test the Checkoff -> Order History workflow
       document.getElementById('simulateTestPaidOrderBtn').addEventListener('click', async () => {
@@ -5282,6 +5728,11 @@
           await window.RetroAuthHub.syncWithServerDb(false);
         }
         await renderAllCards(true);
+
+        if (window.location.hash === '#project-requests') {
+          const prTab = document.getElementById('topFocusTabProjectRequests');
+          if (prTab) prTab.click();
+        }
 
         try {
           if (typeof BroadcastChannel !== 'undefined') {

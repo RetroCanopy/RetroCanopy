@@ -786,7 +786,7 @@
               <p>Custom Hoodies, Snapback Hats, Tees, DTF &amp; 3D Puff Embroidery</p>
             </div>
           </div>
-          <form class="studio-form" onsubmit="submitStudioQuote(event)">
+          <form class="studio-form" id="studioQuoteForm" onsubmit="submitStudioQuote(event)">
             <input type="text" class="studio-input" id="studioName" placeholder="Your Name / Brand" required>
             <input type="text" class="studio-input" id="studioContact" placeholder="Email or Phone" required>
             <select class="studio-select" id="studioService">
@@ -797,7 +797,8 @@
               <option value="Custom Apparel & Merch">Custom Apparel &amp; Merch</option>
               <option value="Full Custom Project">Full Custom Project (Multiple Services)</option>
             </select>
-            <button type="submit" class="studio-submit">START PROJECT &rarr;</button>
+            <textarea class="studio-input" id="studioNotes" rows="3" placeholder="Tell us about your project, quantity, or timeline (Optional)" style="resize:vertical;min-height:68px;font-family:inherit;"></textarea>
+            <button type="submit" class="studio-submit" id="studioSubmitBtn">START PROJECT &rarr;</button>
           </form>
           <div class="studio-confirm" id="studioConfirm"></div>
         </div>
@@ -854,11 +855,170 @@
       if (sel) sel.value = serviceName;
       document.getElementById('studioName').focus();
     };
-    window.submitStudioQuote = function(ev) {
+    window.dispatchStudioProjectRequest = async function(rawPayload) {
+      const nowIso = new Date().toISOString();
+      const reqId = (rawPayload && rawPayload.requestId) || ('RC-PROJ-' + String(Date.now()).slice(-6));
+      const name = String((rawPayload && rawPayload.name) || 'Prospective Client').trim();
+      const contact = String((rawPayload && rawPayload.contact) || '').trim();
+      const service = String((rawPayload && rawPayload.service) || 'Custom Project').trim();
+      const notes = String((rawPayload && rawPayload.notes) || '').trim();
+      const isEmail = contact.includes('@');
+      const emailVal = (rawPayload && rawPayload.email) || (isEmail ? contact : '');
+      const phoneVal = (rawPayload && rawPayload.phone) || (!isEmail ? contact : '');
+
+      const entry = {
+        id: reqId,
+        requestId: reqId,
+        name,
+        contact,
+        email: emailVal || contact,
+        phone: phoneVal || contact,
+        service,
+        notes,
+        status: 'NEW',
+        fulfilled: false,
+        date: nowIso,
+        createdAt: nowIso
+      };
+
+      // 1. Save locally for instant same-device sync + BroadcastChannel to Owner's Hub
+      try {
+        const list = JSON.parse(localStorage.getItem('rc_studio_inquiries_v1') || '[]') || [];
+        list.unshift(entry);
+        localStorage.setItem('rc_studio_inquiries_v1', JSON.stringify(list.slice(0, 200)));
+        if (typeof BroadcastChannel !== 'undefined') {
+          const ch = new BroadcastChannel('rc_admin_hub_sync_v1');
+          ch.postMessage({ type: 'NEW_PROJECT_REQUEST', entry });
+          ch.close();
+        }
+      } catch (_) {}
+
+      // 2. Sync to Supabase Cloud (retrocanopy_orders with payment_status = 'PROJECT_REQUEST') so Owner's Hub on any device receives it
+      const SUPA_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/rest/v1';
+      const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4YXZ2cnF5enB3c2N6cGl3bXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MDksImV4cCI6MjEwNzU4NjgwOX0.XvOWwBlOBjGYxkQrD8eZvnaWaKb0qMW9HVtWhlnI6Yo';
+      const supaRow = {
+        order_id: reqId,
+        customer_name: name,
+        customer_email: emailVal || contact || 'Not Provided',
+        customer_phone: phoneVal || contact || 'Not Provided',
+        shipping_address: `Studio Project Inquiry (${service})`,
+        customer_notes: JSON.stringify({
+          isProjectRequest: true,
+          requestId: reqId,
+          name,
+          contact,
+          email: emailVal || contact,
+          phone: phoneVal || contact,
+          service,
+          notes,
+          createdAt: nowIso
+        }),
+        items: [{
+          model: 'STUDIO-REQ',
+          title: service,
+          notes: notes || 'Studio Project Inquiry',
+          price: 0,
+          qty: 1,
+          size: 'PROJECT'
+        }],
+        subtotal_usd: 0,
+        shipping_usd: 0,
+        discount_usd: 0,
+        total_paid_usd: 0,
+        payment_status: 'PROJECT_REQUEST',
+        is_paid: false,
+        stripe_session_id: reqId,
+        fulfilled: false,
+        fulfilled_at: null,
+        paid_at: nowIso
+      };
+
+      const supaPromise = fetch(`${SUPA_URL}/retrocanopy_orders?on_conflict=order_id`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates,return=minimal'
+        },
+        body: JSON.stringify(supaRow)
+      }).catch(() => null);
+
+      // 3. Send Instant Phone Push via ntfy.sh to Owner's Phone
+      const ntfyTopic = localStorage.getItem('rc_owner_ntfy_topic_v1') || 'retrocanopy-orders-joseph-777';
+      const ntfyPromise = fetch('https://ntfy.sh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: ntfyTopic,
+          title: `🚀 New Project Request: ${service}`,
+          message: `Client: ${name} (${contact})${notes ? ' — "' + notes.slice(0, 140) + '"' : ''} • Ticket #${reqId}. Tap to open Owner's Hub!`,
+          priority: 4,
+          tags: ['rocket', 'briefcase'],
+          click: 'https://www.retrocanopy.com/admin.html#project-requests'
+        })
+      }).catch(() => null);
+
+      // 4. Send Instant Email + SMS Text Gateway Alert to Owner's Phone
+      const ownerEmail = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
+      const carrierDomain = localStorage.getItem('rc_owner_sms_carrier_v1') || 'spectrum';
+      const smsGatewayEmail = (carrierDomain === 'spectrum' || carrierDomain === 'vtext.com')
+        ? '6562427202@vtext.com,6562427202@vzwpix.com'
+        : `6562427202@${carrierDomain}`;
+
+      const emailPromise = fetch(`https://formsubmit.co/ajax/${encodeURIComponent(ownerEmail)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: `🚀 New Studio Project Request #${reqId} — ${name} (${service})`,
+          _cc: smsGatewayEmail,
+          _template: 'table',
+          '1_Project_Ticket_ID': reqId,
+          '2_Client_Name_Or_Brand': name,
+          '3_Client_Contact': contact,
+          '4_Service_Requested': service,
+          '5_Project_Details_And_Notes': notes || 'No additional notes provided',
+          '6_Submitted_At': new Date(nowIso).toLocaleString(),
+          '7_Open_In_Owners_Hub': 'https://www.retrocanopy.com/admin.html#project-requests'
+        })
+      }).catch(() => null);
+
+      await Promise.allSettled([supaPromise, ntfyPromise, emailPromise]);
+      return entry;
+    };
+
+    window.submitStudioQuote = async function(ev) {
       ev.preventDefault();
-      const name = document.getElementById('studioName').value;
-      const svc = document.getElementById('studioService').value;
-      document.getElementById('studioConfirm').textContent = `Thank you, ${name}! Your ${svc} inquiry has been logged in the Sanctuary Studio.`;
+      const nameEl = document.getElementById('studioName');
+      const contactEl = document.getElementById('studioContact');
+      const svcEl = document.getElementById('studioService');
+      const notesEl = document.getElementById('studioNotes');
+      const btnEl = document.getElementById('studioSubmitBtn');
+      const confirmEl = document.getElementById('studioConfirm');
+
+      const name = nameEl ? nameEl.value.trim() : '';
+      const contact = contactEl ? contactEl.value.trim() : '';
+      const service = svcEl ? svcEl.value : 'Custom Project';
+      const notes = notesEl ? notesEl.value.trim() : '';
+
+      const origBtnText = btnEl ? btnEl.innerHTML : 'START PROJECT &rarr;';
+      if (btnEl) {
+        btnEl.disabled = true;
+        btnEl.textContent = 'SENDING TO STUDIO...';
+      }
+      if (confirmEl) {
+        confirmEl.textContent = 'Dispatching your project request to the Owner\'s Hub...';
+      }
+
+      const entry = await window.dispatchStudioProjectRequest({ name, contact, service, notes });
+
+      if (btnEl) {
+        btnEl.disabled = false;
+        btnEl.innerHTML = origBtnText;
+      }
+      if (confirmEl) {
+        confirmEl.textContent = `✓ Thank you, ${name}! Your ${service} request (Ticket #${entry.requestId}) is now in the Owner's Hub and has been pushed directly to our founder's phone.`;
+      }
       ev.target.reset();
     };
 

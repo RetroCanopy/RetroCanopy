@@ -28,6 +28,139 @@ function updateEarnings(val) {
 }
 
 /**
+ * Global Studio / Project Request Dispatcher -> Owner's Hub + Phone Push (ntfy.sh + Email/SMS)
+ */
+if (typeof window.dispatchStudioProjectRequest !== 'function') {
+    window.dispatchStudioProjectRequest = async function (rawPayload) {
+        const nowIso = new Date().toISOString();
+        const reqId = (rawPayload && rawPayload.requestId) || ('RC-PROJ-' + String(Date.now()).slice(-6));
+        const name = String((rawPayload && rawPayload.name) || 'Prospective Client').trim();
+        const contact = String((rawPayload && rawPayload.contact) || '').trim();
+        const service = String((rawPayload && rawPayload.service) || 'Custom Project').trim();
+        const notes = String((rawPayload && rawPayload.notes) || '').trim();
+        const isEmail = contact.includes('@');
+        const emailVal = (rawPayload && rawPayload.email) || (isEmail ? contact : '');
+        const phoneVal = (rawPayload && rawPayload.phone) || (!isEmail ? contact : '');
+
+        const entry = {
+            id: reqId,
+            requestId: reqId,
+            name,
+            contact,
+            email: emailVal || contact,
+            phone: phoneVal || contact,
+            service,
+            notes,
+            status: 'NEW',
+            fulfilled: false,
+            date: nowIso,
+            createdAt: nowIso
+        };
+
+        try {
+            const list = JSON.parse(localStorage.getItem('rc_studio_inquiries_v1') || '[]') || [];
+            list.unshift(entry);
+            localStorage.setItem('rc_studio_inquiries_v1', JSON.stringify(list.slice(0, 200)));
+            if (typeof BroadcastChannel !== 'undefined') {
+                const ch = new BroadcastChannel('rc_admin_hub_sync_v1');
+                ch.postMessage({ type: 'NEW_PROJECT_REQUEST', entry });
+                ch.close();
+            }
+        } catch (_) {}
+
+        const SUPA_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/rest/v1';
+        const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4YXZ2cnF5enB3c2N6cGl3bXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MDksImV4cCI6MjEwNzU4NjgwOX0.XvOWwBlOBjGYxkQrD8eZvnaWaKb0qMW9HVtWhlnI6Yo';
+        const supaRow = {
+            order_id: reqId,
+            customer_name: name,
+            customer_email: emailVal || contact || 'Not Provided',
+            customer_phone: phoneVal || contact || 'Not Provided',
+            shipping_address: `Studio Project Inquiry (${service})`,
+            customer_notes: JSON.stringify({
+                isProjectRequest: true,
+                requestId: reqId,
+                name,
+                contact,
+                email: emailVal || contact,
+                phone: phoneVal || contact,
+                service,
+                notes,
+                createdAt: nowIso
+            }),
+            items: [{
+                model: 'STUDIO-REQ',
+                title: service,
+                notes: notes || 'Studio Project Inquiry',
+                price: 0,
+                qty: 1,
+                size: 'PROJECT'
+            }],
+            subtotal_usd: 0,
+            shipping_usd: 0,
+            discount_usd: 0,
+            total_paid_usd: 0,
+            payment_status: 'PROJECT_REQUEST',
+            is_paid: false,
+            stripe_session_id: reqId,
+            fulfilled: false,
+            fulfilled_at: null,
+            paid_at: nowIso
+        };
+
+        const supaPromise = fetch(`${SUPA_URL}/retrocanopy_orders?on_conflict=order_id`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPA_KEY,
+                'Authorization': `Bearer ${SUPA_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates,return=minimal'
+            },
+            body: JSON.stringify(supaRow)
+        }).catch(() => null);
+
+        const ntfyTopic = localStorage.getItem('rc_owner_ntfy_topic_v1') || 'retrocanopy-orders-joseph-777';
+        const ntfyPromise = fetch('https://ntfy.sh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                topic: ntfyTopic,
+                title: `🚀 New Project Request: ${service}`,
+                message: `Client: ${name} (${contact})${notes ? ' — "' + notes.slice(0, 140) + '"' : ''} • Ticket #${reqId}. Tap to open Owner's Hub!`,
+                priority: 4,
+                tags: ['rocket', 'briefcase'],
+                click: 'https://www.retrocanopy.com/admin.html#project-requests'
+            })
+        }).catch(() => null);
+
+        const ownerEmail = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
+        const carrierDomain = localStorage.getItem('rc_owner_sms_carrier_v1') || 'spectrum';
+        const smsGatewayEmail = (carrierDomain === 'spectrum' || carrierDomain === 'vtext.com')
+            ? '6562427202@vtext.com,6562427202@vzwpix.com'
+            : `6562427202@${carrierDomain}`;
+
+        const emailPromise = fetch(`https://formsubmit.co/ajax/${encodeURIComponent(ownerEmail)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                _subject: `🚀 New Studio Project Request #${reqId} — ${name} (${service})`,
+                _cc: smsGatewayEmail,
+                _template: 'table',
+                '1_Project_Ticket_ID': reqId,
+                '2_Client_Name_Or_Brand': name,
+                '3_Client_Contact': contact,
+                '4_Service_Requested': service,
+                '5_Project_Details_And_Notes': notes || 'No additional notes provided',
+                '6_Submitted_At': new Date(nowIso).toLocaleString(),
+                '7_Open_In_Owners_Hub': 'https://www.retrocanopy.com/admin.html#project-requests'
+            })
+        }).catch(() => null);
+
+        await Promise.allSettled([supaPromise, ntfyPromise, emailPromise]);
+        return entry;
+    };
+}
+
+/**
  * Creator Application Submission Handler (creators.html)
  */
 async function handleCreatorSubmit(event) {
@@ -60,6 +193,16 @@ async function handleCreatorSubmit(event) {
         } catch (err) {
             console.error('Supabase connection error:', err);
         }
+    }
+
+    if (typeof window.dispatchStudioProjectRequest === 'function') {
+        await window.dispatchStudioProjectRequest({
+            name: creatorName || 'Creator Applicant',
+            contact: businessEmail || channelUrl,
+            email: businessEmail,
+            service: `Creator Partnership (${desiredProducts || 'Apparel & Merch'})`,
+            notes: `Channel: ${channelUrl} | Audience: ${audienceSize}${notes ? ' | Notes: ' + notes : ''}`
+        });
     }
 
     alert('CREATOR APPLICATION RECEIVED!\n\nThank you for reaching out. Our team will review your channel and reply within 24 hours with your sample kit details.');
@@ -112,6 +255,17 @@ async function handleOrgSubmit(event) {
         } catch (err) {
             console.error('Supabase connection error:', err);
         }
+    }
+
+    if (typeof window.dispatchStudioProjectRequest === 'function') {
+        await window.dispatchStudioProjectRequest({
+            name: `${orgName}${contactName ? ' (' + contactName + ')' : ''}`.trim() || 'Organization Inquiry',
+            contact: [email, phone].filter(Boolean).join(' • '),
+            email,
+            phone,
+            service: `Bulk Organization Order (${quantityTier || 'Custom Qty'})`,
+            notes: `Org Type: ${orgType} | Products: ${productsNeeded.join(', ') || 'Custom'} | Deadline: ${deadline || 'Flexible'} | Tax Exempt: ${taxExempt}${artworkLink ? ' | Artwork: ' + artworkLink : ''}${notes ? ' | Notes: ' + notes : ''}`
+        });
     }
 
     alert('BULK QUOTE REQUEST RECEIVED!\n\nThank you for reaching out. A dedicated account manager will prepare your itemized quote, volume discounts, and digital mockups within 24 business hours.');
@@ -5086,23 +5240,27 @@ function initHomeShopScroller() {
     }
     if (studioForm && !studioForm.dataset.rcStudioWired) {
         studioForm.dataset.rcStudioWired = '1';
-        studioForm.addEventListener('submit', (e) => {
+        studioForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nameVal = (document.getElementById('rc-studio-name')?.value || '').trim();
             const contactVal = (document.getElementById('rc-studio-contact')?.value || '').trim();
             const serviceVal = studioSelect?.value || 'Full Custom Project';
-            try {
-                const existing = JSON.parse(localStorage.getItem('rc_studio_inquiries_v1') || '[]');
-                existing.push({
+            const notesVal = (document.getElementById('rc-studio-notes')?.value || '').trim();
+            if (studioConfirm) {
+                studioConfirm.textContent = 'Dispatching your project request to the Owner\'s Hub...';
+            }
+            let reqId = 'RC-PROJ-' + String(Date.now()).slice(-6);
+            if (typeof window.dispatchStudioProjectRequest === 'function') {
+                const entry = await window.dispatchStudioProjectRequest({
                     name: nameVal,
                     contact: contactVal,
                     service: serviceVal,
-                    timestamp: new Date().toISOString()
+                    notes: notesVal
                 });
-                localStorage.setItem('rc_studio_inquiries_v1', JSON.stringify(existing));
-            } catch (_) {}
+                if (entry && entry.requestId) reqId = entry.requestId;
+            }
             if (studioConfirm) {
-                studioConfirm.textContent = `✓ Inquiry received for ${serviceVal}! Our team will reach out shortly.`;
+                studioConfirm.textContent = `✓ Inquiry received for ${serviceVal} (Ticket #${reqId})! Sent to Owner's Hub & Founder's Phone.`;
             }
             studioForm.reset();
         });
