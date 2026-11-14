@@ -16,7 +16,78 @@
   };
 
   const SALES_TAX_RATE = 0.07;          // 7.0% Sales Tax
-  const BASELINE_SHIPPING_USD = 19.99;  // $19.99 Baseline Shipping when shipping is wanted
+  const BASELINE_SHIPPING_USD = 6.99;   // Dynamic USPS Ground Advantage starting baseline (Origin: North Port, FL 34286)
+
+  // ========================================================================
+  // NERDY MISFITS / RETROCANOPY DYNAMIC USPS GROUND ADVANTAGE CALCULATOR
+  // Origin: North Port, FL 34286 (Zones 1..8 by 3-digit ZIP / State + Weight)
+  // ========================================================================
+  const STATE_TO_USPS_ZONE = {
+    FL: 2, GA: 3, SC: 3, AL: 3,
+    NC: 4, TN: 4, MS: 4, LA: 4, VA: 4, KY: 4, WV: 4, MD: 4, DC: 4, DE: 4,
+    PA: 5, NJ: 5, NY: 5, CT: 5, RI: 5, MA: 5, VT: 5, NH: 5, ME: 5,
+    OH: 5, IN: 5, MI: 5, IL: 5, MO: 5, AR: 5, TX: 5,
+    WI: 6, MN: 6, IA: 6, KS: 6, NE: 6, SD: 6, ND: 6, OK: 6, NM: 6, CO: 6,
+    WY: 7, MT: 7, UT: 7, AZ: 7, ID: 7, NV: 7,
+    CA: 8, OR: 8, WA: 8, AK: 8, HI: 8, PR: 8, VI: 8
+  };
+
+  // USPS Ground Advantage Commercial Rate Table by Zone (1..8) and Weight Tier (+$2.00 packaging/handling buffer included):
+  // Tiers: [<=4.5oz, <=8.5oz, <=12.5oz, <=16oz (1lb), <=32oz (2lb), >32oz base]
+  const USPS_GROUND_RATES_BY_ZONE = {
+    1: [6.25, 6.65, 7.15, 7.65, 8.45, 9.45],   // Local SWFL (North Port / Sarasota / Fort Myers / Port Charlotte)
+    2: [6.49, 6.95, 7.45, 7.99, 8.85, 9.95],   // Rest of Florida
+    3: [6.75, 7.25, 7.79, 8.39, 9.35, 10.55],  // Southeast (GA, SC, AL, North FL)
+    4: [6.99, 7.55, 8.15, 8.85, 9.95, 11.25],  // Mid-South & Mid-Atlantic
+    5: [7.29, 7.89, 8.55, 9.35, 10.65, 12.15], // Northeast, Midwest & East/Central TX
+    6: [7.59, 8.25, 8.95, 9.85, 11.35, 13.10], // Plains & Rockies
+    7: [7.89, 8.59, 9.39, 10.35, 11.95, 13.95], // Mountain / Inland West
+    8: [8.25, 8.99, 9.85, 10.95, 12.75, 14.95]  // West Coast (CA, OR, WA, AK, HI)
+  };
+
+  const ITEM_WEIGHT_OZ = {
+    hats: 4.5,
+    shirts: 6.0,
+    hoodies: 16.0,
+    joggers: 14.0
+  };
+
+  function resolveUspsZoneFromZipOrState(zip5, stateCode) {
+    const cleanZip = String(zip5 || '').replace(/\D/g, '').slice(0, 5);
+    if (cleanZip.length === 5) {
+      const p3 = parseInt(cleanZip.slice(0, 3), 10);
+      if (p3 === 342 || p3 === 339 || p3 === 341 || p3 === 335 || p3 === 336 || p3 === 337 || p3 === 338) {
+        return { zone: 1, region: 'SWFL Local Zone 1' };
+      }
+      if (p3 >= 320 && p3 <= 349) {
+        return { zone: 2, region: 'Florida Zone 2' };
+      }
+      if ((p3 >= 290 && p3 <= 319) || (p3 >= 350 && p3 <= 369) || p3 === 398 || p3 === 399) {
+        return { zone: 3, region: 'Southeast Zone 3' };
+      }
+      if ((p3 >= 200 && p3 <= 289) || (p3 >= 370 && p3 <= 427) || (p3 >= 700 && p3 <= 714)) {
+        return { zone: 4, region: 'Mid-Atlantic / South Zone 4' };
+      }
+      if ((p3 >= 10 && p3 <= 199) || (p3 >= 430 && p3 <= 516) || (p3 >= 600 && p3 <= 658) || (p3 >= 716 && p3 <= 779)) {
+        return { zone: 5, region: 'Northeast / Midwest Zone 5' };
+      }
+      if ((p3 >= 520 && p3 <= 599) || (p3 >= 660 && p3 <= 693) || (p3 >= 780 && p3 <= 816) || (p3 >= 870 && p3 <= 884)) {
+        return { zone: 6, region: 'Central / Rockies Zone 6' };
+      }
+      if ((p3 >= 820 && p3 <= 865) || (p3 >= 889 && p3 <= 898) || (p3 >= 970 && p3 <= 994)) {
+        return { zone: 7, region: 'Mountain West Zone 7' };
+      }
+      if ((p3 >= 900 && p3 <= 969) || (p3 >= 995 && p3 <= 999) || (p3 >= 5 && p3 <= 9)) {
+        return { zone: 8, region: 'West Coast Zone 8' };
+      }
+    }
+    const st = String(stateCode || '').trim().toUpperCase();
+    if (STATE_TO_USPS_ZONE[st]) {
+      const z = STATE_TO_USPS_ZONE[st];
+      return { zone: z, region: `${st} (Zone ${z})` };
+    }
+    return null;
+  }
 
   const DPW_GANG_BUILDER_URL = 'https://digitalprintworx.com/collections/gang-sheet-builders';
 
@@ -218,6 +289,10 @@
     DPW_GANG_BUILDER_URL,
     SALES_TAX_RATE,
     BASELINE_SHIPPING_USD,
+    STATE_TO_USPS_ZONE,
+    USPS_GROUND_RATES_BY_ZONE,
+    ITEM_WEIGHT_OZ,
+    resolveUspsZoneFromZipOrState,
     DEFAULT_MAKE_COSTS,
     CATALOG,
     ORDERED_SKUS,

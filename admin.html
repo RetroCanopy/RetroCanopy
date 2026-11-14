@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Retrocanopy — Owner's Hub</title>
-  <link rel="icon" type="image/png" href="assets/logo.png?v=240">
-  <script src="assets/merch/store_catalog_1994.js?v=240"></script>
+  <link rel="icon" type="image/png" href="assets/logo.png?v=282">
+  <script src="assets/merch/store_catalog_1994.js?v=282"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -3301,6 +3301,15 @@
                   <label class="bq-field-lbl" style="margin:0;">Tax Rate %:</label>
                   <input type="number" min="0" max="25" step="0.05" class="bq-input" id="bqTaxRateInput" value="7.00" style="width:82px;padding:5px 8px;font-weight:700;color:#ffe89e;">
                 </div>
+                <button type="button" class="bq-tax-toggle-btn is-off" id="bqCustShipToggleBtn" aria-pressed="false" title="Toggle Dynamic USPS Ground Advantage Customer Shipping (Origin: North Port, FL 34286)">
+                  <span class="bq-tax-toggle-dot"></span>
+                  <span id="bqCustShipToggleLabel">&#128205; DELIVERY: LOCAL PICKUP ($0.00)</span>
+                </button>
+                <div id="bqCustShipZipWrap" style="display:none;align-items:center;gap:6px;">
+                  <label class="bq-field-lbl" style="margin:0;color:#2ce6ff;">Dest. ZIP:</label>
+                  <input type="text" maxlength="10" class="bq-input" id="bqCustShipZipInput" placeholder="e.g. 34286" style="width:94px;padding:5px 8px;font-weight:700;color:#2ce6ff;">
+                  <span id="bqCustShipLiveBadge" style="font-size:0.7rem;color:#6bffc3;font-weight:700;"></span>
+                </div>
               </div>
 
               <label style="display:inline-flex;align-items:center;gap:7px;font-size:0.72rem;color:#ffb36b;cursor:pointer;font-weight:600;">
@@ -4798,8 +4807,8 @@
           invEl.innerHTML = `
             <div class="item-row" style="flex-direction:column;align-items:stretch;gap:10px;border-color:rgba(245,196,81,0.55);background:rgba(245,196,81,0.07);">
               <div class="item-title" style="justify-content:space-between;flex-wrap:wrap;">
-                <span>&#128176; 100% RETURN PRICING ENGINE (2&times; MAKE COST) + TAX &amp; SHIPPING</span>
-                <span class="tag-pill tag-owner">7% SALES TAX &bull; $19.99 BASELINE SHIPPING</span>
+                <span>&#128176; 100% RETURN PRICING ENGINE (2&times; MAKE COST) + TAX &amp; USPS DYNAMIC SHIPPING</span>
+                <span class="tag-pill tag-owner">7% SALES TAX &bull; USPS GROUND ADVANTAGE (ZONES 1&ndash;8)</span>
               </div>
               <div class="item-sub">Includes S&amp;S Activewear Blanks + Digital Print Worx 15&Prime;&times;27&Prime; ($7.00) DTF Gang Sheets. Edit any Make Cost below to auto-update 2&times; Store Retail:</div>
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px;">
@@ -4847,7 +4856,7 @@
                   <a href="hoodie_preview.html" style="color:#fff;text-decoration:none;">16 Active Black Edition Variants (Concepts #01, #12, #18 &amp; #19 &times; Black Hats, Shirts &amp; Hoodies)</a>
                   <span class="tag-pill tag-member">BLACK EDITION LIVE</span>
                 </div>
-                <div class="item-sub">Hats: $${rp.hats.toFixed(2)} &bull; Shirts: $${rp.shirts.toFixed(2)} &bull; Hoodies: $${rp.hoodies.toFixed(2)} &bull; Joggers: $${rp.joggers.toFixed(2)} (+ 7% Tax &amp; $19.99 Shipping)</div>
+                <div class="item-sub">Hats: $${rp.hats.toFixed(2)} &bull; Shirts: $${rp.shirts.toFixed(2)} &bull; Hoodies: $${rp.hoodies.toFixed(2)} &bull; Joggers: $${rp.joggers.toFixed(2)} (+ 7% Tax &amp; Dynamic USPS Zone/Weight Shipping)</div>
               </div>
               <a href="hoodie_preview.html" class="act-btn act-approve" style="text-decoration:none;">Open Showroom &rarr;</a>
             </div>
@@ -4949,8 +4958,8 @@
           </div>
           <div class="item-row">
             <div class="item-info">
-              <div class="item-title">Merch Store Checkout (2&times; Return + 7% Tax + $19.99 Shipping)</div>
-              <div class="item-sub">All 160 White &amp; Black Hats, Shirts &amp; Hoodies active</div>
+              <div class="item-title">Merch Store Checkout (2&times; Return + 7% Tax + Dynamic USPS Zone Shipping)</div>
+              <div class="item-sub">All Black Hats, Shirts &amp; Hoodies active with North Port, FL (34286) USPS Ground Advantage calculator</div>
             </div>
             <button type="button" class="toggle-pill ${ctrl.checkoutOpen ? 'on' : ''}" data-toggle-ctrl="checkoutOpen">
               ${ctrl.checkoutOpen ? 'OPEN' : 'PAUSED'}
@@ -5301,6 +5310,6 @@
       });
     })();
   </script>
-  <script src="bulk_quote_tool.js?v=281"></script>
+  <script src="bulk_quote_tool.js?v=282"></script>
 </body>
 </html>

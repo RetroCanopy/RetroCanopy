@@ -1635,15 +1635,32 @@
                 </div>
               </div>
               <div>
-                <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#00f0ff;margin-bottom:3px;">SHIPPING ADDRESS (STREET, CITY, STATE, ZIP) *</label>
-                <input type="text" id="rcCustAddressInput" placeholder="123 Neon Blvd, Apt 4B, Austin, TX 78701" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(0,240,255,0.45);color:#fff;font-family:'Outfit',sans-serif;font-size:0.84rem;padding:8px 11px;border-radius:9px;outline:none;">
+                <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#00f0ff;margin-bottom:3px;">STREET ADDRESS *</label>
+                <input type="text" id="rcCustAddressInput" placeholder="123 Neon Blvd, Apt 4B" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(0,240,255,0.45);color:#fff;font-family:'Outfit',sans-serif;font-size:0.84rem;padding:8px 11px;border-radius:9px;outline:none;">
+              </div>
+              <div id="rcShippingCityStateZipRow" style="display:grid;grid-template-columns:1.35fr 0.65fr 0.9fr;gap:7px;">
+                <div>
+                  <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.54rem;color:#00f0ff;margin-bottom:3px;">CITY *</label>
+                  <input type="text" id="rcCustCityInput" placeholder="City" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(0,240,255,0.45);color:#fff;font-family:'Outfit',sans-serif;font-size:0.82rem;padding:7px 9px;border-radius:9px;outline:none;">
+                </div>
+                <div>
+                  <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.54rem;color:#00f0ff;margin-bottom:3px;">STATE *</label>
+                  <input type="text" id="rcCustStateInput" placeholder="FL" maxlength="2" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(0,240,255,0.45);color:#fff;font-family:'Outfit',sans-serif;font-size:0.82rem;padding:7px 9px;border-radius:9px;text-transform:uppercase;outline:none;">
+                </div>
+                <div>
+                  <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.54rem;color:#ffae00;margin-bottom:3px;">5-DIGIT ZIP *</label>
+                  <input type="text" id="rcCustZipInput" placeholder="ZIP (e.g. 34286)" maxlength="10" style="width:100%;background:rgba(5,4,14,0.92);border:1.5px solid rgba(255,174,0,0.65);color:#fff;font-family:'Outfit',sans-serif;font-size:0.82rem;padding:7px 9px;border-radius:9px;outline:none;">
+                </div>
+              </div>
+              <div id="rcShippingCalcDetail" style="font-size:0.73rem;color:rgba(255,255,255,0.88);background:rgba(0,240,255,0.08);border:1px solid rgba(0,240,255,0.3);border-radius:8px;padding:7px 10px;line-height:1.36;">
+                &#128205; Enter your 5-digit ZIP code above to calculate exact USPS Ground Advantage shipping from North Port, FL (34286).
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                 <div>
                   <label style="display:block;font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#ffae00;margin-bottom:3px;">DELIVERY METHOD *</label>
                   <select id="rcDeliveryMethodSelect" style="width:100%;background:rgba(5,4,14,0.95);border:1.5px solid rgba(255,174,0,0.55);color:#fff;font-family:'Orbitron',sans-serif;font-size:0.68rem;padding:8px 10px;border-radius:9px;outline:none;">
-                    <option value="ship" selected>&#128666; Standard Shipping ($19.99)</option>
-                    <option value="pickup">&#128205; Local Pickup / No Shipping ($0.00)</option>
+                    <option value="ship" id="rcDeliveryOptionShip" selected>&#128666; USPS Ground Advantage (Dynamic)</option>
+                    <option value="pickup">&#128205; SWFL Local Pickup ($0.00)</option>
                   </select>
                 </div>
                 <div>
@@ -1678,19 +1695,222 @@
       delivSelEl.addEventListener('change', () => setWantsShippingPref(delivSelEl.value === 'ship'));
     }
 
-    // Pre-fill saved customer info if available
+    // =========================================================================
+    // ADDRESS-BASED USPS SHIPPING CALCULATOR (ORIGIN: NORTH PORT, FL 34286)
+    // Matches Nerdy Misfits USPS Ground Advantage Zones 1..8 & Weight Tiers
+    // =========================================================================
+    const RC_STATE_TO_USPS_ZONE = {
+      FL: 2, GA: 3, SC: 3, AL: 3,
+      NC: 4, TN: 4, MS: 4, LA: 4, VA: 4, KY: 4, WV: 4, MD: 4, DC: 4, DE: 4,
+      PA: 5, NJ: 5, NY: 5, CT: 5, RI: 5, MA: 5, VT: 5, NH: 5, ME: 5,
+      OH: 5, IN: 5, MI: 5, IL: 5, MO: 5, AR: 5, TX: 5,
+      WI: 6, MN: 6, IA: 6, KS: 6, NE: 6, SD: 6, ND: 6, OK: 6, NM: 6, CO: 6,
+      WY: 7, MT: 7, UT: 7, AZ: 7, ID: 7, NV: 7,
+      CA: 8, OR: 8, WA: 8, AK: 8, HI: 8, PR: 8, VI: 8
+    };
+
+    const RC_USPS_GROUND_RATES_BY_ZONE = {
+      1: [6.25, 6.65, 7.15, 7.65, 8.45, 9.45],   // Local SWFL (North Port / Sarasota / Fort Myers / Port Charlotte)
+      2: [6.49, 6.95, 7.45, 7.99, 8.85, 9.95],   // Rest of Florida
+      3: [6.75, 7.25, 7.79, 8.39, 9.35, 10.55],  // Southeast (GA, SC, AL, North FL)
+      4: [6.99, 7.55, 8.15, 8.85, 9.95, 11.25],  // Mid-South & Mid-Atlantic
+      5: [7.29, 7.89, 8.55, 9.35, 10.65, 12.15], // Northeast, Midwest & East/Central TX
+      6: [7.59, 8.25, 8.95, 9.85, 11.35, 13.10], // Plains & Rockies
+      7: [7.89, 8.59, 9.39, 10.35, 11.95, 13.95], // Mountain / Inland West
+      8: [8.25, 8.99, 9.85, 10.95, 12.75, 14.95]  // West Coast (CA, OR, WA, AK, HI)
+    };
+
+    function resolveRcUspsZoneFromZipOrState(zip5, stateCode) {
+      const cleanZip = String(zip5 || '').replace(/\D/g, '').slice(0, 5);
+      if (cleanZip.length === 5) {
+        const p3 = parseInt(cleanZip.slice(0, 3), 10);
+        if (p3 === 342 || p3 === 339 || p3 === 341 || p3 === 335 || p3 === 336 || p3 === 337 || p3 === 338) {
+          return { zone: 1, region: 'SWFL Local Zone 1' };
+        }
+        if (p3 >= 320 && p3 <= 349) {
+          return { zone: 2, region: 'Florida Zone 2' };
+        }
+        if ((p3 >= 290 && p3 <= 319) || (p3 >= 350 && p3 <= 369) || p3 === 398 || p3 === 399) {
+          return { zone: 3, region: 'Southeast Zone 3' };
+        }
+        if ((p3 >= 200 && p3 <= 289) || (p3 >= 370 && p3 <= 427) || (p3 >= 700 && p3 <= 714)) {
+          return { zone: 4, region: 'Mid-Atlantic / South Zone 4' };
+        }
+        if ((p3 >= 10 && p3 <= 199) || (p3 >= 430 && p3 <= 516) || (p3 >= 600 && p3 <= 658) || (p3 >= 716 && p3 <= 779)) {
+          return { zone: 5, region: 'Northeast / Midwest Zone 5' };
+        }
+        if ((p3 >= 520 && p3 <= 599) || (p3 >= 660 && p3 <= 693) || (p3 >= 780 && p3 <= 816) || (p3 >= 870 && p3 <= 884)) {
+          return { zone: 6, region: 'Central / Rockies Zone 6' };
+        }
+        if ((p3 >= 820 && p3 <= 865) || (p3 >= 889 && p3 <= 898) || (p3 >= 970 && p3 <= 994)) {
+          return { zone: 7, region: 'Mountain West Zone 7' };
+        }
+        if ((p3 >= 900 && p3 <= 969) || (p3 >= 995 && p3 <= 999) || (p3 >= 5 && p3 <= 9)) {
+          return { zone: 8, region: 'West Coast Zone 8' };
+        }
+      }
+      const st = String(stateCode || '').trim().toUpperCase();
+      if (RC_STATE_TO_USPS_ZONE[st]) {
+        const z = RC_STATE_TO_USPS_ZONE[st];
+        return { zone: z, region: `${st} (Zone ${z})` };
+      }
+      return null;
+    }
+
+    function estimateRcCartWeightOz(items) {
+      if (!Array.isArray(items) || items.length === 0) return 0;
+      let itemsOz = 0;
+      items.forEach((item) => {
+        const qty = Math.max(1, Number(item.qty) || 1);
+        const code = String(item.model || '').toUpperCase();
+        const cat = (window.RC_STORE_1994 && window.RC_STORE_1994.CATALOG[item.model]) || masterCatalog[item.model] || {};
+        const catName = String(cat.category || item.category || '').toLowerCase();
+        let unitOz = 6.0;
+        if (catName === 'hats' || code.includes('HAT') || code === 'RC-107') {
+          unitOz = 4.5;
+        } else if (catName === 'shirts' || code.includes('TEE')) {
+          unitOz = 6.0;
+        } else if (catName === 'hoodies' || code.includes('HOD') || code === 'RC-309') {
+          unitOz = 16.0;
+        } else if (catName === 'joggers' || code.includes('JOG')) {
+          unitOz = 14.0;
+        }
+        itemsOz += unitOz * qty;
+      });
+      // Add 3.0 oz for protective shipping box / polymailer
+      return Math.round((itemsOz + 3.0) * 10) / 10;
+    }
+
+    function calculateRcAddressShipping(items) {
+      const weightOz = estimateRcCartWeightOz(items);
+      if (!Array.isArray(items) || items.length === 0 || weightOz <= 0) {
+        return {
+          rate: 0,
+          zone: null,
+          weightOz: 0,
+          hasAddressRate: false,
+          shippingLabel: 'USPS Ground Advantage',
+          detailHtml: '&#128205; Enter your 5-digit ZIP code above to calculate exact USPS shipping from North Port, FL (34286).'
+        };
+      }
+
+      const rawZipInput = (document.getElementById('rcCustZipInput')?.value || '').trim();
+      const rawAddrInput = (document.getElementById('rcCustAddressInput')?.value || '').trim();
+      const rawCityInput = (document.getElementById('rcCustCityInput')?.value || '').trim();
+      const rawStateInput = (document.getElementById('rcCustStateInput')?.value || '').trim().toUpperCase();
+
+      let zip5 = rawZipInput.replace(/\D/g, '').slice(0, 5);
+      if (zip5.length < 5) {
+        const addrZipMatch = rawAddrInput.match(/\b(\d{5})(?:-\d{4})?\b/);
+        if (addrZipMatch) zip5 = addrZipMatch[1];
+      }
+
+      const zoneInfo = resolveRcUspsZoneFromZipOrState(zip5, rawStateInput);
+      const activeZone = zoneInfo ? zoneInfo.zone : 4;
+      const tierRates = RC_USPS_GROUND_RATES_BY_ZONE[activeZone] || RC_USPS_GROUND_RATES_BY_ZONE[4];
+
+      let tierIndex = 0;
+      if (weightOz <= 4.5) tierIndex = 0;
+      else if (weightOz <= 8.5) tierIndex = 1;
+      else if (weightOz <= 12.5) tierIndex = 2;
+      else if (weightOz <= 16.0) tierIndex = 3;
+      else if (weightOz <= 32.0) tierIndex = 4;
+      else tierIndex = 5;
+
+      let rate = tierRates[tierIndex];
+      if (weightOz > 32.0) {
+        const extraLbs = Math.ceil((weightOz - 32.0) / 16.0);
+        rate += extraLbs * 0.85;
+      }
+      rate = Math.round(rate * 100) / 100;
+
+      const weightText = weightOz >= 16
+        ? `${(weightOz / 16).toFixed(1)} lbs (${Math.round(weightOz)} oz)`
+        : `${Math.round(weightOz)} oz`;
+
+      const escSafe = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+      if (zoneInfo) {
+        const locBadge = [rawCityInput, rawStateInput, zip5].filter(Boolean).join(', ') || zoneInfo.region;
+        return {
+          rate,
+          zone: activeZone,
+          weightOz,
+          hasAddressRate: true,
+          shippingLabel: `USPS Ground Advantage (Zone ${activeZone} • ${zip5 || rawStateInput} • ~${weightText})`,
+          detailHtml: `&#128230; <strong>USPS Ground Advantage: $${rate.toFixed(2)}</strong> &mdash; Shipped from North Port, FL (34286) to <strong>${escSafe(locBadge)}</strong> (${zoneInfo.region} &bull; Est. pkg weight: ~${weightText})`
+        };
+      }
+
+      return {
+        rate,
+        zone: null,
+        weightOz,
+        hasAddressRate: false,
+        shippingLabel: `USPS Ground Advantage (~${weightText})`,
+        detailHtml: `&#128205; Enter your 5-digit ZIP code above for exact USPS Zone rate from North Port, FL (Est. pkg weight: ~${weightText}).`
+      };
+    }
+
+    let lastRcZipLookup = '';
+    async function handleRcZipLookup(rawVal) {
+      renderStoreCouponDockAndCheckout();
+      const zip5 = String(rawVal || '').replace(/\D/g, '').slice(0, 5);
+      if (zip5.length === 5 && zip5 !== lastRcZipLookup) {
+        lastRcZipLookup = zip5;
+        try {
+          const res = await fetch(`https://api.zippopotam.us/us/${zip5}`);
+          if (res.ok) {
+            const data = await res.json();
+            const place = (data.places || [])[0];
+            if (place) {
+              const cityEl = document.getElementById('rcCustCityInput');
+              const stateEl = document.getElementById('rcCustStateInput');
+              if (cityEl && place['place name']) {
+                cityEl.value = place['place name'];
+              }
+              if (stateEl && place['state abbreviation']) {
+                stateEl.value = place['state abbreviation'];
+              }
+              renderStoreCouponDockAndCheckout();
+            }
+          }
+        } catch (_) {}
+      }
+    }
+
+    // Pre-fill saved customer info if available & wire live shipping address listeners
     try {
       const savedCust = JSON.parse(localStorage.getItem('rc_saved_customer_info_v1') || '{}') || {};
       const nEl = document.getElementById('rcCustNameInput');
       const eEl = document.getElementById('rcCustEmailInput');
       const pEl = document.getElementById('rcCustPhoneInput');
       const aEl = document.getElementById('rcCustAddressInput');
+      const cEl = document.getElementById('rcCustCityInput');
+      const sEl = document.getElementById('rcCustStateInput');
+      const zEl = document.getElementById('rcCustZipInput');
       if (nEl && savedCust.name) nEl.value = savedCust.name;
       if (eEl && (savedCust.email || localStorage.getItem('rc_current_admin_email_v1'))) {
         eEl.value = savedCust.email || localStorage.getItem('rc_current_admin_email_v1') || '';
       }
       if (pEl && savedCust.phone) pEl.value = savedCust.phone;
       if (aEl && savedCust.address) aEl.value = savedCust.address;
+      if (cEl && savedCust.city) cEl.value = savedCust.city;
+      if (sEl && savedCust.state) sEl.value = savedCust.state;
+      if (zEl && savedCust.zip) zEl.value = savedCust.zip;
+
+      zEl?.addEventListener('input', (ev) => handleRcZipLookup(ev.target.value));
+      aEl?.addEventListener('input', (ev) => {
+        const m = String(ev.target.value || '').match(/\b(\d{5})(?:-\d{4})?\b/);
+        if (m && zEl && !zEl.value.trim()) {
+          zEl.value = m[1];
+          handleRcZipLookup(m[1]);
+        } else {
+          renderStoreCouponDockAndCheckout();
+        }
+      });
+      cEl?.addEventListener('input', () => renderStoreCouponDockAndCheckout());
+      sEl?.addEventListener('input', () => renderStoreCouponDockAndCheckout());
     } catch (_) {}
 
     if (headerUserBtn) {
@@ -1875,7 +2095,7 @@
                   </div>
                   <div class="rc-summary-row">
                     <span>Shipping:</span>
-                    <span style="color:#00f59b;font-weight:800;">${Number(paidOrder.shipping || 0) > 0 ? ('$' + Number(paidOrder.shipping).toFixed(2) + ' Standard') : 'Local Pickup ($0.00)'}</span>
+                    <span style="color:#00f59b;font-weight:800;">${Number(paidOrder.shipping || 0) > 0 ? ('$' + Number(paidOrder.shipping).toFixed(2) + ' (' + safeEsc(paidOrder.shippingLabel || 'USPS Ground Advantage') + ')') : 'SWFL Local Pickup ($0.00)'}</span>
                   </div>
                   <div class="rc-summary-row total-row">
                     <span>TOTAL AMOUNT PAID (STRIPE):</span>
@@ -2426,16 +2646,43 @@
       }
 
       const taxRate = (window.RC_STORE_1994 && window.RC_STORE_1994.SALES_TAX_RATE) || 0.07;
-      const baseShipRate = (window.RC_STORE_1994 && window.RC_STORE_1994.BASELINE_SHIPPING_USD) || 19.99;
+      const shipCalc = calculateRcAddressShipping(items);
       const subtotal = Math.round(items.reduce((sum, it) => sum + Number(it.price || 30) * (it.qty || 1), 0) * 100) / 100;
       const salesTax = items.length > 0 ? Math.round(subtotal * taxRate * 100) / 100 : 0;
-      const shipping = (items.length > 0 && rcWantsShipping) ? baseShipRate : 0;
+      const shipping = (items.length > 0 && rcWantsShipping) ? shipCalc.rate : 0;
       const finalTotal = Math.round((subtotal + salesTax + shipping) * 100) / 100;
 
       const delivSelSync = document.getElementById('rcDeliveryMethodSelect');
       if (delivSelSync) delivSelSync.value = rcWantsShipping ? 'ship' : 'pickup';
 
+      const shipOptEl = document.getElementById('rcDeliveryOptionShip');
+      if (shipOptEl) {
+        shipOptEl.textContent = items.length > 0
+          ? `🚚 USPS Ground Advantage ($${shipCalc.rate.toFixed(2)})`
+          : '🚚 USPS Ground Advantage (Dynamic)';
+      }
+
+      const cityStateZipRowEl = document.getElementById('rcShippingCityStateZipRow');
+      if (cityStateZipRowEl) {
+        cityStateZipRowEl.style.display = rcWantsShipping ? 'grid' : 'none';
+      }
+      const addrInputEl = document.getElementById('rcCustAddressInput');
+      if (addrInputEl) {
+        addrInputEl.placeholder = rcWantsShipping
+          ? '123 Neon Blvd, Apt 4B'
+          : 'Optional Pickup Notes (e.g. Preferred pickup day/time)';
+      }
+      const shipDetailEl = document.getElementById('rcShippingCalcDetail');
+      if (shipDetailEl) {
+        shipDetailEl.innerHTML = rcWantsShipping
+          ? shipCalc.detailHtml
+          : '&#127914; <strong>SWFL Local Pickup Selected:</strong> $0.00 shipping! Coordinate local pickup directly with RetroCanopy.';
+      }
+
       if (summaryLinesEl) {
+        const shipRowLabel = rcWantsShipping
+          ? (shipCalc.hasAddressRate ? `USPS Zone ${shipCalc.zone} Shipping:` : 'Est. USPS Shipping (Enter ZIP):')
+          : 'SWFL Local Pickup (No Shipping):';
         summaryLinesEl.innerHTML = `
           <div class="rc-summary-row">
             <span>Merchandise Subtotal:</span>
@@ -2446,8 +2693,8 @@
             <span>$${salesTax.toFixed(2)}</span>
           </div>
           <div class="rc-summary-row">
-            <span>${rcWantsShipping ? 'Baseline Shipping:' : 'Local Pickup (No Shipping):'}</span>
-            <span style="color:${rcWantsShipping ? '#ffd478' : '#00f59b'};font-weight:800;">$${shipping.toFixed(2)}</span>
+            <span>${shipRowLabel}</span>
+            <span style="color:${rcWantsShipping ? (shipCalc.hasAddressRate ? '#00f0ff' : '#ffd478') : '#00f59b'};font-weight:800;">$${shipping.toFixed(2)}</span>
           </div>
           <div class="rc-summary-row total-row">
             <span>TOTAL PAID AT CHECKOUT:</span>
@@ -2468,24 +2715,44 @@
           const custEmail = (document.getElementById('rcCustEmailInput')?.value || '').trim();
           const custPhone = (document.getElementById('rcCustPhoneInput')?.value || '').trim();
           const custAddress = (document.getElementById('rcCustAddressInput')?.value || '').trim();
+          const custCity = (document.getElementById('rcCustCityInput')?.value || '').trim();
+          const custState = (document.getElementById('rcCustStateInput')?.value || '').trim().toUpperCase();
+          const rawZip = (document.getElementById('rcCustZipInput')?.value || '').trim();
+          const addrZipMatch = custAddress.match(/\b(\d{5})(?:-\d{4})?\b/);
+          const custZip = rawZip.replace(/\D/g, '').slice(0, 5) || (addrZipMatch ? addrZipMatch[1] : '');
           const selectedHoodieSize = (document.getElementById('rcCustSizeSelect')?.value || 'L').trim();
           const custNotes = (document.getElementById('rcCustNotesInput')?.value || '').trim();
 
-          if (!custName || !custEmail || !custAddress) {
+          if (!custName || !custEmail || (rcWantsShipping && !custAddress)) {
             if (errEl) {
               errEl.style.display = 'block';
-              errEl.textContent = '⚠️ Please enter your Full Name, Email Address, and Shipping Address before proceeding to Stripe Checkout.';
+              errEl.textContent = '⚠️ Please enter your Full Name, Email Address, and Street Address before proceeding to Stripe Checkout.';
             }
             return;
           }
+          if (rcWantsShipping && custZip.length < 5 && !custState) {
+            if (errEl) {
+              errEl.style.display = 'block';
+              errEl.textContent = '⚠️ Please enter your 5-digit ZIP code so we can calculate exact USPS Ground Advantage shipping to your address.';
+            }
+            document.getElementById('rcCustZipInput')?.focus();
+            return;
+          }
           if (errEl) errEl.style.display = 'none';
+
+          const fullFormattedAddress = rcWantsShipping
+            ? [custAddress, custCity, [custState, custZip].filter(Boolean).join(' ')].filter(Boolean).join(', ')
+            : `${custAddress || 'SWFL Local Pickup'} (LOCAL PICKUP — $0.00 SHIPPING)`;
 
           try {
             localStorage.setItem('rc_saved_customer_info_v1', JSON.stringify({
               name: custName,
               email: custEmail,
               phone: custPhone,
-              address: custAddress
+              address: custAddress,
+              city: custCity,
+              state: custState,
+              zip: custZip
             }));
           } catch (_) {}
 
@@ -2535,8 +2802,8 @@
           }
           if (shipping > 0) {
             stripeLineItems.push({
-              sku: 'RC-SHIP-BASE',
-              name: 'Standard Baseline Shipping',
+              sku: 'RC-SHIP-USPS',
+              name: shipCalc.shippingLabel || 'USPS Ground Advantage Shipping',
               size: 'Shipping',
               qty: 1,
               priceUsd: shipping
@@ -2549,7 +2816,7 @@
             customerName: custName,
             customerEmail: custEmail,
             customerPhone: custPhone || 'N/A',
-            shippingAddress: rcWantsShipping ? custAddress : `${custAddress} (LOCAL PICKUP — $0.00 SHIPPING)`,
+            shippingAddress: fullFormattedAddress,
             customerNotes: custNotes,
             item: enrichedItems.map((x) => `${x.qty}x ${x.title} (${x.size})`).join(', '),
             items: enrichedItems,
@@ -2557,6 +2824,7 @@
             taxUsd: salesTax,
             discountAmt: 0,
             shipping: shipping,
+            shippingLabel: rcWantsShipping ? (shipCalc.shippingLabel || 'USPS Ground Advantage') : 'SWFL Local Pickup ($0.00)',
             wantsShipping: rcWantsShipping,
             total: finalTotal,
             totalPaid: finalTotal,

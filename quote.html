@@ -1375,6 +1375,9 @@
         const includeTax = Boolean(meta.includeTax);
         const taxRatePct = Number(meta.taxRatePct || 0);
         const taxAmt = Number(meta.taxAmountUsd || 0);
+        const includeCustomerShipping = Boolean(meta.includeCustomerShipping);
+        const customerShippingUsd = Number(meta.customerShippingUsd || 0);
+        const customerShippingLabel = meta.customerShippingLabel || 'USPS Ground Advantage Shipping';
         const totalShirts = Number(meta.totalShirts || items.reduce((s, i) => s + (Number(i.qty) || 0), 0) || 1);
         const basePerItem = Number(meta.avgItemPreDiscount || (subtotalBefore / Math.max(1, totalShirts)));
         const finalPerItem = Number(meta.avgItemAllInFinal || (grandTotal / Math.max(1, totalShirts)));
@@ -1629,6 +1632,13 @@
                     <span>${includeTax ? `Tax Included (${taxRatePct.toFixed(2)}%):` : 'Tax Excluded:'}</span>
                     <strong>${money(taxAmt)}</strong>
                   </div>
+
+                  ${includeCustomerShipping && customerShippingUsd > 0 ? `
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 6px;font-size:0.85rem;color:#38bdf8;">
+                      <span>&#128666; ${esc(customerShippingLabel)}:</span>
+                      <strong>${money(customerShippingUsd)}</strong>
+                    </div>
+                  ` : ''}
 
                   <div class="c1-grand-pill">
                     <span style="font-family:'Orbitron',sans-serif;font-size:0.88rem;font-weight:800;color:#ffffff;">GRAND TOTAL:</span>

@@ -272,6 +272,8 @@
     discountLabel: '',
     includeTax: true,
     taxRatePct: 7.00,
+    includeCustomerShipping: false,
+    customerShipZip: '',
     includeAvailableColorsOnPdf: true,
     garmentLines: [
       {
@@ -454,6 +456,8 @@
       discountLabel: state.discountLabel,
       includeTax: state.includeTax,
       taxRatePct: state.taxRatePct,
+      includeCustomerShipping: Boolean(state.includeCustomerShipping),
+      customerShipZip: state.customerShipZip || '',
       includeAvailableColorsOnPdf: state.includeAvailableColorsOnPdf,
       garmentLines: JSON.parse(JSON.stringify(state.garmentLines)),
       dtfPlacements: state.dtfPlacements.map((p) => {
@@ -821,6 +825,9 @@
       includeTax: calc.includeTax,
       taxRatePct: calc.taxRatePct,
       taxAmountUsd: calc.taxAmountUsd,
+      includeCustomerShipping: Boolean(calc.includeCustomerShipping),
+      customerShippingUsd: calc.customerShippingUsd || 0,
+      customerShippingLabel: calc.customerShippingLabel || 'Local Pickup ($0.00)',
       grandTotalUsd: calc.customerQuoteTotal,
       avgItemPreDiscount: calc.avgItemPreDiscount,
       avgItemAllInFinal: calc.avgItemAllInFinal,
@@ -2701,6 +2708,98 @@
   }
 
   // =========================================================================
+  // NERDY MISFITS USPS GROUND ADVANTAGE CALCULATOR FOR BULK ORDERS
+  // Origin: North Port, FL 34286 (Zones 1..8 + Weight Tiers)
+  // =========================================================================
+  const BQ_STATE_TO_USPS_ZONE = {
+    FL: 2, GA: 3, SC: 3, AL: 3,
+    NC: 4, TN: 4, MS: 4, LA: 4, VA: 4, KY: 4, WV: 4, MD: 4, DC: 4, DE: 4,
+    PA: 5, NJ: 5, NY: 5, CT: 5, RI: 5, MA: 5, VT: 5, NH: 5, ME: 5,
+    OH: 5, IN: 5, MI: 5, IL: 5, MO: 5, AR: 5, TX: 5,
+    WI: 6, MN: 6, IA: 6, KS: 6, NE: 6, SD: 6, ND: 6, OK: 6, NM: 6, CO: 6,
+    WY: 7, MT: 7, UT: 7, AZ: 7, ID: 7, NV: 7,
+    CA: 8, OR: 8, WA: 8, AK: 8, HI: 8, PR: 8, VI: 8
+  };
+
+  const BQ_USPS_GROUND_RATES_BY_ZONE = {
+    1: [6.25, 6.65, 7.15, 7.65, 8.45, 9.45],
+    2: [6.49, 6.95, 7.45, 7.99, 8.85, 9.95],
+    3: [6.75, 7.25, 7.79, 8.39, 9.35, 10.55],
+    4: [6.99, 7.55, 8.15, 8.85, 9.95, 11.25],
+    5: [7.29, 7.89, 8.55, 9.35, 10.65, 12.15],
+    6: [7.59, 8.25, 8.95, 9.85, 11.35, 13.10],
+    7: [7.89, 8.59, 9.39, 10.35, 11.95, 13.95],
+    8: [8.25, 8.99, 9.85, 10.95, 12.75, 14.95]
+  };
+
+  function resolveBqUspsZone(zip5, addrText) {
+    const cleanZip = String(zip5 || '').replace(/\D/g, '').slice(0, 5);
+    if (cleanZip.length === 5) {
+      const p3 = parseInt(cleanZip.slice(0, 3), 10);
+      if (p3 === 342 || p3 === 339 || p3 === 341 || p3 === 335 || p3 === 336 || p3 === 337 || p3 === 338) return { zone: 1, region: 'SWFL Local Zone 1', zip: cleanZip };
+      if (p3 >= 320 && p3 <= 349) return { zone: 2, region: 'Florida Zone 2', zip: cleanZip };
+      if ((p3 >= 290 && p3 <= 319) || (p3 >= 350 && p3 <= 369) || p3 === 398 || p3 === 399) return { zone: 3, region: 'Southeast Zone 3', zip: cleanZip };
+      if ((p3 >= 200 && p3 <= 289) || (p3 >= 370 && p3 <= 427) || (p3 >= 700 && p3 <= 714)) return { zone: 4, region: 'Mid-Atlantic / South Zone 4', zip: cleanZip };
+      if ((p3 >= 10 && p3 <= 199) || (p3 >= 430 && p3 <= 516) || (p3 >= 600 && p3 <= 658) || (p3 >= 716 && p3 <= 779)) return { zone: 5, region: 'Northeast / Midwest Zone 5', zip: cleanZip };
+      if ((p3 >= 520 && p3 <= 599) || (p3 >= 660 && p3 <= 693) || (p3 >= 780 && p3 <= 816) || (p3 >= 870 && p3 <= 884)) return { zone: 6, region: 'Central / Rockies Zone 6', zip: cleanZip };
+      if ((p3 >= 820 && p3 <= 865) || (p3 >= 889 && p3 <= 898) || (p3 >= 970 && p3 <= 994)) return { zone: 7, region: 'Mountain West Zone 7', zip: cleanZip };
+      if ((p3 >= 900 && p3 <= 969) || (p3 >= 995 && p3 <= 999) || (p3 >= 5 && p3 <= 9)) return { zone: 8, region: 'West Coast Zone 8', zip: cleanZip };
+    }
+    const stMatch = String(addrText || '').toUpperCase().match(/\b([A-Z]{2})\b/g);
+    if (stMatch) {
+      for (let i = stMatch.length - 1; i >= 0; i--) {
+        const st = stMatch[i];
+        if (BQ_STATE_TO_USPS_ZONE[st]) {
+          return { zone: BQ_STATE_TO_USPS_ZONE[st], region: `${st} (Zone ${BQ_STATE_TO_USPS_ZONE[st]})`, zip: st };
+        }
+      }
+    }
+    return null;
+  }
+
+  function calculateBulkQuoteUspsShipping(totalAdultShirts, totalYouthShirts, totalPrintOnlyItems) {
+    const totalItems = totalAdultShirts + totalYouthShirts + totalPrintOnlyItems;
+    if (totalItems <= 0) {
+      return { rate: 0, zone: null, weightOz: 0, label: 'USPS Ground Advantage' };
+    }
+    const weightOz = Math.round(((totalAdultShirts * 5.0) + (totalYouthShirts * 3.8) + (totalPrintOnlyItems * 0.5) + 4.0) * 10) / 10;
+    const rawZip = String(state.customerShipZip || '').replace(/\D/g, '').slice(0, 5);
+    const addrZipMatch = String(state.customer.address || '').match(/\b(\d{5})(?:-\d{4})?\b/);
+    const zip5 = rawZip.length === 5 ? rawZip : (addrZipMatch ? addrZipMatch[1] : '');
+    const zoneInfo = resolveBqUspsZone(zip5, state.customer.address);
+    const activeZone = zoneInfo ? zoneInfo.zone : 4;
+    const tierRates = BQ_USPS_GROUND_RATES_BY_ZONE[activeZone] || BQ_USPS_GROUND_RATES_BY_ZONE[4];
+
+    let tierIndex = 0;
+    if (weightOz <= 4.5) tierIndex = 0;
+    else if (weightOz <= 8.5) tierIndex = 1;
+    else if (weightOz <= 12.5) tierIndex = 2;
+    else if (weightOz <= 16.0) tierIndex = 3;
+    else if (weightOz <= 32.0) tierIndex = 4;
+    else tierIndex = 5;
+
+    let rate = tierRates[tierIndex];
+    if (weightOz > 32.0) {
+      const extraLbs = Math.ceil((weightOz - 32.0) / 16.0);
+      rate += extraLbs * 0.85;
+    }
+    rate = +(rate.toFixed(2));
+    const weightText = weightOz >= 16 ? `${(weightOz / 16).toFixed(1)} lbs` : `${Math.round(weightOz)} oz`;
+    const label = zoneInfo
+      ? `USPS Ground Advantage (Zone ${activeZone} • ${zoneInfo.zip} • ~${weightText})`
+      : `USPS Ground Advantage (~${weightText})`;
+    return {
+      rate,
+      zone: zoneInfo ? activeZone : null,
+      hasAddressRate: Boolean(zoneInfo),
+      weightOz,
+      weightText,
+      zip5,
+      label
+    };
+  }
+
+  // =========================================================================
   // FULL CALCULATION: PRINT ONLY ($0), YOUTH + ADULT, DISCOUNT % OFF & TAX
   // =========================================================================
   function recalculateEverything() {
@@ -2920,7 +3019,13 @@
     const includeTax = Boolean(state.includeTax);
     const taxRatePct = Math.min(25, Math.max(0, Number(state.taxRatePct) || 0));
     const taxAmountUsd = includeTax ? +(subtotalAfterDiscount * (taxRatePct / 100)).toFixed(2) : 0;
-    const customerQuoteTotal = +(subtotalAfterDiscount + taxAmountUsd).toFixed(2);
+
+    const customerShippingCalc = calculateBulkQuoteUspsShipping(totalAdultShirts, totalYouthShirts, totalPrintOnlyItems);
+    const includeCustomerShipping = Boolean(state.includeCustomerShipping);
+    const customerShippingUsd = (includeCustomerShipping && totalShirts > 0) ? customerShippingCalc.rate : 0;
+    const customerShippingLabel = includeCustomerShipping ? customerShippingCalc.label : 'SWFL Local Pickup ($0.00)';
+
+    const customerQuoteTotal = +(subtotalAfterDiscount + taxAmountUsd + customerShippingUsd).toFixed(2);
 
     const netProfitUsd = +(subtotalAfterDiscount - totalHardCostUsd).toFixed(2);
 
@@ -2998,6 +3103,10 @@
       includeTax,
       taxRatePct,
       taxAmountUsd,
+      includeCustomerShipping,
+      customerShippingUsd,
+      customerShippingLabel,
+      customerShippingCalc,
       customerQuoteTotal,
       avgItemPreDiscount,
       avgItemAfterDiscount,
@@ -3058,6 +3167,30 @@
       const pVal = parseFloat(chip.getAttribute('data-disc-preset')) || 0;
       chip.classList.toggle('active', Math.abs((Number(state.discountPct) || 0) - pVal) < 0.01);
     });
+
+    const shipBtn = document.getElementById('bqCustShipToggleBtn');
+    const shipLbl = document.getElementById('bqCustShipToggleLabel');
+    const shipZipWrap = document.getElementById('bqCustShipZipWrap');
+    const shipBadge = document.getElementById('bqCustShipLiveBadge');
+    const calc = state.lastCalculation;
+    if (shipBtn) {
+      shipBtn.classList.toggle('is-off', !state.includeCustomerShipping);
+      shipBtn.setAttribute('aria-pressed', state.includeCustomerShipping ? 'true' : 'false');
+    }
+    if (shipLbl) {
+      shipLbl.innerHTML = state.includeCustomerShipping
+        ? `&#128666; USPS DYNAMIC SHIPPING: ON (${calc ? money(calc.customerShippingUsd) : '$0.00'})`
+        : '&#128205; DELIVERY: LOCAL PICKUP ($0.00)';
+    }
+    if (shipZipWrap) {
+      shipZipWrap.style.display = state.includeCustomerShipping ? 'inline-flex' : 'none';
+    }
+    if (shipBadge && calc && calc.customerShippingCalc) {
+      const sc = calc.customerShippingCalc;
+      shipBadge.textContent = sc.hasAddressRate
+        ? `Zone ${sc.zone} • ${money(sc.rate)} (~${sc.weightText})`
+        : `Est. ${money(sc.rate)} (~${sc.weightText} • Enter ZIP)`;
+    }
   }
 
   function renderSummaryAndCanvas() {
@@ -3417,6 +3550,13 @@
                     <span>${calc.includeTax ? `Tax Included (${calc.taxRatePct.toFixed(2)}%):` : 'Tax Excluded:'}</span>
                     <strong>${money(calc.taxAmountUsd)}</strong>
                   </div>
+
+                  ${calc.includeCustomerShipping ? `
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 6px;font-size:0.83rem;color:#9ef3ff;">
+                      <span>${esc(calc.customerShippingLabel || 'USPS Ground Advantage')}:</span>
+                      <strong>${money(calc.customerShippingUsd)}</strong>
+                    </div>
+                  ` : ''}
 
                   <div class="c1-grand-pill">
                     <span style="color:#ffffff;font-family:'Orbitron',sans-serif;font-size:0.86rem;letter-spacing:0.04em;">GRAND TOTAL:</span>
@@ -4340,6 +4480,8 @@
     state.discountLabel = snap.discountLabel || '';
     state.includeTax = snap.includeTax !== false;
     state.taxRatePct = snap.taxRatePct != null ? snap.taxRatePct : 7.00;
+    state.includeCustomerShipping = Boolean(snap.includeCustomerShipping);
+    state.customerShipZip = snap.customerShipZip || '';
     state.includeAvailableColorsOnPdf = snap.includeAvailableColorsOnPdf !== false;
 
     if (Array.isArray(snap.garmentLines) && snap.garmentLines.length > 0) {
@@ -5044,6 +5186,22 @@
       taxToggleBtn.addEventListener('click', () => {
         state.includeTax = !state.includeTax;
         saveOwnerRatePrefs();
+        recalculateEverything();
+      });
+    }
+
+    const custShipToggleBtn = document.getElementById('bqCustShipToggleBtn');
+    if (custShipToggleBtn) {
+      custShipToggleBtn.addEventListener('click', () => {
+        state.includeCustomerShipping = !state.includeCustomerShipping;
+        recalculateEverything();
+      });
+    }
+
+    const custShipZipInput = document.getElementById('bqCustShipZipInput');
+    if (custShipZipInput) {
+      custShipZipInput.addEventListener('input', () => {
+        state.customerShipZip = custShipZipInput.value || '';
         recalculateEverything();
       });
     }
