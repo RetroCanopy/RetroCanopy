@@ -21,36 +21,52 @@
         display: none !important;
       }
 
-      /* When logged in and past the intro, hide the legacy Coming Soon / Diorama layers
-         and reveal the Concept 29 Interactive Living Tree Stage! */
+      /* Keep the Concept 29 Interactive Living Tree Stage pre-warmed underneath the intro video
+         so the transition from the intro video to the main page is 100% seamless & glitch-free! */
       #concept29-unlocked-stage {
         position: fixed;
         inset: 0;
         z-index: 2000;
         background: #000000;
-        display: none;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.6s ease;
-      }
-
-      body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active) #concept29-unlocked-stage,
-      body.coming-soon-finale-active:not(.cinema-intro-active):not(.holo-journey-active) #concept29-unlocked-stage {
         display: block;
         opacity: 1;
+        pointer-events: none;
+      }
+
+      body:not(.cinema-intro-active):not(.holo-journey-active) #concept29-unlocked-stage {
         pointer-events: auto;
       }
 
-      body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active) #hero-container,
-      body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active) #stage-3d-home-backdrop,
-      body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active) #stage-3d-neon-grid-floor,
-      body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active) #holo-butler-journey-stage,
-      body.rc-logged-in-home:not(.cinema-intro-active):not(.holo-journey-active) #kh-music-widget,
-      body.coming-soon-finale-active:not(.cinema-intro-active):not(.holo-journey-active) #hero-container,
-      body.coming-soon-finale-active:not(.cinema-intro-active):not(.holo-journey-active) #stage-3d-home-backdrop,
-      body.coming-soon-finale-active:not(.cinema-intro-active):not(.holo-journey-active) #stage-3d-neon-grid-floor,
-      body.coming-soon-finale-active:not(.cinema-intro-active):not(.holo-journey-active) #holo-butler-journey-stage,
-      body.coming-soon-finale-active:not(.cinema-intro-active):not(.holo-journey-active) #kh-music-widget {
+      #cinema-intro-fx {
+        z-index: 2500 !important;
+        background: #000000;
+        opacity: 0;
+        pointer-events: none !important;
+        transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      body.cinema-intro-active #cinema-intro-fx {
+        opacity: 1;
+      }
+
+      #tap-for-audio-prompt,
+      #skip-intro-btn {
+        z-index: 2650 !important;
+      }
+
+      body:not(.cinema-intro-active) #tap-for-audio-prompt,
+      body:not(.cinema-intro-active) #skip-intro-btn {
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      /* Always hide legacy pre-launch layers so they never flash between the intro video and the main page */
+      #hero-container,
+      #stage-3d-home-backdrop,
+      #stage-3d-neon-grid-floor,
+      #holo-butler-journey-stage,
+      #crew-stage,
+      #kh-music-widget {
         display: none !important;
         opacity: 0 !important;
         pointer-events: none !important;
@@ -434,6 +450,15 @@
             var isLoggedIn = false;
             var isAdminLoggedIn = false;
             try {
+                if (localStorage.getItem('rc_live_launch_reset_v3') !== '1') {
+                    localStorage.setItem('rc_live_launch_reset_v3', '1');
+                    localStorage.removeItem('rc_is_admin_v1');
+                    localStorage.removeItem('rc_current_admin_email_v1');
+                    localStorage.removeItem('rc_current_user_v1');
+                    localStorage.removeItem('rc_current_user_v2');
+                    localStorage.removeItem('rc_botpit_active_user_v1');
+                    localStorage.setItem('rc_session_logged_out_v1', '1');
+                }
                 var bouncedUnauth = sessionStorage.getItem('rc_bounced_unauth') === '1';
                 sessionStorage.removeItem('rc_bounced_unauth');
                 fromInternal = !bouncedUnauth && sessionStorage.getItem('rc_from_internal') === '1';
@@ -446,8 +471,15 @@
                         }
                     } catch (_) {}
                 }
+                var explicitlyLoggedOut = localStorage.getItem('rc_session_logged_out_v1') === '1';
                 var lastActiveRaw = localStorage.getItem('rc_session_last_active_v1');
-                if (lastActiveRaw) {
+                if (explicitlyLoggedOut) {
+                    localStorage.removeItem('rc_is_admin_v1');
+                    localStorage.removeItem('rc_current_admin_email_v1');
+                    localStorage.removeItem('rc_current_user_v1');
+                    localStorage.removeItem('rc_current_user_v2');
+                    localStorage.removeItem('rc_botpit_active_user_v1');
+                } else if (lastActiveRaw) {
                     var elapsed = Date.now() - Number(lastActiveRaw);
                     if (Number.isFinite(elapsed) && elapsed > 6 * 60 * 60 * 1000) {
                         localStorage.removeItem('rc_is_admin_v1');
@@ -458,7 +490,7 @@
                         localStorage.removeItem('rc_session_last_active_v1');
                     }
                 }
-                var isAdminFlag = localStorage.getItem('rc_is_admin_v1') === 'true';
+                var isAdminFlag = !explicitlyLoggedOut && localStorage.getItem('rc_is_admin_v1') === 'true';
                 var adminEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim().toLowerCase();
                 var adminDb = JSON.parse(localStorage.getItem('rc_admin_accounts_v2') || '{}') || {};
                 var isOwnerEmail = adminEmail === 'josephcole001.ai@gmail.com' || adminEmail === 'josephcole001.a1@gmail.com';
@@ -467,7 +499,7 @@
                     localStorage.removeItem('rc_is_admin_v1');
                     localStorage.removeItem('rc_current_admin_email_v1');
                 }
-                var hasPilotUser = Boolean(
+                var hasPilotUser = !explicitlyLoggedOut && Boolean(
                     (localStorage.getItem('rc_current_user_v1') || '').trim() ||
                     (localStorage.getItem('rc_current_user_v2') || '').trim() ||
                     (localStorage.getItem('rc_botpit_active_user_v1') || '').trim()
@@ -477,7 +509,7 @@
             try {
                 sessionStorage.removeItem('rc_from_internal');
             } catch (_) {}
-            var cameFromSite = Boolean(!isReload && (fromInternal || isBackForward || fromSameSitePage));
+            var cameFromSite = Boolean(!isReload && (fromInternal || fromSameSitePage));
             window.__rcIsLoggedIn = isLoggedIn;
             window.__rcCameFromInternal = cameFromSite;
             var skipIntro = Boolean(isLoggedIn || cameFromSite);
@@ -2267,8 +2299,7 @@
         window.__rcIsLoggedIn ||
         window.__rcSkipIntroOnLoad ||
         window.__rcCameFromInternal ||
-        (b && b.classList.contains('rc-no-intro-anim')) ||
-        (b && b.classList.contains('rc-logged-in-home') && !b.classList.contains('coming-soon-finale-active'))
+        (b && b.classList.contains('rc-no-intro-anim'))
       );
     }
 
@@ -2344,10 +2375,27 @@
 
     window.addEventListener('resize', applyViewportMode);
 
+    let lastPrewarmMs = -1000;
     function animate(now) {
       requestAnimationFrame(animate);
       const active = isConcept29StageActive();
-      if (!active) return;
+      if (!active) {
+        introStartTime = now;
+        isIntroComplete = false;
+        stageUniforms.uTreeReveal.value = 0.0;
+        stageUniforms.uRoomLight.value = 0.0;
+        uniforms.uTreeReveal.value = 0.0;
+        uniforms.uIntroProgress.value = 0.0;
+        if (hudOverlay) hudOverlay.classList.remove('is-lit');
+        if (stageOverlayRoot) stageOverlayRoot.style.setProperty('--room-light', '0.000');
+        // Pre-warm WebGL canvas & texture uploads in the background during the intro video so transition is instant
+        if (now - lastPrewarmMs > 600) {
+          lastPrewarmMs = now;
+          applyViewportMode();
+          renderer.render(scene, camera);
+        }
+        return;
+      }
 
       if (!wasStageUnlocked) {
         wasStageUnlocked = true;
@@ -2406,8 +2454,8 @@
     requestAnimationFrame(animate);
     </script>
 
-    <script src="script.js?v=290"></script>
-    <script src="auth_hub.js?v=290"></script>
+    <script src="script.js?v=291"></script>
+    <script src="auth_hub.js?v=291"></script>
 </body>
 
 </html>

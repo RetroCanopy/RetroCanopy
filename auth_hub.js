@@ -32,6 +32,15 @@
   try {
     localStorage.removeItem('rc_accounts_db_v1');
     localStorage.removeItem('rc_admin_accounts_v1');
+    if (localStorage.getItem('rc_live_launch_reset_v3') !== '1') {
+      localStorage.setItem('rc_live_launch_reset_v3', '1');
+      localStorage.removeItem(IS_ADMIN_KEY);
+      localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
+      localStorage.removeItem(CURRENT_USER_KEY);
+      localStorage.removeItem('rc_current_user_v2');
+      localStorage.removeItem('rc_botpit_active_user_v1');
+      localStorage.setItem(SESSION_LOGGED_OUT_KEY, '1');
+    }
   } catch (_) {}
 
   function touchSessionActivity() {
@@ -43,6 +52,14 @@
 
   function checkAndMaintain15DaySession() {
     try {
+      if (localStorage.getItem(SESSION_LOGGED_OUT_KEY) === '1') {
+        localStorage.removeItem(IS_ADMIN_KEY);
+        localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
+        localStorage.removeItem(CURRENT_USER_KEY);
+        localStorage.removeItem('rc_current_user_v2');
+        localStorage.removeItem('rc_botpit_active_user_v1');
+        return false;
+      }
       const hasAdminSession = localStorage.getItem(IS_ADMIN_KEY) === 'true' && Boolean(localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY));
       const v1User = (localStorage.getItem(CURRENT_USER_KEY) || '').trim();
       const v2User = (localStorage.getItem('rc_current_user_v2') || '').trim();
@@ -549,6 +566,11 @@
   }
 
   function verifyActiveAdminSessionStillValid() {
+    if (localStorage.getItem(SESSION_LOGGED_OUT_KEY) === '1') {
+      localStorage.removeItem(IS_ADMIN_KEY);
+      localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
+      return false;
+    }
     if (localStorage.getItem(IS_ADMIN_KEY) !== 'true') {
       localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
       return false;
@@ -1862,7 +1884,8 @@
     });
 
     updateTopPill();
-    const hasAnyLogin = Boolean(
+    const explicitlyLoggedOut = localStorage.getItem(SESSION_LOGGED_OUT_KEY) === '1';
+    const hasAnyLogin = !explicitlyLoggedOut && Boolean(
       isAdminLoggedIn() ||
       (localStorage.getItem(CURRENT_USER_KEY) || '').trim() ||
       (localStorage.getItem('rc_current_user_v2') || '').trim() ||

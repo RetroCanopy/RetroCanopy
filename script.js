@@ -210,6 +210,7 @@ function initGamerIntro() {
 
     function isAdminSiteUnlocked() {
         try {
+            if (localStorage.getItem('rc_session_logged_out_v1') === '1') return false;
             if (window.RetroAuthHub && typeof window.RetroAuthHub.isAdminLoggedIn === 'function') {
                 return Boolean(window.RetroAuthHub.isAdminLoggedIn());
             }
@@ -233,6 +234,7 @@ function initGamerIntro() {
     }
     function isAnyUserLoggedIn() {
         try {
+            if (localStorage.getItem('rc_session_logged_out_v1') === '1') return false;
             if (isAdminSiteUnlocked()) return true;
             const hasPilotUser = Boolean(
                 (localStorage.getItem('rc_current_user_v1') || '').trim() ||
@@ -3828,22 +3830,15 @@ function initGamerIntro() {
         const bgIntroVid = document.getElementById('rc-cinema-intro-bg-video');
         if (bgIntroVid) bgIntroVid.classList.add('video-fade-out');
 
-        if (wasCinemaIntro && heroContainer && !heroContainer.classList.contains('no-transition')) {
-            // Position logo at center handover state for 1 frame so it smoothly glides up to the main site header
-            heroContainer.classList.remove('cinema-reveal-stage', 'shifted-up');
-            heroContainer.classList.add('cinematic-center');
-            if (document.body) {
-                document.body.classList.add('cinema-logo-handover');
-            }
-            void heroContainer.offsetWidth;
-        }
-
         if (document.body) {
             document.body.classList.remove('cinema-intro-active', 'cinema-logo-handover', 'holo-journey-active', 'diorama-reveal-active', 'coming-soon-finale-active', 'syn-in-background');
             document.body.classList.add('rc-logged-in-home');
         }
         if (heroContainer) {
             heroContainer.classList.remove('cinematic-center', 'cinema-reveal-stage');
+        }
+        if (wasCinemaIntro && !window.__rcSkipIntroOnLoad && !window.__rcIsLoggedIn && !window.__rcCameFromInternal && typeof window.replaySwoopIntro === 'function') {
+            window.replaySwoopIntro();
         }
         shiftLogoOutOfWay();
         setSpeakingHighlight(null);
@@ -4263,37 +4258,23 @@ function initGamerIntro() {
     }
 
     let introLogoHoldStarted = false;
-    function finishIntroWithLogoHold(holdLogoMs = 1400) {
+    function finishIntroWithLogoHold(holdLogoMs = 60) {
         if (sequenceComplete || introCraneTimer || introLogoHoldStarted) return;
         introLogoHoldStarted = true;
         if (introTransitionTimer) {
             clearTimeout(introTransitionTimer);
             introTransitionTimer = null;
         }
-        // Seamless handover: cross-dissolve the video's centered RETROCANOPY logo directly into the
-        // live DOM .hero-container logo at the exact same center position, then smoothly glide it up!
+        // Seamless handover: cross-dissolve directly from the intro video into the 3D Living Tree Sanctuary stage!
         introTransitionTimer = setTimeout(() => {
             if (sequenceComplete) return;
-            if (document.body) {
-                document.body.classList.add('cinema-logo-handover');
-            }
-            if (heroContainer) {
-                heroContainer.classList.remove('no-transition', 'shifted-up');
-                heroContainer.classList.add('cinematic-center');
-            }
             const fgVid = document.getElementById('rc-cinema-intro-video');
             if (fgVid) fgVid.classList.add('video-fade-out');
             const bgVid = document.getElementById('rc-cinema-intro-bg-video');
             if (bgVid) bgVid.classList.add('video-fade-out');
             fadeIntroAudio();
-            introCraneTimer = setTimeout(() => {
-                if (sequenceComplete) return;
-                if (document.body) {
-                    document.body.classList.remove('cinema-logo-handover');
-                }
-                skipEntireIntro();
-            }, 520);
-        }, holdLogoMs);
+            skipEntireIntro();
+        }, Math.min(80, holdLogoMs));
     }
 
     function scheduleIntroTransition(holdMs = 20200) {
