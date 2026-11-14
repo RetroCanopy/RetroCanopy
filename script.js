@@ -46,12 +46,22 @@ if (typeof window.dispatchStudioProjectRequest !== 'function') {
         const nowIso = new Date().toISOString();
         const reqId = (rawPayload && rawPayload.requestId) || ('RC-PROJ-' + String(Date.now()).slice(-6));
         const name = String((rawPayload && rawPayload.name) || 'Prospective Client').trim();
-        const contact = String((rawPayload && rawPayload.contact) || '').trim();
+        const rawContact = String((rawPayload && rawPayload.contact) || '').trim();
         const service = String((rawPayload && rawPayload.service) || 'Custom Project').trim();
         const notes = String((rawPayload && rawPayload.notes) || '').trim();
-        const isEmail = contact.includes('@');
-        const emailVal = (rawPayload && rawPayload.email) || (isEmail ? contact : '');
-        const phoneVal = (rawPayload && rawPayload.phone) || (!isEmail ? contact : '');
+        const sanitizeEmail = (val) => {
+            let s = String(val || '').trim();
+            if (!s || !s.includes('@')) return '';
+            s = s.replace(/(@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})+$/i, (m) => {
+                const parts = m.split('@').filter(Boolean);
+                return '@' + parts[parts.length - 1];
+            });
+            const match = s.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+            return match ? match[0] : s;
+        };
+        const emailVal = sanitizeEmail((rawPayload && rawPayload.email) || rawContact);
+        const contact = emailVal && rawContact.includes('@') && !rawContact.includes(' ') ? emailVal : rawContact;
+        const phoneVal = (rawPayload && rawPayload.phone) || (!rawContact.includes('@') ? rawContact : '');
 
         const entry = {
             id: reqId,
