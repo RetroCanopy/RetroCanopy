@@ -44,11 +44,17 @@
   function checkAndMaintain15DaySession() {
     try {
       const hasAdminSession = localStorage.getItem(IS_ADMIN_KEY) === 'true' && Boolean(localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY));
+      const v1User = (localStorage.getItem(CURRENT_USER_KEY) || '').trim();
+      const v2User = (localStorage.getItem('rc_current_user_v2') || '').trim();
+      const bpUser = (localStorage.getItem('rc_botpit_active_user_v1') || '').trim();
+      const hasPlayerSession = Boolean(v1User || v2User || bpUser);
+
       if (!hasAdminSession) {
-        // Never allow a non-admin player session to persist or bypass the Coming Soon gate
         localStorage.removeItem(IS_ADMIN_KEY);
         localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
-        localStorage.removeItem(CURRENT_USER_KEY);
+      }
+
+      if (!hasAdminSession && !hasPlayerSession) {
         return false;
       }
 
@@ -59,8 +65,24 @@
         localStorage.removeItem(IS_ADMIN_KEY);
         localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
         localStorage.removeItem(CURRENT_USER_KEY);
+        localStorage.removeItem('rc_current_user_v2');
+        localStorage.removeItem('rc_botpit_active_user_v1');
         localStorage.removeItem(SESSION_LAST_ACTIVE_KEY);
         return false;
+      }
+
+      // Sync player session keys so index.html, arcade.html, and shibuya_bot_pit.html share the active customer session
+      const activeUserRaw = v1User || v2User || bpUser;
+      if (activeUserRaw) {
+        const uKey = activeUserRaw.replace(/^@/, '').toLowerCase();
+        const accDb = getAccountsDb();
+        let bpDb = {};
+        try { bpDb = JSON.parse(localStorage.getItem('rc_botpit_accounts_v1') || '{}') || {}; } catch (_) {}
+        const rec = accDb[uKey] || bpDb[uKey];
+        const displayName = (rec && rec.username) ? String(rec.username).trim() : activeUserRaw.replace(/^@/, '');
+        if (!v1User) localStorage.setItem(CURRENT_USER_KEY, displayName);
+        if (!v2User) localStorage.setItem('rc_current_user_v2', uKey);
+        if (!bpUser) localStorage.setItem('rc_botpit_active_user_v1', uKey);
       }
 
       // Active within 15 days -> roll forward the 15-day inactivity timer
@@ -76,6 +98,8 @@
       localStorage.removeItem(IS_ADMIN_KEY);
       localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
       localStorage.removeItem(CURRENT_USER_KEY);
+      localStorage.removeItem('rc_current_user_v2');
+      localStorage.removeItem('rc_botpit_active_user_v1');
       localStorage.removeItem(SESSION_LAST_ACTIVE_KEY);
       localStorage.setItem(SESSION_LOGGED_OUT_KEY, '1');
       await syncWithServerDb(true);
@@ -527,15 +551,11 @@
   function verifyActiveAdminSessionStillValid() {
     if (localStorage.getItem(IS_ADMIN_KEY) !== 'true') {
       localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
-      if (!localStorage.getItem('rc_botpit_active_user_v1')) {
-        localStorage.removeItem(CURRENT_USER_KEY);
-      }
       return false;
     }
     const activeEmail = (localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY) || '').trim().toLowerCase();
     if (!activeEmail) {
       localStorage.removeItem(IS_ADMIN_KEY);
-      localStorage.removeItem(CURRENT_USER_KEY);
       return false;
     }
     const adminDb = getAdminAccountsDb();
@@ -543,15 +563,25 @@
     if (!rec || rec.status !== 'Approved' || rec.deleted) {
       localStorage.removeItem(IS_ADMIN_KEY);
       localStorage.removeItem(CURRENT_ADMIN_EMAIL_KEY);
-      localStorage.removeItem(CURRENT_USER_KEY);
       return false;
     }
     return true;
   }
 
   function getCurrentUser() {
-    if (!verifyActiveAdminSessionStillValid()) return '';
-    return (localStorage.getItem(CURRENT_USER_KEY) || '').trim();
+    checkAndMaintain15DaySession();
+    const v1 = (localStorage.getItem(CURRENT_USER_KEY) || '').trim();
+    if (v1) return v1;
+    const v2 = (localStorage.getItem('rc_current_user_v2') || '').trim();
+    if (v2) return v2;
+    const bp = (localStorage.getItem('rc_botpit_active_user_v1') || '').trim();
+    if (bp) return bp;
+    if (verifyActiveAdminSessionStillValid()) {
+      const admEmail = (localStorage.getItem(CURRENT_ADMIN_EMAIL_KEY) || '').trim().toLowerCase();
+      const admRec = getAdminAccountsDb()[admEmail];
+      return admRec?.name || admEmail.split('@')[0] || 'Admin';
+    }
+    return '';
   }
 
   function getCurrentAdminEmail() {
@@ -784,13 +814,310 @@
   }
 
   // =========================================================================
-  // PLAYER ACCOUNT CREATION & LOGIN ENGINE (DISABLED — ADMIN APPROVAL REQUIRED)
+  // CUSTOMER / PLAYER ACCOUNT CREATION & LOGIN ENGINE (LIVE SITE + GAMES)
   // =========================================================================
-  function performPlayerAuth() {
-    return {
-      ok: false,
-      msg: 'Unapproved accounts are disabled. Only Admin accounts approved by the Owner on the Owner\'s Page can access the site.'
+  async function upsertSingleSupabasePlayerAccount(uKey, rec) {
+    if (!window.location.protocol.startsWith('http') || !uKey || !rec) return false;
+    try {
+      const cleanKey = String(uKey).trim().toLowerCase();
+      const row = {
+        username_key: cleanKey,
+        username: rec.username || cleanKey,
+        email: (rec.email || `${cleanKey}@retrocanopy.com`).trim().toLowerCase(),
+        password: rec.password || '',
+        tickets: Number(rec.tickets) || 0,
+        high_scores: rec.highScores || {},
+        unlocked_tiers: rec.unlockedTiers || {},
+        bot_pit_data: rec.botPitData || {},
+        updated_at: new Date().toISOString()
+      };
+      const res = await fetch(`${SUPABASE_REST_URL}/arcade_accounts?on_conflict=username_key`, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_PUB_KEY,
+          Authorization: `Bearer ${SUPABASE_PUB_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'resolution=merge-duplicates,return=representation'
+        },
+        body: JSON.stringify([row])
+      });
+      return res.ok;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  async function lookupSupabasePlayerAccount(rawIdentifier) {
+    if (!window.location.protocol.startsWith('http') || !rawIdentifier) return null;
+    try {
+      const idLower = String(rawIdentifier).trim().replace(/^@/, '').toLowerCase();
+      const enc = encodeURIComponent(idLower);
+      const res = await fetch(
+        `${SUPABASE_REST_URL}/arcade_accounts?or=(username_key.eq.${enc},email.eq.${enc})&limit=1`,
+        {
+          headers: {
+            apikey: SUPABASE_PUB_KEY,
+            Authorization: `Bearer ${SUPABASE_PUB_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          cache: 'no-store'
+        }
+      );
+      if (!res.ok) return null;
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length > 0 && rows[0].username_key) {
+        return rows[0];
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  function performPlayerAuth(mode, rawUser, rawEmail, rawPassword) {
+    const cleanMode = (mode === 'create' || mode === 'register') ? 'create' : 'login';
+    const userStr = String(rawUser || '').trim().replace(/^@/, '');
+    const emailStr = String(rawEmail || '').trim().toLowerCase();
+    const passStr = String(rawPassword || '').trim();
+
+    const identifier = userStr || emailStr;
+    if (!identifier) {
+      return { ok: false, msg: 'Please enter your username or email address.' };
+    }
+    if (!passStr || passStr.length < 4) {
+      return { ok: false, msg: 'Please enter a password (at least 4 characters).' };
+    }
+
+    // Check if an Owner or Approved Admin is logging in via the Customer form
+    const idLower = identifier.toLowerCase();
+    if (isOwnerEmail(idLower) || isOwnerEmail(emailStr) || idLower === 'joseph') {
+      if (passStr === OWNER_ADMIN_PASS || passStr.toLowerCase() === OWNER_ADMIN_PASS.toLowerCase()) {
+        const admRes = loginAdminAccount(OWNER_ADMIN_EMAIL, OWNER_ADMIN_PASS);
+        if (admRes.ok) {
+          localStorage.setItem('rc_current_user_v2', 'joseph');
+          localStorage.setItem('rc_botpit_active_user_v1', 'joseph');
+          return { ok: true, user: 'Joseph', isAdmin: true, account: admRes.account };
+        }
+      }
+    }
+
+    const db = getAccountsDb();
+    let bpDb = {};
+    try { bpDb = JSON.parse(localStorage.getItem('rc_botpit_accounts_v1') || '{}') || {}; } catch (_) {}
+
+    if (cleanMode === 'create') {
+      const chosenUser = userStr || (emailStr.includes('@') ? emailStr.split('@')[0] : identifier);
+      if (chosenUser.length < 2) {
+        return { ok: false, msg: 'Username must be at least 2 characters.' };
+      }
+      const uKey = chosenUser.toLowerCase();
+      const finalEmail = emailStr.includes('@') ? emailStr : `${uKey}@retrocanopy.com`;
+
+      const existing = db[uKey] || bpDb[uKey];
+      if (existing) {
+        const savedPass = String(existing.password || '');
+        if (!savedPass || savedPass === passStr || savedPass.toLowerCase() === passStr.toLowerCase()) {
+          localStorage.setItem(CURRENT_USER_KEY, existing.username || chosenUser);
+          localStorage.setItem('rc_current_user_v2', uKey);
+          localStorage.setItem('rc_botpit_active_user_v1', uKey);
+          touchSessionActivity();
+          syncPlayerToLocal(existing);
+          return { ok: true, user: existing.username || chosenUser, account: existing };
+        }
+        return { ok: false, msg: 'That username is already registered. Switch to Customer Log In!' };
+      }
+
+      const newAcct = {
+        usernameKey: uKey,
+        username: chosenUser,
+        email: finalEmail,
+        password: passStr,
+        xp: parseInt(localStorage.getItem('rc_canopy_xp') || '0', 10) || 0,
+        bestScore: parseInt(localStorage.getItem('rc_synth_flight_best') || '0', 10) || 0,
+        tickets: 0,
+        highScores: {},
+        unlockedTiers: {},
+        usedCoupons: {},
+        createdAt: Date.now(),
+        updatedAt: new Date().toISOString()
+      };
+
+      db[uKey] = newAcct;
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(db));
+
+      if (!bpDb[uKey]) {
+        bpDb[uKey] = {
+          usernameKey: uKey,
+          username: chosenUser,
+          email: finalEmail,
+          password: passStr,
+          pilotCallsign: '@' + chosenUser.toUpperCase().slice(0, 16),
+          botLevel: 1,
+          totalXpEarned: 0,
+          scrap: 0,
+          cpuXp: 0,
+          tickets: 0,
+          partIntegrity: { tires: 100, armor: 100, weapon: 100, core: 100 },
+          econV2: true,
+          seasonResetV3: true,
+          seasonResetV4: true,
+          ownedIds: [],
+          loadout: {},
+          elo: 1000,
+          pvpWins: 0,
+          pvpLosses: 0,
+          wagerAmount: 0,
+          clearedLevels: [],
+          skillRanks: {},
+          updatedAt: Date.now()
+        };
+        localStorage.setItem('rc_botpit_accounts_v1', JSON.stringify(bpDb));
+      }
+
+      localStorage.setItem(CURRENT_USER_KEY, chosenUser);
+      localStorage.setItem('rc_current_user_v2', uKey);
+      localStorage.setItem('rc_botpit_active_user_v1', uKey);
+      touchSessionActivity();
+      syncPlayerToLocal(newAcct);
+      upsertSingleSupabasePlayerAccount(uKey, { ...newAcct, botPitData: bpDb[uKey] });
+      syncWithServerDb(true);
+      return { ok: true, user: chosenUser, account: newAcct };
+    }
+
+    // Login mode: search local accounts by usernameKey, username, or email
+    let matchedKey = null;
+    let matchedRec = null;
+    for (const k of Object.keys(db)) {
+      const r = db[k];
+      if (!r) continue;
+      if (
+        k.toLowerCase() === idLower ||
+        (r.username && String(r.username).trim().toLowerCase() === idLower) ||
+        (r.email && String(r.email).trim().toLowerCase() === idLower) ||
+        (emailStr && r.email && String(r.email).trim().toLowerCase() === emailStr)
+      ) {
+        matchedKey = k.toLowerCase();
+        matchedRec = r;
+        break;
+      }
+    }
+    if (!matchedRec) {
+      for (const k of Object.keys(bpDb)) {
+        const r = bpDb[k];
+        if (!r) continue;
+        if (
+          k.toLowerCase() === idLower ||
+          (r.username && String(r.username).trim().toLowerCase() === idLower) ||
+          (r.email && String(r.email).trim().toLowerCase() === idLower) ||
+          (emailStr && r.email && String(r.email).trim().toLowerCase() === emailStr)
+        ) {
+          matchedKey = k.toLowerCase();
+          matchedRec = r;
+          break;
+        }
+      }
+    }
+
+    if (!matchedRec) {
+      return {
+        ok: false,
+        needsCloudLookup: true,
+        msg: 'No customer account found on this device for that username/email. Tap Create Customer Account to sign up!'
+      };
+    }
+
+    const savedPass = String(matchedRec.password || '');
+    const passMatches =
+      !savedPass ||
+      savedPass === passStr ||
+      (!savedPass.startsWith('sha256:') && savedPass.toLowerCase() === passStr.toLowerCase());
+
+    if (!passMatches) {
+      return { ok: false, msg: 'Incorrect password for this customer account.' };
+    }
+
+    const displayUser = String(matchedRec.username || matchedKey).trim().replace(/^@/, '');
+    if (!db[matchedKey]) {
+      db[matchedKey] = {
+        usernameKey: matchedKey,
+        username: displayUser,
+        email: matchedRec.email || `${matchedKey}@retrocanopy.com`,
+        password: savedPass || passStr,
+        xp: matchedRec.xp || 0,
+        bestScore: matchedRec.bestScore || 0,
+        tickets: matchedRec.tickets || 0,
+        botPitData: matchedRec.botPitData || matchedRec,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(db));
+    }
+
+    localStorage.setItem(CURRENT_USER_KEY, displayUser);
+    localStorage.setItem('rc_current_user_v2', matchedKey);
+    localStorage.setItem('rc_botpit_active_user_v1', matchedKey);
+    touchSessionActivity();
+    syncPlayerToLocal(db[matchedKey]);
+    syncWithServerDb(true);
+    return { ok: true, user: displayUser, account: db[matchedKey] };
+  }
+
+  async function authenticateCustomerWithCloud(mode, rawUser, rawEmail, rawPassword) {
+    const localRes = performPlayerAuth(mode, rawUser, rawEmail, rawPassword);
+    if (localRes.ok || mode === 'create' || !localRes.needsCloudLookup) {
+      return localRes;
+    }
+    const identifier = String(rawUser || rawEmail || '').trim().replace(/^@/, '');
+    const passStr = String(rawPassword || '').trim();
+    const cloudRow = await lookupSupabasePlayerAccount(identifier);
+    if (!cloudRow) {
+      return localRes;
+    }
+    const savedPass = String(cloudRow.password || '');
+    let shaPass = passStr;
+    try {
+      if (savedPass.startsWith('sha256:') && window.crypto && window.crypto.subtle) {
+        const buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode('rc_botpit_salt_v1:' + passStr));
+        shaPass = 'sha256:' + Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+    } catch (_) {}
+
+    if (savedPass && savedPass !== passStr && savedPass !== shaPass && savedPass.toLowerCase() !== passStr.toLowerCase()) {
+      return { ok: false, msg: 'Incorrect password for this customer account.' };
+    }
+
+    const uKey = String(cloudRow.username_key).toLowerCase();
+    const displayUser = String(cloudRow.username || uKey).trim();
+    const db = getAccountsDb();
+    db[uKey] = {
+      usernameKey: uKey,
+      username: displayUser,
+      email: cloudRow.email || `${uKey}@retrocanopy.com`,
+      password: passStr,
+      tickets: Number(cloudRow.tickets) || 0,
+      highScores: cloudRow.high_scores || {},
+      unlockedTiers: cloudRow.unlocked_tiers || {},
+      botPitData: cloudRow.bot_pit_data || {},
+      updatedAt: new Date().toISOString()
     };
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(db));
+
+    if (cloudRow.bot_pit_data && typeof cloudRow.bot_pit_data === 'object') {
+      let bpDb = {};
+      try { bpDb = JSON.parse(localStorage.getItem('rc_botpit_accounts_v1') || '{}') || {}; } catch (_) {}
+      bpDb[uKey] = {
+        ...cloudRow.bot_pit_data,
+        usernameKey: uKey,
+        username: displayUser,
+        email: cloudRow.email || `${uKey}@retrocanopy.com`,
+        password: savedPass || passStr
+      };
+      localStorage.setItem('rc_botpit_accounts_v1', JSON.stringify(bpDb));
+    }
+
+    localStorage.setItem(CURRENT_USER_KEY, displayUser);
+    localStorage.setItem('rc_current_user_v2', uKey);
+    localStorage.setItem('rc_botpit_active_user_v1', uKey);
+    touchSessionActivity();
+    syncPlayerToLocal(db[uKey]);
+    return { ok: true, user: displayUser, account: db[uKey] };
   }
 
   function syncPlayerToLocal(acct) {
@@ -824,6 +1151,7 @@
     setAdminAccountStatus,
     deleteAdminAccount,
     performPlayerAuth,
+    authenticateCustomerWithCloud,
     touchSessionActivity,
     logoutActiveSession,
     clearTrafficStats
@@ -881,14 +1209,7 @@
       return;
     }
     if (!isHomePage) {
-      if (!isAdminLoggedIn()) {
-        try {
-          sessionStorage.removeItem('rc_from_internal');
-          sessionStorage.setItem('rc_bounced_unauth', '1');
-        } catch (_) {}
-        window.location.replace('index.html');
-        return;
-      }
+      // Site is LIVE — do not redirect visitors away from subpages!
       if (!document.getElementById('rcHomeSignInBtn')) {
         return;
       }
@@ -1218,25 +1539,29 @@
         <button type="button" class="rc-clean-close-x" id="rcCleanAuthClose" title="Close">&#10005;</button>
         <img src="assets/logo.png" alt="Retrocanopy" class="rc-clean-logo">
         <h2 class="rc-clean-title" id="rcCleanAuthTitle">RETROCANOPY</h2>
-        <p class="rc-clean-subtitle" id="rcCleanAuthSub">Create an account or log in</p>
+        <p class="rc-clean-subtitle" id="rcCleanAuthSub">Create a customer account or log in to play &amp; save progress</p>
 
-        <!-- VIEW 1: OWNER & APPROVED ADMIN ACCESS ONLY -->
+        <!-- VIEW 1: CUSTOMER LOGIN / SIGN UP + ADMIN ACCESS -->
         <div class="rc-clean-btn-stack" id="rcAuthViewChoice">
-          <button type="button" class="rc-clean-choice-btn primary" id="btnChooseAdminLogin">&#128737;&#65039; ADMIN / OWNER LOG IN</button>
-          <button type="button" class="rc-clean-choice-btn secondary" id="btnChooseAdminCreate">&#10024; REQUEST ADMIN ACCOUNT</button>
-          <div class="rc-clean-divider">&mdash; OWNER APPROVAL REQUIRED FOR SITE ACCESS &mdash;</div>
+          <button type="button" class="rc-clean-choice-btn primary" id="btnChooseCustomerLogin">&#127918; CUSTOMER LOG IN</button>
+          <button type="button" class="rc-clean-choice-btn secondary" id="btnChooseCustomerCreate">&#10024; CREATE CUSTOMER ACCOUNT</button>
+          <div class="rc-clean-divider">&mdash; STAFF / OWNER ACCESS &mdash;</div>
+          <div class="rc-clean-admin-row">
+            <button type="button" class="rc-clean-choice-btn admin" id="btnChooseAdminLogin">&#128737;&#65039; ADMIN LOG IN</button>
+            <button type="button" class="rc-clean-choice-btn admin" id="btnChooseAdminCreate">&#10024; REQUEST ADMIN</button>
+          </div>
           <button type="button" class="rc-clean-back-btn" id="btnHomeLogout" style="display:none;color:#ff77aa;">Log Out of Active Account</button>
         </div>
 
-        <!-- VIEW 2: SPACIOUS EMAIL & PASSWORD FORM -->
+        <!-- VIEW 2: SPACIOUS USERNAME, EMAIL & PASSWORD FORM -->
         <div class="rc-clean-btn-stack" id="rcAuthViewForm" style="display:none;">
           <div class="rc-clean-field-group" id="rcUsernameGroup" style="display:none;">
-            <label class="rc-clean-field-label" id="rcUsernameLabel" for="rcCleanUserInput">USERNAME</label>
+            <label class="rc-clean-field-label" id="rcUsernameLabel" for="rcCleanUserInput">USERNAME / CALLSIGN</label>
             <input type="text" class="rc-clean-input" id="rcCleanUserInput" maxlength="64" placeholder="Choose a display name" autocomplete="username">
           </div>
-          <div class="rc-clean-field-group">
-            <label class="rc-clean-field-label" id="rcEmailLabel" for="rcCleanEmailInput">EMAIL ADDRESS</label>
-            <input type="email" class="rc-clean-input" id="rcCleanEmailInput" maxlength="128" placeholder="you@example.com" autocomplete="email">
+          <div class="rc-clean-field-group" id="rcEmailGroup">
+            <label class="rc-clean-field-label" id="rcEmailLabel" for="rcCleanEmailInput">EMAIL OR USERNAME</label>
+            <input type="text" class="rc-clean-input" id="rcCleanEmailInput" maxlength="128" placeholder="you@example.com or @callsign" autocomplete="email">
           </div>
           <div class="rc-clean-field-group">
             <label class="rc-clean-field-label" id="rcPassLabel" for="rcCleanPassInput">PASSWORD</label>
@@ -1257,7 +1582,7 @@
     `;
     document.body.appendChild(backdrop);
 
-    let currentFormMode = 'admin_login'; // 'admin_login' | 'admin_create'
+    let currentFormMode = 'customer_login'; // 'customer_login' | 'customer_create' | 'admin_login' | 'admin_create'
     let approvalPollTimer = null;
 
     const signInBtn = document.getElementById('rcHomeSignInBtn');
@@ -1295,9 +1620,9 @@
 
     function updateTopPill() {
       const admin = isAdminLoggedIn();
-      const user = admin ? getCurrentUser() : '';
+      const user = getCurrentUser();
       const owner = isOwnerLoggedIn();
-      if (admin && user) {
+      if (user) {
         signInBtn.classList.add('logged-in');
         signInLabel.textContent = `@${user}`;
       } else if (admin) {
@@ -1315,7 +1640,7 @@
         }
       }
       if (logoutBtn) {
-        logoutBtn.style.display = admin ? 'inline-block' : 'none';
+        logoutBtn.style.display = (admin || Boolean(user)) ? 'inline-block' : 'none';
       }
     }
 
@@ -1325,11 +1650,11 @@
       viewForm.style.display = 'none';
       viewApproval.style.display = 'none';
       const admin = isAdminLoggedIn();
-      const user = admin ? getCurrentUser() : '';
-      titleEl.textContent = admin ? `WELCOME, @${(user || 'ADMIN').toUpperCase()}` : 'RETROCANOPY ADMIN ACCESS';
-      subEl.textContent = admin
-        ? 'Approved Admin — full access unlocked'
-        : 'Only Owner-approved Admin accounts can enter past the Coming Soon page';
+      const user = getCurrentUser();
+      titleEl.textContent = user ? `WELCOME, @${user.toUpperCase()}` : 'RETROCANOPY ACCOUNT';
+      subEl.textContent = user
+        ? (admin ? 'Approved Admin & Player — full access unlocked' : 'Signed in — ready to play & shop!')
+        : 'Create a customer account or log in to play & save progress';
       formMsg.textContent = '';
       updateTopPill();
     }
@@ -1345,7 +1670,31 @@
       emailInput.value = '';
       passInput.value = '';
 
-      if (mode === 'admin_login') {
+      if (mode === 'customer_login') {
+        titleEl.textContent = 'CUSTOMER LOG IN';
+        subEl.textContent = 'Sign in with your Customer / Pilot username or email & password';
+        usernameGroup.style.display = 'none';
+        emailLabel.textContent = 'USERNAME OR EMAIL';
+        emailInput.type = 'text';
+        emailInput.placeholder = 'Enter your username or email address';
+        passLabel.textContent = 'PASSWORD';
+        passInput.placeholder = 'Enter your password';
+        submitBtn.textContent = 'LOG IN';
+        setTimeout(() => emailInput.focus(), 50);
+      } else if (mode === 'customer_create') {
+        titleEl.textContent = 'CREATE CUSTOMER ACCOUNT';
+        subEl.textContent = 'Create your free account to play Shibuya Bot Pit, Synth\'s Flight & track orders';
+        usernameGroup.style.display = 'flex';
+        usernameLabel.textContent = 'USERNAME / PILOT CALLSIGN';
+        userInput.placeholder = 'Choose a username (e.g. NeonPilot)';
+        emailLabel.textContent = 'EMAIL ADDRESS';
+        emailInput.type = 'email';
+        emailInput.placeholder = 'you@example.com';
+        passLabel.textContent = 'CREATE PASSWORD';
+        passInput.placeholder = 'At least 4 characters';
+        submitBtn.textContent = 'CREATE ACCOUNT & SIGN IN';
+        setTimeout(() => userInput.focus(), 50);
+      } else if (mode === 'admin_login') {
         titleEl.textContent = 'OWNER / ADMIN LOG IN';
         subEl.textContent = 'Sign in with your Owner or Owner-approved Admin email & password';
         usernameGroup.style.display = 'none';
@@ -1407,6 +1756,8 @@
       }, 2200);
     }
 
+    document.getElementById('btnChooseCustomerLogin').addEventListener('click', () => showFormView('customer_login'));
+    document.getElementById('btnChooseCustomerCreate').addEventListener('click', () => showFormView('customer_create'));
     document.getElementById('btnChooseAdminLogin').addEventListener('click', () => showFormView('admin_login'));
     document.getElementById('btnChooseAdminCreate').addEventListener('click', () => showFormView('admin_create'));
     backBtn.addEventListener('click', showChoiceView);
@@ -1416,9 +1767,6 @@
     logoutBtn.addEventListener('click', async () => {
       await logoutActiveSession();
       updateTopPill();
-      if (typeof window.__rcLockSiteToTeaserMode === 'function') {
-        window.__rcLockSiteToTeaserMode();
-      }
       showChoiceView();
       backdrop.classList.remove('open');
     });
@@ -1427,6 +1775,23 @@
       const u = userInput.value.trim();
       const e = emailInput.value.trim();
       const p = passInput.value.trim();
+
+      if (currentFormMode === 'customer_login' || currentFormMode === 'customer_create') {
+        const mode = currentFormMode === 'customer_create' ? 'create' : 'login';
+        const loginUserArg = mode === 'create' ? u : (u || e);
+        const res = await authenticateCustomerWithCloud(mode, loginUserArg, e, p);
+        if (!res.ok) {
+          formMsg.style.color = '#ff77aa';
+          formMsg.textContent = res.msg;
+          return;
+        }
+        updateTopPill();
+        if (typeof window.__rcUnlockFullSiteForAdmin === 'function') {
+          window.__rcUnlockFullSiteForAdmin();
+        }
+        backdrop.classList.remove('open');
+        return;
+      }
 
       if (currentFormMode === 'admin_create') {
         const res = await registerAdminAccount(u, e, p);
@@ -1499,13 +1864,12 @@
     updateTopPill();
     const hasAnyLogin = Boolean(
       isAdminLoggedIn() ||
+      (localStorage.getItem(CURRENT_USER_KEY) || '').trim() ||
       (localStorage.getItem('rc_current_user_v2') || '').trim() ||
       (localStorage.getItem('rc_botpit_active_user_v1') || '').trim()
     );
     if (hasAnyLogin && typeof window.__rcUnlockFullSiteForAdmin === 'function') {
       window.__rcUnlockFullSiteForAdmin();
-    } else if (!hasAnyLogin && typeof window.__rcLockSiteToTeaserMode === 'function' && document.body && document.body.classList.contains('rc-logged-in-home')) {
-      window.__rcLockSiteToTeaserMode();
     }
   }
 

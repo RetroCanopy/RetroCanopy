@@ -225,7 +225,6 @@ function initGamerIntro() {
             if (!isApprovedAdmin) {
                 localStorage.removeItem('rc_is_admin_v1');
                 localStorage.removeItem('rc_current_admin_email_v1');
-                localStorage.removeItem('rc_current_user_v1');
             }
             return isApprovedAdmin;
         } catch (_) {
@@ -236,6 +235,7 @@ function initGamerIntro() {
         try {
             if (isAdminSiteUnlocked()) return true;
             const hasPilotUser = Boolean(
+                (localStorage.getItem('rc_current_user_v1') || '').trim() ||
                 (localStorage.getItem('rc_current_user_v2') || '').trim() ||
                 (localStorage.getItem('rc_botpit_active_user_v1') || '').trim()
             );
@@ -244,7 +244,7 @@ function initGamerIntro() {
             return false;
         }
     }
-    let TEASER_COMING_SOON_MODE = !isAnyUserLoggedIn();
+    let TEASER_COMING_SOON_MODE = false;
     const IS_LOCAL_DEV_SERVER = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
     const fullPrologueSteps = [
@@ -386,7 +386,7 @@ function initGamerIntro() {
         }
         prologueSteps = TEASER_COMING_SOON_MODE ? fullPrologueSteps.slice(0, 9) : fullPrologueSteps.slice(0, 8);
         if (skipIntroBtn) {
-            skipIntroBtn.style.display = isAdminSiteUnlocked() ? '' : 'none';
+            skipIntroBtn.style.display = '';
         }
         const synEl = document.getElementById('syn-journey-audio');
         if (synEl) {
@@ -1221,7 +1221,9 @@ function initGamerIntro() {
             dismissTapForAudioPrompt();
         }
         if (state === 'LOGO_ZOOM_OUT' && !inPrologue && !sequenceComplete) {
+            const introVid = document.getElementById('rc-cinema-intro-video');
             return Boolean(
+                (introVid && !introVid.paused && !introVid.muted) ||
                 (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted) ||
                 activeWebAudioFallbackMode === 'intro' ||
                 nativeIntroAudioActive
@@ -1247,8 +1249,8 @@ function initGamerIntro() {
     }
 
     function primeHtmlAudioElementsOnGesture() {
-        // IMPORTANT FOR MOBILE: Never call .play() on secondary <audio> elements while #intro-title-audio is playing,
-        // because Android Chrome and iOS Safari only allow 1 active HTMLAudioElement session at a time and will pause #intro-title-audio!
+        // IMPORTANT FOR MOBILE: Never call .play() on secondary <audio> elements while #rc-cinema-intro-video is playing,
+        // because Android Chrome and iOS Safari only allow 1 active media session at a time and will pause the video!
         if (cupBoomAudioEl) {
             try {
                 cupBoomAudioEl.muted = false;
@@ -1271,91 +1273,69 @@ function initGamerIntro() {
 
     function tryStartIntroHtmlAudio(isUserGesture = false) {
         if (window.__rcSkipIntroOnLoad || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT') return;
-        if (!prebuiltIntroAudio) return;
-        prebuiltIntroAudio.muted = false;
-        prebuiltIntroAudio.volume = 0.92;
-        if (!prebuiltIntroAudio.paused && prebuiltIntroAudio.currentTime > 0.01) {
+        const introVidSync = document.getElementById('rc-cinema-intro-video');
+
+        // If the <video> element is already playing unmuted, we're done!
+        if (introVidSync && !introVidSync.paused && !introVidSync.muted && introVidSync.currentTime > 0.01) {
             introHtmlAudioStarted = true;
             dismissTapForAudioPrompt();
             stopWebAudioBufferFallback();
             return;
         }
-        if (introPlayPending && !isUserGesture) return;
-        const introVidSync = document.getElementById('rc-cinema-intro-video');
-        if (isUserGesture && !introGestureSynced && introVidSync) {
+
+        // On direct user gesture (e.g., tapping "TAP FOR AUDIO" on mobile or desktop),
+        // unmute #rc-cinema-intro-video directly WITHOUT resetting currentTime = 0 and WITHOUT starting a competing <audio> element!
+        // This guarantees iOS Safari & Android Chrome never pause the video when enabling audio.
+        if (isUserGesture && introVidSync) {
             introGestureSynced = true;
-            if (introVidSync.currentTime > 2.2) {
-                // Rewind video & audio to 0.0s on gesture unlock so the user gets the full 20s intro with audio!
+            introHtmlAudioStarted = true;
+            dismissTapForAudioPrompt();
+            stopWebAudioBufferFallback();
+            if (nativeIntroAudioActive) {
+                nativeIntroAudioActive = false;
+                triggerNativeServerAudio('stop');
+            }
+            if (prebuiltIntroAudio) {
                 try {
-                    introVidSync.currentTime = 0;
-                    introVidSync.play().catch(() => {});
-                } catch (_) {}
-                try {
-                    prebuiltIntroAudio.currentTime = 0;
-                } catch (_) {}
-                introTransitionScheduled = false;
-                scheduleIntroTransition(20200);
-            } else if (prebuiltIntroAudio.readyState >= 1 && introVidSync.currentTime > 0.15) {
-                try {
-                    prebuiltIntroAudio.currentTime = introVidSync.currentTime;
+                    prebuiltIntroAudio.pause();
+                    prebuiltIntroAudio.muted = true;
                 } catch (_) {}
             }
-        }
-        try {
-            introPlayPending = true;
-            const p = prebuiltIntroAudio.play();
-            if (p && typeof p.then === 'function') {
-                p.then(() => {
-                    introPlayPending = false;
-                    if (window.__rcSkipIntroOnLoad || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT') {
+            try {
+                introVidSync.muted = false;
+                introVidSync.volume = 0.92;
+                const vp = introVidSync.play();
+                if (vp && typeof vp.catch === 'function') {
+                    vp.catch(() => {
+                        // If unmuting the <video> was rejected, keep the video playing and fall back to prebuiltIntroAudio
                         try {
-                            prebuiltIntroAudio.pause();
-                            prebuiltIntroAudio.muted = true;
-                            prebuiltIntroAudio.currentTime = 0;
+                            introVidSync.muted = true;
+                            introVidSync.play().catch(() => {});
                         } catch (_) {}
-                        return;
-                    }
-                    if (nativeIntroAudioActive) {
-                        nativeIntroAudioActive = false;
-                        triggerNativeServerAudio('stop');
-                    }
-                    prebuiltIntroAudio.muted = false;
-                    prebuiltIntroAudio.volume = 0.92;
-                    introHtmlAudioStarted = true;
-                    dismissTapForAudioPrompt();
-                    stopWebAudioBufferFallback();
-                }).catch((err) => {
-                    introPlayPending = false;
-                    if (window.__rcSkipIntroOnLoad || sequenceComplete || inPrologue || state !== 'LOGO_ZOOM_OUT') return;
-                    if (isUserGesture && introVidSync) {
-                        // Backup: unmute the <video> element's own embedded AAC audio track directly on user gesture
-                        try {
-                            if (nativeIntroAudioActive) {
-                                nativeIntroAudioActive = false;
-                                triggerNativeServerAudio('stop');
-                            }
-                            introVidSync.muted = false;
-                            introVidSync.volume = 0.92;
-                            introVidSync.play().then(() => {
-                                introHtmlAudioStarted = true;
-                                dismissTapForAudioPrompt();
-                            }).catch(() => {});
-                        } catch (_) {}
-                    } else if (IS_LOCAL_DEV_SERVER && !nativeIntroAudioActive && (!err || err.name === 'NotAllowedError')) {
-                        nativeIntroAudioActive = true;
-                        triggerNativeServerAudio('intro');
-                        dismissTapForAudioPrompt();
-                    } else {
-                        updateTapForAudioPrompt();
-                    }
-                });
-            } else {
-                introPlayPending = false;
-            }
-        } catch (_) {
-            introPlayPending = false;
-            updateTapForAudioPrompt();
+                        if (prebuiltIntroAudio) {
+                            try {
+                                prebuiltIntroAudio.muted = false;
+                                prebuiltIntroAudio.volume = 0.92;
+                                if (introVidSync.currentTime > 0.1) {
+                                    prebuiltIntroAudio.currentTime = introVidSync.currentTime;
+                                }
+                                prebuiltIntroAudio.play().catch(() => {});
+                            } catch (_) {}
+                        }
+                    });
+                }
+            } catch (_) {}
+            return;
         }
+
+        // Non-gesture check: if prebuiltIntroAudio is already playing unmuted, keep it
+        if (prebuiltIntroAudio && !prebuiltIntroAudio.paused && !prebuiltIntroAudio.muted && prebuiltIntroAudio.currentTime > 0.01) {
+            introHtmlAudioStarted = true;
+            dismissTapForAudioPrompt();
+            stopWebAudioBufferFallback();
+            return;
+        }
+        updateTapForAudioPrompt();
     }
 
     function tryStartSynJourneyAudio(isUserGesture = false) {
@@ -1550,12 +1530,6 @@ function initGamerIntro() {
         introTitleAudioEl.addEventListener('canplay', () => tryStartIntroHtmlAudio(false));
         introTitleAudioEl.addEventListener('playing', () => {
             introHtmlAudioStarted = true;
-            if (synJourneyAudioEl && synJourneyAudioEl.preload === 'none') {
-                try {
-                    synJourneyAudioEl.preload = 'auto';
-                    synJourneyAudioEl.load();
-                } catch (_) {}
-            }
         });
     }
     if (synJourneyAudioEl) {
@@ -3902,21 +3876,13 @@ function initGamerIntro() {
 
     window.__rcLockSiteToTeaserMode = function () {
         window.__rcIsLoggedIn = false;
-        window.__rcSkipIntroOnLoad = false;
-        TEASER_COMING_SOON_MODE = true;
+        window.__rcComingSoonPreview = false;
+        TEASER_COMING_SOON_MODE = false;
         syncTeaserModePrologueState();
-        friendsOnlyOrder.forEach((id) => {
-            const actor = crewActors[id];
-            if (!actor || !actor.el) return;
-            actor.arrived = false;
-            actor.movingToStation = false;
-            actor.el.style.opacity = '0';
-            actor.el.style.pointerEvents = 'none';
-            if (actor.linkSlot) {
-                actor.linkSlot.classList.remove('revealed');
-            }
-        });
         skipEntireIntro();
+        if (typeof window.completeSwoopIntroImmediately === 'function') {
+            window.completeSwoopIntroImmediately();
+        }
     };
 
     if (owlActorEl) {
@@ -4342,7 +4308,9 @@ function initGamerIntro() {
         if (introVideoEl) {
             try {
                 introVideoEl.classList.remove('video-fade-out');
-                introVideoEl.muted = true;
+                if (!introHtmlAudioStarted && !tapForAudioDismissed) {
+                    introVideoEl.muted = true;
+                }
                 introVideoEl.defaultPlaybackRate = rate;
                 introVideoEl.playbackRate = rate;
                 if (introVideoEl.paused) {
@@ -4353,12 +4321,16 @@ function initGamerIntro() {
             if (!introVideoEl._playRetryBound) {
                 introVideoEl._playRetryBound = true;
                 const retryPlay = () => {
-                    if (!sequenceComplete && !window.__rcSkipIntroOnLoad && introVideoEl.paused) {
-                        try { introVideoEl.play().catch(() => {}); } catch (_) {}
+                    if (!sequenceComplete && !window.__rcSkipIntroOnLoad && !introLogoHoldStarted && introVideoEl.paused) {
+                        const dur = introVideoEl.duration || 20;
+                        if (introVideoEl.currentTime < dur - 0.25) {
+                            try { introVideoEl.play().catch(() => {}); } catch (_) {}
+                        }
                     }
                 };
                 introVideoEl.addEventListener('loadeddata', retryPlay);
                 introVideoEl.addEventListener('canplay', retryPlay);
+                introVideoEl.addEventListener('pause', retryPlay);
             }
 
             if (!introVideoEl._endedBound) {

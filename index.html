@@ -466,9 +466,9 @@
                 if (!isAdminLoggedIn) {
                     localStorage.removeItem('rc_is_admin_v1');
                     localStorage.removeItem('rc_current_admin_email_v1');
-                    localStorage.removeItem('rc_current_user_v1');
                 }
                 var hasPilotUser = Boolean(
+                    (localStorage.getItem('rc_current_user_v1') || '').trim() ||
                     (localStorage.getItem('rc_current_user_v2') || '').trim() ||
                     (localStorage.getItem('rc_botpit_active_user_v1') || '').trim()
                 );
@@ -501,12 +501,7 @@
                 }
                 if (document.body) {
                     document.body.classList.remove('cinema-intro-active', 'coming-soon-finale-active', 'diorama-reveal-active', 'rc-coming-soon-preview');
-                    document.body.classList.add('rc-no-intro-anim');
-                    if (isLoggedIn) {
-                        document.body.classList.add('rc-logged-in-home');
-                    } else {
-                        document.body.classList.add('diorama-reveal-active', 'coming-soon-finale-active');
-                    }
+                    document.body.classList.add('rc-no-intro-anim', 'rc-logged-in-home');
                 }
                 return;
             }
@@ -2253,11 +2248,6 @@
     };
 
     function isComingSoonStageMode() {
-      const b = document.body;
-      if (!b) return true;
-      if (b.classList.contains('coming-soon-finale-active') || !b.classList.contains('rc-logged-in-home')) {
-        return true;
-      }
       return Boolean(window.__rcComingSoonPreview);
     }
 
@@ -2416,8 +2406,8 @@
     requestAnimationFrame(animate);
     </script>
 
-    <script src="script.js?v=283"></script>
-    <script src="auth_hub.js?v=283"></script>
+    <script src="script.js?v=290"></script>
+    <script src="auth_hub.js?v=290"></script>
 </body>
 
 </html>

@@ -8704,9 +8704,9 @@
 
       localStorage.setItem(BOTPIT_ACTIVE_USER_KEY, state.loggedInUserKey);
       localStorage.setItem(SITE_CURRENT_USER_KEY, state.loggedInUserKey);
-      if (!localStorage.getItem(SITE_CURRENT_USER_V1_KEY)) {
-        localStorage.setItem(SITE_CURRENT_USER_V1_KEY, state.loggedInUsername || state.loggedInUserKey);
-      }
+      localStorage.setItem(SITE_CURRENT_USER_V1_KEY, state.loggedInUsername || state.loggedInUserKey);
+      localStorage.setItem("rc_session_last_active_v1", String(Date.now()));
+      localStorage.removeItem("rc_session_logged_out_v1");
 
       const authGateBd = document.getElementById("pilotAuthGateBackdrop");
       if (authGateBd) authGateBd.classList.add("hidden");
@@ -8723,18 +8723,6 @@
       if (typeof restorePilotSessionOnBoot === "function") {
         restorePilotSessionOnBoot();
         if (state.loggedInUserKey) return true;
-      }
-      // If any saved pilot account exists on this device, auto-login the first one so battle launch never stalls
-      const bpMap = getBotPitAccountsMap();
-      const siteMap = getSiteAccountsMap();
-      const firstKey = Object.keys(bpMap)[0] || Object.keys(siteMap)[0];
-      if (firstKey) {
-        const rec = bpMap[firstKey] || siteMap[firstKey];
-        if (rec) {
-          applyAccountProgressToState(firstKey, rec);
-          closePilotAuthGateModal();
-          return true;
-        }
       }
       const fsModal = document.getElementById("fullScreenMapModal");
       if (fsModal) fsModal.classList.remove("active");
@@ -8813,6 +8801,7 @@
       state.pilotCallsign = "🔒 LOGIN REQUIRED";
       localStorage.removeItem(BOTPIT_ACTIVE_USER_KEY);
       localStorage.removeItem(SITE_CURRENT_USER_KEY);
+      localStorage.removeItem(SITE_CURRENT_USER_V1_KEY);
       setCloudSaveStatus("🔒 LOGGED OUT", true);
       updatePlayerUI();
       openPilotAuthGateModal();
@@ -8985,43 +8974,6 @@
         createdAt: Date.now()
       };
       saveSiteAccountsMap(siteMap);
-
-      // Also push Pilot registration into Owner's Hub (rc_admin_accounts_v2 + Supabase public.admin_accounts)
-      try {
-        const admMap = getAdminAccountsMap();
-        const emailKey = rawEmail.toLowerCase();
-        if (!admMap[emailKey] || admMap[emailKey].status !== "Approved") {
-          admMap[emailKey] = {
-            name: rawUser,
-            email: rawEmail,
-            password: hashedRegPass,
-            status: "Pending",
-            deleted: false,
-            isOwner: false,
-            createdAt: new Date().toLocaleString(),
-            updatedAt: new Date().toISOString()
-          };
-          localStorage.setItem(SITE_ADMIN_ACCOUNTS_KEY, JSON.stringify(admMap));
-        }
-        if (window.db) {
-          await window.db.from("admin_accounts").upsert(
-            {
-              email_key: emailKey,
-              name: rawUser,
-              email: rawEmail,
-              password_hash: hashedRegPass,
-              status: (admMap[emailKey] && admMap[emailKey].status) || "Pending",
-              deleted: false,
-              is_owner: false,
-              updated_at: new Date().toISOString()
-            },
-            { onConflict: "email_key" }
-          );
-        }
-        if (window.RetroAuthHub && typeof window.RetroAuthHub.registerAdminAccount === "function") {
-          await window.RetroAuthHub.registerAdminAccount(rawUser, rawEmail, hashedRegPass);
-        }
-      } catch (_) {}
 
       applyAccountProgressToState(uKey, newProgress);
       closePilotAuthGateModal();

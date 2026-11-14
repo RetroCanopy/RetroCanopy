@@ -1555,7 +1555,16 @@
       }
 
       function getCurrentUsername() {
-        return (localStorage.getItem('rc_current_user_v1') || '').trim();
+        if (window.RetroAuthHub && typeof window.RetroAuthHub.getCurrentUser === 'function') {
+          const u = window.RetroAuthHub.getCurrentUser();
+          if (u) return u;
+        }
+        return (
+          localStorage.getItem('rc_current_user_v1') ||
+          localStorage.getItem('rc_current_user_v2') ||
+          localStorage.getItem('rc_botpit_active_user_v1') ||
+          ''
+        ).trim();
       }
 
       function syncActiveAccountToGlobalStorage() {
@@ -1596,13 +1605,24 @@
         localStorage.setItem('rc_used_coupons_v1', JSON.stringify(existing.usedCoupons));
       }
 
-      function loginOrRegisterCustomer() {
-        return { ok: false, msg: 'Only Owner-approved Admin accounts are permitted.' };
+      function loginOrRegisterCustomer(identifier, pin, isRegister = false, emailOpt = '') {
+        const cleanPin = (pin && pin.length >= 4) ? pin : '1994';
+        if (window.RetroAuthHub && typeof window.RetroAuthHub.performPlayerAuth === 'function') {
+          const res = window.RetroAuthHub.performPlayerAuth(isRegister ? 'create' : 'login', identifier, emailOpt || identifier, cleanPin);
+          if (res.ok) {
+            syncActiveAccountToGlobalStorage();
+            renderAllUI();
+          }
+          return res;
+        }
+        return { ok: false, msg: 'Auth service unavailable.' };
       }
 
       function logoutCustomer() {
         syncGlobalStorageToActiveAccount();
         localStorage.removeItem('rc_current_user_v1');
+        localStorage.removeItem('rc_current_user_v2');
+        localStorage.removeItem('rc_botpit_active_user_v1');
         localStorage.setItem('rc_canopy_xp', '0');
         localStorage.setItem('rc_synth_flight_best', '0');
         localStorage.setItem('rc_used_coupons_v1', '{}');
@@ -2130,11 +2150,16 @@
       if (btnOpenLoginModal) btnOpenLoginModal.addEventListener('click', () => openAuthModal());
       if (authCloseBtn) {
         authCloseBtn.addEventListener('click', () => {
+          if (!getCurrentUsername()) {
+            setAuthStatus('Please sign in or create a Customer Account to play!');
+            return;
+          }
           authModalBackdrop.classList.remove('open');
         });
       }
       if (authModalBackdrop) {
         authModalBackdrop.addEventListener('click', () => {
+          if (!getCurrentUsername()) return;
           authModalBackdrop.classList.remove('open');
         });
       }
@@ -2144,7 +2169,26 @@
         const emailVal = modalEmailInput ? modalEmailInput.value.trim() : '';
         const pin = modalPinInput ? modalPinInput.value.trim() : '';
 
-        if (authMode === 'admin_create' || authMode === 'register') {
+        if (authMode === 'register' || authMode === 'signin') {
+          const isReg = authMode === 'register';
+          const res = (window.RetroAuthHub && typeof window.RetroAuthHub.authenticateCustomerWithCloud === 'function')
+            ? await window.RetroAuthHub.authenticateCustomerWithCloud(isReg ? 'create' : 'login', isReg ? uname : (uname || emailVal), emailVal, pin)
+            : loginOrRegisterCustomer(isReg ? uname : (uname || emailVal), pin, isReg, emailVal);
+          if (!res.ok) {
+            playArcadeSfx('buzz');
+            setAuthStatus(res.msg);
+            return;
+          }
+          syncActiveAccountToGlobalStorage();
+          renderAllUI();
+          setAuthStatus('');
+          playArcadeSfx('unlock');
+          showToast(`👤 Logged in as @${res.user || (res.account && res.account.username) || uname || emailVal}!`);
+          authModalBackdrop.classList.remove('open');
+          return;
+        }
+
+        if (authMode === 'admin_create') {
           if (!window.RetroAuthHub) return;
           const res = await window.RetroAuthHub.registerAdminAccount(uname, emailVal || uname, pin);
           if (!res.ok) {
@@ -2163,7 +2207,7 @@
           return;
         }
 
-        if (authMode === 'admin_login' || authMode === 'signin') {
+        if (authMode === 'admin_login') {
           if (!window.RetroAuthHub) return;
           await window.RetroAuthHub.syncWithServerDb(false);
           const res = window.RetroAuthHub.loginAdminAccount(emailVal || uname, pin);
@@ -2186,29 +2230,9 @@
             return;
           }
           playArcadeSfx('unlock');
-          if (authMode === 'admin_login') {
-            window.location.href = 'admin.html';
-            return;
-          }
-          syncActiveAccountToGlobalStorage();
-          renderAllUI();
-          setAuthStatus('');
-          showToast(`👤 Logged in as @${(res.account && res.account.name) || emailVal}!`);
-          authModalBackdrop.classList.remove('open');
+          window.location.href = 'admin.html';
           return;
         }
-
-        const res = loginOrRegisterCustomer(identifier, pin, authMode === 'register');
-        if (!res.ok) {
-          playArcadeSfx('buzz');
-          setAuthStatus(res.msg);
-          return;
-        }
-
-        setAuthStatus('');
-        playArcadeSfx('unlock');
-        showToast(`👤 Logged in as @${res.account.username}!`);
-        authModalBackdrop.classList.remove('open');
       }
 
       if (modalLoginSaveBtn) {
