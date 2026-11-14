@@ -5526,6 +5526,13 @@
             paid_at: nowIso
           };
 
+          const ownerEmail = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
+          const carrierSel = document.getElementById('ownerSmsCarrierSelect');
+          const carrierDomain = (carrierSel && carrierSel.value) || localStorage.getItem('rc_owner_sms_carrier_v1') || 'spectrum';
+          const smsGatewayEmail = (carrierDomain === 'spectrum' || carrierDomain === 'vtext.com')
+            ? '6562427202@vtext.com,6562427202@vzwpix.com'
+            : `6562427202@${carrierDomain}`;
+
           await Promise.allSettled([
             fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?on_conflict=order_id`, {
               method: 'POST',
@@ -5547,6 +5554,23 @@
                 priority: 4,
                 tags: ['rocket', 'briefcase'],
                 click: 'https://www.retrocanopy.com/admin.html#project-requests'
+              })
+            }),
+            fetch(`https://formsubmit.co/ajax/${encodeURIComponent(ownerEmail)}`, {
+              method: 'POST',
+              keepalive: true,
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({
+                _subject: `🚀 New Studio Project Request #${reqId} — Joseph Cole (Full Custom Project)`,
+                _cc: smsGatewayEmail,
+                _template: 'table',
+                '1_Project_Ticket_ID': reqId,
+                '2_Client_Name_Or_Brand': 'Joseph Cole (Live Push Test)',
+                '3_Client_Contact': '656-242-7202 • josephcole001.ai@gmail.com',
+                '4_Service_Requested': 'Full Custom Project',
+                '5_Project_Details_And_Notes': 'Live test from Owner\'s Hub — verifying instant phone push, Email & SMS sync!',
+                '6_Submitted_At': new Date(nowIso).toLocaleString(),
+                '7_Open_In_Owners_Hub': 'https://www.retrocanopy.com/admin.html#project-requests'
               })
             })
           ]);
