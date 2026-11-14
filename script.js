@@ -1285,7 +1285,7 @@ function initGamerIntro() {
         if (isUserGesture && !introGestureSynced && introVidSync) {
             introGestureSynced = true;
             if (introVidSync.currentTime > 2.2) {
-                // Rewind video & audio to 0.0s on gesture unlock so the user gets the full 10s intro with audio!
+                // Rewind video & audio to 0.0s on gesture unlock so the user gets the full 20s intro with audio!
                 try {
                     introVidSync.currentTime = 0;
                     introVidSync.play().catch(() => {});
@@ -1294,7 +1294,7 @@ function initGamerIntro() {
                     prebuiltIntroAudio.currentTime = 0;
                 } catch (_) {}
                 introTransitionScheduled = false;
-                scheduleIntroTransition(10200);
+                scheduleIntroTransition(20200);
             } else if (prebuiltIntroAudio.readyState >= 1 && introVidSync.currentTime > 0.15) {
                 try {
                     prebuiltIntroAudio.currentTime = introVidSync.currentTime;
@@ -1621,7 +1621,7 @@ function initGamerIntro() {
             }
         } else {
             try {
-                prebuiltIntroAudio = new Audio('assets/intro_theme.mp3?v=220');
+                prebuiltIntroAudio = new Audio('assets/intro_theme.mp3?v=283');
                 prebuiltIntroAudio.muted = Boolean(cameFromInternalPage || window.__rcSkipIntroOnLoad);
                 prebuiltIntroAudio.volume = (cameFromInternalPage || window.__rcSkipIntroOnLoad) ? 0 : 0.88;
                 prebuiltIntroAudio.preload = (cameFromInternalPage || window.__rcSkipIntroOnLoad) ? 'none' : 'auto';
@@ -4296,8 +4296,10 @@ function initGamerIntro() {
         }
     }
 
+    let introLogoHoldStarted = false;
     function finishIntroWithLogoHold(holdLogoMs = 1400) {
-        if (sequenceComplete || introCraneTimer) return;
+        if (sequenceComplete || introCraneTimer || introLogoHoldStarted) return;
+        introLogoHoldStarted = true;
         if (introTransitionTimer) {
             clearTimeout(introTransitionTimer);
             introTransitionTimer = null;
@@ -4328,7 +4330,7 @@ function initGamerIntro() {
         }, holdLogoMs);
     }
 
-    function scheduleIntroTransition(holdMs = 15500) {
+    function scheduleIntroTransition(holdMs = 20200) {
         if (introTransitionScheduled || sequenceComplete) return;
         introTransitionScheduled = true;
         if (introTransitionTimer) clearTimeout(introTransitionTimer);
@@ -4363,7 +4365,12 @@ function initGamerIntro() {
                 introVideoEl._endedBound = true;
                 introVideoEl.addEventListener('ended', () => {
                     if (!sequenceComplete) {
-                        finishIntroWithLogoHold(2200);
+                        finishIntroWithLogoHold(180);
+                    }
+                });
+                introVideoEl.addEventListener('timeupdate', () => {
+                    if (!sequenceComplete && introVideoEl.duration > 1 && introVideoEl.currentTime >= introVideoEl.duration - 0.15) {
+                        finishIntroWithLogoHold(180);
                     }
                 });
             }
@@ -4372,10 +4379,10 @@ function initGamerIntro() {
         const armSafetyTimer = () => {
             if (sequenceComplete) return;
             if (introTransitionTimer) clearTimeout(introTransitionTimer);
-            // Safety fallback timer only starts AFTER video is actually playing (15.5s)
+            // Safety fallback timer only starts AFTER video is actually playing (20.2s)
             introTransitionTimer = setTimeout(() => {
                 if (sequenceComplete) return;
-                finishIntroWithLogoHold(400);
+                finishIntroWithLogoHold(250);
             }, holdMs);
         };
 
@@ -4389,14 +4396,14 @@ function initGamerIntro() {
                 if (!introVideoEl || introVideoEl.paused || introVideoEl.currentTime < 0.2) {
                     finishIntroWithLogoHold(200);
                 }
-            }, 22000);
+            }, 28000);
         } else {
             armSafetyTimer();
         }
     }
 
     // Schedule the title screen progression immediately — no click required
-    scheduleIntroTransition(10000);
+    scheduleIntroTransition(20200);
 
     function playIntroAudio() {
         playCinemaStudioLogoSwell();
@@ -4405,7 +4412,7 @@ function initGamerIntro() {
     function playCinemaStudioLogoSwell() {
         if (sequenceComplete || state !== 'LOGO_ZOOM_OUT') return;
 
-        // Play the single pre-rendered Title Screen audio track (assets/intro_theme.mp3?v=220) —
+        // Play the single pre-rendered Title Screen audio track (assets/intro_theme.mp3?v=283) —
         // do NOT layer a second Web Audio synth copy on top so the logo audio never plays twice!
         tryStartIntroHtmlAudio(false);
     }
@@ -4456,6 +4463,7 @@ function initGamerIntro() {
             cinemaSwellPlayed = false;
             introHtmlAudioStarted = false;
             introTransitionScheduled = false;
+            introLogoHoldStarted = false;
             state = 'LOGO_ZOOM_OUT';
             introStartPerfNow = performance.now();
 
@@ -4538,7 +4546,7 @@ function initGamerIntro() {
                     prebuiltIntroAudio._playingSynFallback = false;
                     prebuiltIntroAudio._playingLofiFallback = false;
                     if (!prebuiltIntroAudio.src || prebuiltIntroAudio.src.indexOf('intro_theme') === -1) {
-                        prebuiltIntroAudio.src = 'assets/intro_theme.mp3?v=220';
+                        prebuiltIntroAudio.src = 'assets/intro_theme.mp3?v=283';
                     }
                     prebuiltIntroAudio.loop = false;
                     prebuiltIntroAudio.muted = false;
@@ -4558,7 +4566,7 @@ function initGamerIntro() {
             if (ctx && ctx.state === 'suspended') {
                 ctx.resume().catch(() => {});
             }
-            scheduleIntroTransition(10000);
+            scheduleIntroTransition(20200);
             tryStartIntroHtmlAudio(true);
         } catch (err) {
             console.error('Replay intro error:', err);
