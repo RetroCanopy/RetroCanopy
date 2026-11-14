@@ -140,6 +140,7 @@ if (typeof window.dispatchStudioProjectRequest !== 'function') {
 
         const emailPromise = fetch(`https://formsubmit.co/ajax/${encodeURIComponent(ownerEmail)}`, {
             method: 'POST',
+            keepalive: true,
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({
                 _subject: `🚀 New Studio Project Request #${reqId} — ${name} (${service})`,
@@ -155,7 +156,11 @@ if (typeof window.dispatchStudioProjectRequest !== 'function') {
             })
         }).catch(() => null);
 
-        await Promise.allSettled([supaPromise, ntfyPromise, emailPromise]);
+        await Promise.allSettled([
+            supaPromise,
+            ntfyPromise,
+            Promise.race([emailPromise, new Promise((r) => setTimeout(r, 1800))])
+        ]);
         return entry;
     };
 }

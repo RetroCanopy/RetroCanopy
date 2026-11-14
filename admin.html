@@ -2964,6 +2964,7 @@
               <div class="kpi-label">Total Inquiries</div>
               <div class="kpi-val" id="prKpiTotalCount">0</div>
             </div>
+            <button type="button" class="mini-btn" id="prSendTestPushBtn" style="color:#ffe89e;border-color:rgba(245,196,81,0.68) !important;">&#128241; Send Test Project Push</button>
             <button type="button" class="mini-btn" id="prRefreshCloudBtn" style="color:#2ce6ff;border-color:rgba(44,230,255,0.55) !important;">&#8635; Sync Live Requests</button>
           </div>
         </div>
@@ -5485,6 +5486,75 @@
       const prRefreshCloudBtn = document.getElementById('prRefreshCloudBtn');
       if (prRefreshCloudBtn) {
         prRefreshCloudBtn.addEventListener('click', () => renderAllCards(true));
+      }
+
+      const prSendTestPushBtn = document.getElementById('prSendTestPushBtn');
+      if (prSendTestPushBtn) {
+        prSendTestPushBtn.addEventListener('click', async () => {
+          const orig = prSendTestPushBtn.textContent;
+          prSendTestPushBtn.textContent = 'Pushing to Phone...';
+          const reqId = 'RC-PROJ-' + String(Date.now()).slice(-6);
+          const nowIso = new Date().toISOString();
+          const topic = localStorage.getItem('rc_owner_ntfy_topic_v1') || 'retrocanopy-orders-joseph-777';
+          const supaRow = {
+            order_id: reqId,
+            customer_name: 'Joseph Cole (Live Push Test)',
+            customer_email: 'josephcole001.ai@gmail.com',
+            customer_phone: '656-242-7202',
+            shipping_address: 'Studio Project Inquiry (Full Custom Project)',
+            customer_notes: JSON.stringify({
+              isProjectRequest: true,
+              requestId: reqId,
+              name: 'Joseph Cole (Live Push Test)',
+              contact: '656-242-7202 • josephcole001.ai@gmail.com',
+              email: 'josephcole001.ai@gmail.com',
+              phone: '656-242-7202',
+              service: 'Full Custom Project',
+              notes: 'Live test from Owner\'s Hub — verifying instant phone push & Project Quoter sync!',
+              createdAt: nowIso
+            }),
+            items: [{ model: 'STUDIO-REQ', title: 'Full Custom Project', notes: 'Live test from Owner\'s Hub', price: 0, qty: 1, size: 'PROJECT' }],
+            subtotal_usd: 0,
+            shipping_usd: 0,
+            discount_usd: 0,
+            total_paid_usd: 0,
+            payment_status: 'PROJECT_REQUEST',
+            is_paid: false,
+            stripe_session_id: reqId,
+            fulfilled: false,
+            fulfilled_at: null,
+            paid_at: nowIso
+          };
+
+          await Promise.allSettled([
+            fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?on_conflict=order_id`, {
+              method: 'POST',
+              headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates,return=minimal'
+              },
+              body: JSON.stringify(supaRow)
+            }),
+            fetch('https://ntfy.sh', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                topic,
+                title: `🚀 New Project Request: Full Custom Project`,
+                message: `Client: Joseph Cole (656-242-7202) — Ticket #${reqId}. Tap to open Owner's Hub!`,
+                priority: 4,
+                tags: ['rocket', 'briefcase'],
+                click: 'https://www.retrocanopy.com/admin.html#project-requests'
+              })
+            })
+          ]);
+
+          prSendTestPushBtn.textContent = `✓ Pushed #${reqId}!`;
+          setTimeout(() => { prSendTestPushBtn.textContent = orig; }, 3000);
+          await renderAllCards(true);
+        });
       }
 
       // Simulate a $1.00 Paid Customer Order (with both White Hoodie & White Hat) to test the Checkoff -> Order History workflow
