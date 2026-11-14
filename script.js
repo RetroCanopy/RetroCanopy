@@ -28,8 +28,19 @@ function updateEarnings(val) {
 }
 
 /**
- * Global Studio / Project Request Dispatcher -> Owner's Hub + Phone Push (ntfy.sh + Email/SMS)
+ * Global Studio / Project Request Dispatcher -> Owner's Hub + Phone Push (ntfy.sh + Email/SMS) + Official Client Email (JosephCole@retrocanopy.com)
  */
+(function ensureOfficialTicketDossierLoaded() {
+    if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof window.showRetroCanopyTicketCongrats !== 'function') {
+        if (!document.querySelector('script[src*="official_ticket_dossier.js"]')) {
+            const s = document.createElement('script');
+            s.src = 'official_ticket_dossier.js?v=292';
+            s.async = true;
+            (document.head || document.documentElement).appendChild(s);
+        }
+    }
+})();
+
 if (typeof window.dispatchStudioProjectRequest !== 'function') {
     window.dispatchStudioProjectRequest = async function (rawPayload) {
         const nowIso = new Date().toISOString();
@@ -132,6 +143,23 @@ if (typeof window.dispatchStudioProjectRequest !== 'function') {
             })
         }).catch(() => null);
 
+        const officialEmailPromise = fetch('https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout', {
+            method: 'POST',
+            keepalive: true,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'send_official_email',
+                emailType: 'project_request',
+                ticketId: reqId,
+                customerName: name,
+                customerEmail: emailVal,
+                customerPhone: phoneVal,
+                contact,
+                service,
+                notes
+            })
+        }).catch(() => null);
+
         const ownerEmail = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
         const carrierDomain = localStorage.getItem('rc_owner_sms_carrier_v1') || 'spectrum';
         const smsGatewayEmail = (carrierDomain === 'spectrum' || carrierDomain === 'vtext.com')
@@ -159,6 +187,7 @@ if (typeof window.dispatchStudioProjectRequest !== 'function') {
         await Promise.allSettled([
             supaPromise,
             ntfyPromise,
+            officialEmailPromise,
             Promise.race([emailPromise, new Promise((r) => setTimeout(r, 1800))])
         ]);
         return entry;
@@ -200,8 +229,9 @@ async function handleCreatorSubmit(event) {
         }
     }
 
+    let entry = null;
     if (typeof window.dispatchStudioProjectRequest === 'function') {
-        await window.dispatchStudioProjectRequest({
+        entry = await window.dispatchStudioProjectRequest({
             name: creatorName || 'Creator Applicant',
             contact: businessEmail || channelUrl,
             email: businessEmail,
@@ -210,9 +240,20 @@ async function handleCreatorSubmit(event) {
         });
     }
 
-    alert('CREATOR APPLICATION RECEIVED!\n\nThank you for reaching out. Our team will review your channel and reply within 24 hours with your sample kit details.');
     if (submitBtn) submitBtn.innerHTML = originalText;
     form.reset();
+
+    if (typeof window.showRetroCanopyTicketCongrats === 'function') {
+        window.showRetroCanopyTicketCongrats({
+            isOrder: false,
+            ticketId: entry?.requestId || ('RC-PROJ-' + String(Date.now()).slice(-6)),
+            customerName: creatorName || 'Creator Applicant',
+            contact: businessEmail || channelUrl,
+            service: `Creator Partnership (${desiredProducts || 'Apparel & Merch'})`
+        });
+    } else {
+        alert('CREATOR APPLICATION RECEIVED!\n\nThank you for reaching out. Our team will review your channel and reply within 24 hours with your sample kit details.');
+    }
 }
 
 /**
@@ -262,8 +303,9 @@ async function handleOrgSubmit(event) {
         }
     }
 
+    let entry = null;
     if (typeof window.dispatchStudioProjectRequest === 'function') {
-        await window.dispatchStudioProjectRequest({
+        entry = await window.dispatchStudioProjectRequest({
             name: `${orgName}${contactName ? ' (' + contactName + ')' : ''}`.trim() || 'Organization Inquiry',
             contact: [email, phone].filter(Boolean).join(' • '),
             email,
@@ -273,9 +315,20 @@ async function handleOrgSubmit(event) {
         });
     }
 
-    alert('BULK QUOTE REQUEST RECEIVED!\n\nThank you for reaching out. A dedicated account manager will prepare your itemized quote, volume discounts, and digital mockups within 24 business hours.');
     if (submitBtn) submitBtn.innerHTML = originalText;
     form.reset();
+
+    if (typeof window.showRetroCanopyTicketCongrats === 'function') {
+        window.showRetroCanopyTicketCongrats({
+            isOrder: false,
+            ticketId: entry?.requestId || ('RC-PROJ-' + String(Date.now()).slice(-6)),
+            customerName: `${orgName}${contactName ? ' (' + contactName + ')' : ''}`.trim() || 'Organization Inquiry',
+            contact: [email, phone].filter(Boolean).join(' • '),
+            service: `Bulk Organization Order (${quantityTier || 'Custom Qty'})`
+        });
+    } else {
+        alert('BULK QUOTE REQUEST RECEIVED!\n\nThank you for reaching out. A dedicated account manager will prepare your itemized quote, volume discounts, and digital mockups within 24 business hours.');
+    }
 }
 
 /**
@@ -5252,7 +5305,7 @@ function initHomeShopScroller() {
             const serviceVal = studioSelect?.value || 'Full Custom Project';
             const notesVal = (document.getElementById('rc-studio-notes')?.value || '').trim();
             if (studioConfirm) {
-                studioConfirm.textContent = 'Dispatching your project request to the Owner\'s Hub...';
+                studioConfirm.textContent = 'Dispatching your project request & sending official confirmation from JosephCole@retrocanopy.com...';
             }
             let reqId = 'RC-PROJ-' + String(Date.now()).slice(-6);
             if (typeof window.dispatchStudioProjectRequest === 'function') {
@@ -5268,6 +5321,16 @@ function initHomeShopScroller() {
                 studioConfirm.textContent = `✓ Inquiry received for ${serviceVal} (Ticket #${reqId})! Sent to Owner's Hub & Founder's Phone.`;
             }
             studioForm.reset();
+            closeStudioModal();
+            if (typeof window.showRetroCanopyTicketCongrats === 'function') {
+                window.showRetroCanopyTicketCongrats({
+                    isOrder: false,
+                    ticketId: reqId,
+                    customerName: nameVal,
+                    contact: contactVal,
+                    service: serviceVal
+                });
+            }
         });
     }
 
@@ -5283,7 +5346,7 @@ function initHomeShopScroller() {
         { styleClass: 'rc-game-style-arc01', title: 'Black Hoodie #12 — Royal Diamond 19|94 ($50)', titleTop: 'BLACK EDITION #12', titleMain: 'ROYAL 19|94 HOODIE ($50)', winOnly: false, img: 'assets/merch/store_1994/hoodie_12_black_back.webp?v=247', href: 'hoodie_preview.html?set=12&filter=hoodies&side=back' },
         { styleClass: 'rc-game-style-arc09', title: 'Black Snapback Hat #12 ($36)', titleTop: 'BLACK EDITION #12', titleMain: 'ROYAL 19|94 HAT ($36)', winOnly: false, img: 'assets/merch/store_1994/hat_12_black.webp?v=247', href: 'hat_preview.html?set=12&filter=hats' },
         { styleClass: 'rc-game-style-arc05', title: 'Black Tee #18 — Worldwide Orbital ($30)', titleTop: 'BLACK EDITION #18', titleMain: 'ORBITAL TEE ($30)', winOnly: false, img: 'assets/merch/store_1994/shirt_18_black_back.webp?v=247', href: 'hoodie_preview.html?set=18&filter=shirts&side=back' },
-        { styleClass: 'rc-game-style-arc09', title: 'Black Joggers #18 — Worldwide Orbital ($52)', titleTop: 'BLACK EDITION #18', titleMain: 'ORBITAL JOGGERS ($52)', winOnly: false, img: 'assets/merch/store_1994/jogger_18_black_front.webp?v=247', href: 'hoodie_preview.html?set=18&filter=joggers' },
+        { styleClass: 'rc-game-style-arc09', title: 'Black Snapback Hat #18 — Worldwide Orbital ($36)', titleTop: 'BLACK EDITION #18', titleMain: 'ORBITAL HAT ($36)', winOnly: false, img: 'assets/merch/store_1994/hat_18_black.webp?v=247', href: 'hat_preview.html?set=18&filter=hats' },
         { styleClass: 'rc-game-style-arc01', title: 'Black Hoodie #19 — Architectural 1994 ($50)', titleTop: 'BLACK EDITION #19', titleMain: 'ARCHITECTURAL HOODIE ($50)', winOnly: false, img: 'assets/merch/store_1994/hoodie_19_black_back.webp?v=247', href: 'hoodie_preview.html?set=19&filter=hoodies&side=back' },
         { styleClass: 'rc-game-style-arc09', title: 'Black Snapback Hat #19 ($36)', titleTop: 'BLACK EDITION #19', titleMain: 'ARCHITECTURAL HAT ($36)', winOnly: false, img: 'assets/merch/store_1994/hat_19_black.webp?v=247', href: 'hat_preview.html?set=19&filter=hats' }
     ];

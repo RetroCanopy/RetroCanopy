@@ -18871,15 +18871,16 @@
 
     async function recordBotPitGameOrder(pk, platformLabel) {
       try {
-        if (!pk) return;
+        if (!pk) return null;
         const totalCredited = (pk.diamonds || 0) + (pk.bonus || 0);
         const rawPrice = parseFloat(String(pk.priceUsd || '0').replace(/[^0-9.]/g, '')) || 0;
-        const orderId = 'BP-ORD-' + String(Date.now()).slice(-6);
+        const orderId = 'RC-GAME-' + String(Date.now()).slice(-6);
+        const pilotEmailVal = state.loggedInEmail || (String(state.pilotCallsign || '').includes('@') ? state.pilotCallsign : '');
         const rec = {
           order_id: orderId,
           pilot_callsign: state.pilotCallsign || 'PILOT',
           pilot_user_key: normalizeAuthKey(state.loggedInUserKey || state.pilotCallsign || 'pilot'),
-          pilot_email: state.loggedInEmail || '',
+          pilot_email: pilotEmailVal,
           pack_id: pk.id,
           pack_name: pk.name || pk.badge || pk.id,
           diamonds_credited: totalCredited,
@@ -18903,16 +18904,37 @@
             body: JSON.stringify(rec)
           });
         }
+        // Dispatch Official Concept #1 Game Receipt Email from JosephCole@retrocanopy.com
+        fetch('https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout', {
+          method: 'POST',
+          keepalive: true,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'send_official_email',
+            emailType: 'game_receipt',
+            ticketId: orderId,
+            orderId: orderId,
+            pilotCallsign: state.pilotCallsign || 'PILOT',
+            customerName: state.pilotCallsign || 'PILOT',
+            customerEmail: pilotEmailVal,
+            packName: pk.name || pk.badge || pk.id,
+            diamondsCredited: totalCredited,
+            totalPaidUsd: rawPrice,
+            platform: platformLabel || 'Stripe Web Checkout'
+          })
+        }).catch(() => {});
         if (typeof BroadcastChannel !== 'undefined') {
           const ch = new BroadcastChannel('rc_admin_hub_sync_v1');
           ch.postMessage({ type: 'NEW_GAME_ORDER', orderId });
         }
+        return orderId;
       } catch (e) {
         console.warn('recordBotPitGameOrder warning:', e);
+        return null;
       }
     }
 
-    function checkStripeCheckoutReturn() {
+    async function checkStripeCheckoutReturn() {
       try {
         const params = new URLSearchParams(window.location.search);
         if (params.get("stripe_success") !== "1") return;
@@ -18938,13 +18960,24 @@
         state.scrap = (state.scrap || 0) + totalCredited;
         persistWalletAndRig();
         updatePlayerUI();
-        recordBotPitGameOrder(pk, 'Stripe Web Checkout');
+        const orderId = await recordBotPitGameOrder(pk, 'Stripe Web Checkout');
 
         const cleanUrl = window.location.pathname + window.location.hash;
         window.history.replaceState({}, document.title, cleanUrl);
 
         setTimeout(() => {
           showShopToast(`✅ STRIPE PAYMENT COMPLETE: +${totalCredited.toLocaleString()} 💎 CREDITED TO VAULT!`, "#34d399");
+          if (typeof window.showRetroCanopyTicketCongrats === 'function') {
+            window.showRetroCanopyTicketCongrats({
+              isOrder: true,
+              ticketId: orderId || ('RC-GAME-' + String(Date.now()).slice(-6)),
+              customerName: state.pilotCallsign || 'PILOT',
+              customerEmail: state.loggedInEmail || state.pilotCallsign || 'Verified Pilot',
+              service: `${pk.name || pk.badge} (+${totalCredited.toLocaleString()} Diamonds)`,
+              totalPaidUsd: parseFloat(String(pk.priceUsd || '0').replace(/[^0-9.]/g, '')) || 0,
+              countdownSeconds: 8
+            });
+          }
         }, 450);
       } catch (e) {
         console.warn("checkStripeCheckoutReturn error:", e);
@@ -21793,5 +21826,6 @@
     try { initRetroCanopyNativePlayBilling(); } catch (e) { console.error(e); }
 
   </script>
+  <script src="official_ticket_dossier.js?v=292"></script>
 </body>
 </html>

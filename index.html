@@ -959,7 +959,25 @@
         })
       }).catch(() => null);
 
-      // 4. Send Instant Email + SMS Text Gateway Alert to Owner's Phone
+      // 4. Send Official Concept #1 HTML Email from JosephCole@retrocanopy.com to Client + Owner Copy
+      const officialEmailPromise = fetch('https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout', {
+        method: 'POST',
+        keepalive: true,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'send_official_email',
+          emailType: 'project_request',
+          ticketId: reqId,
+          customerName: name,
+          customerEmail: emailVal,
+          customerPhone: phoneVal,
+          contact: contact,
+          service: service,
+          notes: notes
+        })
+      }).catch(() => null);
+
+      // 5. Send Instant Email + SMS Text Gateway Alert to Owner's Phone
       const ownerEmail = localStorage.getItem('rc_owner_alert_email_v1') || 'josephcole001.ai@gmail.com';
       const carrierDomain = localStorage.getItem('rc_owner_sms_carrier_v1') || 'spectrum';
       const smsGatewayEmail = (carrierDomain === 'spectrum' || carrierDomain === 'vtext.com')
@@ -987,6 +1005,7 @@
       await Promise.allSettled([
         supaPromise,
         ntfyPromise,
+        officialEmailPromise,
         Promise.race([emailPromise, new Promise((r) => setTimeout(r, 1800))])
       ]);
       return entry;
@@ -1012,7 +1031,7 @@
         btnEl.textContent = 'SENDING TO STUDIO...';
       }
       if (confirmEl) {
-        confirmEl.textContent = 'Dispatching your project request to the Owner\'s Hub...';
+        confirmEl.textContent = 'Dispatching your project request & sending official confirmation from JosephCole@retrocanopy.com...';
       }
 
       const entry = await window.dispatchStudioProjectRequest({ name, contact, service, notes });
@@ -1025,6 +1044,16 @@
         confirmEl.textContent = `✓ Thank you, ${name}! Your ${service} request (Ticket #${entry.requestId}) is now in the Owner's Hub and has been pushed directly to our founder's phone.`;
       }
       ev.target.reset();
+
+      if (typeof window.showRetroCanopyTicketCongrats === 'function') {
+        window.showRetroCanopyTicketCongrats({
+          isOrder: false,
+          ticketId: entry.requestId,
+          customerName: name,
+          contact: contact,
+          service: service
+        });
+      }
     };
 
     window.toggleSanctuaryMusic = function() {
@@ -2619,8 +2648,9 @@
     requestAnimationFrame(animate);
     </script>
 
-    <script src="script.js?v=291"></script>
-    <script src="auth_hub.js?v=291"></script>
+    <script src="official_ticket_dossier.js?v=292"></script>
+    <script src="script.js?v=292"></script>
+    <script src="auth_hub.js?v=292"></script>
 </body>
 
 </html>

@@ -799,6 +799,7 @@
       ticketId,
       quoteId: ticketId,
       isExplicitSave: Boolean(opts.isExplicitSave),
+      sendClientEmail: Boolean(opts.sendClientEmail),
       projectName: c.projectName || c.companyOrTeam || 'Custom Performance Apparel & Print Order',
       customerName: [c.fullName, c.companyOrTeam].filter(Boolean).join(' — '),
       customerCompany: c.companyOrTeam || '',
@@ -4368,6 +4369,9 @@
             <a href="${esc(clientDossierUrl)}" target="_blank" rel="noopener noreferrer" class="mini-btn" style="padding:6px 10px;font-size:0.71rem;color:#6bffc3;text-decoration:none;border-color:rgba(34,245,155,0.5) !important;">
               &#128065;&#65039; Sent Quote &nearr;
             </a>
+            <button type="button" class="mini-btn" data-vault-email-quote="${esc(tid)}" style="padding:6px 10px;font-size:0.71rem;color:#ffd099;border-color:rgba(255,148,54,0.6) !important;" title="Email Concept #1 Official Quote (with Stripe QR Code) from JosephCole@retrocanopy.com">
+              &#9993;&#65039; Email Quote
+            </button>
             <button type="button" class="mini-btn" data-vault-copy-link="${esc(tid)}" style="padding:6px 10px;font-size:0.71rem;color:#9ef3ff;">
               &#128279; Copy Link
             </button>
@@ -5307,6 +5311,38 @@
     }
 
     const sendClientLinkBtn = document.getElementById('bqSendClientQuoteLinkBtn');
+    const emailOfficialQuoteBtn = document.getElementById('bqEmailOfficialQuoteBtn');
+    if (emailOfficialQuoteBtn) {
+      emailOfficialQuoteBtn.addEventListener('click', async () => {
+        const calc = state.lastCalculation;
+        if (!calc || calc.totalShirts === 0) {
+          alert('Enter at least 1 item in Step 1 before emailing an Official Quote.');
+          return;
+        }
+        let targetEmail = (state.customer.email || '').trim();
+        if (!targetEmail || !targetEmail.includes('@')) {
+          const prompted = prompt('Enter the client email address to receive the Official Quote (with Stripe Payment QR Code) from JosephCole@retrocanopy.com:', targetEmail || '');
+          if (!prompted || !prompted.includes('@')) return;
+          targetEmail = prompted.trim();
+          state.customer.email = targetEmail;
+          const emailInput = document.getElementById('bqCustEmail');
+          if (emailInput) emailInput.value = targetEmail;
+        }
+        const orig = emailOfficialQuoteBtn.innerHTML;
+        emailOfficialQuoteBtn.disabled = true;
+        emailOfficialQuoteBtn.innerHTML = '&#9203; Sending from JosephCole@retrocanopy.com...';
+        await saveCurrentQuote();
+        const res = await syncQuoteToStripeCloudNow(calc, { isExplicitSave: true, sendClientEmail: true });
+        emailOfficialQuoteBtn.disabled = false;
+        if (res && res.ok) {
+          emailOfficialQuoteBtn.innerHTML = `&#10003; Emailed to ${esc(targetEmail)} (w/ Stripe QR)!`;
+        } else {
+          emailOfficialQuoteBtn.innerHTML = '&#9888;&#65039; Saved (Check Email)';
+        }
+        setTimeout(() => { emailOfficialQuoteBtn.innerHTML = orig; }, 3500);
+      });
+    }
+
     if (sendClientLinkBtn) {
       sendClientLinkBtn.addEventListener('click', async () => {
         const calc = state.lastCalculation;
@@ -5363,6 +5399,15 @@
         const openTktBtn = ev.target.closest('[data-vault-open-ticket]');
         if (openTktBtn) {
           await openTicketInStudio(openTktBtn.getAttribute('data-vault-open-ticket'));
+          return;
+        }
+
+        const emailQuoteVaultBtn = ev.target.closest('[data-vault-email-quote]');
+        if (emailQuoteVaultBtn) {
+          const tid = emailQuoteVaultBtn.getAttribute('data-vault-email-quote');
+          await openTicketInStudio(tid);
+          const btn = document.getElementById('bqEmailOfficialQuoteBtn');
+          if (btn) btn.click();
           return;
         }
 

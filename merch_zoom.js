@@ -5,6 +5,14 @@
    ========================================================================== */
 
 (function () {
+  if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof window.showRetroCanopyTicketCongrats !== 'function') {
+    if (!document.querySelector('script[src*="official_ticket_dossier.js"]')) {
+      const s = document.createElement('script');
+      s.src = 'official_ticket_dossier.js?v=292';
+      s.async = true;
+      (document.head || document.documentElement).appendChild(s);
+    }
+  }
   // Store open in $1.00 Test Mode for White Hoodie (RC-309) & White Hat (RC-107)
 
   let zoomScale = 1.45;
@@ -2102,8 +2110,8 @@
                     <span style="color:#00f59b;">$${totalFormatted} USD &#10003;</span>
                   </div>
                 </div>
-                <button type="button" id="rcDoneVerificationBtn" style="margin-top:12px;width:100%;padding:13px 18px;border-radius:999px;border:1.5px solid #00f59b;background:linear-gradient(90deg, rgba(0,245,155,0.28), rgba(0,240,255,0.24));color:#ffffff;font-family:'Orbitron',sans-serif;font-size:0.78rem;font-weight:900;letter-spacing:0.08em;cursor:pointer;box-shadow:0 8px 24px rgba(0,245,155,0.24);">
-                  &#10003; DONE &mdash; RETURN TO STORE
+                <button type="button" id="rcDoneVerificationBtn" style="margin-top:12px;width:100%;padding:13px 18px;border-radius:999px;border:1.5px solid #ffa036;background:linear-gradient(135deg, #ffa036 0%, #ff5500 100%);color:#ffffff;font-family:'Orbitron',sans-serif;font-size:0.78rem;font-weight:900;letter-spacing:0.08em;cursor:pointer;box-shadow:0 8px 24px rgba(255,102,0,0.45);">
+                  &larr; RETURN TO RETROCANOPY MAIN PAGE
                 </button>
               </div>
             </div>
@@ -2124,11 +2132,30 @@
         }
         const doneBtn = document.getElementById('rcDoneVerificationBtn');
         if (doneBtn) {
-          doneBtn.addEventListener('click', closeStoreCheckoutModal);
+          doneBtn.addEventListener('click', () => {
+            closeStoreCheckoutModal();
+            if (typeof window.returnToRetroCanopyMainPage === 'function') {
+              window.returnToRetroCanopyMainPage();
+            } else {
+              window.location.href = 'index.html';
+            }
+          });
         }
       }
 
       checkoutBackdropEl.classList.add('open');
+
+      if (typeof window.showRetroCanopyTicketCongrats === 'function') {
+        window.showRetroCanopyTicketCongrats({
+          isOrder: true,
+          ticketId: ordId,
+          customerName: paidOrder.customerName || paidOrder.customer || 'Valued Client',
+          customerEmail: paidOrder.customerEmail || '',
+          service: orderItems.map((it) => `${it.qty || 1}x ${it.title} (${it.size || 'L'})`).join(', '),
+          totalPaidUsd: Number(paidOrder.totalPaid || paidOrder.total || 1),
+          countdownSeconds: 8
+        });
+      }
     }
 
     const bagBtnMain = document.getElementById('bagBtn');
@@ -2522,6 +2549,31 @@
         }
 
         await persistPaidOrderToCloudAndLocal(pendingOrder);
+        if (!verifiedSession || !verifiedSession.emailSent) {
+          try {
+            fetch(STRIPE_CHECKOUT_FUNCTION_URL, {
+              method: 'POST',
+              keepalive: true,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'send_official_email',
+                emailType: 'product_order',
+                ticketId: canonicalOrderId,
+                orderId: canonicalOrderId,
+                customerName: pendingOrder.customerName || pendingOrder.customer,
+                customerEmail: pendingOrder.customerEmail,
+                customerPhone: pendingOrder.customerPhone,
+                shippingAddress: pendingOrder.shippingAddress,
+                items: pendingOrder.items,
+                subtotalUsd: pendingOrder.subtotal,
+                taxUsd: pendingOrder.taxUsd,
+                shippingUsd: pendingOrder.shipping,
+                shippingLabel: pendingOrder.shippingLabel,
+                totalPaidUsd: pendingOrder.totalPaid
+              })
+            }).catch(() => {});
+          } catch (_) {}
+        }
         try {
           localStorage.removeItem('rc_pending_merch_stripe_order_v1');
         } catch (_) {}

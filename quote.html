@@ -1709,6 +1709,18 @@
             throw new Error(data.error || `Ticket #${ticketId} could not be found.`);
           }
           renderDossier(data);
+          if (isSuccess && typeof window.showRetroCanopyTicketCongrats === 'function') {
+            const qObj = data.quote || {};
+            window.showRetroCanopyTicketCongrats({
+              isOrder: true,
+              ticketId: ticketId,
+              customerName: qObj.customerName || 'Valued Client',
+              customerEmail: qObj.customerEmail || qObj.customerPhone || '',
+              service: qObj.projectName || 'Custom Quote Order',
+              totalPaidUsd: Number(qObj.grandTotalUsd || qObj.totalPaidUsd || 0),
+              countdownSeconds: 8
+            });
+          }
         } catch (err) {
           dynamicEl.innerHTML = `
             <h2 style="font-family:'Orbitron',sans-serif;font-size:1.05rem;color:#ff9e6b;">Unable to Load Ticket #${esc(ticketId)}</h2>
@@ -1720,5 +1732,6 @@
       loadQuoteDossier();
     })();
   </script>
+  <script src="official_ticket_dossier.js?v=292"></script>
 </body>
 </html>
