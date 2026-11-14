@@ -1130,7 +1130,7 @@
     </div>
 
     <div class="header-actions">
-      <a href="index.html" class="nav-btn nav-btn-home">&#8962; Lobby</a>
+      <a href="index.html" class="nav-btn nav-btn-home" onclick="sessionStorage.setItem('rc_from_internal','1')">&#127968; RETROCANOPY</a>
       <a href="hat_preview.html" class="nav-btn nav-btn-store" id="goStoreTopBtn">&#128717;&#65039; Store &amp; Checkout</a>
       <a href="admin.html" class="nav-btn" id="topAdminHubBtn" style="display:none;background:rgba(255,174,0,0.18);border:1.5px solid #ffae00;color:#ffdf80;">&#128737;&#65039; Admin Hub</a>
       <button type="button" class="user-auth-pill guest-mode" id="topUserAuthBtn" title="Click to Sign In, Save Progress, or Switch Account">
@@ -1322,6 +1322,9 @@
         <div id="modalApprovalInfoBox" style="background:rgba(255,174,0,0.08);border:1.5px solid rgba(255,174,0,0.45);border-radius:14px;padding:16px 18px;font-size:0.85rem;color:rgba(255,255,255,0.9);line-height:1.5;"></div>
         <button type="button" class="auth-submit-btn" id="btnVerifyAdminApproval" style="padding:14px 18px;font-size:0.8rem;">GO TO ADMIN LOG IN</button>
         <button type="button" class="auth-close-btn" id="btnApprovalBackToForm" style="background:transparent;border:none;color:rgba(255,255,255,0.68);align-self:center;font-size:0.7rem;">&larr; Back</button>
+      </div>
+    <div style="padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);margin-top:4px;display:flex;justify-content:center;">
+        <a href="index.html" onclick="sessionStorage.setItem(\'rc_from_internal\',\'1\')" style="color:var(--neon-cyan);text-decoration:none;font-family:\'Orbitron\',sans-serif;font-size:0.7rem;font-weight:800;padding:7px 16px;border:1px solid rgba(0,240,255,0.45);border-radius:999px;background:rgba(0,240,255,0.1);">&larr; BACK TO RETROCANOPY</a>
       </div>
     </div>
   </div>

@@ -2448,11 +2448,7 @@
       color: #fb7185;
     }
     .pilot-saved-accounts {
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      display: none !important;
     }
     .pilot-saved-title {
       font-family: 'Orbitron', sans-serif;
@@ -4611,7 +4607,6 @@
        Eliminates duplicate toolbars, noisy HUD sub-rows, and crowded pill walls
        ========================================================================= */
     /* 1. Streamline Top Pilot Bar (from 18 pills down to 6 clean essentials) */
-    .top-pilot-bar a[href="index.html"],
     #pilotRecordDisplay,
     #pilotXpDisplay,
     #cloudSyncBadge,
@@ -6368,9 +6363,7 @@
       -webkit-user-select: none;
     }
 
-    body.rc-app-shell #btnHomeTop,
-    body.rc-app-shell #btnGetAppTop,
-    body.rc-app-shell #pilotAuthBackHomeRow {
+    body.rc-app-shell #btnGetAppTop {
       display: none !important;
     }
     body.rc-hide-paid-iap #btnTopBuyDiamonds,
@@ -7037,7 +7030,7 @@
   <header class="top-pilot-bar">
     <div class="pilot-id-cluster">
       <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" alt="Shibuya Bot Pit App Icon" style="width:36px;height:36px;border-radius:10px;border:1.5px solid #fbbf24;box-shadow:0 0 12px rgba(251,191,36,0.45);object-fit:cover;" />
-      <a href="index.html" class="top-nav-pill" id="btnHomeTop" title="Return to Retrocanopy Home">🏠 HOME</a>
+      <a href="index.html" class="top-nav-pill" id="btnHomeTop" onclick="sessionStorage.setItem('rc_from_internal','1')" style="display:inline-flex !important;align-items:center;gap:5px;background:rgba(14,165,233,0.18);border:1.5px solid #38bdf8;color:#e0f2fe;font-weight:900;text-decoration:none;" title="Return to RetroCanopy">&#127968; RETROCANOPY</a>
       <button type="button" class="top-nav-pill" id="btnGetAppTop" style="background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;border-color:#fde047;" onclick="window.__openBotPitAppOverlay(event)" title="Download & Install Shibuya Bot Pit App">📲 GET APP</button>
       <div class="pilot-badge" id="pilotAccountBadge" onclick="openPilotAuthGateModal()" title="Logged-In Pilot Account">
         <span class="pilot-status-dot"></span>
@@ -7341,6 +7334,7 @@
 
         <!-- 📱 MOBILE LANDSCAPE BATTLE CORNER ICON BAR (CHAT LEFT OVERLAY TOGGLE + CTRL/GARAGE) -->
         <div class="mobile-battle-corner-bar" id="mobileBattleCornerBar">
+          <a href="index.html" class="btn-mobile-corner-icon" onclick="sessionStorage.setItem(\'rc_from_internal\',\'1\')" style="text-decoration:none;border-color:#38bdf8;color:#e0f2fe;" title="Return to RetroCanopy">&#127968; HOME</a>
           <button type="button" class="btn-mobile-corner-icon chat-btn" id="btnMobileChatToggle" onclick="toggleMobileChatOverlay()" title="Toggle Left-Side Live Chat &amp; Friends Overlay">
             <span>💬 CHAT</span>
             <span class="social-unread-pill hidden" id="mobCornerUnreadBadge">0</span>
@@ -7726,6 +7720,10 @@
 
   <!-- MOBILE STICKY BOTTOM NAVIGATION BAR -->
   <nav class="mobile-bottom-nav">
+    <a href="index.html" class="mob-nav-btn" onclick="sessionStorage.setItem(\'rc_from_internal\',\'1\')" style="text-decoration:none;color:#38bdf8;">
+      <span>&#127968;</span>
+      <span>HOME</span>
+    </a>
     <button class="mob-nav-btn active" id="mobNavRig" onclick="mobileNavJump('rig')">
       <span>🔧</span>
       <span>GARAGE</span>
@@ -7937,11 +7935,6 @@
 
       <div class="pilot-auth-msg" id="pilotAuthStatusMsg"></div>
 
-      <div class="pilot-saved-accounts" id="pilotSavedAccountsWrap" style="display:none;">
-        <div class="pilot-saved-title">⚡ SAVED PILOT ACCOUNTS ON THIS DEVICE (CLICK TO FILL):</div>
-        <div class="pilot-saved-chips" id="pilotSavedChipsList"></div>
-      </div>
-
       <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:7px 10px;font-size:0.68rem;color:#fde68a;line-height:1.35;text-align:center;">
         🎟️ <strong>GOLDEN TICKET RULE:</strong> Golden Tickets are won <strong>strictly 1 at a time from Live PvP Victories</strong> and cannot be purchased.
       </div>
@@ -7951,8 +7944,8 @@
         <button type="button" onclick="promptDeletePilotAccount()" style="background:rgba(244,63,94,0.14);border:1px solid rgba(244,63,94,0.45);border-radius:6px;color:#fda4af;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:800;padding:4px 8px;">🗑️ DELETE ACCOUNT</button>
       </div>
 
-      <div id="pilotAuthBackHomeRow" style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.75rem;">
-        <a href="index.html" style="color:#38bdf8;text-decoration:none;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;">&larr; BACK TO HOME</a>
+      <div id="pilotAuthBackHomeRow" style="display:flex !important;justify-content:center;align-items:center;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);font-size:0.75rem;">
+        <a href="index.html" onclick="sessionStorage.setItem('rc_from_internal','1')" style="color:#38bdf8;text-decoration:none;font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:900;padding:6px 14px;border:1px solid rgba(56,189,248,0.45);border-radius:999px;background:rgba(14,165,233,0.14);">&larr; BACK TO RETROCANOPY</a>
       </div>
     </div>
   </div>
@@ -8741,25 +8734,10 @@
     }
 
     function renderSavedAccountChips() {
-      const bpMap = getBotPitAccountsMap();
-      const siteMap = getSiteAccountsMap();
-      const allKeys = Array.from(new Set([...Object.keys(bpMap), ...Object.keys(siteMap)]));
       const wrap = document.getElementById("pilotSavedAccountsWrap");
       const list = document.getElementById("pilotSavedChipsList");
-      if (!wrap || !list) return;
-      if (allKeys.length === 0) {
-        wrap.style.display = "none";
-        return;
-      }
-      wrap.style.display = "flex";
-      list.innerHTML = allKeys.map(k => {
-        const rec = bpMap[k] || siteMap[k] || {};
-        const bData = rec.botPitData || rec;
-        const call = bData.pilotCallsign || ("@" + (rec.username || k).toUpperCase());
-        const dm = typeof bData.scrap === "number" ? bData.scrap : 0;
-        const mods = bData.loadout ? Object.values(bData.loadout).filter(Boolean).length : 0;
-        return `<button type="button" class="pilot-saved-chip" onclick="fillSavedPilotAccount('${k.replace(/'/g, "\\'")}')">🔑 ${call} · 💎 ${dm.toLocaleString()} · ${mods}/6</button>`;
-      }).join("");
+      if (wrap) wrap.style.display = "none";
+      if (list) list.innerHTML = "";
     }
 
     function fillSavedPilotAccount(uKey) {
