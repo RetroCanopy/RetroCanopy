@@ -7021,10 +7021,649 @@
         font-size: 0.56rem !important;
       }
     }
+
+    /* =========================================================================
+       CONCEPT 29 FINAL MASTER MOBILE UI ARCHITECTURE
+       - Sideways 16:9 Landscape Battle: Slim Top Scoreboard + Top-Left Menu/SIM-CTRL Pill
+         + Auto-Hide Controls in SIM Mode + Compact 40%-Opacity Corner Controls in CTRL Mode
+       - 4 Portrait Hub Pages: (1) Lobby & Wager Hub, (2) Radial 6-Slot Bot Garage Arch,
+         (3) Radial 135-Node Skill Tree & Shop + Diamond Vault, (4) Social Hub
+       ========================================================================= */
+    .c29-mobile-header,
+    .c29-pilot-drawer,
+    .c29-quests-accordion-card,
+    .c29-skills-hub-page,
+    .btn-mob-battle-menu-toggle {
+      display: none;
+    }
+
+    /* --- A. SIDEWAYS 16:9 LANDSCAPE BATTLE MODE (`body.mobile-play-active`) --- */
+    @media (max-width: 960px), (max-height: 540px) and (pointer: coarse) {
+      /* 1. Top-Left Compact "☰ Menu | 🤖 SIM / CTRL" Pill (replaces 5 bottom-center buttons!) */
+      body.mobile-play-active .mobile-battle-corner-bar {
+        top: 8px !important;
+        bottom: auto !important;
+        left: max(12px, env(safe-area-inset-top, 12px)) !important;
+        right: auto !important;
+        transform: none !important;
+        background: rgba(10, 13, 20, 0.72) !important;
+        border: 1px solid rgba(251, 191, 36, 0.42) !important;
+        border-radius: 999px !important;
+        padding: 3px 8px !important;
+        gap: 6px !important;
+        z-index: 95 !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65) !important;
+      }
+      body.mobile-play-active .btn-mob-battle-menu-toggle {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 5px;
+        background: transparent;
+        border: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.18);
+        color: #f8fafc;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.58rem;
+        font-weight: 800;
+        padding: 4px 8px 4px 4px;
+        cursor: pointer;
+      }
+      body.mobile-play-active #mobCornerCtrlBtn {
+        background: transparent !important;
+        border: none !important;
+        padding: 4px 6px !important;
+        min-height: 26px !important;
+        min-width: 0 !important;
+        font-size: 0.58rem !important;
+        color: #fbbf24 !important;
+      }
+      /* Hide the extra corner links until "☰ Menu" is tapped */
+      body.mobile-play-active .mobile-battle-corner-bar:not(.c29-menu-open) a.btn-mobile-corner-icon,
+      body.mobile-play-active .mobile-battle-corner-bar:not(.c29-menu-open) button.chat-btn,
+      body.mobile-play-active .mobile-battle-corner-bar:not(.c29-menu-open) button.garage-btn {
+        display: none !important;
+      }
+      body.mobile-play-active .mobile-battle-corner-bar.c29-menu-open {
+        flex-wrap: wrap !important;
+        border-radius: 14px !important;
+        max-width: 340px !important;
+        background: rgba(8, 11, 18, 0.94) !important;
+      }
+
+      /* 2. Slim Top-Center Broadcast Scoreboard (`YOUR UNIT-17 VS ENEMY • ROUND 1 • 1:30 • SAW OFF • BOUNTY`) */
+      body.mobile-play-active .arena-hud {
+        top: 6px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: min(560px, calc(100% - 165px)) !important;
+        background: rgba(8, 11, 18, 0.72) !important;
+        border: 1px solid rgba(251, 191, 36, 0.32) !important;
+        border-radius: 12px !important;
+        padding: 4px 10px !important;
+        gap: 8px !important;
+        align-items: center !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+      }
+      body.mobile-play-active .fighter-bar-card {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 2px 4px !important;
+        backdrop-filter: none !important;
+      }
+      body.mobile-play-active .fighter-bar-card .round-pips-row,
+      body.mobile-play-active .fighter-bar-card .stamina-row,
+      body.mobile-play-active .fighter-bar-card .hud-parts-row,
+      body.mobile-play-active .fighter-bar-card .hud-modules-row {
+        display: none !important;
+      }
+      body.mobile-play-active .fighter-bar-card .hp-track {
+        height: 7px !important;
+        border-radius: 999px !important;
+      }
+      body.mobile-play-active .fighter-bar-card .stamina-track {
+        height: 3px !important;
+        margin-top: 2px !important;
+      }
+      body.mobile-play-active .center-clock {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 6px !important;
+        min-width: 96px !important;
+      }
+      body.mobile-play-active .center-clock .ufc-round-badge {
+        font-size: 0.48rem !important;
+        padding: 1px 6px !important;
+      }
+      body.mobile-play-active .center-clock .val {
+        font-size: 0.78rem !important;
+      }
+      body.mobile-play-active .center-clock .tag,
+      body.mobile-play-active .center-clock .hud-wager-pot {
+        font-size: 0.46rem !important;
+      }
+
+      /* 3. Auto-Hide On-Screen Controls in SIMULATED Mode + Compact 40%-Opacity Smoked-Glass Corner Controls in CONTROLLED Mode */
+      body.mobile-play-active #manualControlHud:not(.active) {
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+      body.mobile-play-active #manualControlHud.active {
+        display: flex !important;
+        left: max(14px, env(safe-area-inset-top, 14px)) !important;
+        right: max(14px, env(safe-area-inset-bottom, 14px)) !important;
+        bottom: 10px !important;
+        align-items: flex-end !important;
+        justify-content: space-between !important;
+      }
+      body.mobile-play-active .touch-joystick-zone {
+        width: 96px !important;
+        height: 96px !important;
+      }
+      body.mobile-play-active .touch-joystick-base {
+        width: 88px !important;
+        height: 88px !important;
+        border-radius: 50% !important;
+        background: rgba(12, 16, 24, 0.38) !important;
+        border: 1.5px solid rgba(251, 191, 36, 0.42) !important;
+        box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.55) !important;
+      }
+      body.mobile-play-active .touch-joystick-knob {
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 50% !important;
+        background: rgba(251, 191, 36, 0.28) !important;
+        border: 1.5px solid rgba(253, 224, 71, 0.65) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-size: 0.40rem !important;
+      }
+      body.mobile-play-active .joy-dir-arrow {
+        color: rgba(251, 191, 36, 0.35) !important;
+        font-size: 0.46rem !important;
+      }
+      body.mobile-play-active .manual-action-cluster {
+        display: flex !important;
+        flex-direction: column-reverse !important;
+        align-items: flex-end !important;
+        gap: 8px !important;
+      }
+      body.mobile-play-active .btn-manual-action.boost-btn,
+      body.mobile-play-active .btn-manual-action.shoot-btn {
+        width: 64px !important;
+        height: 64px !important;
+        min-width: 64px !important;
+        min-height: 64px !important;
+        border-radius: 50% !important;
+        background: rgba(12, 16, 24, 0.40) !important;
+        border: 1.5px solid rgba(226, 232, 240, 0.42) !important;
+        color: rgba(248, 250, 252, 0.92) !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+        padding: 4px !important;
+      }
+      body.mobile-play-active .btn-manual-action.shoot-btn {
+        width: 72px !important;
+        height: 72px !important;
+        border-color: rgba(56, 189, 248, 0.52) !important;
+      }
+      body.mobile-play-active .btn-manual-action .act-icon {
+        font-size: 0.85rem !important;
+      }
+      body.mobile-play-active .btn-manual-action .act-lbl {
+        font-size: 0.50rem !important;
+        letter-spacing: 0.5px !important;
+      }
+      body.mobile-play-active .btn-manual-action .act-sub {
+        display: none !important;
+      }
+    }
+
+    /* --- B. CONCEPT 29 4-PAGE PORTRAIT HUB (`body:not(.mobile-play-active)` on Mobile <= 960px) --- */
+    @media (max-width: 960px) {
+      body:not(.mobile-play-active) {
+        padding: 8px 10px 76px !important;
+        background: #080a10 !important;
+      }
+      /* Hide the crowded 19-pill desktop top bar on mobile; replace with Concept 29 slim header */
+      body:not(.mobile-play-active) .top-pilot-bar {
+        display: none !important;
+      }
+      body:not(.mobile-play-active) .c29-mobile-header {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        background: linear-gradient(180deg, rgba(20, 24, 34, 0.96) 0%, rgba(11, 14, 22, 0.98) 100%);
+        border: 1px solid rgba(251, 191, 36, 0.35);
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.72);
+      }
+      .c29-hdr-menu-btn {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(251, 191, 36, 0.45);
+        color: #fbbf24;
+        border-radius: 10px;
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        font-weight: 900;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .c29-hdr-title-wrap {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+      }
+      .c29-hdr-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 900;
+        color: #f8fafc;
+        letter-spacing: 0.6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .c29-hdr-sub {
+        font-size: 0.58rem;
+        color: #fbbf24;
+        font-weight: 700;
+        margin-top: 1px;
+      }
+      .c29-hdr-right {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .c29-hdr-gem-pill {
+        background: rgba(56, 189, 248, 0.14);
+        border: 1px solid rgba(56, 189, 248, 0.55);
+        color: #7dd3fc;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.62rem;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .c29-hdr-shop-btn {
+        background: rgba(251, 191, 36, 0.14);
+        border: 1px solid rgba(251, 191, 36, 0.55);
+        color: #fde047;
+        border-radius: 10px;
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        cursor: pointer;
+      }
+
+      /* Collapsible Pilot & Utility Menu Drawer (`☰`) */
+      body:not(.mobile-play-active) .c29-pilot-drawer.open {
+        display: flex !important;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        background: linear-gradient(180deg, rgba(16, 21, 32, 0.98) 0%, rgba(9, 12, 20, 0.99) 100%);
+        border: 1.5px solid rgba(251, 191, 36, 0.48);
+        border-radius: 16px;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.85);
+      }
+      .c29-drawer-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+      .c29-drawer-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(148, 163, 184, 0.32);
+        color: #e2e8f0;
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.60rem;
+        font-weight: 800;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+      .c29-drawer-btn.gold {
+        border-color: rgba(251, 191, 36, 0.6);
+        color: #fde047;
+        background: rgba(251, 191, 36, 0.12);
+      }
+      .c29-drawer-btn.cyan {
+        border-color: rgba(56, 189, 248, 0.6);
+        color: #7dd3fc;
+        background: rgba(56, 189, 248, 0.12);
+      }
+
+      /* 4-Tab Bottom Navigation Bar for Concept 29 */
+      body:not(.mobile-play-active) .mobile-bottom-nav {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        position: fixed !important;
+        left: 8px !important;
+        right: 8px !important;
+        bottom: max(6px, env(safe-area-inset-bottom, 6px)) !important;
+        padding: 6px 8px !important;
+        background: linear-gradient(180deg, rgba(16, 20, 30, 0.96) 0%, rgba(8, 10, 16, 0.98) 100%) !important;
+        border: 1.5px solid rgba(251, 191, 36, 0.42) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.88) !important;
+        z-index: 8500 !important;
+      }
+      body:not(.mobile-play-active) .mobile-bottom-nav .mob-nav-btn {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 2px !important;
+        min-height: 44px !important;
+        border-radius: 11px !important;
+        border: 1px solid transparent !important;
+        background: transparent !important;
+        color: #94a3b8 !important;
+        font-family: 'Orbitron', sans-serif !important;
+        font-size: 0.56rem !important;
+        font-weight: 800 !important;
+      }
+      body:not(.mobile-play-active) .mobile-bottom-nav .mob-nav-btn.active {
+        background: rgba(251, 191, 36, 0.16) !important;
+        border-color: rgba(251, 191, 36, 0.68) !important;
+        color: #fde047 !important;
+        box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.18) !important;
+      }
+
+      /* Page Visibility Rules Across the 4 Concept 29 Portrait Hub Pages */
+      body:not(.mobile-play-active)[data-c29-page="lobby"] #rigSection,
+      body:not(.mobile-play-active)[data-c29-page="lobby"] #pitBroadcastDeck,
+      body:not(.mobile-play-active)[data-c29-page="lobby"] #c29SkillsHubPage {
+        display: none !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] #arenaSection,
+      body:not(.mobile-play-active)[data-c29-page="garage"] #pitBroadcastDeck,
+      body:not(.mobile-play-active)[data-c29-page="garage"] #c29SkillsHubPage {
+        display: none !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="skills"] #arenaSection,
+      body:not(.mobile-play-active)[data-c29-page="skills"] #rigSection,
+      body:not(.mobile-play-active)[data-c29-page="skills"] #pitBroadcastDeck {
+        display: none !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="skills"] #c29SkillsHubPage {
+        display: flex !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="social"] #arenaSection,
+      body:not(.mobile-play-active)[data-c29-page="social"] #rigSection,
+      body:not(.mobile-play-active)[data-c29-page="social"] #c29SkillsHubPage {
+        display: none !important;
+      }
+
+      /* PAGE 1: LOBBY & WAGER HUB (Quests 1-10 List + VS CPU / Online PvP + Wager Chips) */
+      body:not(.mobile-play-active) .map-level-bar {
+        display: none !important;
+      }
+      body:not(.mobile-play-active) .c29-quests-accordion-card {
+        display: flex !important;
+        flex-direction: column;
+        width: 100%;
+        background: rgba(13, 17, 26, 0.95);
+        border: 1px solid rgba(251, 191, 36, 0.42);
+        border-radius: 14px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+      }
+      .c29-quest-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 7px 10px;
+        border-radius: 9px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        margin-top: 5px;
+        cursor: pointer;
+        font-size: 0.72rem;
+        color: #e2e8f0;
+      }
+      .c29-quest-row.active {
+        background: linear-gradient(90deg, rgba(251, 191, 36, 0.24) 0%, rgba(180, 83, 9, 0.14) 100%);
+        border-color: #fbbf24;
+        color: #ffffff;
+        font-weight: 800;
+      }
+
+      /* PAGE 2: RADIAL 6-SLOT BOT GARAGE ARCH OVER 3D BOT TURNTABLE */
+      body:not(.mobile-play-active)[data-c29-page="garage"] #rigSection {
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] #rigSection .sidebar-top-row {
+        display: none !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] #rigSection #body_rigSection {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+      }
+      /* Place the Radial 6-Slot Arch + 3D Turntable at the top, and HP/PWR/SPD/AGI bar right below it! */
+      body:not(.mobile-play-active)[data-c29-page="garage"] .bot-tech-rig {
+        order: 1 !important;
+        position: relative !important;
+        display: block !important;
+        width: 100% !important;
+        max-width: 350px !important;
+        height: 305px !important;
+        margin: 4px auto 2px !important;
+        background: radial-gradient(circle at 50% 68%, rgba(251, 191, 36, 0.14) 0%, rgba(12, 16, 26, 0.95) 68%) !important;
+        border: 1.5px solid rgba(251, 191, 36, 0.45) !important;
+        border-radius: 185px 185px 22px 22px !important;
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] .bot-tech-rig .tech-column {
+        display: contents !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] .bot-center-showcase {
+        position: absolute !important;
+        left: 50% !important;
+        bottom: 10px !important;
+        transform: translateX(-50%) !important;
+        width: 176px !important;
+        height: 176px !important;
+        z-index: 2 !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] .bot-pedestal-ring,
+      body:not(.mobile-play-active)[data-c29-page="garage"] .bot-pedestal-well {
+        width: 176px !important;
+        height: 176px !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] #pedestalCanvas {
+        width: 170px !important;
+        height: 170px !important;
+      }
+      /* Position all 6 slots along the semi-circular Radial Arch above & around the turntable! */
+      body:not(.mobile-play-active)[data-c29-page="garage"] .bot-tech-rig .tech-slot {
+        position: absolute !important;
+        width: 78px !important;
+        min-height: 64px !important;
+        padding: 5px 4px !important;
+        border-radius: 14px !important;
+        background: linear-gradient(180deg, rgba(28, 34, 48, 0.96) 0%, rgba(12, 15, 24, 0.98) 100%) !important;
+        border: 1.5px solid rgba(251, 191, 36, 0.55) !important;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.75) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        z-index: 5 !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] .bot-tech-rig .tech-slot .slot-thumb {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 0.85rem !important;
+        margin-bottom: 2px !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] .bot-tech-rig .tech-slot .slot-category-lbl {
+        font-size: 0.46rem !important;
+        color: #fbbf24 !important;
+        letter-spacing: 0.3px !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] .bot-tech-rig .tech-slot .slot-equipped-name {
+        font-size: 0.48rem !important;
+        line-height: 1.1 !important;
+        max-width: 70px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+      }
+      /* Slot 1 (Far Left Bottom of Arch): SPECIAL MOD */
+      body:not(.mobile-play-active)[data-c29-page="garage"] #slotCard_wpnAbil {
+        left: 8px !important;
+        top: 178px !important;
+      }
+      /* Slot 2 (Mid Left of Arch): ABILITY 2 */
+      body:not(.mobile-play-active)[data-c29-page="garage"] #slotCard_botAbil2 {
+        left: 16px !important;
+        top: 92px !important;
+      }
+      /* Slot 3 (Top Left Crown of Arch): TIRES */
+      body:not(.mobile-play-active)[data-c29-page="garage"] #slotCard_tire {
+        left: calc(50% - 84px) !important;
+        top: 14px !important;
+      }
+      /* Slot 4 (Top Right Crown of Arch): MELEE */
+      body:not(.mobile-play-active)[data-c29-page="garage"] #slotCard_wpn1 {
+        right: calc(50% - 84px) !important;
+        top: 14px !important;
+      }
+      /* Slot 5 (Mid Right of Arch): LONG RANGE */
+      body:not(.mobile-play-active)[data-c29-page="garage"] #slotCard_wpn2 {
+        right: 16px !important;
+        top: 92px !important;
+      }
+      /* Slot 6 (Far Right Bottom of Arch): ABILITY 1 */
+      body:not(.mobile-play-active)[data-c29-page="garage"] #slotCard_botAbil1 {
+        right: 8px !important;
+        top: 178px !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] .base-stats-bar {
+        order: 2 !important;
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        background: rgba(13, 17, 26, 0.95) !important;
+        border: 1px solid rgba(251, 191, 36, 0.38) !important;
+        border-radius: 12px !important;
+        padding: 8px !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] #botLevelXpCard {
+        order: 3 !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] #garageConditionBox {
+        order: 4 !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] .preset-strip {
+        order: 5 !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="garage"] .sidebar-actions {
+        order: 6 !important;
+      }
+
+      /* PAGE 3: RADIAL 135-NODE SKILL TREE & SHOP + DIAMOND VAULT */
+      .c29-skills-hub-page {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(180deg, rgba(16, 21, 32, 0.96) 0%, rgba(9, 12, 20, 0.99) 100%);
+        border: 1.5px solid rgba(251, 191, 36, 0.42);
+        border-radius: 18px;
+        padding: 16px 14px;
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.82);
+      }
+      .c29-radial-wheel-preview {
+        position: relative;
+        width: 248px;
+        height: 248px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.24) 0%, rgba(15, 23, 42, 0.92) 55%, rgba(8, 11, 18, 0.98) 100%);
+        border: 2px solid rgba(251, 191, 36, 0.68);
+        box-shadow: inset 0 0 28px rgba(56, 189, 248, 0.28), 0 0 24px rgba(251, 191, 36, 0.22);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      /* PAGE 4: SOCIAL HUB (Friends DM + Live Pit Chat + Leaderboard/Live Fights) */
+      body:not(.mobile-play-active)[data-c29-page="social"] #pitBroadcastDeck {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+      }
+      body:not(.mobile-play-active)[data-c29-page="social"] #pitChatBroadcastCard #pitChatFeed,
+      body:not(.mobile-play-active)[data-c29-page="social"] #pitChatBroadcastCard .pit-chat-footer,
+      body:not(.mobile-play-active)[data-c29-page="social"] #liveFightsBroadcastCard #liveFightsList {
+        display: flex !important;
+      }
+    }
+
   </style>
 </head>
 <body>
 
+
+
+  <!-- CONCEPT 29 MOBILE TOP HEADER + COLLAPSIBLE PILOT DRAWER -->
+  <div class="c29-mobile-header" id="c29MobileHeader">
+    <button type="button" class="c29-hdr-menu-btn" onclick="toggleC29PilotDrawer()" title="Open Pilot Profile, Tickets, Rig Codes &amp; Settings">☰</button>
+    <div class="c29-hdr-title-wrap" onclick="openPilotAuthGateModal()" style="cursor:pointer;">
+      <div class="c29-hdr-title" id="c29MobilePageTitle">Lobby &amp; Wager Hub</div>
+      <div class="c29-hdr-sub" id="c29MobilePilotSub">Tap to View Pilot Profile &bull; RetroCanopy</div>
+    </div>
+    <div class="c29-hdr-right">
+      <button type="button" class="c29-hdr-gem-pill" id="c29HeaderGemsBtn" onclick="openBuyDiamondsModal()" title="Open Diamond Vault">💎 <span id="c29HeaderGemsVal">0</span></button>
+      <button type="button" class="c29-hdr-shop-btn" onclick="openShopModal('tire')" title="Open 6-Slot Upgrade Shop">🛒</button>
+    </div>
+  </div>
+
+  <div class="c29-pilot-drawer" id="c29PilotDrawer">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:8px;">
+      <span style="font-family:'Orbitron',sans-serif;font-size:0.70rem;font-weight:900;color:#fbbf24;">⚡ PILOT COMMAND &amp; TELEMETRY</span>
+      <button type="button" class="btn-friend-act danger" onclick="toggleC29PilotDrawer(false)">✕ CLOSE</button>
+    </div>
+    <div class="c29-drawer-grid">
+      <a href="index.html" class="c29-drawer-btn cyan" onclick="sessionStorage.setItem('rc_from_internal','1')">🏠 RETROCANOPY HOME</a>
+      <button type="button" class="c29-drawer-btn gold" onclick="window.__openBotPitAppOverlay && window.__openBotPitAppOverlay(event)">📲 INSTALL APP</button>
+      <button type="button" class="c29-drawer-btn" onclick="openPilotAuthGateModal()">👤 PILOT LOGIN / ID</button>
+      <button type="button" class="c29-drawer-btn gold" onclick="openPrivacyAndTermsModal()">🎟️ PVP GOLDEN TICKETS</button>
+      <button type="button" class="c29-drawer-btn cyan" onclick="copyMyRigCode()">🔗 COPY MY RIG CODE</button>
+      <button type="button" class="c29-drawer-btn cyan" onclick="challengeFriendRigCode()">⚔️ CHALLENGE RIG CODE</button>
+      <button type="button" class="c29-drawer-btn" onclick="BotPitAudio.toggleMute()">🔊 TOGGLE SOUND</button>
+      <button type="button" class="c29-drawer-btn" onclick="openAccountSafetyMenuModal()">⚙️ ACCOUNT &amp; SAFETY</button>
+    </div>
+  </div>
 
   <!-- CLEAN, FUN ARCADE TOP BAR WITH LOGIN ACCOUNT & NAVIGATION -->
   <header class="top-pilot-bar">
@@ -7332,8 +7971,11 @@
           </div>
         </div>
 
-        <!-- 📱 MOBILE LANDSCAPE BATTLE CORNER ICON BAR (CHAT LEFT OVERLAY TOGGLE + CTRL/GARAGE) -->
+        <!-- 📱 MOBILE LANDSCAPE BATTLE CORNER ICON BAR (CONCEPT 29 TOP-LEFT [☰ Menu | SIM / CTRL] PILL) -->
         <div class="mobile-battle-corner-bar" id="mobileBattleCornerBar">
+          <button type="button" class="btn-mob-battle-menu-toggle" id="btnMobBattleMenuToggle" onclick="document.getElementById('mobileBattleCornerBar').classList.toggle('c29-menu-open')">
+            ☰ Menu
+          </button>
           <a href="index.html" class="btn-mobile-corner-icon" onclick="sessionStorage.setItem(\'rc_from_internal\',\'1\')" style="text-decoration:none;border-color:#38bdf8;color:#e0f2fe;" title="Return to RetroCanopy">&#127968; HOME</a>
           <button type="button" class="btn-mobile-corner-icon chat-btn" id="btnMobileChatToggle" onclick="toggleMobileChatOverlay()" title="Toggle Left-Side Live Chat &amp; Friends Overlay">
             <span>💬 CHAT</span>
@@ -7405,6 +8047,15 @@
 
             <!-- STEP 1: CHOOSE QUESTS 1-10, PVP, CPU, OR FULL-SCREEN MAP SELECTION -->
             <div id="overlayChoiceRow" style="display:flex;flex-direction:column;gap:8px;width:100%;">
+              <!-- CONCEPT 29 COLLAPSIBLE QUESTS 1-10 LIST CARD -->
+              <div class="c29-quests-accordion-card" id="c29QuestsListCard">
+                <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding-bottom:6px;border-bottom:1px solid rgba(251,191,36,0.28);" onclick="const b=document.getElementById('c29QuestsRowsWrap');if(b)b.style.display=b.style.display==='none'?'block':'none';">
+                  <span style="font-family:'Orbitron',sans-serif;font-size:0.76rem;font-weight:900;color:#fbbf24;">⚔️ QUESTS 1–10 CAMPAIGN</span>
+                  <span style="font-size:0.65rem;color:#fde047;font-weight:800;">▾ TAP QUEST TO LAUNCH</span>
+                </div>
+                <div id="c29QuestsRowsWrap" style="max-height:195px;overflow-y:auto;padding-right:2px;"></div>
+              </div>
+
               <button class="btn-arena-battle" id="btnStartQuestBattle" style="width:100%;background:linear-gradient(180deg,#fbbf24 0%,#b45309 100%);color:#090612;border:2px solid #fde047;box-shadow:0 8px 24px rgba(245,158,11,0.45);" onclick="beginPreBattleWizard('quests')">
                 ⚔️ PLAY QUEST 1 (LVL.1 CAMPAIGN · +XP &amp; 💎)
               </button>
@@ -7662,6 +8313,59 @@
       </div>
     </aside>
 
+    <!-- CONCEPT 29 PAGE 3: RADIAL 135-NODE SKILL TREE & SHOP + DIAMOND VAULT -->
+    <section class="c29-skills-hub-page" id="c29SkillsHubPage">
+      <div style="width:100%;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:0.84rem;font-weight:900;color:#ffffff;">🌳 RADIAL 135-NODE SKILL TREE &amp; SHOP</div>
+          <div style="font-size:0.66rem;color:#94a3b8;margin-top:2px;">Tap the Radial Constellation or choose a Syndicate Branch below</div>
+        </div>
+        <button type="button" class="c29-hdr-shop-btn" onclick="openShopModal('tire')" title="Open 6-Slot Upgrade Shop">🛒</button>
+      </div>
+
+      <!-- Interactive Radial Skill Constellation Wheel -->
+      <div class="c29-radial-wheel-preview" onclick="openSkillTreeModal()" title="Tap to Open Full 135-Node Syndicate Skill Tree">
+        <svg viewBox="0 0 220 220" width="228" height="228" style="display:block;">
+          <circle cx="110" cy="110" r="96" fill="none" stroke="rgba(251,191,36,0.35)" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <circle cx="110" cy="110" r="66" fill="none" stroke="rgba(56,189,248,0.35)" stroke-width="1.2"/>
+          <circle cx="110" cy="110" r="34" fill="rgba(56,189,248,0.15)" stroke="#fbbf24" stroke-width="2"/>
+          <!-- Radial Spokes -->
+          <line x1="110" y1="14" x2="110" y2="206" stroke="rgba(56,189,248,0.4)" stroke-width="1.2"/>
+          <line x1="14" y1="110" x2="206" y2="110" stroke="rgba(56,189,248,0.4)" stroke-width="1.2"/>
+          <line x1="42" y1="42" x2="178" y2="178" stroke="rgba(251,191,36,0.35)" stroke-width="1.2"/>
+          <line x1="178" y1="42" x2="42" y2="178" stroke="rgba(251,191,36,0.35)" stroke-width="1.2"/>
+          <!-- Constellation Nodes -->
+          <circle cx="110" cy="44" r="6" fill="#38bdf8" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="176" cy="110" r="6" fill="#fbbf24" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="110" cy="176" r="6" fill="#38bdf8" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="44" cy="110" r="6" fill="#fbbf24" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="63" cy="63" r="5" fill="#34d399" stroke="#fff" stroke-width="1.2"/>
+          <circle cx="157" cy="63" r="5" fill="#38bdf8" stroke="#fff" stroke-width="1.2"/>
+          <circle cx="157" cy="157" r="5" fill="#fbbf24" stroke="#fff" stroke-width="1.2"/>
+          <circle cx="63" cy="157" r="5" fill="#34d399" stroke="#fff" stroke-width="1.2"/>
+          <circle cx="110" cy="18" r="5" fill="#fde047"/>
+          <circle cx="198" cy="82" r="5" fill="#7dd3fc"/>
+          <circle cx="168" cy="186" r="5" fill="#fde047"/>
+          <circle cx="52" cy="186" r="5" fill="#7dd3fc"/>
+          <circle cx="22" cy="82" r="5" fill="#34d399"/>
+          <text x="110" y="114" text-anchor="middle" fill="#ffffff" font-family="Orbitron, sans-serif" font-size="11" font-weight="900">135 NODES</text>
+        </svg>
+      </div>
+
+      <div style="width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
+        <button type="button" class="btn-shop" style="margin:0;padding:11px 10px;font-size:0.68rem;background:linear-gradient(180deg,#fbbf24 0%,#b45309 100%);color:#090612;border-color:#fde047;font-weight:900;" onclick="openSkillTreeModal()">
+          🌳 OPEN 135-NODE TREE
+        </button>
+        <button type="button" class="btn-shop" style="margin:0;padding:11px 10px;font-size:0.68rem;" onclick="openShopModal('tire')">
+          🛒 6-SLOT UPGRADE SHOP
+        </button>
+      </div>
+
+      <button type="button" onclick="openBuyDiamondsModal()" style="width:100%;padding:13px 18px;border-radius:999px;background:linear-gradient(180deg,rgba(14,165,233,0.32) 0%,rgba(2,132,199,0.52) 100%);border:2px solid #38bdf8;color:#e0f2fe;font-family:'Orbitron',sans-serif;font-size:0.80rem;font-weight:900;letter-spacing:0.8px;box-shadow:0 0 22px rgba(56,189,248,0.42);cursor:pointer;">
+        💎 DIAMOND VAULT
+      </button>
+    </section>
+
   </div>
 
   <!-- 🗺️ FULL-SCREEN ARENA MAP SELECTION SHOWCASE MODAL (ALL 7 ARENAS AVAILABLE IN PVP & CPU) -->
@@ -7718,35 +8422,23 @@
     </div>
   </div>
 
-  <!-- MOBILE STICKY BOTTOM NAVIGATION BAR -->
-  <nav class="mobile-bottom-nav">
-    <a href="index.html" class="mob-nav-btn" onclick="sessionStorage.setItem(\'rc_from_internal\',\'1\')" style="text-decoration:none;color:#38bdf8;">
-      <span>&#127968;</span>
-      <span>HOME</span>
-    </a>
-    <button class="mob-nav-btn active" id="mobNavRig" onclick="mobileNavJump('rig')">
-      <span>🔧</span>
-      <span>GARAGE</span>
-    </button>
-    <button class="mob-nav-btn" id="mobNavQuests" onclick="mobileNavJump('quests')">
+  <!-- CONCEPT 29 4-PAGE PORTRAIT HUB BOTTOM NAVIGATION BAR -->
+  <nav class="mobile-bottom-nav" id="c29BottomNav">
+    <button type="button" class="mob-nav-btn active" id="c29TabLobby" onclick="switchC29MobilePage('lobby')">
       <span>⚔️</span>
-      <span>QUESTS 1-10</span>
+      <span>LOBBY &amp; WAGER</span>
     </button>
-    <button class="mob-nav-btn" id="mobNavShop" onclick="openShopModal('tire')">
-      <span>🛒</span>
-      <span>3D SHOP</span>
+    <button type="button" class="mob-nav-btn" id="c29TabGarage" onclick="switchC29MobilePage('garage')">
+      <span>🔧</span>
+      <span>6-SLOT GARAGE</span>
     </button>
-    <button class="mob-nav-btn" id="mobNavSkills" onclick="openSkillTreeModal()">
+    <button type="button" class="mob-nav-btn" id="c29TabSkills" onclick="switchC29MobilePage('skills')">
       <span>🌳</span>
-      <span>SKILLS</span>
+      <span>SKILLS &amp; SHOP</span>
     </button>
-    <button class="mob-nav-btn" id="mobNavPvp" onclick="mobileNavJump('pvp')">
-      <span>🌐</span>
-      <span>LIVE PVP</span>
-    </button>
-    <button class="mob-nav-btn" id="mobNavCampaign" onclick="mobileNavJump('cpu')">
-      <span>🤖</span>
-      <span>VS. CPU</span>
+    <button type="button" class="mob-nav-btn" id="c29TabSocial" onclick="switchC29MobilePage('social')">
+      <span>💬</span>
+      <span>SOCIAL HUB</span>
     </button>
   </nav>
 
@@ -21824,6 +22516,144 @@
     try { bootPitSpectatorAndChat(); } catch (e) { console.error(e); }
     try { initAppShellComplianceAndBackHandler(); } catch (e) { console.error(e); }
     try { initRetroCanopyNativePlayBilling(); } catch (e) { console.error(e); }
+
+    // =========================================================================
+    // CONCEPT 29 MOBILE 4-PAGE HUB & SIDEWAYS BATTLE CONTROLLER
+    // =========================================================================
+    function toggleC29PilotDrawer(forceState) {
+      const drawer = document.getElementById("c29PilotDrawer");
+      if (!drawer) return;
+      if (typeof forceState === "boolean") {
+        drawer.classList.toggle("open", forceState);
+      } else {
+        drawer.classList.toggle("open");
+      }
+    }
+
+    function switchC29MobilePage(page) {
+      const validPage = ["lobby", "garage", "skills", "social"].includes(page) ? page : "lobby";
+      if (document.body.classList.contains("mobile-play-active")) {
+        if (typeof exitMobilePlayMode === "function") exitMobilePlayMode();
+      }
+      document.body.setAttribute("data-c29-page", validPage);
+      toggleC29PilotDrawer(false);
+
+      const titles = {
+        lobby: "Lobby & Wager Hub",
+        garage: "Radial 6-Slot Bot Garage",
+        skills: "Radial 135-Node Skill Tree & Shop",
+        social: "Social Hub"
+      };
+      const titleEl = document.getElementById("c29MobilePageTitle");
+      if (titleEl) titleEl.textContent = titles[validPage] || "Shibuya Bot Pit";
+
+      const tabMap = {
+        lobby: "c29TabLobby",
+        garage: "c29TabGarage",
+        skills: "c29TabSkills",
+        social: "c29TabSocial"
+      };
+      ["c29TabLobby", "c29TabGarage", "c29TabSkills", "c29TabSocial"].forEach((id) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.toggle("active", id === tabMap[validPage]);
+      });
+
+      if (validPage === "garage") {
+        const rig = document.getElementById("rigSection");
+        if (rig) rig.classList.add("tab-expanded");
+      } else if (validPage === "social") {
+        const chatCard = document.getElementById("pitChatBroadcastCard");
+        const liveCard = document.getElementById("liveFightsBroadcastCard");
+        if (chatCard) chatCard.classList.add("tab-expanded");
+        if (liveCard) liveCard.classList.add("tab-expanded");
+      }
+      try {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (_) {}
+    }
+
+    function syncC29MobileHeaderTelemetry() {
+      const gemsEl = document.getElementById("c29HeaderGemsVal");
+      const scrapTop = document.getElementById("topScrapDisplay");
+      if (gemsEl && scrapTop) {
+        gemsEl.textContent = (scrapTop.textContent || "0").replace(/[^0-9,]/g, "") || "0";
+      }
+      const subEl = document.getElementById("c29MobilePilotSub");
+      const callsignEl = document.getElementById("pilotCallsignDisplay");
+      const eloEl = document.getElementById("pilotEloDisplay");
+      if (subEl && callsignEl) {
+        const cs = (callsignEl.textContent || "").trim();
+        const elo = eloEl ? (eloEl.textContent || "").trim() : "";
+        subEl.textContent = [cs, elo].filter(Boolean).join(" • ");
+      }
+    }
+
+    function renderC29QuestsAccordion() {
+      const wrap = document.getElementById("c29QuestsRowsWrap");
+      if (!wrap || typeof QUEST_CAMPAIGN_LEVELS === "undefined") return;
+      const curLvl = (typeof state !== "undefined" && state.currentLevel) ? state.currentLevel : 1;
+      const cleared = (typeof state !== "undefined" && Array.isArray(state.clearedLevels)) ? state.clearedLevels : [];
+      wrap.innerHTML = QUEST_CAMPAIGN_LEVELS.map((q) => {
+        const isCur = q.level === curLvl;
+        const isDone = cleared.includes(q.level);
+        const tag = q.isBossBattle ? "👑 BOSS" : (q.isQuantityChallenge ? "🐝 1v3 SWARM" : `LVL.${q.level}`);
+        return `
+          <div class="c29-quest-row ${isCur ? "active" : ""}" onclick="if(typeof selectCampaignLevel==='function'){selectCampaignLevel(${q.level});} beginPreBattleWizard('quests');">
+            <span>${isDone ? "✅" : "⚔️"} <strong>Quest 1-${q.level}</strong> &bull; ${q.name} <span style="opacity:0.75;font-size:0.62rem;">(${tag})</span></span>
+            <span style="color:#fbbf24;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:800;">+${q.diamondReward || 100} 💎</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Initialize Concept 29 Mobile Page State
+    try {
+      if (!document.body.getAttribute("data-c29-page")) {
+        document.body.setAttribute("data-c29-page", "lobby");
+      }
+      renderC29QuestsAccordion();
+      syncC29MobileHeaderTelemetry();
+      setInterval(() => {
+        syncC29MobileHeaderTelemetry();
+        renderC29QuestsAccordion();
+      }, 1500);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const pv = urlParams.get("c29_preview");
+      if (pv) {
+        const applyPv = () => {
+          const authBd = document.getElementById("pilotAuthGateBackdrop");
+          if (authBd) {
+            authBd.classList.add("hidden");
+            authBd.style.display = "none";
+          }
+          if (pv === "battle_sim" || pv === "battle_ctrl") {
+            if (typeof setControlMode === "function") {
+              setControlMode(pv === "battle_ctrl" ? "controlled" : "simulated", true);
+            }
+            if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
+            const ov = document.getElementById("battleOverlay");
+            if (ov) ov.style.display = "none";
+            if (typeof sim !== "undefined") sim.running = true;
+            if (typeof syncControlModeUI === "function") syncControlModeUI();
+          } else {
+            document.documentElement.style.maxWidth = "390px";
+            document.body.style.width = "390px";
+            document.body.style.maxWidth = "390px";
+            document.body.style.margin = "0";
+            const bNav = document.getElementById("c29BottomNav");
+            if (bNav) {
+              bNav.style.width = "374px";
+              bNav.style.right = "auto";
+            }
+            switchC29MobilePage(pv);
+          }
+        };
+        applyPv();
+        setTimeout(applyPv, 250);
+        setTimeout(applyPv, 700);
+      }
+    } catch (e) { console.error(e); }
 
   </script>
   <script src="official_ticket_dossier.js?v=292"></script>
