@@ -7961,7 +7961,7 @@
         <div class="c19-turntable-glow"></div>
         <div class="c19-turntable-ring"></div>
         <canvas id="c19GarageVehicleCanvas" width="240" height="240"></canvas>
-        <span class="c19-stage-tl-pill lg-pill" id="c19CarModelPill" onclick="cycleC19CarModel()" title="Tap to switch between 4 Realistic 3D Combat Cars">🏎️ INTERCEPTOR V8 ▸</span>
+        <span class="c19-stage-tl-pill lg-pill" id="c19CarModelPill" onclick="openC19CarShowroomModal()" title="Tap to browse & unlock all 20 3D Combat Cars">🏎️ #1 '69 CHARGER V8 ▾</span>
         <span class="c19-stage-tr-pill lg-pill" id="c19GarageRepairPill" onclick="if(typeof healAllBotParts==='function'){healAllBotParts();renderC19GarageTab();}">🛠️ 15/15 HP</span>
         <div class="c19-bot-stat-strip" id="c19GarageStatStrip">
           <span>HP <b id="c19StatHp">1,250</b></span>
@@ -7972,6 +7972,7 @@
       </div>
 
       <div class="c19-slot-tabs-bar" id="c19GarageSlotTabs">
+        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="cars" onclick="selectC19GarageSlot('cars')">🏎️ Cars (20)</button>
         <button type="button" class="c19-slot-tab-btn lg-pill active" data-slot="tire" onclick="selectC19GarageSlot('tire')">🛞 Tires</button>
         <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="wpn1" onclick="selectC19GarageSlot('wpn1')">⚔️ Melee</button>
         <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="wpn2" onclick="selectC19GarageSlot('wpn2')">🎯 Ranged</button>
@@ -9202,30 +9203,30 @@
     const UNIFIED_BASE_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mass_17.png?v=realcar1";
     const UNIFIED_HULL_ONLY_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mass_17_hull_only.png?v=realcar1";
     const REALISTIC_CAR_SKINS = {
-      car_opt_01:  { id: "car_opt_01",  num: 1,  label: "🏎️ #1 '69 CHARGER V8",     url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_01.png?v=car20", showCustomTires: false },
-      car_opt_02:  { id: "car_opt_02",  num: 2,  label: "🐍 #2 MUSTANG GT500",       url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_02.png?v=car20", showCustomTires: false },
-      car_opt_03:  { id: "car_opt_03",  num: 3,  label: "🦈 #3 CORVETTE Z06 GT",     url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_03.png?v=car20", showCustomTires: false },
-      car_opt_04:  { id: "car_opt_04",  num: 4,  label: "🔥 #4 DEMON 170 HELLCAT",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_04.png?v=car20", showCustomTires: false },
-      car_opt_05:  { id: "car_opt_05",  num: 5,  label: "💀 #5 TWIN-V8 BONE SHAKER", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_05.png?v=car20", showCustomTires: false },
-      car_opt_06:  { id: "car_opt_06",  num: 6,  label: "🐂 #6 LAMBORGHINI SVJ V12", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_06.png?v=car20", showCustomTires: false },
-      car_opt_07:  { id: "car_opt_07",  num: 7,  label: "⚡ #7 NISSAN GT-R GODZILLA",url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_07.png?v=car20", showCustomTires: false },
-      car_opt_08:  { id: "car_opt_08",  num: 8,  label: "🏁 #8 PORSCHE 911 GT3 RS",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_08.png?v=car20", showCustomTires: false },
-      car_opt_09:  { id: "car_opt_09",  num: 9,  label: "🚀 #9 BUGATTI BOLIDE W16",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_09.png?v=car20", showCustomTires: false },
-      car_opt_10:  { id: "car_opt_10",  num: 10, label: "🏮 #10 RX-7 DRIFT KING",    url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_10.png?v=car20", showCustomTires: false },
-      car_opt_11:  { id: "car_opt_11",  num: 11, label: "🏜️ #11 BAJA TROPHY TRUCK",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_11.png?v=car20", showCustomTires: false },
-      car_opt_12:  { id: "car_opt_12",  num: 12, label: "🦾 #12 BRABUS 6x6 WAGON",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_12.png?v=car20", showCustomTires: false },
-      car_opt_13:  { id: "car_opt_13",  num: 13, label: "🛡️ #13 HUMVEE H1 ALPHA",    url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_13.png?v=car20", showCustomTires: false },
-      car_opt_14:  { id: "car_opt_14",  num: 14, label: "📐 #14 CYBERTRUCK BEAST",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_14.png?v=car20", showCustomTires: false },
-      car_opt_15:  { id: "car_opt_15",  num: 15, label: "🚛 #15 PETERBILT WAR-CAB",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_15.png?v=car20", showCustomTires: false },
-      car_opt_16:  { id: "car_opt_16",  num: 16, label: "🏎️ #16 FORMULA 1 V10 APEX", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_16.png?v=car20", showCustomTires: false },
-      car_opt_17:  { id: "car_opt_17",  num: 17, label: "🦅 #17 LE MANS VALKYRIE",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_17.png?v=car20", showCustomTires: false },
-      car_opt_18:  { id: "car_opt_18",  num: 18, label: "⚙️ #18 ARIEL V8 EXO-BUGGY", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_18.png?v=car20", showCustomTires: false },
-      car_opt_19:  { id: "car_opt_19",  num: 19, label: "🏔️ #19 AUDI QUATTRO RALLY", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_19.png?v=car20", showCustomTires: false },
-      car_opt_20:  { id: "car_opt_20",  num: 20, label: "👹 #20 SHIBUYA ONI GT",     url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_20.png?v=car20", showCustomTires: false },
-      interceptor: { id: "car_opt_01",  num: 1,  label: "🏎️ #1 '69 CHARGER V8",     url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_01.png?v=car20", showCustomTires: false },
-      muscle:      { id: "car_opt_04",  num: 4,  label: "🔥 #4 DEMON 170 HELLCAT",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_04.png?v=car20", showCustomTires: false },
-      vortex_gt:   { id: "car_opt_06",  num: 6,  label: "🐂 #6 LAMBORGHINI SVJ V12", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_06.png?v=car20", showCustomTires: false },
-      brawler_4x4: { id: "car_opt_11",  num: 11, label: "🏜️ #11 BAJA TROPHY TRUCK",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_11.png?v=car20", showCustomTires: false }
+      car_opt_01:  { id: "car_opt_01",  num: 1,  cost: 0,    label: "🏎️ #1 '69 CHARGER V8",     desc: "Starter Muscle • Exposed Chrome Supercharger • Steel Ram Bumper", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_01.png?v=car20", showCustomTires: false },
+      car_opt_02:  { id: "car_opt_02",  num: 2,  cost: 250,  label: "🐍 #2 MUSTANG GT500",       desc: "Gunmetal & Carbon Shelby GT500 • Tiger Stripes • Tubular Bash-Bar", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_02.png?v=car20", showCustomTires: false },
+      car_opt_03:  { id: "car_opt_03",  num: 3,  cost: 350,  label: "🦈 #3 CORVETTE Z06 GT",     desc: "Mid-Engine C8 Z06 • Visible Rear V8 Louvers • Orange Aero Splitters", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_03.png?v=car20", showCustomTires: false },
+      car_opt_04:  { id: "car_opt_04",  num: 4,  cost: 450,  label: "🔥 #4 DEMON 170 HELLCAT",   desc: "Satin Black Widebody Challenger • Molten-Orange Scoop • Drag Parachute", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_04.png?v=car20", showCustomTires: false },
+      car_opt_05:  { id: "car_opt_05",  num: 5,  cost: 550,  label: "💀 #5 TWIN-V8 BONE SHAKER", desc: "1932 Chopped Steel Rat-Rod • Dual Exposed V8 Engines • Zoomie Pipes", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_05.png?v=car20", showCustomTires: false },
+      car_opt_06:  { id: "car_opt_06",  num: 6,  cost: 700,  label: "🐂 #6 LAMBORGHINI SVJ V12", desc: "Stealth Matte Carbon Aventador SVJ • Gold V12 Bay • Y-Aero Trim", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_06.png?v=car20", showCustomTires: false },
+      car_opt_07:  { id: "car_opt_07",  num: 7,  cost: 800,  label: "⚡ #7 NISSAN GT-R GODZILLA",desc: "Widebody R35 Nismo • Hood-Exit Burnt Titanium Turbos • Orange Roll-Cage", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_07.png?v=car20", showCustomTires: false },
+      car_opt_08:  { id: "car_opt_08",  num: 8,  cost: 900,  label: "🏁 #8 PORSCHE 911 GT3 RS",  desc: "Slate-Grey & Lava-Orange Weissach 911 • Carbon Louvers • Swan-Neck Wing", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_08.png?v=car20", showCustomTires: false },
+      car_opt_09:  { id: "car_opt_09",  num: 9,  cost: 1050, label: "🚀 #9 BUGATTI BOLIDE W16",  desc: "Exposed Carbon X-Wing Hypercar • Roof Air-Scoop • Dorsal Fin & Slicks", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_09.png?v=car20", showCustomTires: false },
+      car_opt_10:  { id: "car_opt_10",  num: 10, cost: 1200, label: "🏮 #10 RX-7 DRIFT KING",    desc: "Obsidian & Pearl-Orange Veilside Widebody • Vented Carbon Hood", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_10.png?v=car20", showCustomTires: false },
+      car_opt_11:  { id: "car_opt_11",  num: 11, cost: 1350, label: "🏜️ #11 BAJA TROPHY TRUCK",  desc: "Wide-Track V8 Raptor Trophy Truck • Exposed Coilovers • Dual Bed Spares", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_11.png?v=car20", showCustomTires: false },
+      car_opt_12:  { id: "car_opt_12",  num: 12, cost: 1500, label: "🦾 #12 BRABUS 6x6 WAGON",   desc: "6-Wheel-Drive Armored G-Wagon • 3 Portal Axles • Carbon Power-Dome", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_12.png?v=car20", showCustomTires: false },
+      car_opt_13:  { id: "car_opt_13",  num: 13, cost: 1650, label: "🛡️ #13 HUMVEE H1 ALPHA",    desc: "Ultra-Wide Military Slant-Back H1 • Roof Turret Ring • 40-Inch Mud Tires", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_13.png?v=car20", showCustomTires: false },
+      car_opt_14:  { id: "car_opt_14",  num: 14, cost: 1800, label: "📐 #14 CYBERTRUCK BEAST",   desc: "Faceted Black Tungsten Steel Wedge • Laser Lightbar • Mud-Claw Flares", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_14.png?v=car20", showCustomTires: false },
+      car_opt_15:  { id: "car_opt_15",  num: 15, cost: 2000, label: "🚛 #15 PETERBILT WAR-CAB",  desc: "Chopped-Roof V12 Semi Tractor • Dual Chrome Stacks • V-Plow Ram Grille", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_15.png?v=car20", showCustomTires: false },
+      car_opt_16:  { id: "car_opt_16",  num: 16, cost: 2200, label: "🏎️ #16 FORMULA 1 V10 APEX", desc: "Stealth Carbon & Papaya-Orange F1 Open-Wheel • Exposed Wishbones • Halo", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_16.png?v=car20", showCustomTires: false },
+      car_opt_17:  { id: "car_opt_17",  num: 17, cost: 2400, label: "🦅 #17 LE MANS VALKYRIE",   desc: "Closed-Cockpit Hyper-Prototype • Forged Carbon & Orange Strakes", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_17.png?v=car20", showCustomTires: false },
+      car_opt_18:  { id: "car_opt_18",  num: 18, cost: 2600, label: "⚙️ #18 ARIEL V8 EXO-BUGGY", desc: "Exposed Tiger-Orange Tubular Steel Exoskeleton • Visible Rear V8", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_18.png?v=car20", showCustomTires: false },
+      car_opt_19:  { id: "car_opt_19",  num: 19, cost: 2800, label: "🏔️ #19 AUDI QUATTRO RALLY", desc: "Group-B Box-Flared Pikes Peak Monster • Quad Hood Light-Pod • Turbofans", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_19.png?v=car20", showCustomTires: false },
+      car_opt_20:  { id: "car_opt_20",  num: 20, cost: 3000, label: "👹 #20 SHIBUYA ONI GT",     desc: "Diamond-Cut Obsidian V12 Cyber-Interceptor • Twin Hood Turbines", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_20.png?v=car20", showCustomTires: false },
+      interceptor: { id: "car_opt_01",  num: 1,  cost: 0,    label: "🏎️ #1 '69 CHARGER V8",     desc: "Starter Muscle • Exposed Chrome Supercharger • Steel Ram Bumper", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_01.png?v=car20", showCustomTires: false },
+      muscle:      { id: "car_opt_04",  num: 4,  cost: 450,  label: "🔥 #4 DEMON 170 HELLCAT",   desc: "Satin Black Widebody Challenger • Molten-Orange Scoop • Drag Parachute", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_04.png?v=car20", showCustomTires: false },
+      vortex_gt:   { id: "car_opt_06",  num: 6,  cost: 700,  label: "🐂 #6 LAMBORGHINI SVJ V12", desc: "Stealth Matte Carbon Aventador SVJ • Gold V12 Bay • Y-Aero Trim", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_06.png?v=car20", showCustomTires: false },
+      brawler_4x4: { id: "car_opt_11",  num: 11, cost: 1350, label: "🏜️ #11 BAJA TROPHY TRUCK",  desc: "Wide-Track V8 Raptor Trophy Truck • Exposed Coilovers • Dual Bed Spares", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_11.png?v=car20", showCustomTires: false }
     };
     const SAW_BLADE_3D_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mr_saw_blade.png";
     const ARENA_10_BG_SKIN = "assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg";
@@ -10254,7 +10255,7 @@
     const QUEST_CAMPAIGN_LEVELS = [
       {
         level: 1,
-        carSkin: "vortex_gt",
+        carSkin: "car_opt_02",
         code: "QUEST 1",
         name: "SCRAP-SCOUT MK-I",
         title: "LVL.1 Scrapyard Enforcer",
@@ -10271,7 +10272,7 @@
       },
       {
         level: 2,
-        carSkin: "muscle",
+        carSkin: "car_opt_10",
         code: "QUEST 2",
         name: "HACHIKO DRIFTER",
         title: "LVL.2 Street Wedge Drifter",
@@ -10288,7 +10289,7 @@
       },
       {
         level: 3,
-        carSkin: "brawler_4x4",
+        carSkin: "car_opt_11",
         code: "QUEST 3",
         name: "IRON BULLDOZER",
         title: "LVL.3 Saw-Herder Bruiser",
@@ -10305,7 +10306,7 @@
       },
       {
         level: 4,
-        carSkin: "vortex_gt",
+        carSkin: "car_opt_06",
         code: "QUEST 4",
         name: "AKIHABARA SNIPER",
         title: "LVL.4 Gauss Rail Stalker",
@@ -10322,7 +10323,7 @@
       },
       {
         level: 5,
-        carSkin: "interceptor",
+        carSkin: "car_opt_05",
         code: "QUEST 5 · SWARM",
         name: "SHIBUYA PACK SWARM (3x BOTS)",
         title: "🔥 QUANTITY CHALLENGE · 1 VS. 3 ENEMY BOTS",
@@ -10346,7 +10347,7 @@
       },
       {
         level: 6,
-        carSkin: "vortex_gt",
+        carSkin: "car_opt_17",
         code: "QUEST 6",
         name: "FROST VALKYRIE",
         title: "LVL.6 Cryo-Flipper Juggler",
@@ -10363,7 +10364,7 @@
       },
       {
         level: 7,
-        carSkin: "brawler_4x4",
+        carSkin: "car_opt_12",
         code: "QUEST 7",
         name: "KAWASAKI CRUSHER",
         title: "LVL.7 Smelter Executioner",
@@ -10380,7 +10381,7 @@
       },
       {
         level: 8,
-        carSkin: "muscle",
+        carSkin: "car_opt_07",
         code: "QUEST 8",
         name: "CRIMSON RONIN",
         title: "LVL.8 Vampiric Ring-Shredder",
@@ -10397,7 +10398,7 @@
       },
       {
         level: 9,
-        carSkin: "vortex_gt",
+        carSkin: "car_opt_16",
         code: "QUEST 9",
         name: "ROPPONGI SENTINEL",
         title: "LVL.9 Penthouse Royal Guard",
@@ -10414,7 +10415,7 @@
       },
       {
         level: 10,
-        carSkin: "brawler_4x4",
+        carSkin: "car_opt_20",
         code: "QUEST 10 · BOSS",
         name: "EMPEROR KAGUYA OMEGA",
         title: "👑💀 LVL.10 MEGA BOSS DREADNOUGHT",
@@ -10490,6 +10491,8 @@
       const wagerPool = oppSlots >= 4 ? [250, 500, 1000, 1000, 2000] : [100, 250, 500, 500, 1000];
       const oppWager = wagerPool[Math.floor(Math.random() * wagerPool.length)];
 
+      const oppCarNum = 2 + Math.floor(Math.random() * 19);
+      const oppCarSkin = `car_opt_${String(oppCarNum).padStart(2, "0")}`;
       return {
         id: "online_" + Date.now(),
         callsign: profile.callsign,
@@ -10500,7 +10503,7 @@
         bounty,
         wager: oppWager,
         color: profile.color,
-        baseStats: { power: 50, speed: 50, agility: 50, hp: 1250 },
+        baseStats: { power: 50, speed: 50, agility: 50, hp: 1250, carSkin: oppCarSkin },
         loadout,
         bio: `🌐 Live Online Match vs. ${profile.callsign} (${profile.region}) — ${oppSlots}/6 3D Upgrades Equipped!`
       };
@@ -10535,11 +10538,14 @@
       const xpReward = 95 + cpuSlotCount * 15;
       const cpuWagerPool = cpuSlotCount >= 4 ? [250, 500, 1000, 1500] : [100, 250, 500, 1000];
       const cpuWager = cpuWagerPool[Math.floor(Math.random() * cpuWagerPool.length)];
+      const cpuCarNum = 2 + Math.floor(Math.random() * 19);
+      const cpuCarSkin = `car_opt_${String(cpuCarNum).padStart(2, "0")}`;
       const cpuBaseStats = {
         power: Math.round(38 + pInfo.equippedCount * 1.8),
         speed: Math.round(40 + pInfo.equippedCount * 1.6),
         agility: Math.round(40 + pInfo.equippedCount * 1.6),
-        hp: Math.round(960 + pInfo.equippedCount * 38)
+        hp: Math.round(960 + pInfo.equippedCount * 38),
+        carSkin: cpuCarSkin
       };
 
       return {
@@ -12414,8 +12420,8 @@
       }
 
       const carSkinKey = isPlayerBot
-        ? (state.selectedCarSkin || (loadoutObj && loadoutObj.tire ? "muscle" : "interceptor"))
-        : ((baseStats && baseStats.carSkin) || "vortex_gt");
+        ? (state.selectedCarSkin || "car_opt_01")
+        : ((baseStats && baseStats.carSkin) || "car_opt_06");
       return {
         carSkinKey,
         power, speed, agility, maxHp, bonusHp,
@@ -23355,16 +23361,70 @@
     // -------------------------------------------------------------------------
     const C19_20_CAR_ORDER = Array.from({ length: 20 }, (_, i) => `car_opt_${String(i + 1).padStart(2, "0")}`);
 
+    function getOwnedCarSkinsSet() {
+      const set = new Set(["car_opt_01"]);
+      try {
+        const raw = JSON.parse(localStorage.getItem("rc_c19_owned_cars") || "[]");
+        if (Array.isArray(raw)) raw.forEach((k) => set.add(k));
+      } catch (_) {}
+      if (Array.isArray(state.ownedIds)) {
+        state.ownedIds.forEach((id) => {
+          if (String(id).startsWith("car_opt_")) set.add(id);
+        });
+      }
+      return set;
+    }
+
+    function isCarSkinOwned(skinKey) {
+      const sp = REALISTIC_CAR_SKINS[skinKey] || REALISTIC_CAR_SKINS.car_opt_01;
+      if (!sp || sp.id === "car_opt_01" || !sp.cost || sp.cost <= 0) return true;
+      return getOwnedCarSkinsSet().has(sp.id);
+    }
+
+    function saveOwnedCarSkin(skinId) {
+      const set = getOwnedCarSkinsSet();
+      set.add(skinId);
+      try {
+        localStorage.setItem("rc_c19_owned_cars", JSON.stringify(Array.from(set)));
+      } catch (_) {}
+      if (Array.isArray(state.ownedIds) && !state.ownedIds.includes(skinId)) {
+        state.ownedIds.push(skinId);
+      }
+    }
+
     function selectC19CarModel(skinKey) {
+      ensurePilotLoggedIn();
       const spec = REALISTIC_CAR_SKINS[skinKey] || REALISTIC_CAR_SKINS.car_opt_01;
+      if (!isCarSkinOwned(spec.id)) {
+        const cost = Number(spec.cost) || 250;
+        if ((state.scrap || 0) < cost) {
+          showShopToast(`⚠️ Need ${cost.toLocaleString()} 💎 Diamonds for ${spec.label}! Opening Diamond Shop...`, "#ff7700");
+          const bd = document.getElementById("c19CarShowroomBackdrop");
+          if (bd) bd.style.display = "none";
+          switchC29MobilePage("shop");
+          return;
+        }
+        state.scrap = Math.max(0, (state.scrap || 0) - cost);
+        saveOwnedCarSkin(spec.id);
+        persistWalletAndRig();
+        updatePlayerUI();
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+        showShopToast(`💎 UNLOCKED & EQUIPPED ${spec.label} (-${cost.toLocaleString()} 💎)!`, "#ff7700");
+      } else {
+        showShopToast("🏎️ EQUIPPED CHASSIS: " + spec.label, "#ff7700");
+      }
       state.selectedCarSkin = spec.id;
       try { localStorage.setItem("rc_c19_car_skin", spec.id); } catch (_) {}
       const pill = document.getElementById("c19CarModelPill");
       if (pill) pill.textContent = spec.label + " ▾";
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineIdle();
-      showShopToast("🏎️ EQUIPPED CHASSIS: " + spec.label, "#ff7700");
+      if (!sim.running && typeof setupStagingArena === "function") setupStagingArena();
+      renderC19GarageTab();
+      syncC29ArtScreensTelemetry();
       const bd = document.getElementById("c19CarShowroomBackdrop");
-      if (bd) bd.style.display = "none";
+      if (bd && bd.style.display !== "none") {
+        openC19CarShowroomModal();
+      }
     }
 
     function cycleC19CarModel() {
@@ -23384,27 +23444,42 @@
       const cardsHtml = C19_20_CAR_ORDER.map((k) => {
         const sp = REALISTIC_CAR_SKINS[k];
         const isSel = sp.id === curId;
+        const owned = isCarSkinOwned(sp.id);
+        const cost = Number(sp.cost) || 0;
+        let badgeTxt = "";
+        let badgeCol = "#94a3b8";
+        if (isSel) {
+          badgeTxt = "✓ EQUIPPED";
+          badgeCol = "#ffaa44";
+        } else if (owned) {
+          badgeTxt = "🔩 EQUIP (OWNED)";
+          badgeCol = "#34d399";
+        } else {
+          badgeTxt = `💎 ${cost.toLocaleString()} BUY`;
+          badgeCol = "#ff7700";
+        }
         return `
           <button type="button" class="lg-card ${isSel ? 'lg-active' : ''}" onclick="selectC19CarModel('${sp.id}')" style="padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-align:center;">
             <div style="width:100%;height:74px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(255,119,0,0.18) 0%,rgba(6,4,3,0.95) 75%);border-radius:10px;overflow:hidden;">
               <img src="${sp.url}" alt="${sp.label}" style="width:94%;height:94%;object-fit:contain;" loading="lazy" />
             </div>
             <div style="font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:900;color:${isSel ? '#ff7700' : '#ffffff'};line-height:1.2;">${sp.label}</div>
-            <span style="font-family:'Orbitron',sans-serif;font-size:0.52rem;font-weight:900;color:${isSel ? '#ffaa44' : '#94a3b8'};">${isSel ? '✓ EQUIPPED' : 'TAP TO EQUIP'}</span>
+            <div style="font-size:0.55rem;color:#fed7aa;line-height:1.15;opacity:0.88;">${sp.desc || ''}</div>
+            <span style="font-family:'Orbitron',sans-serif;font-size:0.54rem;font-weight:900;color:${badgeCol};padding:2px 7px;border-radius:999px;background:rgba(255,119,0,0.14);border:1px solid rgba(255,150,70,0.35);margin-top:2px;">${badgeTxt}</span>
           </button>
         `;
       }).join("");
 
       bd.innerHTML = `
-        <div class="lg-card lg-active" style="width:100%;max-width:760px;max-height:88dvh;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:radial-gradient(circle at 50% 0%,#1f0d04 0%,#060403 85%);" onclick="event.stopPropagation()">
-          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,150,70,0.3);padding-bottom:8px;">
+        <div class="lg-card lg-active" style="width:100%;max-width:780px;max-height:88dvh;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:radial-gradient(circle at 50% 0%,#1f0d04 0%,#060403 85%);" onclick="event.stopPropagation()">
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,150,70,0.3);padding-bottom:8px;gap:8px;flex-wrap:wrap;">
             <div>
-              <div style="font-family:'Orbitron',sans-serif;font-size:0.84rem;font-weight:900;color:#ff7700;">🏎️ 20-CAR COMBAT SHOWROOM — CHOOSE YOUR CHASSIS</div>
-              <div style="font-size:0.70rem;color:#fed7aa;">Tap any of the 20 full-size 3D combat vehicles below to equip it in the Garage &amp; Arena!</div>
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.84rem;font-weight:900;color:#ff7700;">🏎️ 20-CAR COMBAT SHOWROOM — VAULT: 💎 ${(state.scrap || 0).toLocaleString()}</div>
+              <div style="font-size:0.70rem;color:#fed7aa;">#1 '69 Charger V8 is unlocked free! Unlock #2–#20 with 💎 Diamonds and equip anytime!</div>
             </div>
-            <button type="button" class="lg-btn" style="background:linear-gradient(180deg,#ff7700,#c2410c);color:#090502;padding:6px 12px;font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:900;" onclick="document.getElementById('c19CarShowroomBackdrop').style.display='none'">✕ CLOSE</button>
+            <button type="button" class="lg-btn" style="background:linear-gradient(180deg,#ff7700,#c2410c);color:#090502;padding:6px 12px;font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:900;" onclick="document.getElementById('c19CarShowroomBackdrop').style.display='none'">✓ DONE</button>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
             ${cardsHtml}
           </div>
         </div>
@@ -23413,9 +23488,14 @@
     }
     try {
       const savedSkin = localStorage.getItem("rc_c19_car_skin");
-      if (savedSkin && REALISTIC_CAR_SKINS[savedSkin]) state.selectedCarSkin = REALISTIC_CAR_SKINS[savedSkin].id;
-      else state.selectedCarSkin = "car_opt_01";
-    } catch (_) {}
+      if (savedSkin && REALISTIC_CAR_SKINS[savedSkin] && isCarSkinOwned(savedSkin)) {
+        state.selectedCarSkin = REALISTIC_CAR_SKINS[savedSkin].id;
+      } else {
+        state.selectedCarSkin = "car_opt_01";
+      }
+    } catch (_) {
+      state.selectedCarSkin = "car_opt_01";
+    }
 
     (function initC19GarageDragRotate() {
       let dragging = false;
@@ -23458,6 +23538,13 @@
         b.classList.toggle("active", b.getAttribute("data-slot") === slotKey);
       });
 
+      // Sync Top-Left Car Model Pill
+      const activeCarSpec = REALISTIC_CAR_SKINS[state.selectedCarSkin] || REALISTIC_CAR_SKINS.car_opt_01;
+      const carPillEl = document.getElementById("c19CarModelPill");
+      if (carPillEl && activeCarSpec) {
+        carPillEl.textContent = activeCarSpec.label + " ▾";
+      }
+
       // Update Top 3D Vehicle Telemetry Strip
       const pProf = computeBotCombatProfile(BASE_STATS, state.loadout, true);
       const hpEl = document.getElementById("c19StatHp");
@@ -23477,9 +23564,41 @@
         repPill.textContent = avgPct >= 99 ? "🛠️ 15/15 OPTIMAL" : `🛠️ REPAIR (${avgPct}%)`;
       }
 
-      // Render Horizontal Part Rows for Selected Slot
+      // Render Horizontal Rows for Selected Slot (or all 20 Cars when 'cars' tab is selected!)
       const rowsWrap = document.getElementById("c19GaragePartRows");
-      if (!rowsWrap || !window.BOT_ADDONS_CATALOG) return;
+      if (!rowsWrap) return;
+
+      if (slotKey === "cars") {
+        const curCarId = (REALISTIC_CAR_SKINS[state.selectedCarSkin] || REALISTIC_CAR_SKINS.car_opt_01).id;
+        rowsWrap.innerHTML = C19_20_CAR_ORDER.map((k) => {
+          const sp = REALISTIC_CAR_SKINS[k];
+          const isEquipped = sp.id === curCarId;
+          const isOwned = isCarSkinOwned(sp.id);
+          const cost = Number(sp.cost) || 0;
+          let ctaHtml = "";
+          if (isEquipped) {
+            ctaHtml = `<button type="button" class="c19-part-cta lg-pill" style="color:#ffaa44;" onclick="event.stopPropagation();selectC19CarModel('${sp.id}')">✓ EQUIPPED</button>`;
+          } else if (isOwned) {
+            ctaHtml = `<button type="button" class="c19-part-cta lg-btn" style="background:linear-gradient(180deg,#ffaa44,#ff7700);color:#090502;" onclick="event.stopPropagation();selectC19CarModel('${sp.id}')">🔩 EQUIP</button>`;
+          } else {
+            ctaHtml = `<button type="button" class="c19-part-cta lg-btn" style="background:linear-gradient(180deg,#ff7700,#c2410c);color:#090502;" onclick="event.stopPropagation();selectC19CarModel('${sp.id}')">💎 ${cost.toLocaleString()} BUY</button>`;
+          }
+          return `
+            <div class="c19-part-row lg-card ${isEquipped ? 'lg-active' : ''}" onclick="selectC19CarModel('${sp.id}')">
+              <img src="${sp.url}" class="c19-part-thumb" alt="${sp.label}" loading="lazy" />
+              <div class="c19-part-info">
+                <div class="c19-part-name" style="color:${isEquipped ? '#ff7700' : '#ffffff'};">${sp.label}</div>
+                <div class="c19-part-stat">${cost === 0 ? '★ FREE STARTER CHASSIS' : (isOwned ? '✓ UNLOCKED IN GARAGE' : `💎 ${cost.toLocaleString()} DIAMONDS`)}</div>
+                <div class="c19-part-desc">${sp.desc || 'Full-Size 3D Armored Combat Vehicle'}</div>
+              </div>
+              ${ctaHtml}
+            </div>
+          `;
+        }).join("");
+        return;
+      }
+
+      if (!window.BOT_ADDONS_CATALOG) return;
       const sd = SLOT_DEFS.find((s) => s.key === slotKey) || SLOT_DEFS[0];
       const rawItems = window.BOT_ADDONS_CATALOG[sd.cat] || [];
       const allowedIds = (typeof FEATURED_POOL_BY_SLOT !== "undefined" && FEATURED_POOL_BY_SLOT[slotKey]) || [];
@@ -23691,8 +23810,9 @@
         handle: "@SHIBUYA",
         title: "🏆 #1 @SHIBUYA",
         elo: 3000,
-        sub: "3,000 ELO • 12 Win Streak • Furnace Pit",
-        img: "assets/concept_gallery/battlebots_topdown_3d/td_mass_17.png",
+        sub: "3,000 ELO • #20 Shibuya Oni GT • Furnace Pit",
+        carSkin: "car_opt_20",
+        img: "assets/concept_gallery/battlebots_topdown_3d/car_opt_20.png?v=car20",
         cta: "⚔️ DUEL",
         highlight: true,
         loadout: { tire: "tire_17", wpn1: "wpn_12", wpn2: "rng_13", botAbil1: "bot_abil_04", botAbil2: "bot_abil_11", wpnAbil: "wpn_abil_03" }
@@ -23701,8 +23821,9 @@
         handle: "@KAZUYA",
         title: "🟢 @KAZUYA (Friend)",
         elo: 2640,
-        sub: "2,640 ELO • Online Now • Ready for 1v1",
-        img: "assets/concept_gallery/battlebots_topdown_3d/td_agility_12.png",
+        sub: "2,640 ELO • #7 Nissan GT-R Godzilla • Ready for 1v1",
+        carSkin: "car_opt_07",
+        img: "assets/concept_gallery/battlebots_topdown_3d/car_opt_07.png?v=car20",
         cta: "⚔️ 1v1",
         highlight: true,
         loadout: { tire: "tire_12", wpn1: "wpn_08", wpn2: "rng_04", botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: "wpn_abil_07" }
@@ -23711,8 +23832,9 @@
         handle: "@VORTEX",
         title: "🥈 #2 @VORTEX",
         elo: 2920,
-        sub: "2,920 ELO • Cryo Spinner Build",
-        img: "assets/concept_gallery/battlebots_topdown_3d/mr_saw_assembled_preview.png",
+        sub: "2,920 ELO • #6 Lamborghini SVJ V12",
+        carSkin: "car_opt_06",
+        img: "assets/concept_gallery/battlebots_topdown_3d/car_opt_06.png?v=car20",
         cta: "⚔️ DUEL",
         highlight: false,
         loadout: { tire: "tire_04", wpn1: "wpn_05", wpn2: "rng_08", botAbil1: "bot_abil_04", botAbil2: null, wpnAbil: "wpn_abil_11" }
@@ -23721,8 +23843,9 @@
         handle: "@VALKYRIE",
         title: "🟢 @VALKYRIE (Friend)",
         elo: 2510,
-        sub: "2,510 ELO • In 3D Garage",
-        img: "assets/concept_gallery/battlebots_topdown_3d/td_speed_04.png",
+        sub: "2,510 ELO • #16 Formula 1 V10 Apex",
+        carSkin: "car_opt_16",
+        img: "assets/concept_gallery/battlebots_topdown_3d/car_opt_16.png?v=car20",
         cta: "⚔️ 1v1",
         highlight: false,
         loadout: { tire: "tire_15", wpn1: "wpn_01", wpn2: "rng_01", botAbil1: "bot_abil_01", botAbil2: null, wpnAbil: null }
@@ -23731,8 +23854,9 @@
         handle: "@MR_SAW",
         title: "🥉 #3 @MR_SAW",
         elo: 2850,
-        sub: "2,850 ELO • Heavy Dreadnought",
-        img: "assets/concept_gallery/battlebots_topdown_3d/mr_saw_assembled_preview.png",
+        sub: "2,850 ELO • #12 Brabus 6x6 War-Wagon",
+        carSkin: "car_opt_12",
+        img: "assets/concept_gallery/battlebots_topdown_3d/car_opt_12.png?v=car20",
         cta: "⚔️ DUEL",
         highlight: false,
         loadout: { tire: "tire_05", wpn1: "wpn_10", wpn2: "rng_04", botAbil1: "bot_abil_17", botAbil2: null, wpnAbil: "wpn_abil_07" }
@@ -23750,7 +23874,7 @@
         elo: rv.elo,
         bounty: 250,
         wager: 0,
-        baseStats: { power: 78, speed: 74, agility: 74, hp: 1950 },
+        baseStats: { power: 78, speed: 74, agility: 74, hp: 1950, carSkin: rv.carSkin || "car_opt_20" },
         loadout: { ...rv.loadout }
       };
       syncModeButtonsUI();
