@@ -7960,7 +7960,7 @@
         <div class="c19-turntable-glow"></div>
         <div class="c19-turntable-ring"></div>
         <canvas id="c19GarageVehicleCanvas" width="240" height="240"></canvas>
-        <span class="c19-stage-tl-pill lg-pill" onclick="spinC19GarageVehicle()">🔄 360° 3D MODEL</span>
+        <span class="c19-stage-tl-pill lg-pill" id="c19CarModelPill" onclick="cycleC19CarModel()" title="Tap to switch between 4 Realistic 3D Combat Cars">🏎️ INTERCEPTOR V8 ▸</span>
         <span class="c19-stage-tr-pill lg-pill" id="c19GarageRepairPill" onclick="if(typeof healAllBotParts==='function'){healAllBotParts();renderC19GarageTab();}">🛠️ 15/15 HP</span>
         <div class="c19-bot-stat-strip" id="c19GarageStatStrip">
           <span>HP <b id="c19StatHp">1,250</b></span>
@@ -9198,8 +9198,14 @@
     // =========================================================================
     // 1. STATE: PILOT LOG-ON, CAMPAIGN vs PVP MODE, OWNED ARMORY & 3D MOUNTS
     // =========================================================================
-    const UNIFIED_BASE_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mass_17.png";
-    const UNIFIED_HULL_ONLY_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mass_17_hull_only.png?v=pbr3";
+    const UNIFIED_BASE_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mass_17.png?v=realcar1";
+    const UNIFIED_HULL_ONLY_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mass_17_hull_only.png?v=realcar1";
+    const REALISTIC_CAR_SKINS = {
+      interceptor: { id: "interceptor", label: "🏎️ INTERCEPTOR V8", url: "assets/concept_gallery/battlebots_topdown_3d/realistic_car_01_interceptor.png?v=realcar1", showCustomTires: false },
+      muscle:      { id: "muscle",      label: "🔥 TIGER MUSCLE",   url: "assets/concept_gallery/battlebots_topdown_3d/td_mass_17_hull_only.png?v=realcar1", showCustomTires: true },
+      vortex_gt:   { id: "vortex_gt",   label: "⚡ VORTEX GT",      url: "assets/concept_gallery/battlebots_topdown_3d/realistic_car_02_vortex_gt.png?v=realcar1", showCustomTires: false },
+      brawler_4x4: { id: "brawler_4x4", label: "🛻 BRAWLER 4x4",    url: "assets/concept_gallery/battlebots_topdown_3d/realistic_car_03_brawler_4x4.png?v=realcar1", showCustomTires: false }
+    };
     const SAW_BLADE_3D_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mr_saw_blade.png";
     const ARENA_10_BG_SKIN = "assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg";
 
@@ -9207,31 +9213,31 @@
 
     // All 20 Real Blender 5.2 Top-Down 3D PBR Transparent Mount Sprites
     const MOUNT_3D_SPRITES = {
-      tire_04: "assets/concept_gallery/addons_80/3d_mounts/tire_04.png?v=pbr3",
-      tire_05: "assets/concept_gallery/addons_80/3d_mounts/tire_05.png?v=pbr3",
-      tire_12: "assets/concept_gallery/addons_80/3d_mounts/tire_12.png?v=pbr3",
-      tire_15: "assets/concept_gallery/addons_80/3d_mounts/tire_15.png?v=pbr3",
-      tire_17: "assets/concept_gallery/addons_80/3d_mounts/tire_17.png?v=pbr3",
-      wpn_01: "assets/concept_gallery/addons_80/3d_mounts/wpn_01.png?v=pbr3",
-      wpn_05: "assets/concept_gallery/addons_80/3d_mounts/wpn_05.png?v=pbr3",
-      wpn_08: "assets/concept_gallery/addons_80/3d_mounts/wpn_08.png?v=pbr3",
-      wpn_10: "assets/concept_gallery/addons_80/3d_mounts/wpn_10.png?v=pbr3",
-      wpn_12: "assets/concept_gallery/addons_80/3d_mounts/wpn_12.png?v=pbr3",
+      tire_04: "assets/concept_gallery/addons_80/3d_mounts/tire_04.png?v=realcar1",
+      tire_05: "assets/concept_gallery/addons_80/3d_mounts/tire_05.png?v=realcar1",
+      tire_12: "assets/concept_gallery/addons_80/3d_mounts/tire_12.png?v=realcar1",
+      tire_15: "assets/concept_gallery/addons_80/3d_mounts/tire_15.png?v=realcar1",
+      tire_17: "assets/concept_gallery/addons_80/3d_mounts/tire_17.png?v=realcar1",
+      wpn_01: "assets/concept_gallery/addons_80/3d_mounts/wpn_01.png?v=realcar1",
+      wpn_05: "assets/concept_gallery/addons_80/3d_mounts/wpn_05.png?v=realcar1",
+      wpn_08: "assets/concept_gallery/addons_80/3d_mounts/wpn_08.png?v=realcar1",
+      wpn_10: "assets/concept_gallery/addons_80/3d_mounts/wpn_10.png?v=realcar1",
+      wpn_12: "assets/concept_gallery/addons_80/3d_mounts/wpn_12.png?v=realcar1",
       rng_01: "assets/concept_gallery/addons_80/3d_mounts/rng_01.png?v=pbr4",
       rng_04: "assets/concept_gallery/addons_80/3d_mounts/rng_04.png?v=pbr4",
       rng_08: "assets/concept_gallery/addons_80/3d_mounts/rng_08.png?v=pbr4",
       rng_13: "assets/concept_gallery/addons_80/3d_mounts/rng_13.png?v=pbr4",
       rng_18: "assets/concept_gallery/addons_80/3d_mounts/rng_18.png?v=pbr4",
-      bot_abil_01: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_01.png?v=pbr3",
-      bot_abil_04: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_04.png?v=pbr3",
-      bot_abil_09: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_09.png?v=pbr3",
-      bot_abil_11: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_11.png?v=pbr3",
-      bot_abil_17: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_17.png?v=pbr3",
-      wpn_abil_03: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_03.png?v=pbr3",
-      wpn_abil_07: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_07.png?v=pbr3",
-      wpn_abil_11: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_11.png?v=pbr3",
-      wpn_abil_12: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_12.png?v=pbr3",
-      wpn_abil_18: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_18.png?v=pbr3"
+      bot_abil_01: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_01.png?v=realcar1",
+      bot_abil_04: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_04.png?v=realcar1",
+      bot_abil_09: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_09.png?v=realcar1",
+      bot_abil_11: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_11.png?v=realcar1",
+      bot_abil_17: "assets/concept_gallery/addons_80/3d_mounts/bot_abil_17.png?v=realcar1",
+      wpn_abil_03: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_03.png?v=realcar1",
+      wpn_abil_07: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_07.png?v=realcar1",
+      wpn_abil_11: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_11.png?v=realcar1",
+      wpn_abil_12: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_12.png?v=realcar1",
+      wpn_abil_18: "assets/concept_gallery/addons_80/3d_mounts/wpn_abil_18.png?v=realcar1"
     };
 
     const DYNAMIC_PRESETS = {
@@ -10136,10 +10142,10 @@
     function getTransparentSlotThumb(item) {
       if (!item) return "";
       if (item.thumbRef) {
-        return `assets/concept_gallery/addons_80/transparent_20/${item.thumbRef}.png?v=pbr3`;
+        return `assets/concept_gallery/addons_80/transparent_20/${item.thumbRef}.png?v=realcar1`;
       }
       if (item.isDynamicPick) {
-        return `assets/concept_gallery/addons_80/transparent_20/${item.id}.png?v=pbr3`;
+        return `assets/concept_gallery/addons_80/transparent_20/${item.id}.png?v=realcar1`;
       }
       return item.img;
     }
@@ -10216,6 +10222,7 @@
     const QUEST_CAMPAIGN_LEVELS = [
       {
         level: 1,
+        carSkin: "vortex_gt",
         code: "QUEST 1",
         name: "SCRAP-SCOUT MK-I",
         title: "LVL.1 Scrapyard Enforcer",
@@ -10232,6 +10239,7 @@
       },
       {
         level: 2,
+        carSkin: "muscle",
         code: "QUEST 2",
         name: "HACHIKO DRIFTER",
         title: "LVL.2 Street Wedge Drifter",
@@ -10248,6 +10256,7 @@
       },
       {
         level: 3,
+        carSkin: "brawler_4x4",
         code: "QUEST 3",
         name: "IRON BULLDOZER",
         title: "LVL.3 Saw-Herder Bruiser",
@@ -10264,6 +10273,7 @@
       },
       {
         level: 4,
+        carSkin: "vortex_gt",
         code: "QUEST 4",
         name: "AKIHABARA SNIPER",
         title: "LVL.4 Gauss Rail Stalker",
@@ -10280,6 +10290,7 @@
       },
       {
         level: 5,
+        carSkin: "interceptor",
         code: "QUEST 5 · SWARM",
         name: "SHIBUYA PACK SWARM (3x BOTS)",
         title: "🔥 QUANTITY CHALLENGE · 1 VS. 3 ENEMY BOTS",
@@ -10303,6 +10314,7 @@
       },
       {
         level: 6,
+        carSkin: "vortex_gt",
         code: "QUEST 6",
         name: "FROST VALKYRIE",
         title: "LVL.6 Cryo-Flipper Juggler",
@@ -10319,6 +10331,7 @@
       },
       {
         level: 7,
+        carSkin: "brawler_4x4",
         code: "QUEST 7",
         name: "KAWASAKI CRUSHER",
         title: "LVL.7 Smelter Executioner",
@@ -10335,6 +10348,7 @@
       },
       {
         level: 8,
+        carSkin: "muscle",
         code: "QUEST 8",
         name: "CRIMSON RONIN",
         title: "LVL.8 Vampiric Ring-Shredder",
@@ -10351,6 +10365,7 @@
       },
       {
         level: 9,
+        carSkin: "vortex_gt",
         code: "QUEST 9",
         name: "ROPPONGI SENTINEL",
         title: "LVL.9 Penthouse Royal Guard",
@@ -10367,6 +10382,7 @@
       },
       {
         level: 10,
+        carSkin: "brawler_4x4",
         code: "QUEST 10 · BOSS",
         name: "EMPEROR KAGUYA OMEGA",
         title: "👑💀 LVL.10 MEGA BOSS DREADNOUGHT",
@@ -10395,6 +10411,7 @@
     function getActiveQuestSpec(lvlNum) {
       const target = Math.max(1, Math.min(10, Number(lvlNum || state.currentLevel) || 1));
       const found = QUEST_CAMPAIGN_LEVELS.find(q => q.level === target) || QUEST_CAMPAIGN_LEVELS[0];
+      if (found && found.baseStats && found.carSkin) found.baseStats.carSkin = found.carSkin;
       if (!found.tag) found.tag = found.code || `QUEST ${found.level}`;
       if (found.isQuantityChallenge && !found.packSpecs && Array.isArray(found.swarmRoster)) {
         found.packSpecs = found.swarmRoster.map(sr => ({
@@ -12364,7 +12381,11 @@
         rearMult = Math.max(rearMult, 2.55);
       }
 
+      const carSkinKey = isPlayerBot
+        ? (state.selectedCarSkin || (loadoutObj && loadoutObj.tire ? "muscle" : "interceptor"))
+        : ((baseStats && baseStats.carSkin) || "vortex_gt");
       return {
+        carSkinKey,
         power, speed, agility, maxHp, bonusHp,
         effAttack, baseStrikeDmg, effDefense, armorReduction, frontGuardBlock,
         topSpeedPx, accelPx, turnRateRad, sawDetectRadius,
@@ -16941,9 +16962,12 @@
         }
       }
 
-      // 1. UNDER-CHASSIS 3D TIRES: Only draw the SINGLE active tire upgrade in the 4 wheel wells!
-      if (hasTireUpgrade) {
-        const tireMountKey = resolveMountKey(activeTireId) || "tire_04";
+      const skinSpec = (typeof REALISTIC_CAR_SKINS !== "undefined" && REALISTIC_CAR_SKINS[cp.carSkinKey]) || REALISTIC_CAR_SKINS.interceptor;
+      const drawModularTires = hasTireUpgrade || skinSpec.showCustomTires;
+
+      // 1. UNDER-CHASSIS PHOTOREALISTIC 3D TIRES:
+      if (drawModularTires) {
+        const tireMountKey = resolveMountKey(activeTireId) || "tire_15";
         draw3DMountSprite(targetCtx, tireMountKey, mountBox, 0);
       }
 
@@ -16954,9 +16978,8 @@
         draw3DMountSprite(targetCtx, "wpn_12", mountBox * 1.16, rTicks * 0.22);
       }
 
-      // 3. BASE 3D MASS-17 CHASSIS SPRITE:
-      //    When a Tire Upgrade is equipped or previewed, use UNIFIED_HULL_ONLY_SKIN so old stock tires are NOT there!
-      const chassisSkin = hasTireUpgrade ? UNIFIED_HULL_ONLY_SKIN : UNIFIED_BASE_SKIN;
+      // 3. PHOTOREALISTIC 3D COMBAT CAR CHASSIS SPRITE:
+      const chassisSkin = (hasTireUpgrade && skinSpec.id === "muscle") ? UNIFIED_HULL_ONLY_SKIN : skinSpec.url;
       const spr = getImg(chassisSkin);
       const drawW = r * 2.42;
       if (spr && spr.complete && spr.naturalWidth > 0) {
@@ -23133,10 +23156,22 @@
     // -------------------------------------------------------------------------
     // TAB 2: GARAGE (#19-01: 3D MODEL AT TOP + 6-SLOT TABS + HORIZONTAL ROWS)
     // -------------------------------------------------------------------------
-    function spinC19GarageVehicle() {
-      window.__c19GarageYaw = (window.__c19GarageYaw || 0) + Math.PI / 3;
+    function cycleC19CarModel() {
+      const order = ["interceptor", "muscle", "vortex_gt", "brawler_4x4"];
+      const cur = state.selectedCarSkin || "interceptor";
+      const next = order[(order.indexOf(cur) + 1) % order.length];
+      state.selectedCarSkin = next;
+      try { localStorage.setItem("rc_c19_car_skin", next); } catch (_) {}
+      const spec = REALISTIC_CAR_SKINS[next] || REALISTIC_CAR_SKINS.interceptor;
+      const pill = document.getElementById("c19CarModelPill");
+      if (pill) pill.textContent = spec.label + " ▸";
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      showShopToast("🏎️ EQUIPPED CHASSIS: " + spec.label, "#ff7700");
     }
+    try {
+      const savedSkin = localStorage.getItem("rc_c19_car_skin");
+      if (savedSkin && REALISTIC_CAR_SKINS[savedSkin]) state.selectedCarSkin = savedSkin;
+    } catch (_) {}
 
     (function initC19GarageDragRotate() {
       let dragging = false;
