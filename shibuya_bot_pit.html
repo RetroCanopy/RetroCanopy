@@ -6,6 +6,12 @@
   <title>SHIBUYA BOT PIT — 3D BattleBots Arena, Live PvP & 6-Slot Upgrade Garage</title>
   <link rel="icon" type="image/jpeg" href="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" />
   <link rel="apple-touch-icon" href="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" />
+  <link rel="manifest" href="shibuya_bot_pit_manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Shibuya Bot Pit" />
+  <meta name="theme-color" content="#07080c" />
   <meta property="og:title" content="SHIBUYA BOT PIT — 3D BattleBots Arena" />
   <meta property="og:description" content="Build your 6-slot 3D BattleBot, set Diamond Arena Stakes in 3x3:00 rounds, spectate live fights, and chat in the Shibuya Pit!" />
   <meta property="og:image" content="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg" />
@@ -7962,6 +7968,7 @@
         <button type="button" class="btn-friend-act danger" onclick="toggleC29ArtDrawer(false)">✕</button>
       </div>
       <div class="c29-art-drawer-grid">
+        <button type="button" class="c29-art-drawer-item" style="grid-column:1 / -1;border-color:#fbbf24;color:#fde047;background:rgba(251,191,36,0.16);justify-content:center;font-weight:700;" onclick="toggleC29ArtDrawer(false);window.__openBotPitAppOverlay(event);">📲 Download Shibuya Bot Pit Mobile App</button>
         <a href="index.html" class="c29-art-drawer-item" onclick="sessionStorage.setItem('rc_from_internal','1')">🏠 RetroCanopy Home</a>
         <button type="button" class="c29-art-drawer-item" onclick="openPilotAuthGateModal()">👤 Pilot Login / Account</button>
         <button type="button" class="c29-art-drawer-item" onclick="setControlMode(state.controlMode==='controlled'?'simulated':'controlled');toggleC29ArtDrawer(false);">🎮 Toggle SIM / CTRL</button>
@@ -8002,6 +8009,7 @@
         <button type="button" class="c29-wager-mini-pill" onclick="selectWagerAndAdvance(500)">💎 500</button>
         <button type="button" class="c29-wager-mini-pill" onclick="selectWagerAndAdvance(1000)">💎 1K</button>
         <button type="button" class="c29-wager-mini-pill" onclick="openFullScreenMapSelector()">🗺️ MAPS</button>
+        <button type="button" class="c29-wager-mini-pill" style="border-color:#fbbf24;color:#fde047;" onclick="window.__openBotPitAppOverlay(event)">📲 GET APP</button>
       </div>
     </section>
 
@@ -21901,7 +21909,7 @@
   }
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((r) => r.unregister().catch(() => {}))).catch(() => {});
+      navigator.serviceWorker.register('botpit_sw.js', { scope: './shibuya_bot_pit.html' }).catch(() => {});
     });
   }
 
@@ -21909,6 +21917,16 @@
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredInstallPrompt = e;
+  });
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const qs = new URLSearchParams(window.location.search);
+      if (qs.get('install_app') === '1') {
+        setTimeout(() => {
+          if (typeof window.__openBotPitAppOverlay === 'function') window.__openBotPitAppOverlay();
+        }, 300);
+      }
+    } catch (_) {}
   });
 
   function ensureBotPitOverlayInjected() {
@@ -22292,7 +22310,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Shibuya Bot Pit" />
+  <meta name="theme-color" content="#07080c" />
   <title>Shibuya Bot Pit — Standalone App</title>
   <link rel="icon" href="${iconUrl}" />
   <link rel="apple-touch-icon" href="${iconUrl}" />

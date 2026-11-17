@@ -6005,7 +6005,12 @@ if (document.readyState === 'loading') {
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Shibuya Bot Pit" />
+  <meta name="theme-color" content="#07080c" />
   <title>Shibuya Bot Pit — Standalone App</title>
   <link rel="icon" href="${iconUrl}" />
   <link rel="apple-touch-icon" href="${iconUrl}" />
@@ -6014,7 +6019,7 @@ if (document.readyState === 'loading') {
   </style>
 </head>
 <body>
-  <iframe src="${targetUrl}" allow="autoplay; fullscreen; clipboard-write" allowfullscreen></iframe>
+  <iframe src="${targetUrl}" allow="autoplay; fullscreen; clipboard-write; screen-wake-lock" allowfullscreen></iframe>
 </body>
 </html>`;
 
@@ -6031,11 +6036,16 @@ if (document.readyState === 'loading') {
     } catch (_) {}
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent || '');
+    const onIndexPage = !(window.location.pathname || '').toLowerCase().includes('shibuya_bot_pit');
+    const installAppUrl = 'shibuya_bot_pit.html?app=1&install_app=1';
+    const directInstallBtn = onIndexPage
+      ? `<div style="margin-top:8px;"><a href="${installAppUrl}" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:900;text-decoration:none;letter-spacing:0.06em;">📲 OPEN MOBILE APP INSTALLER &rarr;</a></div>`
+      : '';
     if (statusBox) {
       if (isIOS) {
-        statusBox.innerHTML = '📲 <strong>iOS APP INSTALL:</strong> Tap <strong>Share ⬆️</strong> in Safari and tap <strong>"Add to Home Screen ➕"</strong> to install the full-screen <strong>Shibuya Bot Pit</strong> App Icon! (Or tap <em>Play Instantly in Browser</em> above!)';
+        statusBox.innerHTML = '📲 <strong>Shibuya_Bot_Pit_App.html downloaded!</strong> On iPhone/iPad: tap <strong>Share ⬆️</strong> in Safari and tap <strong>"Add to Home Screen ➕"</strong> to install the full-screen <strong>Shibuya Bot Pit</strong> App Icon!' + directInstallBtn;
       } else {
-        statusBox.innerHTML = '✅ <strong>Shibuya_Bot_Pit_App.html downloaded!</strong> Open it anytime to launch the standalone App, or click the <strong>Install App ➕</strong> icon in your browser address bar!';
+        statusBox.innerHTML = '✅ <strong>Shibuya_Bot_Pit_App.html downloaded!</strong> Open the downloaded file anytime to launch the standalone App, or tap <strong>Install App ➕</strong> / <strong>Add to Home Screen</strong> in your browser menu!' + directInstallBtn;
       }
       statusBox.classList.add('visible');
     }

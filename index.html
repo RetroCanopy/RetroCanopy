@@ -717,8 +717,8 @@
         <a href="https://nerdymisfits.com" target="_blank" rel="noopener" class="stage-hotspot hs-nerdy" title="Visit NerdyMisfits.com">
           <span class="hotspot-pill">Visit NerdyMisfits.com &nearr;</span>
         </a>
-        <a href="shibuya_bot_pit.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" class="stage-hotspot hs-botpit" title="Play Shibuya 3D Arena Bot Pit">
-          <span class="hotspot-pill">Enter Shibuya 3D Bot Pit &rarr;</span>
+        <a href="shibuya_bot_pit.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}; if(window.__openBotPitAppOverlay){window.__openBotPitAppOverlay(event);return false;}" class="stage-hotspot hs-botpit" title="Download or Play Shibuya 3D Bot Pit App">
+          <span class="hotspot-pill">&#128242; Download / Play Shibuya Bot Pit App &rarr;</span>
         </a>
         <div class="stage-hotspot hs-synth" onclick="triggerSynthGreeting()" title="Speak with Synth the Owl Butler">
           <span class="hotspot-pill">Speak with Synth</span>
@@ -2658,9 +2658,9 @@
     requestAnimationFrame(animate);
     </script>
 
-    <script src="official_ticket_dossier.js?v=292"></script>
-    <script src="script.js?v=292"></script>
-    <script src="auth_hub.js?v=292"></script>
+    <script src="official_ticket_dossier.js?v=293"></script>
+    <script src="script.js?v=293"></script>
+    <script src="auth_hub.js?v=293"></script>
 </body>
 
 </html>
