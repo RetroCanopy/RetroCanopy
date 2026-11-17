@@ -367,8 +367,7 @@
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({
               _subject: `✅ RetroCanopy Bulk Quote PAID ${tid} ($${totalFormatted} PAID) — ${meta.projectName || 'Custom Apparel Order'}`,
-              _cc: '6562427202@vtext.com,6562427202@vzwpix.com',
-              _template: 'table',
+                            _template: 'table',
               '1_Ticket_And_Amount_Paid': `Ticket #${tid} — PAID $${totalFormatted} USD via Live Stripe (${v.sessionId || 'Verified'})`,
               '2_Customer_Full_Info': [
                 `Name: ${v.customerName || 'N/A'}`,

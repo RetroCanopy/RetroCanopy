@@ -2401,8 +2401,7 @@
           // 4B. Instant Production Email + Spectrum SMS/MMS Alert with Blank Supplier Links, DTF Files, Embroidery Files, Customer Info, Amount Paid & Item Pictures
           const emailPayload = {
             _subject: `🛍️ New RetroCanopy Paid Order ${orderRecord.orderId} ($${totalFormatted} PAID) — ${itemsSummary}`,
-            _cc: '6562427202@vtext.com,6562427202@vzwpix.com',
-            _template: 'table',
+                        _template: 'table',
             '1_Order_ID_And_Amount_Paid': `Order #${orderRecord.orderId} — PAID $${totalFormatted} USD via Live Stripe (${orderRecord.stripeSessionId || 'Verified'})`,
             '2_Customer_Full_Info': [
               `Name: ${orderRecord.customerName}`,

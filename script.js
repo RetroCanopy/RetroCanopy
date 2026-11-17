@@ -182,8 +182,7 @@ if (typeof window.dispatchStudioProjectRequest !== 'function') {
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({
                 _subject: `🚀 New Studio Project Request #${reqId} — ${name} (${service})`,
-                _cc: smsGatewayEmail,
-                _template: 'table',
+                                _template: 'table',
                 '1_Project_Ticket_ID': reqId,
                 '2_Client_Name_Or_Brand': name,
                 '3_Client_Contact': contact,
