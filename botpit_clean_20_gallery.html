@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shibuya Bot Pit — 20 Ultra-Clean Mobile UI Concepts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #07080d;
+      color: #f8fafc;
+      font-family: 'Outfit', system-ui, sans-serif;
+      padding: 28px 20px 80px;
+    }
+    header {
+      max-width: 1480px;
+      margin: 0 auto 28px;
+      text-align: center;
+      padding: 24px 20px;
+      background: linear-gradient(180deg, rgba(22, 28, 45, 0.9), rgba(10, 13, 22, 0.95));
+      border: 1.5px solid rgba(251, 191, 36, 0.45);
+      border-radius: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.85);
+    }
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.3rem, 2.6vw, 2.1rem);
+      color: #fbbf24;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    header p {
+      color: #cbd5e1;
+      font-size: 0.98rem;
+      max-width: 880px;
+      margin: 0 auto 16px;
+      line-height: 1.5;
+    }
+    .quick-jump {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+    .quick-jump a {
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: #fde047;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      transition: all 0.15s ease;
+    }
+    .quick-jump a:hover {
+      background: #fbbf24;
+      color: #090612;
+    }
+    .gallery-grid {
+      max-width: 1480px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(620px, 1fr));
+      gap: 26px;
+    }
+    @media (max-width: 700px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+    }
+    .concept-card {
+      background: linear-gradient(180deg, #121726 0%, #090c15 100%);
+      border: 1.5px solid rgba(251, 191, 36, 0.38);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 18px 48px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .concept-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .concept-badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 900;
+    }
+    .concept-header h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.02rem;
+      color: #ffffff;
+      letter-spacing: 0.04em;
+    }
+    .concept-img-wrap {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.14);
+      cursor: zoom-in;
+      background: #05060a;
+    }
+    .concept-img-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.25s ease;
+    }
+    .concept-img-wrap:hover img {
+      transform: scale(1.015);
+    }
+    .zoom-hint {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(7, 8, 13, 0.85);
+      border: 1px solid rgba(251, 191, 36, 0.55);
+      color: #fde047;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .concept-desc {
+      color: #cbd5e1;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(4, 6, 12, 0.95);
+      backdrop-filter: blur(12px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 96vw;
+      max-height: 86vh;
+      border-radius: 16px;
+      border: 2px solid #fbbf24;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.95);
+    }
+    .lightbox-bar {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #fde047;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+    }
+    .lightbox-close {
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: #e11d48;
+      border: none;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SHIBUYA BOT PIT — 20 ULTRA-CLEAN MOBILE APP CONCEPTS</h1>
+    <p>Every board shows the <strong>Sideways 16:9 Landscape Battle Arena</strong> on the left alongside the <strong>4 Uncluttered Portrait Hub Screens</strong> (Lobby &amp; Wager, 6-Slot Garage, Skill Tree &amp; Vault, Social &amp; ELO). Click any board to zoom full-screen.</p>
+    <div class="quick-jump">
+      <a href="#concept-01">#01</a><a href="#concept-02">#02</a><a href="#concept-03">#03</a><a href="#concept-04">#04</a><a href="#concept-05">#05</a><a href="#concept-06">#06</a><a href="#concept-07">#07</a><a href="#concept-08">#08</a><a href="#concept-09">#09</a><a href="#concept-10">#10</a><a href="#concept-11">#11</a><a href="#concept-12">#12</a><a href="#concept-13">#13</a><a href="#concept-14">#14</a><a href="#concept-15">#15</a><a href="#concept-16">#16</a><a href="#concept-17">#17</a><a href="#concept-18">#18</a><a href="#concept-19">#19</a><a href="#concept-20">#20</a>
+    </div>
+  </header>
+
+  <main class="gallery-grid">
+    
+    <article class="concept-card" id="concept-01">
+      <div class="concept-header">
+        <span class="concept-badge">#01 OF 20</span>
+        <h2>Concept 01 — VisionOS Zero-Gravity Spatial Glass</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c01.jpg', 'Concept 01 — VisionOS Zero-Gravity Spatial Glass')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c01.jpg" alt="Concept 01 — VisionOS Zero-Gravity Spatial Glass" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Frameless frosted-glass pills floating over 70% open dark obsidian negative space; 3D BattleBot hovers on a lit floor ring with 6 floating micro-orbs; Quests collapse into a single top pill.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-02">
+      <div class="concept-header">
+        <span class="concept-badge">#02 OF 20</span>
+        <h2>Concept 02 — Apple Arcade Minimalist Card Stack</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c02.jpg', 'Concept 02 — Apple Arcade Minimalist Card Stack')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c02.jpg" alt="Concept 02 — Apple Arcade Minimalist Card Stack" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Strictly one centered focal card per screen over a blurred depth-of-field 3D backdrop; Quests and Live Chat tuck into single-line pull-up pills at the bottom edge.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-03">
+      <div class="concept-header">
+        <span class="concept-badge">#03 OF 20</span>
+        <h2>Concept 03 — Porsche Taycan / Automotive Showroom Configurator HUD</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c03.jpg', 'Concept 03 — Porsche Taycan / Automotive Showroom Configurator HUD')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c03.jpg" alt="Concept 03 — Porsche Taycan / Automotive Showroom Configurator HUD" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Sleek dark studio light-tunnel aesthetic; tapping a bot slot smoothly zooms the 3D camera into that exact part (Tires, Melee, Ranged, Reactor) with ultra-clean floating callout lines.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-04">
+      <div class="concept-header">
+        <span class="concept-badge">#04 OF 20</span>
+        <h2>Concept 04 — Nothing OS Dot-Matrix & Monochrome Gold</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c04.jpg', 'Concept 04 — Nothing OS Dot-Matrix & Monochrome Gold')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c04.jpg" alt="Concept 04 — Nothing OS Dot-Matrix & Monochrome Gold" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Pure black OLED glass with crisp geometric white and 24K gold dot-matrix telemetry, wireframe part glyphs, and zero heavy boxes or decorative clutter.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-05">
+      <div class="concept-header">
+        <span class="concept-badge">#05 OF 20</span>
+        <h2>Concept 05 — Holographic 3D Coverflow Carousel</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c05.jpg', 'Concept 05 — Holographic 3D Coverflow Carousel')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c05.jpg" alt="Concept 05 — Holographic 3D Coverflow Carousel" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Each screen spotlights a single large 3D holographic element in center focus with horizontal swipe coverflow for Wager chips, 6 Garage slots, 5 Skill categories, and ELO division crests.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-06">
+      <div class="concept-header">
+        <span class="concept-badge">#06 OF 20</span>
+        <h2>Concept 06 — Zen Obsidian & Liquid Gold Ribbon</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c06.jpg', 'Concept 06 — Zen Obsidian & Liquid Gold Ribbon')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c06.jpg" alt="Concept 06 — Zen Obsidian & Liquid Gold Ribbon" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">A single flowing golden light ribbon ties all 4 portrait screens together over deep matte obsidian; only 2 pill buttons per screen with micro-tabs for Quests and Live Chat.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-07">
+      <div class="concept-header">
+        <span class="concept-badge">#07 OF 20</span>
+        <h2>Concept 07 — Destiny / Bungie Hairline Radial Minimalist</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c07.jpg', 'Concept 07 — Destiny / Bungie Hairline Radial Minimalist')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c07.jpg" alt="Concept 07 — Destiny / Bungie Hairline Radial Minimalist" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Ultra-fine 1px gold hairlines on dark slate, wide letter-spaced headers, a clean 6-node ring around the BattleBot, and a 5-orb primary skill ring that expands on tap.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-08">
+      <div class="concept-header">
+        <span class="concept-badge">#08 OF 20</span>
+        <h2>Concept 08 — Teenage Engineering Tactile Matte Dial</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c08.jpg', 'Concept 08 — Teenage Engineering Tactile Matte Dial')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c08.jpg" alt="Concept 08 — Teenage Engineering Tactile Matte Dial" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Precision matte charcoal hardware aesthetic with tactile rotary dials for selecting Wager Stakes and cycling the 6 Garage slots.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-09">
+      <div class="concept-header">
+        <span class="concept-badge">#09 OF 20</span>
+        <h2>Concept 09 — Editorial Hype-Drop Layout</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c09.jpg', 'Concept 09 — Editorial Hype-Drop Layout')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c09.jpg" alt="Concept 09 — Editorial Hype-Drop Layout" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Magazine-clean vertical showcase with full-bleed 3D hero renders, bold typography, a single bottom action pill (ENTER PIT, EQUIP BOT, UNLOCK, CHALLENGE), and side-edge glass pull tabs.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-10">
+      <div class="concept-header">
+        <span class="concept-badge">#10 OF 20</span>
+        <h2>Concept 10 — Cyber-Minimalist Continuous 3D Camera Stage</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c10.jpg', 'Concept 10 — Cyber-Minimalist Continuous 3D Camera Stage')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c10.jpg" alt="Concept 10 — Cyber-Minimalist Continuous 3D Camera Stage" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">One continuous 3D Shibuya pit environment across all 4 tabs — switching tabs smoothly pans the 3D camera from the Arena Gate to the Mech Bay, Reactor Core, and Trophy Podium.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-11">
+      <div class="concept-header">
+        <span class="concept-badge">#11 OF 20</span>
+        <h2>Concept 11 — PS5 Dynamic Ambient Edge Glass</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c11.jpg', 'Concept 11 — PS5 Dynamic Ambient Edge Glass')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c11.jpg" alt="Concept 11 — PS5 Dynamic Ambient Edge Glass" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Soft gold and cyan ambient edge-lighting frames an open 3D viewport, paired with a paper-thin header and a single horizontal chip scroller at the bottom.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-12">
+      <div class="concept-header">
+        <span class="concept-badge">#12 OF 20</span>
+        <h2>Concept 12 — Supercell Snappy Action Hub</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c12.jpg', 'Concept 12 — Supercell Snappy Action Hub')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c12.jpg" alt="Concept 12 — Supercell Snappy Action Hub" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Puts your 3D BattleBot front-and-center on the Lobby screen with oversized, hyper-legible VS CPU / ONLINE PVP action pills and zero tiny text lists.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-13">
+      <div class="concept-header">
+        <span class="concept-badge">#13 OF 20</span>
+        <h2>Concept 13 — Gesture-First Invisible HUD</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c13.jpg', 'Concept 13 — Gesture-First Invisible HUD')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c13.jpg" alt="Concept 13 — Gesture-First Invisible HUD" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">92% unobstructed 3D view on every screen; replaces button grids with swipe-to-rotate gestures and a single Morphing Glass Action Pill at the bottom center.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-14">
+      <div class="concept-header">
+        <span class="concept-badge">#14 OF 20</span>
+        <h2>Concept 14 — Luxury Swiss Chronograph Precision Dial</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c14.jpg', 'Concept 14 — Luxury Swiss Chronograph Precision Dial')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c14.jpg" alt="Concept 14 — Luxury Swiss Chronograph Precision Dial" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Deep matte black with a single 24K gold precision bezel ring on each screen (Wager Bezel, 6-Slot Garage Bezel, Skill Constellation Bezel, ELO Rank Bezel).</p>
+    </article>
+    
+    <article class="concept-card" id="concept-15">
+      <div class="concept-header">
+        <span class="concept-badge">#15 OF 20</span>
+        <h2>Concept 15 — Frameless Laser Projection HUD</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c15.jpg', 'Concept 15 — Frameless Laser Projection HUD')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c15.jpg" alt="Concept 15 — Frameless Laser Projection HUD" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Eliminates all rectangular boxes, cards, and panel backgrounds — crisp glowing gold and cyan vector lines float directly over the dark 3D Shibuya arena.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-16">
+      <div class="concept-header">
+        <span class="concept-badge">#16 OF 20</span>
+        <h2>Concept 16 — Floating Island Micro-Docks</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c16.jpg', 'Concept 16 — Floating Island Micro-Docks')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c16.jpg" alt="Concept 16 — Floating Island Micro-Docks" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">At most 2 compact floating glass islands per screen (a top status pill + a bottom action island), leaving the entire middle 75% of the screen completely open for dynamic 3D visuals.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-17">
+      <div class="concept-header">
+        <span class="concept-badge">#17 OF 20</span>
+        <h2>Concept 17 — Split-Horizon 60/40 Clean Deck</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c17.jpg', 'Concept 17 — Split-Horizon 60/40 Clean Deck')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c17.jpg" alt="Concept 17 — Split-Horizon 60/40 Clean Deck" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Top 60% of every portrait screen is a pure, unobstructed 3D viewport (Arena preview, 3D Bot turntable, 3D Skill Core, 3D Champion Podium); bottom 40% is a single clean matte-black control deck.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-18">
+      <div class="concept-header">
+        <span class="concept-badge">#18 OF 20</span>
+        <h2>Concept 18 — Isometric 3D Diorama Room Switcher</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c18.jpg', 'Concept 18 — Isometric 3D Diorama Room Switcher')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c18.jpg" alt="Concept 18 — Isometric 3D Diorama Room Switcher" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Each tab is a miniature 3D isometric room (Wager Lounge, Bot Bay, Cyber Lab, Champions Podium) with only 2 clean action pills at the bottom.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-19">
+      <div class="concept-header">
+        <span class="concept-badge">#19 OF 20</span>
+        <h2>Concept 19 — Dynamic 3-Tile Bento Grid</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c19.jpg', 'Concept 19 — Dynamic 3-Tile Bento Grid')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c19.jpg" alt="Concept 19 — Dynamic 3-Tile Bento Grid" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Enforces a strict 3-Tile Max Rule per screen with generous 16px gaps and zero nested scrollbars.</p>
+    </article>
+    
+    <article class="concept-card" id="concept-20">
+      <div class="concept-header">
+        <span class="concept-badge">#20 OF 20</span>
+        <h2>Concept 20 — Sovereign Master Ultra-Clean Edition</h2>
+      </div>
+      <div class="concept-img-wrap" onclick="openLightbox('assets/concept_gallery/battlebots_topdown_3d/clean_20/c20.jpg', 'Concept 20 — Sovereign Master Ultra-Clean Edition')">
+        <img src="assets/concept_gallery/battlebots_topdown_3d/clean_20/c20.jpg" alt="Concept 20 — Sovereign Master Ultra-Clean Edition" loading="lazy" />
+        <span class="zoom-hint">🔍 Click to Expand Full Screen</span>
+      </div>
+      <p class="concept-desc">Combines a 95%-open sideways landscape battle arena with 4 ultra-clean portrait screens featuring a 3D Bot Turntable, single-row wager chips, and collapsed bottom slide-up drawers (Quests ^, Part Repair ^, Live Chat ^).</p>
+    </article>
+    
+  </main>
+
+  <div class="lightbox" id="lightbox" onclick="if(event.target.id==='lightbox')closeLightbox()">
+    <img id="lightboxImg" src="" alt="" />
+    <div class="lightbox-bar">
+      <span id="lightboxTitle"></span>
+      <button type="button" class="lightbox-close" onclick="closeLightbox()">✕ Close</button>
+    </div>
+  </div>
+
+  <script>
+    function openLightbox(src, title) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightboxTitle').textContent = title;
+      document.getElementById('lightbox').classList.add('open');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+</body>
+</html>
