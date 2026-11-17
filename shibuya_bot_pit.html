@@ -10884,7 +10884,7 @@
       sim.lastCountdownSec = 10;
       sim.running = true;
       if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
-      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineRev();
       document.getElementById("battleOverlay").classList.add("hidden");
       const arenaEl = document.getElementById("battleCanvas") || document.getElementById("arenaSection");
       if (arenaEl && typeof arenaEl.scrollIntoView === "function") {
@@ -14493,7 +14493,7 @@
       sim.lastCountdownSec = 10;
       sim.running = true;
       if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
-      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineRev();
       document.getElementById("battleOverlay").classList.add("hidden");
       const arenaEl = document.getElementById("battleCanvas") || document.getElementById("arenaSection");
       if (arenaEl && typeof arenaEl.scrollIntoView === "function") {
@@ -18861,7 +18861,7 @@
 
     const SOUND_STUDIO_CATALOG = [
       {
-        cat: "crash", short: "💥 1. Girthy Crash", title: "💥 1. CRISP & GIRTHY CAR CRASH (Full 20kHz Metal Snap + 35Hz Sub Slam)",
+        cat: "crash", short: "💥 1. Girthy Crash", title: "💥 1. CRISP & GIRTHY CAR CRASH (Locked In: #7 Heavy War-Rig Detonation)",
         options: [
           { id: 1,  name: "Deep Kinetic Body Slam",       desc: "Full 20kHz studio transient snap + phase-locked 35Hz sub-bass punch" },
           { id: 2,  name: "Heavy Steel Beam Smash",       desc: "Crisp steel pole impact + deep 36Hz chest-thumping sub slam" },
@@ -18876,7 +18876,7 @@
         ]
       },
       {
-        cat: "rev", short: "🏎️ 2. Engine Rev", title: "🏎️ 2. CRISP ENGINE REV (Un-Filtered 20kHz Tailpipe Exhaust Bark)",
+        cat: "rev", short: "🏎️ 2. Engine Rev", title: "🏎️ 2. CRISP ENGINE REV (Locked In: #7 Lamborghini Centenario V12)",
         options: [
           { id: 1,  name: "Ford Mustang GT (Mod Exhaust)",desc: "Crisp, raspy 5.0L Coyote V8 stationary tailpipe throttle rev" },
           { id: 2,  name: "Corvette C6 Z06 (7.0L LS7 V8)",desc: "Raw, un-filtered 7.0L American V8 bark & exhaust crackle" },
@@ -18891,7 +18891,7 @@
         ]
       },
       {
-        cat: "idle", short: "🛞 3. Engine Idle", title: "🛞 3. CRISP ENGINE IDLE (Un-Filtered 20kHz Tailpipe Chop & Burble)",
+        cat: "idle", short: "🛞 3. Engine Idle", title: "🛞 3. CRISP ENGINE IDLE (Locked In: #9 Detroit 6.2L War-Truck Idle)",
         options: [
           { id: 1,  name: "Corvette C6 Z06 Crisp Idle",   desc: "Clear, close-mic 7.0L LS7 V8 tailpipe chop & valve burble" },
           { id: 2,  name: "Shelby GT350 V8 Raspy Idle",   desc: "Crisp, metallic Shelby V8 open-exhaust stationary idle" },
@@ -18904,6 +18904,96 @@
           { id: 9,  name: "Detroit 6.2L War-Truck Idle",  desc: "Crisp mechanical 6.2L V8 diesel injector clatter & chug" },
           { id: 10, name: "Corvette Z06 Deep Cammed Lope",desc: "Rhythmic, un-filtered 7.0L V8 cammed tailpipe lope" }
         ]
+      },
+      {
+        cat: "saw", short: "⚙️ 4. Rip-Saw & Shred", title: "⚙️ 4. RIP-SAW, AUGER & RING-SPINNER SHRED (Full 20kHz Blade Bite)",
+        options: [
+          { id: 1,  name: "Stihl Two-Stroke Chainsaw Rip", desc: "Real high-RPM two-stroke chainsaw ripping into steel armor" },
+          { id: 2,  name: "High-RPM Carbide Auger Drill",  desc: "Piercing industrial carbide drill grinding through metal" },
+          { id: 3,  name: "Hydraulic Jaws & Steel Shear",  desc: "Heavy hydraulic jaws clamping & shearing steel plate" },
+          { id: 4,  name: "Dual Rip-Saw & Drill Grind",    desc: "Combined circular rip-saw blade and high-torque auger grind" },
+          { id: 5,  name: "Heavy Steel Pole-Grinder",      desc: "Rapid multi-tooth steel grinder shredding roll-cage bars" },
+          { id: 6,  name: "Deep-Torque Industrial Saw",    desc: "Throaty low-slung chainsaw tear with heavy motor torque" },
+          { id: 7,  name: "Diamond-Tipped Armor Cutter",   desc: "High-speed rotary cutter slicing sheet metal with sparks" },
+          { id: 8,  name: "Pneumatic Hammer-Saw Crush",    desc: "Hydraulic ram whine paired with vicious chainsaw bite" },
+          { id: 9,  name: "18,000-RPM Ring-Spinner Shred", desc: "Screaming high-RPM spinner motor colliding with steel" },
+          { id: 10, name: "Molten Furnace Saw Eruption",   desc: "Chainsaw shred layered with a deep furnace blast punch" }
+        ]
+      },
+      {
+        cat: "weapon", short: "🔫 5. Weapon Fire", title: "🔫 5. RANGED WEAPON FIRE & CANNON (Crisp Muzzle Snap + Sub Recoil)",
+        options: [
+          { id: 1,  name: ".50-Cal Sniper Rifle Crack",    desc: "Razor-sharp ballistic rifle crack with 36Hz recoil thump" },
+          { id: 2,  name: "Twin-Barrel Gauss Railgun",     desc: "Supersonic hypersonic rail-slug crack + sonic boom tail" },
+          { id: 3,  name: "120mm Tank Cannon Blast",       desc: "Massive main-battle-tank breech fire & 32Hz chest kick" },
+          { id: 4,  name: "Supersonic Rail-Slug Boom",     desc: "Pure whip-crack sonic boom with crisp metallic bolt snap" },
+          { id: 5,  name: "Heavy Siege Mortar Launch",     desc: "Deep kinetic mortar tube thump & explosive propellant roar" },
+          { id: 6,  name: "Quad-Pod Missile Salvo",        desc: "Crisp rocket pod ignition whoosh & high-energy salvo pop" },
+          { id: 7,  name: "Rotary Vulcan Double-Tap",      desc: "Rapid two-round heavy autocannon burst with brass snap" },
+          { id: 8,  name: "High-Voltage Tesla Arc Cannon", desc: "Crisp lightning-arc snap & high-voltage thunder discharge" },
+          { id: 9,  name: "Armor-Piercing Flak Shot",      desc: "Hard metallic breech slam paired with high-caliber gunfire" },
+          { id: 10, name: "Orbital Siege Howitzer",        desc: "Full-spectrum cannon detonation + transonic shockwave" }
+        ]
+      },
+      {
+        cat: "break", short: "🔩 6. Part Break & KO", title: "🔩 6. PART BREAK, ARMOR SHEAR & KNOCKOUT (Glass/Steel + Sub Drop)",
+        options: [
+          { id: 1,  name: "Tempered Armor & Glass Shatter",desc: "Razor-sharp tempered glass smash + torn steel armor plate" },
+          { id: 2,  name: "Catastrophic Chassis Collapse", desc: "Multi-stage mechanical frame snap & heavy sub-bass drop" },
+          { id: 3,  name: "War-Rig Knockout Detonation",   desc: "Full-bandwidth KO explosion with flying steel shrapnel" },
+          { id: 4,  name: "High-Voltage Core Blowout",     desc: "Electrical transformer thunder arc + shattered cockpit glass" },
+          { id: 5,  name: "Sheared Axle & Steel Snap",     desc: "Crisp metallic torsion bar snap & heavy suspension drop" },
+          { id: 6,  name: "Blown Tire & Rim Wreck",        desc: "Explosive sidewall blowout & heavy steel rim slam" },
+          { id: 7,  name: "Hydraulic Line Burst & Crunch", desc: "High-pressure hydraulic rupture + glass & steel crunch" },
+          { id: 8,  name: "Demolition Derby Totaled KO",   desc: "Extended rolling steel wreck & concussive sub-bass boom" },
+          { id: 9,  name: "Sonic Shockwave Armor Rip",     desc: "Whip-crack shockwave tearing sheet metal off the hull" },
+          { id: 10, name: "Triple-Stage Mech Explosion",   desc: "Primary blast + secondary fireworks & glass scatter" }
+        ]
+      },
+      {
+        cat: "bell", short: "🔔 7. Arena Bell & Horn", title: "🔔 7. ROUND BELL & OVERCHARGE HORN (Crisp Brass & Train Horns)",
+        options: [
+          { id: 1,  name: "Championship Brass Bell (1x)",  desc: "Crystal-clear single strike of a heavy boxing/MMA ring bell" },
+          { id: 2,  name: "Double-Strike Fight Bell (2x)", desc: "Classic rapid 2-strike championship round-start ring bell" },
+          { id: 3,  name: "Nathan K5LA Train Airhorn",     desc: "Authentic 5-chime locomotive airhorn blast (full 20kHz)" },
+          { id: 4,  name: "Nathan P5 Industrial Horn",     desc: "Rich, punchy P5 locomotive horn chord for arena alerts" },
+          { id: 5,  name: "Ring Bell + K5LA Horn Stinger", desc: "Crisp brass bell strike backed by a K5LA airhorn swell" },
+          { id: 6,  name: "Triple-Strike Knockout Bell",   desc: "Rapid 3-strike championship bell signaling match finish" },
+          { id: 7,  name: "Sudden Overcharge Airhorn",     desc: "Urgent high-pressure K5LA airhorn blast for final 30s" },
+          { id: 8,  name: "Heavy Steel Anvil Gong",        desc: "Deep bronze-pitched ring bell layered with a steel anvil hit" },
+          { id: 9,  name: "Stadium Pit-Horn & Double Bell",desc: "Double brass bell ring over a P5 stadium horn blast" },
+          { id: 10, name: "Final Round War-Horn Blast",    desc: "Deep-pitched locomotive war-horn with 35Hz stadium sub" }
+        ]
+      },
+      {
+        cat: "victory", short: "🏆 8. Victory Fanfare", title: "🏆 8. VICTORY FANFARE & CHAMPIONSHIP CELEBRATION",
+        options: [
+          { id: 1,  name: "K5LA Airhorn & Fireworks",      desc: "5-chime championship train horn + crisp stadium fireworks" },
+          { id: 2,  name: "Grand Finale Fireworks & Bell", desc: "Double championship bell + crackling aerial fireworks salvo" },
+          { id: 3,  name: "P5 Victory Horn & Double Bell", desc: "Punchy P5 airhorn chord + rapid double ring bell" },
+          { id: 4,  name: "Lamborghini V12 Victory Rev",   desc: "Screaming 6.5L V12 celebration rev + aerial fireworks" },
+          { id: 5,  name: "Mustang V8 Roar & Airhorn",     desc: "5.0L Coyote V8 throttle roar + K5LA championship horn" },
+          { id: 6,  name: "Triple Bell & Pyro Salvo",      desc: "3-strike knockout bell into a bright fireworks celebration" },
+          { id: 7,  name: "Formula 1 V10 Winner Scream",   desc: "18,000-RPM F1 V10 victory blip + stadium pyrotechnics" },
+          { id: 8,  name: "Heavy War-Horn & Cannon Salute",desc: "K5LA airhorn blast + concussive victory cannon boom" },
+          { id: 9,  name: "Shibuya Pit Pyro & Horn",       desc: "High-definition aerial mortar crackle + P5 stadium horn" },
+          { id: 10, name: "Apex Champion Full Finale",     desc: "K5LA horn + Lamborghini V12 rev + grand finale fireworks" }
+        ]
+      },
+      {
+        cat: "ui", short: "🔩 9. Garage & UI Latch", title: "🔩 9. GARAGE EQUIP LATCH & BUTTON CLICK (Crisp Mechanical Tactile)",
+        options: [
+          { id: 1,  name: "Crisp Billet Ratchet Latch",    desc: "Sharp, tactile machined-steel lock snap for buttons & tabs" },
+          { id: 2,  name: "Titanium Micro-Switch Click",   desc: "Ultra-clean, instant high-definition mechanical click" },
+          { id: 3,  name: "Heavy Mech Servo Bolt",         desc: "Solid robotic actuator slide & lock for equipping parts" },
+          { id: 4,  name: "Hardened Steel Pin Lock",       desc: "Crisp metallic pin tap + precision lock engagement" },
+          { id: 5,  name: "Diamond Vault Bell Latch",      desc: "Precision lock snap with a bright high-frequency chime" },
+          { id: 6,  name: "Double-Detent Torque Wrench",   desc: "Crisp two-stage pit-crew torque wrench click" },
+          { id: 7,  name: "Armor Plate Bolted On",         desc: "Heavy mech servo lock + high-pitched steel anvil tap" },
+          { id: 8,  name: "Pneumatic Air-Wrench Zip",      desc: "Short pit-stop hydraulic zip into a solid mechanical lock" },
+          { id: 9,  name: "TacticalAlloy Trigger Snap",    desc: "High-tension metallic trigger click with tight low thud" },
+          { id: 10, name: "Syndicate Gold Medallion Ping", desc: "Crisp mechanical latch + resonant metallic medallion ring" }
+        ]
       }
     ];
 
@@ -18915,10 +19005,10 @@
       _buffers: {},
       _loading: {},
       prefs: (() => {
-        const defaults = { crash: 1, rev: 1, idle: 1, clash: 1, saw: 1, weapon: 1, boost: 1, break: 1, bell: 1, ui: 1, victory: 1 };
+        const defaults = { crash: 7, rev: 7, idle: 9, clash: 7, saw: 1, weapon: 1, boost: 7, break: 1, bell: 1, ui: 1, victory: 1 };
         try {
           const saved = JSON.parse(localStorage.getItem("rc_c19_sound_prefs") || "{}");
-          const merged = { ...defaults, ...saved };
+          const merged = { ...defaults, ...saved, crash: saved.crash_locked ? saved.crash : 7, rev: saved.rev_locked ? saved.rev : 7, idle: saved.idle_locked ? saved.idle : 9 };
           Object.keys(merged).forEach(k => {
             if (merged[k] < 1 || merged[k] > 10) merged[k] = 1;
           });
@@ -18949,7 +19039,7 @@
       },
 
       preloadActivePrefs() {
-        Object.keys(this.prefs).forEach((cat) => {
+        ["crash", "rev", "idle", "saw", "weapon", "break", "bell", "victory", "ui"].forEach((cat) => {
           this._loadMp3Buffer(`${cat}_${this.prefs[cat] || 1}`);
         });
       },
@@ -18959,7 +19049,7 @@
           if (cb) cb(this._buffers[key]);
           return;
         }
-        const url = `assets/sfx_realistic/${key}.mp3?v=crisp4`;
+        const url = `assets/sfx_realistic/${key}.mp3?v=crisp5`;
         if (this._loading[key]) return;
         this._loading[key] = true;
         fetch(url)
@@ -18999,7 +19089,7 @@
         }
         // Immediate HTML5 Audio playback while WebAudio buffer caches
         try {
-          const a = new Audio(`assets/sfx_realistic/${key}.mp3?v=crisp4`);
+          const a = new Audio(`assets/sfx_realistic/${key}.mp3?v=crisp5`);
           a.volume = Math.min(1, Math.max(0, volume));
           a.playbackRate = playbackRate;
           a.play().catch(() => {});
@@ -19009,9 +19099,22 @@
 
       setOption(cat, optId) {
         this.prefs[cat] = Math.max(1, Math.min(10, Number(optId) || 1));
+        if (cat === "crash" || cat === "rev" || cat === "idle") {
+          this.prefs[cat + "_locked"] = true;
+        }
         this.savePrefs();
         this.previewSound(cat, this.prefs[cat]);
         if (typeof renderC19SoundStudioModal === "function") renderC19SoundStudioModal();
+      },
+
+      playEngineRev() {
+        if (this.muted) return;
+        this.playRealClip("rev", this.prefs.rev || 7, 0.88, 1.0);
+      },
+
+      playEngineIdle() {
+        if (this.muted) return;
+        this.playRealClip("idle", this.prefs.idle || 9, 0.80, 1.0);
       },
 
       applyPresetPack(optId) {
@@ -19073,7 +19176,7 @@
         if (nowMs - this.lastSawMs < 240) return;
         this.lastSawMs = nowMs;
         const rate = 0.94 + Math.random() * 0.12;
-        this.playRealClip("rev", this.prefs.rev || 1, 0.82, rate);
+        this.playRealClip("saw", this.prefs.saw || 1, 0.86, rate);
       },
 
       playWeaponFire(kind = "rail") {
@@ -23159,7 +23262,7 @@
       const spec = REALISTIC_CAR_SKINS[next] || REALISTIC_CAR_SKINS.interceptor;
       const pill = document.getElementById("c19CarModelPill");
       if (pill) pill.textContent = spec.label + " ▸";
-      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineIdle();
       showShopToast("🏎️ EQUIPPED CHASSIS: " + spec.label, "#ff7700");
     }
     try {
