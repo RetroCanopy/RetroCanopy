@@ -2966,6 +2966,7 @@
             </div>
             <button type="button" class="mini-btn" id="prSendTestPushBtn" style="color:#ffe89e;border-color:rgba(245,196,81,0.68) !important;">&#128241; Send Test Project Push</button>
             <button type="button" class="mini-btn" id="prRefreshCloudBtn" style="color:#2ce6ff;border-color:rgba(44,230,255,0.55) !important;">&#8635; Sync Live Requests</button>
+            <button type="button" class="mini-btn" id="prClearAllBtn" style="color:#ff85b3;border-color:rgba(255,92,150,0.65) !important;">&#128465;&#65039; Clear All Requests</button>
           </div>
         </div>
 
@@ -3027,6 +3028,7 @@
 
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button type="button" class="mini-btn" id="sqRefreshCloudQuotesBtn" style="color:#22f59b;border-color:rgba(34,245,155,0.55) !important;">&#8635; Sync Live Paid Status</button>
+            <button type="button" class="mini-btn" id="sqClearAllQuotesBtn" style="color:#ff85b3;border-color:rgba(255,92,150,0.65) !important;">&#128465;&#65039; Clear All Quotes</button>
             <button type="button" class="vision-gold-cta-btn" id="sqCreateNewQuoteBtn" style="padding:8px 16px;font-size:0.75rem;">+ New Project Quote</button>
           </div>
         </div>
@@ -4295,10 +4297,15 @@
                 </div>
               </div>
 
-              <label class="prod-checkoff-label" title="Check off when bulk order pressing &amp; fulfillment are complete">
-                <input type="checkbox" data-toggle-merch-fulfilled="${escapeHtml(order.orderId)}" ${order.fulfilled ? 'checked' : ''}>
-                <span>${order.fulfilled ? '&#10003; Completed (In Order History)' : '&#10003; Mark Bulk Order Completed &rarr; Move to History'}</span>
-              </label>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+                <label class="prod-checkoff-label" style="flex:1;" title="Check off when bulk order pressing &amp; fulfillment are complete">
+                  <input type="checkbox" data-toggle-merch-fulfilled="${escapeHtml(order.orderId)}" ${order.fulfilled ? 'checked' : ''}>
+                  <span>${order.fulfilled ? '&#10003; Completed (In Order History)' : '&#10003; Mark Bulk Order Completed &rarr; Move to History'}</span>
+                </label>
+                <button type="button" class="mini-btn" data-delete-merch-order="${escapeHtml(order.orderId)}" style="color:#ff85b3;border-color:rgba(255,92,150,0.65) !important;" title="Delete Order">
+                  &#128465;&#65039; Delete
+                </button>
+              </div>
             </div>
           `;
         }
@@ -4419,10 +4426,15 @@
               </div>
             </div>
 
-            <label class="prod-checkoff-label" title="Check off when production &amp; fulfillment are complete to move to Order History">
-              <input type="checkbox" data-toggle-merch-fulfilled="${escapeHtml(order.orderId)}" ${order.fulfilled ? 'checked' : ''}>
-              <span>${order.fulfilled ? '&#10003; Completed (In Order History)' : '&#10003; Mark Completed &rarr; Move to History'}</span>
-            </label>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+              <label class="prod-checkoff-label" style="flex:1;" title="Check off when production &amp; fulfillment are complete to move to Order History">
+                <input type="checkbox" data-toggle-merch-fulfilled="${escapeHtml(order.orderId)}" ${order.fulfilled ? 'checked' : ''}>
+                <span>${order.fulfilled ? '&#10003; Completed (In Order History)' : '&#10003; Mark Completed &rarr; Move to History'}</span>
+              </label>
+              <button type="button" class="mini-btn" data-delete-merch-order="${escapeHtml(order.orderId)}" style="color:#ff85b3;border-color:rgba(255,92,150,0.65) !important;" title="Delete Order">
+                &#128465;&#65039; Delete
+              </button>
+            </div>
           </div>
         `;
       }
@@ -5144,10 +5156,30 @@
         };
       }
 
+      function getDeletedProjReqIds() {
+        try {
+          return new Set(JSON.parse(localStorage.getItem('rc_deleted_proj_req_ids_v1') || '[]') || []);
+        } catch (_) {
+          return new Set();
+        }
+      }
+
+      function markProjReqIdDeleted(id) {
+        if (!id) return;
+        try {
+          const s = getDeletedProjReqIds();
+          s.add(String(id));
+          localStorage.setItem('rc_deleted_proj_req_ids_v1', JSON.stringify(Array.from(s).slice(-400)));
+        } catch (_) {}
+      }
+
       function getMergedProjectRequests() {
+        const deletedIds = getDeletedProjReqIds();
         const byKey = new Map();
         cloudProjectRequests.forEach((r) => {
-          if (r && r.requestId) byKey.set(String(r.requestId), r);
+          if (r && r.requestId && !deletedIds.has(String(r.requestId))) {
+            byKey.set(String(r.requestId), r);
+          }
         });
         try {
           const localList = JSON.parse(localStorage.getItem('rc_studio_inquiries_v1') || '[]') || [];
@@ -5155,6 +5187,7 @@
             const norm = normalizeProjectRequestRow(raw);
             if (!norm) return;
             const key = String(norm.requestId || (norm.name + '|' + norm.contact + '|' + norm.service));
+            if (deletedIds.has(key) || deletedIds.has(String(norm.requestId))) return;
             if (!byKey.has(key)) {
               byKey.set(key, norm);
             } else {
@@ -5230,9 +5263,14 @@
                 </button>
               </div>
 
-              <button type="button" class="mini-btn" data-toggle-projreq-done="${escapeHtml(req.requestId)}" data-next-state="${req.fulfilled ? '0' : '1'}" style="color:${req.fulfilled ? '#ffb36b' : '#22f59b'};border-color:${req.fulfilled ? 'rgba(255,179,107,0.55)' : 'rgba(34,245,155,0.65)'} !important;">
-                ${req.fulfilled ? '&#8634; Reopen Request' : '&#10003; Mark Contacted / Done'}
-              </button>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button type="button" class="mini-btn" data-toggle-projreq-done="${escapeHtml(req.requestId)}" data-next-state="${req.fulfilled ? '0' : '1'}" style="color:${req.fulfilled ? '#ffb36b' : '#22f59b'};border-color:${req.fulfilled ? 'rgba(255,179,107,0.55)' : 'rgba(34,245,155,0.65)'} !important;">
+                  ${req.fulfilled ? '&#8634; Reopen Request' : '&#10003; Mark Contacted / Done'}
+                </button>
+                <button type="button" class="mini-btn" data-delete-projreq="${escapeHtml(req.requestId)}" style="color:#ff85b3;border-color:rgba(255,92,150,0.65) !important;" title="Delete Project Request">
+                  &#128465;&#65039; Delete
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -5324,6 +5362,9 @@
                   </button>
                   <button type="button" class="mini-btn" data-open-projreq-quoter="${escapeHtml(req.requestId)}" style="color:#ffd099;border-color:rgba(255,148,54,0.8) !important;">
                     &#128208; Open in Quoter
+                  </button>
+                  <button type="button" class="mini-btn" data-delete-projreq="${escapeHtml(req.requestId)}" style="color:#ff85b3;border-color:rgba(255,92,150,0.65) !important;">
+                    &times; Clear
                   </button>
                 </div>
               </div>
@@ -5482,7 +5523,93 @@
           openProjectRequestInQuoter(reqId);
           return;
         }
+
+        const delProjReqBtn = e.target.closest('[data-delete-projreq]');
+        if (delProjReqBtn) {
+          const reqId = delProjReqBtn.getAttribute('data-delete-projreq');
+          await deleteProjectRequestEverywhere(reqId);
+          return;
+        }
+
+        const delMerchOrdBtn = e.target.closest('[data-delete-merch-order]');
+        if (delMerchOrdBtn) {
+          const ordId = delMerchOrdBtn.getAttribute('data-delete-merch-order');
+          await deleteMerchOrderEverywhere(ordId);
+          return;
+        }
       });
+
+      async function deleteProjectRequestEverywhere(requestId) {
+        const cleanId = String(requestId || '').trim();
+        if (!cleanId) return;
+        markProjReqIdDeleted(cleanId);
+        try {
+          const list = JSON.parse(localStorage.getItem('rc_studio_inquiries_v1') || '[]') || [];
+          const filtered = list.filter((item) => String(item.requestId || item.id || '') !== cleanId);
+          localStorage.setItem('rc_studio_inquiries_v1', JSON.stringify(filtered));
+        } catch (_) {}
+        cloudProjectRequests = cloudProjectRequests.filter((item) => String(item.requestId) !== cleanId);
+        renderProjectRequestsHub();
+        try {
+          await fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?order_id=eq.${encodeURIComponent(cleanId)}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            }
+          });
+        } catch (_) {}
+      }
+
+      async function clearAllProjectRequestsEverywhere() {
+        const allReqs = getMergedProjectRequests();
+        allReqs.forEach((r) => {
+          if (r && r.requestId) markProjReqIdDeleted(r.requestId);
+        });
+        try {
+          localStorage.setItem('rc_studio_inquiries_v1', '[]');
+        } catch (_) {}
+        cloudProjectRequests = [];
+        renderProjectRequestsHub();
+        try {
+          await fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?payment_status=eq.PROJECT_REQUEST`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            }
+          });
+        } catch (_) {}
+      }
+
+      async function deleteMerchOrderEverywhere(orderId) {
+        const cleanId = String(orderId || '').trim();
+        if (!cleanId) return;
+        cloudPaidMerchOrders = cloudPaidMerchOrders.filter((o) => String(o.orderId) !== cleanId);
+        ['rc_shop_orders_v2', 'rc_shop_orders_v1'].forEach((k) => {
+          try {
+            const list = JSON.parse(localStorage.getItem(k) || '[]') || [];
+            localStorage.setItem(k, JSON.stringify(list.filter((o) => String(o.orderId || o.order_id) !== cleanId)));
+          } catch (_) {}
+        });
+        renderWebsiteMerchOrdersHub();
+        try {
+          await fetch(`${SUPABASE_REST_URL}/retrocanopy_orders?order_id=eq.${encodeURIComponent(cleanId)}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+            }
+          });
+        } catch (_) {}
+      }
+
+      const prClearAllBtn = document.getElementById('prClearAllBtn');
+      if (prClearAllBtn) {
+        prClearAllBtn.addEventListener('click', async () => {
+          await clearAllProjectRequestsEverywhere();
+        });
+      }
 
       const prRefreshCloudBtn = document.getElementById('prRefreshCloudBtn');
       if (prRefreshCloudBtn) {
@@ -5855,6 +5982,6 @@
     })();
   </script>
   <script src="official_ticket_dossier.js?v=292"></script>
-  <script src="bulk_quote_tool.js?v=292"></script>
+  <script src="bulk_quote_tool.js?v=294"></script>
 </body>
 </html>
