@@ -19005,12 +19005,12 @@
       _buffers: {},
       _loading: {},
       prefs: (() => {
-        const defaults = { crash: 7, rev: 7, idle: 9, clash: 7, saw: 1, weapon: 1, boost: 7, break: 1, bell: 1, ui: 1, victory: 1 };
+        const defaults = { crash: 7, rev: 7, idle: 9, saw: 10, weapon: 5, break: 7, bell: 3, victory: 10, ui: 6 };
         try {
-          const saved = JSON.parse(localStorage.getItem("rc_c19_sound_prefs") || "{}");
-          const merged = { ...defaults, ...saved, crash: saved.crash_locked ? saved.crash : 7, rev: saved.rev_locked ? saved.rev : 7, idle: saved.idle_locked ? saved.idle : 9 };
-          Object.keys(merged).forEach(k => {
-            if (merged[k] < 1 || merged[k] > 10) merged[k] = 1;
+          const saved = JSON.parse(localStorage.getItem("rc_c19_sound_prefs_v2") || "{}");
+          const merged = { ...defaults, ...saved };
+          Object.keys(defaults).forEach(k => {
+            if (typeof merged[k] !== "number" || merged[k] < 1 || merged[k] > 10) merged[k] = defaults[k];
           });
           return merged;
         } catch (_) {
@@ -19020,7 +19020,7 @@
 
       savePrefs() {
         try {
-          localStorage.setItem("rc_c19_sound_prefs", JSON.stringify(this.prefs));
+          localStorage.setItem("rc_c19_sound_prefs_v2", JSON.stringify(this.prefs));
         } catch (_) {}
       },
 
@@ -19167,7 +19167,7 @@
         if (nowMs - this.lastClashMs < 95) return;
         this.lastClashMs = nowMs;
         const rate = (heavy ? 0.94 : 1.04) * (0.94 + Math.random() * 0.12);
-        this.playRealClip("crash", this.prefs.crash || 1, heavy ? 0.95 : 0.78, rate);
+        this.playRealClip("crash", this.prefs.crash || 7, heavy ? 0.95 : 0.78, rate);
       },
 
       playSawBuzz() {
@@ -19176,47 +19176,47 @@
         if (nowMs - this.lastSawMs < 240) return;
         this.lastSawMs = nowMs;
         const rate = 0.94 + Math.random() * 0.12;
-        this.playRealClip("saw", this.prefs.saw || 1, 0.86, rate);
+        this.playRealClip("saw", this.prefs.saw || 10, 0.86, rate);
       },
 
       playWeaponFire(kind = "rail") {
         if (this.muted) return;
         const rate = 0.95 + Math.random() * 0.10;
-        this.playRealClip("weapon", this.prefs.weapon || 1, 0.88, rate);
+        this.playRealClip("weapon", this.prefs.weapon || 5, 0.88, rate);
       },
 
       playPredatorLock() {
         if (this.muted) return;
-        this.playRealClip("rev", this.prefs.rev || 1, 0.86, 1.0);
+        this.playRealClip("rev", this.prefs.rev || 7, 0.86, 1.0);
       },
 
       playPartBreak(isCrippled = false) {
         if (this.muted) return;
-        this.playRealClip("break", this.prefs.break || 1, isCrippled ? 0.98 : 0.85, isCrippled ? 0.92 : 1.0);
+        this.playRealClip("break", this.prefs.break || 7, isCrippled ? 0.98 : 0.85, isCrippled ? 0.92 : 1.0);
       },
 
       playBell(strikes = 1) {
         if (this.muted) return;
-        this.playRealClip("bell", this.prefs.bell || 1, 0.92, 1.0);
+        this.playRealClip("bell", this.prefs.bell || 3, 0.92, 1.0);
       },
 
       playCashChime() {
         if (this.muted) return;
-        this.playRealClip("ui", this.prefs.ui || 1, 0.80, 1.0);
+        this.playRealClip("ui", this.prefs.ui || 6, 0.80, 1.0);
       },
 
       playWrenchHeal() {
         if (this.muted) return;
-        this.playRealClip("ui", 1, 0.90, 1.0);
+        this.playRealClip("ui", this.prefs.ui || 6, 0.90, 1.0);
       },
 
       playVictoryFanfare(won = true) {
         if (this.muted) return;
         if (!won) {
-          this.playRealClip("break", 4, 0.90, 0.88);
+          this.playRealClip("break", this.prefs.break || 7, 0.90, 0.88);
           return;
         }
-        this.playRealClip("victory", this.prefs.victory || 1, 0.96, 1.0);
+        this.playRealClip("victory", this.prefs.victory || 10, 0.96, 1.0);
       }
     };
 
