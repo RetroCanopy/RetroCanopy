@@ -9202,10 +9202,30 @@
     const UNIFIED_BASE_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mass_17.png?v=realcar1";
     const UNIFIED_HULL_ONLY_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mass_17_hull_only.png?v=realcar1";
     const REALISTIC_CAR_SKINS = {
-      interceptor: { id: "interceptor", label: "🏎️ INTERCEPTOR V8", url: "assets/concept_gallery/battlebots_topdown_3d/realistic_car_01_interceptor.png?v=realcar1", showCustomTires: false },
-      muscle:      { id: "muscle",      label: "🔥 TIGER MUSCLE",   url: "assets/concept_gallery/battlebots_topdown_3d/td_mass_17_hull_only.png?v=realcar1", showCustomTires: true },
-      vortex_gt:   { id: "vortex_gt",   label: "⚡ VORTEX GT",      url: "assets/concept_gallery/battlebots_topdown_3d/realistic_car_02_vortex_gt.png?v=realcar1", showCustomTires: false },
-      brawler_4x4: { id: "brawler_4x4", label: "🛻 BRAWLER 4x4",    url: "assets/concept_gallery/battlebots_topdown_3d/realistic_car_03_brawler_4x4.png?v=realcar1", showCustomTires: false }
+      car_opt_01:  { id: "car_opt_01",  num: 1,  label: "🏎️ #1 '69 CHARGER V8",     url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_01.png?v=car20", showCustomTires: false },
+      car_opt_02:  { id: "car_opt_02",  num: 2,  label: "🐍 #2 MUSTANG GT500",       url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_02.png?v=car20", showCustomTires: false },
+      car_opt_03:  { id: "car_opt_03",  num: 3,  label: "🦈 #3 CORVETTE Z06 GT",     url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_03.png?v=car20", showCustomTires: false },
+      car_opt_04:  { id: "car_opt_04",  num: 4,  label: "🔥 #4 DEMON 170 HELLCAT",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_04.png?v=car20", showCustomTires: false },
+      car_opt_05:  { id: "car_opt_05",  num: 5,  label: "💀 #5 TWIN-V8 BONE SHAKER", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_05.png?v=car20", showCustomTires: false },
+      car_opt_06:  { id: "car_opt_06",  num: 6,  label: "🐂 #6 LAMBORGHINI SVJ V12", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_06.png?v=car20", showCustomTires: false },
+      car_opt_07:  { id: "car_opt_07",  num: 7,  label: "⚡ #7 NISSAN GT-R GODZILLA",url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_07.png?v=car20", showCustomTires: false },
+      car_opt_08:  { id: "car_opt_08",  num: 8,  label: "🏁 #8 PORSCHE 911 GT3 RS",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_08.png?v=car20", showCustomTires: false },
+      car_opt_09:  { id: "car_opt_09",  num: 9,  label: "🚀 #9 BUGATTI BOLIDE W16",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_09.png?v=car20", showCustomTires: false },
+      car_opt_10:  { id: "car_opt_10",  num: 10, label: "🏮 #10 RX-7 DRIFT KING",    url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_10.png?v=car20", showCustomTires: false },
+      car_opt_11:  { id: "car_opt_11",  num: 11, label: "🏜️ #11 BAJA TROPHY TRUCK",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_11.png?v=car20", showCustomTires: false },
+      car_opt_12:  { id: "car_opt_12",  num: 12, label: "🦾 #12 BRABUS 6x6 WAGON",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_12.png?v=car20", showCustomTires: false },
+      car_opt_13:  { id: "car_opt_13",  num: 13, label: "🛡️ #13 HUMVEE H1 ALPHA",    url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_13.png?v=car20", showCustomTires: false },
+      car_opt_14:  { id: "car_opt_14",  num: 14, label: "📐 #14 CYBERTRUCK BEAST",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_14.png?v=car20", showCustomTires: false },
+      car_opt_15:  { id: "car_opt_15",  num: 15, label: "🚛 #15 PETERBILT WAR-CAB",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_15.png?v=car20", showCustomTires: false },
+      car_opt_16:  { id: "car_opt_16",  num: 16, label: "🏎️ #16 FORMULA 1 V10 APEX", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_16.png?v=car20", showCustomTires: false },
+      car_opt_17:  { id: "car_opt_17",  num: 17, label: "🦅 #17 LE MANS VALKYRIE",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_17.png?v=car20", showCustomTires: false },
+      car_opt_18:  { id: "car_opt_18",  num: 18, label: "⚙️ #18 ARIEL V8 EXO-BUGGY", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_18.png?v=car20", showCustomTires: false },
+      car_opt_19:  { id: "car_opt_19",  num: 19, label: "🏔️ #19 AUDI QUATTRO RALLY", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_19.png?v=car20", showCustomTires: false },
+      car_opt_20:  { id: "car_opt_20",  num: 20, label: "👹 #20 SHIBUYA ONI GT",     url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_20.png?v=car20", showCustomTires: false },
+      interceptor: { id: "car_opt_01",  num: 1,  label: "🏎️ #1 '69 CHARGER V8",     url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_01.png?v=car20", showCustomTires: false },
+      muscle:      { id: "car_opt_04",  num: 4,  label: "🔥 #4 DEMON 170 HELLCAT",   url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_04.png?v=car20", showCustomTires: false },
+      vortex_gt:   { id: "car_opt_06",  num: 6,  label: "🐂 #6 LAMBORGHINI SVJ V12", url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_06.png?v=car20", showCustomTires: false },
+      brawler_4x4: { id: "car_opt_11",  num: 11, label: "🏜️ #11 BAJA TROPHY TRUCK",  url: "assets/concept_gallery/battlebots_topdown_3d/car_opt_11.png?v=car20", showCustomTires: false }
     };
     const SAW_BLADE_3D_SKIN = "assets/concept_gallery/battlebots_topdown_3d/td_mr_saw_blade.png";
     const ARENA_10_BG_SKIN = "assets/concept_gallery/battlebots_topdown_3d/topdown_3d_arena_10.jpg";
@@ -17010,10 +17030,10 @@
         draw3DMountSprite(targetCtx, "wpn_12", mountBox * 1.16, rTicks * 0.22);
       }
 
-      // 3. PHOTOREALISTIC 3D COMBAT CAR CHASSIS SPRITE:
+      // 3. PHOTOREALISTIC 3D COMBAT CAR CHASSIS SPRITE (Full-Size 2.86x Scale):
       const chassisSkin = (hasTireUpgrade && skinSpec.id === "muscle") ? UNIFIED_HULL_ONLY_SKIN : skinSpec.url;
       const spr = getImg(chassisSkin);
-      const drawW = r * 2.42;
+      const drawW = r * 2.86;
       if (spr && spr.complete && spr.naturalWidth > 0) {
         targetCtx.save();
         targetCtx.shadowColor = "rgba(0, 0, 0, 0.92)";
@@ -23331,23 +23351,70 @@
     }
 
     // -------------------------------------------------------------------------
-    // TAB 2: GARAGE (#19-01: 3D MODEL AT TOP + 6-SLOT TABS + HORIZONTAL ROWS)
+    // TAB 2: GARAGE (#19-01: 3D MODEL AT TOP + 20-CAR SHOWROOM + 6-SLOT TABS)
     // -------------------------------------------------------------------------
-    function cycleC19CarModel() {
-      const order = ["interceptor", "muscle", "vortex_gt", "brawler_4x4"];
-      const cur = state.selectedCarSkin || "interceptor";
-      const next = order[(order.indexOf(cur) + 1) % order.length];
-      state.selectedCarSkin = next;
-      try { localStorage.setItem("rc_c19_car_skin", next); } catch (_) {}
-      const spec = REALISTIC_CAR_SKINS[next] || REALISTIC_CAR_SKINS.interceptor;
+    const C19_20_CAR_ORDER = Array.from({ length: 20 }, (_, i) => `car_opt_${String(i + 1).padStart(2, "0")}`);
+
+    function selectC19CarModel(skinKey) {
+      const spec = REALISTIC_CAR_SKINS[skinKey] || REALISTIC_CAR_SKINS.car_opt_01;
+      state.selectedCarSkin = spec.id;
+      try { localStorage.setItem("rc_c19_car_skin", spec.id); } catch (_) {}
       const pill = document.getElementById("c19CarModelPill");
-      if (pill) pill.textContent = spec.label + " ▸";
+      if (pill) pill.textContent = spec.label + " ▾";
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineIdle();
       showShopToast("🏎️ EQUIPPED CHASSIS: " + spec.label, "#ff7700");
+      const bd = document.getElementById("c19CarShowroomBackdrop");
+      if (bd) bd.style.display = "none";
+    }
+
+    function cycleC19CarModel() {
+      openC19CarShowroomModal();
+    }
+
+    function openC19CarShowroomModal() {
+      let bd = document.getElementById("c19CarShowroomBackdrop");
+      if (!bd) {
+        bd = document.createElement("div");
+        bd.id = "c19CarShowroomBackdrop";
+        bd.style.cssText = "position:fixed;inset:0;z-index:100008;background:rgba(4,3,2,0.92);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:10px;";
+        bd.onclick = (e) => { if (e.target === bd) bd.style.display = "none"; };
+        document.body.appendChild(bd);
+      }
+      const curId = (REALISTIC_CAR_SKINS[state.selectedCarSkin] || REALISTIC_CAR_SKINS.car_opt_01).id;
+      const cardsHtml = C19_20_CAR_ORDER.map((k) => {
+        const sp = REALISTIC_CAR_SKINS[k];
+        const isSel = sp.id === curId;
+        return `
+          <button type="button" class="lg-card ${isSel ? 'lg-active' : ''}" onclick="selectC19CarModel('${sp.id}')" style="padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-align:center;">
+            <div style="width:100%;height:74px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(255,119,0,0.18) 0%,rgba(6,4,3,0.95) 75%);border-radius:10px;overflow:hidden;">
+              <img src="${sp.url}" alt="${sp.label}" style="width:94%;height:94%;object-fit:contain;" loading="lazy" />
+            </div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:900;color:${isSel ? '#ff7700' : '#ffffff'};line-height:1.2;">${sp.label}</div>
+            <span style="font-family:'Orbitron',sans-serif;font-size:0.52rem;font-weight:900;color:${isSel ? '#ffaa44' : '#94a3b8'};">${isSel ? '✓ EQUIPPED' : 'TAP TO EQUIP'}</span>
+          </button>
+        `;
+      }).join("");
+
+      bd.innerHTML = `
+        <div class="lg-card lg-active" style="width:100%;max-width:760px;max-height:88dvh;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:radial-gradient(circle at 50% 0%,#1f0d04 0%,#060403 85%);" onclick="event.stopPropagation()">
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,150,70,0.3);padding-bottom:8px;">
+            <div>
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.84rem;font-weight:900;color:#ff7700;">🏎️ 20-CAR COMBAT SHOWROOM — CHOOSE YOUR CHASSIS</div>
+              <div style="font-size:0.70rem;color:#fed7aa;">Tap any of the 20 full-size 3D combat vehicles below to equip it in the Garage &amp; Arena!</div>
+            </div>
+            <button type="button" class="lg-btn" style="background:linear-gradient(180deg,#ff7700,#c2410c);color:#090502;padding:6px 12px;font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:900;" onclick="document.getElementById('c19CarShowroomBackdrop').style.display='none'">✕ CLOSE</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px;">
+            ${cardsHtml}
+          </div>
+        </div>
+      `;
+      bd.style.display = "flex";
     }
     try {
       const savedSkin = localStorage.getItem("rc_c19_car_skin");
-      if (savedSkin && REALISTIC_CAR_SKINS[savedSkin]) state.selectedCarSkin = savedSkin;
+      if (savedSkin && REALISTIC_CAR_SKINS[savedSkin]) state.selectedCarSkin = REALISTIC_CAR_SKINS[savedSkin].id;
+      else state.selectedCarSkin = "car_opt_01";
     } catch (_) {}
 
     (function initC19GarageDragRotate() {
