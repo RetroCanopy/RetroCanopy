@@ -18856,879 +18856,91 @@
 
     // =========================================================================
     // CONCEPT #19-01: MULTI-OPTION REALISTIC CAR & BATTLE AUDIO ENGINE
-    // (8 Sound Categories x 10 Cinematic Action-Packed Options = 80 Blockbuster Sounds)
+    // (40 Real Recorded .MP3 Audio Effects in assets/sfx_realistic/*.mp3)
     // =========================================================================
 
     const SOUND_STUDIO_CATALOG = [
       {
-        cat: "clash", short: "💥 Crash", title: "💥 1. Crash & Ram Impact (10 Cinematic Options)",
+        cat: "clash", short: "💥 Crash", title: "💥 1. Real Car Crash & Impact (5 Recorded Options)",
         options: [
-          { id: 1,  name: "Mad Max War-Rig Collision",   desc: "Doppler whoosh + 35Hz cinema LFE boom + tearing steel + stereo shrapnel" },
-          { id: 2,  name: "Transformers Metal Slam",     desc: "Robotic servo-screech + seismic bass drop + titanium clang + spark tail" },
-          { id: 3,  name: "Highway Flip & Roll Wreck",   desc: "Tire skid screech + triple rolling chassis smash + glass + exhaust boom" },
-          { id: 4,  name: "Zimmer Braaam Kinetic Slam",  desc: "Earth-shattering theatrical brass/sub impact + sub-harmonic rumble" },
-          { id: 5,  name: "C4 Reactive Armor Blast",     desc: "Sharp military C4 snap + fireball low-end roar + steel shrapnel rings" },
-          { id: 6,  name: "Monster Truck Car-Crusher",   desc: "Hydraulic suspension slam + crunching roof pillars + V8 exhaust bark" },
-          { id: 7,  name: "Locomotive Train Smash",      desc: "Heavy cast-iron coupling slam + pressurized steam blast + rail ring" },
-          { id: 8,  name: "Plasma Core Implosion",       desc: "Magnetic suck-in + massive plasma shockwave detonation + ion crackle" },
-          { id: 9,  name: "Bullet-Time Slow-Mo Wreck",   desc: "Time-warped pitch-diving bass boom + slow-motion glass cascade" },
-          { id: 10, name: "Thunderdome Cage Body-Check", desc: "Heavy chain-link cage rattle + booming arena sub-slam + pyro thud" }
+          { id: 1, name: "Heavy Car Wreck & Windshield Shatter", desc: "Real recorded explosion impact + tempered glass shatter + V8 chassis crunch" },
+          { id: 2, name: "Explosive Armor Demolition Smash",     desc: "Real heavy blast + pitched-down steel crash + shattering debris" },
+          { id: 3, name: "Sonic Boom & High-Speed Roll Wreck",   desc: "Real transonic shockwave boom + shattering glass + V8 impact bark" },
+          { id: 4, name: "Thunderous T-Bone Collision",          desc: "Real thunderclap crack + heavy collision blast + windshield scatter" },
+          { id: 5, name: "Deep Sub-Bass Hydraulic Ram",          desc: "Deep sub-bass LFE slam + heavy explosion thud + hydraulic burst" }
         ]
       },
       {
-        cat: "saw", short: "🏎️ V8/Melee", title: "🏎️ 2. V8 Engine Roar, Saw Rip & Melee (10 Options)",
+        cat: "saw", short: "🏎️ V8/Saw", title: "🏎️ 2. Real V8 Engine Roar, Chainsaw & Melee (5 Recorded Options)",
         options: [
-          { id: 1,  name: "1500HP Hellcat V8 + Burnout", desc: "Cammed V8 redline roar + screaming supercharger whine + tire shred" },
-          { id: 2,  name: "Twin-Turbo V10 + Anti-Lag",   desc: "Exotic V10 scream + rapid-fire pop-pop-bang exhaust flame backfires" },
-          { id: 3,  name: "Chainsaw Rip-Saw vs Armor",   desc: "Revving 2-stroke chainsaw bite + screaming carbide teeth + spark shower" },
-          { id: 4,  name: "Formula-Drift Turbo Flutter", desc: "High-boost wastegate scream + iconic stutututu titanium turbo flutter" },
-          { id: 5,  name: "Quad-Rotor Plasma Grinder",   desc: "Spinning magnetic turbine + high-voltage arc welding sizzle + slag pops" },
-          { id: 6,  name: "Big-Rig Diesel & Jake-Brake", desc: "Deep throaty war-truck diesel roar + turbo whistle + jake-brake growl" },
-          { id: 7,  name: "RX-7 4-Rotor Brap & Dump",    desc: "Iconic rotary brap-brap-brap + screaming external wastegate dump pipe" },
-          { id: 8,  name: "Hydraulic Jaws-of-Life Shear",desc: "Immense hydraulic pump whine + snapping steel frame crunch + steam hiss" },
-          { id: 9,  name: "Jet-Car Flamethrower Roar",   desc: "Roaring jet-turbine spool + whooshing liquid-fuel flamethrower burst" },
-          { id: 10, name: "Mech Rotary Triple-Slash",    desc: "Heavy industrial motor spin-up + 3 rapid metallic slicing combos" }
+          { id: 1, name: "Aston Martin V8 Quicksilver Roar",     desc: "Real recorded Aston Martin V8 with Quicksilver exhaust redline rev" },
+          { id: 2, name: "Real 2-Stroke Chainsaw Ripping Metal", desc: "Real recorded gas chainsaw roaring + power-drill metallic grind" },
+          { id: 3, name: "Red Bull Formula 1 V10 Scream",        desc: "Real recorded 2005 Red Bull-Cosworth F1 V10 screaming at 18,000 RPM" },
+          { id: 4, name: "Detroit 6.2L Heavy V8 Diesel Growl",   desc: "Real recorded 6.2L Detroit V8 war-truck throaty diesel roar" },
+          { id: 5, name: "Rover V8 Muscle Rev & Exhaust Bark",   desc: "Real recorded classic V8 muscle car revving + Quicksilver exhaust blip" }
         ]
       },
       {
-        cat: "weapon", short: "🔫 Weapons", title: "🔫 3. Heavy Weapons & Artillery Fire (10 Options)",
+        cat: "weapon", short: "🔫 Weapons", title: "🔫 3. Real Gunfire, Tank Cannon & Artillery (5 Recorded Options)",
         options: [
-          { id: 1,  name: "A-10 Warthog 30mm BRRRRT!",   desc: "7-barrel 3,900-RPM GAU-8 cannon roar + seismic recoil + sonic cracks" },
-          { id: 2,  name: "Abrams 120mm Tank Cannon",    desc: "Deafening breech explosion + supersonic shockwave + canyon thunder" },
-          { id: 3,  name: "Orbital Railgun Hyper-Shot",  desc: "Capacitor whine-up + blinding magnetic discharge + thunderous boom" },
-          { id: 4,  name: "HIMARS 4x Rocket Salvo",      desc: "Rapid 4-rocket launch whoosh-whoosh-whoosh + rolling cluster blasts" },
-          { id: 5,  name: "Twin .50-Cal Heavy MG Burst", desc: "Thumping 6-round .50 BMG burst + metallic belt clatter + brass shells" },
-          { id: 6,  name: "BFG-9000 Plasma Detonator",   desc: "Deep sub-bass plasma charge + earth-shaking energy blast + arc crackle" },
-          { id: 7,  name: "Heavy Howitzer & Whistle",    desc: "Hollow mortar THUMP + incoming artillery whistle + dirt-shaking boom" },
-          { id: 8,  name: "Quad-Turbolaser Barrage",     desc: "Rapid 4-barrel cinematic sci-fi laser cannons with sub-bass punch" },
-          { id: 9,  name: "40mm Grenade Thoomp-Boom",    desc: "Rotary grenade launcher THOOMP tube pop + concussive frag explosion" },
-          { id: 10, name: "Tesla Lightning Arc Cannon",  desc: "Crackling 1,000,000-volt electric whip snap + booming thunderclap" }
+          { id: 1, name: "Heavy .50-Caliber 4-Shot Rapid Burst", desc: "Real recorded rapid 4-round heavy machine-gun burst + sub recoil" },
+          { id: 2, name: "120mm Tank Main Cannon Blast",         desc: "Real recorded gunshot breech crack + heavy explosion + sonic shockwave" },
+          { id: 3, name: "Supersonic Rail-Cannon Crack",         desc: "High-velocity recorded rifle snap + real sonic boom + thunder rumble" },
+          { id: 4, name: "Multi-Rocket Artillery Salvo",         desc: "Real mortar launches + rolling high-explosive detonation" },
+          { id: 5, name: "Double-Barrel Heavy Shotgun Blast",    desc: "Twin layered real recorded shotgun blasts + shattering debris" }
         ]
       },
       {
-        cat: "boost", short: "🚀 Boost", title: "🚀 4. Nitrous Boost, Charge & Target Lock (10 Options)",
+        cat: "boost", short: "🚀 Boost", title: "🚀 4. Real V8 Downshift, F1 Overtake & Sonic Boost (5 Recorded Options)",
         options: [
-          { id: 1,  name: "Dual-Stage NOS + Downshift",  desc: "Twin-cloud nitrous PSSSH purge + rev-matching V8 downshift + warp rush" },
-          { id: 2,  name: "F-22 Raptor Mach-2 Sonic Boom",desc: "Turbine spool + transonic shockwave crack + roaring afterburner wash" },
-          { id: 3,  name: "Top Gun Radar Lock + Launch", desc: "Rapid tactical target BEEP-BEEP-BEEP-TONE + sidewinder ignition" },
-          { id: 4,  name: "Batmobile Jet-Turbine Roar",  desc: "Deep subterranean turbine spin-up + explosive afterburner flame burst" },
-          { id: 5,  name: "Autobot Mechanical Transform",desc: "Multi-part shifting gears (chk-ka-chk-krrk) + hydraulic lock + bass hit" },
-          { id: 6,  name: "Sandevistan Time-Warp Trigger",desc: "Neural bass drop + time-dilation frequency sweep + chrome flash" },
-          { id: 7,  name: "F1 Hybrid ERS Overtake Boost",desc: "High-RPM MGU-K electric deployment whine + wind-tunnel rush" },
-          { id: 8,  name: "Gundam Vernier Double-Dash",  desc: "Twin pneumatic thruster bursts (KSHH-KSHH) + metallic G-force thud" },
-          { id: 9,  name: "Hellcat Blower + Drag Hook",  desc: "Screaming 2.7L supercharger whine + sticky drag-radial launch hook" },
-          { id: 10, name: "Inception Braaam Charge",     desc: "Deep cinematic brass swell + low-frequency tectonic charge rumble" }
+          { id: 1, name: "Aston Martin V8 Downshift & Purge",    desc: "Real recorded V8 rev-match downshift + high-pressure pneumatic release" },
+          { id: 2, name: "Formula 1 V10 High-Speed Fly-By",      desc: "Real recorded F1 V10 full-throttle overtake scream + sonic rush" },
+          { id: 3, name: "Supersonic Jet Sonic Boom Rush",       desc: "Real recorded massive transonic shockwave crack & jet wash" },
+          { id: 4, name: "Hydraulic Turbo Spool & V8 Launch",    desc: "Real recorded hydraulic pressure spool + Rover V8 launch roar" },
+          { id: 5, name: "Twin-Engine V8 War-Rig Roar",          desc: "Dual-layered Detroit V8 + Aston V8 full-throttle launch punch" }
         ]
       },
       {
-        cat: "break", short: "💀 Shatter", title: "💀 5. Part Break, Armor Rip & Critical KO (10 Options)",
+        cat: "break", short: "💀 Shatter", title: "💀 5. Real Explosion, Glass Shatter & Part Break (5 Recorded Options)",
         options: [
-          { id: 1,  name: "Hollywood Car Fireball Blast",desc: "Fuel-tank rupture + massive rolling fireball boom + raining glass" },
-          { id: 2,  name: "Engine Blowout & Steam Burst",desc: "Violent piston shatter + high-pressure radiator steam blowout" },
-          { id: 3,  name: "Titanium Armor Rip & Storm",  desc: "Screaming metal tear + heavy armor plate slam + bouncing bolts" },
-          { id: 4,  name: "EMP Blackout & Meltdown",     desc: "High-voltage transformer explosion + dramatic city-wide bass drop" },
-          { id: 5,  name: "Windshield Smash + Roll-Cage",desc: "Explosive tempered-glass shatter + heavy tubular steel frame crunch" },
-          { id: 6,  name: "Ammo Rack 4x Chain Cook-Off", desc: "4 rapid chain-reaction internal explosions (BOOM-BAM-BOOM-KABOOM)" },
-          { id: 7,  name: "200MPH Tire Blowout & Sparks",desc: "Violent rubber tire explosion + screaming alloy rim grinding sparks" },
-          { id: 8,  name: "Hydraulic Spine Snap & Oil",  desc: "Bone-crushing mechanical snap + pressurized fluid hiss + heavy thud" },
-          { id: 9,  name: "Mecha Reactor Core Breach",   desc: "Warning klaxon chirp + unstable reactor rumble + shockwave boom" },
-          { id: 10, name: "Demolition Totaled Finisher", desc: "Triple consecutive wrecking-ball slams + final dying chassis groan" }
+          { id: 1, name: "Tempered Windshield & Carbon Shatter", desc: "Real recorded Gravity Sound dual glass shatter + heavy sub impact" },
+          { id: 2, name: "Massive Car Fireball Explosion",       desc: "Real recorded full-scale explosion detonation + raining glass debris" },
+          { id: 3, name: "High-Pressure Hydraulic Blowout",      desc: "Real recorded hydraulic line rupture + explosion + metallic crash" },
+          { id: 4, name: "Thunderstrike Transformer Blowout",    desc: "Real recorded thunderbolt crack + explosion + shattering glass" },
+          { id: 5, name: "Chain-Reaction Ammo Cook-Off",         desc: "3 rapid real recorded explosions & gunshots + shattering glass" }
         ]
       },
       {
-        cat: "bell", short: "🔔 Start", title: "🔔 6. Match Start & Arena Countdown (10 Options)",
+        cat: "bell", short: "🔔 Start", title: "🔔 6. Real Airhorns, Ringside Bell & Race Launch (5 Recorded Options)",
         options: [
-          { id: 1,  name: "NHRA Drag Tree + 3000HP Launch",desc: "BEEP-BEEP-BEEP-BEEEEP + dual-car thunderous V8 launch & tire scream" },
-          { id: 2,  name: "Zimmer Braaam + 3x Taiko Drums",desc: "Massive theatrical low-brass BRAAAAM + 3 thunderous Taiko drum slams" },
-          { id: 3,  name: "Octagon Cage Slam + Airhorn", desc: "Heavy steel cage bolt slam + ringside airhorn + arena roar" },
-          { id: 4,  name: "Tokyo Street Race Horn Launch",desc: "3 street-car horn blips + twin-turbo launch + nitrous purge hiss" },
-          { id: 5,  name: "Jaeger Hangar Siren + Drop",  desc: "Giant mecha hangar warning klaxon + hydraulic drop-pod slam" },
-          { id: 6,  name: "Colosseum War-Horn & Anvils", desc: "Deep ancient brass war-horn + 3 heavy blacksmith anvil strikes" },
-          { id: 7,  name: "F1 5-Lights-Out Grid Launch", desc: "5 iconic F1 start-light beeps + screaming multi-car grid launch" },
-          { id: 8,  name: "Dystopian Siren + 30Hz Drop", desc: "Rising/falling purge siren + chest-rattling 30Hz sub-bass drop" },
-          { id: 9,  name: "Thunderdome 3x Pyro Cannons", desc: "3 pyrotechnic flame-cannon blasts + heavy power-chord stinger" },
-          { id: 10, name: "Arcade 3-2-1 FIGHT! + Gong",  desc: "Crisp 3-stage rising arcade countdown + explosive bronze gong" }
+          { id: 1, name: "Nathan K5LA Train Horn + V8 Launch",   desc: "Real recorded 150dB Nathan K5LA locomotive airhorn + V8 peel-out" },
+          { id: 2, name: "Real Championship Ringside Bell",      desc: "Authentic recorded brass boxing ringside double-ding + arena boom" },
+          { id: 3, name: "Nathan P5 Stadium Airhorn Blast",      desc: "Real recorded Nathan Airchime P5 multi-chime stadium horn blast" },
+          { id: 4, name: "Airhorn Signal + F1 V10 Grid Launch",  desc: "Real K5LA horn blast + screaming Red Bull F1 V10 launch" },
+          { id: 5, name: "Thunderdome Heavy Gong & Thunder",     desc: "Deep pitched-down acoustic bronze bell + LFE boom + real thunder" }
         ]
       },
       {
-        cat: "ui", short: "✨ UI/Garage", title: "✨ 7. Tactical UI, Buy, Equip & Bond SFX (10 Options)",
+        cat: "ui", short: "✨ UI/Garage", title: "✨ 7. Real Pit-Crew Wrench, Bolt Rack & V8 Blip (5 Recorded Options)",
         options: [
-          { id: 1,  name: "Heavy Mech Ratchet & Lock",   desc: "Crisp mechanical ratchet spin + pneumatic armor lock + sub-thud" },
-          { id: 2,  name: "Liquid Glass Crystal + Sub",  desc: "Tactile water-glass droplet pop + shimmering crystal + bass tap" },
-          { id: 3,  name: "Tactical Pump-Action Rack",   desc: "Unmistakable shotgun-style metallic slide rack (CHK-CHK!) on equip" },
-          { id: 4,  name: "Iron-Suit HUD & Servo Lock",  desc: "Futuristic helmet HUD telemetry chime + motorized faceplate lock" },
-          { id: 5,  name: "Bank Vault Steel Bolts Lock", desc: "Deep vault tumbler spin + 4 heavy steel locking bolts slamming shut" },
-          { id: 6,  name: "V8 Throttle Blip (VROOM!)",   desc: "Quick, punchy supercharged V8 throttle rev blip on every upgrade" },
-          { id: 7,  name: "Cyber Katana Unsheathe",      desc: "Razor-sharp metallic blade draw (SHING!) + subtle sub-bass impact" },
-          { id: 8,  name: "High-Voltage Capacitor Snap", desc: "Rising electric coil hum + crisp neon plasma spark snap" },
-          { id: 9,  name: "F1 Pit-Crew Impact Wrench",   desc: "High-RPM pneumatic wheel-gun lug-nut zip (ZZT-ZZT!)" },
-          { id: 10, name: "24K Gold Bullion + Diamond",  desc: "Heavy gold bar thud + shimmering diamond harmonic triad chord" }
+          { id: 1, name: "Pit-Crew Pneumatic Wrench Zip",        desc: "Real recorded high-RPM power drill / impact wrench lug-nut zip" },
+          { id: 2, name: "Mechanical Gun-Bolt Rack (CHK-CHK!)",  desc: "Crisp double mechanical action transient from real recorded hardware" },
+          { id: 3, name: "Quick Aston V8 Throttle Blip",         desc: "Real recorded 400ms Aston Martin V8 Quicksilver exhaust rev blip" },
+          { id: 4, name: "Crisp Acoustic Ringside Bell Tap",     desc: "Single bright acoustic strike from the real ringside boxing bell" },
+          { id: 5, name: "Heavy Hydraulic Armor Lock",           desc: "Real recorded hydraulic machinery lock transient + sub-bass thud" }
         ]
       },
       {
-        cat: "victory", short: "🏆 Victory", title: "🏆 8. Victory Fanfare & Finisher (10 Options)",
+        cat: "victory", short: "🏆 Victory", title: "🏆 8. Real V8 Burnout, Fireworks & Airhorn Victory (5 Recorded Options)",
         options: [
-          { id: 1,  name: "Tokyo Drift Anthem + Burnout",desc: "Heavy synth-brass fanfare + screaming V8 donut burnout + fireworks" },
-          { id: 2,  name: "Blockbuster Trailer Finale",  desc: "Soaring Zimmer brass chord + rapid Taiko drum roll + massive sub-boom" },
-          { id: 3,  name: "Mad Max Flame-Guitar + Horns",desc: "Overdriven arena guitar/synth power riff + war-rig airhorns + pyro" },
-          { id: 4,  name: "Cyberpunk Synthwave Drop",    desc: "Driving dark-synth bassline + soaring neon lead arpeggio + impact" },
-          { id: 5,  name: "Victory Lane Donuts + Sirens",desc: "Screaming 9,000-RPM victory burnout + triple stadium horn + roar" },
-          { id: 6,  name: "Boss Reactor Boom + Fanfare", desc: "Massive boss-kill chain explosion followed by heroic 5-note brass" },
-          { id: 7,  name: "Pit King Heavy 808 Trap Drop",desc: "Hard-hitting distorted 808 bassline + brass stabs + crisp snare roll" },
-          { id: 8,  name: "Shogun Taiko & Samurai Brass",desc: "Thunderous Japanese Taiko drum ensemble + dramatic samurai chord" },
-          { id: 9,  name: "Goal Explosion Shockwave",    desc: "Magnetic suck-in + massive stadium goal-explosion boom + chord" },
-          { id: 10, name: "Sovereign Jackpot + Fireworks",desc: "Cascading diamond vault chimes + 4 sky-splitting firework mortar booms" }
+          { id: 1, name: "V8 Burnout + K5LA Horn + Fireworks",   desc: "Real Aston V8 roar + Nathan K5LA airhorn + real fireworks finale" },
+          { id: 2, name: "Grand Finale Fireworks & Cannon Salute",desc: "Real recorded sky-splitting fireworks barrage + cannon boom + bell" },
+          { id: 3, name: "F1 V10 Victory Donut + Stadium Horns", desc: "Real screaming F1 V10 victory rev + Nathan P5 horn + fireworks" },
+          { id: 4, name: "RetroCanopy Arena Theme + Fireworks",  desc: "Real mastered RetroCanopy orchestral/synth climax + fireworks boom" },
+          { id: 5, name: "3x Knockout Bell + Airhorn & Fireworks",desc: "Triple real ringside knockout bell + K5LA airhorn + fireworks roar" }
         ]
       }
     ];
-
-
-    // Master Cinematic Bus: Compressor + Stereo Arena Hall Reverb + Tube Saturation
-    function ensureMasterBus(ctx, holder) {
-      if (holder._masterIn && holder._ctx === ctx) return holder._masterIn;
-      holder._ctx = ctx;
-
-      const comp = ctx.createDynamicsCompressor();
-      comp.threshold.setValueAtTime(-14, ctx.currentTime);
-      comp.knee.setValueAtTime(12, ctx.currentTime);
-      comp.ratio.setValueAtTime(6, ctx.currentTime);
-      comp.attack.setValueAtTime(0.002, ctx.currentTime);
-      comp.release.setValueAtTime(0.18, ctx.currentTime);
-
-      const masterGain = ctx.createGain();
-      masterGain.gain.setValueAtTime(1.15, ctx.currentTime);
-
-      // Stereo Hall / Arena Reverb Convolver (0.85s stereo impulse with early reflections)
-      const revLen = Math.floor(ctx.sampleRate * 0.85);
-      const revBuf = ctx.createBuffer(2, revLen, ctx.sampleRate);
-      for (let ch = 0; ch < 2; ch++) {
-        const d = revBuf.getChannelData(ch);
-        for (let i = 0; i < revLen; i++) {
-          const t = i / revLen;
-          const early = (i < ctx.sampleRate * 0.06 && i % 420 < 18) ? 0.65 : 0;
-          d[i] = ((Math.random() * 2 - 1) * Math.pow(1 - t, 2.6) + early) * 0.45;
-        }
-      }
-      const convolver = ctx.createConvolver();
-      convolver.buffer = revBuf;
-
-      const wetGain = ctx.createGain();
-      wetGain.gain.setValueAtTime(0.28, ctx.currentTime);
-
-      const dryGain = ctx.createGain();
-      dryGain.gain.setValueAtTime(0.95, ctx.currentTime);
-
-      const busIn = ctx.createGain();
-      busIn.connect(dryGain);
-      busIn.connect(convolver);
-      convolver.connect(wetGain);
-      dryGain.connect(comp);
-      wetGain.connect(comp);
-      comp.connect(masterGain);
-      masterGain.connect(ctx.destination);
-
-      holder._masterIn = busIn;
-      return busIn;
-    }
-
-    function makeDistCurve(amount = 50) {
-      const n = 2048;
-      const curve = new Float32Array(n);
-      for (let i = 0; i < n; i++) {
-        const x = (i * 2) / n - 1;
-        curve[i] = ((3 + amount) * x * 22 * (Math.PI / 180)) / (Math.PI + amount * Math.abs(x));
-      }
-      return curve;
-    }
-
-    // Layered Building Blocks connected through the Cinematic Master Bus
-    function cineSubBoom(ctx, dest, t0, fStart, fEnd, dur, vol, wave = "sine", drive = 25) {
-      const osc = ctx.createOscillator();
-      const g = ctx.createGain();
-      osc.type = wave;
-      osc.frequency.setValueAtTime(Math.max(20, fStart), t0);
-      osc.frequency.exponentialRampToValueAtTime(Math.max(18, fEnd), t0 + dur);
-      g.gain.setValueAtTime(0.001, t0);
-      g.gain.linearRampToValueAtTime(vol, t0 + 0.006);
-      g.gain.exponentialRampToValueAtTime(0.0008, t0 + dur);
-      if (drive > 0) {
-        const sh = ctx.createWaveShaper();
-        sh.curve = makeDistCurve(drive);
-        osc.connect(sh);
-        sh.connect(g);
-      } else {
-        osc.connect(g);
-      }
-      g.connect(dest);
-      osc.start(t0);
-      osc.stop(t0 + dur + 0.02);
-    }
-
-    function cineNoiseLayer(ctx, dest, t0, dur, filterType, fStart, fEnd, qVal, vol, crunch = 35, pan = 0, attack = 0.004) {
-      const bufLen = Math.max(1, Math.floor(ctx.sampleRate * dur));
-      const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < bufLen; i++) {
-        const t = i / bufLen;
-        const crackle = (i % 29 < 6) ? 1.35 : 0.85;
-        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 1.45) * crackle;
-      }
-      const src = ctx.createBufferSource();
-      src.buffer = buf;
-
-      const flt = ctx.createBiquadFilter();
-      flt.type = filterType;
-      flt.frequency.setValueAtTime(Math.max(30, fStart), t0);
-      if (fEnd && fEnd !== fStart) {
-        flt.frequency.exponentialRampToValueAtTime(Math.max(30, fEnd), t0 + dur);
-      }
-      flt.Q.setValueAtTime(qVal || 1.2, t0);
-
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0.001, t0);
-      g.gain.linearRampToValueAtTime(vol, t0 + attack);
-      g.gain.exponentialRampToValueAtTime(0.0008, t0 + dur);
-
-      src.connect(flt);
-      let lastNode = flt;
-      if (crunch > 0) {
-        const sh = ctx.createWaveShaper();
-        sh.curve = makeDistCurve(crunch);
-        lastNode.connect(sh);
-        lastNode = sh;
-      }
-      if (ctx.createStereoPanner && pan !== 0) {
-        const p = ctx.createStereoPanner();
-        p.pan.setValueAtTime(Math.max(-1, Math.min(1, pan)), t0);
-        lastNode.connect(p);
-        lastNode = p;
-      }
-      lastNode.connect(g);
-      g.connect(dest);
-      src.start(t0);
-    }
-
-    function cineBrassNote(ctx, dest, t0, freq, dur, vol, detuneCents = 12) {
-      [-detuneCents, 0, detuneCents].forEach((dt, idx) => {
-        const osc = ctx.createOscillator();
-        osc.type = idx === 1 ? "triangle" : "sawtooth";
-        osc.frequency.setValueAtTime(freq, t0);
-        osc.detune.setValueAtTime(dt, t0);
-
-        const flt = ctx.createBiquadFilter();
-        flt.type = "lowpass";
-        flt.frequency.setValueAtTime(freq * 1.5, t0);
-        flt.frequency.linearRampToValueAtTime(freq * 4.8, t0 + Math.min(0.08, dur * 0.35));
-        flt.frequency.exponentialRampToValueAtTime(freq * 1.8, t0 + dur);
-
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.001, t0);
-        g.gain.linearRampToValueAtTime(vol / 2.2, t0 + 0.018);
-        g.gain.exponentialRampToValueAtTime(0.0008, t0 + dur);
-
-        osc.connect(flt);
-        flt.connect(g);
-        g.connect(dest);
-        osc.start(t0);
-        osc.stop(t0 + dur + 0.02);
-      });
-    }
-
-    function cineMetallicHits(ctx, dest, t0, freqs, dur, vol, pitchDrop = 0.72) {
-      freqs.forEach((f, idx) => {
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = idx % 2 === 0 ? "sawtooth" : "square";
-        osc.frequency.setValueAtTime(f, t0);
-        osc.frequency.exponentialRampToValueAtTime(Math.max(30, f * pitchDrop), t0 + dur);
-        g.gain.setValueAtTime(vol / (idx + 1), t0);
-        g.gain.exponentialRampToValueAtTime(0.0008, t0 + dur);
-        osc.connect(g);
-        g.connect(dest);
-        osc.start(t0);
-        osc.stop(t0 + dur + 0.02);
-      });
-    }
-
-    function triggerCinematicSound(ctx, holder, cat, opt) {
-      const dest = ensureMasterBus(ctx, holder);
-      const t0 = ctx.currentTime;
-
-      // =====================================================================
-      // 1. CRASH & RAM IMPACT (10 BLOCKBUSTER OPTIONS)
-      // =====================================================================
-      if (cat === "clash") {
-        if (opt === 1) {
-          // #1 Mad Max War-Rig Head-On Collision
-          cineNoiseLayer(ctx, dest, t0, 0.11, "bandpass", 320, 1450, 2.0, 0.35, 20, -0.4, 0.05);
-          cineSubBoom(ctx, dest, t0 + 0.05, 165, 24, 0.65, 0.75, "sine", 45);
-          cineNoiseLayer(ctx, dest, t0 + 0.05, 0.55, "bandpass", 920, 210, 1.4, 0.55, 65, 0.2);
-          cineMetallicHits(ctx, dest, t0 + 0.06, [340, 610, 1180, 2150], 0.42, 0.24, 0.68);
-          [0.14, 0.22, 0.31, 0.42].forEach((d, i) => {
-            cineNoiseLayer(ctx, dest, t0 + d, 0.14, "highpass", 2800 + i * 400, 1400, 2.0, 0.18, 15, (i % 2 ? 0.65 : -0.65));
-          });
-        } else if (opt === 2) {
-          // #2 Transformers Decepticon Metal Slam
-          cineSubBoom(ctx, dest, t0, 580, 180, 0.14, 0.32, "sawtooth", 40);
-          cineSubBoom(ctx, dest, t0 + 0.04, 150, 22, 0.68, 0.78, "sine", 50);
-          cineMetallicHits(ctx, dest, t0 + 0.04, [240, 485, 960, 1840, 2920], 0.55, 0.28, 0.82);
-          cineNoiseLayer(ctx, dest, t0 + 0.05, 0.48, "bandpass", 1450, 320, 2.2, 0.48, 55, 0);
-          cineSubBoom(ctx, dest, t0 + 0.22, 2400, 420, 0.24, 0.16, "sawtooth", 25);
-        } else if (opt === 3) {
-          // #3 Fast & Furious Highway Flip & Roll
-          cineSubBoom(ctx, dest, t0, 1450, 980, 0.18, 0.20, "triangle", 15); // Tire screech lead-in
-          [0.10, 0.28, 0.48].forEach((d, idx) => {
-            const m = 1 - idx * 0.22;
-            cineSubBoom(ctx, dest, t0 + d, 140 * m, 26, 0.32, 0.68 * m, "sine", 45);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.30, "bandpass", 880, 240, 1.5, 0.48 * m, 55, idx === 1 ? -0.5 : 0.5);
-            cineNoiseLayer(ctx, dest, t0 + d + 0.04, 0.18, "highpass", 3200, 1500, 1.8, 0.22 * m, 10, idx === 1 ? 0.6 : -0.6);
-          });
-        } else if (opt === 4) {
-          // #4 Zimmer Braaam Kinetic Slam
-          cineSubBoom(ctx, dest, t0, 130, 22, 0.85, 0.80, "sine", 55);
-          cineBrassNote(ctx, dest, t0 + 0.02, 55, 0.82, 0.65, 18);
-          cineBrassNote(ctx, dest, t0 + 0.02, 110, 0.78, 0.45, 22);
-          cineNoiseLayer(ctx, dest, t0, 0.55, "lowpass", 680, 120, 1.6, 0.50, 45, 0);
-        } else if (opt === 5) {
-          // #5 C4 Reactive Armor Detonation
-          cineNoiseLayer(ctx, dest, t0, 0.06, "highpass", 1800, 800, 1.0, 0.65, 75, 0, 0.001);
-          cineSubBoom(ctx, dest, t0 + 0.01, 195, 20, 0.75, 0.85, "sine", 65);
-          cineNoiseLayer(ctx, dest, t0 + 0.02, 0.68, "lowpass", 1100, 95, 1.2, 0.62, 60, 0);
-          [0.12, 0.20, 0.30, 0.42].forEach((d, i) => {
-            cineMetallicHits(ctx, dest, t0 + d, [1400 + i * 250, 2400], 0.14, 0.18, 0.65);
-          });
-        } else if (opt === 6) {
-          // #6 Monster Truck Car-Crusher Stomp
-          cineSubBoom(ctx, dest, t0, 85, 195, 0.16, 0.38, "sawtooth", 35); // V8 bark
-          cineSubBoom(ctx, dest, t0 + 0.08, 155, 25, 0.58, 0.76, "sine", 50);
-          cineNoiseLayer(ctx, dest, t0 + 0.08, 0.48, "bandpass", 720, 180, 1.8, 0.54, 65, 0);
-          cineNoiseLayer(ctx, dest, t0 + 0.25, 0.25, "bandpass", 2600, 900, 2.5, 0.24, 15, 0.4);
-        } else if (opt === 7) {
-          // #7 Locomotive Train Smash
-          cineSubBoom(ctx, dest, t0, 125, 24, 0.70, 0.78, "triangle", 55);
-          cineMetallicHits(ctx, dest, t0, [195, 390, 780, 1560], 0.68, 0.34, 0.92);
-          cineNoiseLayer(ctx, dest, t0 + 0.08, 0.55, "bandpass", 2400, 1100, 2.2, 0.32, 10, -0.35);
-        } else if (opt === 8) {
-          // #8 Plasma Core Implosion
-          cineSubBoom(ctx, dest, t0, 45, 420, 0.15, 0.36, "sine", 15); // Suck-in
-          cineSubBoom(ctx, dest, t0 + 0.15, 240, 22, 0.72, 0.82, "sine", 60);
-          cineSubBoom(ctx, dest, t0 + 0.15, 980, 52, 0.48, 0.34, "sawtooth", 40);
-          cineNoiseLayer(ctx, dest, t0 + 0.15, 0.55, "bandpass", 1800, 280, 2.0, 0.48, 45, 0);
-        } else if (opt === 9) {
-          // #9 Bullet-Time Slow-Mo Wreck
-          cineSubBoom(ctx, dest, t0, 220, 19, 0.92, 0.78, "sine", 40);
-          cineNoiseLayer(ctx, dest, t0, 0.85, "bandpass", 1600, 140, 2.4, 0.48, 50, 0);
-          [0.18, 0.32, 0.48, 0.64].forEach((d, i) => {
-            cineMetallicHits(ctx, dest, t0 + d, [2800 - i * 320, 4100 - i * 400], 0.18, 0.14, 0.85);
-          });
-        } else {
-          // #10 Thunderdome Cage Body-Check
-          cineSubBoom(ctx, dest, t0, 145, 26, 0.55, 0.74, "sine", 50);
-          cineNoiseLayer(ctx, dest, t0, 0.45, "lowpass", 520, 110, 1.4, 0.52, 45, 0);
-          [0.04, 0.12, 0.22, 0.32].forEach((d, i) => {
-            cineMetallicHits(ctx, dest, t0 + d, [820 + i * 110, 1640], 0.15, 0.18, 0.75);
-          });
-        }
-      }
-
-      // =====================================================================
-      // 2. V8 ENGINE ROAR, SAW RIP & MELEE ACTION (10 OPTIONS)
-      // =====================================================================
-      else if (cat === "saw") {
-        if (opt === 1) {
-          // #1 1500HP Supercharged Hellcat V8 + Tire Shred
-          cineSubBoom(ctx, dest, t0, 68, 175, 0.45, 0.42, "sawtooth", 55);
-          cineSubBoom(ctx, dest, t0, 136, 350, 0.45, 0.26, "sawtooth", 45);
-          cineSubBoom(ctx, dest, t0 + 0.04, 620, 1480, 0.42, 0.16, "triangle", 15); // Supercharger whine
-          cineNoiseLayer(ctx, dest, t0 + 0.08, 0.38, "bandpass", 1550, 1180, 3.8, 0.26, 25, 0); // Tire burnout
-        } else if (opt === 2) {
-          // #2 Twin-Turbo Lamborghini V10 + Anti-Lag Pops
-          cineSubBoom(ctx, dest, t0, 115, 340, 0.36, 0.34, "sawtooth", 45);
-          cineSubBoom(ctx, dest, t0, 172, 510, 0.36, 0.24, "triangle", 35);
-          [0.32, 0.40, 0.48].forEach((d) => {
-            cineSubBoom(ctx, dest, t0 + d, 160, 35, 0.09, 0.52, "sine", 65);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.08, "lowpass", 1400, 220, 1.4, 0.44, 60, 0, 0.001);
-          });
-        } else if (opt === 3) {
-          // #3 Chainsaw Massacre Rip-Saw vs Steel Armor
-          cineSubBoom(ctx, dest, t0, 95, 245, 0.52, 0.36, "sawtooth", 70);
-          cineNoiseLayer(ctx, dest, t0, 0.52, "bandpass", 1850, 2850, 2.6, 0.42, 65, 0);
-          [0.08, 0.18, 0.28, 0.38].forEach((d, i) => {
-            cineMetallicHits(ctx, dest, t0 + d, [2200 + i * 300, 3400], 0.09, 0.20, 0.70);
-          });
-        } else if (opt === 4) {
-          // #4 Formula-Drift Twin-Scroll Turbo + Stutututu Flutter
-          cineSubBoom(ctx, dest, t0, 90, 230, 0.28, 0.34, "sawtooth", 45);
-          cineNoiseLayer(ctx, dest, t0, 0.26, "bandpass", 2400, 3800, 3.0, 0.24, 10, 0);
-          [0.26, 0.33, 0.40, 0.47, 0.54].forEach((d, i) => {
-            const f = 1350 - i * 140;
-            cineNoiseLayer(ctx, dest, t0 + d, 0.065, "bandpass", f, f * 0.8, 4.5, 0.28 * (1 - i * 0.14), 10, (i % 2 ? 0.4 : -0.4));
-          });
-        } else if (opt === 5) {
-          // #5 Cyberpunk Quad-Rotor Plasma Grinder
-          cineSubBoom(ctx, dest, t0, 140, 280, 0.48, 0.34, "sawtooth", 50);
-          cineSubBoom(ctx, dest, t0, 285, 570, 0.48, 0.22, "square", 40);
-          cineNoiseLayer(ctx, dest, t0, 0.48, "bandpass", 2600, 950, 2.2, 0.35, 55, 0);
-        } else if (opt === 6) {
-          // #6 Big-Rig Diesel War-Truck & Jake-Brake
-          cineSubBoom(ctx, dest, t0, 52, 118, 0.52, 0.48, "sawtooth", 65);
-          cineSubBoom(ctx, dest, t0 + 0.05, 900, 1950, 0.45, 0.15, "sine", 10); // Turbo whistle
-          [0.28, 0.35, 0.42, 0.49].forEach((d) => {
-            cineSubBoom(ctx, dest, t0 + d, 88, 44, 0.06, 0.40, "sawtooth", 60);
-          });
-        } else if (opt === 7) {
-          // #7 JDM RX-7 4-Rotor Brap-Brap & Wastegate Scream
-          [0, 0.11, 0.22].forEach((d) => {
-            cineSubBoom(ctx, dest, t0 + d, 135, 225, 0.095, 0.36, "sawtooth", 55);
-          });
-          cineSubBoom(ctx, dest, t0 + 0.32, 240, 490, 0.28, 0.40, "sawtooth", 65);
-          cineNoiseLayer(ctx, dest, t0 + 0.32, 0.28, "bandpass", 1900, 3200, 2.4, 0.32, 40, 0);
-        } else if (opt === 8) {
-          // #8 Hydraulic Jaws-of-Life Metal Shears
-          cineSubBoom(ctx, dest, t0, 280, 620, 0.24, 0.24, "triangle", 25);
-          cineSubBoom(ctx, dest, t0 + 0.22, 160, 28, 0.38, 0.68, "sine", 55);
-          cineMetallicHits(ctx, dest, t0 + 0.22, [420, 890, 1720], 0.34, 0.32, 0.62);
-          cineNoiseLayer(ctx, dest, t0 + 0.36, 0.24, "highpass", 2800, 1200, 2.0, 0.24, 0, 0);
-        } else if (opt === 9) {
-          // #9 Jet-Car Afterburner Flamethrower
-          cineSubBoom(ctx, dest, t0, 320, 1150, 0.25, 0.22, "triangle", 20);
-          cineSubBoom(ctx, dest, t0 + 0.12, 110, 34, 0.48, 0.58, "sine", 45);
-          cineNoiseLayer(ctx, dest, t0 + 0.10, 0.50, "bandpass", 580, 190, 1.1, 0.52, 40, 0, 0.04);
-        } else {
-          // #10 Mech Rotary Triple-Slash
-          [0, 0.14, 0.28].forEach((d, idx) => {
-            cineNoiseLayer(ctx, dest, t0 + d, 0.12, "bandpass", 1200 + idx * 450, 320, 2.2, 0.44, 45, idx === 1 ? -0.5 : 0.5);
-            cineMetallicHits(ctx, dest, t0 + d + 0.02, [680 + idx * 180, 1480 + idx * 260], 0.14, 0.26, 0.65);
-          });
-        }
-      }
-
-      // =====================================================================
-      // 3. HEAVY WEAPONS & ARTILLERY FIRE (10 OPTIONS)
-      // =====================================================================
-      else if (cat === "weapon") {
-        if (opt === 1) {
-          // #1 A-10 Warthog GAU-8 30mm Avenger (BRRRRT!)
-          for (let i = 0; i < 9; i++) {
-            const d = i * 0.036;
-            cineSubBoom(ctx, dest, t0 + d, 195, 58, 0.035, 0.48, "sawtooth", 65);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.035, "bandpass", 1350, 480, 1.8, 0.38, 45, (i % 2 ? 0.3 : -0.3), 0.001);
-          }
-          cineSubBoom(ctx, dest, t0 + 0.04, 95, 26, 0.48, 0.58, "sine", 40);
-          cineNoiseLayer(ctx, dest, t0 + 0.30, 0.32, "lowpass", 650, 140, 1.2, 0.32, 25, 0);
-        } else if (opt === 2) {
-          // #2 Abrams M1A2 120mm Tank Main Gun
-          cineNoiseLayer(ctx, dest, t0, 0.05, "highpass", 2200, 900, 1.0, 0.65, 70, 0, 0.001);
-          cineSubBoom(ctx, dest, t0, 185, 20, 0.78, 0.85, "sine", 65);
-          cineNoiseLayer(ctx, dest, t0 + 0.02, 0.72, "lowpass", 920, 85, 1.3, 0.64, 55, 0);
-          cineMetallicHits(ctx, dest, t0 + 0.38, [1180, 2360, 3120], 0.22, 0.16, 0.92); // Shell casing drop
-        } else if (opt === 3) {
-          // #3 Sci-Fi Orbital Railgun Hyper-Shot
-          cineSubBoom(ctx, dest, t0, 280, 1850, 0.14, 0.28, "triangle", 20); // Capacitor charge
-          cineSubBoom(ctx, dest, t0 + 0.14, 2400, 32, 0.58, 0.76, "sawtooth", 60);
-          cineNoiseLayer(ctx, dest, t0 + 0.14, 0.52, "bandpass", 2800, 220, 2.0, 0.56, 55, 0, 0.001);
-        } else if (opt === 4) {
-          // #4 HIMARS 4x Multi-Rocket Salvo
-          [0, 0.09, 0.18, 0.27].forEach((d, idx) => {
-            cineSubBoom(ctx, dest, t0 + d, 140, 42, 0.16, 0.44, "triangle", 35);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.22, "bandpass", 1200 + idx * 220, 380, 1.8, 0.38, 30, (idx % 2 ? 0.55 : -0.55));
-          });
-          cineSubBoom(ctx, dest, t0 + 0.36, 130, 22, 0.52, 0.68, "sine", 55);
-        } else if (opt === 5) {
-          // #5 Twin .50-Cal Heavy Machine Gun Burst
-          [0, 0.075, 0.15, 0.225, 0.30].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 175, 42, 0.07, 0.56, "sine", 50);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.068, "lowpass", 1600, 240, 1.4, 0.45, 45, (i % 2 ? 0.25 : -0.25), 0.001);
-          });
-        } else if (opt === 6) {
-          // #6 BFG-9000 Plasma Detonator
-          cineSubBoom(ctx, dest, t0, 55, 320, 0.22, 0.42, "sawtooth", 35);
-          cineSubBoom(ctx, dest, t0 + 0.20, 210, 20, 0.75, 0.85, "sine", 65);
-          cineSubBoom(ctx, dest, t0 + 0.20, 880, 48, 0.55, 0.38, "sawtooth", 45);
-          cineNoiseLayer(ctx, dest, t0 + 0.20, 0.60, "bandpass", 1600, 180, 2.2, 0.50, 50, 0);
-        } else if (opt === 7) {
-          // #7 Heavy Mortar Howitzer Thump & Whistle
-          cineSubBoom(ctx, dest, t0, 165, 36, 0.22, 0.62, "sine", 35);
-          cineSubBoom(ctx, dest, t0 + 0.14, 1450, 380, 0.24, 0.18, "sine", 0); // Incoming whistle
-          cineSubBoom(ctx, dest, t0 + 0.36, 150, 22, 0.58, 0.78, "sine", 60);
-          cineNoiseLayer(ctx, dest, t0 + 0.36, 0.52, "lowpass", 820, 95, 1.2, 0.55, 50, 0);
-        } else if (opt === 8) {
-          // #8 Starship Quad-Turbolaser Barrage
-          [0, 0.08, 0.16, 0.24].forEach((d, idx) => {
-            cineSubBoom(ctx, dest, t0 + d, 1950 - idx * 120, 95, 0.16, 0.38, "sawtooth", 35);
-            cineSubBoom(ctx, dest, t0 + d, 130, 36, 0.14, 0.42, "sine", 30);
-          });
-        } else if (opt === 9) {
-          // #9 40mm Grenade Launcher (THOOMP-BOOM!)
-          cineSubBoom(ctx, dest, t0, 210, 58, 0.16, 0.55, "sine", 20);
-          cineSubBoom(ctx, dest, t0 + 0.22, 160, 22, 0.58, 0.78, "sine", 60);
-          cineNoiseLayer(ctx, dest, t0 + 0.22, 0.52, "bandpass", 980, 160, 1.4, 0.54, 55, 0);
-        } else {
-          // #10 Tesla Lightning Arc Cannon
-          cineNoiseLayer(ctx, dest, t0, 0.18, "highpass", 2400, 800, 3.2, 0.48, 65, 0, 0.001);
-          cineSubBoom(ctx, dest, t0, 1600, 48, 0.32, 0.42, "sawtooth", 50);
-          cineSubBoom(ctx, dest, t0 + 0.04, 140, 24, 0.62, 0.72, "sine", 55);
-        }
-      }
-
-      // =====================================================================
-      // 4. NITROUS BOOST, CHARGE & TARGET LOCK (10 OPTIONS)
-      // =====================================================================
-      else if (cat === "boost") {
-        if (opt === 1) {
-          // #1 Dual-Stage NOS Purge + V8 Downshift Roar
-          [0, 0.11].forEach((d, i) => {
-            cineNoiseLayer(ctx, dest, t0 + d, 0.09, "highpass", 3200, 1800, 2.2, 0.38, 15, i ? 0.5 : -0.5, 0.002);
-          });
-          cineSubBoom(ctx, dest, t0 + 0.18, 72, 210, 0.38, 0.46, "sawtooth", 55);
-          cineNoiseLayer(ctx, dest, t0 + 0.18, 0.38, "bandpass", 680, 1850, 1.8, 0.36, 25, 0, 0.04);
-        } else if (opt === 2) {
-          // #2 F-22 Raptor Mach-2 Sonic Boom
-          cineSubBoom(ctx, dest, t0, 240, 920, 0.16, 0.24, "triangle", 15);
-          cineSubBoom(ctx, dest, t0 + 0.14, 180, 22, 0.62, 0.80, "sine", 60);
-          cineNoiseLayer(ctx, dest, t0 + 0.14, 0.58, "lowpass", 950, 120, 1.2, 0.58, 50, 0, 0.001);
-        } else if (opt === 3) {
-          // #3 Top Gun Missile Radar Lock + Launch
-          [0, 0.065, 0.13].forEach((d) => {
-            cineSubBoom(ctx, dest, t0 + d, 1480, 1480, 0.045, 0.24, "sine", 0);
-          });
-          cineSubBoom(ctx, dest, t0 + 0.20, 1975, 1975, 0.18, 0.28, "triangle", 10);
-          cineNoiseLayer(ctx, dest, t0 + 0.24, 0.36, "bandpass", 1400, 420, 1.6, 0.42, 35, 0);
-        } else if (opt === 4) {
-          // #4 Batmobile Jet-Turbine Ignition & Flame Burst
-          cineSubBoom(ctx, dest, t0, 110, 680, 0.38, 0.32, "sawtooth", 35);
-          cineSubBoom(ctx, dest, t0 + 0.12, 135, 28, 0.52, 0.68, "sine", 50);
-          cineNoiseLayer(ctx, dest, t0 + 0.10, 0.52, "bandpass", 740, 220, 1.4, 0.48, 40, 0);
-        } else if (opt === 5) {
-          // #5 Transformers Autobot Mechanical Transform
-          [0, 0.08, 0.16, 0.24, 0.32].forEach((d, idx) => {
-            const f = [420, 680, 520, 880, 310][idx];
-            cineSubBoom(ctx, dest, t0 + d, f, f * (idx % 2 ? 1.45 : 0.65), 0.075, 0.34, "sawtooth", 40);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.06, "bandpass", 1800, 900, 2.5, 0.24, 25, (idx % 2 ? 0.45 : -0.45));
-          });
-          cineSubBoom(ctx, dest, t0 + 0.38, 120, 28, 0.28, 0.58, "sine", 45);
-        } else if (opt === 6) {
-          // #6 Cyberpunk Sandevistan Time-Warp Trigger
-          cineSubBoom(ctx, dest, t0, 880, 32, 0.48, 0.62, "sine", 35);
-          cineSubBoom(ctx, dest, t0 + 0.04, 120, 1650, 0.38, 0.26, "triangle", 20);
-          cineMetallicHits(ctx, dest, t0 + 0.02, [2400, 3600], 0.25, 0.18, 0.96);
-        } else if (opt === 7) {
-          // #7 F1 Hybrid ERS Overtake Boost
-          cineSubBoom(ctx, dest, t0, 340, 1280, 0.48, 0.28, "sawtooth", 25);
-          cineSubBoom(ctx, dest, t0, 680, 2560, 0.48, 0.16, "sine", 10);
-          cineNoiseLayer(ctx, dest, t0, 0.48, "bandpass", 850, 2200, 2.0, 0.30, 15, 0);
-        } else if (opt === 8) {
-          // #8 Gundam Vernier Double-Dash
-          [0, 0.14].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 160, 36, 0.12, 0.54, "sine", 40);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.12, "bandpass", 1850, 520, 1.8, 0.44, 30, i ? 0.5 : -0.5, 0.001);
-          });
-        } else if (opt === 9) {
-          // #9 Hellcat Supercharger Scream + Drag Hook
-          cineSubBoom(ctx, dest, t0, 75, 220, 0.42, 0.44, "sawtooth", 55);
-          cineSubBoom(ctx, dest, t0, 740, 1920, 0.42, 0.22, "triangle", 20);
-          cineNoiseLayer(ctx, dest, t0, 0.16, "bandpass", 1450, 950, 4.0, 0.30, 20, 0);
-        } else {
-          // #10 Inception Braaam Charge
-          cineBrassNote(ctx, dest, t0, 65.41, 0.62, 0.62, 16);
-          cineBrassNote(ctx, dest, t0, 130.81, 0.62, 0.42, 20);
-          cineSubBoom(ctx, dest, t0, 95, 26, 0.62, 0.68, "sine", 45);
-        }
-      }
-
-      // =====================================================================
-      // 5. PART BREAK, ARMOR RIP & CRITICAL KO (10 OPTIONS)
-      // =====================================================================
-      else if (cat === "break") {
-        if (opt === 1) {
-          // #1 Hollywood Car Fireball Explosion
-          cineSubBoom(ctx, dest, t0, 175, 20, 0.85, 0.85, "sine", 65);
-          cineNoiseLayer(ctx, dest, t0, 0.80, "lowpass", 950, 80, 1.2, 0.65, 60, 0);
-          [0.10, 0.20, 0.32, 0.46].forEach((d, i) => {
-            cineNoiseLayer(ctx, dest, t0 + d, 0.18, "highpass", 2600 + i * 300, 1200, 2.0, 0.22, 15, (i % 2 ? 0.7 : -0.7));
-          });
-        } else if (opt === 2) {
-          // #2 Catastrophic Engine Blowout & Steam Burst
-          [0, 0.07, 0.14].forEach((d) => {
-            cineMetallicHits(ctx, dest, t0 + d, [520, 1140, 2180], 0.08, 0.32, 0.65);
-          });
-          cineSubBoom(ctx, dest, t0 + 0.18, 160, 26, 0.48, 0.74, "sine", 55);
-          cineNoiseLayer(ctx, dest, t0 + 0.20, 0.55, "bandpass", 2800, 950, 2.2, 0.42, 15, 0);
-        } else if (opt === 3) {
-          // #3 Titanium Armor Rip & Shrapnel Storm
-          cineSubBoom(ctx, dest, t0, 620, 140, 0.28, 0.42, "sawtooth", 55);
-          cineSubBoom(ctx, dest, t0 + 0.04, 145, 24, 0.55, 0.72, "sine", 50);
-          [0.06, 0.15, 0.25, 0.36, 0.48].forEach((d, i) => {
-            cineMetallicHits(ctx, dest, t0 + d, [980 + i * 240, 1960 + i * 310], 0.14, 0.22 * (1 - i * 0.12), 0.72);
-          });
-        } else if (opt === 4) {
-          // #4 EMP Blackout & Reactor Meltdown
-          cineNoiseLayer(ctx, dest, t0, 0.14, "bandpass", 2200, 600, 2.5, 0.48, 55, 0, 0.001);
-          cineSubBoom(ctx, dest, t0 + 0.04, 1150, 22, 0.78, 0.68, "sawtooth", 45);
-          cineSubBoom(ctx, dest, t0 + 0.04, 160, 18, 0.82, 0.78, "sine", 50);
-        } else if (opt === 5) {
-          // #5 Windshield Smash + Roll-Cage Buckle
-          cineSubBoom(ctx, dest, t0, 150, 28, 0.48, 0.70, "sine", 50);
-          cineNoiseLayer(ctx, dest, t0, 0.38, "highpass", 2400, 950, 1.5, 0.45, 30, 0, 0.001);
-          cineMetallicHits(ctx, dest, t0 + 0.05, [380, 790, 1580, 2950], 0.38, 0.26, 0.74);
-        } else if (opt === 6) {
-          // #6 Ammo Rack 4x Chain Cook-Off (BOOM-BAM-BOOM-KABOOM!)
-          [0, 0.12, 0.24, 0.38].forEach((d, idx) => {
-            const big = idx === 3 ? 1.35 : 0.9;
-            cineSubBoom(ctx, dest, t0 + d, 165 * big, 22, 0.36 * big, 0.64 * big, "sine", 60);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.32 * big, "lowpass", 1100, 110, 1.3, 0.48 * big, 55, (idx % 2 ? 0.5 : -0.5), 0.001);
-          });
-        } else if (opt === 7) {
-          // #7 200MPH Tire Blowout & Alloy Rim Sparks
-          cineSubBoom(ctx, dest, t0, 190, 26, 0.34, 0.76, "sine", 55);
-          cineNoiseLayer(ctx, dest, t0, 0.22, "lowpass", 850, 140, 1.2, 0.55, 50, 0, 0.001);
-          cineNoiseLayer(ctx, dest, t0 + 0.12, 0.52, "bandpass", 2600, 1400, 3.2, 0.36, 45, 0.3);
-        } else if (opt === 8) {
-          // #8 Hydraulic Spine Snap & Oil Burst
-          cineMetallicHits(ctx, dest, t0, [640, 1280, 2560], 0.12, 0.38, 0.45);
-          cineSubBoom(ctx, dest, t0 + 0.04, 155, 25, 0.45, 0.72, "sine", 50);
-          cineNoiseLayer(ctx, dest, t0 + 0.08, 0.45, "highpass", 2200, 800, 2.0, 0.34, 15, -0.3);
-        } else if (opt === 9) {
-          // #9 Mecha Reactor Core Breach
-          [0, 0.12].forEach((d) => cineSubBoom(ctx, dest, t0 + d, 880, 440, 0.09, 0.28, "sawtooth", 25));
-          cineSubBoom(ctx, dest, t0 + 0.22, 220, 20, 0.75, 0.84, "sine", 65);
-          cineNoiseLayer(ctx, dest, t0 + 0.22, 0.68, "bandpass", 1200, 120, 1.5, 0.58, 55, 0);
-        } else {
-          // #10 Demolition Totaled Finisher
-          [0, 0.16, 0.32].forEach((d, idx) => {
-            cineSubBoom(ctx, dest, t0 + d, 150 - idx * 20, 24, 0.32, 0.68, "sine", 55);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.28, "bandpass", 820, 190, 1.6, 0.46, 55, (idx - 1) * 0.5);
-          });
-          cineBrassNote(ctx, dest, t0 + 0.42, 65.41, 0.55, 0.45, 20);
-        }
-      }
-
-      // =====================================================================
-      // 6. MATCH START & ARENA COUNTDOWN (10 OPTIONS)
-      // =====================================================================
-      else if (cat === "bell") {
-        if (opt === 1) {
-          // #1 NHRA Drag Strip Tree + 3000HP Launch
-          [0, 0.14, 0.28].forEach((d) => {
-            cineSubBoom(ctx, dest, t0 + d, 587.33, 587.33, 0.08, 0.24, "triangle", 10);
-          });
-          cineSubBoom(ctx, dest, t0 + 0.42, 1174.66, 1174.66, 0.28, 0.32, "triangle", 15);
-          cineSubBoom(ctx, dest, t0 + 0.42, 72, 215, 0.55, 0.52, "sawtooth", 60);
-          cineNoiseLayer(ctx, dest, t0 + 0.42, 0.50, "bandpass", 1450, 950, 3.2, 0.34, 30, 0);
-        } else if (opt === 2) {
-          // #2 Zimmer Braaam + 3x Taiko War-Drums
-          cineBrassNote(ctx, dest, t0, 55, 0.85, 0.68, 18);
-          cineBrassNote(ctx, dest, t0, 110, 0.85, 0.48, 22);
-          [0, 0.22, 0.44].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 145 + i * 15, 26, 0.32, 0.72, "sine", 50);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.18, "lowpass", 620, 140, 1.4, 0.42, 35, (i - 1) * 0.4);
-          });
-        } else if (opt === 3) {
-          // #3 UFC Octagon Cage Door Slam + Airhorn
-          cineMetallicHits(ctx, dest, t0, [280, 560, 1120, 2240], 0.32, 0.36, 0.78);
-          cineSubBoom(ctx, dest, t0, 140, 28, 0.35, 0.68, "sine", 50);
-          cineBrassNote(ctx, dest, t0 + 0.18, 196, 0.65, 0.55, 16);
-          cineBrassNote(ctx, dest, t0 + 0.18, 293.66, 0.65, 0.42, 16);
-        } else if (opt === 4) {
-          // #4 Tokyo Street Race Horn + Twin-Turbo Launch
-          [0, 0.12].forEach((d) => cineBrassNote(ctx, dest, t0 + d, 349.23, 0.09, 0.35, 10));
-          cineBrassNote(ctx, dest, t0 + 0.24, 466.16, 0.28, 0.45, 12);
-          cineSubBoom(ctx, dest, t0 + 0.26, 85, 240, 0.48, 0.46, "sawtooth", 55);
-          cineNoiseLayer(ctx, dest, t0 + 0.28, 0.22, "highpass", 2800, 1400, 2.0, 0.30, 15, 0);
-        } else if (opt === 5) {
-          // #5 Jaeger Hangar Siren + Hydraulic Drop-Pod Slam
-          cineSubBoom(ctx, dest, t0, 320, 740, 0.26, 0.32, "sawtooth", 30);
-          cineSubBoom(ctx, dest, t0 + 0.26, 740, 280, 0.24, 0.32, "sawtooth", 30);
-          cineSubBoom(ctx, dest, t0 + 0.32, 165, 22, 0.62, 0.80, "sine", 60);
-          cineNoiseLayer(ctx, dest, t0 + 0.32, 0.48, "lowpass", 780, 120, 1.5, 0.52, 45, 0);
-        } else if (opt === 6) {
-          // #6 Colosseum War-Horn & 3x Anvil Strikes
-          cineBrassNote(ctx, dest, t0, 82.41, 0.85, 0.65, 15);
-          [0.10, 0.28, 0.46].forEach((d) => {
-            cineMetallicHits(ctx, dest, t0 + d, [880, 1760, 2640], 0.22, 0.28, 0.92);
-            cineSubBoom(ctx, dest, t0 + d, 130, 34, 0.22, 0.48, "sine", 35);
-          });
-        } else if (opt === 7) {
-          // #7 Formula 1 5-Lights-Out Grid Launch
-          [0, 0.11, 0.22, 0.33, 0.44].forEach((d) => {
-            cineSubBoom(ctx, dest, t0 + d, 440, 440, 0.065, 0.24, "sine", 5);
-          });
-          cineSubBoom(ctx, dest, t0 + 0.55, 880, 880, 0.22, 0.32, "triangle", 15);
-          cineSubBoom(ctx, dest, t0 + 0.55, 140, 520, 0.45, 0.44, "sawtooth", 50);
-        } else if (opt === 8) {
-          // #8 Dystopian Purge Siren + 30Hz Bass Drop
-          cineSubBoom(ctx, dest, t0, 260, 620, 0.32, 0.34, "sawtooth", 35);
-          cineSubBoom(ctx, dest, t0 + 0.32, 620, 180, 0.28, 0.34, "sawtooth", 35);
-          cineSubBoom(ctx, dest, t0 + 0.34, 150, 22, 0.68, 0.82, "sine", 55);
-        } else if (opt === 9) {
-          // #9 Thunderdome 3x Pyrotechnic Cannons
-          [0, 0.16, 0.32].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 160, 26, 0.32, 0.68, "sine", 55);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.30, "bandpass", 680 + i * 200, 180, 1.4, 0.48, 45, (i - 1) * 0.5);
-          });
-          cineBrassNote(ctx, dest, t0 + 0.32, 146.83, 0.52, 0.52, 18);
-        } else {
-          // #10 Arcade 3-2-1 FIGHT! + Bronze Gong
-          [0, 0.14, 0.28].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 440 + i * 110, 440 + i * 110, 0.09, 0.26, "triangle", 10);
-          });
-          cineMetallicHits(ctx, dest, t0 + 0.42, [110, 220, 342, 684, 1120], 0.78, 0.38, 0.96);
-          cineSubBoom(ctx, dest, t0 + 0.42, 130, 26, 0.55, 0.68, "sine", 45);
-        }
-      }
-
-      // =====================================================================
-      // 7. TACTICAL UI, BUY, EQUIP & BOND SFX (10 OPTIONS)
-      // =====================================================================
-      else if (cat === "ui") {
-        if (opt === 1) {
-          // #1 Heavy Mech Ratchet & Hydraulic Lock
-          [0, 0.04, 0.08].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 420 + i * 120, 210, 0.032, 0.26, "sawtooth", 30);
-          });
-          cineSubBoom(ctx, dest, t0 + 0.13, 140, 34, 0.18, 0.52, "sine", 40);
-          cineNoiseLayer(ctx, dest, t0 + 0.13, 0.14, "highpass", 2600, 1100, 2.0, 0.24, 10, 0);
-        } else if (opt === 2) {
-          // #2 Liquid Glass Crystal + Sub-Pop
-          cineSubBoom(ctx, dest, t0, 120, 38, 0.14, 0.38, "sine", 15);
-          cineSubBoom(ctx, dest, t0, 587.33, 1174.66, 0.11, 0.26, "sine", 0);
-          cineSubBoom(ctx, dest, t0 + 0.06, 880, 1760, 0.16, 0.22, "triangle", 0);
-        } else if (opt === 3) {
-          // #3 Tactical Pump-Action Rack (CHK-CHK!)
-          [0, 0.085].forEach((d, idx) => {
-            cineNoiseLayer(ctx, dest, t0 + d, 0.065, "bandpass", idx ? 2200 : 1650, 720, 2.4, 0.42, 45, idx ? 0.25 : -0.25, 0.001);
-            cineMetallicHits(ctx, dest, t0 + d, [idx ? 920 : 680, 1840], 0.06, 0.24, 0.65);
-          });
-        } else if (opt === 4) {
-          // #4 Iron-Suit HUD Telemetry & Servo Lock
-          cineSubBoom(ctx, dest, t0, 880, 1318.5, 0.07, 0.22, "sine", 0);
-          cineSubBoom(ctx, dest, t0 + 0.06, 1760, 1318.5, 0.09, 0.22, "triangle", 0);
-          cineSubBoom(ctx, dest, t0 + 0.12, 130, 36, 0.15, 0.44, "sine", 30);
-        } else if (opt === 5) {
-          // #5 Bank Vault Heavy Steel Bolts Lock
-          [0, 0.06, 0.12].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 160 - i * 20, 38, 0.09, 0.46, "triangle", 40);
-            cineMetallicHits(ctx, dest, t0 + d, [520 + i * 110, 1040], 0.08, 0.22, 0.75);
-          });
-        } else if (opt === 6) {
-          // #6 V8 Throttle Blip (VROOM!)
-          cineSubBoom(ctx, dest, t0, 78, 215, 0.15, 0.42, "sawtooth", 55);
-          cineSubBoom(ctx, dest, t0 + 0.13, 215, 88, 0.15, 0.34, "sawtooth", 45);
-        } else if (opt === 7) {
-          // #7 Cyber Katana Unsheathe (SHING!)
-          cineNoiseLayer(ctx, dest, t0, 0.22, "bandpass", 2400, 4800, 3.8, 0.34, 25, 0, 0.01);
-          cineMetallicHits(ctx, dest, t0 + 0.02, [1760, 3520, 5280], 0.28, 0.22, 0.98);
-          cineSubBoom(ctx, dest, t0, 130, 34, 0.18, 0.42, "sine", 30);
-        } else if (opt === 8) {
-          // #8 High-Voltage Capacitor Snap
-          cineSubBoom(ctx, dest, t0, 280, 1480, 0.11, 0.24, "sawtooth", 20);
-          cineNoiseLayer(ctx, dest, t0 + 0.10, 0.08, "highpass", 2800, 1200, 2.0, 0.38, 50, 0, 0.001);
-        } else if (opt === 9) {
-          // #9 F1 Pit-Crew Impact Wrench (ZZT-ZZT!)
-          [0, 0.09].forEach((d, idx) => {
-            cineSubBoom(ctx, dest, t0 + d, 380 + idx * 140, 760 + idx * 180, 0.075, 0.32, "sawtooth", 45);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.075, "bandpass", 1800, 1100, 2.5, 0.26, 30, 0);
-          });
-        } else {
-          // #10 24K Gold Bullion + Diamond Triad
-          cineSubBoom(ctx, dest, t0, 145, 38, 0.16, 0.48, "sine", 35);
-          [880, 1108.73, 1318.51, 1760].forEach((f, i) => {
-            cineSubBoom(ctx, dest, t0 + 0.03 + i * 0.035, f, f, 0.24, 0.18, "triangle", 0);
-          });
-        }
-      }
-
-      // =====================================================================
-      // 8. VICTORY FANFARE & CHAMPIONSHIP FINISHER (10 OPTIONS)
-      // =====================================================================
-      else if (cat === "victory") {
-        if (opt === 1) {
-          // #1 Tokyo Drift Victory Anthem + V8 Burnout + Fireworks
-          cineSubBoom(ctx, dest, t0, 150, 24, 0.65, 0.78, "sine", 55);
-          [293.66, 349.23, 440, 587.33].forEach((f, i) => {
-            cineBrassNote(ctx, dest, t0 + i * 0.11, f, 0.42, 0.48, 16);
-          });
-          cineSubBoom(ctx, dest, t0 + 0.25, 82, 210, 0.55, 0.38, "sawtooth", 50); // V8 burnout
-          cineNoiseLayer(ctx, dest, t0 + 0.45, 0.42, "bandpass", 1600, 900, 2.5, 0.32, 30, 0);
-        } else if (opt === 2) {
-          // #2 Blockbuster Trailer Finale (Zimmer Brass + Taiko Roll)
-          [0, 0.09, 0.18, 0.27].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 140 + i * 12, 28, 0.22, 0.62, "sine", 50);
-          });
-          cineBrassNote(ctx, dest, t0 + 0.32, 110, 0.85, 0.68, 20);
-          cineBrassNote(ctx, dest, t0 + 0.32, 164.81, 0.85, 0.52, 20);
-          cineBrassNote(ctx, dest, t0 + 0.32, 220, 0.85, 0.55, 22);
-          cineSubBoom(ctx, dest, t0 + 0.32, 160, 20, 0.85, 0.82, "sine", 60);
-        } else if (opt === 3) {
-          // #3 Mad Max Flame-Guitar Power Riff + War-Horns
-          [146.83, 174.61, 196.00, 293.66].forEach((f, idx) => {
-            const d = idx * 0.13;
-            cineSubBoom(ctx, dest, t0 + d, f, f, 0.28, 0.38, "sawtooth", 70);
-            cineSubBoom(ctx, dest, t0 + d, f * 1.5, f * 1.5, 0.28, 0.28, "sawtooth", 70);
-            cineSubBoom(ctx, dest, t0 + d, 120, 32, 0.18, 0.48, "sine", 40);
-          });
-          cineNoiseLayer(ctx, dest, t0 + 0.40, 0.48, "bandpass", 680, 220, 1.4, 0.42, 40, 0);
-        } else if (opt === 4) {
-          // #4 Cyberpunk Synthwave Champion Drop
-          cineSubBoom(ctx, dest, t0, 160, 24, 0.65, 0.78, "sine", 55);
-          [220, 277.18, 329.63, 440, 659.25].forEach((f, i) => {
-            cineBrassNote(ctx, dest, t0 + i * 0.085, f, 0.36, 0.42, 18);
-          });
-        } else if (opt === 5) {
-          // #5 Victory Lane 9000-RPM Donuts + Stadium Horns
-          cineSubBoom(ctx, dest, t0, 95, 285, 0.68, 0.44, "sawtooth", 60);
-          cineNoiseLayer(ctx, dest, t0 + 0.08, 0.60, "bandpass", 1650, 1250, 3.5, 0.32, 25, 0);
-          [0.05, 0.24, 0.44].forEach((d) => {
-            cineBrassNote(ctx, dest, t0 + d, 233.08, 0.16, 0.46, 15);
-            cineBrassNote(ctx, dest, t0 + d, 349.23, 0.16, 0.38, 15);
-          });
-        } else if (opt === 6) {
-          // #6 Boss Reactor Explosion + Heroic 5-Note Brass
-          [0, 0.12].forEach((d) => {
-            cineSubBoom(ctx, dest, t0 + d, 175, 22, 0.36, 0.74, "sine", 65);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.32, "lowpass", 950, 110, 1.3, 0.54, 55, 0, 0.001);
-          });
-          [261.63, 329.63, 392.00, 523.25].forEach((f, idx) => {
-            cineBrassNote(ctx, dest, t0 + 0.26 + idx * 0.10, f, 0.42, 0.48, 16);
-          });
-        } else if (opt === 7) {
-          // #7 Pit King Heavy 808 Trap Drop
-          [0, 0.22, 0.38].forEach((d, idx) => {
-            const p = [130, 110, 165][idx];
-            cineSubBoom(ctx, dest, t0 + d, p, 26, 0.32, 0.78, "sine", 60);
-            cineBrassNote(ctx, dest, t0 + d, p * 2, 0.22, 0.44, 15);
-          });
-          [0.50, 0.54, 0.58, 0.62].forEach((d) => {
-            cineNoiseLayer(ctx, dest, t0 + d, 0.04, "highpass", 1800, 900, 1.5, 0.36, 30, 0, 0.001);
-          });
-        } else if (opt === 8) {
-          // #8 Shogun Taiko Ensemble & Samurai Brass
-          [0, 0.11, 0.22, 0.36].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 155, 25, 0.28, 0.74, "sine", 50);
-            cineMetallicHits(ctx, dest, t0 + d, [620 + i * 90, 1240], 0.12, 0.20, 0.85);
-          });
-          cineBrassNote(ctx, dest, t0 + 0.36, 146.83, 0.68, 0.62, 18);
-          cineBrassNote(ctx, dest, t0 + 0.36, 220.00, 0.68, 0.48, 18);
-        } else if (opt === 9) {
-          // #9 Rocket League Goal Explosion Shockwave
-          cineSubBoom(ctx, dest, t0, 48, 480, 0.16, 0.38, "sine", 15); // Implosion suck-in
-          cineSubBoom(ctx, dest, t0 + 0.16, 220, 20, 0.78, 0.86, "sine", 65);
-          cineNoiseLayer(ctx, dest, t0 + 0.16, 0.65, "bandpass", 1400, 180, 1.6, 0.56, 50, 0, 0.001);
-          [293.66, 440, 587.33, 880].forEach((f) => {
-            cineBrassNote(ctx, dest, t0 + 0.18, f, 0.68, 0.38, 16);
-          });
-        } else {
-          // #10 Sovereign Gold Jackpot + 4x Firework Mortars
-          [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => {
-            cineSubBoom(ctx, dest, t0 + i * 0.06, f, f, 0.32, 0.24, "triangle", 5);
-          });
-          [0.14, 0.28, 0.42, 0.56].forEach((d, i) => {
-            cineSubBoom(ctx, dest, t0 + d, 165, 24, 0.32, 0.64, "sine", 55);
-            cineNoiseLayer(ctx, dest, t0 + d, 0.28, "bandpass", 1800, 420, 1.8, 0.38, 35, (i % 2 ? 0.6 : -0.6), 0.001);
-          });
-        }
-      }
-    }
 
 
     const BotPitAudio = {
@@ -19736,13 +18948,17 @@
       muted: localStorage.getItem("rc_botpit_muted") === "1",
       lastClashMs: 0,
       lastSawMs: 0,
-      _masterIn: null,
-      _ctx: null,
+      _buffers: {},
+      _loading: {},
       prefs: (() => {
         const defaults = { clash: 1, saw: 1, weapon: 1, boost: 1, break: 1, bell: 1, ui: 1, victory: 1 };
         try {
           const saved = JSON.parse(localStorage.getItem("rc_c19_sound_prefs") || "{}");
-          return { ...defaults, ...saved };
+          const merged = { ...defaults, ...saved };
+          Object.keys(merged).forEach(k => {
+            if (merged[k] < 1 || merged[k] > 5) merged[k] = 1;
+          });
+          return merged;
         } catch (_) {
           return defaults;
         }
@@ -19754,44 +18970,99 @@
         } catch (_) {}
       },
 
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) {
+            try { this.ctx = new AudioCtx(); } catch (_) {}
+          }
+        }
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume().catch(() => {});
+        }
+        this.preloadActivePrefs();
+        return this.ctx;
+      },
+
+      preloadActivePrefs() {
+        Object.keys(this.prefs).forEach((cat) => {
+          this._loadMp3Buffer(`${cat}_${this.prefs[cat] || 1}`);
+        });
+      },
+
+      _loadMp3Buffer(key, cb) {
+        if (this._buffers[key]) {
+          if (cb) cb(this._buffers[key]);
+          return;
+        }
+        const url = `assets/sfx_realistic/${key}.mp3?v=real1`;
+        if (this._loading[key]) return;
+        this._loading[key] = true;
+        fetch(url)
+          .then(r => r.arrayBuffer())
+          .then(ab => {
+            const ctx = this.ctx || this.init();
+            if (!ctx) return;
+            return ctx.decodeAudioData(ab);
+          })
+          .then(decoded => {
+            if (decoded) {
+              this._buffers[key] = decoded;
+              if (cb) cb(decoded);
+            }
+          })
+          .catch(() => {
+            this._loading[key] = false;
+          });
+      },
+
+      playRealClip(cat, optId, volume = 0.92, playbackRate = 1.0) {
+        const safeOpt = Math.max(1, Math.min(5, Number(optId) || 1));
+        const key = `${cat}_${safeOpt}`;
+        const ctx = this.init();
+        if (ctx && this._buffers[key]) {
+          try {
+            const src = ctx.createBufferSource();
+            src.buffer = this._buffers[key];
+            src.playbackRate.value = playbackRate;
+            const g = ctx.createGain();
+            g.gain.value = volume;
+            src.connect(g);
+            g.connect(ctx.destination);
+            src.start(0);
+            return;
+          } catch (_) {}
+        }
+        // Immediate HTML5 Audio playback while WebAudio buffer caches
+        try {
+          const a = new Audio(`assets/sfx_realistic/${key}.mp3?v=real1`);
+          a.volume = Math.min(1, Math.max(0, volume));
+          a.playbackRate = playbackRate;
+          a.play().catch(() => {});
+          this._loadMp3Buffer(key);
+        } catch (_) {}
+      },
+
       setOption(cat, optId) {
-        this.prefs[cat] = Number(optId) || 1;
+        this.prefs[cat] = Math.max(1, Math.min(5, Number(optId) || 1));
         this.savePrefs();
         this.previewSound(cat, this.prefs[cat]);
         if (typeof renderC19SoundStudioModal === "function") renderC19SoundStudioModal();
       },
 
       applyPresetPack(optId) {
-        const n = Number(optId) || 1;
+        const n = Math.max(1, Math.min(5, Number(optId) || 1));
         ["clash", "saw", "weapon", "boost", "break", "bell", "ui", "victory"].forEach((k) => {
           this.prefs[k] = n;
         });
         this.savePrefs();
+        this.preloadActivePrefs();
         this.previewSound("clash", n);
         if (typeof renderC19SoundStudioModal === "function") renderC19SoundStudioModal();
       },
 
       previewSound(cat, optId) {
-        const ctx = this.init();
-        if (!ctx) return;
-        triggerCinematicSound(ctx, this, cat, Number(optId) || 1);
-      },
-
-      init() {
-        if (this.ctx) {
-          if (this.ctx.state === "suspended") {
-            this.ctx.resume().catch(() => {});
-          }
-          return this.ctx;
-        }
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return null;
-        try {
-          this.ctx = new AudioCtx();
-        } catch (_) {
-          this.ctx = null;
-        }
-        return this.ctx;
+        this.playRealClip(cat, optId, 0.96, 1.0);
       },
 
       syncButton() {
@@ -19818,12 +19089,9 @@
         }
       },
 
-      playTone(freq = 600, type = "sine", dur = 0.1, vol = 0.1, endFreq = null) {
+      playTone() {
         if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        const dest = ensureMasterBus(ctx, this);
-        cineSubBoom(ctx, dest, ctx.currentTime, freq, endFreq || freq, dur, vol, type, 0);
+        this.playCashChime();
       },
 
       playClash(heavy = false) {
@@ -19831,72 +19099,57 @@
         const nowMs = performance.now();
         if (nowMs - this.lastClashMs < 95) return;
         this.lastClashMs = nowMs;
-        const ctx = this.init();
-        if (!ctx) return;
-        triggerCinematicSound(ctx, this, "clash", this.prefs.clash || 1);
+        const rate = (heavy ? 0.94 : 1.04) * (0.94 + Math.random() * 0.12);
+        this.playRealClip("clash", this.prefs.clash || 1, heavy ? 0.95 : 0.78, rate);
       },
 
       playSawBuzz() {
         if (this.muted) return;
         const nowMs = performance.now();
-        if (nowMs - this.lastSawMs < 180) return;
+        if (nowMs - this.lastSawMs < 240) return;
         this.lastSawMs = nowMs;
-        const ctx = this.init();
-        if (!ctx) return;
-        triggerCinematicSound(ctx, this, "saw", this.prefs.saw || 1);
+        const rate = 0.94 + Math.random() * 0.12;
+        this.playRealClip("saw", this.prefs.saw || 1, 0.82, rate);
       },
 
       playWeaponFire(kind = "rail") {
         if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        triggerCinematicSound(ctx, this, "weapon", this.prefs.weapon || 1);
+        const rate = 0.95 + Math.random() * 0.10;
+        this.playRealClip("weapon", this.prefs.weapon || 1, 0.88, rate);
       },
 
       playPredatorLock() {
         if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        triggerCinematicSound(ctx, this, "boost", this.prefs.boost || 1);
+        this.playRealClip("boost", this.prefs.boost || 1, 0.86, 1.0);
       },
 
       playPartBreak(isCrippled = false) {
         if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        triggerCinematicSound(ctx, this, "break", this.prefs.break || 1);
+        this.playRealClip("break", this.prefs.break || 1, isCrippled ? 0.98 : 0.85, isCrippled ? 0.92 : 1.0);
       },
 
       playBell(strikes = 1) {
         if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        triggerCinematicSound(ctx, this, "bell", this.prefs.bell || 1);
+        this.playRealClip("bell", this.prefs.bell || 1, 0.92, 1.0);
       },
 
       playCashChime() {
         if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        triggerCinematicSound(ctx, this, "ui", this.prefs.ui || 1);
+        this.playRealClip("ui", this.prefs.ui || 1, 0.80, 1.0);
       },
 
       playWrenchHeal() {
         if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        triggerCinematicSound(ctx, this, "ui", 9);
+        this.playRealClip("ui", 1, 0.90, 1.0);
       },
 
       playVictoryFanfare(won = true) {
         if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
         if (!won) {
-          triggerCinematicSound(ctx, this, "break", 10);
+          this.playRealClip("break", 4, 0.90, 0.88);
           return;
         }
-        triggerCinematicSound(ctx, this, "victory", this.prefs.victory || 1);
+        this.playRealClip("victory", this.prefs.victory || 1, 0.96, 1.0);
       }
     };
 
@@ -19921,22 +19174,22 @@
         const btns = c.options.map((o) => {
           const isAct = curOpt === o.id;
           return `
-            <button type="button" class="${isAct ? 'lg-btn' : 'lg-pill'}" onclick="BotPitAudio.setOption('${c.cat}', ${o.id})" style="text-align:left;padding:6px 8px;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;gap:2px;background:${isAct ? 'linear-gradient(180deg,#ff7700,#c2410c)' : 'rgba(255,119,0,0.12)'};color:${isAct ? '#090502' : '#fff7ed'};">
-              <div style="font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:900;display:flex;justify-content:space-between;align-items:center;gap:4px;">
+            <button type="button" class="${isAct ? 'lg-btn' : 'lg-pill'}" onclick="BotPitAudio.setOption('${c.cat}', ${o.id})" style="text-align:left;padding:7px 9px;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;gap:2px;background:${isAct ? 'linear-gradient(180deg,#ff7700,#c2410c)' : 'rgba(255,119,0,0.12)'};color:${isAct ? '#090502' : '#fff7ed'};">
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.60rem;font-weight:900;display:flex;justify-content:space-between;align-items:center;gap:4px;">
                 <span>#${o.id} ${o.name}</span>
-                <span>${isAct ? '✓' : '▶️'}</span>
+                <span>${isAct ? '✓ ACTIVE' : '▶️ PLAY'}</span>
               </div>
-              <div style="font-size:0.58rem;opacity:0.90;font-weight:600;color:${isAct ? '#1c0a02' : '#fed7aa'};line-height:1.2;">${o.desc}</div>
+              <div style="font-size:0.60rem;opacity:0.90;font-weight:600;color:${isAct ? '#1c0a02' : '#fed7aa'};line-height:1.25;">${o.desc}</div>
             </button>
           `;
         }).join("");
         return `
-          <div class="lg-card" style="padding:9px;display:flex;flex-direction:column;gap:6px;">
+          <div class="lg-card" style="padding:10px;display:flex;flex-direction:column;gap:6px;">
             <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:900;color:#ff7700;">${c.title}</span>
-              <button type="button" class="lg-pill" style="padding:3px 8px;border-radius:999px;font-family:'Orbitron',sans-serif;font-size:0.54rem;font-weight:900;color:#ffaa44;cursor:pointer;" onclick="BotPitAudio.previewSound('${c.cat}', ${curOpt})">🔊 BLAST ACTIVE (#${curOpt})</button>
+              <span style="font-family:'Orbitron',sans-serif;font-size:0.70rem;font-weight:900;color:#ff7700;">${c.title}</span>
+              <button type="button" class="lg-pill" style="padding:3px 8px;border-radius:999px;font-family:'Orbitron',sans-serif;font-size:0.55rem;font-weight:900;color:#ffaa44;cursor:pointer;" onclick="BotPitAudio.previewSound('${c.cat}', ${curOpt})">🔊 TEST ACTIVE (#${curOpt})</button>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:4px;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:5px;">
               ${btns}
             </div>
           </div>
@@ -19944,22 +19197,22 @@
       }).join("");
 
       bd.innerHTML = `
-        <div class="lg-card lg-active" style="width:100%;max-width:860px;max-height:90dvh;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:radial-gradient(circle at 50% 0%,#1f0d04 0%,#060403 82%);" onclick="event.stopPropagation()">
+        <div class="lg-card lg-active" style="width:100%;max-width:780px;max-height:90dvh;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:radial-gradient(circle at 50% 0%,#1f0d04 0%,#060403 82%);" onclick="event.stopPropagation()">
           <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,150,70,0.3);padding-bottom:8px;">
             <div>
-              <div style="font-family:'Orbitron',sans-serif;font-size:0.86rem;font-weight:900;color:#ff7700;">🎬 SHIBUYA CINEMATIC SOUND STUDIO — 80 ACTION-PACKED BATTLE FX</div>
-              <div style="font-size:0.72rem;color:#fed7aa;">10 Blockbuster Options per Category (with Stereo Arena Reverb &amp; LFE Sub-Booms). Tap any card to blast &amp; lock it in!</div>
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.86rem;font-weight:900;color:#ff7700;">🎙️ SHIBUYA REAL-AUDIO SOUND STUDIO — 40 RECORDED BATTLE FX</div>
+              <div style="font-size:0.72rem;color:#fed7aa;">Mastered from real Aston Martin V8, F1 V10, Detroit Diesel, real chainsaws, gunfire, explosions &amp; Nathan K5LA airhorns!</div>
             </div>
             <button type="button" class="lg-btn" style="background:linear-gradient(180deg,#ff7700,#c2410c);color:#090502;padding:6px 12px;font-family:'Orbitron',sans-serif;font-size:0.66rem;font-weight:900;" onclick="document.getElementById('c19SoundStudioBackdrop').style.display='none'">✓ DONE</button>
           </div>
 
           <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
-            <span style="font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#ffaa44;font-weight:900;">⚡ 1-TAP FULL PACKS:</span>
-            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ff7700;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(1)">#1 Mad Max War-Rig</button>
-            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(2)">#2 Transformers / Abrams</button>
-            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(3)">#3 Fast &amp; Furious / Railgun</button>
-            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(4)">#4 Zimmer Braaam / Drift</button>
-            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(6)">#6 Monster / BFG-9000</button>
+            <span style="font-family:'Orbitron',sans-serif;font-size:0.58rem;color:#ffaa44;font-weight:900;">⚡ 1-TAP REAL AUDIO PACKS:</span>
+            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ff7700;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(1)">Pack #1: Aston V8 &amp; Heavy Wreck</button>
+            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(2)">Pack #2: Chainsaw &amp; 120mm Tank</button>
+            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(3)">Pack #3: F1 V10 &amp; Sonic Boom</button>
+            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(4)">Pack #4: Detroit V8 &amp; Thunder</button>
+            <button type="button" class="lg-pill" style="padding:4px 8px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(5)">Pack #5: Rover V8 &amp; Shotgun</button>
           </div>
 
           <div style="display:flex;flex-direction:column;gap:8px;">
