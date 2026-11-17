@@ -4377,8 +4377,8 @@
             </button>
             ${!q.isPaid ? `
               <a href="${esc(stripePortalUrl)}" target="_blank" rel="noopener noreferrer" class="mini-btn" style="padding:6px 9px;font-size:0.71rem;color:#ffe89e;text-decoration:none;" title="Open Stripe Checkout">&#128179;</a>
-              <button type="button" class="mini-btn" data-vault-delete-ticket="${esc(tid)}" style="padding:6px 9px;font-size:0.71rem;color:#ff85b3;" title="Delete Saved Quote">&times;</button>
             ` : ''}
+            <button type="button" class="mini-btn" data-vault-delete-ticket="${esc(tid)}" style="padding:6px 9px;font-size:0.71rem;color:#ff85b3;" title="Delete Quote">&times;</button>
           </div>
         </div>
       `;
@@ -4413,7 +4413,7 @@
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
             <button type="button" class="mini-btn" data-load-quote="${esc(tid)}" style="padding:5px 10px;font-size:0.7rem;color:#ffb36b;">&#128194; Load Ticket</button>
             <a href="${esc(getClientQuoteDossierUrl(tid))}" target="_blank" class="mini-btn" style="padding:5px 10px;font-size:0.7rem;color:#6bffc3;text-decoration:none;">&#128065;&#65039; Quote &nearr;</a>
-            ${!q.isPaid ? `<button type="button" class="mini-btn" data-delete-quote="${esc(tid)}" style="padding:5px 9px;font-size:0.7rem;color:#ff85b3;">&times;</button>` : ''}
+            <button type="button" class="mini-btn" data-delete-quote="${esc(tid)}" style="padding:5px 9px;font-size:0.7rem;color:#ff85b3;" title="Delete Quote">&times;</button>
           </div>
         </div>
       `;
@@ -4597,9 +4597,38 @@
       await fetch(STRIPE_EDGE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'delete_saved_quote', ticketId: cleanId })
+        body: JSON.stringify({ action: 'delete_saved_quote', ticketId: cleanId, forceDeletePaid: true })
       });
     } catch (_) {}
+  }
+
+  async function clearAllSavedQuotesEverywhere() {
+    const allQuotes = getMergedVaultQuotes();
+    clearTimeout(stripeSyncTimer);
+    allQuotes.forEach((q) => {
+      const tid = q.ticketId || q.quoteId;
+      if (tid) markQuoteIdDeleted(tid);
+    });
+    state.isCurrentTicketSavedInVault = false;
+    state.activeQuoteId = mintFreshQuoteId();
+    try {
+      localStorage.setItem(SAVED_QUOTES_KEY, '[]');
+      LEGACY_QUOTES_KEYS.forEach((k) => localStorage.removeItem(k));
+    } catch (_) {}
+    state.cloudSavedQuotes = [];
+    renderSavedQuotesList();
+    renderSavedQuotesVaultGrid();
+    await Promise.allSettled(
+      allQuotes.map((q) => {
+        const tid = q.ticketId || q.quoteId;
+        if (!tid) return Promise.resolve();
+        return fetch(STRIPE_EDGE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete_saved_quote', ticketId: tid, forceDeletePaid: true })
+        });
+      })
+    );
   }
 
   // Expose Public Studio Controller for Owner's Hub Paid Banners & Merch Queue Deep-Links
@@ -5427,9 +5456,7 @@
         const delTktBtn = ev.target.closest('[data-vault-delete-ticket]');
         if (delTktBtn) {
           const tid = delTktBtn.getAttribute('data-vault-delete-ticket');
-          if (confirm(`Delete saved quote Ticket #${tid}?`)) {
-            await deleteSavedTicketEverywhere(tid);
-          }
+          await deleteSavedTicketEverywhere(tid);
           return;
         }
       });
@@ -5445,6 +5472,12 @@
       const sqRefreshBtn = document.getElementById('sqRefreshCloudQuotesBtn');
       if (sqRefreshBtn) {
         sqRefreshBtn.addEventListener('click', () => fetchAndRenderSavedQuotesVault(false));
+      }
+      const clearAllQuotesBtn = document.getElementById('sqClearAllQuotesBtn');
+      if (clearAllQuotesBtn) {
+        clearAllQuotesBtn.addEventListener('click', async () => {
+          await clearAllSavedQuotesEverywhere();
+        });
       }
 
       const sqNewBtn = document.getElementById('sqCreateNewQuoteBtn');
