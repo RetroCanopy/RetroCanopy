@@ -18861,83 +18861,48 @@
 
     const SOUND_STUDIO_CATALOG = [
       {
-        cat: "clash", short: "💥 Crash", title: "💥 1. Crash & Ram Impact (5 Pure Isolated Studio Recordings)",
+        cat: "crash", short: "💥 1. Girthy Crash", title: "💥 1. GIRTHY CAR CRASH (10 Heavy Sub-Bass & Steel Body Slam Options)",
         options: [
-          { id: 1, name: "Studio Crash Hit #1",       desc: "Single isolated studio crash impact (Gravity Sound)" },
-          { id: 2, name: "Heavy Metal Crash #2",      desc: "Single isolated sharp metallic crash hit (Gravity Sound)" },
-          { id: 3, name: "Demolition Smash #3",       desc: "Single isolated heavy structural smash (Gravity Sound)" },
-          { id: 4, name: "Deep Kinetic Slam",         desc: "Single isolated deep low-end body impact (Gravity Sound)" },
-          { id: 5, name: "Solid Steel Armor Hit",     desc: "Single isolated solid steel plate strike (Gravity Sound)" }
+          { id: 1,  name: "4,000-Lb Steel Bumper Slam",   desc: "Deep 0.68x pitched kinetic slam + +9.5dB 55Hz sub-bass girth" },
+          { id: 2,  name: "Demolition Derby Frame Crunch",desc: "Heavy low-passed concussive frame crumple with massive bottom end" },
+          { id: 3,  name: "Sub-Bass Wrecking-Ball Thud",  desc: "Pure chest-rattling 45Hz–120Hz subwoofer slam + thick iron thud" },
+          { id: 4,  name: "Armored War-Rig Head-On Smash",desc: "Colossal low-frequency concussive collision (zero high-pitch hiss)" },
+          { id: 5,  name: "Heavy Chassis Buckle & Iron",  desc: "0.50x pitched solid steel beam impact + +10.5dB sub-bass weight" },
+          { id: 6,  name: "Sonic Sub-Slam Collision",     desc: "Tight, ultra-punchy 45Hz–650Hz sub-bass shockwave car slam" },
+          { id: 7,  name: "Thunderous Heavy Iron Ram",    desc: "Dark, rumbling 0.55x heavyweight body check (low-passed at 880Hz)" },
+          { id: 8,  name: "Ultra-Deep 40Hz Sub Thump",    desc: "Pure 40Hz–480Hz subwoofer physical punch — maximum bass girth" },
+          { id: 9,  name: "Multi-Beam Roll-Cage Crush",   desc: "Heavy structural steel frame collapse with deep low-mid body" },
+          { id: 10, name: "Heavy Anvil Armor Plate Slam", desc: "0.46x pitched thick armor plate impact + 50Hz chest punch" }
         ]
       },
       {
-        cat: "saw", short: "🏎️ V8/Saw", title: "🏎️ 2. Engine Roar & Chainsaw (5 Pure Isolated Recordings)",
+        cat: "rev", short: "🏎️ 2. Engine Rev", title: "🏎️ 2. REAL ENGINE REV (10 Stationary Supercar & Muscle Exhaust Revs)",
         options: [
-          { id: 1, name: "Aston Martin V8 Rev",       desc: "Pure un-mixed Aston Martin V8 Quicksilver exhaust rev" },
-          { id: 2, name: "Rover V8 Muscle Roar",      desc: "Pure un-mixed classic Rover V8 engine roar" },
-          { id: 3, name: "Formula 1 V10 Scream",      desc: "Pure un-mixed Red Bull-Cosworth F1 V10 engine scream" },
-          { id: 4, name: "Detroit 6.2L V8 Diesel",    desc: "Pure un-mixed Detroit 6.2L V8 truck engine growl" },
-          { id: 5, name: "2-Stroke Gas Chainsaw",     desc: "Pure un-mixed 2-stroke chainsaw revving" }
+          { id: 1,  name: "Ford Mustang GT (Mod Exhaust)",desc: "Real 5.0L Coyote V8 stationary tailpipe throttle rev" },
+          { id: 2,  name: "Corvette C6 Z06 (7.0L LS7 V8)",desc: "Real 7.0-liter big-bore American V8 muscular rev bark" },
+          { id: 3,  name: "Shelby GT350 (Flat-Plane V8)", desc: "Real 5.2L Voodoo flat-plane crank V8 aggressive rev" },
+          { id: 4,  name: "Mercedes-AMG C63 Bi-Turbo V8", desc: "Real German AMG V8 deep tailpipe rev & burble" },
+          { id: 5,  name: "Mercedes-AMG S63 (Fi Exhaust)",desc: "Real heavy, bass-rich custom Fi-Exhaust AMG V8 rev" },
+          { id: 6,  name: "Aston Martin V8 (Quicksilver)",desc: "Real Aston Martin V8 Vantage stationary Quicksilver rev" },
+          { id: 7,  name: "Lamborghini Centenario V12",   desc: "Real 770HP 6.5L naturally aspirated V12 throttle surge" },
+          { id: 8,  name: "Ferrari LaFerrari 6.3L V12",   desc: "Real Maranello 6.3L V12 sharp tailpipe rev" },
+          { id: 9,  name: "Detroit 6.2L Heavy V8 Truck",  desc: "Real deep, torquey 6.2L Detroit V8 war-truck rev" },
+          { id: 10, name: "Red Bull Formula 1 V10 Blip",  desc: "Real 18,000-RPM Formula 1 V10 screaming throttle blip" }
         ]
       },
       {
-        cat: "weapon", short: "🔫 Weapons", title: "🔫 3. Gunfire & Cannon Blast (5 Pure Isolated Recordings)",
+        cat: "idle", short: "🛞 3. Engine Idle", title: "🛞 3. REAL ENGINE IDLE (10 Deep Stationary V8 & V12 Exhaust Idles)",
         options: [
-          { id: 1, name: "Single Heavy Gunshot",      desc: "Pure un-mixed single firearm shot crack" },
-          { id: 2, name: "Rapid Automatic Burst",     desc: "Pure un-mixed multi-round automatic gunfire burst" },
-          { id: 3, name: "Concussive Cannon Blast",   desc: "Pure un-mixed high-explosive cannon blast" },
-          { id: 4, name: "Heavy Artillery Boom",      desc: "Pure un-mixed deep artillery detonation" },
-          { id: 5, name: "Supersonic Shockwave",      desc: "Pure un-mixed supersonic sonic-boom crack" }
-        ]
-      },
-      {
-        cat: "boost", short: "🚀 Boost", title: "🚀 4. Acceleration & Boost (5 Pure Isolated Recordings)",
-        options: [
-          { id: 1, name: "Aston V8 High-RPM Pull",    desc: "Pure un-mixed Aston Martin V8 full-throttle pull" },
-          { id: 2, name: "Formula 1 V10 Fly-By",      desc: "Pure un-mixed F1 V10 high-speed track fly-by" },
-          { id: 3, name: "Rover V8 Launch Roar",      desc: "Pure un-mixed V8 muscle launch acceleration" },
-          { id: 4, name: "Jet Sonic Boom Rush",       desc: "Pure un-mixed transonic jet shockwave rush" },
-          { id: 5, name: "Deep Sub-Bass Boost",       desc: "Pure un-mixed deep sub-bass kinetic boom" }
-        ]
-      },
-      {
-        cat: "break", short: "💀 Shatter", title: "💀 5. Glass & Part Break (5 Pure Isolated Studio Recordings)",
-        options: [
-          { id: 1, name: "Studio Glass Shatter #1",   desc: "Pure isolated glass breaking recording #1 (Gravity Sound)" },
-          { id: 2, name: "Windshield Smash #2",       desc: "Pure isolated glass breaking recording #2 (Gravity Sound)" },
-          { id: 3, name: "Tempered Glass Break #3",   desc: "Pure isolated glass breaking recording #3 (Gravity Sound)" },
-          { id: 4, name: "Delayed Part Collapse",     desc: "Pure isolated structural break recording (Gravity Sound)" },
-          { id: 5, name: "Falling Steel Part Clatter",desc: "Pure isolated metal pole clatter recording (Gravity Sound)" }
-        ]
-      },
-      {
-        cat: "bell", short: "🔔 Start", title: "🔔 6. Match Start Bell & Horn (5 Pure Isolated Recordings)",
-        options: [
-          { id: 1, name: "Ringside Boxing Bell",      desc: "Pure un-mixed authentic ringside boxing bell" },
-          { id: 2, name: "Nathan K5LA Train Horn",    desc: "Pure un-mixed 150dB Nathan K5LA locomotive airhorn" },
-          { id: 3, name: "Nathan P5 Stadium Horn",    desc: "Pure un-mixed Nathan P5 multi-chime airhorn" },
-          { id: 4, name: "Resonant Steel Gong",       desc: "Pure isolated resonant metal sign gong (Gravity Sound)" },
-          { id: 5, name: "Heavy Iron Bell Strike",    desc: "Pure isolated heavy metal pole strike (Gravity Sound)" }
-        ]
-      },
-      {
-        cat: "ui", short: "✨ UI/Garage", title: "✨ 7. UI & Garage Click/Lock (5 Pure Isolated Studio Recordings)",
-        options: [
-          { id: 1, name: "Mechanical Lock Click",     desc: "Pure isolated mechanical lock engage (Gravity Sound)" },
-          { id: 2, name: "Mechanical Gear Latch",     desc: "Pure isolated mechanical gear sound (Gravity Sound)" },
-          { id: 3, name: "Tactile Switch Click",      desc: "Pure isolated crisp switch click (Gravity Sound)" },
-          { id: 4, name: "Crisp Micro-Tick",          desc: "Pure isolated ultra-clean UI micro-tick" },
-          { id: 5, name: "Metallic Tap Ping",         desc: "Pure isolated short metallic tap (Gravity Sound)" }
-        ]
-      },
-      {
-        cat: "victory", short: "🏆 Victory", title: "🏆 8. Victory Fanfare (5 Pure Isolated Recordings)",
-        options: [
-          { id: 1, name: "RetroCanopy Theme Stinger", desc: "Pure un-mixed RetroCanopy orchestral/synth climax" },
-          { id: 2, name: "RetroCanopy Hero Fanfare",  desc: "Pure un-mixed RetroCanopy main theme fanfare" },
-          { id: 3, name: "Real Fireworks Finale",     desc: "Pure un-mixed sky-splitting fireworks recording" },
-          { id: 4, name: "Stadium Airhorn Salute",    desc: "Pure un-mixed Nathan P5 championship horn salute" },
-          { id: 5, name: "Aston V8 Victory Roar",     desc: "Pure un-mixed Aston Martin V8 redline celebration" }
+          { id: 1,  name: "Corvette C6 Z06 7.0L V8 Idle", desc: "Deep, choppy 7.0L LS7 V8 cammed tailpipe idle lope" },
+          { id: 2,  name: "Shelby GT350 V8 Deep Idle",    desc: "Throaty, muscular Shelby V8 stationary exhaust idle" },
+          { id: 3,  name: "Ford Mustang GT V8 Burble",    desc: "Deep, rumbling 5.0L Mustang GT modified exhaust idle" },
+          { id: 4,  name: "Mercedes-AMG S63 Heavy Idle",  desc: "Ultra-deep custom Fi-Exhaust AMG V8 bass idle" },
+          { id: 5,  name: "Aston Martin V8 212Hz Idle",   desc: "Smooth, bass-heavy British V8 stationary tailpipe rumble" },
+          { id: 6,  name: "Lamborghini Centenario V12",   desc: "Heavy, menacing 6.5L V12 stationary exhaust idle" },
+          { id: 7,  name: "Ferrari LaFerrari V12 Idle",   desc: "Resonant quad-pipe 6.3L Ferrari V12 stationary idle" },
+          { id: 8,  name: "Mercedes-AMG C63 V8 Idle",     desc: "Low, aggressive bi-turbo AMG V8 exhaust rumble" },
+          { id: 9,  name: "Detroit 6.2L War-Truck Idle",  desc: "Slow, chugging heavy-duty 6.2L V8 diesel truck idle" },
+          { id: 10, name: "500-Cubic-Inch Pro-Stock V8",  desc: "Sub-pitched 7.0L V8 for an earth-shaking dragster idle lope" }
         ]
       }
     ];
@@ -18950,12 +18915,12 @@
       _buffers: {},
       _loading: {},
       prefs: (() => {
-        const defaults = { clash: 1, saw: 1, weapon: 1, boost: 1, break: 1, bell: 1, ui: 1, victory: 1 };
+        const defaults = { crash: 1, rev: 1, idle: 1, clash: 1, saw: 1, weapon: 1, boost: 1, break: 1, bell: 1, ui: 1, victory: 1 };
         try {
           const saved = JSON.parse(localStorage.getItem("rc_c19_sound_prefs") || "{}");
           const merged = { ...defaults, ...saved };
           Object.keys(merged).forEach(k => {
-            if (merged[k] < 1 || merged[k] > 5) merged[k] = 1;
+            if (merged[k] < 1 || merged[k] > 10) merged[k] = 1;
           });
           return merged;
         } catch (_) {
@@ -18994,7 +18959,7 @@
           if (cb) cb(this._buffers[key]);
           return;
         }
-        const url = `assets/sfx_realistic/${key}.mp3?v=pure2`;
+        const url = `assets/sfx_realistic/${key}.mp3?v=core3`;
         if (this._loading[key]) return;
         this._loading[key] = true;
         fetch(url)
@@ -19016,7 +18981,7 @@
       },
 
       playRealClip(cat, optId, volume = 0.92, playbackRate = 1.0) {
-        const safeOpt = Math.max(1, Math.min(5, Number(optId) || 1));
+        const safeOpt = Math.max(1, Math.min(10, Number(optId) || 1));
         const key = `${cat}_${safeOpt}`;
         const ctx = this.init();
         if (ctx && this._buffers[key]) {
@@ -19034,7 +18999,7 @@
         }
         // Immediate HTML5 Audio playback while WebAudio buffer caches
         try {
-          const a = new Audio(`assets/sfx_realistic/${key}.mp3?v=pure2`);
+          const a = new Audio(`assets/sfx_realistic/${key}.mp3?v=core3`);
           a.volume = Math.min(1, Math.max(0, volume));
           a.playbackRate = playbackRate;
           a.play().catch(() => {});
@@ -19043,14 +19008,14 @@
       },
 
       setOption(cat, optId) {
-        this.prefs[cat] = Math.max(1, Math.min(5, Number(optId) || 1));
+        this.prefs[cat] = Math.max(1, Math.min(10, Number(optId) || 1));
         this.savePrefs();
         this.previewSound(cat, this.prefs[cat]);
         if (typeof renderC19SoundStudioModal === "function") renderC19SoundStudioModal();
       },
 
       applyPresetPack(optId) {
-        const n = Math.max(1, Math.min(5, Number(optId) || 1));
+        const n = Math.max(1, Math.min(10, Number(optId) || 1));
         ["clash", "saw", "weapon", "boost", "break", "bell", "ui", "victory"].forEach((k) => {
           this.prefs[k] = n;
         });
@@ -19099,7 +19064,7 @@
         if (nowMs - this.lastClashMs < 95) return;
         this.lastClashMs = nowMs;
         const rate = (heavy ? 0.94 : 1.04) * (0.94 + Math.random() * 0.12);
-        this.playRealClip("clash", this.prefs.clash || 1, heavy ? 0.95 : 0.78, rate);
+        this.playRealClip("crash", this.prefs.crash || 1, heavy ? 0.95 : 0.78, rate);
       },
 
       playSawBuzz() {
@@ -19108,7 +19073,7 @@
         if (nowMs - this.lastSawMs < 240) return;
         this.lastSawMs = nowMs;
         const rate = 0.94 + Math.random() * 0.12;
-        this.playRealClip("saw", this.prefs.saw || 1, 0.82, rate);
+        this.playRealClip("rev", this.prefs.rev || 1, 0.82, rate);
       },
 
       playWeaponFire(kind = "rail") {
@@ -19119,7 +19084,7 @@
 
       playPredatorLock() {
         if (this.muted) return;
-        this.playRealClip("boost", this.prefs.boost || 1, 0.86, 1.0);
+        this.playRealClip("rev", this.prefs.rev || 1, 0.86, 1.0);
       },
 
       playPartBreak(isCrippled = false) {
