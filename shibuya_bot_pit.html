@@ -7913,7 +7913,7 @@
     <header class="c19-header">
       <button type="button" class="c19-menu-btn lg-pill" onclick="toggleC29ArtDrawer()" title="Pilot Command Menu">☰</button>
       <div class="c19-hdr-title" id="c29ArtHeaderTitle">QUESTS LADDER</div>
-      <div class="c19-hdr-badge lg-pill" id="c19HeaderRightBadge" onclick="switchC29MobilePage('shop')" title="View Diamond Shop">💎 1,250</div>
+      <div style="display:flex;align-items:center;gap:5px;"><button type="button" class="c19-hdr-badge lg-pill" onclick="openC19SoundStudioModal()" title="Open Sound Studio & Pick Your Battle FX" style="color:#ffaa44;padding:4px 8px;">🔊 SFX</button><div class="c19-hdr-badge lg-pill" id="c19HeaderRightBadge" onclick="switchC29MobilePage('shop')" title="View Diamond Shop">💎 1,250</div></div>
     </header>
 
     <!-- Collapsible `☰` Pilot Command Drawer -->
@@ -7930,7 +7930,8 @@
         <button type="button" class="c29-art-drawer-item" onclick="toggleC29ArtDrawer(false);openFullScreenMapSelector();">🗺️ 7 Arena Maps</button>
         <button type="button" class="c29-art-drawer-item" onclick="toggleC29ArtDrawer(false);copyMyRigCode();">🔗 Copy Rig Code</button>
         <button type="button" class="c29-art-drawer-item" onclick="toggleC29ArtDrawer(false);challengeFriendRigCode();">⚔️ Challenge Rig Code</button>
-        <button type="button" class="c29-art-drawer-item" onclick="BotPitAudio.toggleMute()">🔊 Sound On / Off</button>
+        <button type="button" class="c29-art-drawer-item" style="border-color:#ff7700;color:#ffaa44;" onclick="toggleC29ArtDrawer(false);openC19SoundStudioModal();">🎛️ Sound Studio (Pick Battle FX)</button>
+        <button type="button" class="c29-art-drawer-item" onclick="BotPitAudio.toggleMute()">🔊 Mute / Unmute</button>
         <button type="button" class="c29-art-drawer-item" onclick="toggleC29ArtDrawer(false);openAccountSafetyMenuModal();">⚙️ Account &amp; Safety</button>
       </div>
     </div>
@@ -18854,13 +18855,157 @@
     // =========================================================================
 
     // =========================================================================
-    // PROCEDURAL WEBAUDIO HEAVY METALLIC CRASH & COMBAT SFX ENGINE
+    // CONCEPT #19-01: MULTI-OPTION REALISTIC CAR & BATTLE AUDIO ENGINE
+    // (8 Sound Categories x 5 Auditionable Options = 40 Custom WebAudio Sounds)
     // =========================================================================
+    const SOUND_STUDIO_CATALOG = [
+      {
+        cat: "clash",
+        title: "💥 1. Car Crash & Ram Impact",
+        options: [
+          { id: 1, name: "V8 Demolition Crunch", desc: "Deep 808 chest punch + crumpling steel fender + glass scatter" },
+          { id: 2, name: "Hydraulic Titan Slam", desc: "Pneumatic air-brake release + 45Hz sub-bass drop + anvil thud" },
+          { id: 3, name: "Cyber-Plasma Shockwave", desc: "Kinetic sub-boom + magnetic EMP sweep + high-voltage snap" },
+          { id: 4, name: "Hollywood Car Wreck", desc: "Mid-bass body slam + twisting chassis groan + double thud" },
+          { id: 5, name: "Smooth Tactile Sub-Thump", desc: "Warm, deep subwoofer punch (90Hz→28Hz) with zero harsh highs" }
+        ]
+      },
+      {
+        cat: "saw",
+        title: "🏎️ 2. Melee Grind / Engine & Tire Roar",
+        options: [
+          { id: 1, name: "Twin-Turbo V8 & Tire Chirp", desc: "Throaty V8 engine rev + realistic rubber tire chirp on asphalt" },
+          { id: 2, name: "Diamond-Blade Steel Rip", desc: "Warm filtered circular-saw bite + spark crackle" },
+          { id: 3, name: "Supercharger & Blow-Off Valve", desc: "GT racing supercharger whine + turbo flutter psshhh" },
+          { id: 4, name: "Plasma Torch Sizzle", desc: "Deep thermal arc hum + sizzling molten slag crackle" },
+          { id: 5, name: "Heavy Chain-Drive Growl", desc: "Low-pitched mechanical V12 & gearbox rumble" }
+        ]
+      },
+      {
+        cat: "weapon",
+        title: "🔫 3. Ranged Weapon & Cannon Fire",
+        options: [
+          { id: 1, name: "50-Cal Heavy Autocannon", desc: "Deep mechanical breech thump + crisp muzzle crack" },
+          { id: 2, name: "Gauss Railgun Whip", desc: "Magnetic capacitor charge + supersonic whip-crack + sub recoil" },
+          { id: 3, name: "Rocket Pod & Detonation", desc: "Ignition thump + turbine rocket whoosh + warm boom" },
+          { id: 4, name: "Pulse Ion Blaster", desc: "Frequency-swept sci-fi blaster (1600Hz→120Hz) with chorus" },
+          { id: 5, name: "Vulcan Rotary Burst", desc: "Rapid 4-round mechanical cannon burst with bass punch" }
+        ]
+      },
+      {
+        cat: "boost",
+        title: "🚀 4. Charge / Boost / Target Lock",
+        options: [
+          { id: 1, name: "Turbo Spool & NOS Purge", desc: "Rising turbocharger whistle + crisp nitrous valve hiss" },
+          { id: 2, name: "Jet Afterburner Whoosh", desc: "Deep turbine ignition + low-end afterburner roar" },
+          { id: 3, name: "HUD Radar Target Lock", desc: "Crisp double-chirp target lock + servo engage" },
+          { id: 4, name: "Liquid Bass Riser", desc: "Smooth sub-bass upward sweep with harmonic shimmer" },
+          { id: 5, name: "Muscle Car V8 Rev Bomb", desc: "Throaty dual-exhaust V8 throttle blip (85Hz→220Hz)" }
+        ]
+      },
+      {
+        cat: "break",
+        title: "💀 5. Part Break / Armor Shatter",
+        options: [
+          { id: 1, name: "Carbon & Glass Shatter", desc: "Heavy bass impact + tempered safety-glass & carbon scatter" },
+          { id: 2, name: "Explosive Detonation", desc: "Deep fiery boom + cascading metallic shrapnel" },
+          { id: 3, name: "Hydraulic Line Blowout", desc: "High-pressure air-line rupture hiss + heavy mechanical clunk" },
+          { id: 4, name: "EMP Circuit Power-Down", desc: "Electric pop + downward turbine power-down whine" },
+          { id: 5, name: "Heavy Anvil Buckle", desc: "Double low-end steel buckle impact with rapid decay" }
+        ]
+      },
+      {
+        cat: "bell",
+        title: "🔔 6. Match Start / Fight Signal",
+        options: [
+          { id: 1, name: "Drag Strip Tree & V8 Launch", desc: "Amber stage beeps + green-light airhorn + V8 launch roar" },
+          { id: 2, name: "Underground Pit Airhorn", desc: "Deep dual-tone stadium airhorn blast with arena reverb" },
+          { id: 3, name: "Octagon Bronze Gong", desc: "Deep resonant 110Hz bronze arena gong with warm decay" },
+          { id: 4, name: "Cyber Siren & Bass Drop", desc: "2-pulse arena klaxon + 40Hz sub-bass drop" },
+          { id: 5, name: "Championship Ringside Bell", desc: "Classic crisp brass boxing ringside double-ding" }
+        ]
+      },
+      {
+        cat: "ui",
+        title: "✨ 7. UI Tap / Buy / Bond Chime",
+        options: [
+          { id: 1, name: "Liquid Glass Droplet Pop", desc: "Tactile, resonant water-glass marimba droplet pop" },
+          { id: 2, name: "Cockpit Toggle Click", desc: "Crisp 18ms anodized metal cockpit switch click" },
+          { id: 3, name: "Diamond Crystal Chord", desc: "Shimmering harmonic triad chime with soft decay" },
+          { id: 4, name: "Gunmetal Bolt Latch", desc: "Satisfying mechanical double-click latch" },
+          { id: 5, name: "Warm Analog Synth Pluck", desc: "Deep, muted analog synth pluck in Dorian scale" }
+        ]
+      },
+      {
+        cat: "victory",
+        title: "🏆 8. Victory & Match End Fanfare",
+        options: [
+          { id: 1, name: "Shibuya Drift King Anthem", desc: "Sub-bass hit + warm 4-note analog synth-brass fanfare" },
+          { id: 2, name: "V8 Burnout & Airhorns", desc: "Tire-smoking V8 victory rev + triple stadium airhorn" },
+          { id: 3, name: "Liquid Glass Celestial Chord", desc: "Lush harmonic crystal chord with warm sub-bass foundation" },
+          { id: 4, name: "Heavy Power Chord Riff", desc: "Punchy rock/synth power chord progression" },
+          { id: 5, name: "Clean Esports Stinger", desc: "Short, modern broadcast-grade 3-note trophy stinger" }
+        ]
+      }
+    ];
+
     const BotPitAudio = {
       ctx: null,
       muted: localStorage.getItem("rc_botpit_muted") === "1",
       lastClashMs: 0,
       lastSawMs: 0,
+      prefs: (() => {
+        const defaults = { clash: 1, saw: 1, weapon: 1, boost: 1, break: 1, bell: 1, ui: 1, victory: 1 };
+        try {
+          const saved = JSON.parse(localStorage.getItem("rc_c19_sound_prefs") || "{}");
+          return { ...defaults, ...saved };
+        } catch (_) {
+          return defaults;
+        }
+      })(),
+
+      savePrefs() {
+        try {
+          localStorage.setItem("rc_c19_sound_prefs", JSON.stringify(this.prefs));
+        } catch (_) {}
+      },
+
+      setOption(cat, optId) {
+        this.prefs[cat] = Number(optId) || 1;
+        this.savePrefs();
+        this.previewSound(cat, this.prefs[cat]);
+        if (typeof renderC19SoundStudioModal === "function") renderC19SoundStudioModal();
+      },
+
+      applyPresetPack(optId) {
+        const n = Number(optId) || 1;
+        ["clash", "saw", "weapon", "boost", "break", "bell", "ui", "victory"].forEach((k) => {
+          this.prefs[k] = n;
+        });
+        this.savePrefs();
+        this.previewSound("clash", n);
+        setTimeout(() => this.previewSound("saw", n), 220);
+        if (typeof renderC19SoundStudioModal === "function") renderC19SoundStudioModal();
+      },
+
+      previewSound(cat, optId) {
+        const prev = this.prefs[cat];
+        this.prefs[cat] = Number(optId) || 1;
+        const wasMuted = this.muted;
+        this.muted = false;
+        this.lastClashMs = 0;
+        this.lastSawMs = 0;
+        if (cat === "clash") this.playClash(true);
+        else if (cat === "saw") this.playSawBuzz();
+        else if (cat === "weapon") this.playWeaponFire("rail");
+        else if (cat === "boost") this.playPredatorLock();
+        else if (cat === "break") this.playPartBreak(true);
+        else if (cat === "bell") this.playBell(1);
+        else if (cat === "ui") this.playCashChime();
+        else if (cat === "victory") this.playVictoryFanfare(true);
+        this.muted = wasMuted;
+        this.prefs[cat] = prev;
+      },
 
       init() {
         if (this.ctx) {
@@ -18888,8 +19033,8 @@
           btn.style.borderColor = "rgba(148,163,184,0.35)";
         } else {
           btn.textContent = "🔊 SOUND: ON";
-          btn.style.color = "#34d399";
-          btn.style.borderColor = "rgba(52,211,153,0.55)";
+          btn.style.color = "#ff7700";
+          btn.style.borderColor = "rgba(255,119,0,0.55)";
         }
       },
 
@@ -18899,12 +19044,11 @@
         this.syncButton();
         if (!this.muted) {
           this.init();
-          this.playClash(false);
+          this.playCashChime();
         }
       },
 
-      // Helper: create wave-shaped distortion curve for gritty metallic crunch
-      _makeCrunchCurve(amount = 45) {
+      _makeCrunchCurve(amount = 35) {
         const n = 2048;
         const curve = new Float32Array(n);
         for (let i = 0; i < n; i++) {
@@ -18914,217 +19058,302 @@
         return curve;
       },
 
-      playBell(strikes = 1) {
+      _noiseBurst(ctx, t0, dur, filterType, fStart, fEnd, qVal, gainVal, crunch = 0) {
+        const bufLen = Math.max(1, Math.floor(ctx.sampleRate * dur));
+        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.35));
+        }
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        const flt = ctx.createBiquadFilter();
+        flt.type = filterType;
+        flt.frequency.setValueAtTime(fStart, t0);
+        if (fEnd && fEnd !== fStart) {
+          flt.frequency.exponentialRampToValueAtTime(Math.max(20, fEnd), t0 + dur);
+        }
+        flt.Q.setValueAtTime(qVal || 1.0, t0);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(gainVal, t0);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+        src.connect(flt);
+        if (crunch > 0) {
+          const sh = ctx.createWaveShaper();
+          sh.curve = this._makeCrunchCurve(crunch);
+          flt.connect(sh);
+          sh.connect(g);
+        } else {
+          flt.connect(g);
+        }
+        g.connect(ctx.destination);
+        src.start(t0);
+      },
+
+      _subDrop(ctx, t0, fStart, fEnd, dur, gainVal, wave = "sine") {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = wave;
+        osc.frequency.setValueAtTime(fStart, t0);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(18, fEnd), t0 + dur);
+        g.gain.setValueAtTime(gainVal, t0);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(t0);
+        osc.stop(t0 + dur + 0.01);
+      },
+
+      playTone(freq = 600, type = "sine", dur = 0.1, vol = 0.1, endFreq = null) {
         if (this.muted) return;
         const ctx = this.init();
         if (!ctx) return;
-        for (let s = 0; s < strikes; s++) {
-          const t0 = ctx.currentTime + s * 0.24;
-          // Heavy Industrial Steel Gong / Cage Slam Bell
-          [220, 440, 685, 1120, 1640].forEach((freq, idx) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = idx % 2 === 0 ? "triangle" : "sawtooth";
-            osc.frequency.setValueAtTime(freq, t0);
-            osc.frequency.exponentialRampToValueAtTime(freq * 0.96, t0 + 0.75);
-            gain.gain.setValueAtTime(0.18 / (idx + 1), t0);
-            gain.gain.exponentialRampToValueAtTime(0.0008, t0 + 0.78);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(t0);
-            osc.stop(t0 + 0.8);
-          });
-        }
+        this._subDrop(ctx, ctx.currentTime, freq, endFreq || freq, dur, vol, type);
       },
 
+      // 1. VEHICLE CRASH / RAM IMPACT (5 Options)
       playClash(heavy = false) {
         if (this.muted) return;
         const nowMs = performance.now();
-        if (nowMs - this.lastClashMs < 70) return;
+        if (nowMs - this.lastClashMs < 75) return;
         this.lastClashMs = nowMs;
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        const dur = heavy ? 0.42 : 0.26;
-        const pitchJit = 0.88 + Math.random() * 0.24;
+        const opt = this.prefs.clash || 1;
+        const mul = heavy ? 1.25 : 0.9;
 
-        // 1. Sub-Bass Kinetic Wrecking Slam (Chest Thud)
-        const subOsc = ctx.createOscillator();
-        const subGain = ctx.createGain();
-        subOsc.type = "sine";
-        subOsc.frequency.setValueAtTime((heavy ? 115 : 140) * pitchJit, t0);
-        subOsc.frequency.exponentialRampToValueAtTime(26, t0 + dur * 0.85);
-        subGain.gain.setValueAtTime(heavy ? 0.55 : 0.36, t0);
-        subGain.gain.exponentialRampToValueAtTime(0.001, t0 + dur * 0.9);
-        subOsc.connect(subGain);
-        subGain.connect(ctx.destination);
-        subOsc.start(t0);
-        subOsc.stop(t0 + dur);
-
-        // 2. Broadband Crashing Sheet-Metal Crunch & Shrapnel Burst
-        const bufLen = Math.floor(ctx.sampleRate * dur);
-        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < bufLen; i++) {
-          const tNorm = i / bufLen;
-          // Double-impact envelope: initial slam + secondary buckling crunch
-          const env = Math.exp(-tNorm * 6.5) + (heavy ? 0.45 * Math.exp(-Math.pow((tNorm - 0.18) * 14, 2)) : 0);
-          // Granular crackle modulation for tearing metal texture
-          const grit = (i % 19 < 7) ? 1.35 : 0.75;
-          data[i] = (Math.random() * 2 - 1) * env * grit;
+        if (opt === 1) {
+          // Option 1: V8 Demolition Derby Crunch (Deep 808 sub + crumpling steel fender + glass scatter)
+          this._subDrop(ctx, t0, heavy ? 135 : 115, 28, 0.34, 0.48 * mul, "sine");
+          this._noiseBurst(ctx, t0, 0.28, "bandpass", 780, 260, 1.8, 0.32 * mul, 32);
+          if (heavy) {
+            this._noiseBurst(ctx, t0 + 0.05, 0.22, "highpass", 2400, 1200, 1.2, 0.14, 0);
+          }
+        } else if (opt === 2) {
+          // Option 2: Hydraulic Titan Slam (Pneumatic air-brake hiss + 45Hz bass drop + cast-iron thud)
+          this._subDrop(ctx, t0, 95, 24, 0.42, 0.55 * mul, "triangle");
+          this._noiseBurst(ctx, t0, 0.16, "lowpass", 520, 120, 2.2, 0.36 * mul, 20);
+          this._noiseBurst(ctx, t0 + 0.04, 0.26, "bandpass", 3200, 1800, 3.0, 0.16 * mul, 0);
+        } else if (opt === 3) {
+          // Option 3: Cyber-Plasma Shockwave (Kinetic sub-boom + EMP sweep + high-voltage snap)
+          this._subDrop(ctx, t0, 180, 32, 0.36, 0.46 * mul, "sine");
+          this._subDrop(ctx, t0, 720, 65, 0.22, 0.18 * mul, "sawtooth");
+          this._noiseBurst(ctx, t0, 0.18, "bandpass", 1900, 420, 2.5, 0.24 * mul, 18);
+        } else if (opt === 4) {
+          // Option 4: Hollywood Car Wreck (Multi-stage twisting metal groan + double chassis thud)
+          this._subDrop(ctx, t0, 120, 34, 0.25, 0.44 * mul, "sine");
+          this._subDrop(ctx, t0 + 0.09, 90, 26, 0.28, 0.34 * mul, "triangle");
+          this._noiseBurst(ctx, t0, 0.35, "bandpass", 640, 210, 2.4, 0.30 * mul, 40);
+        } else {
+          // Option 5: Smooth Tactile Sub-Thump (Warm 90Hz->28Hz subwoofer punch, zero harsh highs)
+          this._subDrop(ctx, t0, 96, 26, 0.32, 0.52 * mul, "sine");
+          this._noiseBurst(ctx, t0, 0.14, "lowpass", 340, 90, 1.0, 0.22 * mul, 0);
         }
-        const noise = ctx.createBufferSource();
-        noise.buffer = buf;
-
-        const bpFilter = ctx.createBiquadFilter();
-        bpFilter.type = "bandpass";
-        bpFilter.frequency.setValueAtTime((heavy ? 920 : 1280) * pitchJit, t0);
-        bpFilter.frequency.exponentialRampToValueAtTime(380, t0 + dur);
-        bpFilter.Q.setValueAtTime(1.4, t0);
-
-        const shaper = ctx.createWaveShaper();
-        shaper.curve = this._makeCrunchCurve(heavy ? 65 : 38);
-
-        const nGain = ctx.createGain();
-        nGain.gain.setValueAtTime(heavy ? 0.44 : 0.28, t0);
-        nGain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-
-        noise.connect(bpFilter);
-        bpFilter.connect(shaper);
-        shaper.connect(nGain);
-        nGain.connect(ctx.destination);
-        noise.start(t0);
-
-        // 3. Inharmonic Steel Chassis Ring / Clanging Armor Plate Resonators
-        const clangFreqs = heavy ? [318, 587, 1045, 1790] : [412, 765, 1340];
-        clangFreqs.forEach((baseF, idx) => {
-          const osc = ctx.createOscillator();
-          const g = ctx.createGain();
-          osc.type = idx % 2 === 0 ? "sawtooth" : "square";
-          const f = baseF * pitchJit;
-          osc.frequency.setValueAtTime(f, t0);
-          // Slight downward pitch bend as steel plate warps on impact
-          osc.frequency.exponentialRampToValueAtTime(f * 0.74, t0 + dur * 0.65);
-          g.gain.setValueAtTime((heavy ? 0.14 : 0.09) / (idx + 1), t0);
-          g.gain.exponentialRampToValueAtTime(0.0008, t0 + dur * (0.55 + idx * 0.1));
-          osc.connect(g);
-          g.connect(ctx.destination);
-          osc.start(t0);
-          osc.stop(t0 + dur);
-        });
       },
 
+      // 2. MELEE GRIND / V8 ENGINE & TIRE ROAR (5 Options)
       playSawBuzz() {
         if (this.muted) return;
         const nowMs = performance.now();
-        if (nowMs - this.lastSawMs < 115) return;
+        if (nowMs - this.lastSawMs < 130) return;
         this.lastSawMs = nowMs;
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        const dur = 0.28;
+        const opt = this.prefs.saw || 1;
 
-        // High-RPM Carbide Saw Grinding Against Armor (FM Screech + Spark Noise)
-        const bufLen = Math.floor(ctx.sampleRate * dur);
-        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < bufLen; i++) {
-          const phase = i / ctx.sampleRate;
-          const sawWave = ((phase * 340) % 1) * 2 - 1;
-          const sparkNoise = (Math.random() * 2 - 1) * 0.75;
-          data[i] = (sawWave * 0.55 + sparkNoise * 0.45) * Math.exp(-i / (bufLen * 0.45));
+        if (opt === 1) {
+          // Option 1: Twin-Turbo V8 Roar & Tire Chirp
+          this._subDrop(ctx, t0, 82, 148, 0.24, 0.24, "sawtooth");
+          this._subDrop(ctx, t0, 123, 220, 0.24, 0.15, "triangle");
+          this._noiseBurst(ctx, t0 + 0.04, 0.16, "bandpass", 1650, 1180, 4.5, 0.14, 0);
+        } else if (opt === 2) {
+          // Option 2: Diamond-Blade Steel Rip (Warm filtered saw bite + spark crackle)
+          this._subDrop(ctx, t0, 260, 390, 0.24, 0.16, "sawtooth");
+          this._noiseBurst(ctx, t0, 0.24, "bandpass", 1450, 920, 2.2, 0.22, 20);
+        } else if (opt === 3) {
+          // Option 3: Supercharger Whine & Blow-Off Valve
+          this._subDrop(ctx, t0, 520, 980, 0.18, 0.12, "triangle");
+          this._noiseBurst(ctx, t0 + 0.12, 0.14, "highpass", 2800, 1400, 1.8, 0.16, 0);
+        } else if (opt === 4) {
+          // Option 4: Plasma Torch Sizzle
+          this._subDrop(ctx, t0, 110, 95, 0.25, 0.22, "sawtooth");
+          this._noiseBurst(ctx, t0, 0.25, "bandpass", 2200, 850, 1.5, 0.18, 25);
+        } else {
+          // Option 5: Heavy Chain-Drive V12 Growl
+          this._subDrop(ctx, t0, 64, 108, 0.26, 0.28, "sawtooth");
+          this._noiseBurst(ctx, t0, 0.22, "lowpass", 480, 220, 1.6, 0.20, 15);
         }
-        const src = ctx.createBufferSource();
-        src.buffer = buf;
-
-        const filter = ctx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.frequency.setValueAtTime(1850, t0);
-        filter.frequency.linearRampToValueAtTime(2650, t0 + 0.09);
-        filter.frequency.linearRampToValueAtTime(1100, t0 + dur);
-        filter.Q.setValueAtTime(2.8, t0);
-
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.28, t0);
-        gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-
-        src.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-        src.start(t0);
       },
 
-      playPartBreak(isCrippled = false) {
-        if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        const t0 = ctx.currentTime;
-        const dur = isCrippled ? 0.55 : 0.36;
-
-        // Explosive Armor Shatter + Cascading Shrapnel Clatter
-        this.playClash(true);
-        const hits = isCrippled ? [0.06, 0.14, 0.24, 0.35] : [0.07, 0.17];
-        hits.forEach((delay, idx) => {
-          const osc = ctx.createOscillator();
-          const g = ctx.createGain();
-          osc.type = "sawtooth";
-          const f = (920 - idx * 165) * (0.9 + Math.random() * 0.2);
-          osc.frequency.setValueAtTime(f, t0 + delay);
-          osc.frequency.exponentialRampToValueAtTime(140, t0 + delay + 0.11);
-          g.gain.setValueAtTime(0.18 / (idx + 1), t0 + delay);
-          g.gain.exponentialRampToValueAtTime(0.001, t0 + delay + 0.12);
-          osc.connect(g);
-          g.connect(ctx.destination);
-          osc.start(t0 + delay);
-          osc.stop(t0 + delay + 0.13);
-        });
-      },
-
-      playPredatorLock() {
-        if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        const t0 = ctx.currentTime;
-        // Hydraulic Turbo-Spool & Mechanical Latch Lock
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(140, t0);
-        osc.frequency.exponentialRampToValueAtTime(520, t0 + 0.16);
-        gain.gain.setValueAtTime(0.14, t0);
-        gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.18);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(t0);
-        osc.stop(t0 + 0.19);
-      },
-
+      // 3. RANGED WEAPON & CANNON FIRE (5 Options)
       playWeaponFire(kind = "rail") {
         if (this.muted) return;
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        // Mechanical Cannon Punch + Muzzle Blast Noise
-        const dur = kind === "mortar" ? 0.30 : 0.19;
-        const bufLen = Math.floor(ctx.sampleRate * dur);
-        const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < bufLen; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.28));
+        const opt = this.prefs.weapon || 1;
+
+        if (opt === 1) {
+          // Option 1: 50-Cal Heavy Autocannon
+          this._subDrop(ctx, t0, 150, 38, 0.18, 0.38, "sine");
+          this._noiseBurst(ctx, t0, 0.16, "lowpass", 1400, 180, 1.4, 0.30, 25);
+        } else if (opt === 2) {
+          // Option 2: Gauss Railgun Whip
+          this._subDrop(ctx, t0, 1400, 55, 0.20, 0.26, "sawtooth");
+          this._noiseBurst(ctx, t0, 0.18, "bandpass", 2400, 320, 2.0, 0.26, 15);
+        } else if (opt === 3) {
+          // Option 3: Rocket Pod Whoosh & Detonation
+          this._subDrop(ctx, t0, 110, 42, 0.28, 0.34, "triangle");
+          this._noiseBurst(ctx, t0, 0.28, "bandpass", 850, 240, 1.2, 0.28, 10);
+        } else if (opt === 4) {
+          // Option 4: Pulse Ion Blaster
+          this._subDrop(ctx, t0, 1650, 110, 0.19, 0.24, "triangle");
+          this._subDrop(ctx, t0 + 0.02, 825, 65, 0.19, 0.18, "sine");
+        } else {
+          // Option 5: Vulcan Rotary Burst (4 rapid mechanical thumps)
+          [0, 0.045, 0.09, 0.135].forEach((d) => {
+            this._subDrop(ctx, t0 + d, 190, 52, 0.04, 0.26, "sawtooth");
+            this._noiseBurst(ctx, t0 + d, 0.04, "lowpass", 1100, 300, 1.0, 0.18, 0);
+          });
         }
-        const noise = ctx.createBufferSource();
-        noise.buffer = buf;
-        const filter = ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(kind === "rail" ? 2400 : 950, t0);
-        filter.frequency.exponentialRampToValueAtTime(160, t0 + dur);
-        const nGain = ctx.createGain();
-        nGain.gain.setValueAtTime(0.28, t0);
-        nGain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-        noise.connect(filter);
-        filter.connect(nGain);
-        nGain.connect(ctx.destination);
-        noise.start(t0);
+      },
+
+      // 4. CHARGE / BOOST / TARGET LOCK (5 Options)
+      playPredatorLock() {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        const opt = this.prefs.boost || 1;
+
+        if (opt === 1) {
+          // Option 1: Twin-Turbo Spool & NOS Purge
+          this._subDrop(ctx, t0, 220, 680, 0.22, 0.16, "triangle");
+          this._noiseBurst(ctx, t0 + 0.08, 0.16, "highpass", 2600, 1200, 1.5, 0.16, 0);
+        } else if (opt === 2) {
+          // Option 2: Jet Afterburner Whoosh
+          this._subDrop(ctx, t0, 140, 48, 0.28, 0.32, "sine");
+          this._noiseBurst(ctx, t0, 0.28, "bandpass", 620, 180, 1.2, 0.26, 12);
+        } else if (opt === 3) {
+          // Option 3: HUD Radar Target Lock
+          this._subDrop(ctx, t0, 1046, 1046, 0.06, 0.14, "sine");
+          this._subDrop(ctx, t0 + 0.075, 1396, 1396, 0.09, 0.16, "sine");
+        } else if (opt === 4) {
+          // Option 4: Liquid Bass Riser
+          this._subDrop(ctx, t0, 65, 260, 0.24, 0.28, "sine");
+          this._subDrop(ctx, t0, 130, 520, 0.24, 0.12, "triangle");
+        } else {
+          // Option 5: Muscle Car V8 Rev Bomb
+          this._subDrop(ctx, t0, 75, 195, 0.16, 0.26, "sawtooth");
+          this._subDrop(ctx, t0 + 0.14, 195, 92, 0.14, 0.22, "sawtooth");
+        }
+      },
+
+      // 5. PART BREAK / ARMOR SHATTER (5 Options)
+      playPartBreak(isCrippled = false) {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        const opt = this.prefs.break || 1;
+
+        if (opt === 1) {
+          // Option 1: Carbon-Fiber & Tempered Glass Shatter
+          this._subDrop(ctx, t0, 125, 28, 0.34, 0.45, "sine");
+          this._noiseBurst(ctx, t0, 0.28, "bandpass", 1800, 620, 1.6, 0.28, 22);
+          [0.05, 0.11, 0.18].forEach((d, i) => {
+            this._subDrop(ctx, t0 + d, 2200 - i * 380, 900, 0.06, 0.10, "triangle");
+          });
+        } else if (opt === 2) {
+          // Option 2: Explosive Detonation
+          this._subDrop(ctx, t0, 110, 22, 0.45, 0.52, "sine");
+          this._noiseBurst(ctx, t0, 0.42, "lowpass", 820, 110, 1.2, 0.38, 35);
+        } else if (opt === 3) {
+          // Option 3: Hydraulic Line Blowout
+          this._subDrop(ctx, t0, 160, 42, 0.22, 0.38, "triangle");
+          this._noiseBurst(ctx, t0 + 0.03, 0.34, "bandpass", 2800, 900, 2.4, 0.24, 0);
+        } else if (opt === 4) {
+          // Option 4: EMP Circuit Power-Down
+          this._subDrop(ctx, t0, 880, 48, 0.38, 0.26, "sawtooth");
+          this._noiseBurst(ctx, t0, 0.12, "bandpass", 1600, 400, 2.0, 0.20, 0);
+        } else {
+          // Option 5: Heavy Anvil Buckle
+          this._subDrop(ctx, t0, 140, 32, 0.26, 0.46, "triangle");
+          this._subDrop(ctx, t0 + 0.08, 105, 25, 0.26, 0.38, "sine");
+        }
+      },
+
+      // 6. ROUND START / FIGHT SIGNAL (5 Options)
+      playBell(strikes = 1) {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        const opt = this.prefs.bell || 1;
+
+        if (opt === 1) {
+          // Option 1: Drag Strip Countdown Tree & V8 Launch
+          [0, 0.14].forEach((d) => {
+            this._subDrop(ctx, t0 + d, 523.25, 523.25, 0.08, 0.16, "triangle");
+          });
+          this._subDrop(ctx, t0 + 0.28, 1046.5, 1046.5, 0.26, 0.22, "triangle");
+          this._subDrop(ctx, t0 + 0.28, 92, 165, 0.38, 0.24, "sawtooth");
+        } else if (opt === 2) {
+          // Option 2: Underground Pit Airhorn
+          [185, 233.08, 370].forEach((f, i) => {
+            this._subDrop(ctx, t0, f, f * 0.98, 0.55, 0.16 / (i + 1), "sawtooth");
+          });
+        } else if (opt === 3) {
+          // Option 3: Octagon Bronze Gong
+          [110, 220, 342, 560].forEach((f, i) => {
+            this._subDrop(ctx, t0, f, f * 0.97, 0.75, 0.22 / (i + 1), "triangle");
+          });
+        } else if (opt === 4) {
+          // Option 4: Cyber Siren & Bass Drop
+          this._subDrop(ctx, t0, 440, 880, 0.18, 0.16, "sawtooth");
+          this._subDrop(ctx, t0 + 0.18, 120, 28, 0.42, 0.45, "sine");
+        } else {
+          // Option 5: Championship Ringside Bell
+          for (let s = 0; s < strikes; s++) {
+            const ts = t0 + s * 0.18;
+            [784, 1568, 2352].forEach((f, i) => {
+              this._subDrop(ctx, ts, f, f * 0.99, 0.45, 0.16 / (i + 1), "sine");
+            });
+          }
+        }
+      },
+
+      // 7. UI TAP / BUY / BOND CHIME (5 Options)
+      playCashChime() {
+        if (this.muted) return;
+        const ctx = this.init();
+        if (!ctx) return;
+        const t0 = ctx.currentTime;
+        const opt = this.prefs.ui || 1;
+
+        if (opt === 1) {
+          // Option 1: Liquid Glass Droplet Pop
+          this._subDrop(ctx, t0, 520, 920, 0.085, 0.16, "sine");
+          this._subDrop(ctx, t0 + 0.055, 780, 1180, 0.11, 0.12, "triangle");
+        } else if (opt === 2) {
+          // Option 2: Cockpit Toggle Click
+          this._subDrop(ctx, t0, 1200, 280, 0.028, 0.18, "triangle");
+        } else if (opt === 3) {
+          // Option 3: Diamond Crystal Chord
+          [880, 1108.73, 1318.51].forEach((f, i) => {
+            this._subDrop(ctx, t0 + i * 0.04, f, f, 0.18, 0.11, "triangle");
+          });
+        } else if (opt === 4) {
+          // Option 4: Gunmetal Bolt Latch
+          this._subDrop(ctx, t0, 620, 180, 0.04, 0.18, "sawtooth");
+          this._subDrop(ctx, t0 + 0.055, 840, 240, 0.045, 0.18, "sawtooth");
+        } else {
+          // Option 5: Warm Analog Synth Pluck
+          this._subDrop(ctx, t0, 330, 328, 0.14, 0.18, "triangle");
+          this._subDrop(ctx, t0 + 0.06, 495, 492, 0.16, 0.14, "sine");
+        }
       },
 
       playWrenchHeal() {
@@ -19132,64 +19361,130 @@
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        // Pneumatic Impact Wrench Ratchet Drill Sound
         [0, 0.055, 0.11, 0.165].forEach((offset, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(320 + idx * 85, t0 + offset);
-          osc.frequency.exponentialRampToValueAtTime(180, t0 + offset + 0.045);
-          gain.gain.setValueAtTime(0.16, t0 + offset);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + offset + 0.05);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(t0 + offset);
-          osc.stop(t0 + offset + 0.052);
+          this._subDrop(ctx, t0 + offset, 340 + idx * 90, 190, 0.048, 0.16, "triangle");
         });
       },
 
-      playCashChime() {
-        if (this.muted) return;
-        const ctx = this.init();
-        if (!ctx) return;
-        const t0 = ctx.currentTime;
-        // Crisp Metallic Vault Lock / Coin Clink
-        [880, 1320].forEach((f, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(f, t0 + idx * 0.065);
-          gain.gain.setValueAtTime(0.15, t0 + idx * 0.065);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.065 + 0.18);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(t0 + idx * 0.065);
-          osc.stop(t0 + idx * 0.065 + 0.20);
-        });
-      },
-
+      // 8. VICTORY & DEFEAT FANFARE (5 Options)
       playVictoryFanfare(won = true) {
         if (this.muted) return;
         const ctx = this.init();
         if (!ctx) return;
         const t0 = ctx.currentTime;
-        // Heavy Arena Pyrotechnic Boom + Industrial Horn Chord
-        this.playClash(true);
-        const notes = won ? [220, 277.18, 329.63, 440] : [196, 174.61, 155.56, 130.81];
-        notes.forEach((f, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(f, t0 + idx * 0.10);
-          gain.gain.setValueAtTime(0.14, t0 + idx * 0.10);
-          gain.gain.exponentialRampToValueAtTime(0.001, t0 + idx * 0.10 + 0.38);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(t0 + idx * 0.10);
-          osc.stop(t0 + idx * 0.10 + 0.40);
-        });
+        const opt = this.prefs.victory || 1;
+
+        if (!won) {
+          [220, 196, 174.61, 146.83].forEach((f, idx) => {
+            this._subDrop(ctx, t0 + idx * 0.11, f, f * 0.96, 0.32, 0.16, "triangle");
+          });
+          return;
+        }
+
+        if (opt === 1) {
+          // Option 1: Shibuya Drift King Synth-Brass Anthem
+          this._subDrop(ctx, t0, 110, 32, 0.45, 0.42, "sine");
+          [293.66, 369.99, 440, 587.33].forEach((f, idx) => {
+            this._subDrop(ctx, t0 + idx * 0.09, f, f, 0.36, 0.16, "sawtooth");
+            this._subDrop(ctx, t0 + idx * 0.09, f * 0.5, f * 0.5, 0.36, 0.14, "triangle");
+          });
+        } else if (opt === 2) {
+          // Option 2: V8 Burnout & Stadium Airhorns
+          this._subDrop(ctx, t0, 85, 195, 0.42, 0.28, "sawtooth");
+          [0, 0.14, 0.28].forEach((d) => {
+            this._subDrop(ctx, t0 + d, 233.08, 233.08, 0.12, 0.18, "sawtooth");
+            this._subDrop(ctx, t0 + d, 349.23, 349.23, 0.12, 0.14, "sawtooth");
+          });
+        } else if (opt === 3) {
+          // Option 3: Liquid Glass Celestial Chord
+          this._subDrop(ctx, t0, 110, 55, 0.55, 0.34, "sine");
+          [440, 554.37, 659.25, 880].forEach((f, idx) => {
+            this._subDrop(ctx, t0 + idx * 0.06, f, f, 0.55, 0.14, "triangle");
+          });
+        } else if (opt === 4) {
+          // Option 4: Heavy Power Chord Riff
+          [146.83, 174.61, 220, 293.66].forEach((f, idx) => {
+            this._subDrop(ctx, t0 + idx * 0.10, f, f, 0.28, 0.20, "sawtooth");
+            this._subDrop(ctx, t0 + idx * 0.10, f * 1.5, f * 1.5, 0.28, 0.14, "sawtooth");
+          });
+        } else {
+          // Option 5: Clean Esports Trophy Stinger
+          [523.25, 659.25, 1046.5].forEach((f, idx) => {
+            this._subDrop(ctx, t0 + idx * 0.08, f, f, 0.32, 0.18, "triangle");
+          });
+        }
       }
     };
+
+    // Interactive Sound Studio Modal so the user can audition & pick from 5 options for each of the 8 sounds!
+    function openC19SoundStudioModal() {
+      let bd = document.getElementById("c19SoundStudioBackdrop");
+      if (!bd) {
+        bd = document.createElement("div");
+        bd.id = "c19SoundStudioBackdrop";
+        bd.style.cssText = "position:fixed;inset:0;z-index:100005;background:rgba(4,3,2,0.88);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:12px;";
+        bd.onclick = (e) => { if (e.target === bd) bd.style.display = "none"; };
+        document.body.appendChild(bd);
+      }
+      bd.style.display = "flex";
+      renderC19SoundStudioModal();
+    }
+
+    function renderC19SoundStudioModal() {
+      const bd = document.getElementById("c19SoundStudioBackdrop");
+      if (!bd) return;
+      const catsHtml = SOUND_STUDIO_CATALOG.map((c) => {
+        const curOpt = BotPitAudio.prefs[c.cat] || 1;
+        const btns = c.options.map((o) => {
+          const isAct = curOpt === o.id;
+          return `
+            <button type="button" class="${isAct ? 'lg-btn' : 'lg-pill'}" onclick="BotPitAudio.setOption('${c.cat}', ${o.id})" style="text-align:left;padding:7px 9px;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;gap:2px;background:${isAct ? 'linear-gradient(180deg,#ff7700,#c2410c)' : 'rgba(255,119,0,0.12)'};color:${isAct ? '#090502' : '#fff7ed'};">
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:900;display:flex;justify-content:space-between;align-items:center;">
+                <span>#${o.id} ${o.name}</span>
+                <span>${isAct ? '✓ ACTIVE' : '▶️ PLAY'}</span>
+              </div>
+              <div style="font-size:0.62rem;opacity:0.88;font-weight:600;color:${isAct ? '#1c0a02' : '#fed7aa'};">${o.desc}</div>
+            </button>
+          `;
+        }).join("");
+        return `
+          <div class="lg-card" style="padding:10px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:900;color:#ff7700;">${c.title}</span>
+              <button type="button" class="lg-pill" style="padding:3px 8px;border-radius:999px;font-family:'Orbitron',sans-serif;font-size:0.56rem;font-weight:900;color:#ffaa44;cursor:pointer;" onclick="BotPitAudio.previewSound('${c.cat}', ${curOpt})">🔊 TEST ACTIVE</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:5px;">
+              ${btns}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      bd.innerHTML = `
+        <div class="lg-card lg-active" style="width:100%;max-width:680px;max-height:88dvh;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:radial-gradient(circle at 50% 0%,#1f0d04 0%,#060403 80%);" onclick="event.stopPropagation()">
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,150,70,0.3);padding-bottom:8px;">
+            <div>
+              <div style="font-family:'Orbitron',sans-serif;font-size:0.88rem;font-weight:900;color:#ff7700;">🔊 SHIBUYA SOUND STUDIO — PICK YOUR BATTLE FX</div>
+              <div style="font-size:0.74rem;color:#fed7aa;">Tap any option below to hear it live and lock it in for your game!</div>
+            </div>
+            <button type="button" class="lg-btn" style="background:linear-gradient(180deg,#ff7700,#c2410c);color:#090502;padding:6px 12px;font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:900;" onclick="document.getElementById('c19SoundStudioBackdrop').style.display='none'">✓ DONE</button>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">
+            <span style="font-family:'Orbitron',sans-serif;font-size:0.6rem;color:#ffaa44;font-weight:900;">⚡ 1-TAP FULL PACK PRESETS:</span>
+            <button type="button" class="lg-pill" style="padding:4px 9px;border-radius:999px;color:#ff7700;font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(1)">Pack #1: V8 Demolition</button>
+            <button type="button" class="lg-pill" style="padding:4px 9px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(2)">Pack #2: Hydraulic Titan</button>
+            <button type="button" class="lg-pill" style="padding:4px 9px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(3)">Pack #3: Cyber-Plasma</button>
+            <button type="button" class="lg-pill" style="padding:4px 9px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(4)">Pack #4: Hollywood Wreck</button>
+            <button type="button" class="lg-pill" style="padding:4px 9px;border-radius:999px;color:#ffaa44;font-family:'Orbitron',sans-serif;font-size:0.58rem;font-weight:900;cursor:pointer;" onclick="BotPitAudio.applyPresetPack(5)">Pack #5: Smooth Sub-Bass</button>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            ${catsHtml}
+          </div>
+        </div>
+      `;
+    }
 
     // Auto-unlock WebAudio on first user pointer/keyboard gesture
     ["pointerdown", "keydown"].forEach(evName => {
