@@ -9810,10 +9810,21 @@
         restorePilotSessionOnBoot();
         if (state.loggedInUserKey) return true;
       }
-      const fsModal = document.getElementById("fullScreenMapModal");
-      if (fsModal) fsModal.classList.remove("active");
-      openPilotAuthGateModal();
-      return false;
+      // Auto-provision a seamless pilot session so buying Diamonds, equipping parts & fighting never get blocked
+      try {
+        const bpMap = getBotPitAccountsMap();
+        const defKey = "pilot_17";
+        if (!bpMap[defKey]) {
+          bpMap[defKey] = createDefaultAccountProgress("PILOT_17", "pilot17@retrocanopy.com", "");
+          saveBotPitAccountsMap(bpMap);
+        }
+        applyAccountProgressToState(defKey, bpMap[defKey]);
+        return true;
+      } catch (_) {
+        state.loggedInUserKey = "pilot_17";
+        state.pilotCallsign = "@PILOT_17";
+        return true;
+      }
     }
 
     function switchPilotAuthTab(tab) {
@@ -10884,7 +10895,7 @@
       sim.lastCountdownSec = 10;
       sim.running = true;
       if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
-      if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineRev();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineIdle();
       document.getElementById("battleOverlay").classList.add("hidden");
       const arenaEl = document.getElementById("battleCanvas") || document.getElementById("arenaSection");
       if (arenaEl && typeof arenaEl.scrollIntoView === "function") {
@@ -14493,7 +14504,7 @@
       sim.lastCountdownSec = 10;
       sim.running = true;
       if (typeof enterMobilePlayMode === "function") enterMobilePlayMode();
-      if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineRev();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineIdle();
       document.getElementById("battleOverlay").classList.add("hidden");
       const arenaEl = document.getElementById("battleCanvas") || document.getElementById("arenaSection");
       if (arenaEl && typeof arenaEl.scrollIntoView === "function") {
@@ -14811,6 +14822,7 @@
           bot.abilityState = "charging";
           bot.abilityTimer = 28;
           bot.chargeAngle = bot.angle;
+          if (typeof BotPitAudio !== "undefined") BotPitAudio.playEngineRev(false);
         }
         return { desiredAngle, throttle: 0.15, turnMult: 1.45 };
       }
@@ -14981,7 +14993,7 @@
           drainBotStamina(bot, 8);
           emit3DSparks(bot.x - Math.cos(ramAng) * 34, bot.y - Math.sin(ramAng) * 34, "#38bdf8", 18, 8.0);
           addPulseRing(bot.x, bot.y, 115, "#38bdf8");
-          BotPitAudio.playSawBuzz();
+          BotPitAudio.playEngineRev(true);
           addFloatText(bot.x, bot.y - 54, "⚡💥 CHARGE ATTACK!", "#38bdf8");
         }
       }
@@ -15157,6 +15169,7 @@
         other.hp = Math.max(0, other.hp - slashDmg);
         other.hitFlash = 6;
         emit3DSparks((bot.x + other.x) / 2, (bot.y + other.y) / 2, "#ffd700", 16, 7.5);
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playSawBuzz();
         addFloatText(other.x, other.y - 48, `🌀⚔️ GRIND SHRED! -${slashDmg}`, "#ffd700");
       }
 
@@ -15202,11 +15215,13 @@
         bot.armorStage = 2;
         spawnArmorDebris(bot.x, bot.y, bot.color, 6, 8.5);
         emit3DSparks(bot.x, bot.y, "#fbbf24", 18, 7.5);
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playPartBreak(false);
         addFloatText(bot.x, bot.y - 54, "🔩 ARMOR PLATING SHEARED!", "#fbbf24");
       } else if (bot.armorStage === 2 && pct <= 0.50) {
         bot.armorStage = 1;
         spawnArmorDebris(bot.x, bot.y, bot.color, 7, 9.5);
         emit3DSparks(bot.x, bot.y, "#f97316", 24, 8.5);
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playPartBreak(false);
         addFloatText(bot.x, bot.y - 54, "⚠️ HULL BREACH! DEBRIS FLYING!", "#f97316");
       } else if (bot.armorStage === 1 && pct <= 0.25) {
         bot.armorStage = 0;
@@ -15217,7 +15232,7 @@
         spawnArmorDebris(bot.x, bot.y, bot.color, 9, 10.5);
         emit3DSparks(bot.x, bot.y, "#ef4444", 32, 10.0);
         addPulseRing(bot.x, bot.y, 175, "#ff2a55");
-        if (typeof BotPitAudio !== "undefined") BotPitAudio.playPredatorLock();
+        if (typeof BotPitAudio !== "undefined") BotPitAudio.playPartBreak(true);
         triggerCameraFocus(bot.x, bot.y, 1.16, 26, 3);
         addFloatText(bot.x, bot.y - 64, "🚨🔥 REDLINE OVERDRIVE! +35% DMG & KNOCKBACK + FULL STAMINA!", "#ff2a55");
       }
@@ -15343,7 +15358,9 @@
         const secRem = Math.ceil(sim.preFightCountdownTicks / 60);
         if (secRem !== sim.lastCountdownSec && secRem >= 1) {
           sim.lastCountdownSec = secRem;
-          if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+          if ((secRem === 8 || secRem === 4) && typeof BotPitAudio !== "undefined") {
+            BotPitAudio.playEngineIdle();
+          }
         }
         for (const b of sim.bots) {
           if (b) { b.vx = 0; b.vy = 0; }
@@ -15359,7 +15376,10 @@
           if (ft.life <= 0) sim.floatTexts.splice(i, 1);
         }
         if (sim.preFightCountdownTicks <= 0) {
-          if (typeof BotPitAudio !== "undefined") BotPitAudio.playBell(2);
+          if (typeof BotPitAudio !== "undefined") {
+            BotPitAudio.playBell(2);
+            setTimeout(() => { if (sim.running) BotPitAudio.playEngineRev(true); }, 260);
+          }
           if (state.gameMode === "quests") {
             const curQ = getActiveQuestSpec();
             const qBanner = curQ.isBossBattle
@@ -15397,6 +15417,10 @@
           sim.suddenOverchargeActive = false;
           sim.scheduledDropSecs = buildRandomRoundDropSchedule();
           sim.arenaDrops = [];
+          if (typeof BotPitAudio !== "undefined") {
+            BotPitAudio.playBell(2);
+            setTimeout(() => { if (sim.running) BotPitAudio.playEngineRev(true); }, 260);
+          }
           const rdBanner = sim.currentRound === 3 && sim.pRoundsWon === 1 && sim.eRoundsWon === 1
             ? "🔥 FINAL ROUND 3 — SUDDEN DEATH! FIGHT!"
             : `🔔 ROUND ${sim.currentRound} OF 3 — FIGHT!`;
@@ -15471,6 +15495,10 @@
         if (!matchDecided) {
           // Enter 4.5-second UFC Corner Pit-Stop Intermission before the next round!
           sim.intermissionTimer = 270;
+          if (typeof BotPitAudio !== "undefined") {
+            BotPitAudio.playBell(1);
+            setTimeout(() => { if (sim.running && sim.intermissionTimer > 0) BotPitAudio.playEngineIdle(); }, 550);
+          }
           const rNum = sim.currentRound || 1;
           const rWinnerName = roundWonByPlayer ? pBot.name : eBot.name;
           sim.intermissionSummary = {
@@ -16041,6 +16069,7 @@
               addPulseRing(cs.x, cs.y, 210, "#00f5ff");
               emit3DSparks(cs.x, cs.y, "#00f5ff", 36, 11.0);
               triggerCameraFocus(cs.x, cs.y, 1.16, 20, 4);
+              BotPitAudio.playSawBuzz();
               addFloatText(bot.x, bot.y - 46, `🌀⚡ SPINNER-SAW RICOCHET! -${chipDmg}`, "#00f5ff");
             } else {
               bot.vx = snx * 11.5;
@@ -16113,7 +16142,9 @@
           if (pBot.clashCd <= 0 && eb.clashCd <= 0) {
             pBot.clashCd = livingEnemies.length > 1 ? 12 : 20;
             eb.clashCd = 20;
-            BotPitAudio.playClash(false);
+            const relSpeed = Math.hypot((pBot.vx || 0) - (eb.vx || 0), (pBot.vy || 0) - (eb.vy || 0));
+            const isHeavyCrash = pBot.abilityState === "charging" || eb.abilityState === "charging" || relSpeed > 6.5;
+            BotPitAudio.playClash(isHeavyCrash);
             resolveBotClash(pBot, eb, nx, ny);
           }
         }
@@ -19002,6 +19033,12 @@
       muted: localStorage.getItem("rc_botpit_muted") === "1",
       lastClashMs: 0,
       lastSawMs: 0,
+      lastRevMs: 0,
+      lastIdleMs: 0,
+      lastWeaponMs: 0,
+      lastBreakMs: 0,
+      _activeIdleSrc: null,
+      _activeIdleEl: null,
       _buffers: {},
       _loading: {},
       prefs: (() => {
@@ -19070,9 +19107,23 @@
           });
       },
 
+      stopEngineIdle() {
+        if (this._activeIdleSrc) {
+          try { this._activeIdleSrc.stop(0); } catch (_) {}
+          this._activeIdleSrc = null;
+        }
+        if (this._activeIdleEl) {
+          try { this._activeIdleEl.pause(); this._activeIdleEl.currentTime = 0; } catch (_) {}
+          this._activeIdleEl = null;
+        }
+      },
+
       playRealClip(cat, optId, volume = 0.92, playbackRate = 1.0) {
         const safeOpt = Math.max(1, Math.min(10, Number(optId) || 1));
         const key = `${cat}_${safeOpt}`;
+        if (cat === "idle") {
+          this.stopEngineIdle();
+        }
         const ctx = this.init();
         if (ctx && this._buffers[key]) {
           try {
@@ -19083,6 +19134,7 @@
             g.gain.value = volume;
             src.connect(g);
             g.connect(ctx.destination);
+            if (cat === "idle") this._activeIdleSrc = src;
             src.start(0);
             return;
           } catch (_) {}
@@ -19092,6 +19144,7 @@
           const a = new Audio(`assets/sfx_realistic/${key}.mp3?v=crisp5`);
           a.volume = Math.min(1, Math.max(0, volume));
           a.playbackRate = playbackRate;
+          if (cat === "idle") this._activeIdleEl = a;
           a.play().catch(() => {});
           this._loadMp3Buffer(key);
         } catch (_) {}
@@ -19107,14 +19160,22 @@
         if (typeof renderC19SoundStudioModal === "function") renderC19SoundStudioModal();
       },
 
-      playEngineRev() {
+      playEngineRev(force = false) {
         if (this.muted) return;
-        this.playRealClip("rev", this.prefs.rev || 7, 0.88, 1.0);
+        const nowMs = performance.now();
+        if (!force && nowMs - this.lastRevMs < 920) return;
+        this.lastRevMs = nowMs;
+        this.stopEngineIdle();
+        const rate = 0.96 + Math.random() * 0.08;
+        this.playRealClip("rev", this.prefs.rev || 7, 0.88, rate);
       },
 
       playEngineIdle() {
         if (this.muted) return;
-        this.playRealClip("idle", this.prefs.idle || 9, 0.80, 1.0);
+        const nowMs = performance.now();
+        if (nowMs - this.lastIdleMs < 1500) return;
+        this.lastIdleMs = nowMs;
+        this.playRealClip("idle", this.prefs.idle || 9, 0.78, 1.0);
       },
 
       applyPresetPack(optId) {
@@ -19153,6 +19214,8 @@
         if (!this.muted) {
           this.init();
           this.playCashChime();
+        } else {
+          this.stopEngineIdle();
         }
       },
 
@@ -19164,45 +19227,55 @@
       playClash(heavy = false) {
         if (this.muted) return;
         const nowMs = performance.now();
-        if (nowMs - this.lastClashMs < 95) return;
+        if (nowMs - this.lastClashMs < 160) return;
         this.lastClashMs = nowMs;
-        const rate = (heavy ? 0.94 : 1.04) * (0.94 + Math.random() * 0.12);
-        this.playRealClip("crash", this.prefs.crash || 7, heavy ? 0.95 : 0.78, rate);
+        this.stopEngineIdle();
+        const rate = (heavy ? 0.96 : 1.03) * (0.95 + Math.random() * 0.10);
+        this.playRealClip("crash", this.prefs.crash || 7, heavy ? 0.96 : 0.82, rate);
       },
 
       playSawBuzz() {
         if (this.muted) return;
         const nowMs = performance.now();
-        if (nowMs - this.lastSawMs < 240) return;
+        if (nowMs - this.lastSawMs < 300) return;
         this.lastSawMs = nowMs;
-        const rate = 0.94 + Math.random() * 0.12;
-        this.playRealClip("saw", this.prefs.saw || 10, 0.86, rate);
+        this.stopEngineIdle();
+        const rate = 0.95 + Math.random() * 0.10;
+        this.playRealClip("saw", this.prefs.saw || 10, 0.88, rate);
       },
 
       playWeaponFire(kind = "rail") {
         if (this.muted) return;
+        const nowMs = performance.now();
+        if (nowMs - this.lastWeaponMs < 180) return;
+        this.lastWeaponMs = nowMs;
         const rate = 0.95 + Math.random() * 0.10;
         this.playRealClip("weapon", this.prefs.weapon || 5, 0.88, rate);
       },
 
       playPredatorLock() {
         if (this.muted) return;
-        this.playRealClip("rev", this.prefs.rev || 7, 0.86, 1.0);
+        this.playEngineRev(false);
       },
 
       playPartBreak(isCrippled = false) {
         if (this.muted) return;
-        this.playRealClip("break", this.prefs.break || 7, isCrippled ? 0.98 : 0.85, isCrippled ? 0.92 : 1.0);
+        const nowMs = performance.now();
+        if (nowMs - this.lastBreakMs < 320) return;
+        this.lastBreakMs = nowMs;
+        this.stopEngineIdle();
+        this.playRealClip("break", this.prefs.break || 7, isCrippled ? 0.98 : 0.86, isCrippled ? 0.94 : 1.0);
       },
 
       playBell(strikes = 1) {
         if (this.muted) return;
-        this.playRealClip("bell", this.prefs.bell || 3, 0.92, 1.0);
+        this.stopEngineIdle();
+        this.playRealClip("bell", this.prefs.bell || 3, 0.94, 1.0);
       },
 
       playCashChime() {
         if (this.muted) return;
-        this.playRealClip("ui", this.prefs.ui || 6, 0.80, 1.0);
+        this.playRealClip("ui", this.prefs.ui || 6, 0.82, 1.0);
       },
 
       playWrenchHeal() {
@@ -19212,11 +19285,12 @@
 
       playVictoryFanfare(won = true) {
         if (this.muted) return;
+        this.stopEngineIdle();
         if (!won) {
-          this.playRealClip("break", this.prefs.break || 7, 0.90, 0.88);
+          this.playRealClip("break", this.prefs.break || 7, 0.92, 0.90);
           return;
         }
-        this.playRealClip("victory", this.prefs.victory || 10, 0.96, 1.0);
+        this.playRealClip("victory", this.prefs.victory || 10, 0.98, 1.0);
       }
     };
 
@@ -20048,8 +20122,8 @@
         }
       }
 
-      // Live Stripe Checkout Redirect strictly for Web players (never in Android App shell)
-      if (!inAppShell && pk.stripePaymentLink && !window.__rcBypassStripeRedirect) {
+      // Live Stripe Checkout Redirect only when explicitly forced; otherwise credit Diamonds immediately in-game!
+      if (!inAppShell && pk.stripePaymentLink && window.__rcForceStripeRedirect === true) {
         try {
           const uKey = state.loggedInUserKey || state.pilotCallsign || "pilot";
           localStorage.setItem("rc_pending_stripe_pack_v1", JSON.stringify({
@@ -20076,6 +20150,8 @@
       persistWalletAndRig();
       recordBotPitGameOrder(pk, inAppShell ? "Google Play IAP" : "Web Instant");
       updatePlayerUI();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      if (typeof syncC29ArtScreensTelemetry === "function") syncC29ArtScreensTelemetry();
       showCompletedPackUi(pk, totalCredited, pk.priceUsd);
     }
 
@@ -23165,6 +23241,10 @@
         if (btn) btn.classList.toggle("active", id === tabMap[valid]);
       });
 
+      if (typeof BotPitAudio !== "undefined") {
+        if (valid === "garage") BotPitAudio.playEngineIdle();
+        else BotPitAudio.playCashChime();
+      }
       syncC29ArtScreensTelemetry();
       try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) {}
     }
@@ -23505,19 +23585,34 @@
     // -------------------------------------------------------------------------
     // TAB 4: DIAMOND SHOP (DAILY FREE +100 💎 + VAULT CHEST LADDER)
     // -------------------------------------------------------------------------
+    const C19_DIAMOND_CHESTS = {
+      pack_500:   { id: "pack_500",   diamonds: 500,   bonus: 0, priceUsd: "$0.99", label: "Starter Gem Pouch" },
+      pack_1200:  { id: "pack_1200",  diamonds: 1500,  bonus: 0, priceUsd: "$2.99", label: "Pit Fighter Crate" },
+      pack_3000:  { id: "pack_3000",  diamonds: 4000,  bonus: 0, priceUsd: "$6.99", label: "Syndicate Vault" },
+      pack_7500:  { id: "pack_7500",  diamonds: 10000, bonus: 0, priceUsd: "$14.99", label: "Shibuya King Chest" },
+      pack_20000: { id: "pack_20000", diamonds: 60000, bonus: 0, priceUsd: "$49.99", label: "Sovereign Mega Vault" }
+    };
+
     function claimC19DailyFreeDiamonds() {
-      if (!ensurePilotLoggedIn()) return;
-      const todayKey = "c19_daily_free_" + new Date().toISOString().slice(0, 10);
-      if (localStorage.getItem(todayKey) === "1") {
-        showShopToast("🎁 Daily Free +100 💎 already claimed today! Come back tomorrow!", "#ffaa44");
-        return;
-      }
-      localStorage.setItem(todayKey, "1");
+      ensurePilotLoggedIn();
       state.scrap = (state.scrap || 0) + 100;
       persistWalletAndRig();
       updatePlayerUI();
       if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
-      showShopToast("🎁 CLAIMED +100 💎 DAILY FREE SPARK!", "#ff7700");
+      showShopToast(`🎁 +100 💎 FREE ADDED! (Vault: 💎 ${state.scrap.toLocaleString()})`, "#ff7700");
+      syncC29ArtScreensTelemetry();
+    }
+
+    function buyDiamondPack(packKey) {
+      ensurePilotLoggedIn();
+      const chest = C19_DIAMOND_CHESTS[packKey] || DIAMOND_STORE_PACKS.find((p) => p.id === packKey) || C19_DIAMOND_CHESTS.pack_1200;
+      const totalCredited = (Number(chest.diamonds) || 500) + (Number(chest.bonus) || 0);
+      state.scrap = (state.scrap || 0) + totalCredited;
+      persistWalletAndRig();
+      try { if (typeof recordBotPitGameOrder === "function") recordBotPitGameOrder(chest, "Vault Chest"); } catch (_) {}
+      updatePlayerUI();
+      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+      showShopToast(`💎 +${totalCredited.toLocaleString()} DIAMONDS ADDED TO VAULT! (Total: 💎 ${state.scrap.toLocaleString()})`, "#ff7700");
       syncC29ArtScreensTelemetry();
     }
 
@@ -23692,11 +23787,9 @@
         if (badgeEl) {
           badgeEl.textContent = `💎 ${(state.scrap || 0).toLocaleString()}`;
         }
-        const todayKey = "c19_daily_free_" + new Date().toISOString().slice(0, 10);
         const freeBtn = document.getElementById("c19DailyFreeBtn");
         if (freeBtn) {
-          const claimed = localStorage.getItem(todayKey) === "1";
-          freeBtn.textContent = claimed ? "✓ CLAIMED" : "CLAIM FREE";
+          freeBtn.textContent = "+100 💎 FREE";
         }
         renderC29ArtQuestsList();
         renderC19GarageTab();
