@@ -7973,12 +7973,12 @@
 
       <div class="c19-slot-tabs-bar" id="c19GarageSlotTabs">
         <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="cars" onclick="selectC19GarageSlot('cars')">🏎️ Cars (20)</button>
-        <button type="button" class="c19-slot-tab-btn lg-pill active" data-slot="tire" onclick="selectC19GarageSlot('tire')">🛞 Tires</button>
-        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="wpn1" onclick="selectC19GarageSlot('wpn1')">⚔️ Melee</button>
-        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="wpn2" onclick="selectC19GarageSlot('wpn2')">🎯 Ranged</button>
-        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="botAbil1" onclick="selectC19GarageSlot('botAbil1')">⚡ Abil 1</button>
-        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="botAbil2" onclick="selectC19GarageSlot('botAbil2')">🛡️ Abil 2</button>
-        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="wpnAbil" onclick="selectC19GarageSlot('wpnAbil')">🔥 Mod</button>
+        <button type="button" class="c19-slot-tab-btn lg-pill active" data-slot="tire" onclick="selectC19GarageSlot('tire')">🛞 Tires (20)</button>
+        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="wpn1" onclick="selectC19GarageSlot('wpn1')">⚔️ Melee (20)</button>
+        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="wpn2" onclick="selectC19GarageSlot('wpn2')">🎯 Ranged (20)</button>
+        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="botAbil1" onclick="selectC19GarageSlot('botAbil1')">⚡ Abil 1 (20)</button>
+        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="botAbil2" onclick="selectC19GarageSlot('botAbil2')">🛡️ Abil 2 (20)</button>
+        <button type="button" class="c19-slot-tab-btn lg-pill" data-slot="wpnAbil" onclick="selectC19GarageSlot('wpnAbil')">🔥 Mod (20)</button>
       </div>
 
       <div class="c19-part-rows-list" id="c19GaragePartRows"></div>
@@ -9041,7 +9041,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
   <script src="auth_hub.js?v=155"></script>
-  <script src="bot_addons_data.js?v=arenas7_v3"></script>
+  <script src="bot_addons_data.js?v=upgrades120_v1"></script>
   <script>
     // =========================================================================
     // AUTHORITATIVE 7 ARENA MAPS (ARENA 01, 02, 07, 11, 12, 13, 17)
@@ -9409,12 +9409,15 @@
     }
 
     const CORE_5_BY_SLOT = {
-      tire: ["tire_04", "tire_05", "tire_12", "tire_15", "tire_17"],
-      wpn1: ["wpn_01", "wpn_05", "wpn_08", "wpn_10", "wpn_12"],
-      wpn2: ["rng_01", "rng_04", "rng_08", "rng_13", "rng_18"],
-      botAbil1: ["bot_abil_01", "bot_abil_04", "bot_abil_09", "bot_abil_11", "bot_abil_17"],
-      botAbil2: ["bot_abil_01", "bot_abil_04", "bot_abil_09", "bot_abil_11", "bot_abil_17"],
-      wpnAbil: ["wpn_abil_03", "wpn_abil_07", "wpn_abil_11", "wpn_abil_12", "wpn_abil_18"]
+      tire: Array.from({ length: 20 }, (_, i) => `tire_${String(i + 1).padStart(2, "0")}`),
+      wpn1: Array.from({ length: 20 }, (_, i) => `wpn_${String(i + 1).padStart(2, "0")}`),
+      wpn2: Array.from({ length: 20 }, (_, i) => `rng_${String(i + 1).padStart(2, "0")}`),
+      botAbil1: Array.from({ length: 20 }, (_, i) => `bot_abil_${String(i + 1).padStart(2, "0")}`),
+      botAbil2: [
+        ...Array.from({ length: 20 }, (_, i) => `def_abil_${String(i + 1).padStart(2, "0")}`),
+        ...Array.from({ length: 20 }, (_, i) => `bot_abil_${String(i + 1).padStart(2, "0")}`)
+      ],
+      wpnAbil: Array.from({ length: 20 }, (_, i) => `wpn_abil_${String(i + 1).padStart(2, "0")}`)
     };
 
     function normalizeLoadout(obj) {
@@ -10174,6 +10177,9 @@
 
     function getTransparentSlotThumb(item) {
       if (!item) return "";
+      if (item.img && item.img.includes("addons_120")) {
+        return item.img;
+      }
       if (item.thumbRef) {
         return `assets/concept_gallery/addons_80/transparent_20/${item.thumbRef}.png?v=realcar1`;
       }
@@ -10213,12 +10219,12 @@
     ];
 
     const FEATURED_POOL_BY_SLOT = {
-      tire: ["tire_04", "tire_05", "tire_12", "tire_15", "tire_17"],
-      wpn1: ["wpn_01", "wpn_05", "wpn_08", "wpn_10", "wpn_12"],
-      wpn2: ["rng_01", "rng_04", "rng_08", "rng_13", "rng_18"],
-      botAbil1: ["bot_abil_01", "bot_abil_04", "bot_abil_09", "bot_abil_11", "bot_abil_17"],
-      botAbil2: ["bot_abil_01", "bot_abil_04", "bot_abil_09", "bot_abil_11", "bot_abil_17"],
-      wpnAbil: ["wpn_abil_03", "wpn_abil_07", "wpn_abil_11", "wpn_abil_12", "wpn_abil_18"]
+      tire: Array.from({ length: 20 }, (_, i) => `tire_${String(i + 1).padStart(2, "0")}`),
+      wpn1: Array.from({ length: 20 }, (_, i) => `wpn_${String(i + 1).padStart(2, "0")}`),
+      wpn2: Array.from({ length: 20 }, (_, i) => `rng_${String(i + 1).padStart(2, "0")}`),
+      botAbil1: Array.from({ length: 20 }, (_, i) => `bot_abil_${String(i + 1).padStart(2, "0")}`),
+      botAbil2: Array.from({ length: 20 }, (_, i) => `def_abil_${String(i + 1).padStart(2, "0")}`),
+      wpnAbil: Array.from({ length: 20 }, (_, i) => `wpn_abil_${String(i + 1).padStart(2, "0")}`)
     };
 
     function getPlayerRigTierInfo() {
@@ -12454,6 +12460,8 @@
         if (item) {
           equippedItems.push(item);
           equippedIds.add(item.id);
+          if (item.simRef) equippedIds.add(item.simRef);
+          if (item.mountRef) equippedIds.add(item.mountRef);
           power += item.stats.power || 0;
           speed += item.stats.speed || 0;
           agility += item.stats.agility || 0;
@@ -12539,12 +12547,12 @@
     }
 
     const SLOT_DEFS = [
-      { key: "tire",     cat: "tires",           label: "TIRE UPGRADE",          icon: "🛞" },
-      { key: "wpn1",     cat: "weapons",         label: "WEAPON 1 (MELEE)",      icon: "⚔️" },
-      { key: "wpn2",     cat: "rangedWeapons",   label: "WEAPON 2 (LONG RANGE)", icon: "🎯" },
-      { key: "botAbil1", cat: "botAbilities",    label: "BOT ABILITY 1",         icon: "⚡" },
-      { key: "botAbil2", cat: "botAbilities",    label: "BOT ABILITY 2",         icon: "⚡" },
-      { key: "wpnAbil",  cat: "weaponAbilities", label: "WEAPON ABILITY",        icon: "🔥" }
+      { key: "tire",     cat: "tires",           label: "TIRE UPGRADE (20)",          icon: "🛞" },
+      { key: "wpn1",     cat: "weapons",         label: "WEAPON 1 — MELEE (20)",      icon: "⚔️" },
+      { key: "wpn2",     cat: "rangedWeapons",   label: "WEAPON 2 — RANGED (20)",     icon: "🎯" },
+      { key: "botAbil1", cat: "botAbilities",    label: "BOT ABILITY 1 — OFFENSE (20)", icon: "⚡" },
+      { key: "botAbil2", cat: "defAbilities",    label: "BOT ABILITY 2 — DEFENSE (20)", icon: "🛡️" },
+      { key: "wpnAbil",  cat: "weaponAbilities", label: "WEAPON MOD — OVERDRIVE (20)", icon: "🔥" }
     ];
 
     function formatHudModuleChips(cp) {
@@ -17107,7 +17115,10 @@
       if (!id) return null;
       if (MOUNT_3D_SPRITES[id]) return id;
       const item = findAddonById(id);
-      if (item && item.mountRef && MOUNT_3D_SPRITES[item.mountRef]) return item.mountRef;
+      if (item) {
+        const ref = item.mountRef || item.simRef;
+        if (ref && MOUNT_3D_SPRITES[ref]) return ref;
+      }
       return TIRE_FALLBACK_MOUNT[id] || WPN_FALLBACK_MOUNT[id] || RANGED_FALLBACK_MOUNT[id] || BOT_ABIL_FALLBACK_MOUNT[id] || WPN_ABIL_FALLBACK_MOUNT[id] || null;
     }
 
@@ -23755,8 +23766,9 @@
         const attachedOtherSlot = Object.keys(state.loadout).find((k) => state.loadout[k] === item.id);
         const isOwned = state.ownedIds.includes(item.id);
         const artSrc = typeof getTransparentSlotThumb === "function" ? getTransparentSlotThumb(item) : item.img;
-        const priceNum = Number(item.cost) || 200;
+        const priceNum = Number(item.cost) || 250;
         const statLine = formatPlainStatLine(item.stats);
+        const tierBadge = item.tier ? `<span style="font-size:0.52rem;padding:1px 5px;border-radius:999px;background:rgba(255,119,0,0.18);border:1px solid rgba(255,150,70,0.4);color:#ffaa44;margin-left:5px;">${item.tier.toUpperCase()}</span>` : "";
 
         let ctaHtml = "";
         if (isEquippedHere) {
@@ -23764,16 +23776,20 @@
         } else if (isOwned) {
           ctaHtml = `<button type="button" class="c19-part-cta lg-btn" style="background:linear-gradient(180deg,#ffaa44,#ff7700);color:#090502;" onclick="event.stopPropagation();equipOwnedItem('${slotKey}','${item.id}');renderC19GarageTab();">🔩 EQUIP</button>`;
         } else {
-          ctaHtml = `<button type="button" class="c19-part-cta lg-btn" style="background:linear-gradient(180deg,#ff7700,#c2410c);color:#090502;" onclick="event.stopPropagation();buyAndEquipC19('${slotKey}','${item.id}',${priceNum});">💎 ${priceNum} BUY</button>`;
+          ctaHtml = `<button type="button" class="c19-part-cta lg-btn" style="background:linear-gradient(180deg,#ff7700,#c2410c);color:#090502;" onclick="event.stopPropagation();buyAndEquipC19('${slotKey}','${item.id}',${priceNum});">💎 ${priceNum.toLocaleString()} BUY</button>`;
         }
+
+        const strengthTxt = item.strength || item.effect || "";
+        const weaknessTxt = item.weakness || "";
 
         return `
           <div class="c19-part-row lg-card ${isEquippedHere ? 'lg-active' : ''}" onclick="${isEquippedHere ? `unequipSlot('${slotKey}');renderC19GarageTab();` : (isOwned ? `equipOwnedItem('${slotKey}','${item.id}');renderC19GarageTab();` : `buyAndEquipC19('${slotKey}','${item.id}',${priceNum});`)}">
-            <img src="${artSrc}" class="c19-part-thumb" alt="${item.name}" loading="lazy" />
+            <img src="${artSrc}" class="c19-part-thumb" alt="${item.name}" style="object-fit:cover;border-radius:8px;border:1px solid rgba(255,150,70,0.35);" loading="lazy" />
             <div class="c19-part-info">
-              <div class="c19-part-name" style="color:${isEquippedHere ? '#ff7700' : '#ffffff'};">${item.dynamicRole || item.name}</div>
-              <div class="c19-part-stat">${statLine}${attachedOtherSlot && !isEquippedHere ? ` • On ${attachedOtherSlot}` : ''}</div>
-              <div class="c19-part-desc">${item.strength || item.effect || ''}</div>
+              <div class="c19-part-name" style="color:${isEquippedHere ? '#ff7700' : '#ffffff'};">${item.dynamicRole || item.name}${tierBadge}</div>
+              <div class="c19-part-stat">${statLine} • <strong style="color:#ffaa44;">💎 ${priceNum.toLocaleString()}</strong>${attachedOtherSlot && !isEquippedHere ? ` • On ${attachedOtherSlot}` : ''}</div>
+              <div class="c19-part-desc" style="color:#a7f3d0;">✅ ${strengthTxt}</div>
+              ${weaknessTxt ? `<div class="c19-part-desc" style="color:#fda4af;margin-top:2px;">⚠️ Downside: ${weaknessTxt}</div>` : ''}
             </div>
             ${ctaHtml}
           </div>
