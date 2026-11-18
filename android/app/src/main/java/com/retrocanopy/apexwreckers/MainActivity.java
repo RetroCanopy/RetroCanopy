@@ -1,4 +1,4 @@
-package com.retrocanopy.shibuyabotpit;
+package com.retrocanopy.apexwreckers;
 
 import com.getcapacitor.BridgeActivity;
 

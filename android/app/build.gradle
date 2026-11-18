@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.retrocanopy.shibuyabotpit"
+    namespace = "com.retrocanopy.apexwreckers"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.retrocanopy.shibuyabotpit"
+        applicationId "com.retrocanopy.apexwreckers"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
