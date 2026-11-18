@@ -5399,10 +5399,10 @@ function initHomeShopScroller() {
         const game = {
             code: 'BOT-PIT',
             styleClass: 'rc-game-style-arc02',
-            title: 'Shibuya Bot Pit',
-            titleTop: 'SHIBUYA 3D ARENA',
-            titleMain: 'BOT PIT',
-            img: 'assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg',
+            title: 'Apex Wreckers: 3D Battle Cars',
+            titleTop: '3D BATTLE CARS',
+            titleMain: 'APEX WRECKERS',
+            img: 'assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg?v=icon12',
             href: 'shibuya_bot_pit.html'
         };
         gamesTrack.innerHTML = `
@@ -5601,7 +5601,7 @@ if (document.readyState === 'loading') {
 
 
 /* =========================================================================
-   SHIBUYA BOT PIT — APP DOWNLOAD & INSTANT LAUNCH OVERLAY MODAL
+   APEX WRECKERS — APP DOWNLOAD & INSTANT LAUNCH OVERLAY MODAL
    ========================================================================= */
 (function() {
   if (window.__openBotPitAppOverlay) return;
@@ -5667,7 +5667,7 @@ if (document.readyState === 'loading') {
         position: relative;
         width: 100%;
         height: 215px;
-        background: url('assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg') center/cover no-repeat;
+        background: url('assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_thumbnail.jpg?v=icon12') center/cover no-repeat;
         border-bottom: 2px solid rgba(251, 191, 36, 0.45);
       }
       .rc-botpit-hero-banner::after {
@@ -5891,18 +5891,18 @@ if (document.readyState === 'loading') {
     };
 
     modal.innerHTML = `
-      <div class="rc-botpit-app-card" role="dialog" aria-modal="true" aria-label="Download Shibuya Bot Pit App">
+      <div class="rc-botpit-app-card" role="dialog" aria-modal="true" aria-label="Download Apex Wreckers App">
         <div class="rc-botpit-hero-banner">
           <span class="rc-botpit-live-pill">🟢OFFICIAL RETROCANOPY APP</span>
           <button type="button" class="rc-botpit-close-btn" onclick="window.__closeBotPitAppOverlay()" title="Close">✕</button>
         </div>
         <div class="rc-botpit-app-body">
           <div class="rc-botpit-icon-header">
-            <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg" alt="Shibuya Bot Pit App Icon" class="rc-botpit-app-icon" />
+            <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg?v=icon12" alt="Apex Wreckers App Icon" class="rc-botpit-app-icon" />
             <div class="rc-botpit-title-col">
               <span class="rc-botpit-studio-tag">RETROCANOPY ARENA LABS</span>
-              <h2>SHIBUYA BOT PIT</h2>
-              <span class="rc-botpit-sub">3D Wheeled BattleBots · Live PvP · 6-Slot Garage</span>
+              <h2>APEX WRECKERS</h2>
+              <span class="rc-botpit-sub">Custom War Rigs & Live PvP · 3D Battle Cars</span>
             </div>
           </div>
 
@@ -5926,7 +5926,7 @@ if (document.readyState === 'loading') {
           </div>
 
           <p class="rc-botpit-desc">
-            Install the <strong>Shibuya Bot Pit App</strong> to your device for full-screen 60fps 3D BattleBox combat, instant Pilot Cloud Saves, Live Spectating, and Pit Chat—or jump straight into the arena in your browser!
+            Install the <strong>Apex Wreckers App</strong> to your device for full-screen 60fps 3D BattleBox combat, instant Pilot Cloud Saves, Live Spectating, and Pit Chat—or jump straight into the arena in your browser!
           </p>
 
           <div class="rc-botpit-cta-stack">
@@ -5980,7 +5980,7 @@ if (document.readyState === 'loading') {
     if (activeRcUser) qParams.set('rc_user', activeRcUser);
     if (activeRcEmail) qParams.set('rc_email', activeRcEmail);
     const targetUrl = new URL('shibuya_bot_pit.html?' + qParams.toString(), window.location.href).href;
-    const iconUrl = new URL('assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg', window.location.href).href;
+    const iconUrl = new URL('assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg?v=icon12', window.location.href).href;
 
     // 1. If native browser PWA install prompt is ready (Chrome / Edge / Android), trigger it immediately!
     if (deferredInstallPrompt) {
@@ -5990,7 +5990,7 @@ if (document.readyState === 'loading') {
         deferredInstallPrompt = null;
         if (choice && choice.outcome === 'accepted') {
           if (statusBox) {
-            statusBox.innerHTML = '✅ <strong>SHIBUYA BOT PIT APP INSTALLED!</strong> Launching arena now...';
+            statusBox.innerHTML = '✅ <strong>APEX WRECKERS APP INSTALLED!</strong> Launching arena now...';
             statusBox.classList.add('visible');
           }
           setTimeout(() => window.__launchBotPitInBrowser(), 1200);
@@ -5999,7 +5999,7 @@ if (document.readyState === 'loading') {
       } catch (_) {}
     }
 
-    // 2. Generate & download a standalone 1-click Shibuya Bot Pit App Launcher file + show platform instructions!
+    // 2. Generate & download a standalone 1-click Apex Wreckers App Launcher file + show platform instructions!
     const launcherHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6008,9 +6008,9 @@ if (document.readyState === 'loading') {
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Shibuya Bot Pit" />
+  <meta name="apple-mobile-web-app-title" content="Apex Wreckers" />
   <meta name="theme-color" content="#07080c" />
-  <title>Shibuya Bot Pit — Standalone App</title>
+  <title>Apex Wreckers — Standalone App</title>
   <link rel="icon" href="${iconUrl}" />
   <link rel="apple-touch-icon" href="${iconUrl}" />
   <style>
@@ -6042,7 +6042,7 @@ if (document.readyState === 'loading') {
       : '';
     if (statusBox) {
       if (isIOS) {
-        statusBox.innerHTML = '📲 <strong>Shibuya_Bot_Pit_App.html downloaded!</strong> On iPhone/iPad: tap <strong>Share ⬆️</strong> in Safari and tap <strong>"Add to Home Screen ➕"</strong> to install the full-screen <strong>Shibuya Bot Pit</strong> App Icon!' + directInstallBtn;
+        statusBox.innerHTML = '📲 <strong>Shibuya_Bot_Pit_App.html downloaded!</strong> On iPhone/iPad: tap <strong>Share ⬆️</strong> in Safari and tap <strong>"Add to Home Screen ➕"</strong> to install the full-screen <strong>Apex Wreckers</strong> App Icon!' + directInstallBtn;
       } else {
         statusBox.innerHTML = '✅ <strong>Shibuya_Bot_Pit_App.html downloaded!</strong> Open the downloaded file anytime to launch the standalone App, or tap <strong>Install App ➕</strong> / <strong>Add to Home Screen</strong> in your browser menu!' + directInstallBtn;
       }

@@ -1,22 +1,22 @@
 {
-  "name": "Shibuya Bot Pit \u2014 3D BattleBots Arena",
-  "short_name": "Shibuya Bot Pit",
-  "description": "Build your 6-Slot 3D BattleBot, compete in 3x3:00 UFC-style rounds, spectate live fights, and chat in the Shibuya Pit.",
+  "name": "Apex Wreckers: 3D Battle Cars",
+  "short_name": "Apex Wreckers",
+  "description": "Custom War Rigs & Live PvP \u2014 Build your 6-Slot 3D Combat Car with 120 upgrades, battle across 30 Quests, and clash in Live PvP.",
   "start_url": "./shibuya_bot_pit.html?app=1",
   "scope": "./shibuya_bot_pit.html",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#07080c",
-  "theme_color": "#fbbf24",
+  "theme_color": "#ff7700",
   "icons": [
     {
-      "src": "assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_icon_192.png",
+      "src": "assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_icon_192.png?v=icon12",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_icon_512.png",
+      "src": "assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_icon_512.png?v=icon12",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
