@@ -8010,6 +8010,17 @@
          ===================================================================== -->
     <section class="c29-screen-pane" id="c29Pane_shop">
       <div class="c19-shop-ladder" id="c19ShopLadderList">
+        <div class="c19-shop-row lg-card lg-active" onclick="watchAdMobRewardedVideo(250)">
+          <div class="c19-shop-left">
+            <span class="c19-shop-ic lg-orb">🎬</span>
+            <div>
+              <div class="c19-shop-amt" style="color:#34d399;">+250 💎 FREE AD</div>
+              <div class="c19-shop-sub">Watch Rewarded Video • Instant +250 💎</div>
+            </div>
+          </div>
+          <button type="button" class="c19-shop-btn lg-btn" style="background:linear-gradient(180deg,#34d399,#059669);color:#04130d;">🎬 WATCH AD</button>
+        </div>
+
         <div class="c19-shop-row lg-card lg-active" onclick="claimC19DailyFreeDiamonds()">
           <div class="c19-shop-left">
             <span class="c19-shop-ic lg-orb">🎁</span>
@@ -23939,6 +23950,67 @@
       pack_7500:  { id: "pack_7500",  diamonds: 10000, bonus: 0, priceUsd: "$14.99", label: "Shibuya King Chest" },
       pack_20000: { id: "pack_20000", diamonds: 60000, bonus: 0, priceUsd: "$49.99", label: "Sovereign Mega Vault" }
     };
+
+    const ADMOB_REWARDED_CONFIG = {
+      appId: "ca-app-pub-3027167132320964~7025931479",
+      rewardedAdUnitId: "ca-app-pub-3027167132320964/5521278118",
+      rewardAmount: 250
+    };
+
+    async function watchAdMobRewardedVideo(rewardAmt = 250) {
+      ensurePilotLoggedIn();
+      const admobPlugin = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.AdMob;
+      if (admobPlugin && typeof admobPlugin.prepareRewardVideoAd === "function") {
+        try {
+          await admobPlugin.initialize({ initializeForTesting: false });
+          await admobPlugin.prepareRewardVideoAd({ adId: ADMOB_REWARDED_CONFIG.rewardedAdUnitId });
+          await admobPlugin.showRewardVideoAd();
+          state.scrap = (state.scrap || 0) + rewardAmt;
+          persistWalletAndRig();
+          updatePlayerUI();
+          if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+          showShopToast(`🎬 REWARDED AD COMPLETE! +${rewardAmt} 💎 ADDED!`, "#34d399");
+          syncC29ArtScreensTelemetry();
+          return;
+        } catch (_) {}
+      }
+      // Web / Fallback 5-second Rewarded Ad Preview Overlay
+      let bd = document.getElementById("c19RewardedAdBackdrop");
+      if (!bd) {
+        bd = document.createElement("div");
+        bd.id = "c19RewardedAdBackdrop";
+        bd.style.cssText = "position:fixed;inset:0;z-index:100020;background:rgba(4,5,9,0.95);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:16px;";
+        document.body.appendChild(bd);
+      }
+      let secLeft = 5;
+      const renderAdStep = () => {
+        bd.innerHTML = `
+          <div class="lg-card lg-active" style="width:100%;max-width:420px;padding:20px;text-align:center;display:flex;flex-direction:column;gap:12px;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.78rem;color:#34d399;font-weight:900;">🎬 ADMOB REWARDED VIDEO • +${rewardAmt} 💎</div>
+            <img src="assets/concept_gallery/battlebots_topdown_3d/shibuya_bot_pit_app_icon.jpg?v=icon12" style="width:140px;height:140px;border-radius:24px;margin:0 auto;border:2px solid #ff7700;object-fit:cover;" alt="Apex Wreckers" />
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.95rem;color:#fff;font-weight:900;">APEX WRECKERS: 3D BATTLE CARS</div>
+            <div style="font-size:0.78rem;color:#fed7aa;">${secLeft > 0 ? `Reward unlocks in ${secLeft}s...` : `✅ Reward Unlocked! Claim your +${rewardAmt} 💎 Diamonds!`}</div>
+          </div>
+        `;
+      };
+      bd.style.display = "flex";
+      renderAdStep();
+      const iv = setInterval(() => {
+        secLeft--;
+        if (secLeft > 0) {
+          renderAdStep();
+        } else {
+          clearInterval(iv);
+          bd.style.display = "none";
+          state.scrap = (state.scrap || 0) + rewardAmt;
+          persistWalletAndRig();
+          updatePlayerUI();
+          if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
+          showShopToast(`🎬 REWARDED AD COMPLETE! +${rewardAmt} 💎 ADDED!`, "#34d399");
+          syncC29ArtScreensTelemetry();
+        }
+      }, 1000);
+    }
 
     function claimC19DailyFreeDiamonds() {
       ensurePilotLoggedIn();
