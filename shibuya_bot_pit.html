@@ -27495,10 +27495,21 @@
       function callNative(method, payload) {
         return new Promise((resolve, reject) => {
           const id = "cb_" + (seq++);
-          pending[id] = { resolve, reject };
+          const timeoutMs = method === "purchaseProduct" ? 12000 : 4500;
+          const timer = setTimeout(() => {
+            if (pending[id]) {
+              delete pending[id];
+              reject(new Error("Google Play Billing timed out (" + method + ")"));
+            }
+          }, timeoutMs);
+          pending[id] = {
+            resolve: (val) => { clearTimeout(timer); resolve(val); },
+            reject: (err) => { clearTimeout(timer); reject(err); }
+          };
           try {
             window.ApexNativeBridge[method](id, JSON.stringify(payload || {}));
           } catch (err) {
+            clearTimeout(timer);
             delete pending[id];
             reject(err);
           }
@@ -27985,6 +27996,7 @@
             const ok = result === true || Boolean(result && result.ok);
             if (!ok) {
               if (result && result.pending) return;
+              openGooglePlayTestPurchaseSheet(pk);
               return;
             }
             const credited = (result && Number(result.diamondsCredited) > 0)
