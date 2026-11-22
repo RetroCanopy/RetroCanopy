@@ -28004,9 +28004,10 @@
               showShopToast("⏳ Purchase pending in Google Play. Diamonds will credit once confirmed.", "#fbbf24");
             } else if (/cancel/i.test(msg)) {
               showShopToast("Google Play purchase cancelled.", "#94a3b8");
-            } else {
-              // SKU not yet created/activated in Play Console or Billing test fallback -> open Google Play Test Card Sheet!
+            } else if (window.__rcEnablePlayTestSheetFallback === true) {
               openGooglePlayTestPurchaseSheet(pk);
+            } else {
+              showShopToast("⚠️ Google Play Billing error: " + (msg.slice(0, 72) || "Check connection and try again."), "#fb7185");
             }
             return;
           } finally {
