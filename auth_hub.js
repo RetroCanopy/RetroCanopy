@@ -1327,56 +1327,98 @@
         display: flex;
       }
       .rc-clean-auth-card {
-        width: min(500px, 95vw);
-        background: rgba(11, 9, 26, 0.98);
-        border: 1.5px solid rgba(0, 240, 255, 0.55);
-        border-radius: 24px;
-        padding: 34px 32px;
-        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.94), 0 0 40px rgba(0, 240, 255, 0.22);
-        color: #ffffff;
+        width: min(430px, 94vw);
+        background: linear-gradient(180deg, #111218 0%, #06070b 100%);
+        border: 1.5px solid rgba(232, 184, 82, 0.68);
+        border-radius: 22px;
+        padding: 30px 30px 28px;
+        box-shadow: 0 36px 95px rgba(0, 0, 0, 0.96), 0 0 42px rgba(255, 180, 38, 0.22);
+        color: #f6e7c1;
         font-family: 'Outfit', sans-serif;
         text-align: center;
         position: relative;
+        box-sizing: border-box;
       }
       .rc-clean-close-x {
         position: absolute;
         top: 16px;
         right: 18px;
-        background: transparent;
-        border: none;
-        color: rgba(255, 255, 255, 0.55);
-        font-size: 1.2rem;
+        width: 30px;
+        height: 30px;
+        min-height: 0 !important;
+        min-width: 0 !important;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 204, 92, 0.38);
+        background: rgba(255, 255, 255, 0.03);
+        color: #ffe29e;
+        font-size: 14px;
         cursor: pointer;
-        padding: 4px 8px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.16s ease;
       }
       .rc-clean-close-x:hover {
+        border-color: #ffd86b;
         color: #ffffff;
+        background: rgba(255, 204, 92, 0.12);
       }
       .rc-clean-logo {
-        width: 50px;
-        height: 50px;
-        object-fit: contain;
-        margin-bottom: 10px;
-        filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.6));
+        display: none !important;
       }
       .rc-clean-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1.2rem;
-        font-weight: 900;
-        letter-spacing: 0.1em;
-        color: #ffffff;
-        margin: 0 0 6px;
+        font-family: 'Cinzel Decorative', 'Orbitron', serif !important;
+        font-size: 19px !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.15em !important;
+        color: #ffe7a0 !important;
+        -webkit-text-fill-color: #ffe7a0 !important;
+        background: none !important;
+        margin: 0 0 18px !important;
       }
       .rc-clean-subtitle {
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.72);
-        margin: 0 0 22px;
-        line-height: 1.45;
+        display: none !important;
+      }
+      .rc-seg-switcher {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 4px;
+        padding: 4px;
+        border-radius: 12px;
+        background: #050609;
+        border: 1px solid rgba(232, 184, 82, 0.35);
+        margin-bottom: 20px;
+      }
+      .rc-seg-tab {
+        padding: 9px 0;
+        min-height: 0 !important;
+        min-width: 0 !important;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: rgba(255, 230, 168, 0.72);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        transition: all 0.16s ease;
+      }
+      .rc-seg-tab:hover {
+        color: #ffe8a3;
+      }
+      .rc-seg-tab.active {
+        background: linear-gradient(180deg, #f3d27a 0%, #b8841e 100%);
+        color: #140c02;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        box-shadow: 0 4px 12px rgba(184, 132, 30, 0.35);
       }
       .rc-clean-btn-stack {
         display: flex;
         flex-direction: column;
-        gap: 13px;
+        gap: 12px;
       }
       .rc-clean-admin-row {
         display: grid;
@@ -1386,62 +1428,70 @@
       .rc-clean-field-group {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 0;
         text-align: left;
       }
       .rc-clean-field-label {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 0.66rem;
-        font-weight: 800;
-        letter-spacing: 0.1em;
-        color: #00f0ff;
-        padding-left: 2px;
+        display: none !important;
       }
       .rc-clean-input {
         width: 100%;
-        padding: 15px 18px;
-        border-radius: 12px;
-        border: 1.5px solid rgba(0, 240, 255, 0.5);
-        background: rgba(4, 3, 12, 0.95);
-        color: #ffffff;
+        height: 44px;
+        padding: 0 15px;
+        border-radius: 10px;
+        border: 1px solid rgba(232, 184, 82, 0.42) !important;
+        background: #06070a !important;
+        color: #f6e7c1 !important;
         font-family: 'Outfit', sans-serif;
-        font-size: 1.02rem;
+        font-size: 14px;
         letter-spacing: 0.01em;
         outline: none;
         box-sizing: border-box;
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85);
+        transition: border-color 0.16s ease, box-shadow 0.16s ease;
+      }
+      .rc-clean-input::placeholder {
+        color: rgba(214, 196, 156, 0.52);
       }
       .rc-clean-input:focus {
-        border-color: #00f59b;
-        box-shadow: 0 0 18px rgba(0, 245, 155, 0.38);
+        border-color: #ffd86b !important;
+        box-shadow: 0 0 16px rgba(255, 196, 64, 0.32), inset 0 2px 6px rgba(0, 0, 0, 0.85) !important;
       }
       .rc-clean-choice-btn {
         width: 100%;
-        padding: 15px 18px;
-        border-radius: 13px;
+        height: 46px;
+        padding: 0 18px;
+        border-radius: 10px;
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.8rem;
-        font-weight: 800;
-        letter-spacing: 0.09em;
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
         cursor: pointer;
         transition: all 0.18s ease;
-        border: 1.5px solid transparent;
+        border: 1px solid transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
       }
       .rc-clean-choice-btn.primary {
-        background: linear-gradient(135deg, #00f59b, #00f0ff);
-        color: #04030c;
-        box-shadow: 0 0 22px rgba(0, 245, 155, 0.4);
+        margin-top: 4px;
+        background: linear-gradient(180deg, #f4d683 0%, #c89328 55%, #99690e 100%) !important;
+        border: 1px solid #fff1b8 !important;
+        color: #130c02 !important;
+        box-shadow: 0 10px 26px rgba(204, 142, 28, 0.4) !important;
       }
       .rc-clean-choice-btn.primary:hover {
         transform: translateY(-1px);
-        box-shadow: 0 0 28px rgba(0, 245, 155, 0.75);
+        filter: brightness(1.06);
       }
       .rc-clean-choice-btn.secondary {
-        background: rgba(0, 240, 255, 0.1);
-        border-color: rgba(0, 240, 255, 0.55);
-        color: #ffffff;
+        background: rgba(255, 188, 52, 0.08) !important;
+        border-color: rgba(255, 198, 82, 0.52) !important;
+        color: #ffe7a4 !important;
       }
       .rc-clean-choice-btn.secondary:hover {
-        background: rgba(0, 240, 255, 0.22);
+        background: rgba(255, 188, 52, 0.16) !important;
       }
       .rc-clean-choice-btn.admin {
         background: rgba(255, 174, 0, 0.1);
@@ -1449,10 +1499,6 @@
         color: #ffdf80;
         font-size: 0.72rem;
         padding: 13px 12px;
-      }
-      .rc-clean-choice-btn.admin:hover {
-        background: rgba(255, 174, 0, 0.22);
-        color: #ffffff;
       }
       .rc-clean-divider {
         font-family: 'Orbitron', sans-serif;
@@ -1464,21 +1510,26 @@
       .rc-clean-back-btn {
         background: transparent;
         border: none;
-        color: rgba(255, 255, 255, 0.68);
+        color: rgba(255, 224, 152, 0.68);
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.7rem;
+        font-size: 0.66rem;
+        letter-spacing: 0.1em;
         cursor: pointer;
-        margin-top: 4px;
-        padding: 6px;
+        margin-top: 2px;
+        padding: 4px 6px;
+        min-height: 0 !important;
       }
       .rc-clean-back-btn:hover {
-        color: #00f0ff;
+        color: #ffe7a0;
       }
       .rc-clean-msg {
-        font-size: 0.85rem;
-        min-height: 20px;
+        font-size: 0.82rem;
+        min-height: 0;
         color: #ff77aa;
-        margin: 2px 0;
+        margin: 0;
+      }
+      .rc-clean-msg:empty {
+        display: none;
       }
       .rc-approval-box {
         background: rgba(255, 174, 0, 0.08);
@@ -1569,37 +1620,42 @@
         <button type="button" class="rc-clean-close-x" id="rcCleanAuthClose" title="Close">&#10005;</button>
         <img src="assets/logo.png" alt="Retrocanopy" class="rc-clean-logo">
         <h2 class="rc-clean-title" id="rcCleanAuthTitle">RETROCANOPY</h2>
-        <p class="rc-clean-subtitle" id="rcCleanAuthSub">Create a customer account or log in to play &amp; save progress</p>
+        <p class="rc-clean-subtitle" id="rcCleanAuthSub"></p>
 
-        <!-- VIEW 1: CUSTOMER LOGIN / SIGN UP + ADMIN ACCESS -->
-        <div class="rc-clean-btn-stack" id="rcAuthViewChoice">
-          <button type="button" class="rc-clean-choice-btn primary" id="btnChooseCustomerLogin">&#127918; CUSTOMER LOG IN</button>
-          <button type="button" class="rc-clean-choice-btn secondary" id="btnChooseCustomerCreate">&#10024; CREATE CUSTOMER ACCOUNT</button>
-          <div class="rc-clean-divider">&mdash; STAFF / OWNER ACCESS &mdash;</div>
-          <div class="rc-clean-admin-row">
-            <button type="button" class="rc-clean-choice-btn admin" id="btnChooseAdminLogin">&#128737;&#65039; ADMIN LOG IN</button>
-            <button type="button" class="rc-clean-choice-btn admin" id="btnChooseAdminCreate">&#10024; REQUEST ADMIN</button>
-          </div>
-          <button type="button" class="rc-clean-back-btn" id="btnHomeLogout" style="display:none;color:#ff77aa;">Log Out of Active Account</button>
+        <!-- OPTION 4: 3-WAY SEGMENTED PILL SWITCHER (LOG IN | SIGN UP | ADMIN) -->
+        <div class="rc-seg-switcher" id="rcAuthSegBar" role="tablist" aria-label="Account Mode">
+          <button type="button" class="rc-seg-tab active" id="tabSegLogin" data-seg="customer_login">LOG IN</button>
+          <button type="button" class="rc-seg-tab" id="tabSegSignup" data-seg="customer_create">SIGN UP</button>
+          <button type="button" class="rc-seg-tab" id="tabSegAdmin" data-seg="admin_login">ADMIN</button>
         </div>
 
-        <!-- VIEW 2: SPACIOUS USERNAME, EMAIL & PASSWORD FORM -->
-        <div class="rc-clean-btn-stack" id="rcAuthViewForm" style="display:none;">
+        <!-- Hidden legacy buttons preserved for script/test compatibility -->
+        <div class="rc-clean-btn-stack" id="rcAuthViewChoice" style="display:none !important;">
+          <button type="button" class="rc-clean-choice-btn primary" id="btnChooseCustomerLogin">LOG IN</button>
+          <button type="button" class="rc-clean-choice-btn secondary" id="btnChooseCustomerCreate">SIGN UP</button>
+          <button type="button" class="rc-clean-choice-btn admin" id="btnChooseAdminLogin">ADMIN</button>
+          <button type="button" class="rc-clean-choice-btn admin" id="btnChooseAdminCreate">REQUEST ADMIN</button>
+        </div>
+
+        <!-- ONE-SCREEN FORM VIEW -->
+        <div class="rc-clean-btn-stack" id="rcAuthViewForm">
           <div class="rc-clean-field-group" id="rcUsernameGroup" style="display:none;">
-            <label class="rc-clean-field-label" id="rcUsernameLabel" for="rcCleanUserInput">USERNAME / CALLSIGN</label>
-            <input type="text" class="rc-clean-input" id="rcCleanUserInput" maxlength="64" placeholder="Choose a display name" autocomplete="username">
+            <label class="rc-clean-field-label" id="rcUsernameLabel" for="rcCleanUserInput">USERNAME</label>
+            <input type="text" class="rc-clean-input" id="rcCleanUserInput" maxlength="64" placeholder="Username / Callsign" autocomplete="username">
           </div>
           <div class="rc-clean-field-group" id="rcEmailGroup">
             <label class="rc-clean-field-label" id="rcEmailLabel" for="rcCleanEmailInput">EMAIL OR USERNAME</label>
-            <input type="text" class="rc-clean-input" id="rcCleanEmailInput" maxlength="128" placeholder="you@example.com or @callsign" autocomplete="email">
+            <input type="text" class="rc-clean-input" id="rcCleanEmailInput" maxlength="128" placeholder="Email or Username" autocomplete="email">
           </div>
           <div class="rc-clean-field-group">
             <label class="rc-clean-field-label" id="rcPassLabel" for="rcCleanPassInput">PASSWORD</label>
-            <input type="password" class="rc-clean-input" id="rcCleanPassInput" maxlength="128" placeholder="Enter your password" autocomplete="current-password">
+            <input type="password" class="rc-clean-input" id="rcCleanPassInput" maxlength="128" placeholder="Password" autocomplete="current-password">
           </div>
           <div class="rc-clean-msg" id="rcCleanFormMsg"></div>
-          <button type="button" class="rc-clean-choice-btn primary" id="rcCleanSubmitBtn">CONTINUE</button>
-          <button type="button" class="rc-clean-back-btn" id="rcCleanBackBtn">&larr; Back</button>
+          <button type="button" class="rc-clean-choice-btn primary" id="rcCleanSubmitBtn">CONTINUE &rarr;</button>
+          <button type="button" class="rc-clean-back-btn" id="rcAdminModeToggleBtn" style="display:none;">Request New Admin Access &rarr;</button>
+          <button type="button" class="rc-clean-back-btn" id="btnHomeLogout" style="display:none;color:#ff85a8;">Log Out of Active Account</button>
+          <button type="button" class="rc-clean-back-btn" id="rcCleanBackBtn" style="display:none !important;">&larr; Back</button>
         </div>
 
         <!-- VIEW 3: ADMIN ACCOUNT CREATED -> SENT TO OWNER'S PAGE FOR APPROVAL -->
@@ -1624,6 +1680,11 @@
     const viewChoice = document.getElementById('rcAuthViewChoice');
     const viewForm = document.getElementById('rcAuthViewForm');
     const viewApproval = document.getElementById('rcAuthViewApproval');
+    const segBar = document.getElementById('rcAuthSegBar');
+    const tabSegLogin = document.getElementById('tabSegLogin');
+    const tabSegSignup = document.getElementById('tabSegSignup');
+    const tabSegAdmin = document.getElementById('tabSegAdmin');
+    const adminModeToggleBtn = document.getElementById('rcAdminModeToggleBtn');
     const titleEl = document.getElementById('rcCleanAuthTitle');
     const subEl = document.getElementById('rcCleanAuthSub');
     const usernameGroup = document.getElementById('rcUsernameGroup');
@@ -1674,94 +1735,86 @@
       }
     }
 
-    function showChoiceView() {
-      stopApprovalPolling();
-      viewChoice.style.display = 'flex';
-      viewForm.style.display = 'none';
-      viewApproval.style.display = 'none';
-      const admin = isAdminLoggedIn();
-      const user = getCurrentUser();
-      titleEl.textContent = user ? `WELCOME, @${user.toUpperCase()}` : 'RETROCANOPY ACCOUNT';
-      subEl.textContent = user
-        ? (admin ? 'Approved Admin & Player — full access unlocked' : 'Signed in — ready to play & shop!')
-        : 'Create a customer account or log in to play & save progress';
-      formMsg.textContent = '';
-      updateTopPill();
+    function syncSegTabs(mode) {
+      if (!tabSegLogin || !tabSegSignup || !tabSegAdmin) return;
+      tabSegLogin.classList.toggle('active', mode === 'customer_login');
+      tabSegSignup.classList.toggle('active', mode === 'customer_create');
+      tabSegAdmin.classList.toggle('active', mode === 'admin_login' || mode === 'admin_create');
     }
 
     function showFormView(mode) {
       stopApprovalPolling();
-      currentFormMode = mode;
+      currentFormMode = mode || 'customer_login';
+      if (segBar) segBar.style.display = 'grid';
       viewChoice.style.display = 'none';
       viewForm.style.display = 'flex';
       viewApproval.style.display = 'none';
+      titleEl.textContent = 'RETROCANOPY';
       formMsg.textContent = '';
       userInput.value = '';
       emailInput.value = '';
       passInput.value = '';
+      syncSegTabs(currentFormMode);
+      updateTopPill();
 
-      if (mode === 'customer_login') {
-        titleEl.textContent = 'CUSTOMER LOG IN';
-        subEl.textContent = 'Sign in with your Customer / Pilot username or email & password';
+      if (currentFormMode === 'customer_login') {
         usernameGroup.style.display = 'none';
-        emailLabel.textContent = 'USERNAME OR EMAIL';
         emailInput.type = 'text';
-        emailInput.placeholder = 'Enter your username or email address';
-        passLabel.textContent = 'PASSWORD';
-        passInput.placeholder = 'Enter your password';
-        submitBtn.textContent = 'LOG IN';
+        emailInput.placeholder = 'Email or Username';
+        passInput.placeholder = 'Password';
+        submitBtn.innerHTML = 'CONTINUE &rarr;';
+        if (adminModeToggleBtn) adminModeToggleBtn.style.display = 'none';
         setTimeout(() => emailInput.focus(), 50);
-      } else if (mode === 'customer_create') {
-        titleEl.textContent = 'CREATE CUSTOMER ACCOUNT';
-        subEl.textContent = 'Create your free account to play Shibuya Bot Pit, Synth\'s Flight & track orders';
+      } else if (currentFormMode === 'customer_create') {
         usernameGroup.style.display = 'flex';
-        usernameLabel.textContent = 'USERNAME / PILOT CALLSIGN';
-        userInput.placeholder = 'Choose a username (e.g. NeonPilot)';
-        emailLabel.textContent = 'EMAIL ADDRESS';
+        userInput.placeholder = 'Username / Callsign';
         emailInput.type = 'email';
-        emailInput.placeholder = 'you@example.com';
-        passLabel.textContent = 'CREATE PASSWORD';
-        passInput.placeholder = 'At least 4 characters';
-        submitBtn.textContent = 'CREATE ACCOUNT & SIGN IN';
+        emailInput.placeholder = 'Email Address';
+        passInput.placeholder = 'Create Password';
+        submitBtn.innerHTML = 'CREATE ACCOUNT &rarr;';
+        if (adminModeToggleBtn) adminModeToggleBtn.style.display = 'none';
         setTimeout(() => userInput.focus(), 50);
-      } else if (mode === 'admin_login') {
-        titleEl.textContent = 'OWNER / ADMIN LOG IN';
-        subEl.textContent = 'Sign in with your Owner or Owner-approved Admin email & password';
+      } else if (currentFormMode === 'admin_login') {
         usernameGroup.style.display = 'none';
-        emailLabel.textContent = 'ADMIN EMAIL ADDRESS';
         emailInput.type = 'email';
-        emailInput.placeholder = 'Enter your admin email address';
-        passLabel.textContent = 'ADMIN PASSWORD';
-        passInput.placeholder = 'Enter your admin password';
-        submitBtn.textContent = 'LOG IN';
+        emailInput.placeholder = 'Admin Email Address';
+        passInput.placeholder = 'Admin Password';
+        submitBtn.innerHTML = 'CONTINUE &rarr;';
+        if (adminModeToggleBtn) {
+          adminModeToggleBtn.style.display = 'inline-block';
+          adminModeToggleBtn.innerHTML = 'Request New Admin Access &rarr;';
+        }
         setTimeout(() => emailInput.focus(), 50);
-      } else if (mode === 'admin_create') {
-        titleEl.textContent = 'REQUEST ADMIN ACCOUNT';
-        subEl.textContent = 'Set up your email & password — request goes to the Owner\'s Page for approval';
+      } else if (currentFormMode === 'admin_create') {
         usernameGroup.style.display = 'flex';
-        usernameLabel.textContent = 'ADMIN NAME';
-        userInput.placeholder = 'Your name (e.g. Alex)';
-        emailLabel.textContent = 'ADMIN EMAIL ADDRESS';
+        userInput.placeholder = 'Your Name';
         emailInput.type = 'email';
-        emailInput.placeholder = 'Enter your email address';
-        passLabel.textContent = 'SET ADMIN PASSWORD';
-        passInput.placeholder = 'Create the password you will use once approved';
-        submitBtn.textContent = 'SEND REQUEST TO OWNER\'S PAGE';
+        emailInput.placeholder = 'Admin Email Address';
+        passInput.placeholder = 'Set Admin Password';
+        submitBtn.innerHTML = 'REQUEST ADMIN &rarr;';
+        if (adminModeToggleBtn) {
+          adminModeToggleBtn.style.display = 'inline-block';
+          adminModeToggleBtn.innerHTML = '&larr; Back to Admin Log In';
+        }
         setTimeout(() => userInput.focus(), 50);
       }
     }
 
+    function showChoiceView() {
+      showFormView('customer_login');
+    }
+
     function showAdminPendingApprovalView(acct) {
+      if (segBar) segBar.style.display = 'none';
       viewChoice.style.display = 'none';
       viewForm.style.display = 'none';
       viewApproval.style.display = 'flex';
-      titleEl.textContent = 'SENT TO OWNER\'S PAGE';
-      subEl.textContent = 'Awaiting approval on the Owner\'s Page';
+      titleEl.textContent = 'RETROCANOPY';
 
       approvalInfoBox.innerHTML = `
-        <div><strong style="color:#00f59b;">&#10003; Admin Account Request Submitted!</strong></div>
+        <div><strong style="color:#ffd86b;">&#10003; Admin Account Request Submitted!</strong></div>
         <div style="margin-top:6px;">Admin Name: <strong>${acct.name}</strong></div>
-        <div>Admin Email: <strong style="color:#00f0ff;">${acct.email}</strong></div>
+        <div>Admin Email: <strong style="color:#ffe7a0;">${acct.email}</strong></div>
         <div style="margin-top:8px;font-size:0.82rem;color:rgba(255,255,255,0.8);">
           Your request is now waiting on the <strong>Owner's Page</strong>. Once the Owner clicks <strong>Approve</strong>, you can log in using <strong>${acct.email}</strong> and the password you set up!
         </div>
@@ -1786,18 +1839,26 @@
       }, 2200);
     }
 
+    tabSegLogin.addEventListener('click', () => showFormView('customer_login'));
+    tabSegSignup.addEventListener('click', () => showFormView('customer_create'));
+    tabSegAdmin.addEventListener('click', () => showFormView('admin_login'));
+    if (adminModeToggleBtn) {
+      adminModeToggleBtn.addEventListener('click', () => {
+        showFormView(currentFormMode === 'admin_create' ? 'admin_login' : 'admin_create');
+      });
+    }
     document.getElementById('btnChooseCustomerLogin').addEventListener('click', () => showFormView('customer_login'));
     document.getElementById('btnChooseCustomerCreate').addEventListener('click', () => showFormView('customer_create'));
     document.getElementById('btnChooseAdminLogin').addEventListener('click', () => showFormView('admin_login'));
     document.getElementById('btnChooseAdminCreate').addEventListener('click', () => showFormView('admin_create'));
-    backBtn.addEventListener('click', showChoiceView);
-    approvalBackBtn.addEventListener('click', showChoiceView);
+    backBtn.addEventListener('click', () => showFormView('customer_login'));
+    approvalBackBtn.addEventListener('click', () => showFormView('admin_login'));
     goToAdminLoginBtn.addEventListener('click', () => showFormView('admin_login'));
 
     logoutBtn.addEventListener('click', async () => {
       await logoutActiveSession();
       updateTopPill();
-      showChoiceView();
+      showFormView('customer_login');
       backdrop.classList.remove('open');
     });
 
