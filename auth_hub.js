@@ -1492,23 +1492,24 @@
       }
       @media (max-width: 768px) {
         .rc-home-auth-bar {
-          top: 10px;
-          right: 8px;
+          top: 12px;
+          right: 12px;
           gap: 6px;
         }
         .rc-home-signin-btn {
-          width: 90px !important;
-          height: 66px !important;
-          min-height: 66px !important;
-          padding: 0 !important;
+          width: auto !important;
+          height: 34px !important;
+          min-height: 34px !important;
+          padding: 0 15px !important;
+          gap: 7px !important;
         }
         .rc-home-admin-btn, .rc-home-ticket-btn {
           min-height: 0 !important;
-          height: 25px !important;
-          font-size: 0.44rem !important;
-          padding: 0 7px !important;
-          letter-spacing: 0.03em !important;
-          gap: 3px !important;
+          height: 28px !important;
+          font-size: 0.50rem !important;
+          padding: 0 9px !important;
+          letter-spacing: 0.04em !important;
+          gap: 4px !important;
           line-height: 1 !important;
         }
         .skip-intro-btn {
@@ -1553,7 +1554,7 @@
           &#128737;&#65039; <span id="rcHomeAdminHubText">OWNER HUB</span>
         </a>
         <button type="button" class="rc-home-signin-btn" id="rcHomeSignInBtn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffd86b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px rgba(255,196,56,0.75));flex-shrink:0;" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2.5"/><path d="M8 6h8v5H8z"/><path d="M8 18v4M12 18v4M16 18v4"/></svg>
+          <span class="rc-sunset-dot" aria-hidden="true"></span>
           <span id="rcHomeSignInLabel">LOG IN</span>
         </button>
       `;

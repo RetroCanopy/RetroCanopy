@@ -234,57 +234,69 @@
       }
       .rc-home-signin-btn {
         position: relative !important;
-        width: 126px !important;
-        height: 94px !important;
-        padding: 0 !important;
-        border: none !important;
-        border-radius: 0 !important;
-        background: transparent url('assets/concept_gallery/living_tree/c02_login_cartridge_btn.png?v=316') center / contain no-repeat !important;
-        box-shadow: none !important;
-        backdrop-filter: none !important;
-        filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 14px rgba(255, 184, 38, 0.28)) !important;
-        transition: transform 0.2s ease, filter 0.2s ease !important;
+        background: linear-gradient(180deg, rgba(14, 11, 18, 0.94), rgba(6, 5, 10, 0.98)) padding-box,
+                    linear-gradient(90deg, #ff4d88 0%, #ff9638 50%, #ffe066 100%) border-box !important;
+        border: 2px solid transparent !important;
+        border-radius: 999px !important;
+        width: auto !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        padding: 0 20px !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
+        gap: 9px !important;
+        box-shadow: -6px 0 20px rgba(255, 77, 136, 0.35), 6px 0 22px rgba(255, 208, 72, 0.38), 0 10px 26px rgba(0, 0, 0, 0.9) !important;
+        backdrop-filter: blur(10px) !important;
+        filter: none !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
       }
-      .rc-home-signin-btn svg {
-        display: none !important;
+      .rc-home-signin-btn .rc-sunset-dot {
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        background: linear-gradient(135deg, #ff4d88, #ffd866) !important;
+        box-shadow: 0 0 10px #ff7b54 !important;
+        flex-shrink: 0 !important;
+        display: inline-block !important;
       }
       .rc-home-signin-btn #rcHomeSignInLabel {
-        opacity: 0 !important;
-        pointer-events: none !important;
-      }
-      .rc-home-signin-btn:hover {
-        background: transparent url('assets/concept_gallery/living_tree/c02_login_cartridge_btn.png?v=316') center / contain no-repeat !important;
-        filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.92)) drop-shadow(0 0 22px rgba(255, 198, 58, 0.65)) brightness(1.06) !important;
-        transform: translateY(-2px) scale(1.02) !important;
-      }
-      .rc-home-signin-btn.logged-in {
-        background: transparent url('assets/concept_gallery/living_tree/c02_login_cartridge_base.png?v=316') center / contain no-repeat !important;
-      }
-      .rc-home-signin-btn.logged-in:hover {
-        background: transparent url('assets/concept_gallery/living_tree/c02_login_cartridge_base.png?v=316') center / contain no-repeat !important;
-      }
-      .rc-home-signin-btn.logged-in #rcHomeSignInLabel {
         opacity: 1 !important;
+        pointer-events: none !important;
         font-family: 'Orbitron', sans-serif !important;
-        font-size: 0.62rem !important;
+        font-size: 12px !important;
         font-weight: 900 !important;
-        letter-spacing: 0.06em !important;
-        color: #ffe8a3 !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95) !important;
-        margin-top: -8px !important;
-        max-width: 72px !important;
+        letter-spacing: 0.18em !important;
+        background: linear-gradient(90deg, #ff85a8 0%, #ffc266 52%, #fff0a8 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        margin: 0 !important;
+        max-width: 160px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+      }
+      .rc-home-signin-btn:hover {
+        background: linear-gradient(180deg, rgba(20, 15, 25, 0.96), rgba(9, 7, 14, 0.99)) padding-box,
+                    linear-gradient(90deg, #ff5e95 0%, #ffa64c 50%, #ffea80 100%) border-box !important;
+        box-shadow: -8px 0 26px rgba(255, 77, 136, 0.52), 8px 0 28px rgba(255, 208, 72, 0.55), 0 12px 28px rgba(0, 0, 0, 0.95) !important;
+        transform: translateY(-1.5px) scale(1.02) !important;
       }
       @media (max-width: 768px) {
         .rc-home-signin-btn {
-          width: 90px !important;
-          height: 66px !important;
-          min-height: 66px !important;
-          padding: 0 !important;
+          width: auto !important;
+          height: 34px !important;
+          min-height: 34px !important;
+          padding: 0 15px !important;
+          gap: 7px !important;
+        }
+        .rc-home-signin-btn .rc-sunset-dot {
+          width: 7px !important;
+          height: 7px !important;
+        }
+        .rc-home-signin-btn #rcHomeSignInLabel {
+          font-size: 10.5px !important;
+          letter-spacing: 0.15em !important;
         }
       }
       .c02-hs-dock-cart { left: 35.8%; top: 22.0%; width: 28.4%; height: 39.5%; border-radius: 18px; }
@@ -2920,9 +2932,9 @@
     requestAnimationFrame(animate);
     </script>
 
-    <script src="official_ticket_dossier.js?v=319"></script>
-    <script src="script.js?v=319"></script>
-    <script src="auth_hub.js?v=319"></script>
+    <script src="official_ticket_dossier.js?v=321"></script>
+    <script src="script.js?v=321"></script>
+    <script src="auth_hub.js?v=321"></script>
 </body>
 
 </html>
