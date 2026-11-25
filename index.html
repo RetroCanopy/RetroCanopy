@@ -148,101 +148,993 @@
         transform: translateX(-50%) translateY(0);
       }
 
-      .hs-nerdy { left: 6.4%; top: 14.0%; width: 19.2%; height: 32.5%; }
-      .hs-botpit { left: 2.8%; top: 47.5%; width: 22.0%; height: 22.5%; }
-      .hs-synth { left: 25.2%; top: 46.8%; width: 7.4%; height: 20.5%; }
-      .hs-hoodie { left: 67.2%; top: 43.5%; width: 11.4%; height: 23.5%; }
-      .hs-studio { left: 79.4%; top: 46.8%; width: 18.0%; height: 20.5%; }
-      .hs-deafhammer { left: 76.2%; top: 14.0%; width: 18.2%; height: 32.0%; }
+      /* Concept 01 Stage Hotspots (Locked 1:1 to 1376x768 Desktop & 768x1376 Mobile Stage Geometry) */
+      .hs-logo-title { left: 26.2%; top: 4.8%; width: 47.6%; height: 13.8%; }
+      .hs-nerdy { left: 30.2%; top: 52.0%; width: 18.8%; height: 32.8%; }
+      .hs-deafhammer { left: 52.2%; top: 52.0%; width: 18.0%; height: 32.8%; }
 
-      /* Mobile Concept 04 (Cascading Spiral Pedestal Terraces 768x1376) Hotspot Positions */
+      /* Concept 01 Clean Bottom Navigation: APPS · MERCH · STUDIO (Audio Removed) */
+      .c06-bottom-nav {
+        position: absolute;
+        left: 50%;
+        top: 93.4%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 64px;
+        pointer-events: auto;
+        z-index: 12;
+        opacity: var(--room-light, 1);
+        transition: opacity 0.45s ease;
+      }
+      .c06-nav-link {
+        background: transparent;
+        border: none;
+        padding: 6px 10px;
+        font-family: 'Outfit', 'Orbitron', sans-serif;
+        font-size: 23px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #f8fafc;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.22s ease, text-shadow 0.22s ease, transform 0.22s ease;
+        text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
+      }
+      .c06-nav-link.c06-nav-merch {
+        color: #e8be74;
+      }
+      .c06-nav-link:hover,
+      .c06-nav-link:focus-visible {
+        color: #ffe27a;
+        text-shadow: 0 0 18px rgba(255, 198, 88, 0.78), 0 2px 14px rgba(0, 0, 0, 0.9);
+        transform: translateY(-1.5px);
+        outline: none;
+      }
+
+      /* Mobile Portrait (768x1376) Stage Hotspot & Nav Positions */
       body.is-mobile-concept04 #stage-overlay-root {
         width: 768px;
         height: 1376px;
       }
+      body.is-mobile-concept04 .hs-logo-title {
+        left: 13.5%; top: 19.5%; width: 73.0%; height: 7.2%;
+      }
       body.is-mobile-concept04 .hs-nerdy {
-        left: 3.2%; top: 39.2%; width: 25.0%; height: 17.5%;
+        left: 19.5%; top: 41.8%; width: 29.0%; height: 17.5%;
       }
       body.is-mobile-concept04 .hs-deafhammer {
-        left: 72.8%; top: 39.6%; width: 24.0%; height: 15.6%;
+        left: 53.0%; top: 41.8%; width: 27.5%; height: 17.5%;
       }
-      body.is-mobile-concept04 .hs-hoodie {
-        left: 50.0%; top: 54.0%; width: 16.8%; height: 13.8%;
+      body.is-mobile-concept04 .c06-bottom-nav {
+        top: 64.6%;
+        gap: 54px;
       }
-      body.is-mobile-concept04 .hs-studio {
-        left: 68.2%; top: 56.8%; width: 28.8%; height: 10.6%;
-      }
-      body.is-mobile-concept04 .hs-synth {
-        left: 41.0%; top: 70.4%; width: 12.2%; height: 10.8%;
-      }
-      body.is-mobile-concept04 .hs-botpit {
-        left: 2.0%; top: 71.8%; width: 45.5%; height: 19.8%;
-      }
-      body.is-mobile-concept04 .synth-speech-bubble {
-        left: 47.1%; top: 69.5%;
-        width: 220px;
+      body.is-mobile-concept04 .c06-nav-link {
+        font-size: 24px;
       }
 
-      .synth-speech-bubble {
+      /* Hide legacy top-bar on Concept 01 Minimal Stage while keeping the Top-Right Log In pill active */
+      .hud-overlay,
+      .top-bar {
+        display: none !important;
+      }
+
+      /* Top-Right Corner Log In Button — Option 2 Exact 3D Translucent 24K Gold Mini-Cartridge */
+      .rc-home-auth-bar {
+        position: fixed !important;
+        top: clamp(14px, 2.2vh, 22px) !important;
+        right: clamp(14px, 2.2vw, 26px) !important;
+        z-index: 9500 !important;
+        display: flex !important;
+        align-items: center;
+        gap: 12px;
+      }
+      .rc-home-signin-btn {
+        position: relative !important;
+        width: 126px !important;
+        height: 94px !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        background: transparent url('assets/concept_gallery/living_tree/c02_login_cartridge_btn.png?v=316') center / contain no-repeat !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 14px rgba(255, 184, 38, 0.28)) !important;
+        transition: transform 0.2s ease, filter 0.2s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .rc-home-signin-btn svg {
+        display: none !important;
+      }
+      .rc-home-signin-btn #rcHomeSignInLabel {
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+      .rc-home-signin-btn:hover {
+        background: transparent url('assets/concept_gallery/living_tree/c02_login_cartridge_btn.png?v=316') center / contain no-repeat !important;
+        filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.92)) drop-shadow(0 0 22px rgba(255, 198, 58, 0.65)) brightness(1.06) !important;
+        transform: translateY(-2px) scale(1.02) !important;
+      }
+      .rc-home-signin-btn.logged-in {
+        background: transparent url('assets/concept_gallery/living_tree/c02_login_cartridge_base.png?v=316') center / contain no-repeat !important;
+      }
+      .rc-home-signin-btn.logged-in:hover {
+        background: transparent url('assets/concept_gallery/living_tree/c02_login_cartridge_base.png?v=316') center / contain no-repeat !important;
+      }
+      .rc-home-signin-btn.logged-in #rcHomeSignInLabel {
+        opacity: 1 !important;
+        font-family: 'Orbitron', sans-serif !important;
+        font-size: 0.62rem !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.06em !important;
+        color: #ffe8a3 !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95) !important;
+        margin-top: -8px !important;
+        max-width: 72px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+      @media (max-width: 768px) {
+        .rc-home-signin-btn {
+          width: 90px !important;
+          height: 66px !important;
+          min-height: 66px !important;
+          padding: 0 !important;
+        }
+      }
+      .c02-hs-dock-cart { left: 35.8%; top: 22.0%; width: 28.4%; height: 39.5%; border-radius: 18px; }
+      .c02-hs-dock-cart:hover { box-shadow: 0 0 32px rgba(255, 196, 48, 0.48); }
+      .c02-hs-dock-back { left: 30.4%; top: 50.5%; width: 6.0%; height: 4.7%; border-radius: 6px; }
+      .c02-hs-dock-back:hover { box-shadow: 0 0 18px rgba(255, 206, 86, 0.65); }
+      .c02-hs-dock-close { left: 65.6%; top: 50.5%; width: 4.1%; height: 4.7%; border-radius: 6px; }
+      .c02-hs-dock-close:hover { box-shadow: 0 0 18px rgba(255, 206, 86, 0.65); }
+      .c02-hs-dock-launch { left: 33.6%; top: 70.8%; width: 15.8%; height: 7.4%; border-radius: 8px; }
+      .c02-hs-dock-launch:hover { box-shadow: 0 0 26px rgba(255, 214, 94, 0.85); transform: translateY(-1px); }
+      .c02-hs-dock-install { left: 50.6%; top: 70.8%; width: 15.8%; height: 7.4%; border-radius: 8px; }
+      .c02-hs-dock-install:hover { box-shadow: 0 0 22px rgba(255, 206, 94, 0.55); transform: translateY(-1px); }
+      .c02-dock-status-wrap { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(560px, 88%); z-index: 25; }
+
+      /* Studio Option #1 — 5 Translucent 24K Gold Game Cartridges on Tempered Glass Shelf (Individual Hover Illumination) */
+      .c02-studio-stage-wrap {
+        position: relative;
+        width: min(1140px, 95vw);
+        aspect-ratio: 1376 / 768;
+        border-radius: 24px;
+        overflow: hidden;
+        background: #050608;
+        border: 2px solid rgba(226, 182, 86, 0.62);
+        box-shadow:
+          0 36px 100px rgba(0, 0, 0, 0.96),
+          0 0 54px rgba(255, 178, 36, 0.24),
+          inset 0 1px 2px rgba(255, 240, 190, 0.38);
+      }
+      .c02-studio-cart-hs {
         position: absolute;
-        left: 28.9%; top: 36.5%;
-        transform: translate(-50%, -100%) scale(0.92);
-        width: 240px;
-        padding: 10px 14px;
-        border-radius: 14px;
-        background: rgba(8, 9, 15, 0.92);
-        backdrop-filter: blur(14px);
-        border: 1px solid rgba(255, 202, 95, 0.55);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.85), 0 0 22px rgba(255, 185, 60, 0.22);
-        color: #f8eedc;
-        font-size: 11.5px;
-        line-height: 1.42;
-        text-align: center;
+        top: 24.740%;
+        height: 21.484%;
+        cursor: pointer;
+        border: none;
+        padding: 0;
+        background: transparent;
+        outline: none;
+        border-radius: 10px;
+        z-index: 8;
+      }
+      .c02-studio-cart-1 { left: 16.715%; width: 13.081%; }
+      .c02-studio-cart-2 { left: 30.233%; width: 12.936%; }
+      .c02-studio-cart-3 { left: 43.605%; width: 12.936%; }
+      .c02-studio-cart-4 { left: 56.831%; width: 12.936%; }
+      .c02-studio-cart-5 { left: 70.203%; width: 12.936%; }
+      .c02-studio-cart-lit {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: fill;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.25s ease, transform 0.25s ease;
-        z-index: 15;
+        border-radius: 8px;
+        transition: opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1), filter 0.22s ease, transform 0.22s ease;
       }
-      .synth-speech-bubble.is-visible {
+      .c02-studio-cart-hs:hover .c02-studio-cart-lit,
+      .c02-studio-cart-hs:focus-visible .c02-studio-cart-lit,
+      .c02-studio-cart-hs:active .c02-studio-cart-lit {
         opacity: 1;
-        transform: translate(-50%, -100%) scale(1);
+        filter: drop-shadow(0 0 22px rgba(255, 194, 48, 0.72)) brightness(1.06);
       }
-      .synth-speech-bubble strong {
+      @media (max-width: 768px), (hover: none) {
+        .c02-studio-cart-hs.is-selected .c02-studio-cart-lit {
+          opacity: 1;
+          filter: drop-shadow(0 0 18px rgba(255, 194, 48, 0.72)) brightness(1.06);
+        }
+      }
+      .c02-studio-close-hs {
+        position: absolute;
+        left: 82.9%;
+        top: 8.6%;
+        width: 4.1%;
+        height: 7.1%;
+        background: transparent;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        z-index: 15;
+        transition: box-shadow 0.18s ease, transform 0.18s ease;
+      }
+      .c02-studio-close-hs:hover {
+        box-shadow: 0 0 20px rgba(255, 206, 86, 0.75);
+        transform: scale(1.04);
+      }
+      /* 1:1 Stage-Locked Form Inputs Inside the Option #1 Console Base */
+      .c02-studio-field {
+        position: absolute;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #f6e7c1;
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(8.5px, 1.15vw, 15.5px);
+        font-weight: 500;
+        padding: 0 1.2%;
+        box-sizing: border-box;
+        z-index: 12;
+        border-radius: 7px;
+        transition: box-shadow 0.18s ease;
+      }
+      .c02-studio-field::placeholder {
+        color: rgba(214, 196, 156, 0.58);
+      }
+      .c02-studio-field:focus {
+        box-shadow: 0 0 16px rgba(255, 196, 58, 0.42), inset 0 0 8px rgba(255, 196, 58, 0.14);
+      }
+      .c02-studio-field-name {
+        left: 20.49%;
+        top: 55.08%;
+        width: 28.63%;
+        height: 5.47%;
+      }
+      .c02-studio-field-contact {
+        left: 50.87%;
+        top: 55.08%;
+        width: 28.63%;
+        height: 5.47%;
+      }
+      .c02-studio-field-service {
+        left: 20.49%;
+        top: 62.89%;
+        width: 59.01%;
+        height: 5.47%;
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        padding-right: 3.2%;
+      }
+      .c02-studio-field-service option {
+        background: #0d0e12;
+        color: #ffe8a3;
+      }
+      .c02-studio-field-notes {
+        left: 20.49%;
+        top: 70.70%;
+        width: 59.01%;
+        height: 9.38%;
+        padding-top: 0.7%;
+        padding-bottom: 0.6%;
+        resize: none;
+        line-height: 1.32;
+        overflow-y: auto;
+      }
+      @media (max-width: 768px) {
+        .apps-modal-backdrop,
+        .studio-modal-backdrop {
+          padding: 8px !important;
+        }
+        .c02-cartridge-stage-wrap,
+        .c02-studio-stage-wrap {
+          width: 96vw !important;
+          border-radius: 14px !important;
+        }
+        .c02-close-plaque {
+          top: 7px !important;
+          right: 8px !important;
+          padding: 4px 9px !important;
+          font-size: 0.50rem !important;
+          border-radius: 5px !important;
+          min-height: 0 !important;
+          min-width: 0 !important;
+          height: auto !important;
+          line-height: 1.1 !important;
+        }
+        .c02-hs,
+        .c02-studio-cart-hs,
+        .c02-studio-close-hs,
+        .c02-studio-submit-hs {
+          min-height: 0 !important;
+          min-width: 0 !important;
+        }
+        .c02-studio-field {
+          font-size: 8.2px !important;
+          padding: 0 5px !important;
+          line-height: 1.05 !important;
+          border-radius: 4px !important;
+        }
+        .c02-studio-field-service {
+          padding-right: 16px !important;
+        }
+        .c02-studio-field-notes {
+          padding-top: 2px !important;
+          padding-bottom: 1px !important;
+          line-height: 1.08 !important;
+          overflow: hidden !important;
+        }
+      }
+      .c02-studio-submit-hs {
+        position: absolute;
+        left: 39.83%;
+        top: 82.55%;
+        width: 20.35%;
+        height: 6.64%;
+        background: transparent;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        z-index: 14;
+        color: transparent;
+        font-size: 0;
+        transition: box-shadow 0.18s ease, transform 0.18s ease;
+      }
+      .c02-studio-submit-hs:hover {
+        box-shadow: 0 0 26px rgba(255, 212, 92, 0.82);
+        transform: translateY(-1px);
+      }
+      .c02-studio-confirm-bar {
+        position: absolute;
+        left: 50%;
+        bottom: 1.4%;
+        transform: translateX(-50%);
+        width: 76%;
+        text-align: center;
+        color: #ffe28a;
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(10px, 0.95vw, 13.5px);
+        font-weight: 600;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
+        z-index: 16;
+        pointer-events: none;
+      }
+      body:has(#appsHubModal.is-open) .rc-home-auth-bar,
+      body:has(#studioModal.is-open) .rc-home-auth-bar {
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      /* Match Account Log In Modal (#rcHomeAuthBackdrop) to Concept #2 Collector's Obsidian & Brushed 24K Gold Aesthetic */
+      .rc-clean-auth-card {
+        background: linear-gradient(180deg, #111217 0%, #07080b 100%) !important;
+        border: 2px solid rgba(218, 172, 78, 0.68) !important;
+        border-radius: 22px !important;
+        box-shadow:
+          0 32px 90px rgba(0, 0, 0, 0.96),
+          0 0 38px rgba(255, 178, 38, 0.24),
+          inset 0 1px 1px rgba(255, 236, 178, 0.35) !important;
+      }
+      .rc-clean-title {
+        font-family: 'Cinzel Decorative', 'Orbitron', serif !important;
+        background: linear-gradient(180deg, #fff1b8 0%, #e4af42 52%, #9e6b14 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        letter-spacing: 0.14em !important;
+        filter: drop-shadow(0 2px 10px rgba(255, 184, 42, 0.32)) !important;
+      }
+      .rc-clean-choice-btn.primary {
+        background: linear-gradient(180deg, #f3d27a 0%, #c9962c 55%, #9a6b10 100%) !important;
+        border: 1px solid #ffeaa8 !important;
+        color: #120c02 !important;
+        font-family: 'Orbitron', sans-serif !important;
+        font-weight: 900 !important;
+        box-shadow: 0 8px 24px rgba(212, 150, 34, 0.42), inset 0 1px 1px rgba(255, 250, 225, 0.85) !important;
+      }
+      .rc-clean-choice-btn.secondary {
+        background: rgba(255, 188, 52, 0.08) !important;
+        border-color: rgba(255, 198, 82, 0.52) !important;
+        color: #ffe7a4 !important;
+      }
+      .rc-clean-field-label {
+        color: #f3c65f !important;
+      }
+      .rc-clean-input {
+        border-color: rgba(243, 198, 95, 0.48) !important;
+        background: rgba(6, 6, 10, 0.96) !important;
+      }
+      .rc-clean-input:focus {
+        border-color: #ffd86b !important;
+        box-shadow: 0 0 18px rgba(255, 196, 64, 0.38) !important;
+      }
+
+      /* Concept #2 Exact Retro 1990s Translucent 24K Gold Game Cartridge Shelf Modal */
+      .apps-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 10050;
+        background: rgba(2, 3, 7, 0.88);
+        backdrop-filter: blur(18px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+      }
+      .apps-modal-backdrop.is-open {
+        display: flex;
+      }
+      .c02-cartridge-stage-wrap {
+        position: relative;
+        width: min(1140px, 95vw);
+        aspect-ratio: 1376 / 768;
+        border-radius: 24px;
+        overflow: hidden;
+        background: #050608;
+        border: 2px solid rgba(226, 182, 86, 0.62);
+        box-shadow:
+          0 36px 100px rgba(0, 0, 0, 0.96),
+          0 0 54px rgba(255, 178, 36, 0.24),
+          inset 0 1px 2px rgba(255, 240, 190, 0.38);
+      }
+      .c02-cartridge-stage-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         display: block;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+      /* Interactive Hotspots Locked 1:1 to Concept #2 (1376x768) Cartridge Display Stand */
+      .c02-hs {
+        position: absolute;
+        cursor: pointer;
+        border-radius: 16px;
+        background: transparent;
+        border: none;
+        outline: none;
+        transition: transform 0.2s ease, box-shadow 0.22s ease;
+        text-decoration: none;
+      }
+      /* Cartridge 1: Translucent 24K Gold APEX WRECKERS Cartridge */
+      .c02-hs-apex-cart {
+        left: 20.2%;
+        top: 34.4%;
+        width: 27.6%;
+        height: 38.6%;
+        border-radius: 20px;
+      }
+      .c02-hs-apex-cart:hover {
+        box-shadow: 0 0 36px rgba(255, 190, 42, 0.55), inset 0 0 22px rgba(255, 210, 88, 0.25);
+      }
+      /* Brushed 24K Gold LAUNCH Plaque Button directly beneath Cartridge 1 */
+      .c02-hs-apex-launch {
+        left: 33.1%;
+        top: 72.3%;
+        width: 8.4%;
+        height: 6.2%;
+        border-radius: 8px;
+      }
+      .c02-hs-apex-launch:hover {
+        box-shadow: 0 0 26px rgba(255, 214, 94, 0.85);
+        transform: scale(1.04);
+      }
+      /* Smoked Cartridge 2: COMING SOON */
+      .c02-hs-cart-2 {
+        left: 48.2%;
+        top: 36.8%;
+        width: 20.0%;
+        height: 31.8%;
+      }
+      /* Smoked Cartridge 3: COMING SOON / Custom Studio App */
+      .c02-hs-cart-3 {
+        left: 67.6%;
+        top: 38.0%;
+        width: 16.4%;
+        height: 28.0%;
+      }
+      .c02-hs-pill {
+        position: absolute;
+        left: 50%;
+        bottom: 10px;
+        transform: translateX(-50%) translateY(4px);
+        padding: 5px 13px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #f3d27a 0%, #c49026 100%);
+        border: 1px solid #fff2ba;
+        color: #140d02;
         font-family: 'Orbitron', sans-serif;
         font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.85), 0 0 16px rgba(255, 194, 58, 0.55);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+      .c02-hs:hover .c02-hs-pill {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      /* Concept #2 Brushed 24K Gold Close Plaque Button */
+      .c02-close-plaque {
+        position: absolute;
+        top: 16px;
+        right: 18px;
+        z-index: 20;
+        padding: 7px 14px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #ecd07e 0%, #b8841e 100%);
+        border: 1px solid #fff0b5;
+        color: #140d02;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.85), inset 0 1px 1px rgba(255, 250, 220, 0.85);
+        transition: transform 0.16s ease, filter 0.16s ease;
+      }
+      .c02-close-plaque:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.08);
+      }
+      /* Concept #2 Step 2 Selected Cartridge Detail Overlay Card — Minimal & Pure 24K Gold Collector's Aesthetic */
+      .c02-detail-card {
+        position: relative;
+        width: min(500px, 94vw);
+        background: linear-gradient(180deg, #0d0e12 0%, #050608 100%);
+        border: 1.5px solid rgba(226, 182, 86, 0.65);
+        border-radius: 22px;
+        padding: 34px 30px 28px;
+        box-shadow:
+          0 36px 95px rgba(0, 0, 0, 0.96),
+          0 0 42px rgba(255, 178, 36, 0.22),
+          inset 0 1px 1px rgba(255, 240, 190, 0.35);
+        color: #f8fafc;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .c02-mini-cartridge {
+        position: relative;
+        width: 248px;
+        height: 162px;
+        border-radius: 16px 16px 10px 10px;
+        padding: 18px 26px 24px;
+        box-sizing: border-box;
+        margin: 8px auto 20px;
+        background:
+          linear-gradient(90deg,
+            rgba(255, 184, 34, 0.34) 0%,
+            rgba(28, 18, 6, 0.85) 14%,
+            rgba(28, 18, 6, 0.85) 86%,
+            rgba(255, 184, 34, 0.34) 100%
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(255, 206, 84, 0.22) 0px,
+            rgba(255, 206, 84, 0.22) 2px,
+            transparent 2px,
+            transparent 7px
+          );
+        border: 2px solid #ffd264;
+        box-shadow:
+          0 0 28px rgba(255, 180, 32, 0.55),
+          0 16px 36px rgba(0, 0, 0, 0.88),
+          inset 0 2px 3px rgba(255, 246, 206, 0.82),
+          inset 0 -6px 0 rgba(198, 128, 16, 0.72);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .c02-mini-cartridge::after {
+        content: "";
+        position: absolute;
+        left: 16%;
+        right: 16%;
+        bottom: 2px;
+        height: 8px;
+        background: repeating-linear-gradient(
+          90deg,
+          #ffd86b 0px,
+          #ffd86b 4px,
+          rgba(16, 11, 4, 0.9) 4px,
+          rgba(16, 11, 4, 0.9) 7px
+        );
+        border-top: 1px solid rgba(255, 218, 112, 0.65);
+      }
+      .c02-mini-cartridge-label {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1.5px solid rgba(255, 214, 112, 0.62);
+        position: relative;
+        box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8);
+      }
+      .c02-mini-cartridge-label img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .c02-detail-title {
+        font-family: 'Cinzel Decorative', 'Cormorant Garamond', serif;
+        font-size: 1.48rem;
+        font-weight: 900;
         letter-spacing: 0.14em;
-        color: #ffcf68;
+        margin: 0 0 6px;
+        background: linear-gradient(180deg, #fff3c4 0%, #e5af42 52%, #a26d12 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 2px 12px rgba(255, 180, 42, 0.32));
+      }
+      .c02-detail-sub {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        color: rgba(238, 214, 158, 0.75);
+        margin: 0 0 24px;
+        text-transform: uppercase;
+      }
+      .c02-detail-actions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+      .c02-plaque-btn-primary {
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: 10px;
+        border: 1px solid #fff1b8;
+        background: linear-gradient(180deg, #f4d683 0%, #c89328 55%, #99690e 100%);
+        color: #130c02;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.84rem;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        box-shadow:
+          0 10px 26px rgba(204, 142, 28, 0.42),
+          inset 0 1.5px 1px rgba(255, 250, 224, 0.9);
+        transition: transform 0.16s ease, filter 0.16s ease;
+      }
+      .c02-plaque-btn-primary:hover {
+        transform: translateY(-1.5px);
+        filter: brightness(1.07);
+      }
+      .c02-plaque-btn-secondary {
+        width: 100%;
+        padding: 12px 20px;
+        border-radius: 10px;
+        border: 1.5px solid rgba(232, 184, 82, 0.48);
+        background: rgba(255, 190, 56, 0.06);
+        color: #ffe6a3;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        transition: all 0.16s ease;
+      }
+      .c02-plaque-btn-secondary:hover {
+        background: rgba(255, 190, 56, 0.16);
+        border-color: #ffd86b;
+        color: #ffffff;
+      }
+      .apps-catalog-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      /* Step 1: App Select Grid */
+      .app-select-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+      }
+      .app-select-tile {
+        position: relative;
+        background: linear-gradient(155deg, rgba(24, 22, 36, 0.94) 0%, rgba(10, 11, 18, 0.98) 100%);
+        border: 1.5px solid rgba(255, 202, 96, 0.45);
+        border-radius: 22px;
+        padding: 22px 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 36px rgba(0, 0, 0, 0.7);
+      }
+      .app-select-tile:hover {
+        transform: translateY(-4px);
+        border-color: #ffe27a;
+        box-shadow: 0 20px 44px rgba(0, 0, 0, 0.85), 0 0 28px rgba(255, 196, 78, 0.32);
+      }
+      .app-select-tile.is-placeholder {
+        border-style: dashed;
+        border-color: rgba(255, 255, 255, 0.14);
+        background: rgba(12, 13, 21, 0.65);
+        cursor: default;
+        opacity: 0.72;
+      }
+      .app-select-tile.is-placeholder:hover {
+        transform: none;
+        border-color: rgba(255, 198, 88, 0.28);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 14px 36px rgba(0, 0, 0, 0.7);
+      }
+      .app-select-icon-wrap {
+        position: relative;
+        width: 108px;
+        height: 108px;
+        border-radius: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .app-select-icon {
+        width: 108px;
+        height: 108px;
+        border-radius: 26px;
+        object-fit: cover;
+        border: 2px solid #f6c453;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.85), 0 0 24px rgba(246, 196, 83, 0.32);
+      }
+      .app-select-placeholder-icon {
+        width: 108px;
+        height: 108px;
+        border-radius: 26px;
+        border: 1.5px dashed rgba(255, 198, 90, 0.32);
+        background: rgba(255, 198, 90, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.65rem;
+        color: rgba(255, 210, 110, 0.45);
+      }
+      .app-select-name {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.02rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        color: #ffffff;
+        margin: 2px 0 0;
+      }
+      .app-select-meta {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.82rem;
+        color: rgba(226, 232, 240, 0.78);
+        margin: 0;
+        line-height: 1.35;
+      }
+      .app-select-cta {
+        margin-top: auto;
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid #ffe27a;
+        background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+        color: #090612;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.74rem;
+        font-weight: 900;
+        letter-spacing: 0.09em;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .app-back-select-btn {
+        position: absolute;
+        top: 18px;
+        left: 22px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 200, 90, 0.42);
+        color: #ffe29e;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.18s ease;
+      }
+      .app-back-select-btn:hover {
+        background: rgba(255, 198, 88, 0.18);
+        color: #ffffff;
+      }
+      .app-showcase-card {
+        background: linear-gradient(145deg, rgba(24, 22, 36, 0.92) 0%, rgba(11, 12, 20, 0.96) 100%);
+        border: 1.5px solid rgba(255, 202, 96, 0.42);
+        border-radius: 22px;
+        padding: 22px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 42px rgba(0, 0, 0, 0.65);
+      }
+      .app-showcase-top {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .app-showcase-icon {
+        width: 96px;
+        height: 96px;
+        border-radius: 22px;
+        object-fit: cover;
+        border: 2px solid #f6c453;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.8), 0 0 22px rgba(246, 196, 83, 0.28);
+        flex-shrink: 0;
+      }
+      .app-showcase-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .app-badges-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .app-pill-badge {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.62rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        padding: 4px 10px;
+        border-radius: 999px;
+        text-transform: uppercase;
+      }
+      .app-pill-live {
+        background: rgba(16, 185, 129, 0.16);
+        border: 1px solid rgba(52, 211, 153, 0.55);
+        color: #6ee7b7;
+      }
+      .app-pill-stripe {
+        background: rgba(99, 91, 255, 0.2);
+        border: 1px solid rgba(129, 140, 248, 0.65);
+        color: #c7d2fe;
+      }
+      .app-pill-ver {
+        background: rgba(255, 198, 88, 0.14);
+        border: 1px solid rgba(255, 198, 88, 0.48);
+        color: #fde68a;
+      }
+      .app-showcase-name {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.28rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin: 0 0 4px;
+        letter-spacing: 0.06em;
+      }
+      .app-showcase-tagline {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.9rem;
+        color: #fbbf24;
+        font-weight: 600;
+        margin: 0;
+      }
+      .app-specs-strip {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .app-spec-cell {
+        background: rgba(6, 7, 13, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 12px;
+        padding: 9px 10px;
+        text-align: center;
+      }
+      .app-spec-lbl {
+        display: block;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.56rem;
+        color: #94a3b8;
+        letter-spacing: 0.08em;
         margin-bottom: 3px;
       }
-
-      /* Concept 29 HUD Overlay — Completely Dark Until Tree Illuminates Room! */
-      .hud-overlay {
-        position: fixed; inset: 0; z-index: 10;
-        pointer-events: none;
-        display: flex; flex-direction: column; justify-content: flex-start;
-        padding: 18px 28px;
-        opacity: 0;
-        filter: brightness(0.2);
-        transition: opacity 1.1s ease, filter 1.1s ease;
+      .app-spec-val {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.74rem;
+        font-weight: 800;
+        color: #f8fafc;
       }
-      .hud-overlay.is-lit,
-      body.rc-no-intro-anim .hud-overlay {
-        opacity: 1;
-        filter: brightness(1);
+      .app-showcase-desc {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.88rem;
+        line-height: 1.48;
+        color: rgba(226, 232, 240, 0.88);
+        margin: 0;
       }
-      body.rc-no-intro-anim #concept29-unlocked-stage,
-      body.rc-no-intro-anim .hud-overlay,
-      body.rc-no-intro-anim #room-light-wash {
-        transition: none !important;
-      }
-
-      .top-bar {
-        display: flex; justify-content: space-between; align-items: center;
-        width: 100%;
-        padding-right: clamp(160px, 25vw, 370px);
-        flex-wrap: wrap;
+      .app-actions-row {
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
         gap: 12px;
+      }
+      .app-btn-launch {
+        padding: 14px 20px;
+        border-radius: 14px;
+        border: 1px solid #ffe27a;
+        background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+        color: #090612;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.84rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 10px 26px rgba(217, 119, 6, 0.42);
+        transition: transform 0.16s ease, filter 0.16s ease;
+      }
+      .app-btn-launch:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.08);
+      }
+      .app-btn-install {
+        padding: 14px 18px;
+        border-radius: 14px;
+        border: 1.5px solid rgba(56, 189, 248, 0.55);
+        background: rgba(14, 165, 233, 0.14);
+        color: #7dd3fc;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.16s ease;
+      }
+      .app-btn-install:hover {
+        background: rgba(14, 165, 233, 0.28);
+        color: #ffffff;
+        transform: translateY(-1px);
+      }
+      @media (max-width: 680px) {
+        .apps-modal-card { padding: 22px 18px; }
+        .app-showcase-top { flex-direction: column; text-align: center; }
+        .app-badges-row { justify-content: center; }
+        .app-specs-strip { grid-template-columns: repeat(2, 1fr); }
+        .app-actions-row { grid-template-columns: 1fr; }
       }
       @media (max-width: 768px) {
         .hud-overlay {
@@ -510,63 +1402,31 @@
                 sessionStorage.removeItem('rc_from_internal');
             } catch (_) {}
             var cameFromSite = Boolean(!isReload && (fromInternal || fromSameSitePage));
-            window.__rcIsLoggedIn = isLoggedIn;
+            window.__rcIsLoggedIn = true;
             window.__rcCameFromInternal = cameFromSite;
-            var skipIntro = Boolean(isLoggedIn || cameFromSite);
-            if (skipIntro) {
-                window.__rcSkipIntroOnLoad = true;
-                if (v) {
-                    try {
-                        v.pause();
-                        v.muted = true;
-                        v.removeAttribute('autoplay');
-                        v.classList.add('video-fade-out');
-                    } catch (_) {}
-                }
-                if (a) {
-                    try {
-                        a.pause();
-                        a.muted = true;
-                        a.volume = 0;
-                        a.removeAttribute('autoplay');
-                    } catch (_) {}
-                }
-                if (document.body) {
-                    document.body.classList.remove('cinema-intro-active', 'coming-soon-finale-active', 'diorama-reveal-active', 'rc-coming-soon-preview');
-                    document.body.classList.add('rc-no-intro-anim', 'rc-logged-in-home');
-                }
-                return;
-            }
-
-            window.__rcSkipIntroOnLoad = false;
-            if (document.body) {
-                document.body.classList.remove('rc-logged-in-home', 'coming-soon-finale-active', 'diorama-reveal-active');
-                document.body.classList.add('cinema-intro-active');
-            }
+            window.__rcSkipIntroOnLoad = true;
             if (v) {
-                v.classList.remove('video-fade-out');
-                v.muted = true;
-                var targetRate = 1.0;
                 try {
-                    v.defaultPlaybackRate = targetRate;
-                    v.playbackRate = targetRate;
+                    v.pause();
+                    v.muted = true;
+                    v.removeAttribute('autoplay');
+                    v.classList.add('video-fade-out');
                 } catch (_) {}
-                var tryPlayIntroVideo = function () {
-                    if (window.__rcSkipIntroOnLoad) return;
-                    try {
-                        v.playbackRate = targetRate;
-                        if (v.paused) {
-                            v.play().catch(function () {});
-                        }
-                    } catch (_) {}
-                };
-                v.addEventListener('loadedmetadata', tryPlayIntroVideo);
-                v.addEventListener('canplay', tryPlayIntroVideo);
-                v.addEventListener('playing', function () {
-                    window.__rcIntroVideoPlayingStartMs = performance.now();
-                    try { v.playbackRate = targetRate; } catch (_) {}
-                });
-                tryPlayIntroVideo();
+            }
+            if (a) {
+                try {
+                    a.pause();
+                    a.muted = true;
+                    a.volume = 0;
+                    a.removeAttribute('autoplay');
+                } catch (_) {}
+            }
+            if (document.body) {
+                document.body.classList.remove('cinema-intro-active', 'coming-soon-finale-active', 'diorama-reveal-active', 'rc-coming-soon-preview');
+                document.body.classList.add('rc-logged-in-home');
+                if (cameFromSite) {
+                    document.body.classList.add('rc-no-intro-anim');
+                }
             }
         })();
     </script>
@@ -712,30 +1572,22 @@
       <div id="room-light-wash"></div>
       <div id="webgl-container"></div>
 
-      <!-- 1:1 Stage-Locked Concept 29 Interactive Layer -->
+      <!-- 1:1 Stage-Locked Concept 01 Interactive Layer -->
       <div id="stage-overlay-root">
+        <div class="stage-hotspot hs-logo-title" onclick="replaySwoopIntro()" title="Replay Sanctuary Tree Animation">
+          <span class="hotspot-pill">Replay Tree Animation &#8635;</span>
+        </div>
         <a href="https://nerdymisfits.com" target="_blank" rel="noopener" class="stage-hotspot hs-nerdy" title="Visit NerdyMisfits.com">
           <span class="hotspot-pill">Visit NerdyMisfits.com &nearr;</span>
         </a>
-        <a href="shibuya_bot_pit.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}; if(window.__openBotPitAppOverlay){window.__openBotPitAppOverlay(event);return false;}" class="stage-hotspot hs-botpit" title="Download or Play Apex Wreckers: 3D Battle Cars">
-          <span class="hotspot-pill">&#128242; Download / Play Apex Wreckers App &rarr;</span>
-        </a>
-        <div class="stage-hotspot hs-synth" onclick="triggerSynthGreeting()" title="Speak with Synth the Owl Butler">
-          <span class="hotspot-pill">Speak with Synth</span>
-        </div>
-        <div class="synth-speech-bubble" id="synthBubble">
-          <strong>SYNTH &bull; SANCTUARY BUTLER</strong>
-          <span id="synthBubbleText">Welcome to the Sanctuary, friend. Explore our Black Edition Hoodies, enter Apex Wreckers: 3D Battle Cars, or start a custom project!</span>
-        </div>
-        <a href="hoodie_preview.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" class="stage-hotspot hs-hoodie" title="Shop Official Black Edition Hoodies ($50)">
-          <span class="hotspot-pill">Official Merch Showroom &rarr;</span>
-        </a>
-        <div class="stage-hotspot hs-studio" onclick="openStudioModal()" title="We Build Websites, Apps, Games, Apparel &amp; 3D Prints">
-          <span class="hotspot-pill">Start a Custom Project &rarr;</span>
-        </div>
         <a href="https://deafhammer.com" target="_blank" rel="noopener" class="stage-hotspot hs-deafhammer" title="Visit DeafHammer.com">
           <span class="hotspot-pill">Visit DeafHammer.com &nearr;</span>
         </a>
+        <nav class="c06-bottom-nav" aria-label="Main Navigation">
+          <button type="button" onclick="openAppsModal(event)" class="c06-nav-link">APPS</button>
+          <a href="hoodie_preview.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" class="c06-nav-link c06-nav-merch">MERCH</a>
+          <button type="button" onclick="openStudioModal()" class="c06-nav-link">STUDIO</button>
+        </nav>
       </div>
 
       <!-- HUD Overlay (Minimalist Top Bar Only — Completely Dark Until Tree Illuminates Room) -->
@@ -759,37 +1611,36 @@
         </div>
       </div>
 
-      <!-- We Build & Create Studio Modal -->
+      <!-- We Build & Create Studio Modal (Option #1: 5 Translucent 24K Gold Game Cartridges on Tempered Glass Shelf — Individual Hover Lighting) -->
       <div class="studio-modal-backdrop" id="studioModal" onclick="if(event.target.id==='studioModal')closeStudioModal()">
-        <div class="studio-modal-card">
-          <button type="button" class="studio-close-btn" onclick="closeStudioModal()">&times;</button>
-          <h3 class="studio-modal-title">RETROCANOPY STUDIO &mdash; WE BUILD &amp; CREATE</h3>
-          <div class="studio-pillars">
-            <div class="studio-pillar" onclick="selectStudioService('Custom Website')">
-              <h4>WEBSITES</h4>
-              <p>Custom Brand Sites, 3D WebGL Stages &amp; E-Commerce Storefronts</p>
-            </div>
-            <div class="studio-pillar" onclick="selectStudioService('Mobile / Web App')">
-              <h4>APPS</h4>
-              <p>iOS, Android &amp; Full-Stack Web Applications Built to Scale</p>
-            </div>
-            <div class="studio-pillar" onclick="selectStudioService('Custom Arcade / Web Game')">
-              <h4>GAMES</h4>
-              <p>Custom 3D &amp; HTML5 Arcade Games, Bot Pit Arenas &amp; Leaderboards</p>
-            </div>
-            <div class="studio-pillar" onclick="selectStudioService('Custom 3D Prints')">
-              <h4>3D PRINTS</h4>
-              <p>Custom Figures, Props, Keychains, Prototypes &amp; Multi-Color Prints</p>
-            </div>
-            <div class="studio-pillar" onclick="selectStudioService('Custom Apparel & Merch')">
-              <h4>CUSTOM APPAREL</h4>
-              <p>Custom Hoodies, Snapback Hats, Tees, DTF &amp; 3D Puff Embroidery</p>
-            </div>
-          </div>
-          <form class="studio-form" id="studioQuoteForm" onsubmit="submitStudioQuote(event)">
-            <input type="text" class="studio-input" id="studioName" placeholder="Your Name / Brand" required>
-            <input type="text" class="studio-input" id="studioContact" placeholder="Email or Phone" required>
-            <select class="studio-select" id="studioService">
+        <div class="c02-studio-stage-wrap" role="dialog" aria-modal="true" aria-label="Retrocanopy Studio — We Build & Create">
+          <img src="assets/concept_gallery/living_tree/c02_studio_opt1_base.jpg?v=318" alt="Retrocanopy Studio — 5 Translucent 24K Gold Cartridges on Tempered Glass Shelf" class="c02-cartridge-stage-img">
+
+          <!-- Top-Right Brushed 24K Gold X Close Button -->
+          <button type="button" class="c02-studio-close-hs" onclick="closeStudioModal()" title="Close Studio" aria-label="Close Studio"></button>
+
+          <!-- 5 Translucent 24K Gold Service Cartridges (Light Up Individually on Hover!) -->
+          <button type="button" class="c02-studio-cart-hs c02-studio-cart-1" data-service="Custom Website" onclick="selectStudioService('Custom Website')" title="Websites — Custom Brand Sites, 3D WebGL Stages & E-Commerce" aria-label="Select Custom Website">
+            <img src="assets/concept_gallery/living_tree/c02_studio_cart_lit_1.jpg?v=318" alt="" class="c02-studio-cart-lit">
+          </button>
+          <button type="button" class="c02-studio-cart-hs c02-studio-cart-2" data-service="Mobile / Web App" onclick="selectStudioService('Mobile / Web App')" title="Apps — iOS, Android & Full-Stack Web Applications" aria-label="Select Mobile or Web App">
+            <img src="assets/concept_gallery/living_tree/c02_studio_cart_lit_2.jpg?v=318" alt="" class="c02-studio-cart-lit">
+          </button>
+          <button type="button" class="c02-studio-cart-hs c02-studio-cart-3" data-service="Custom Arcade / Web Game" onclick="selectStudioService('Custom Arcade / Web Game')" title="Games — Custom 3D & HTML5 Arcade Games & Arenas" aria-label="Select Custom Arcade or Web Game">
+            <img src="assets/concept_gallery/living_tree/c02_studio_cart_lit_3.jpg?v=318" alt="" class="c02-studio-cart-lit">
+          </button>
+          <button type="button" class="c02-studio-cart-hs c02-studio-cart-4" data-service="Custom 3D Prints" onclick="selectStudioService('Custom 3D Prints')" title="3D Prints — Custom Figures, Props, Keychains & Multi-Color Prints" aria-label="Select Custom 3D Prints">
+            <img src="assets/concept_gallery/living_tree/c02_studio_cart_lit_4.jpg?v=318" alt="" class="c02-studio-cart-lit">
+          </button>
+          <button type="button" class="c02-studio-cart-hs c02-studio-cart-5" data-service="Custom Apparel & Merch" onclick="selectStudioService('Custom Apparel & Merch')" title="Custom Apparel — Hoodies, Snapback Hats, Tees, DTF & 3D Puff Embroidery" aria-label="Select Custom Apparel & Merch">
+            <img src="assets/concept_gallery/living_tree/c02_studio_cart_lit_5.jpg?v=318" alt="" class="c02-studio-cart-lit">
+          </button>
+
+          <!-- 1:1 Stage-Locked Interactive Form Inside the Obsidian & 24K Gold Console Base -->
+          <form id="studioQuoteForm" onsubmit="submitStudioQuote(event)">
+            <input type="text" class="c02-studio-field c02-studio-field-name" id="studioName" placeholder="Your Name / Brand" required>
+            <input type="text" class="c02-studio-field c02-studio-field-contact" id="studioContact" placeholder="Email or Phone" required>
+            <select class="c02-studio-field c02-studio-field-service" id="studioService" aria-label="Select Studio Service">
               <option value="Custom Website">Custom Website</option>
               <option value="Mobile / Web App">Mobile / Web App</option>
               <option value="Custom Arcade / Web Game">Custom Arcade / Web Game</option>
@@ -797,10 +1648,61 @@
               <option value="Custom Apparel & Merch">Custom Apparel &amp; Merch</option>
               <option value="Full Custom Project">Full Custom Project (Multiple Services)</option>
             </select>
-            <textarea class="studio-input" id="studioNotes" rows="3" placeholder="Tell us about your project, quantity, or timeline (Optional)" style="resize:vertical;min-height:68px;font-family:inherit;"></textarea>
-            <button type="submit" class="studio-submit" id="studioSubmitBtn">START PROJECT &rarr;</button>
+            <textarea class="c02-studio-field c02-studio-field-notes" id="studioNotes" rows="2" placeholder="Tell us about your project, quantity, or timeline"></textarea>
+            <button type="submit" class="c02-studio-submit-hs" id="studioSubmitBtn" title="Start Project" aria-label="Start Project">START PROJECT &rarr;</button>
           </form>
-          <div class="studio-confirm" id="studioConfirm"></div>
+          <div class="c02-studio-confirm-bar" id="studioConfirm"></div>
+        </div>
+      </div>
+
+      <!-- Retrocanopy Apps Hub Pop-up Screen (Concept #2: Retro 1990s Translucent 24K Gold Game Cartridge Shelf) -->
+      <div class="apps-modal-backdrop" id="appsHubModal" onclick="if(event.target.id==='appsHubModal')closeAppsModal()">
+        <!-- STEP 1: CONCEPT #2 EXACT TRANSLUCENT 24K GOLD GAME CARTRIDGE SHELF -->
+        <div class="c02-cartridge-stage-wrap" id="appsSelectView" role="dialog" aria-modal="true" aria-label="Retrocanopy App Select">
+          <img src="assets/concept_gallery/living_tree/c02_app_select_cartridges.jpg?v=312" alt="Retrocanopy App Select — Translucent 24K Gold Cartridge Shelf" class="c02-cartridge-stage-img">
+          <button type="button" class="c02-close-plaque" onclick="closeAppsModal()" title="Close App Select">&times; CLOSE</button>
+
+          <!-- Cartridge 1: Translucent 24K Gold APEX WRECKERS: 3D BATTLE CARS (Click to inspect/launch) -->
+          <div class="c02-hs c02-hs-apex-cart" onclick="selectAppFromHub('apex_wreckers')" role="button" tabindex="0" aria-label="Select Apex Wreckers: 3D Battle Cars Cartridge">
+            <span class="c02-hs-pill">SELECT CARTRIDGE &rarr;</span>
+          </div>
+
+          <!-- Brushed 24K Gold LAUNCH Plaque Button directly below Cartridge 1 -->
+          <a href="shibuya_bot_pit.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" class="c02-hs c02-hs-apex-launch" title="Launch Apex Wreckers: 3D Battle Cars (v1.0.6 · Stripe)" aria-label="Launch Apex Wreckers"></a>
+
+          <!-- Smoked Cartridge 2: COMING SOON -->
+          <div class="c02-hs c02-hs-cart-2" title="Upcoming Retrocanopy Cartridge — Coming Soon">
+            <span class="c02-hs-pill">APP SLOT 02 &middot; COMING SOON</span>
+          </div>
+
+          <!-- Smoked Cartridge 3: COMING SOON / Studio Custom App -->
+          <div class="c02-hs c02-hs-cart-3" onclick="closeAppsModal();openStudioModal('Mobile / Web App');" title="Commission a Custom App in Retrocanopy Studio">
+            <span class="c02-hs-pill">CUSTOM STUDIO APP &rarr;</span>
+          </div>
+        </div>
+
+        <!-- STEP 2: OPTION 2 EXACT TRANSLUCENT 24K GOLD CARTRIDGE PLUGGED INTO OBSIDIAN CONSOLE SLOT DOCK (CONSISTENT CARTRIDGE ART) -->
+        <div class="c02-cartridge-stage-wrap" id="appsDetailApexView" style="display:none;" role="dialog" aria-modal="true" aria-label="Apex Wreckers Cartridge Dock">
+          <img src="assets/concept_gallery/living_tree/c02_option02_cart_dock.jpg?v=316" alt="Apex Wreckers: 3D Battle Cars — Translucent 24K Gold Cartridge in Console Dock" class="c02-cartridge-stage-img">
+
+          <!-- <- BACK Eject Button on Left of Console Dock -->
+          <button type="button" class="c02-hs c02-hs-dock-back" id="appsBackToSelectBtn" onclick="showAppsSelectView()" title="Back to Cartridge Shelf" aria-label="Back to Cartridge Shelf"></button>
+
+          <!-- X Close Button on Right of Console Dock -->
+          <button type="button" class="c02-hs c02-hs-dock-close" onclick="closeAppsModal()" title="Close" aria-label="Close"></button>
+
+          <!-- Translucent 24K Gold Cartridge in Slot -->
+          <a href="shibuya_bot_pit.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" class="c02-hs c02-hs-dock-cart" title="Launch Apex Wreckers: 3D Battle Cars (v1.0.6 · Stripe)" aria-label="Launch Apex Wreckers Cartridge"></a>
+
+          <!-- Brushed 24K Gold LAUNCH Button on Front-Left of Console Dock -->
+          <a href="shibuya_bot_pit.html" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" class="c02-hs c02-hs-dock-launch" title="Launch Apex Wreckers: 3D Battle Cars" aria-label="Launch Apex Wreckers"></a>
+
+          <!-- Gunmetal INSTALL APP Button on Front-Right of Console Dock -->
+          <button type="button" class="c02-hs c02-hs-dock-install" onclick="installApexWreckersWebApp()" title="Install Apex Wreckers Web App" aria-label="Install Web App"></button>
+
+          <div class="c02-dock-status-wrap">
+            <div class="rc-install-status-box" id="rcAppsHubInstallStatus"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -840,10 +1742,61 @@
       synthBubbleTimer = setTimeout(() => bubble.classList.remove('is-visible'), 5500);
     };
 
+    window.showAppsSelectView = function() {
+      const selView = document.getElementById('appsSelectView');
+      const detView = document.getElementById('appsDetailApexView');
+      const st = document.getElementById('rcAppsHubInstallStatus');
+      if (selView) selView.style.display = 'block';
+      if (detView) detView.style.display = 'none';
+      if (st) st.classList.remove('visible');
+    };
+    window.selectAppFromHub = function(appKey) {
+      if (appKey !== 'apex_wreckers') return;
+      const selView = document.getElementById('appsSelectView');
+      const detView = document.getElementById('appsDetailApexView');
+      if (selView) selView.style.display = 'none';
+      if (detView) detView.style.display = 'block';
+    };
+    window.openAppsModal = function(ev) {
+      if (ev && typeof ev.preventDefault === 'function') {
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+      window.showAppsSelectView();
+      const el = document.getElementById('appsHubModal');
+      if (el) el.classList.add('is-open');
+    };
+    window.closeAppsModal = function() {
+      const el = document.getElementById('appsHubModal');
+      if (el) el.classList.remove('is-open');
+    };
+    window.__openBotPitAppOverlay = window.openAppsModal;
+    window.__closeBotPitAppOverlay = window.closeAppsModal;
+    window.installApexWreckersWebApp = function() {
+      if (typeof window.__triggerBotPitAppDownload === 'function') {
+        window.__triggerBotPitAppDownload('rcAppsHubInstallStatus');
+      } else {
+        try { sessionStorage.setItem('rc_from_internal', '1'); } catch (_) {}
+        window.location.href = 'shibuya_bot_pit.html';
+      }
+    };
+
+    window.syncStudioSelectedCart = function(serviceName) {
+      document.querySelectorAll('.c02-studio-cart-hs').forEach((btn) => {
+        if (serviceName && btn.getAttribute('data-service') === serviceName) {
+          btn.classList.add('is-selected');
+        } else {
+          btn.classList.remove('is-selected');
+        }
+      });
+    };
     window.openStudioModal = function(serviceName) {
       if (serviceName) {
         const sel = document.getElementById('studioService');
         if (sel) sel.value = serviceName;
+        window.syncStudioSelectedCart(serviceName);
+      } else {
+        window.syncStudioSelectedCart('');
       }
       document.getElementById('studioModal').classList.add('is-open');
     };
@@ -853,6 +1806,7 @@
     window.selectStudioService = function(serviceName) {
       const sel = document.getElementById('studioService');
       if (sel) sel.value = serviceName;
+      window.syncStudioSelectedCart(serviceName);
       document.getElementById('studioName').focus();
     };
     window.dispatchStudioProjectRequest = async function(rawPayload) {
@@ -1143,22 +2097,22 @@
     composer.addPass(bloomPass);
 
     const texLoader = new THREE.TextureLoader();
-    const texBgDesk       = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_bg_only.jpg?v=256');
-    const texFullDesk     = texLoader.load('assets/concept_gallery/living_tree/concept29_stage_tree.jpg?v=256');
-    const texBgMob        = texLoader.load('assets/concept_gallery/living_tree/mobile04_stage_bg_only.jpg?v=256');
-    const texFullMob      = texLoader.load('assets/concept_gallery/living_tree/mobile04_stage_tree.jpg?v=256');
-    const texGamerCutDesk = texLoader.load('assets/concept_gallery/living_tree/gamer_cutout_desktop.png?v=256');
-    const texGamerBgDesk  = texLoader.load('assets/concept_gallery/living_tree/gamer_bg_desktop.png?v=256');
-    const texGamerCutMob  = texLoader.load('assets/concept_gallery/living_tree/gamer_cutout_mobile.png?v=256');
-    const texGamerBgMob   = texLoader.load('assets/concept_gallery/living_tree/gamer_bg_mobile.png?v=256');
-    const texCardBots     = texLoader.load('assets/concept_gallery/living_tree/card_bots_body.png?v=258');
-    const texCardArms     = texLoader.load('assets/concept_gallery/living_tree/card_bots_arms.png?v=258');
-    const texCsBgDesk     = texLoader.load('assets/concept_gallery/living_tree/cs_stage_bg_desktop.jpg?v=260');
-    const texCsFullDesk   = texLoader.load('assets/concept_gallery/living_tree/cs_stage_tree_desktop.jpg?v=260');
-    const texCsBgMob      = texLoader.load('assets/concept_gallery/living_tree/cs_stage_bg_mobile.jpg?v=260');
-    const texCsFullMob    = texLoader.load('assets/concept_gallery/living_tree/cs_stage_tree_mobile.jpg?v=260');
+    const texBgDesk       = texLoader.load('assets/concept_gallery/living_tree/c06_p01_stage_bg.jpg?v=305');
+    const texFullDesk     = texLoader.load('assets/concept_gallery/living_tree/c06_p01_stage_full.jpg?v=305');
+    const texBgMob        = texLoader.load('assets/concept_gallery/living_tree/c06_p01_mobile_bg.jpg?v=305');
+    const texFullMob      = texLoader.load('assets/concept_gallery/living_tree/c06_p01_mobile_full.jpg?v=305');
+    const texGamerCutDesk = texFullDesk;
+    const texGamerBgDesk  = texBgDesk;
+    const texGamerCutMob  = texFullMob;
+    const texGamerBgMob   = texBgMob;
+    const texCardBots     = texFullDesk;
+    const texCardArms     = texFullDesk;
+    const texCsBgDesk     = texBgDesk;
+    const texCsFullDesk   = texFullDesk;
+    const texCsBgMob      = texBgMob;
+    const texCsFullMob    = texFullMob;
 
-    [texBgDesk, texFullDesk, texBgMob, texFullMob, texGamerCutDesk, texGamerBgDesk, texGamerCutMob, texGamerBgMob, texCardBots, texCardArms, texCsBgDesk, texCsFullDesk, texCsBgMob, texCsFullMob].forEach(t => {
+    [texBgDesk, texFullDesk, texBgMob, texFullMob].forEach(t => {
       t.minFilter = THREE.LinearFilter;
       t.magFilter = THREE.LinearFilter;
       t.generateMipmaps = false;
@@ -1175,7 +2129,7 @@
       uTreeReveal: { value: 0.0 },
       uRoomLight: { value: 0.0 },
       uIsMobile: { value: isMobileMode ? 1.0 : 0.0 },
-      uIsComingSoon: { value: 1.0 },
+      uIsComingSoon: { value: 0.0 },
       uMouse3D: { value: new THREE.Vector3(999, 999, 0) }
     };
 
@@ -1194,10 +2148,6 @@
       fragmentShader: `
         uniform sampler2D uTexFull;
         uniform sampler2D uTexBg;
-        uniform sampler2D uTexGamerCut;
-        uniform sampler2D uTexGamerBg;
-        uniform sampler2D uTexCardBots;
-        uniform sampler2D uTexCardArms;
         uniform float uTime;
         uniform float uTreeReveal;
         uniform float uRoomLight;
@@ -1206,808 +2156,63 @@
         uniform vec3 uMouse3D;
         varying vec2 vUv;
 
-        vec2 rotRigidAspect(vec2 uv, vec2 pivot, float angle, vec2 aspect) {
-          vec2 d = (uv - pivot) * aspect;
-          float c = cos(angle);
-          float s = sin(angle);
-          vec2 r = vec2(d.x * c - d.y * s, d.x * s + d.y * c);
-          return pivot + r / aspect;
-        }
-
-        float partMask(vec2 uv, vec2 center, vec2 radii) {
-          vec2 d = (uv - center) / radii;
-          return 1.0 - smoothstep(0.62, 1.0, length(d));
-        }
-
-        float naturalBlink(float t, float period, float offset) {
-          float m = mod(t + offset, period);
-          return smoothstep(0.0, 0.06, m) * (1.0 - smoothstep(0.08, 0.15, m));
-        }
-
         void main() {
           bool mob = uIsMobile > 0.5;
           vec2 stageDims = mob ? vec2(6.627417, 11.874122) : vec2(11.874122, 6.627417);
-          vec2 aspectVec = mob ? vec2(768.0 / 1376.0, 1.0) : vec2(1408.0 / 768.0, 1.0);
           vec2 worldXY = vec2((vUv.x - 0.5) * stageDims.x, (vUv.y - 0.5) * stageDims.y);
 
-          vec2 sampleUv = vUv;
-          float eyeBlinkDim = 0.0;
-          float eyeGlowPulse = 0.0;
+          vec3 bgTexCol = texture2D(uTexBg, vUv).rgb;
+          vec3 fullTexCol = texture2D(uTexFull, vUv).rgb;
+
+          // Smooth cross-fade from pre-reveal stage (uTexBg) to full illuminated voxel tree (uTexFull)
+          float heightFactor = mob
+            ? clamp((vUv.y - 0.45) / 0.35, 0.0, 1.0)
+            : clamp((vUv.y - 0.25) / 0.55, 0.0, 1.0);
+          float organicNoise = sin(worldXY.x * 5.0 + uTime * 2.0) * cos(worldXY.y * 5.0 - uTime * 1.8) * 0.05;
+          float revealMask = smoothstep(0.0, 1.0, (uTreeReveal * 1.35) - heightFactor * 0.30 + organicNoise);
+          vec3 litRoomCol = mix(bgTexCol, fullTexCol, revealMask);
+
+          // Living Golden Sap-Wave & Interactive Cursor Glow across the Tree Canopy & Trunk
+          float sapPhase = worldXY.y * 2.6 - abs(worldXY.x) * 1.1 - uTime * 1.45;
+          float sapWave = pow(0.5 + 0.5 * sin(sapPhase), 3.4);
+
+          float inTreeZone = mob
+            ? (smoothstep(-2.4, -1.6, worldXY.x) * (1.0 - smoothstep(1.6, 2.4, worldXY.x)) * smoothstep(0.42, 0.48, vUv.y) * (1.0 - smoothstep(0.76, 0.80, vUv.y)))
+            : (smoothstep(-2.5, -1.7, worldXY.x) * (1.0 - smoothstep(1.7, 2.5, worldXY.x)) * smoothstep(0.20, 0.28, vUv.y) * (1.0 - smoothstep(0.80, 0.84, vUv.y)));
+
+          float goldDominance = clamp((fullTexCol.r * 0.65 + fullTexCol.g * 0.35) - fullTexCol.b * 0.85, 0.0, 1.0);
+          float isTreeOrSun = goldDominance * inTreeZone;
 
-          // ==================================================================
-          // 12.0-SECOND DRAMATIC NES GAMEPLAY: LOCKED-IN -> HAPPY VICTORY
-          // CELEBRATION -> BOSS CLIMAX -> FRUSTRATED TANTRUM -> RECOVERY!
-          //   0.0s - 3.0s : Act 1 — Locked-In Gameplay ("Really Into It")
-          //   3.0s - 5.4s : Act 2 — HAPPY VICTORY CELEBRATION! (Joyful bounces, ^ ^ happy eyes, gold stars!)
-          //   5.4s - 7.4s : Act 3 — Boss Speed-Up Climax (Edge-of-seat leaning & furious button mashing)
-          //   7.4s - 7.85s: Act 4a— BAM! Wipeout on CRT -> Shock recoil backward (O O eyes)
-          //   7.85s- 9.25s: Act 4b— FRUSTRATED RAGE! (Head/body shake, \ / fiery red eyes, overheat sparks!)
-          //   9.25s-10.45s: Act 4c— Defeated Slump & Heavy Sigh (- - droopy eyes looking at controller)
-          //  10.45s-12.00s: Act 5 — Shake It Off, Smash START & Lean Back In!
-          // ==================================================================
-          float tC = mod(uTime, 12.0);
-          float inPlay1   = 1.0 - smoothstep(2.92, 3.05, tC);
-          float inHappy   = smoothstep(2.95, 3.12, tC) * (1.0 - smoothstep(5.25, 5.45, tC));
-          float inClimax  = smoothstep(5.38, 5.58, tC) * (1.0 - smoothstep(7.32, 7.44, tC));
-          float inPlay    = clamp(inPlay1 + inClimax, 0.0, 1.0);
-          float inShock   = smoothstep(7.36, 7.46, tC) * (1.0 - smoothstep(7.78, 7.92, tC));
-          float inRage    = smoothstep(7.78, 7.96, tC) * (1.0 - smoothstep(9.15, 9.35, tC));
-          float inSlump   = smoothstep(9.20, 9.42, tC) * (1.0 - smoothstep(10.35, 10.58, tC));
-          float inRecover = smoothstep(10.42, 10.65, tC) * (1.0 - smoothstep(11.80, 11.98, tC));
-          float inFrustrated = clamp(inShock + inRage + inSlump * 0.75, 0.0, 1.0);
-
-          // Synchronized Jump Pulses when the 8-bit character jumps on the CRT!
-          float jump1 = exp(-pow((tC - 1.05) * 5.5, 2.0));
-          float jump2 = exp(-pow((tC - 2.25) * 5.5, 2.0));
-          float jump3 = exp(-pow((tC - 6.00) * 6.5, 2.0));
-          float jump4 = exp(-pow((tC - 6.65) * 7.0, 2.0));
-          float jump5 = exp(-pow((tC - 7.15) * 7.5, 2.0));
-          float jumpEffort = clamp(jump1 + jump2 + jump3 + jump4 + jump5, 0.0, 1.0);
-          float startMash  = exp(-pow((tC - 11.25) * 6.5, 2.0));
-
-          // Spectator robots react to Happy Victory AND Frustrated Wipeout!
-          float specCheer = inHappy * sin(uTime * 12.0) * 0.032;
-          float specShock = (inShock + inRage * 0.8) * sin(uTime * 16.0) * 0.028;
-
-          if (uIsComingSoon < 0.5 && !mob) {
-            // ================================================================
-            // DESKTOP CONCEPT 29: SPECTATOR ROBOTS 1-4 ON UPPER TERRACE
-            // ================================================================
-            if (vUv.x < 0.250 && vUv.y > 0.340 && vUv.y < 0.500) {
-              float mHead1 = partMask(vUv, vec2(0.0582, 0.442), vec2(0.022, 0.038));
-              float ang1 = sin(uTime * 1.35 + 0.4) * 0.022 + specCheer + specShock;
-
-              float mHead2 = partMask(vUv, vec2(0.1001, 0.448), vec2(0.019, 0.034));
-              float ang2 = sin(uTime * 1.55 + 1.7) * 0.020 - specCheer;
-
-              float mHead3 = partMask(vUv, vec2(0.1584, 0.450), vec2(0.022, 0.038));
-              float ang3 = sin(uTime * 1.22 + 3.1) * 0.022 + specCheer - specShock;
-
-              float mHead4 = partMask(vUv, vec2(0.2223, 0.448), vec2(0.020, 0.035));
-              float ang4 = sin(uTime * 1.42 + 4.5) * 0.020 + specCheer + specShock;
-
-              vec2 uv1 = rotRigidAspect(vUv, vec2(0.0589, 0.4089), ang1, aspectVec);
-              vec2 uv2 = rotRigidAspect(vUv, vec2(0.1001, 0.4167), ang2, aspectVec);
-              vec2 uv3 = rotRigidAspect(vUv, vec2(0.1584, 0.4167), ang3, aspectVec);
-              vec2 uv4 = rotRigidAspect(vUv, vec2(0.2223, 0.4167), ang4, aspectVec);
-
-              sampleUv = vUv;
-              sampleUv = mix(sampleUv, uv1, mHead1);
-              sampleUv = mix(sampleUv, uv2, mHead2);
-              sampleUv = mix(sampleUv, uv3, mHead3);
-              sampleUv = mix(sampleUv, uv4, mHead4);
-
-              float b1 = naturalBlink(uTime, 4.3, 0.7) * partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012));
-              float b3 = naturalBlink(uTime, 3.8, 2.1) * partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012));
-              float b4 = naturalBlink(uTime, 4.9, 1.4) * partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012));
-              eyeBlinkDim = clamp(b1 + b3 + b4, 0.0, 1.0);
-
-              float gMask = partMask(sampleUv, vec2(0.0614, 0.4375), vec2(0.014, 0.012))
-                          + partMask(sampleUv, vec2(0.1584, 0.4544), vec2(0.014, 0.012))
-                          + partMask(sampleUv, vec2(0.2205, 0.4453), vec2(0.013, 0.012));
-              eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.14 + 0.12 * sin(uTime * 4.2));
-            }
-          } else if (uIsComingSoon < 0.5) {
-            // ================================================================
-            // MOBILE CONCEPT 04: SPECTATOR ROBOTS 1-4 ON UPPER TERRACE
-            // ================================================================
-            if (vUv.x < 0.395 && vUv.y > 0.195 && vUv.y < 0.295) {
-              float mHead1 = partMask(vUv, vec2(0.0729, 0.2355), vec2(0.040, 0.022));
-              float ang1 = sin(uTime * 1.35 + 0.4) * 0.022 + specCheer + specShock;
-
-              float mHead2 = partMask(vUv, vec2(0.1302, 0.2573), vec2(0.035, 0.020));
-              float ang2 = sin(uTime * 1.55 + 1.7) * 0.020 - specCheer;
-
-              float mHead3 = partMask(vUv, vec2(0.2422, 0.2442), vec2(0.040, 0.022));
-              float ang3 = sin(uTime * 1.22 + 3.1) * 0.022 + specCheer - specShock;
-
-              float mHead4 = partMask(vUv, vec2(0.3464, 0.2602), vec2(0.038, 0.021));
-              float ang4 = sin(uTime * 1.42 + 4.5) * 0.020 + specCheer + specShock;
-
-              vec2 uv1 = rotRigidAspect(vUv, vec2(0.0755, 0.2180), ang1, aspectVec);
-              vec2 uv2 = rotRigidAspect(vUv, vec2(0.1302, 0.2427), ang2, aspectVec);
-              vec2 uv3 = rotRigidAspect(vUv, vec2(0.2422, 0.2267), ang3, aspectVec);
-              vec2 uv4 = rotRigidAspect(vUv, vec2(0.3464, 0.2442), ang4, aspectVec);
-
-              sampleUv = vUv;
-              sampleUv = mix(sampleUv, uv1, mHead1);
-              sampleUv = mix(sampleUv, uv2, mHead2);
-              sampleUv = mix(sampleUv, uv3, mHead3);
-              sampleUv = mix(sampleUv, uv4, mHead4);
-
-              float b1 = naturalBlink(uTime, 4.3, 0.7) * partMask(sampleUv, vec2(0.0807, 0.2326), vec2(0.025, 0.008));
-              float b3 = naturalBlink(uTime, 3.8, 2.1) * partMask(sampleUv, vec2(0.2500, 0.2427), vec2(0.025, 0.008));
-              float b4 = naturalBlink(uTime, 4.9, 1.4) * partMask(sampleUv, vec2(0.3438, 0.2587), vec2(0.024, 0.008));
-              eyeBlinkDim = clamp(b1 + b3 + b4, 0.0, 1.0);
-
-              float gMask = partMask(sampleUv, vec2(0.0807, 0.2326), vec2(0.025, 0.008))
-                          + partMask(sampleUv, vec2(0.2500, 0.2427), vec2(0.025, 0.008))
-                          + partMask(sampleUv, vec2(0.3438, 0.2587), vec2(0.024, 0.008));
-              eyeGlowPulse = clamp(gMask, 0.0, 1.0) * (0.14 + 0.12 * sin(uTime * 4.2));
-            }
-          }
-
-          vec3 litRoomCol = texture2D(uTexBg, sampleUv).rgb;
-
-          if (eyeBlinkDim > 0.001 || eyeGlowPulse > 0.001) {
-            float visorCyan = clamp((litRoomCol.g + litRoomCol.b) * 0.6 - litRoomCol.r * 0.4, 0.0, 1.0);
-            litRoomCol *= (1.0 - eyeBlinkDim * 0.88);
-            litRoomCol += vec3(0.10, 0.85, 1.0) * visorCyan * eyeGlowPulse * (1.0 - eyeBlinkDim);
-          }
-
-          // ==================================================================
-          // 2.5D ALPHA-SEGMENTED GAMER ROBOT RIG (ZERO BACKGROUND/PAD WARPING!)
-          // The clean gold steps live on uTexGamerBg; the Gamer Robot lives on
-          // uTexGamerCut (RGBA). His entire Upper Body + Arms + NES Controller
-          // moves as one rigid biomechanical piece above his hips, and his Head
-          // pivots cleanly at his neck!
-          // ==================================================================
-          vec4 gBox = mob
-            ? vec4(0.304688, 0.454427, 0.080669, 0.205669)
-            : vec4(0.164773, 0.250000, 0.195312, 0.425781);
-
-          if (vUv.x > gBox.x && vUv.x < gBox.y && vUv.y > gBox.z && vUv.y < gBox.w) {
-            vec2 boxUv = (vUv - gBox.xz) / (gBox.yw - gBox.xz);
-
-            // Soft interior mask so the outer 3% border of the box blends seamlessly with uTexBg
-            float boxInterior = smoothstep(0.0, 0.04, boxUv.x) * (1.0 - smoothstep(0.96, 1.0, boxUv.x))
-                              * smoothstep(0.18, 0.28, boxUv.y) * (1.0 - smoothstep(0.95, 1.0, boxUv.y));
-
-            // 1. Place the un-warped clean gold stair background plate behind the Gamer Robot (Full Sanctuary mode only; Coming Soon is pure black!)
-            if (uIsComingSoon < 0.5) {
-              vec3 cleanPlateCol = texture2D(uTexGamerBg, boxUv).rgb;
-              litRoomCol = mix(litRoomCol, cleanPlateCol, boxInterior);
-            }
-
-            // 2. Compute Smooth, Weighted Full-Body & Head Kinematics for the Gamer Robot Cutout:
-            float torsoAng = inPlay1  * (0.018 + 0.012 * sin(uTime * 3.2) - jumpEffort * 0.022)
-                           + inHappy  * (sin(uTime * 6.0) * 0.025 - 0.010)
-                           + inClimax * (0.034 + sin(uTime * 6.5) * 0.012 - jumpEffort * 0.025)
-                           - inShock  * 0.035
-                           + inRage   * (-0.018 + sin(uTime * 9.5) * 0.026)
-                           + inSlump  * 0.036
-                           + inRecover* (0.014 + startMash * 0.020);
-
-            float bounceScale = mob ? 0.0007 : 0.0012;
-            float bodyBounceY = (inPlay   * (sin(uTime * 4.5) * 0.6 + jumpEffort * 1.6 + inClimax * sin(uTime * 7.5) * 0.6)
-                               + inHappy  * (0.5 + 0.5 * sin(uTime * 6.0)) * 2.2
-                               + inShock  * 1.2
-                               + inRage   * (sin(uTime * 9.5) * 1.1)
-                               - inSlump  * 1.5
-                               + startMash* 1.2) * bounceScale;
-
-            float bodyShiftX = (inPlay * (0.5 + inClimax * 0.6) - inShock * 0.8 + inRage * cos(uTime * 9.5) * 0.5) * bounceScale * 0.6;
-
-            float headExtraAng = inPlay   * (sin(uTime * 4.5) * 0.016 - jumpEffort * 0.028)
-                               + inHappy  * (sin(uTime * 6.0 + 0.6) * 0.030 - 0.015)
-                               - inShock  * 0.038
-                               + inRage   * (-0.022 + sin(uTime * 11.0) * 0.034)
-                               + inSlump  * 0.045
-                               + inRecover* (sin(uTime * 8.0) * 0.022 * (1.0 - smoothstep(11.0, 11.2, tC)));
-
-            // Pivots in stage UV coordinates:
-            vec2 hipPivot  = mob ? vec2(0.3550, 0.1160) : vec2(0.1945, 0.2700);
-            vec2 neckPivot = mob ? vec2(0.3580, 0.1500) : vec2(0.1960, 0.3430);
-
-            // Transform stage UV for Rigid Upper Body (Chest + Arms + NES Controller) and Head:
-            vec2 uvShifted = vUv - vec2(bodyShiftX, bodyBounceY);
-            vec2 uvTorso   = rotRigidAspect(uvShifted, hipPivot, torsoAng, aspectVec);
-            vec2 uvHead    = rotRigidAspect(uvTorso, neckPivot, headExtraAng, aspectVec);
-
-            // Anatomical Band Blending (100% rigid across the entire chest & NES controller!):
-            // - Hip split is BELOW the forearms & controller (0.264..0.276 on Desktop, 0.112..0.119 on Mobile)
-            // - Neck split is in the narrow dark collar ABOVE the controller (0.340..0.346 on Desktop, 0.148..0.153 on Mobile)
-            float mUpperBody = mob
-              ? smoothstep(0.112, 0.119, vUv.y)
-              : smoothstep(0.264, 0.276, vUv.y);
-            // Keep lower hanging controller wire anchored near the floor on Desktop
-            if (!mob && vUv.x > 0.233) {
-              mUpperBody *= smoothstep(0.275, 0.295, vUv.y);
-            }
-            float mHeadBand = mob
-              ? smoothstep(0.148, 0.153, uvTorso.y)
-              : smoothstep(0.340, 0.346, uvTorso.y);
-
-            vec2 gamerStageUv = mix(vUv, uvTorso, mUpperBody);
-            gamerStageUv      = mix(gamerStageUv, uvHead, mHeadBand * mUpperBody);
-
-            vec2 cutUv = (gamerStageUv - gBox.xz) / (gBox.yw - gBox.xz);
-            if (cutUv.x > 0.002 && cutUv.x < 0.998 && cutUv.y > 0.002 && cutUv.y < 0.998) {
-              vec4 gamerSample = texture2D(uTexGamerCut, cutUv);
-              vec3 gamerCol = gamerSample.rgb;
-
-              if (gamerSample.a > 0.02) {
-                // ============================================================
-                // A. EXPRESSIVE LED VISOR EYES (TRACKED IN gamerStageUv SPACE!)
-                //    - Play/Climax: Electric cyan eyes darting & squinting
-                //    - Happy (3.0s-5.4s): Joyful ^ ^ curved smile-eyes in golden-cyan!
-                //    - Shock (7.4s-7.85s): Wide O O hollow ring eyes!
-                //    - Rage (7.85s-9.25s): Fiery Red-Orange \ / angry V-brows shaking!
-                //    - Slump (9.25s-10.45s): Droopy - - sad eyes looking down!
-                // ============================================================
-                vec2 eyeLBase = mob ? vec2(0.3888, 0.1665) : vec2(0.2072, 0.3705);
-                vec2 eyeRBase = mob ? vec2(0.4092, 0.1682) : vec2(0.2186, 0.3725);
-                vec2 eyeRad   = mob ? vec2(0.0050, 0.0046) : vec2(0.0029, 0.0068);
-                vec2 visorCtr = mob ? vec2(0.3965, 0.1685) : vec2(0.2118, 0.3725);
-                vec2 visorRad = mob ? vec2(0.0195, 0.0125) : vec2(0.0118, 0.0175);
-
-                float inVisorGlass = 1.0 - smoothstep(0.72, 1.0, length((gamerStageUv - visorCtr) / visorRad));
-                if (inVisorGlass > 0.01) {
-                  // Erase static baked cyan eye dots inside the dark glass visor
-                  float staticEyeCyan = clamp((gamerCol.g + gamerCol.b) * 0.52 - gamerCol.r * 0.30 - 0.08, 0.0, 1.0);
-                  vec3 darkGlassBase = vec3(0.025, 0.055, 0.075);
-                  gamerCol = mix(gamerCol, darkGlassBase, clamp(staticEyeCyan * 1.65, 0.0, 1.0) * inVisorGlass);
-
-                  vec2 gazeScale = mob ? vec2(0.0040, 0.0026) : vec2(0.0022, 0.0045);
-                  float gazeX = inPlay   * (0.30 + 0.50 * sin(uTime * 5.2) + inClimax * 0.35 * cos(uTime * 14.0))
-                              + inHappy  * (0.35 * sin(uTime * 11.5))
-                              + inRage   * sin(uTime * 34.0) * 1.05
-                              - inSlump  * 0.20;
-                  float gazeY = inPlay   * (0.15 * sin(uTime * 7.5) + jumpEffort * 0.85)
-                              + inHappy  * (0.35 + 0.35 * abs(sin(uTime * 11.5)))
-                              + inShock  * 0.40
-                              + inRage   * (0.20 + 0.30 * cos(uTime * 26.0))
-                              - inSlump  * 0.90
-                              + startMash* 0.55;
-                  vec2 eyeOffset = vec2(gazeX, gazeY) * gazeScale;
-
-                  vec2 dL = (gamerStageUv - (eyeLBase + eyeOffset)) / eyeRad;
-                  vec2 dR = (gamerStageUv - (eyeRBase + eyeOffset)) / eyeRad;
-
-                  float blink = naturalBlink(uTime, 2.8, 0.2) * (1.0 - inShock) * (1.0 - inRage) * (1.0 - inHappy);
-                  float vScale = 1.0 - blink * 0.88 + jumpEffort * 0.20 + inShock * 0.32 + inHappy * 0.18 - inSlump * 0.35;
-                  dL.y /= max(0.12, vScale);
-                  dR.y /= max(0.12, vScale);
-
-                  float distL = length(dL);
-                  float distR = length(dR);
-
-                  float eyeShapeL = 1.0 - smoothstep(0.68, 1.02, distL);
-                  float eyeShapeR = 1.0 - smoothstep(0.68, 1.02, distR);
-
-                  // Happy ^ ^ Cheerful Arc Eyes: carve upward-curved smile cutout from bottom of each eye!
-                  if (inHappy > 0.02) {
-                    float happyArchL = 1.0 - smoothstep(0.55, 0.88, length(vec2(dL.x * 0.85, dL.y + 0.52)));
-                    float happyArchR = 1.0 - smoothstep(0.55, 0.88, length(vec2(dR.x * 0.85, dR.y + 0.52)));
-                    eyeShapeL *= (1.0 - happyArchL * inHappy * 0.95);
-                    eyeShapeR *= (1.0 - happyArchR * inHappy * 0.95);
-                  }
-
-                  // Shocked O O hollow ring eyes
-                  if (inShock > 0.05) {
-                    float hollowL = 1.0 - smoothstep(0.15, 0.42, distL);
-                    float hollowR = 1.0 - smoothstep(0.15, 0.42, distR);
-                    eyeShapeL *= (1.0 - hollowL * inShock * 0.85);
-                    eyeShapeR *= (1.0 - hollowR * inShock * 0.85);
-                  }
-
-                  // Focus / Angry V-Brow / Sad Slump upper eyelid cutoffs
-                  float browFocus = clamp(inClimax * 0.65 + jumpEffort * 0.35, 0.0, 1.0);
-                  if (browFocus > 0.01 || inRage > 0.01 || inSlump > 0.01) {
-                    float slantStrength = browFocus * 0.45 + inRage * 0.95;
-                    float topCutL = 0.75 - browFocus * 0.28 - inRage * 0.42 - inSlump * 0.55 - dL.x * slantStrength;
-                    float topCutR = 0.75 - browFocus * 0.28 - inRage * 0.42 - inSlump * 0.55 + dR.x * slantStrength;
-                    eyeShapeL *= smoothstep(topCutL + 0.15, topCutL - 0.15, dL.y);
-                    eyeShapeR *= smoothstep(topCutR + 0.15, topCutR - 0.15, dR.y);
-                  }
-
-                  float eyeTotal = clamp(eyeShapeL + eyeShapeR, 0.0, 1.0) * inVisorGlass;
-                  float eyeHalo  = clamp((1.0 - smoothstep(0.6, 1.65, distL)) + (1.0 - smoothstep(0.6, 1.65, distR)), 0.0, 1.0) * inVisorGlass;
-
-                  vec3 playEyeCol  = vec3(0.55, 0.98, 1.0) * (1.15 + jumpEffort * 0.35 + inClimax * 0.25);
-                  vec3 happyEyeCol = vec3(0.45, 1.0, 0.78) * (1.30 + 0.20 * sin(uTime * 20.0));
-                  vec3 rageEyeCol  = vec3(1.0, 0.16, 0.03) * (1.35 + 0.25 * sin(uTime * 30.0));
-                  vec3 slumpEyeCol = vec3(0.35, 0.72, 0.85) * 0.75;
-
-                  vec3 activeEyeCol = mix(playEyeCol, happyEyeCol, inHappy);
-                  activeEyeCol = mix(activeEyeCol, rageEyeCol, clamp(inShock + inRage, 0.0, 1.0));
-                  activeEyeCol = mix(activeEyeCol, slumpEyeCol, inSlump);
-
-                  gamerCol += activeEyeCol * eyeHalo * 0.28;
-                  gamerCol = mix(gamerCol, activeEyeCol, eyeTotal);
-                }
-
-                // B. Ear-Ring Telemetry (Golden-Emerald in Happy, Blazing Red in Rage, Warm Gold in Play)
-                vec2 earCenter = mob ? vec2(0.3350, 0.1685) : vec2(0.1805, 0.3725);
-                vec2 earRadii  = mob ? vec2(0.0135, 0.0098) : vec2(0.0080, 0.0155);
-                float inEar = 1.0 - smoothstep(0.65, 1.05, length((gamerStageUv - earCenter) / earRadii));
-                if (inEar > 0.01) {
-                  float earRingBright = clamp(gamerCol.r * 0.85 - gamerCol.b * 0.45, 0.0, 1.0) * inEar;
-                  if (inFrustrated > 0.01) {
-                    float ragePulse = 0.75 + 0.25 * sin(uTime * 28.0);
-                    gamerCol = mix(gamerCol, vec3(1.0, 0.12, 0.02) * 1.35, earRingBright * inFrustrated * ragePulse);
-                  } else if (inHappy > 0.01) {
-                    float happyPulse = 0.75 + 0.25 * sin(uTime * 22.0);
-                    gamerCol = mix(gamerCol, vec3(0.45, 1.0, 0.65) * 1.30, earRingBright * inHappy * happyPulse);
-                  } else {
-                    float playPulse = 0.15 + 0.15 * sin(uTime * (6.0 + inClimax * 12.0)) + jumpEffort * 0.35;
-                    gamerCol += vec3(1.0, 0.65, 0.15) * earRingBright * playPulse;
-                  }
-                }
-
-                // C. Live NES Controller Button-Mashing (Tracked to gamerStageUv!)
-                vec2 btnBCenter = mob ? vec2(0.4250, 0.1292) : vec2(0.2305, 0.3035);
-                vec2 btnACenter = mob ? vec2(0.4335, 0.1298) : vec2(0.2355, 0.3040);
-                vec2 btnRadii   = mob ? vec2(0.0046, 0.0026) : vec2(0.0026, 0.0036);
-                float inBtnB = 1.0 - smoothstep(0.5, 1.0, length((gamerStageUv - btnBCenter) / btnRadii));
-                float inBtnA = 1.0 - smoothstep(0.5, 1.0, length((gamerStageUv - btnACenter) / btnRadii));
-                if (inBtnB > 0.01 || inBtnA > 0.01) {
-                  float mashB = step(0.15, sin(uTime * (22.0 + inClimax * 14.0))) * inPlay + step(0.0, sin(uTime * 36.0)) * inRage;
-                  float mashA = clamp(jumpEffort * 1.4 + step(0.35, cos(uTime * (18.0 + inClimax * 14.0))) * inPlay + startMash * 1.5, 0.0, 1.0);
-                  gamerCol += vec3(1.0, 0.38, 0.18) * inBtnB * mashB * 0.75;
-                  gamerCol += vec3(1.0, 0.48, 0.22) * inBtnA * mashA * 0.85;
-                }
-
-                litRoomCol = mix(litRoomCol, gamerCol, gamerSample.a);
-              }
-            }
-          }
-
-          // ==================================================================
-          // HOLOGRAPHIC EMOTES ABOVE GAMER ROBOT'S HELMET:
-          // - Happy Victory (3.0s-5.4s): Golden-Cyan Cheer Sparkles / Stars!
-          // - Frustrated Rage (7.85s-9.25s): Fiery Red Overheat Sparks!
-          // ==================================================================
-          if (inHappy > 0.02 || inRage > 0.02) {
-            vec2 crownCenter = mob ? vec2(0.366, 0.204) : vec2(0.200, 0.428);
-            vec2 crownSpan   = mob ? vec2(0.036, 0.017) : vec2(0.022, 0.025);
-            vec2 cUv = (vUv - crownCenter) / crownSpan;
-            if (abs(cUv.x) < 1.1 && abs(cUv.y) < 1.1) {
-              float rise = fract(uTime * 3.2);
-              float p1x = cUv.x + 0.50 + sin(uTime * 12.0) * 0.06;
-              float p1y = cUv.y - (-0.35 + rise * 0.85);
-              float p2x = cUv.x - 0.02;
-              float p2y = cUv.y - (-0.15 + fract(rise + 0.35) * 0.90);
-              float p3x = cUv.x - 0.52 + cos(uTime * 12.0) * 0.06;
-              float p3y = cUv.y - (-0.35 + fract(rise + 0.70) * 0.85);
-
-              float s1 = step(abs(p1x), 0.09) * step(abs(p1y), 0.22) + step(abs(p1x), 0.20) * step(abs(p1y), 0.08);
-              float s2 = step(abs(p2x), 0.10) * step(abs(p2y), 0.25) + step(abs(p2x), 0.22) * step(abs(p2y), 0.09);
-              float s3 = step(abs(p3x), 0.09) * step(abs(p3y), 0.22) + step(abs(p3x), 0.20) * step(abs(p3y), 0.08);
-              float emoteMask = clamp(s1 + s2 + s3, 0.0, 1.0);
-              vec3 emoteCol = inHappy > 0.02 ? vec3(0.45, 1.0, 0.78) : vec3(1.0, 0.24, 0.05);
-              litRoomCol = mix(litRoomCol, emoteCol, emoteMask * max(inHappy, inRage) * 0.90);
-            }
-          }
-
-          // ==================================================================
-          // SYNCHRONIZED 60FPS 8-BIT CRT TELEVISION SCREEN GAMEPLAY,
-          // HAPPY VICTORY STAGE CLEAR & FRUSTRATED GAME OVER WIPEOUT!
-          // ==================================================================
-          vec4 tvBounds = mob
-            ? vec4(0.740, 0.852, 0.155, 0.233)
-            : vec4(0.318, 0.363, 0.292, 0.396);
-          float inTvScreen = smoothstep(tvBounds.x, tvBounds.x + 0.005, vUv.x) * (1.0 - smoothstep(tvBounds.y - 0.005, tvBounds.y, vUv.x))
-                           * smoothstep(tvBounds.z, tvBounds.z + 0.006, vUv.y) * (1.0 - smoothstep(tvBounds.w - 0.006, tvBounds.w, vUv.y));
-          if (inTvScreen > 0.01) {
-            float scanline = 0.93 + 0.07 * sin(vUv.y * 680.0 - uTime * 18.0);
-            float phosphorPulse = 1.05 + 0.04 * sin(uTime * 6.0);
-            vec2 tvUv = (vUv - vec2(tvBounds.x, tvBounds.z)) / vec2(tvBounds.y - tvBounds.x, tvBounds.w - tvBounds.z);
-
-            if (inPlay > 0.01) {
-              // Hero sprite jumps in exact sync with Gamer Robot!
-              float heroX = 0.26 + 0.08 * sin(uTime * 3.5);
-              float heroY = 0.28 + jumpEffort * 0.38;
-              float heroBox = step(abs(tvUv.x - heroX), 0.065) * step(abs(tvUv.y - heroY), 0.085);
-
-              // Scrolling red fireball / enemy obstacle
-              float enemySpeed = 1.15 + inClimax * 1.15;
-              float enemyX = 1.0 - fract(uTime * enemySpeed) * 1.15;
-              float enemyBox = step(abs(tvUv.x - enemyX), 0.055) * step(abs(tvUv.y - 0.27), 0.065);
-
-              litRoomCol = mix(litRoomCol, vec3(1.0, 0.88, 0.28), heroBox * inTvScreen * 0.78);
-              litRoomCol = mix(litRoomCol, vec3(1.0, 0.22, 0.12), enemyBox * inTvScreen * 0.75);
-            } else if (inHappy > 0.01) {
-              // HAPPY VICTORY SCREEN: Hero hops for joy under golden STAGE CLEAR / 1UP banner!
-              float winHopY = 0.30 + abs(sin(uTime * 11.5)) * 0.26;
-              float heroBox = step(abs(tvUv.x - 0.48), 0.075) * step(abs(tvUv.y - winHopY), 0.095);
-              float clearBar = step(abs(tvUv.x - 0.50), 0.35) * step(abs(tvUv.y - 0.72), 0.075) * step(-0.2, sin(uTime * 18.0));
-              litRoomCol = mix(litRoomCol, vec3(0.18, 0.92, 0.58), inTvScreen * 0.26);
-              litRoomCol = mix(litRoomCol, vec3(1.0, 0.94, 0.35), (heroBox + clearBar) * inTvScreen * 0.85);
-            } else if (inShock > 0.01 || inRage > 0.01 || inSlump > 0.01) {
-              // Impact flash -> Red 8-bit GAME OVER wipeout screen while Gamer Robot rages!
-              float hitFlash = inShock * (0.5 + 0.5 * sin(uTime * 45.0));
-              float fallY = clamp(0.45 - (tC - 7.4) * 0.55, -0.2, 0.5);
-              float deadSprite = step(abs(tvUv.x - 0.30), 0.07) * step(abs(tvUv.y - fallY), 0.08) * step(0.0, fallY);
-              float gameOverBar = step(abs(tvUv.x - 0.50), 0.34) * step(abs(tvUv.y - 0.54), 0.075) * step(0.3, sin(uTime * 16.0));
-              litRoomCol = mix(litRoomCol, vec3(0.85, 0.10, 0.06), inTvScreen * (0.32 + hitFlash * 0.45));
-              litRoomCol = mix(litRoomCol, vec3(1.0, 0.92, 0.80), (deadSprite + gameOverBar) * inTvScreen * 0.85);
-            } else {
-              // READY / START flash as Gamer Robot mashes Start to jump back in!
-              float readyBar = step(abs(tvUv.x - 0.50), 0.28) * step(abs(tvUv.y - 0.52), 0.065) * startMash;
-              litRoomCol = mix(litRoomCol, vec3(0.25, 1.0, 0.65), readyBar * inTvScreen * 0.75);
-            }
-
-            litRoomCol *= mix(1.0, scanline * phosphorPulse, inTvScreen);
-          }
-
-          // ==================================================================
-          // 2 ROBOTS ON THE RIGHT-HAND SIDE SITTING & PLAYING A CARD GAME!
-          // 2-Layer Spine-Style Articulated Arm + Held-Card Rig:
-          // - Layer 1 (uTexCardBots): Seated robot bodies, inner hand + card fan, and center deck
-          // - Layer 2 (uTexCardArms): Articulated 2-Bone Foreground Arms + Robotic Hands
-          // Each robot leans forward, reaches its empty hand down to the center deck,
-          // grabs a card between its metallic fingers, lifts it up to its card fan,
-          // then reaches its hand down to place a card onto the center pile and
-          // pulls its empty hand back up!
-          // ==================================================================
-          vec4 cardBox = mob
-            ? vec4(0.565, 0.945, 0.025, 0.135)
-            : vec4(0.655, 0.875, 0.145, 0.365);
-
-          if (uIsComingSoon < 0.5 && vUv.x > cardBox.x && vUv.x < cardBox.y && vUv.y > cardBox.z && vUv.y < cardBox.w) {
-            vec2 cbUv = (vUv - cardBox.xz) / (cardBox.yw - cardBox.xz);
-            vec2 cbAspect = vec2(512.0 / 288.0, 1.0);
-            float du = 22.0 / 512.0; // 0.04296875 inward seating offset
-
-            // Soft contact shadows on the glossy obsidian floor under Left Robot, Deck, and Right Robot
-            float shL = 1.0 - smoothstep(0.0, 0.22, length((cbUv - vec2(0.24, 0.12)) / vec2(0.18, 0.08)));
-            float shM = 1.0 - smoothstep(0.0, 0.16, length((cbUv - vec2(0.50, 0.10)) / vec2(0.13, 0.06)));
-            float shR = 1.0 - smoothstep(0.0, 0.22, length((cbUv - vec2(0.76, 0.12)) / vec2(0.18, 0.08)));
-            litRoomCol *= (1.0 - clamp(shL + shM * 0.7 + shR, 0.0, 1.0) * 0.42);
-
-            float tCard = mod(uTime + 1.2, 12.0);
-
-            // Turn 1 (Left Robot: 0.0s - 6.0s):
-            // 0.15s -> 0.85s: Empty hand reaches down to touch top of draw deck
-            // 0.85s -> 1.65s: Hand grips card from deck and lifts it into the card fan
-            // 1.65s -> 2.45s: Studies cards in fan
-            // 2.45s -> 3.20s: Hand holding card reaches down to the floor pile
-            // 3.20s -> 3.95s: Releases card onto the floor pile & empty hand returns to fan
-            float lReachDeck = smoothstep(0.15, 0.82, tCard) * (1.0 - smoothstep(0.88, 1.65, tCard));
-            float lHoldDraw  = smoothstep(0.78, 0.86, tCard) * (1.0 - smoothstep(1.52, 1.64, tCard));
-            float lStudy     = smoothstep(1.55, 1.85, tCard) * (1.0 - smoothstep(2.35, 2.55, tCard));
-            float lPutReach  = smoothstep(2.45, 3.16, tCard) * (1.0 - smoothstep(3.24, 3.95, tCard));
-            float lHoldPut   = smoothstep(2.48, 2.58, tCard) * (1.0 - smoothstep(3.16, 3.24, tCard));
-            float lHoldCard  = clamp(lHoldDraw + lHoldPut, 0.0, 1.0);
-            float lPileCard  = smoothstep(3.16, 3.24, tCard) * (1.0 - smoothstep(5.70, 5.95, tCard));
-            float cWinL      = smoothstep(3.85, 4.15, tCard) * (1.0 - smoothstep(5.65, 5.95, tCard));
-
-            // Turn 2 (Right Robot: 6.0s - 12.0s):
-            float rReachDeck = smoothstep(6.15, 6.82, tCard) * (1.0 - smoothstep(6.88, 7.65, tCard));
-            float rHoldDraw  = smoothstep(6.78, 6.86, tCard) * (1.0 - smoothstep(7.52, 7.64, tCard));
-            float rStudy     = smoothstep(7.55, 7.85, tCard) * (1.0 - smoothstep(8.35, 8.55, tCard));
-            float rPutReach  = smoothstep(8.45, 9.16, tCard) * (1.0 - smoothstep(9.24, 9.95, tCard));
-            float rHoldPut   = smoothstep(8.48, 8.58, tCard) * (1.0 - smoothstep(9.16, 9.24, tCard));
-            float rHoldCard  = clamp(rHoldDraw + rHoldPut, 0.0, 1.0);
-            float rPileCard  = smoothstep(9.16, 9.24, tCard) * (1.0 - smoothstep(11.70, 11.95, tCard));
-            float cWinR      = smoothstep(9.85, 10.15, tCard) * (1.0 - smoothstep(11.65, 11.95, tCard));
-
-            float cStudy = clamp(lStudy + rStudy, 0.0, 1.0);
-
-            // ================================================================
-            // LAYER 1: SEATED ROBOT BODIES, INNER HAND + CARD FAN & CENTER DECK
-            // ================================================================
-            float hipLx = 0.160 + du;
-            float hipRx = 0.850 - du;
-            float wTorso = clamp((cbUv.y - 0.24) / 0.12, 0.0, 1.0);
-
-            float leanL = lReachDeck * 0.23 + lPutReach * 0.26
-                        + lStudy * (0.03 + 0.015 * sin(uTime * 3.0))
-                        + cWinL  * (sin(uTime * 5.8) * 0.035 - 0.01)
-                        + cWinR  * (-0.025 + sin(uTime * 9.0) * 0.025);
-
-            float leanR = rReachDeck * 0.23 + rPutReach * 0.26
-                        + rStudy * (0.03 + 0.015 * cos(uTime * 3.0))
-                        + cWinR  * (sin(uTime * 5.8) * 0.035 - 0.01)
-                        + cWinL  * (-0.025 + sin(uTime * 9.0) * 0.025);
-
-            vec2 sampleCbUv = cbUv;
-            bool validBody = true;
-
-            if (cbUv.y > 0.24) {
-              if (cbUv.x < 0.50) {
-                float aL = leanL * wTorso;
-                float shiftXL = 0.075 * leanL * wTorso;
-                float bounceYL = (cWinL * (0.5 + 0.5 * sin(uTime * 5.8)) * 0.012 - cWinR * 0.005) * wTorso;
-                vec2 dL = vec2(cbUv.x - shiftXL - hipLx, cbUv.y - bounceYL - 0.25);
-                float cL = cos(aL);
-                float sL = sin(aL);
-                sampleCbUv = vec2(hipLx + dL.x * cL - dL.y * sL, 0.25 + dL.x * sL + dL.y * cL);
-                if (sampleCbUv.x > 0.445) validBody = false;
-              } else {
-                float aR = -leanR * wTorso;
-                float shiftXR = -0.075 * leanR * wTorso;
-                float bounceYR = (cWinR * (0.5 + 0.5 * sin(uTime * 5.8)) * 0.012 - cWinL * 0.005) * wTorso;
-                vec2 dR = vec2(cbUv.x - shiftXR - hipRx, cbUv.y - bounceYR - 0.25);
-                float cR = cos(aR);
-                float sR = sin(aR);
-                sampleCbUv = vec2(hipRx + dR.x * cR - dR.y * sR, 0.25 + dR.x * sR + dR.y * cR);
-                if (sampleCbUv.x < 0.575) validBody = false;
-              }
-            }
-
-            if (validBody && sampleCbUv.x > 0.002 && sampleCbUv.x < 0.998 && sampleCbUv.y > 0.002 && sampleCbUv.y < 0.998) {
-              vec4 cbSample = texture2D(uTexCardBots, sampleCbUv);
-              vec3 cbCol = cbSample.rgb;
-
-              if (cbSample.a > 0.02) {
-                bool isLeftBot = sampleCbUv.x < 0.50;
-                float myHappy = isLeftBot ? cWinL : cWinR;
-                float myRage  = isLeftBot ? cWinR : cWinL;
-                float myReach = isLeftBot ? (lReachDeck + lPutReach) : (rReachDeck + rPutReach);
-                float dirToCenter = isLeftBot ? 1.0 : -1.0;
-
-                vec2 vCtr  = isLeftBot ? vec2(0.240 + du, 0.695) : vec2(0.760 - du, 0.695);
-                vec2 vRad  = vec2(0.066, 0.112);
-                vec2 e1Ctr = isLeftBot ? vec2(0.222 + du, 0.678) : vec2(0.735 - du, 0.686);
-                vec2 e2Ctr = isLeftBot ? vec2(0.278 + du, 0.686) : vec2(0.790 - du, 0.678);
-                vec2 e1Rad = isLeftBot ? vec2(0.015, 0.034) : vec2(0.013, 0.032);
-                vec2 e2Rad = isLeftBot ? vec2(0.013, 0.032) : vec2(0.015, 0.034);
-
-                float inVGlass = 1.0 - smoothstep(0.70, 1.0, length((sampleCbUv - vCtr) / vRad));
-                if (inVGlass > 0.01) {
-                  float staticCyan = clamp((cbCol.g + cbCol.b) * 0.52 - cbCol.r * 0.30 - 0.08, 0.0, 1.0);
-                  cbCol = mix(cbCol, vec3(0.025, 0.055, 0.075), clamp(staticCyan * 1.65, 0.0, 1.0) * inVGlass);
-
-                  float lookCycle = sin(uTime * 2.2 + (isLeftBot ? 0.0 : 1.6));
-                  float gx = myReach * (dirToCenter * 0.45)
-                           + cStudy  * (dirToCenter * 0.30 * smoothstep(-0.2, 0.6, lookCycle))
-                           + myHappy * (0.22 * sin(uTime * 5.8))
-                           + myRage  * (sin(uTime * 12.0) * 0.45);
-                  float gy = -myReach * 0.65
-                           + cStudy  * (-0.40 * smoothstep(0.2, -0.5, lookCycle) + 0.18 * smoothstep(-0.1, 0.6, lookCycle))
-                           + myHappy * (0.28 + 0.20 * (0.5 + 0.5 * sin(uTime * 5.8)))
-                           - myRage  * 0.15;
-                  vec2 gOff = vec2(gx * 0.012, gy * 0.024);
-
-                  vec2 d1 = (sampleCbUv - (e1Ctr + gOff)) / e1Rad;
-                  vec2 d2 = (sampleCbUv - (e2Ctr + gOff)) / e2Rad;
-
-                  float cBlink = naturalBlink(uTime, isLeftBot ? 3.4 : 3.9, isLeftBot ? 0.5 : 1.9) * (1.0 - myHappy) * (1.0 - myRage);
-                  float vSc = 1.0 - cBlink * 0.88 + myHappy * 0.14;
-                  d1.y /= max(0.12, vSc);
-                  d2.y /= max(0.12, vSc);
-
-                  float sh1 = 1.0 - smoothstep(0.68, 1.02, length(d1));
-                  float sh2 = 1.0 - smoothstep(0.68, 1.02, length(d2));
-
-                  if (myHappy > 0.02) {
-                    float hArch1 = 1.0 - smoothstep(0.55, 0.88, length(vec2(d1.x * 0.85, d1.y + 0.52)));
-                    float hArch2 = 1.0 - smoothstep(0.55, 0.88, length(vec2(d2.x * 0.85, d2.y + 0.52)));
-                    sh1 *= (1.0 - hArch1 * myHappy * 0.95);
-                    sh2 *= (1.0 - hArch2 * myHappy * 0.95);
-                  }
-
-                  float bluffSquint = cStudy * smoothstep(0.2, 0.8, lookCycle) * 0.35;
-                  if (bluffSquint > 0.01 || myRage > 0.01) {
-                    float sl = bluffSquint * 0.35 + myRage * 0.90;
-                    float cut1 = 0.72 - bluffSquint * 0.32 - myRage * 0.40 - d1.x * sl;
-                    float cut2 = 0.72 - bluffSquint * 0.32 - myRage * 0.40 + d2.x * sl;
-                    sh1 *= smoothstep(cut1 + 0.15, cut1 - 0.15, d1.y);
-                    sh2 *= smoothstep(cut2 + 0.15, cut2 - 0.15, d2.y);
-                  }
-
-                  float eTot = clamp(sh1 + sh2, 0.0, 1.0) * inVGlass;
-                  float eHal = clamp((1.0 - smoothstep(0.6, 1.65, length(d1))) + (1.0 - smoothstep(0.6, 1.65, length(d2))), 0.0, 1.0) * inVGlass;
-
-                  vec3 eCol = mix(vec3(0.55, 0.98, 1.0) * 1.15, vec3(0.45, 1.0, 0.78) * 1.30, myHappy);
-                  eCol = mix(eCol, vec3(1.0, 0.18, 0.04) * 1.35, myRage);
-
-                  cbCol += eCol * eHal * 0.28;
-                  cbCol = mix(cbCol, eCol, eTot);
-                }
-
-                litRoomCol = mix(litRoomCol, cbCol, cbSample.a);
-              }
-            }
-
-            // Newly placed card resting on the floor pile after the robot puts it down!
-            float pileCardVis = max(lPileCard, rPileCard);
-            if (pileCardVis > 0.01) {
-              vec2 pCtr = lPileCard > 0.01 ? vec2(0.492, 0.105) : vec2(0.518, 0.105);
-              float pAng = lPileCard > 0.01 ? -0.14 : 0.16;
-              vec2 dP = (cbUv - pCtr) * cbAspect;
-              float cP = cos(pAng);
-              float sP = sin(pAng);
-              vec2 rP = vec2(dP.x * cP - dP.y * sP, (dP.x * sP + dP.y * cP) / 0.34);
-              vec2 lcP = rP / vec2(0.032, 0.042);
-              if (abs(lcP.x) < 1.05 && abs(lcP.y) < 1.05) {
-                float isBdr = step(0.82, max(abs(lcP.x), abs(lcP.y)));
-                float isCore = step(max(abs(lcP.x), abs(lcP.y)), 0.45);
-                vec3 pCol = mix(vec3(0.78, 0.66, 0.32), vec3(0.32, 0.48, 0.38), isCore);
-                pCol = mix(pCol, vec3(0.98, 0.86, 0.48), isBdr);
-                litRoomCol = mix(litRoomCol, pCol, pileCardVis * 0.95);
-              }
-            }
-
-            // ================================================================
-            // LAYER 2: 2-BONE ARTICULATED FOREGROUND ARMS + HANDS + HELD CARD
-            // (Bone 1: Shoulder -> Elbow with circular cap; Bone 2: Elbow -> Hand)
-            // ================================================================
-            // Evaluate Left Arm (if cbUv.x < 0.60) and Right Arm (if cbUv.x > 0.40)
-            for (int armIdx = 0; armIdx < 2; armIdx++) {
-              bool isL = (armIdx == 0);
-              if (isL && cbUv.x > 0.60) continue;
-              if (!isL && cbUv.x < 0.40) continue;
-
-              vec2 S0 = isL ? vec2(0.105 + du, 0.470) : vec2(0.910 - du, 0.470);
-              vec2 E0 = isL ? vec2(0.112 + du, 0.362) : vec2(0.903 - du, 0.362);
-              vec2 hip = isL ? vec2(hipLx, 0.25) : vec2(hipRx, 0.25);
-
-              float reachD = isL ? lReachDeck : rReachDeck;
-              float reachP = isL ? lPutReach  : rPutReach;
-              float reachTot = reachD + reachP * 1.08;
-              float studyOsc = (isL ? lStudy : rStudy) * sin(uTime * 4.5) * 0.04;
-              float winOsc   = (isL ? cWinL : cWinR) * sin(uTime * 11.6) * 0.12;
-
-              float aBody = isL ? leanL : -leanR;
-              float shShiftX = (isL ? 1.0 : -1.0) * (0.075 * (isL ? leanL : leanR) + 0.026 * reachTot);
-              float shShiftY = -0.020 * reachTot;
-
-              float shRotMag = reachD * 0.85 + reachP * 0.92 + studyOsc + winOsc;
-              float elRotMag = reachD * 0.56 + reachP * 0.68 + studyOsc * 1.2 - winOsc * 0.8;
-              float uRot = isL ? -shRotMag : shRotMag;
-              float fRot = isL ?  elRotMag : -elRotMag;
-              float fExt = 1.0 + reachD * 0.26 + reachP * 0.32;
-              float hasCard = isL ? lHoldCard : rHoldCard;
-
-              vec2 sD = S0 - hip;
-              float cB = cos(aBody);
-              float sB = sin(aBody);
-              vec2 S_curr = vec2(
-                hip.x + sD.x * cB + sD.y * sB + shShiftX,
-                hip.y - sD.x * sB + sD.y * cB + shShiftY
-              );
-
-              vec2 vSE = E0 - S0;
-              float cU = cos(uRot);
-              float sU = sin(uRot);
-              vec2 E_curr = vec2(
-                S_curr.x + vSE.x * cU + vSE.y * sU,
-                S_curr.y - vSE.x * sU + vSE.y * cU
-              );
-
-              // Bone 1: Upper Arm
-              vec2 uS = cbUv - S_curr;
-              vec2 uRest = vec2(
-                S0.x + uS.x * cU - uS.y * sU,
-                S0.y + uS.x * sU + uS.y * cU
-              );
-              float dElU = length(vec2(uRest.x - E0.x, (uRest.y - E0.y) * (288.0 / 512.0)));
-              float capU = clamp((0.026 - dElU) / 0.006, 0.0, 1.0);
-              float wUpper = 0.0;
-              if (isL) {
-                float inBoxU = step(0.065 + du, uRest.x) * step(uRest.x, 0.132 + du) * step(E0.y, uRest.y) * step(uRest.y, 0.510);
-                wUpper = max(inBoxU * clamp((0.130 + du - uRest.x) / 0.012, 0.0, 1.0), capU * step(uRest.x, 0.132 + du));
-              } else {
-                float inBoxU = step(0.883 - du, uRest.x) * step(uRest.x, 0.950 - du) * step(E0.y, uRest.y) * step(uRest.y, 0.510);
-                wUpper = max(inBoxU * clamp((uRest.x - (0.885 - du)) / 0.012, 0.0, 1.0), capU * step(0.883 - du, uRest.x));
-              }
-
-              if (wUpper > 0.01 && uRest.x > 0.002 && uRest.x < 0.998 && uRest.y > 0.002 && uRest.y < 0.998) {
-                vec4 uSamp = texture2D(uTexCardArms, uRest);
-                litRoomCol = mix(litRoomCol, uSamp.rgb, uSamp.a * wUpper);
-              }
-
-              // Bone 2: Forearm + Hand + Held Card Gripped in the Robot's Fingers!
-              vec2 fS = cbUv - E_curr;
-              float cF = cos(fRot);
-              float sF = sin(fRot);
-              vec2 fRest = vec2(
-                E0.x + (fS.x * cF - fS.y * sF) / fExt,
-                E0.y + (fS.x * sF + fS.y * cF)
-              );
-              float dElF = length(vec2(fRest.x - E0.x, (fRest.y - E0.y) * (288.0 / 512.0)));
-              float capF = clamp((0.026 - dElF) / 0.006, 0.0, 1.0) * step(fRest.y, 0.415);
-              float wFore = 0.0;
-              if (isL) {
-                float inBoxF = step(E0.x, fRest.x) * step(fRest.x, 0.340 + du) * step(0.310, fRest.y) * step(fRest.y, 0.422);
-                wFore = max(inBoxF * clamp((0.418 - fRest.y) / 0.012, 0.0, 1.0), capF);
-              } else {
-                float inBoxF = step(0.675 - du, fRest.x) * step(fRest.x, E0.x) * step(0.310, fRest.y) * step(fRest.y, 0.422);
-                wFore = max(inBoxF * clamp((0.418 - fRest.y) / 0.012, 0.0, 1.0), capF);
-              }
-
-              // Held card tucked right inside the robot's metallic fingers!
-              if (hasCard > 0.01) {
-                vec2 cPivot = isL ? vec2(0.285 + du, 0.375) : vec2(0.730 - du, 0.375);
-                float cAng  = isL ? -0.20 : 0.20;
-                vec2 cD = fRest - cPivot;
-                float cc = cos(cAng);
-                float ss = sin(cAng);
-                vec2 qC = vec2(cD.x * cc - cD.y * ss, cD.x * ss + cD.y * cc);
-                if (abs(qC.x) < 0.036 && abs(qC.y) < 0.050) {
-                  float isBdr  = max(step(0.029, abs(qC.x)), step(0.042, abs(qC.y)));
-                  float isCore = step(abs(qC.x), 0.016) * step(abs(qC.y), 0.024);
-                  vec3 hCardCol = mix(vec3(0.78, 0.66, 0.32), vec3(0.32, 0.48, 0.38), isCore);
-                  hCardCol = mix(hCardCol, vec3(0.98, 0.86, 0.48), isBdr);
-                  litRoomCol = mix(litRoomCol, hCardCol, hasCard);
-                }
-              }
-
-              if (wFore > 0.01 && fRest.x > 0.002 && fRest.x < 0.998 && fRest.y > 0.002 && fRest.y < 0.998) {
-                vec4 fSamp = texture2D(uTexCardArms, fRest);
-                litRoomCol = mix(litRoomCol, fSamp.rgb, fSamp.a * wFore);
-              }
-            }
-          }
-          // Vibrant Multi-Band Retro Setting Sun (strictly on the sun disc — ZERO room haze!)
-          vec2 sunCenter = mob ? vec2(0.03, 3.35) : vec2(0.0, 0.52);
-          float distSun = length(worldXY - sunCenter);
-          float sunMinY = mob ? 1.85 : -0.65;
-          if (uIsComingSoon < 0.5 && distSun < 1.88 && worldXY.y > sunMinY) {
-            float sunLuma = dot(litRoomCol, vec3(0.299, 0.587, 0.114));
-            if (sunLuma > 0.18) {
-              litRoomCol = mix(vec3(sunLuma), litRoomCol, 1.24) * (1.0 + (0.04 + 0.03 * sin(uTime * 1.25)) * uRoomLight);
-            }
-          }
-
-          // Crisp deep-black contrast so the obsidian room never looks hazy or washed out
-          litRoomCol = clamp(pow(max(litRoomCol, vec3(0.0)), vec3(1.05)) * 1.04, 0.0, 1.0);
-
-          // Pitch-Black Room During Particle Swoop -> Golden Light Wave Cascades From Tree to 100% Clear Room!
-          vec3 darkSilhouette = vec3(0.0);
-
-          vec2 treeOrigin = mob ? vec2(0.03, 3.15) : vec2(0.0, 0.05);
-          vec2 distScale  = mob ? vec2(0.22, 0.14) : vec2(0.20, 0.26);
-          float distFromTree = length((worldXY - treeOrigin) * distScale);
-          float localRoomLight = smoothstep(0.0, 1.0, (uRoomLight * 2.15) - distFromTree * 0.42);
-
-          // Transient wave crest that disappears completely (0.0) once uRoomLight reaches 1.0
-          float waveActive = 1.0 - smoothstep(0.82, 0.98, uRoomLight);
-          float lightWaveCrest = smoothstep(0.05, 0.45, localRoomLight) * (1.0 - smoothstep(0.55, 0.95, localRoomLight)) * waveActive;
-          vec3 bgCol = mix(darkSilhouette, litRoomCol, localRoomLight)
-                     + litRoomCol * vec3(0.45, 0.30, 0.10) * lightWaveCrest * 0.30;
-
-          float inCenterColumn = mob
-            ? (smoothstep(-2.45, -1.85, worldXY.x) * (1.0 - smoothstep(1.85, 2.45, worldXY.x)))
-            : (smoothstep(-2.4, -1.7, worldXY.x) * (1.0 - smoothstep(1.7, 2.4, worldXY.x)));
-          vec2 treeUv = vUv;
-          vec3 bgAtTreeUv = texture2D(uTexBg, treeUv).rgb;
-
-          float treeMinUvY = mob ? 0.655 : 0.28;
           float distMouse = distance(worldXY, uMouse3D.xy);
           float cursorGlow = 0.0;
-          if (distMouse < 0.34 && vUv.y > treeMinUvY && inCenterColumn > 0.1) {
-            float push = (0.34 - distMouse) / 0.34;
-            cursorGlow = push * push * 0.28;
+          if (distMouse < 0.42) {
+            float push = (0.42 - distMouse) / 0.42;
+            cursorGlow = push * push * 0.32;
           }
 
-          float sapPhase = worldXY.y * 2.6 - abs(worldXY.x) * 1.1 - uTime * 1.35;
-          float sapWave = pow(0.5 + 0.5 * sin(sapPhase), 3.6);
+          litRoomCol += fullTexCol * sapWave * 0.16 * isTreeOrSun * uTreeReveal;
+          litRoomCol += vec3(1.0, 0.78, 0.30) * cursorGlow * inTreeZone * uTreeReveal;
 
-          float organicNoise = sin(worldXY.x * 5.0 + uTime * 2.0) * cos(worldXY.y * 5.0 - uTime * 1.8) * 0.06;
-          float heightFactor = mob
-            ? clamp((vUv.y - 0.66) / 0.26, 0.0, 1.0)
-            : clamp((vUv.y - 0.30) / 0.60, 0.0, 1.0);
+          // Subtle living neon pulse on Nerdy Misfits Green Smiley & Goblin Tech Lens (left) + Deaf Hammer Blue DH (right)
+          float greenNeon = clamp(fullTexCol.g - max(fullTexCol.r, fullTexCol.b) * 0.75, 0.0, 1.0);
+          float blueNeon  = clamp(fullTexCol.b - max(fullTexCol.r, fullTexCol.g) * 0.75, 0.0, 1.0);
+          float neonBreathL = 0.10 + 0.10 * sin(uTime * 2.8);
+          float neonBreathR = 0.10 + 0.10 * sin(uTime * 2.6 + 1.4);
+          litRoomCol += vec3(0.25, 1.0, 0.35) * greenNeon * neonBreathL * uRoomLight;
+          litRoomCol += vec3(0.20, 0.65, 1.0) * blueNeon  * neonBreathR * uRoomLight;
 
-          vec3 finalCol = bgCol;
+          // Expanding Golden Illumination Wave during 3D Particle Swoop-In
+          vec2 treeOrigin = mob ? vec2(0.0, 0.85) : vec2(0.0, 0.35);
+          vec2 distScale  = mob ? vec2(0.22, 0.16) : vec2(0.20, 0.26);
+          float distFromTree = length((worldXY - treeOrigin) * distScale);
+          float localRoomLight = smoothstep(0.0, 1.0, (uRoomLight * 2.15) - distFromTree * 0.42);
+          float waveActive = 1.0 - smoothstep(0.82, 0.98, uRoomLight);
+          float lightWaveCrest = smoothstep(0.05, 0.45, localRoomLight) * (1.0 - smoothstep(0.55, 0.95, localRoomLight)) * waveActive;
 
-          if (uIsComingSoon < 0.5 && uTreeReveal > 0.005) {
-            vec3 fullCol = texture2D(uTexFull, treeUv).rgb;
-            float treeDiff = length(fullCol - bgAtTreeUv);
-            float inForegroundTv = mob
-              ? 0.0
-              : (smoothstep(0.275, 0.285, vUv.x) * (1.0 - smoothstep(0.412, 0.422, vUv.x)) * (1.0 - smoothstep(0.415, 0.428, vUv.y)));
-            float isTreePixel = smoothstep(0.03, 0.15, treeDiff) * smoothstep(treeMinUvY, treeMinUvY + 0.035, vUv.y) * inCenterColumn * (1.0 - inForegroundTv);
-            vec3 livingTreeCol = fullCol * (1.0 + sapWave * 0.20 * isTreePixel)
-                               + vec3(0.98, 0.74, 0.25) * cursorGlow * isTreePixel;
-            float revealMask = smoothstep(0.0, 1.0, (uTreeReveal * 1.35) - heightFactor * 0.32 + organicNoise);
-            finalCol = mix(finalCol, livingTreeCol, isTreePixel * revealMask);
-          }
+          vec3 finalCol = litRoomCol * localRoomLight
+                        + litRoomCol * vec3(0.50, 0.34, 0.12) * lightWaveCrest * 0.35;
 
-          gl_FragColor = vec4(finalCol, 1.0);
+          gl_FragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);
         }
       `
     });
@@ -2125,15 +2330,19 @@
       let [tx, ty, tz, r, g, b, isVox] = pt;
       const seed = Math.random();
 
-      if (isVox < 0.5 && (i % 2 === 0) && csIdx < csTextPts.length) {
-        const cp = csTextPts[csIdx++];
-        tx = cp.wx;
-        ty = cp.wy;
-        tz = cp.wz;
-        r = cp.cr * 255;
-        g = cp.cg * 255;
-        b = cp.cb * 255;
-        isVox = 2.0; // 2.0 = COMING SOON 3D liquid text particle!
+      // Keep ALL 420 outer-orbiting 3D cubes (isVox==1.0) PLUS ~680 inner & lower-branch 3D cubes (isVox==0.75)
+      // (~1,100 total live 3D rotating golden glass cubes filling the upper, middle, AND lowest branches!)
+      if (isVox < 0.5 && ty > -1.25 && (i % 16 === 0)) {
+        isVox = 0.75;
+        tz = ((i % 13) - 6.0) * 0.055;
+      }
+
+      // Rich 24K amber-bronze-gold base palette (so each 3D cube has contrast even over the bright yellow sun!)
+      if (isVox > 0.5) {
+        const goldMix = (i % 17) / 16.0;
+        r = Math.round(235 + goldMix * 20);
+        g = Math.round(148 + goldMix * 52);
+        b = Math.round(38 + goldMix * 42);
       }
 
       posStart[i * 3] = tx;
@@ -2221,37 +2430,60 @@
         vec3 basePos = mix(position, aTarget, m);
         vec3 baseCol = mix(aColorStart, aColorTarget, m);
 
-        bool isTextVox  = aIsVoxel > 1.5;
-        bool isOrbitVox = (aIsVoxel > 0.5) && !isTextVox;
+        bool isTextVox      = aIsVoxel > 1.5;
+        bool isFullOrbitVox = (aIsVoxel > 0.88) && !isTextVox;
+        bool isBranchLeafVox= (aIsVoxel > 0.5) && (aIsVoxel <= 0.88);
+        bool isOrbitVox     = isFullOrbitVox || isBranchLeafVox;
 
-        // Smooth 3D liquid-vortex orbital rotation of the floating particles around the Living Tree!
+        // 1. Full 360° 3D orbital swirl for outer halo voxel cubes (isFullOrbitVox)
+        // 2. Organic 3D breeze sway + local orbital hover along the bare golden branches for inner canopy voxel leaves (isBranchLeafVox)
         float orbitDepthAlpha = 1.0;
-        if (isOrbitVox) {
+        if (isFullOrbitVox) {
           float rawR = length(basePos.xz);
-          float minCanopyR = mix(0.52, 1.40, smoothstep(-0.65, 0.45, basePos.y)) * (0.68 + 0.62 * fract(aPhase * 19.3));
-          // Subtle radial breathing wave like a living liquid current
-          float radialWave = 1.0 + 0.06 * sin(uTime * 1.6 + aPhase * 18.85 + basePos.y * 2.2);
+          float minCanopyR = mix(0.68, 1.70, smoothstep(-0.65, 0.45, basePos.y)) * (0.74 + 0.58 * fract(aPhase * 19.3));
+          float radialWave = 1.0 + 0.07 * sin(uTime * 1.6 + aPhase * 18.85 + basePos.y * 2.2);
           float orbitR = max(rawR, minCanopyR) * radialWave;
           float startTheta = atan(basePos.z, basePos.x) + aPhase * 6.2831853;
-          float orbitSpeed = 0.38 + fract(aPhase * 7.13) * 0.26;
+          float orbitSpeed = 0.34 + fract(aPhase * 7.13) * 0.24;
           float theta = startTheta + uTime * orbitSpeed;
 
           basePos.x = cos(theta) * orbitR;
           basePos.z = sin(theta) * (orbitR * 0.58);
-          basePos.y += sin(uTime * 1.35 + aPhase * 12.566 + theta * 1.5) * 0.085;
-
-          // Subtle 3D depth shading as particles pass behind the tree canopy (z < 0) vs in front (z > 0)
-          orbitDepthAlpha = mix(0.38, 1.0, smoothstep(-0.55, 0.25, sin(theta)));
+          basePos.y += sin(uTime * 1.35 + aPhase * 12.566 + theta * 1.5) * 0.09;
+          orbitDepthAlpha = mix(0.45, 1.0, smoothstep(-0.55, 0.25, sin(theta)));
+        } else if (isBranchLeafVox) {
+          float localAng = uTime * (0.75 + fract(aPhase * 11.7) * 0.55) + aPhase * 6.2831853;
+          float localRad = 0.065 + fract(aPhase * 23.1) * 0.11;
+          basePos.x += cos(localAng) * localRad;
+          basePos.y += sin(localAng * 0.85) * (localRad * 0.78);
+          basePos.z += sin(localAng) * 0.08;
+          orbitDepthAlpha = 0.78 + 0.22 * sin(localAng);
         }
 
-        // On Mobile Concept 04, map the Tree target to the top of the spiral staircase (0.03, 3.05)
-        // and center the "COMING" / "SOON" 3D liquid particle words across the middle of the portrait stage!
+        // Normalize across the actual canopy Y distribution (0.0 .. 1.0) + pseudo-random vertical spread per particle
+        // so cubes genuinely reach all the way down to the lowest left, center, and right branches!
+        float rawCanopyT = clamp((basePos.y + 0.35) / 3.65, 0.0, 1.0);
+        float spreadT = mix(rawCanopyT, fract(aPhase * 43.17), 0.38);
+        float normCanopyY = clamp(pow(spreadT, 0.88), 0.0, 1.0);
+
+        // Drape the outer left & right wings lower over the lowest sweeping branches while keeping a clean arch above the two characters' faces
+        float archDrop = clamp(abs(basePos.x) / 3.1, 0.0, 1.0);
+        float crownYDesk = mix(-0.38, 2.14, normCanopyY) - archDrop * archDrop * 0.52;
+        float crownYMob  = mix( 0.42, 2.58, normCanopyY) - archDrop * archDrop * 0.34;
         if (mob) {
           if (isTextVox) {
             basePos.x = basePos.x * 0.74;
             basePos.y = (basePos.y - 1.05) * 1.12 + 0.85;
+          } else if (isOrbitVox) {
+            basePos = vec3(basePos.x * 0.78, crownYMob, basePos.z * 0.58);
           } else {
-            basePos = vec3(basePos.x * 0.78 + 0.03, basePos.y * 0.78 + 3.05, basePos.z * 0.78);
+            basePos = vec3(basePos.x * 0.68, mix(0.40, 2.55, normCanopyY), basePos.z * 0.58);
+          }
+        } else {
+          if (isOrbitVox) {
+            basePos = vec3(basePos.x * 0.92, crownYDesk, basePos.z * 0.65);
+          } else if (!isTextVox) {
+            basePos = vec3(basePos.x * 0.80, mix(-0.45, 2.10, normCanopyY), basePos.z * 0.65);
           }
         }
 
@@ -2321,9 +2553,16 @@
 
         // Subtle surface-tension pulse in droplet size
         float liquidBreath = 1.0 + 0.09 * sin(uTime * 2.8 + aPhase * 25.13);
+        float rSize = fract(aPhase * 31.73);
+        // 3 distinct size tiers: 42% small (8..14px), 40% medium (15..26px), 18% large hero cubes (28..44px)
+        float voxSize = (rSize < 0.42)
+          ? mix(8.0, 14.5, rSize / 0.42)
+          : ((rSize < 0.82)
+              ? mix(15.5, 26.5, (rSize - 0.42) / 0.40)
+              : mix(28.5, 44.0, (rSize - 0.82) / 0.18));
         float baseSize = isTextVox
-          ? (4.8 + fract(aPhase * 17.0) * 2.2) * liquidBreath
-          : (isOrbitVox ? (8.2 + fract(aPhase * 17.0) * 4.6) * liquidBreath : (3.0 + fract(aPhase * 13.0) * 0.85));
+          ? (4.8 + rSize * 2.2) * liquidBreath
+          : (isOrbitVox ? voxSize * liquidBreath : (3.2 + fract(aPhase * 13.0) * 0.9));
         gl_PointSize = baseSize * uPixelRatio * (5.5 / -mvPosition.z);
       }
     `;
@@ -2336,74 +2575,98 @@
       varying float vPhase;
       varying float vTime;
 
+      mat3 rot3D(float ax, float ay, float az) {
+        float cx = cos(ax), sx = sin(ax);
+        float cy = cos(ay), sy = sin(ay);
+        float cz = cos(az), sz = sin(az);
+        mat3 rx = mat3(1.0, 0.0, 0.0, 0.0, cx, -sx, 0.0, sx, cx);
+        mat3 ry = mat3(cy, 0.0, sy, 0.0, 1.0, 0.0, -sy, 0.0, cy);
+        mat3 rz = mat3(cz, -sz, 0.0, sz, cz, 0.0, 0.0, 0.0, 1.0);
+        return rz * ry * rx;
+      }
+
       void main() {
         if (vAlpha <= 0.01) discard;
         vec2 uv = gl_PointCoord * 2.0 - 1.0;
+        uv.y = -uv.y;
 
-        // Slow 2D rotation + organic surface-tension liquid wobble for each droplet
-        float rotAng = vTime * (0.55 + fract(vPhase * 5.3) * 0.45) + vPhase * 6.2831853;
-        float cR = cos(rotAng);
-        float sR = sin(rotAng);
-        vec2 rUv = vec2(uv.x * cR - uv.y * sR, uv.x * sR + uv.y * cR);
+        // Slow 3D tumbling rotation unique to each golden cube
+        float speed = 0.45 + fract(vPhase * 7.3) * 0.55;
+        float ax = 0.52 + vPhase * 6.28318 + sin(vTime * speed * 0.7 + vPhase * 9.0) * 0.35;
+        float ay = 0.68 + vPhase * 4.71238 + vTime * speed;
+        float az = 0.25 * sin(vTime * speed * 0.5 + vPhase * 13.0);
+        mat3 R = rot3D(ax, ay, az);
+        mat3 Rinv = transpose(R);
 
-        float polarAng = atan(rUv.y, rUv.x);
-        float surfaceWobble = sin(polarAng * 2.0 + vTime * 3.2 + vPhase * 12.56) * 0.065
-                            + cos(polarAng * 3.0 - vTime * 2.4 + vPhase * 18.85) * 0.042;
-        vec2 wUv = rUv * (1.0 + surfaceWobble);
+        // Orthographic ray from camera (0, 0, +3) looking along -Z into a 3D cube of half-size bSize
+        float bSize = 0.54;
+        vec3 ro = Rinv * vec3(uv, 3.0);
+        vec3 rd = Rinv * vec3(0.0, 0.0, -1.0);
 
-        // Soft 3D liquid cushion / molten droplet SDF (blends rounded cube and organic liquid sphere)
-        vec2 q = abs(wUv) - vec2(0.42);
-        float boxSdf = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - 0.38;
-        float sphereSdf = length(wUv) - 0.84;
-        float sdf = mix(sphereSdf, boxSdf, 0.42);
-        if (sdf > 0.04) discard;
+        vec3 invRd = 1.0 / sign(rd + vec3(1e-6)) / max(abs(rd), vec3(1e-5));
+        vec3 t0 = (-vec3(bSize) - ro) * invRd;
+        vec3 t1 = ( vec3(bSize) - ro) * invRd;
+        vec3 tminV = min(t0, t1);
+        vec3 tmaxV = max(t0, t1);
 
-        float dropletMask = 1.0 - smoothstep(-0.06, 0.04, sdf);
+        float tNear = max(max(tminV.x, tminV.y), tminV.z);
+        float tFar  = min(min(tmaxV.x, tmaxV.y), tmaxV.z);
 
-        // 3D Curved Liquid Meniscus Normal with internal rippling wave perturbation
-        float r2 = clamp(dot(uv, uv), 0.0, 0.98);
-        vec2 ripple = vec2(
-          sin(uv.y * 4.2 + vTime * 3.6 + vPhase * 15.7),
-          cos(uv.x * 4.2 - vTime * 3.1 + vPhase * 11.3)
-        ) * 0.11;
-        vec3 normal = normalize(vec3(
-          uv.x * 1.05 + ripple.x,
-          -uv.y * 1.05 + ripple.y,
-          sqrt(max(0.06, 1.0 - r2 * 0.92))
-        ));
+        if (tNear > tFar) discard;
 
-        // Primary top-left studio light + secondary warm bottom-right bounce light
-        vec3 lightDir1 = normalize(vec3(-0.48, 0.62, 0.62));
-        vec3 lightDir2 = normalize(vec3( 0.52, -0.55, 0.65));
-        vec3 viewDir   = vec3(0.0, 0.0, 1.0);
+        // Soft anti-aliased edge at the silhouette boundary of the 3D cube
+        float thickness = tFar - tNear;
+        float edgeAA = smoothstep(0.0, 0.08, thickness);
 
-        float diff1 = max(0.0, dot(normal, lightDir1));
-        vec3 half1  = normalize(lightDir1 + viewDir);
-        vec3 half2  = normalize(lightDir2 + viewDir);
+        // Local hit point & face normal in cube space
+        vec3 pLocal = ro + rd * tNear;
+        vec3 absP = abs(pLocal);
+        vec3 nLocal = step(absP.yzx, absP.xyz) * step(absP.zxy, absP.xyz) * sign(pLocal);
+        vec3 nWorld = normalize(R * nLocal);
 
-        // Razor-sharp wet-coat primary specular + soft secondary rim reflection
-        float specWet  = pow(max(0.0, dot(normal, half1)), 56.0);
-        float specCoat = pow(max(0.0, dot(normal, half1)), 14.0);
-        float specRim2 = pow(max(0.0, dot(normal, half2)), 24.0);
+        // Distance to nearest 3D cube edges (in local space, two of |x|,|y|,|z| are near bSize)
+        vec3 dEdge = abs(vec3(bSize) - absP);
+        float minE1 = min(min(dEdge.x, dEdge.y), dEdge.z);
+        float maxE  = max(max(dEdge.x, dEdge.y), dEdge.z);
+        float midE  = (dEdge.x + dEdge.y + dEdge.z) - minE1 - maxE;
+        float bevelGlow = 1.0 - smoothstep(0.01, 0.085, midE);
+        float outerRim  = 1.0 - smoothstep(0.0, 0.14, thickness);
 
-        // Schlick Fresnel 3D liquid meniscus rim + internal refractive subsurface caustic (bottom-right)
-        float fresnel = pow(1.0 - clamp(normal.z, 0.0, 1.0), 2.8);
-        vec2 causticCenter = vec2(0.26, 0.28) + ripple * 0.6;
-        float internalCaustic = exp(-dot(uv - causticCenter, uv - causticCenter) * 4.8);
+        // Studio 3-point lighting for warm translucent 24K golden amber glass cube
+        vec3 lightTopLeft = normalize(vec3(-0.52, 0.72, 0.46));
+        vec3 lightFront   = normalize(vec3( 0.18, 0.25, 0.95));
+        vec3 lightBotRim  = normalize(vec3( 0.45, -0.78, 0.42));
 
-        // Rich deep liquid core + glowing subsurface caustic + wet-coat reflections
-        vec3 deepLiquidCore = pow(max(vColor, vec3(0.01)), vec3(1.18)) * (0.48 + diff1 * 0.55);
-        vec3 causticGlow    = (vColor * 1.35 + vec3(0.35, 0.24, 0.08)) * internalCaustic * (0.65 + vLumBoost * 0.25);
-        vec3 fresnelRimCol  = (vColor * 0.85 + vec3(0.45, 0.35, 0.18)) * fresnel * (0.75 + vLumBoost * 0.28);
-        vec3 wetHighlight   = (vec3(1.0, 0.97, 0.90) + vColor * 0.35) * (specWet * 1.35 + specCoat * 0.32)
-                            + (vColor * 0.7 + vec3(0.55, 0.40, 0.18)) * specRim2 * 0.45;
+        float ndl1 = max(0.0, dot(nWorld, lightTopLeft));
+        float ndl2 = max(0.0, dot(nWorld, lightFront));
+        float ndl3 = max(0.0, dot(nWorld, lightBotRim));
 
-        vec3 col = deepLiquidCore + causticGlow + fresnelRimCol + wetHighlight;
+        // Distinct 3-face shading: Top/Left face is luminous 24K champagne gold; side face is warm amber; shadow face is deep bronze
+        vec3 goldBright = vec3(1.00, 0.91, 0.52);
+        vec3 goldAmber  = vec3(0.96, 0.64, 0.18);
+        vec3 goldBronze = vec3(0.46, 0.22, 0.05);
 
-        // Translucent liquid glass/metal alpha (slightly more solid at the Fresnel meniscus rim & specular hotspot)
-        float liquidAlpha = clamp(0.78 + fresnel * 0.20 + specWet * 0.25, 0.0, 1.0);
-        float alpha = dropletMask * vAlpha * liquidAlpha;
-        gl_FragColor = vec4(col, alpha);
+        float faceLight = clamp(ndl1 * 0.75 + ndl2 * 0.40, 0.0, 1.0);
+        vec3 faceCol = mix(goldBronze, goldAmber, smoothstep(0.05, 0.55, faceLight));
+        faceCol = mix(faceCol, goldBright, smoothstep(0.50, 0.98, faceLight));
+
+        // Internal subsurface golden glow (thicker center glows like warm honey glass)
+        float innerGlow = clamp(thickness / (bSize * 1.8), 0.0, 1.0);
+        faceCol += vec3(0.32, 0.18, 0.03) * innerGlow;
+
+        // Crisp 24K gold bevel highlight along the 3D cube edges
+        vec3 bevelCol = vec3(1.00, 0.94, 0.66);
+        faceCol = mix(faceCol, bevelCol, bevelGlow * 0.62);
+
+        // Specular glint on the front-facing facet
+        float spec = pow(max(0.0, dot(nWorld, normalize(lightTopLeft + vec3(0.0, 0.0, 1.0)))), 28.0);
+        faceCol += vec3(1.0, 0.97, 0.85) * spec * 0.55;
+
+        // Subtle warm bronze silhouette rim so the 3D cube stands out crisply even over the bright yellow synthwave sun!
+        faceCol = mix(faceCol, vec3(0.36, 0.17, 0.03), outerRim * 0.55);
+
+        float alpha = edgeAA * vAlpha * 0.94;
+        gl_FragColor = vec4(faceCol, alpha);
       }
     `;
 
@@ -2419,11 +2682,11 @@
     const pointsMesh = new THREE.Points(geom, material);
     scene.add(pointsMesh);
 
-    const INTRO_DURATION_MS = 7200;
-    let introStartTime = (window.__rcIsLoggedIn || window.__rcSkipIntroOnLoad)
+    const INTRO_DURATION_MS = 5200;
+    let introStartTime = window.__rcCameFromInternal
       ? (performance.now() - INTRO_DURATION_MS * 2)
       : performance.now();
-    let isIntroComplete = Boolean(window.__rcIsLoggedIn || window.__rcSkipIntroOnLoad);
+    let isIntroComplete = Boolean(window.__rcCameFromInternal);
     let wasStageUnlocked = false;
 
     const hudOverlay = document.getElementById('hudOverlay');
@@ -2445,20 +2708,22 @@
     window.replaySwoopIntro = function() {
       isIntroComplete = false;
       if (document.body) document.body.classList.remove('rc-no-intro-anim');
-      hudOverlay.classList.remove('is-lit');
+      if (hudOverlay) hudOverlay.classList.remove('is-lit');
       stageUniforms.uTreeReveal.value = 0.0;
       stageUniforms.uRoomLight.value = 0.0;
       uniforms.uTreeReveal.value = 0.0;
-      stageOverlayRoot.style.setProperty('--room-light', '0');
+      if (stageOverlayRoot) stageOverlayRoot.style.setProperty('--room-light', '0');
       introStartTime = performance.now();
     };
 
-    if (window.__rcIsLoggedIn || window.__rcSkipIntroOnLoad || window.__rcCameFromInternal) {
+    if (window.__rcCameFromInternal) {
       window.completeSwoopIntroImmediately();
+    } else {
+      window.replaySwoopIntro();
     }
 
     window.addEventListener('pageshow', (e) => {
-      if (e.persisted || window.__rcIsLoggedIn || window.__rcSkipIntroOnLoad || window.__rcCameFromInternal) {
+      if (e.persisted || window.__rcCameFromInternal) {
         window.completeSwoopIntroImmediately();
       }
     });
@@ -2499,8 +2764,6 @@
     function isStageUserLoggedIn() {
       const b = document.body;
       return Boolean(
-        window.__rcIsLoggedIn ||
-        window.__rcSkipIntroOnLoad ||
         window.__rcCameFromInternal ||
         (b && b.classList.contains('rc-no-intro-anim'))
       );
@@ -2657,9 +2920,9 @@
     requestAnimationFrame(animate);
     </script>
 
-    <script src="official_ticket_dossier.js?v=293"></script>
-    <script src="script.js?v=293"></script>
-    <script src="auth_hub.js?v=293"></script>
+    <script src="official_ticket_dossier.js?v=319"></script>
+    <script src="script.js?v=319"></script>
+    <script src="auth_hub.js?v=319"></script>
 </body>
 
 </html>

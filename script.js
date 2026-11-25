@@ -5972,11 +5972,11 @@ if (document.readyState === 'loading') {
     }
   };
 
-  window.__triggerBotPitAppDownload = async function() {
-    const statusBox = document.getElementById('rcBotPitInstallStatusBox');
+  window.__triggerBotPitAppDownload = async function(customStatusBoxId) {
+    const statusBox = document.getElementById(customStatusBoxId || 'rcAppsHubInstallStatus') || document.getElementById('rcBotPitInstallStatusBox');
     const activeRcUser = (localStorage.getItem('rc_current_user_v1') || localStorage.getItem('rc_current_user_v2') || localStorage.getItem('rc_botpit_active_user_v1') || '').trim();
     const activeRcEmail = (localStorage.getItem('rc_current_admin_email_v1') || '').trim();
-    const qParams = new URLSearchParams({ app: '1' });
+    const qParams = new URLSearchParams({ stripe: '1' });
     if (activeRcUser) qParams.set('rc_user', activeRcUser);
     if (activeRcEmail) qParams.set('rc_email', activeRcEmail);
     const targetUrl = new URL('shibuya_bot_pit.html?' + qParams.toString(), window.location.href).href;
@@ -6027,7 +6027,7 @@ if (document.readyState === 'loading') {
       const dlUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = dlUrl;
-      a.download = 'Shibuya_Bot_Pit_App.html';
+      a.download = 'Apex_Wreckers_App.html';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -6036,15 +6036,15 @@ if (document.readyState === 'loading') {
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent || '');
     const onIndexPage = !(window.location.pathname || '').toLowerCase().includes('shibuya_bot_pit');
-    const installAppUrl = 'shibuya_bot_pit.html?app=1&install_app=1';
+    const installAppUrl = 'shibuya_bot_pit.html?stripe=1&install_app=1';
     const directInstallBtn = onIndexPage
-      ? `<div style="margin-top:8px;"><a href="${installAppUrl}" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:900;text-decoration:none;letter-spacing:0.06em;">📲 OPEN MOBILE APP INSTALLER &rarr;</a></div>`
+      ? `<div style="margin-top:8px;"><a href="${installAppUrl}" onclick="try{sessionStorage.setItem('rc_from_internal','1');}catch(_){}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:linear-gradient(180deg,#fbbf24 0%,#d97706 100%);color:#090612;font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:900;text-decoration:none;letter-spacing:0.06em;">📲 LAUNCH FULL-SCREEN WEB APP &rarr;</a></div>`
       : '';
     if (statusBox) {
       if (isIOS) {
-        statusBox.innerHTML = '📲 <strong>Shibuya_Bot_Pit_App.html downloaded!</strong> On iPhone/iPad: tap <strong>Share ⬆️</strong> in Safari and tap <strong>"Add to Home Screen ➕"</strong> to install the full-screen <strong>Apex Wreckers</strong> App Icon!' + directInstallBtn;
+        statusBox.innerHTML = '📲 <strong>Apex_Wreckers_App.html downloaded!</strong> On iPhone/iPad: tap <strong>Share ⬆️</strong> in Safari and tap <strong>"Add to Home Screen ➕"</strong> to install the full-screen <strong>Apex Wreckers</strong> App Icon!' + directInstallBtn;
       } else {
-        statusBox.innerHTML = '✅ <strong>Shibuya_Bot_Pit_App.html downloaded!</strong> Open the downloaded file anytime to launch the standalone App, or tap <strong>Install App ➕</strong> / <strong>Add to Home Screen</strong> in your browser menu!' + directInstallBtn;
+        statusBox.innerHTML = '✅ <strong>Apex_Wreckers_App.html downloaded!</strong> Open the downloaded file anytime to launch the standalone App (powered by Stripe Checkout), or tap <strong>Install App ➕</strong> in your browser!' + directInstallBtn;
       }
       statusBox.classList.add('visible');
     }

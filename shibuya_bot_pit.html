@@ -26572,7 +26572,7 @@
               <div class="dp-desc" style="margin-top:6px;">${pk.desc}</div>
             </div>
             <button type="button" class="dp-buy-btn" id="dpBuyBtn_${pk.id}" onclick="purchaseDiamondPack('${pk.id}')">
-              <span>⚡ INSTANT TOP-UP</span>
+              <span>💳 STRIPE CHECKOUT</span>
               <span id="dpPrice_${pk.id}" style="background:rgba(0,0,0,0.22);padding:2px 8px;border-radius:999px;">${pk.priceUsd}</span>
             </button>
           </div>
@@ -27454,16 +27454,7 @@
     }
 
     function isAndroidPlayOrAppShell() {
-      try {
-        const search = (window.location.search || "").toLowerCase();
-        if (search.includes("app=1") || search.includes("play=1")) return true;
-        if (window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform()) return true;
-        if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return true;
-        if (window.navigator && window.navigator.standalone === true) return true;
-        if ((document.referrer || "").toLowerCase().startsWith("android-app://")) return true;
-        if (/;\s*wv\)/i.test(navigator.userAgent || "")) return true;
-        if (typeof window.getDigitalGoodsService === "function") return true;
-      } catch (_) {}
+      // Website / Web App build is 100% tied to Stripe Checkout (never Google Play Billing)
       return false;
     }
 
@@ -27857,9 +27848,7 @@
         } else if (shortfallAmount > 0) {
           subEl.innerHTML = `<span style="color:#fbbf24;font-weight:800;">⚠️ You need 💎 ${shortfallAmount.toLocaleString()} more Diamonds for that upgrade!</span> Choose a Diamond Pack below or fight CPU Bots to earn XP &amp; Diamonds:`;
         } else {
-          subEl.textContent = inAppShell
-            ? "Top up Diamonds securely with Google Play, or earn Diamonds for free by battling CPU Bots for XP!"
-            : "Top up Diamonds instantly for 3D Upgrades & Competitive Arena Stakes, or earn Diamonds for free by battling CPU Bots for XP!";
+          subEl.textContent = "Top up Diamonds securely via Stripe Checkout for 3D Upgrades, Battle Cars, Skills & Repairs, or earn Diamonds for free by battling CPU Bots for XP!";
         }
       }
     }
@@ -27984,106 +27973,77 @@
       const pk = DIAMOND_STORE_PACKS.find(p => p.id === packId);
       if (!pk) return;
 
-      const inAppShell = isAndroidPlayOrAppShell();
-      if (inAppShell) {
-        if (window.RetroCanopyNativeIAP && typeof window.RetroCanopyNativeIAP.purchasePack === "function") {
-          const buyBtn = document.getElementById("dpBuyBtn_" + pk.id);
-          const gpProd = nativePlayCatalogState.productsMap[pk.id];
-          const playPrice = (gpProd && gpProd.priceString) || pk.priceUsd;
-          if (buyBtn) buyBtn.disabled = true;
-          try {
-            const result = await window.RetroCanopyNativeIAP.purchasePack(pk.id);
-            const ok = result === true || Boolean(result && result.ok);
-            if (!ok) {
-              if (result && result.pending) return;
-              openGooglePlayTestPurchaseSheet(pk);
-              return;
-            }
-            const credited = (result && Number(result.diamondsCredited) > 0)
-              ? Number(result.diamondsCredited)
-              : (pk.diamonds + pk.bonus);
-            if (result === true) {
-              state.scrap += credited;
-              persistWalletAndRig();
-              recordBotPitGameOrder(pk, "Google Play IAP");
-              updatePlayerUI();
-            }
-            showCompletedPackUi(pk, credited, playPrice);
-            return;
-          } catch (err) {
-            const msg = String((err && err.message) || err || "");
-            if (/pending/i.test(msg)) {
-              showShopToast("⏳ Purchase pending in Google Play. Diamonds will credit once confirmed.", "#fbbf24");
-            } else if (/cancel/i.test(msg)) {
-              showShopToast("Google Play purchase cancelled.", "#94a3b8");
-            } else {
-              // While app is still in unreviewed Internal/Closed Testing or Play is propagating SKUs, open the Google Play Test Card Sheet
-              openGooglePlayTestPurchaseSheet(pk);
-            }
-            return;
-          } finally {
-            if (buyBtn) buyBtn.disabled = false;
-          }
-        } else if (typeof window.getDigitalGoodsService === "function" && typeof PaymentRequest === "function") {
-          try {
-            const service = await window.getDigitalGoodsService("https://play.google.com/billing");
-            const details = await service.getDetails([pk.id]);
-            if (!details || details.length === 0) {
-              openBuyDiamondsModal(0);
-              showShopToast("⚠️ Play Store SKU not configured yet — earn Diamonds free in the Arena!", "#38bdf8");
-              return;
-            }
-            const request = new PaymentRequest([{ supportedMethods: "https://play.google.com/billing", data: { sku: pk.id } }]);
-            const response = await request.show();
-            const token = response && response.details && response.details.purchaseToken;
-            await response.complete("success");
-            if (token) {
-              const vRes = await verifyAndConsumePlayTransaction({ productIdentifier: pk.id, purchaseToken: token, purchaseState: "1" }, false);
-              if (!vRes.ok) return;
-              showCompletedPackUi(pk, vRes.diamondsCredited || (pk.diamonds + pk.bonus), pk.priceUsd);
-              return;
-            }
-          } catch (err) {
-            showShopToast("⚠️ Google Play purchase cancelled.", "#fb7185");
+      const uKey = String(state.loggedInUserKey || state.pilotCallsign || "pilot").trim().replace(/^@+/, "").toLowerCase();
+      const pilotName = state.pilotCallsign || ("@" + uKey.toUpperCase());
+      const pilotEmail = (state.loggedInEmail && state.loggedInEmail.includes("@")) ? state.loggedInEmail.trim() : "";
+      const totalDiamonds = (Number(pk.diamonds) || 0) + (Number(pk.bonus) || 0);
+      const rawPrice = parseFloat(String(pk.priceUsd || "1.99").replace(/[^0-9.]/g, "")) || 1.99;
+      const meta = (typeof APEX_SHOP_PACK_META !== "undefined" && APEX_SHOP_PACK_META[pk.id]) || { title: pk.badge || pk.id };
+      const packTitle = meta.title || pk.badge || pk.id;
+      const orderId = "RC-GAME-" + String(Date.now()).slice(-6);
+
+      try {
+        localStorage.setItem("rc_pending_stripe_pack_v1", JSON.stringify({
+          orderId,
+          packId: pk.id,
+          packTitle,
+          userKey: uKey,
+          pilotCallsign: pilotName,
+          email: pilotEmail,
+          diamonds: totalDiamonds,
+          priceUsd: pk.priceUsd,
+          amountUsd: rawPrice,
+          ts: Date.now()
+        }));
+      } catch (_) {}
+
+      const buyBtn = document.getElementById("dpBuyBtn_" + pk.id);
+      if (buyBtn) buyBtn.disabled = true;
+      showShopToast(`💳 Opening secure Stripe Checkout for ${packTitle} (${pk.priceUsd})...`, "#38bdf8");
+
+      // 1. Create dynamic Live Stripe Checkout Session via Supabase Edge Function (supports all 7 packs $1.99-$99.99 & returns to current URL)
+      const returnBaseUrl = window.location.origin + window.location.pathname;
+      try {
+        const sessionRes = await fetch("https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "create_session",
+            orderId,
+            customerName: pilotName,
+            customerEmail: pilotEmail,
+            shippingAddress: `Apex Wreckers In-App Diamond Vault (${pilotName})`,
+            returnBaseUrl,
+            items: [{
+              sku: pk.id.toUpperCase(),
+              name: `Apex Wreckers — ${packTitle} (+${totalDiamonds.toLocaleString()} Diamonds)`,
+              size: `${totalDiamonds.toLocaleString()} Diamonds`,
+              qty: 1,
+              priceUsd: rawPrice
+            }]
+          })
+        });
+        if (sessionRes.ok) {
+          const sessionData = await sessionRes.json();
+          if (sessionData && sessionData.url) {
+            (window.top || window).location.href = sessionData.url;
             return;
           }
-        } else {
-          openBuyDiamondsModal(0);
-          return;
         }
+      } catch (err) {
+        console.warn("Stripe Edge session creation fallback to direct Stripe Payment Link:", err);
+      } finally {
+        if (buyBtn) buyBtn.disabled = false;
       }
 
-      // Live Stripe Checkout Redirect only when explicitly forced; otherwise credit Diamonds immediately in-game!
-      if (!inAppShell && pk.stripePaymentLink && window.__rcForceStripeRedirect === true) {
-        try {
-          const uKey = state.loggedInUserKey || state.pilotCallsign || "pilot";
-          localStorage.setItem("rc_pending_stripe_pack_v1", JSON.stringify({
-            packId: pk.id,
-            userKey: uKey,
-            diamonds: pk.diamonds + pk.bonus,
-            priceUsd: pk.priceUsd,
-            ts: Date.now()
-          }));
-          const sep = pk.stripePaymentLink.includes("?") ? "&" : "?";
-          let checkoutUrl = `${pk.stripePaymentLink}${sep}client_reference_id=${encodeURIComponent(uKey)}`;
-          if (state.loggedInEmail && state.loggedInEmail.includes("@")) {
-            checkoutUrl += `&prefilled_email=${encodeURIComponent(state.loggedInEmail)}`;
-          }
-          showShopToast(`💳 Redirecting to secure Stripe Checkout (${pk.priceUsd})...`, "#38bdf8");
-          window.location.href = checkoutUrl;
-          return;
-        } catch (err) {
-          console.warn("Stripe redirect error:", err);
-        }
+      // 2. Fallback to direct Live Stripe Payment Link if Edge Function is unreachable
+      const fallbackStripeLink = pk.stripePaymentLink || "https://buy.stripe.com/cNifZ9czC4q7fj0axg7Re04";
+      const sep = fallbackStripeLink.includes("?") ? "&" : "?";
+      let checkoutUrl = `${fallbackStripeLink}${sep}client_reference_id=${encodeURIComponent(uKey)}`;
+      if (pilotEmail) {
+        checkoutUrl += `&prefilled_email=${encodeURIComponent(pilotEmail)}`;
       }
-      const totalCredited = pk.diamonds + pk.bonus;
-      state.scrap += totalCredited;
-      persistWalletAndRig();
-      recordBotPitGameOrder(pk, inAppShell ? "Google Play IAP" : "Web Instant");
-      updatePlayerUI();
-      if (typeof BotPitAudio !== "undefined") BotPitAudio.playCashChime();
-      if (typeof syncC29ArtScreensTelemetry === "function") syncC29ArtScreensTelemetry();
-      showCompletedPackUi(pk, totalCredited, pk.priceUsd);
+      (window.top || window).location.href = checkoutUrl;
     }
 
     async function recordBotPitGameOrder(pk, platformLabel) {
@@ -28154,10 +28114,27 @@
     async function checkStripeCheckoutReturn() {
       try {
         const params = new URLSearchParams(window.location.search);
-        if (params.get("stripe_success") !== "1") return;
-        const packId = params.get("pack_id") || "";
-        const sessionId = params.get("session_id") || ("session_" + Date.now());
-        const pk = DIAMOND_STORE_PACKS.find(p => p.id === packId);
+        const isCancel = params.get("stripe_cancel") === "1" || params.get("stripe_merch_cancel") === "1";
+        if (isCancel) {
+          const cleanUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState({}, document.title, cleanUrl);
+          setTimeout(() => {
+            showShopToast("💳 Stripe Checkout canceled — no charge was made.", "#94a3b8");
+          }, 400);
+          return;
+        }
+
+        const isSuccess = params.get("stripe_success") === "1" || params.get("stripe_merch_success") === "1";
+        if (!isSuccess) return;
+
+        let pendingPack = null;
+        try {
+          pendingPack = JSON.parse(localStorage.getItem("rc_pending_stripe_pack_v1") || "null");
+        } catch (_) {}
+
+        const packId = params.get("pack_id") || (pendingPack && pendingPack.packId) || "pack_starter";
+        const sessionId = params.get("session_id") || (pendingPack && pendingPack.orderId) || ("session_" + Date.now());
+        const pk = DIAMOND_STORE_PACKS.find(p => p.id === packId) || DIAMOND_STORE_PACKS[0];
         if (!pk) return;
 
         const redeemedRaw = localStorage.getItem("rc_redeemed_stripe_sessions_v1") || "[]";
@@ -28167,6 +28144,20 @@
           const cleanUrl = window.location.pathname + window.location.hash;
           window.history.replaceState({}, document.title, cleanUrl);
           return;
+        }
+
+        if (params.get("session_id")) {
+          try {
+            await fetch("https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/retrocanopy-stripe-checkout", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                action: "verify_session",
+                sessionId: params.get("session_id"),
+                orderId: params.get("order_id") || (pendingPack && pendingPack.orderId) || ""
+              })
+            });
+          } catch (_) {}
         }
 
         redeemedList.push(sessionId);
@@ -33558,7 +33549,7 @@
               <div class="apex-s-vitrine-bottom">
                 <div class="apex-s-vitrine-sub">${pk.desc}</div>
                 <button type="button" class="apex-s-cta-btn" onclick="event.stopPropagation();purchaseDiamondPack('${pk.id}');">
-                  <span>UNLOCK · ${pk.priceUsd}</span>
+                  <span>💳 STRIPE · ${pk.priceUsd}</span>
                 </button>
               </div>
             </div>
