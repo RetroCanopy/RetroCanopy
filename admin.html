@@ -2747,6 +2747,297 @@
       background: linear-gradient(180deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.03) 100%);
       border-radius: inherit;
     }
+
+    /* =====================================================================
+       OPTION 7: LEFT SIDE TABS BAR + RETROCANOPY LOGO STYLE LETTERING
+       ===================================================================== */
+    body {
+      background: #040508 !important;
+      color: #f6e7c1 !important;
+      padding: 24px 28px 40px !important;
+    }
+    body::before {
+      background:
+        radial-gradient(circle at 50% 22%, rgba(255, 178, 46, 0.13), transparent 54%),
+        radial-gradient(circle at 50% 82%, rgba(255, 84, 130, 0.06), transparent 50%),
+        linear-gradient(180deg, #05060a 0%, #080910 50%, #040508 100%) !important;
+      filter: none !important;
+    }
+    body::after,
+    .vision-ambient-canvas,
+    .vision-header-card,
+    .spatial-focus-nav,
+    .rc-capabilities-strip {
+      display: none !important;
+    }
+
+    /* Official Retrocanopy Logo Style Lettering (Yellow-Gold -> Sunset Orange -> Coral Pink) */
+    .rc-logo-style-text,
+    .vision-brand-name,
+    .vision-main-title,
+    .section-title,
+    .vision-wing-title {
+      font-family: 'Outfit', 'Orbitron', sans-serif !important;
+      font-weight: 900 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.14em !important;
+      background: linear-gradient(180deg, #ffe978 0%, #ff9b3d 50%, #ff4482 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      filter: drop-shadow(0 0 16px rgba(255, 156, 56, 0.36)) !important;
+    }
+
+    /* Option 7 Two-Column Shell: 240px Left Side Tabs Bar + Clean Right Stage */
+    body[data-layout="tabbed-studio"] .vision-shell {
+      display: grid !important;
+      grid-template-columns: 240px minmax(0, 1fr) !important;
+      gap: 20px !important;
+      max-width: 1620px !important;
+      margin: 0 auto !important;
+      align-items: stretch !important;
+    }
+    body[data-layout="tabbed-studio"] .vision-sidebar {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      padding: 24px 16px 20px !important;
+      min-height: calc(100vh - 52px) !important;
+      position: sticky !important;
+      top: 24px !important;
+    }
+    .vision-glass,
+    .owner-section,
+    .prod-order-card,
+    .sq-quote-card,
+    .bq-subpanel {
+      background: linear-gradient(180deg, #111218 0%, #06070b 100%) !important;
+      border: 1.5px solid rgba(232, 184, 82, 0.68) !important;
+      border-radius: 20px !important;
+      box-shadow: 0 32px 85px rgba(0, 0, 0, 0.94), 0 0 36px rgba(255, 180, 38, 0.14) !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    .vision-glass::before,
+    .prod-order-card::before {
+      display: none !important;
+    }
+    .vision-brand-box {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-decoration: none !important;
+      padding: 2px 0 8px !important;
+      border-bottom: 1px solid rgba(232, 184, 82, 0.22) !important;
+    }
+    .vision-brand-name {
+      font-size: 1.24rem !important;
+    }
+    .vision-nav-list {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 7px !important;
+      margin-top: 16px !important;
+    }
+    .vision-nav-item {
+      width: 100% !important;
+      padding: 12px 14px !important;
+      border-radius: 10px !important;
+      border: 1px solid transparent !important;
+      background: transparent !important;
+      color: rgba(255, 230, 168, 0.72) !important;
+      font-family: 'Orbitron', sans-serif !important;
+      font-size: 10.5px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.11em !important;
+      text-transform: uppercase !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      cursor: pointer !important;
+      transition: all 0.16s ease !important;
+    }
+    .vision-nav-item:hover {
+      background: rgba(255, 196, 68, 0.08) !important;
+      border-color: rgba(232, 184, 82, 0.35) !important;
+      color: #ffe8a3 !important;
+    }
+    .vision-nav-item.active {
+      background: linear-gradient(180deg, #f3d27a 0%, #b8841e 100%) !important;
+      border-color: #fff1b8 !important;
+      color: #140c02 !important;
+      font-weight: 900 !important;
+      box-shadow: 0 6px 18px rgba(184, 132, 30, 0.38) !important;
+    }
+    .rc-side-badge {
+      padding: 1px 7px !important;
+      border-radius: 999px !important;
+      font-size: 9.5px !important;
+      font-weight: 800 !important;
+      background: rgba(255, 196, 68, 0.14) !important;
+      border: 1px solid rgba(232, 184, 82, 0.52) !important;
+      color: #ffe6a3 !important;
+    }
+    .vision-nav-item.active .rc-side-badge {
+      background: rgba(20, 12, 2, 0.2) !important;
+      border-color: rgba(20, 12, 2, 0.45) !important;
+      color: #140c02 !important;
+    }
+    .vision-sidebar-footer {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 9px !important;
+      padding-top: 16px !important;
+      border-top: 1px solid rgba(232, 184, 82, 0.2) !important;
+    }
+    .rc-side-status-pill,
+    .rc-side-home-btn {
+      width: 100% !important;
+      padding: 9px 12px !important;
+      border-radius: 10px !important;
+      background: rgba(255, 196, 68, 0.05) !important;
+      border: 1px solid rgba(232, 184, 82, 0.38) !important;
+      color: #ffe6a3 !important;
+      font-family: 'Orbitron', sans-serif !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.12em !important;
+      text-decoration: none !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 7px !important;
+      transition: all 0.16s ease !important;
+    }
+    .rc-side-home-btn:hover {
+      background: rgba(255, 196, 68, 0.14) !important;
+      border-color: #ffd86b !important;
+      color: #ffffff !important;
+    }
+    .rc-side-status-dot {
+      width: 7px !important;
+      height: 7px !important;
+      border-radius: 50% !important;
+      background: #38ef7d !important;
+      box-shadow: 0 0 8px #38ef7d !important;
+      flex-shrink: 0 !important;
+    }
+
+    /* Right Workspace Stage Styling (Option 7) */
+    .owner-major-section {
+      padding: 26px 28px !important;
+      display: flex;
+      flex-direction: column;
+      gap: 18px !important;
+      min-height: calc(100vh - 52px);
+    }
+    .section-title {
+      font-size: 1.22rem !important;
+    }
+    .rc-opt7-kpi-grid {
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 12px !important;
+      width: 100% !important;
+    }
+    .kpi-pill {
+      background: #06070a !important;
+      border: 1px solid rgba(232, 184, 82, 0.42) !important;
+      border-radius: 12px !important;
+      padding: 12px 14px !important;
+      text-align: center !important;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .kpi-label {
+      font-family: 'Orbitron', sans-serif !important;
+      font-size: 9.5px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.14em !important;
+      color: rgba(214, 196, 156, 0.65) !important;
+      text-transform: uppercase !important;
+    }
+    .kpi-val {
+      font-family: 'Orbitron', sans-serif !important;
+      font-size: 19px !important;
+      font-weight: 900 !important;
+      color: #ffe8a3 !important;
+      margin-top: 4px !important;
+    }
+    .vision-gold-cta-btn,
+    .card-tab-btn.active {
+      background: linear-gradient(180deg, #f4d683 0%, #c89328 55%, #99690e 100%) !important;
+      border: 1px solid #fff1b8 !important;
+      color: #130c02 !important;
+      font-family: 'Orbitron', sans-serif !important;
+      font-size: 10.5px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.13em !important;
+      padding: 9px 16px !important;
+      border-radius: 9px !important;
+      box-shadow: 0 6px 18px rgba(204, 142, 28, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.85) !important;
+      text-transform: uppercase !important;
+    }
+    .mini-btn,
+    .card-tab-btn:not(.active) {
+      background: rgba(255, 196, 68, 0.05) !important;
+      border: 1px solid rgba(232, 184, 82, 0.38) !important;
+      color: #ffe6a3 !important;
+      font-family: 'Orbitron', sans-serif !important;
+      font-size: 10.5px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.12em !important;
+      padding: 8px 14px !important;
+      border-radius: 9px !important;
+      box-shadow: none !important;
+      text-transform: uppercase !important;
+    }
+    .mini-btn:hover,
+    .card-tab-btn:not(.active):hover {
+      background: rgba(255, 196, 68, 0.14) !important;
+      border-color: #ffd86b !important;
+      color: #ffffff !important;
+    }
+    .empty-state {
+      background: #050609 !important;
+      border: 1px dashed rgba(232, 184, 82, 0.32) !important;
+      border-radius: 14px !important;
+      padding: 64px 24px !important;
+      text-align: center !important;
+      color: rgba(214, 196, 156, 0.72) !important;
+      font-size: 14px !important;
+      line-height: 1.65 !important;
+    }
+
+    @media (max-width: 960px) {
+      body {
+        padding: 12px 10px 32px !important;
+      }
+      body[data-layout="tabbed-studio"] .vision-shell {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+      }
+      body[data-layout="tabbed-studio"] .vision-sidebar {
+        min-height: 0 !important;
+        position: relative !important;
+        top: 0 !important;
+        padding: 16px 14px !important;
+      }
+      .vision-nav-list {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px !important;
+      }
+      .rc-opt7-kpi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      .owner-major-section {
+        min-height: 0 !important;
+        padding: 18px 16px !important;
+      }
+    }
   </style>
 </head>
 <body data-layout="tabbed-studio" data-focus-pane="orders">
@@ -2764,117 +3055,70 @@
   <div class="vision-shell">
 
     <!-- =================================================================== -->
-    <!-- COLUMN 1: LEFT FROSTED GLASS SIDEBAR (24K GOLD CROWN & NAVIGATION)  -->
+    <!-- COLUMN 1: OPTION 7 LEFT SIDE TABS BAR (OBSIDIAN & 24K GOLD)         -->
     <!-- =================================================================== -->
     <aside class="vision-glass vision-sidebar">
       <div>
         <a href="index.html" class="vision-brand-box" title="Return to RetroCanopy Home Stage">
-          <img src="assets/logo.png" alt="RetroCanopy Official Logo" class="vision-official-logo" style="width:72px;height:72px;">
-          <span class="vision-brand-name">RETROCANOPY</span>
+          <span class="vision-brand-name rc-logo-style-text">RETROCANOPY</span>
         </a>
 
-        <nav class="vision-nav-list" style="margin-top:18px;">
-          <button type="button" class="vision-nav-item" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-            <span class="vision-nav-icon">&#127968;</span>
-            <span>Dashboard</span>
+        <nav class="vision-nav-list" style="margin-top:18px;" aria-label="Owner Hub Workspaces">
+          <button type="button" class="vision-nav-item active" id="sideNavMerchQueue" data-focus-target="orders">
+            <span>MERCH ORDERS</span>
           </button>
 
-          <button type="button" class="vision-nav-item active" id="sideNavMerchQueue" onclick="document.querySelector('[data-focus-target=\'orders\']').click();document.getElementById('tabBtnMerchUnfulfilled').click();document.getElementById('websiteOrdersHubSection').scrollIntoView({behavior:'smooth'});">
-            <span class="vision-nav-icon">&#128717;&#65039;</span>
-            <span>
-              Merch Queue
-              <span class="vision-nav-sub">(Needs Done)</span>
-            </span>
+          <button type="button" class="vision-nav-item" id="sideNavProjectRequests" data-focus-target="projectrequests">
+            <span>REQUESTS</span>
+            <span class="rc-side-badge" id="sideProjectReqBadge">0</span>
           </button>
 
-          <button type="button" class="vision-nav-item" id="sideNavOrderHistory" onclick="document.querySelector('[data-focus-target=\'orders\']').click();document.getElementById('tabBtnMerchHistory').click();document.getElementById('websiteOrdersHubSection').scrollIntoView({behavior:'smooth'});">
-            <span class="vision-nav-icon">&#128338;</span>
-            <span>
-              Order History
-              <span class="vision-nav-sub">(Completed)</span>
-            </span>
+          <button type="button" class="vision-nav-item" id="sideNavBulkQuote" data-focus-target="bulkquote">
+            <span>BULK QUOTER</span>
           </button>
 
-          <button type="button" class="vision-nav-item" id="sideNavBulkQuote" style="border-color:rgba(245,196,81,0.55);background:rgba(245,196,81,0.12);" onclick="document.querySelector('[data-focus-target=\'bulkquote\']').click();document.getElementById('bulkQuoteStudioSection').scrollIntoView({behavior:'smooth'});">
-            <span class="vision-nav-icon">&#128208;</span>
-            <span>
-              Bulk Order Quoter
-              <span class="vision-nav-sub">(S&amp;S + Live DTF)</span>
-            </span>
+          <button type="button" class="vision-nav-item" id="sideNavSavedQuotes" data-focus-target="savedquotes">
+            <span>SAVED QUOTES</span>
+            <span class="rc-side-badge" id="sideSavedQuotesBadge">0</span>
           </button>
 
-          <button type="button" class="vision-nav-item" id="sideNavSavedQuotes" style="border-color:rgba(34,245,155,0.48);background:rgba(34,245,155,0.09);" onclick="document.querySelector('[data-focus-target=\'savedquotes\']').click();document.getElementById('savedQuotesVaultSection').scrollIntoView({behavior:'smooth'});">
-            <span class="vision-nav-icon">&#127915;</span>
-            <span>
-              Saved Quotes Vault
-              <span class="vision-nav-sub">(Tickets &amp; Paid Status)</span>
-            </span>
+          <button type="button" class="vision-nav-item" id="sideNavVault" data-focus-target="vault">
+            <span>300 DPI VAULT</span>
           </button>
 
-          <button type="button" class="vision-nav-item" onclick="document.querySelector('[data-tab-target=\'pane-master-files\']').click();document.getElementById('storeCatalogSection').scrollIntoView({behavior:'smooth'});">
-            <span class="vision-nav-icon">&#128193;</span>
-            <span>DTF &amp; .DST Production Vault</span>
+          <button type="button" class="vision-nav-item" id="sideNavBotPit" data-focus-target="botpit">
+            <span>BOT PIT ARENA</span>
           </button>
 
-          <button type="button" class="vision-nav-item" onclick="document.getElementById('gameAnalyticsHubSection').scrollIntoView({behavior:'smooth'});">
-            <span class="vision-nav-icon">&#128200;</span>
-            <span>Shibuya Bot Pit Telemetry</span>
-          </button>
-
-          <button type="button" class="vision-nav-item" onclick="document.querySelector('[data-tab-target=\'pane-controls\']').click();document.getElementById('storeCatalogSection').scrollIntoView({behavior:'smooth'});">
-            <span class="vision-nav-icon">&#128276;</span>
-            <span>Site Controls &amp; Alerts</span>
+          <button type="button" class="vision-nav-item" id="sideNavTraffic" data-focus-target="traffic">
+            <span>LIVE TRAFFIC</span>
           </button>
         </nav>
       </div>
 
       <div class="vision-sidebar-footer">
-        <div class="vision-quick-links">
-          <a href="index.html" class="vision-quick-link">Home Stage</a>
-          <a href="hoodie_preview.html" class="vision-quick-link">Hoodie ($1)</a>
-          <a href="hat_preview.html" class="vision-quick-link">Hat ($1)</a>
-          <a href="shibuya_bot_pit.html" class="vision-quick-link">Bot Pit</a>
+        <div class="rc-side-status-pill">
+          <span class="rc-side-status-dot"></span>
+          <span>STRIPE LIVE</span>
         </div>
-        <button type="button" class="mini-btn" id="logoutBtn" style="display:none;width:100%;border-color:rgba(255,79,163,0.5);color:#ff99c9;">Log Out</button>
+        <a href="index.html" class="rc-side-home-btn">&larr; HOME STAGE</a>
+        <button type="button" class="mini-btn" id="logoutBtn" style="display:none;width:100%;border-color:rgba(255,120,150,0.45);color:#ff99b8;">LOG OUT</button>
       </div>
     </aside>
 
     <!-- =================================================================== -->
-    <!-- COLUMN 2: CENTER SPATIAL GLASS WORKSPACE                            -->
+    <!-- COLUMN 2: MAIN OBSIDIAN & 24K GOLD WORKSPACE                        -->
     <!-- =================================================================== -->
     <main class="vision-main">
 
-      <!-- TOP SPATIAL GLASS HEADER CARD -->
+      <!-- SIMPLIFIED TOP ACTION HEADER -->
       <header class="vision-glass vision-header-card">
         <div class="vision-header-top">
-          <div>
-            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-              <img src="assets/logo.png" alt="RetroCanopy Official Logo" style="width:46px;height:46px;object-fit:contain;border-radius:11px;">
-              <h1 class="vision-main-title">RETROCANOPY — OWNER'S HUB</h1>
-            </div>
-            <div class="rc-capabilities-strip" aria-label="RetroCanopy Studio Capabilities">
-              <span class="rc-cap-pill">&#128085; Apparel</span>
-              <span class="rc-cap-pill">&#127760; Websites</span>
-              <span class="rc-cap-pill">&#128227; Marketing</span>
-              <span class="rc-cap-pill">&#128241; Apps</span>
-              <span class="rc-cap-pill">&#127918; Games</span>
-              <span class="rc-cap-pill">&#129482; Custom 3D Prints</span>
-            </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <h1 class="vision-main-title rc-logo-style-text">RETROCANOPY &mdash; OWNER'S HUB</h1>
           </div>
-          <button type="button" class="vision-gold-cta-btn" id="simulateTestPaidOrderBtn">+ Test $1 Order</button>
-        </div>
-
-        <div class="vision-header-bottom">
-          <div class="vision-status-pills">
-            <span class="vision-status-pill green">
-              <span class="vision-status-dot"></span>
-              Stripe Live Connected
-            </span>
-            <span class="vision-status-pill cyan" title="Email: josephcole001.ai@gmail.com • Topic: retrocanopy-orders-joseph-777">
-              <span class="vision-status-dot"></span>
-              Email + Phone Push Active
-            </span>
-            <select id="ownerSmsCarrierSelect" style="background:rgba(12,10,24,0.75);color:#fff;border:1px solid rgba(44,230,255,0.45);border-radius:999px;padding:6px 12px;font-size:0.72rem;" title="Select your cell carrier for SMS alerts to 656-242-7202">
+          <div class="vision-action-pills">
+            <select id="ownerSmsCarrierSelect" style="display:none;" title="SMS Carrier">
               <option value="spectrum" selected>SMS: Spectrum Mobile</option>
               <option value="vtext.com">SMS: Verizon</option>
               <option value="tmomail.net">SMS: T-Mobile / Metro</option>
@@ -2882,56 +3126,31 @@
               <option value="mms.cricketwireless.net">SMS: Cricket</option>
               <option value="sms.myboostmobile.com">SMS: Boost Mobile</option>
             </select>
-          </div>
-
-          <div class="vision-action-pills">
-            <button type="button" class="mini-btn" id="testPhonePushEmailBtn" style="border-color:rgba(245,196,81,0.55);color:#ffe89e;">&#128242; Test Alert</button>
-            <button type="button" class="mini-btn" id="enableBrowserPushBtn">&#128276; Device Push</button>
-            <button type="button" class="mini-btn" id="refreshCloudOrdersBtn">&#9729;&#65039; Sync Cloud</button>
-            <button type="button" class="mini-btn" id="exportOrdersCsvBtn">&#128228; Export CSV</button>
+            <button type="button" class="mini-btn" id="testPhonePushEmailBtn">TEST ALERT</button>
+            <button type="button" class="mini-btn" id="enableBrowserPushBtn" style="display:none;">DEVICE PUSH</button>
+            <button type="button" class="mini-btn" id="refreshCloudOrdersBtn">SYNC CLOUD</button>
+            <button type="button" class="mini-btn" id="exportOrdersCsvBtn">EXPORT CSV</button>
+            <button type="button" class="vision-gold-cta-btn" id="simulateTestPaidOrderBtn">+ TEST $1 ORDER</button>
           </div>
         </div>
       </header>
 
-      <!-- SPATIAL FOCUS WORKSPACE BAR (Used in Tabbed Studio & Floating Bottom Dock Layouts) -->
-      <nav class="spatial-focus-nav" id="spatialFocusNav">
+      <!-- HIDDEN LEGACY FOCUS NAV (Preserves IDs for existing JS hooks while Side Tabs Bar drives navigation) -->
+      <nav class="spatial-focus-nav" id="spatialFocusNav" style="display:none !important;">
         <div class="spatial-focus-tabs">
-          <button type="button" class="spatial-focus-tab active" data-focus-target="orders">
-            <span>&#128717;&#65039;</span>
-            <span>Merch Orders &amp; Production Queue</span>
-          </button>
+          <button type="button" class="spatial-focus-tab active" data-focus-target="orders">MERCH ORDERS</button>
           <button type="button" class="spatial-focus-tab" data-focus-target="projectrequests" id="topFocusTabProjectRequests">
-            <span>&#128640;</span>
-            <span>Project Requests</span>
-            <span id="projectReqNavCountBadge" style="padding:2px 8px;border-radius:999px;font-size:0.7rem;background:rgba(44,230,255,0.22);border:1px solid rgba(44,230,255,0.75);color:#2ce6ff;">0</span>
+            <span>REQUESTS</span>
+            <span id="projectReqNavCountBadge">0</span>
           </button>
-          <button type="button" class="spatial-focus-tab" data-focus-target="bulkquote" id="topFocusTabBulkQuote">
-            <span>&#128208;</span>
-            <span>Bulk Order Quoter (S&amp;S + Live DTF)</span>
-          </button>
+          <button type="button" class="spatial-focus-tab" data-focus-target="bulkquote" id="topFocusTabBulkQuote">BULK QUOTER</button>
           <button type="button" class="spatial-focus-tab" data-focus-target="savedquotes" id="topFocusTabSavedQuotes">
-            <span>&#127915;</span>
-            <span>Saved Quotes &amp; Paid Tracker</span>
-            <span id="savedQuotesNavCountBadge" style="padding:2px 8px;border-radius:999px;font-size:0.7rem;background:rgba(255,138,38,0.24);border:1px solid rgba(255,148,54,0.65);color:#ffd099;">0</span>
+            <span>SAVED QUOTES</span>
+            <span id="savedQuotesNavCountBadge">0</span>
           </button>
-          <button type="button" class="spatial-focus-tab" data-focus-target="vault">
-            <span>&#128193;</span>
-            <span>300 DPI DTF / .DST Vault &amp; Store ($1)</span>
-          </button>
-          <button type="button" class="spatial-focus-tab" data-focus-target="botpit">
-            <span>&#129302;</span>
-            <span>Shibuya Bot Pit Live Arena</span>
-          </button>
-          <button type="button" class="spatial-focus-tab" data-focus-target="traffic">
-            <span>&#127760;</span>
-            <span>Live Traffic &amp; Members</span>
-          </button>
-        </div>
-        <div class="spatial-focus-quicklinks">
-          <a href="index.html" class="vision-quick-link">Home Stage</a>
-          <a href="hoodie_preview.html" class="vision-quick-link">Hoodie ($1)</a>
-          <a href="hat_preview.html" class="vision-quick-link">Hat ($1)</a>
-          <a href="shibuya_bot_pit.html" class="vision-quick-link">Bot Pit</a>
+          <button type="button" class="spatial-focus-tab" data-focus-target="vault">300 DPI VAULT</button>
+          <button type="button" class="spatial-focus-tab" data-focus-target="botpit">BOT PIT ARENA</button>
+          <button type="button" class="spatial-focus-tab" data-focus-target="traffic">LIVE TRAFFIC</button>
         </div>
       </nav>
 
@@ -2943,39 +3162,43 @@
 
       <!-- DEDICATED STUDIO PROJECT REQUESTS ("START A PROJECT") HUB -->
       <section class="vision-glass owner-major-section" id="projectRequestsHubSection">
-        <div class="section-header" style="align-items:flex-start;gap:14px;flex-wrap:wrap;">
+        <div class="section-header" style="align-items:center;gap:14px;flex-wrap:wrap;">
           <div>
-            <h2 class="section-title">&#128640; Studio Project Requests ("Start a Project" Inquiries)</h2>
-            <div style="font-size:0.78rem;color:rgba(255,255,255,0.75);margin-top:4px;">
-              Every <strong>Start a Project</strong> request from the website is pushed directly to your phone via <strong>ntfy.sh + Email/SMS</strong> and synced here in real time. Click <strong>Open in Project Quoter</strong> to pre-fill a quote in 1 click!
-            </div>
+            <h2 class="section-title rc-logo-style-text">STUDIO PROJECT REQUESTS</h2>
           </div>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <div class="kpi-pill" style="border-color:rgba(44,230,255,0.72) !important;">
-              <div class="kpi-label">New Requests</div>
-              <div class="kpi-val" id="prKpiOpenCount" style="color:#2ce6ff;">0</div>
-            </div>
-            <div class="kpi-pill" style="border-color:rgba(34,245,155,0.72) !important;">
-              <div class="kpi-label">Contacted / Done</div>
-              <div class="kpi-val" id="prKpiDoneCount" style="color:#22f59b;">0</div>
-            </div>
-            <div class="kpi-pill">
-              <div class="kpi-label">Total Inquiries</div>
-              <div class="kpi-val" id="prKpiTotalCount">0</div>
-            </div>
-            <button type="button" class="mini-btn" id="prSendTestPushBtn" style="color:#ffe89e;border-color:rgba(245,196,81,0.68) !important;">&#128241; Send Test Project Push</button>
-            <button type="button" class="mini-btn" id="prRefreshCloudBtn" style="color:#2ce6ff;border-color:rgba(44,230,255,0.55) !important;">&#8635; Sync Live Requests</button>
-            <button type="button" class="mini-btn" id="prClearAllBtn" style="color:#ff85b3;border-color:rgba(255,92,150,0.65) !important;">&#128465;&#65039; Clear All Requests</button>
+            <button type="button" class="mini-btn" id="prSendTestPushBtn">SEND TEST PUSH</button>
+            <button type="button" class="mini-btn" id="prRefreshCloudBtn">SYNC REQUESTS</button>
+            <button type="button" class="mini-btn" id="prClearAllBtn">CLEAR ALL</button>
           </div>
         </div>
 
-        <div class="card-tabs" style="margin-top:12px;">
+        <div class="rc-opt7-kpi-grid">
+          <div class="kpi-pill">
+            <div class="kpi-label">NEW REQUESTS</div>
+            <div class="kpi-val" id="prKpiOpenCount">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">CONTACTED / DONE</div>
+            <div class="kpi-val" id="prKpiDoneCount">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">TOTAL INQUIRIES</div>
+            <div class="kpi-val" id="prKpiTotalCount">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">PUSH STATUS</div>
+            <div class="kpi-val" style="font-size:13px;color:#38ef7d;">LIVE</div>
+          </div>
+        </div>
+
+        <div class="card-tabs" style="margin-top:4px;">
           <button type="button" class="card-tab-btn active" data-tab-target="pane-projreq-open" id="tabBtnProjReqOpen">
-            &#128640; New / Open Project Requests (0)
+            OPEN PROJECT REQUESTS (0)
           </button>
           <button type="button" class="card-tab-btn" data-tab-target="pane-projreq-done" id="tabBtnProjReqDone">
-            &#9989; Contacted / Completed (0)
+            CONTACTED / COMPLETED (0)
           </button>
         </div>
 
@@ -2990,47 +3213,44 @@
 
       <!-- DEDICATED SAVED QUOTES & PAID QUOTE CONFIRMATION VAULT -->
       <section class="vision-glass owner-major-section" id="savedQuotesVaultSection">
-        <div class="section-header" style="align-items:flex-start;gap:14px;flex-wrap:wrap;">
+        <div class="section-header" style="align-items:center;gap:14px;flex-wrap:wrap;">
           <div>
-            <h2 class="section-title">&#127915; Saved Quotes Vault &amp; Live Stripe Paid Confirmation Tracker</h2>
-            <div style="font-size:0.78rem;color:rgba(255,255,255,0.75);margin-top:4px;">
-              Every quote carries an official <strong>Project Ticket Number (#RC-TKT-...)</strong> that deep-links directly to the project studio &amp; live Concept #1 client quote. Paid quotes confirm automatically in real time!
-            </div>
-          </div>
-
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <div class="kpi-pill">
-              <div class="kpi-label">Saved Quotes</div>
-              <div class="kpi-val" id="sqKpiTotalCount">0</div>
-            </div>
-            <div class="kpi-pill" style="border-color:rgba(34,245,155,0.72) !important;">
-              <div class="kpi-label">Paid &amp; Confirmed</div>
-              <div class="kpi-val" id="sqKpiPaidCount" style="color:#22f59b;">0</div>
-            </div>
-            <div class="kpi-pill" style="border-color:rgba(255,148,54,0.68) !important;">
-              <div class="kpi-label">Awaiting Payment</div>
-              <div class="kpi-val" id="sqKpiPendingCount" style="color:#ffb36b;">0</div>
-            </div>
-            <div class="kpi-pill" style="border-color:rgba(34,245,155,0.72) !important;">
-              <div class="kpi-label">Paid Quote Rev</div>
-              <div class="kpi-val" id="sqKpiPaidRevenue" style="color:#22f59b;">$0.00</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(10,9,18,0.68);border:1px solid rgba(255,255,255,0.14);">
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <button type="button" class="card-tab-btn active" data-sq-filter="all" id="sqFilterBtnAll">All Quotes</button>
-            <button type="button" class="card-tab-btn" data-sq-filter="paid" id="sqFilterBtnPaid" style="color:#6bffc3;">&#9989; Paid &amp; Confirmed</button>
-            <button type="button" class="card-tab-btn" data-sq-filter="pending" id="sqFilterBtnPending" style="color:#ffb36b;">&#9203; Sent / Unpaid</button>
-            <input type="search" class="bq-input" id="sqVaultSearchInput" placeholder="Search Ticket #, Client, Project, Email..." style="min-width:250px;">
+            <h2 class="section-title rc-logo-style-text">SAVED QUOTES &amp; PAID TRACKER</h2>
           </div>
 
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button type="button" class="mini-btn" id="sqRefreshCloudQuotesBtn" style="color:#22f59b;border-color:rgba(34,245,155,0.55) !important;">&#8635; Sync Live Paid Status</button>
-            <button type="button" class="mini-btn" id="sqClearAllQuotesBtn" style="color:#ff85b3;border-color:rgba(255,92,150,0.65) !important;">&#128465;&#65039; Clear All Quotes</button>
-            <button type="button" class="vision-gold-cta-btn" id="sqCreateNewQuoteBtn" style="padding:8px 16px;font-size:0.75rem;">+ New Project Quote</button>
+            <button type="button" class="mini-btn" id="sqRefreshCloudQuotesBtn">SYNC PAID STATUS</button>
+            <button type="button" class="mini-btn" id="sqClearAllQuotesBtn">CLEAR ALL</button>
+            <button type="button" class="vision-gold-cta-btn" id="sqCreateNewQuoteBtn">+ NEW PROJECT QUOTE</button>
           </div>
+        </div>
+
+        <div class="rc-opt7-kpi-grid">
+          <div class="kpi-pill">
+            <div class="kpi-label">SAVED QUOTES</div>
+            <div class="kpi-val" id="sqKpiTotalCount">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">PAID &amp; CONFIRMED</div>
+            <div class="kpi-val" id="sqKpiPaidCount">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">AWAITING PAYMENT</div>
+            <div class="kpi-val" id="sqKpiPendingCount">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">PAID QUOTE REV</div>
+            <div class="kpi-val" id="sqKpiPaidRevenue">$0.00</div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button type="button" class="card-tab-btn active" data-sq-filter="all" id="sqFilterBtnAll">ALL QUOTES</button>
+            <button type="button" class="card-tab-btn" data-sq-filter="paid" id="sqFilterBtnPaid">PAID &amp; CONFIRMED</button>
+            <button type="button" class="card-tab-btn" data-sq-filter="pending" id="sqFilterBtnPending">SENT / UNPAID</button>
+          </div>
+          <input type="search" class="bq-input" id="sqVaultSearchInput" placeholder="Search Ticket #, Client, Project, Email..." style="min-width:260px;">
         </div>
 
         <div class="sq-vault-grid" id="savedQuotesVaultGrid">
@@ -3038,43 +3258,49 @@
         </div>
       </section>
 
-      <!-- MAIN PRODUCTION QUEUE GLASS PANEL -->
+      <!-- MAIN PRODUCTION QUEUE GLASS PANEL (OPTION 7 UNIFIED RIGHT STAGE) -->
       <section class="vision-glass owner-major-section" id="websiteOrdersHubSection">
         <div class="section-header">
           <div class="section-title-wrap">
-            <h2 class="section-title">Website Merch Orders &amp; 300 DPI Production Queue</h2>
+            <h2 class="section-title rc-logo-style-text">MERCH ORDERS &amp; PRODUCTION QUEUE</h2>
           </div>
-          <!-- Compact Live KPIs -->
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <div class="kpi-pill">
-              <div class="kpi-label">Paid Rev</div>
-              <div class="kpi-val" id="kpiMerchRevenue">$0.00</div>
-            </div>
-            <div class="kpi-pill">
-              <div class="kpi-label">Needs Done</div>
-              <div class="kpi-val" id="kpiMerchNeedsDone">0</div>
-            </div>
-            <div class="kpi-pill">
-              <div class="kpi-label">Completed</div>
-              <div class="kpi-val" id="kpiMerchHistoryCount">0</div>
-            </div>
-            <div class="kpi-pill">
-              <div class="kpi-label">Total Orders</div>
-              <div class="kpi-val" id="kpiMerchTotalOrders">0</div>
-            </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button type="button" class="mini-btn" onclick="document.getElementById('refreshCloudOrdersBtn').click()">SYNC CLOUD</button>
+            <button type="button" class="mini-btn" onclick="document.getElementById('exportOrdersCsvBtn').click()">EXPORT CSV</button>
+            <button type="button" class="vision-gold-cta-btn" onclick="document.getElementById('simulateTestPaidOrderBtn').click()">+ TEST $1 ORDER</button>
           </div>
         </div>
 
-        <!-- VisionOS Frosted Pill Sub-Tabs -->
+        <!-- Option 7 4-Column Full-Width KPI Row -->
+        <div class="rc-opt7-kpi-grid">
+          <div class="kpi-pill">
+            <div class="kpi-label">PAID REVENUE</div>
+            <div class="kpi-val" id="kpiMerchRevenue">$0.00</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">NEEDS DONE</div>
+            <div class="kpi-val" id="kpiMerchNeedsDone">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">COMPLETED</div>
+            <div class="kpi-val" id="kpiMerchHistoryCount">0</div>
+          </div>
+          <div class="kpi-pill">
+            <div class="kpi-label">TOTAL ORDERS</div>
+            <div class="kpi-val" id="kpiMerchTotalOrders">0</div>
+          </div>
+        </div>
+
+        <!-- Option 7 Clean Sub-Tabs -->
         <div class="card-tabs">
           <button type="button" class="card-tab-btn active" data-tab-target="pane-merch-unfulfilled" id="tabBtnMerchUnfulfilled">
-            Needs Done / Production Queue (0)
+            PRODUCTION QUEUE (0)
           </button>
           <button type="button" class="card-tab-btn" data-tab-target="pane-merch-history" id="tabBtnMerchHistory">
-            Order History (Checked Off) (0)
+            ORDER HISTORY (0)
           </button>
-          <button type="button" class="card-tab-btn" data-tab-target="pane-merch-projreq" id="tabBtnMerchProjReq" style="color:#2ce6ff;">
-            &#128640; Studio Project Requests (0)
+          <button type="button" class="card-tab-btn" data-tab-target="pane-merch-projreq" id="tabBtnMerchProjReq">
+            STUDIO REQUESTS (0)
           </button>
         </div>
 
@@ -3746,7 +3972,21 @@
         });
       });
 
-      // Tab Switching across all sections
+      // Keep Option 7 Side Tab Badges synced with Saved Quotes & Project Requests count badges
+      const syncSideBadges = () => {
+        const sqSrc = document.getElementById('savedQuotesNavCountBadge');
+        const sqDst = document.getElementById('sideSavedQuotesBadge');
+        if (sqSrc && sqDst && sqDst.textContent !== sqSrc.textContent) {
+          sqDst.textContent = sqSrc.textContent;
+        }
+        const prSrc = document.getElementById('projectReqNavCountBadge');
+        const prDst = document.getElementById('sideProjectReqBadge');
+        if (prSrc && prDst && prDst.textContent !== prSrc.textContent) {
+          prDst.textContent = prSrc.textContent;
+        }
+      };
+      setInterval(syncSideBadges, 800);
+      setTimeout(syncSideBadges, 150);
       document.querySelectorAll('.card-tab-btn[data-tab-target]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const card = btn.closest('section');
@@ -4155,8 +4395,8 @@
           innerArc.style.strokeDashoffset = String(Math.round(circumference * (1 - fulfillPct / 100)));
         }
 
-        document.getElementById('tabBtnMerchUnfulfilled').textContent = `⏳ Needs Done / Production Queue (${unfulfilled.length})`;
-        document.getElementById('tabBtnMerchHistory').textContent = `✅ Order History (Checked Off) (${history.length})`;
+        document.getElementById('tabBtnMerchUnfulfilled').textContent = `PRODUCTION QUEUE (${unfulfilled.length})`;
+        document.getElementById('tabBtnMerchHistory').textContent = `ORDER HISTORY (${history.length})`;
 
         const unfulfilledEl = document.getElementById('merchUnfulfilledList');
         const historyEl = document.getElementById('merchHistoryList');
@@ -5303,6 +5543,8 @@
 
         const navBadge = document.getElementById('projectReqNavCountBadge');
         if (navBadge) navBadge.textContent = String(openReqs.length);
+        const sidePrBadge = document.getElementById('sideProjectReqBadge');
+        if (sidePrBadge) sidePrBadge.textContent = String(openReqs.length);
 
         const kpiOpen = document.getElementById('prKpiOpenCount');
         const kpiDone = document.getElementById('prKpiDoneCount');
@@ -5314,9 +5556,9 @@
         const tabOpen = document.getElementById('tabBtnProjReqOpen');
         const tabDone = document.getElementById('tabBtnProjReqDone');
         const tabInline = document.getElementById('tabBtnMerchProjReq');
-        if (tabOpen) tabOpen.textContent = `🚀 New / Open Project Requests (${openReqs.length})`;
-        if (tabDone) tabDone.textContent = `✅ Contacted / Completed (${doneReqs.length})`;
-        if (tabInline) tabInline.textContent = `🚀 Studio Project Requests (${openReqs.length})`;
+        if (tabOpen) tabOpen.textContent = `OPEN PROJECT REQUESTS (${openReqs.length})`;
+        if (tabDone) tabDone.textContent = `CONTACTED / COMPLETED (${doneReqs.length})`;
+        if (tabInline) tabInline.textContent = `STUDIO REQUESTS (${openReqs.length})`;
 
         const openGrid = document.getElementById('projectRequestsOpenGrid');
         const doneGrid = document.getElementById('projectRequestsDoneGrid');
