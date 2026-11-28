@@ -299,6 +299,91 @@
           letter-spacing: 0.15em !important;
         }
       }
+
+      /* Top-Left Mute Music Capsule Button — Matches Option 2 Sunset-Gradient Neon Rim Login Button */
+      .rc-home-mute-btn {
+        position: fixed !important;
+        top: clamp(14px, 2.2vh, 22px) !important;
+        left: clamp(14px, 2.2vw, 26px) !important;
+        z-index: 9500 !important;
+        background: linear-gradient(180deg, rgba(14, 11, 18, 0.94), rgba(6, 5, 10, 0.98)) padding-box,
+                    linear-gradient(90deg, #ff4d88 0%, #ff9638 50%, #ffe066 100%) border-box !important;
+        border: 2px solid transparent !important;
+        border-radius: 999px !important;
+        width: auto !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        padding: 0 18px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 9px !important;
+        cursor: pointer !important;
+        box-shadow: -6px 0 20px rgba(255, 77, 136, 0.32), 6px 0 22px rgba(255, 208, 72, 0.35), 0 10px 26px rgba(0, 0, 0, 0.9) !important;
+        backdrop-filter: blur(10px) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease !important;
+      }
+      .rc-home-mute-btn:hover {
+        background: linear-gradient(180deg, rgba(20, 15, 25, 0.96), rgba(9, 7, 14, 0.99)) padding-box,
+                    linear-gradient(90deg, #ff5e95 0%, #ffa64c 50%, #ffea80 100%) border-box !important;
+        box-shadow: -8px 0 26px rgba(255, 77, 136, 0.5), 8px 0 28px rgba(255, 208, 72, 0.52), 0 12px 28px rgba(0, 0, 0, 0.95) !important;
+        transform: translateY(-1.5px) scale(1.02) !important;
+      }
+      .rc-home-mute-btn svg {
+        width: 15px !important;
+        height: 15px !important;
+        flex-shrink: 0 !important;
+        stroke: #ffc266 !important;
+        filter: drop-shadow(0 0 6px rgba(255, 160, 64, 0.65)) !important;
+      }
+      .rc-home-mute-btn .rc-mute-icon-off {
+        display: none !important;
+      }
+      .rc-home-mute-btn.is-muted .rc-mute-icon-on {
+        display: none !important;
+      }
+      .rc-home-mute-btn.is-muted .rc-mute-icon-off {
+        display: block !important;
+        stroke: #ff6b8b !important;
+      }
+      .rc-home-mute-btn.is-muted {
+        background: linear-gradient(180deg, rgba(12, 11, 16, 0.94), rgba(6, 5, 9, 0.98)) padding-box,
+                    linear-gradient(90deg, rgba(255, 77, 136, 0.55) 0%, rgba(255, 150, 56, 0.55) 50%, rgba(255, 224, 102, 0.55) 100%) border-box !important;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.88) !important;
+      }
+      .rc-home-mute-btn #rcHomeMuteMusicLabel {
+        font-family: 'Orbitron', sans-serif !important;
+        font-size: 11.5px !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.16em !important;
+        background: linear-gradient(90deg, #ff85a8 0%, #ffc266 52%, #fff0a8 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        white-space: nowrap !important;
+      }
+      body:has(#appsHubModal.is-open) .rc-home-mute-btn,
+      body:has(#studioModal.is-open) .rc-home-mute-btn {
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+      @media (max-width: 768px) {
+        .rc-home-mute-btn {
+          top: 12px !important;
+          left: 12px !important;
+          height: 34px !important;
+          min-height: 34px !important;
+          padding: 0 13px !important;
+          gap: 6px !important;
+        }
+        .rc-home-mute-btn svg {
+          width: 13px !important;
+          height: 13px !important;
+        }
+        .rc-home-mute-btn #rcHomeMuteMusicLabel {
+          font-size: 10px !important;
+          letter-spacing: 0.13em !important;
+        }
+      }
       .c02-hs-dock-cart { left: 35.8%; top: 22.0%; width: 28.4%; height: 39.5%; border-radius: 18px; }
       .c02-hs-dock-cart:hover { box-shadow: 0 0 32px rgba(255, 196, 48, 0.48); }
       .c02-hs-dock-back { left: 30.4%; top: 50.5%; width: 6.0%; height: 4.7%; border-radius: 6px; }
@@ -1588,6 +1673,21 @@
       <div id="room-light-wash"></div>
       <div id="webgl-container"></div>
 
+      <!-- Top-Left Sunset-Gradient Neon Rim Mute Music Button -->
+      <button type="button" class="rc-home-mute-btn" id="rcHomeMuteMusicBtn" onclick="toggleHomeMusicMute(event)" title="Mute / Unmute Background Music" aria-label="Mute or Unmute Background Music">
+        <svg class="rc-mute-icon-on" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <svg class="rc-mute-icon-off" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <line x1="23" y1="9" x2="17" y2="15"></line>
+          <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+        <span id="rcHomeMuteMusicLabel">MUTE MUSIC</span>
+      </button>
+
       <!-- 1:1 Stage-Locked Concept 01 Interactive Layer -->
       <div id="stage-overlay-root">
         <div class="stage-hotspot hs-logo-title" onclick="replaySwoopIntro()" title="Replay Sanctuary Tree Animation">
@@ -2035,18 +2135,56 @@
       }
     };
 
-    window.toggleSanctuaryMusic = function() {
-      const audio = document.getElementById('lofi-loop-audio');
-      const btn = document.getElementById('musicToggleBtn');
-      if (!audio) return;
-      if (audio.paused) {
-        audio.volume = 0.45;
-        audio.play().then(() => { if (btn) btn.classList.add('playing'); }).catch(() => {});
-      } else {
-        audio.pause();
-        if (btn) btn.classList.remove('playing');
-      }
+    window.syncHomeMuteMusicUI = function(isMuted) {
+      const btn = document.getElementById('rcHomeMuteMusicBtn');
+      const lbl = document.getElementById('rcHomeMuteMusicLabel');
+      if (btn) btn.classList.toggle('is-muted', Boolean(isMuted));
+      if (lbl) lbl.textContent = isMuted ? 'UNMUTE MUSIC' : 'MUTE MUSIC';
     };
+    window.__rcHomeMusicMuted = (sessionStorage.getItem('rc_lofi_muted') === '1');
+    window.syncHomeMuteMusicUI(window.__rcHomeMusicMuted);
+
+    window.toggleHomeMusicMute = function(ev) {
+      if (ev && typeof ev.stopPropagation === 'function') {
+        ev.stopPropagation();
+      }
+      const nextMuted = !Boolean(window.__rcHomeMusicMuted);
+      window.__rcHomeMusicMuted = nextMuted;
+      try {
+        sessionStorage.setItem('rc_lofi_muted', nextMuted ? '1' : '0');
+      } catch (_) {}
+
+      if (nextMuted) {
+        const offOpt = document.querySelector('.kh-track-option[data-kh-track="off"]');
+        if (offOpt) {
+          try { offOpt.click(); } catch (_) {}
+        }
+        document.querySelectorAll('audio, video').forEach((el) => {
+          try {
+            el.muted = true;
+            if (el.tagName === 'AUDIO') el.pause();
+          } catch (_) {}
+        });
+      } else {
+        const savedTrack = sessionStorage.getItem('rc_kh_track') || '0';
+        const onOpt = document.querySelector(`.kh-track-option[data-kh-track="${savedTrack}"]`) ||
+                      document.querySelector('.kh-track-option[data-kh-track="0"]');
+        if (onOpt) {
+          try { onOpt.click(); } catch (_) {}
+        }
+        const audio = document.getElementById('lofi-loop-audio');
+        if (audio) {
+          try {
+            audio.muted = false;
+            audio.volume = 0.35;
+            audio.play().catch(() => {});
+          } catch (_) {}
+        }
+      }
+      window.syncHomeMuteMusicUI(nextMuted);
+    };
+
+    window.toggleSanctuaryMusic = window.toggleHomeMusicMute;
 
     const data = window.__RC_MORPH_DATA;
     const N = data.count;
