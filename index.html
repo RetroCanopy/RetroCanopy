@@ -2251,10 +2251,10 @@
     composer.addPass(bloomPass);
 
     const texLoader = new THREE.TextureLoader();
-    const texBgDesk       = texLoader.load('assets/concept_gallery/living_tree/c06_p01_stage_bg.jpg?v=305');
-    const texFullDesk     = texLoader.load('assets/concept_gallery/living_tree/c06_p01_stage_full.jpg?v=305');
-    const texBgMob        = texLoader.load('assets/concept_gallery/living_tree/c06_p01_mobile_bg.jpg?v=305');
-    const texFullMob      = texLoader.load('assets/concept_gallery/living_tree/c06_p01_mobile_full.jpg?v=305');
+    const texBgDesk       = texLoader.load('assets/concept_gallery/living_tree/c06_p01_stage_bg.jpg?v=326');
+    const texFullDesk     = texLoader.load('assets/concept_gallery/living_tree/c06_p01_stage_full.jpg?v=326');
+    const texBgMob        = texLoader.load('assets/concept_gallery/living_tree/c06_p01_mobile_bg.jpg?v=326');
+    const texFullMob      = texLoader.load('assets/concept_gallery/living_tree/c06_p01_mobile_full.jpg?v=326');
     const texGamerCutDesk = texFullDesk;
     const texGamerBgDesk  = texBgDesk;
     const texGamerCutMob  = texFullMob;
@@ -2285,6 +2285,19 @@
       uIsMobile: { value: isMobileMode ? 1.0 : 0.0 },
       uIsComingSoon: { value: 0.0 },
       uMouse3D: { value: new THREE.Vector3(999, 999, 0) }
+    };
+
+    window.__setStageTextureUrl = function(url) {
+      return new Promise((resolve) => {
+        texLoader.load(url, (tex) => {
+          tex.minFilter = THREE.LinearFilter;
+          tex.magFilter = THREE.LinearFilter;
+          tex.generateMipmaps = false;
+          stageUniforms.uTexFull.value = tex;
+          stageUniforms.uTexBg.value = tex;
+          resolve(true);
+        }, undefined, () => resolve(false));
+      });
     };
 
     const stageGeo = new THREE.PlaneGeometry(1.0, 1.0, 1, 1);
